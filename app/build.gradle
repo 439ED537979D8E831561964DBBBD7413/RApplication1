@@ -1,0 +1,88 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+apply plugin: 'android-apt'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
+    defaultConfig {
+        applicationId "com.rawalinfocom.rcontact"
+        minSdkVersion 16
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled true
+
+            proguardFiles 'proguard-support-design.pro'
+            proguardFiles 'proguard-support-v7-appcompat.pro'
+            proguardFiles 'proguard-support-v7-recyclerview.pro'
+            proguardFiles 'proguard-jackson.pro'
+            proguardFiles 'proguard-butterknife.pro'
+            proguardFiles 'proguard-gson.pro'
+            proguardFiles 'proguard-apache-commons-lang.pro'
+
+            proguardFiles 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+        }
+    }
+
+    packagingOptions {
+        pickFirst 'META-INF/LICENSE'
+    }
+}
+
+final SUPPORT_LIBRARY_VERSION = '24.2.1'
+final JACKSON_CORE_VERSION = '2.8.3'
+final BUTTER_KNIFE_VERSION = '8.4.0'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile 'junit:junit:4.12'
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
+        transitive = true;
+    }
+
+    compile "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
+    compile "com.android.support:support-v4:$SUPPORT_LIBRARY_VERSION"
+    compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
+    compile "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
+    compile "com.android.support:palette-v7:$SUPPORT_LIBRARY_VERSION"
+
+    compile "com.fasterxml.jackson.core:jackson-core:$JACKSON_CORE_VERSION"
+    compile "com.fasterxml.jackson.core:jackson-databind:$JACKSON_CORE_VERSION"
+    compile "com.fasterxml.jackson.core:jackson-annotations:$JACKSON_CORE_VERSION"
+
+    compile "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
+    apt "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
+
+    compile 'com.google.code.gson:gson:2.7'
+    compile 'org.apache.commons:commons-lang3:3.5'
+}
