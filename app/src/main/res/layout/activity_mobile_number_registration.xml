@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_mobile_number_registration"
+    android:id="@+id/relative_root_mobile_registration"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
@@ -52,36 +52,37 @@
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/linear_country_code"
+        <!-- <LinearLayout
+             android:id="@+id/linear_country_code"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:clickable="true"
+             android:orientation="horizontal">-->
+
+        <EditText
+            android:id="@+id/input_country_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:drawablePadding="@dimen/activity_half_horizontal_margin"
+            android:drawableRight="@drawable/ic_drop_down_arrow"
+            android:focusableInTouchMode="false"
+            android:inputType="number"
+            android:singleLine="true"
+            android:text="(IN)+91"
+            android:textColor="@drawable/selector_registration_number_edittext"/>
 
-            <EditText
-                android:id="@+id/input_country_code"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableRight="@drawable/ic_drop_down_arrow"
-                android:enabled="false"
-                android:inputType="number"
-                android:singleLine="true"
-                android:text="(IN)+91"
-                android:textColor="@drawable/selector_registration_number_edittext"/>
+        <!-- <ImageView
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center"
+             android:src="@drawable/ic_drop_down_arrow"/>-->
 
-            <!-- <ImageView
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_gravity="center"
-                 android:src="@drawable/ic_drop_down_arrow"/>-->
-
-        </LinearLayout>
+        <!-- </LinearLayout>-->
 
         <EditText
             android:id="@+id/input_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
             android:layout_toRightOf="@id/input_country_code"
             android:hint="Mobile Number"
             android:inputType="number"
@@ -90,6 +91,7 @@
     </LinearLayout>
 
     <com.rawalinfocom.rcontact.helper.RippleView
+        android:id="@+id/ripple_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/linear_country_number"
@@ -103,7 +105,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/linear_country_number"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorAccent"
             android:text="@string/action_submit"
             android:textColor="@color/colorWhite"/>
 

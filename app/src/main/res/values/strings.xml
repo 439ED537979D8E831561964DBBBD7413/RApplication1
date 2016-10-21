@@ -5,4 +5,10 @@
     <string name="title_verify_number">Verify Your Phone Number</string>
     <string name="msg_enter_number">Please Confirm your Country Code and Enter Your Phone Number</string>
     <string name="action_submit">Submit</string>
+    <string name="msg_please_wait">Please Wait...</string>
+    <string name="msg_no_network">Network Not Available.</string>
+    <string name="hint_search">Search</string>
+    <string name="description_action_back">Description Action Back</string>
+    <string name="error_invalid_number">Please add valid Number</string>
+    <string name="msg_empty_country">No Country Available</string>
 </resources>

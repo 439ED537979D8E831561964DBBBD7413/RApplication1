@@ -35,7 +35,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            minifyEnabled true
+            minifyEnabled false
 
             proguardFiles 'proguard-support-design.pro'
             proguardFiles 'proguard-support-v7-appcompat.pro'

@@ -8,4 +8,10 @@ package com.rawalinfocom.rcontact.constants;
  */
 
 public class AppConstants {
+
+    public static int REQUEST_CODE_COUNTRY_REGISTRATION = 2;
+
+    public static String EXTRA_OBJECT_COUNTRY = "object_country";
+
+
 }
