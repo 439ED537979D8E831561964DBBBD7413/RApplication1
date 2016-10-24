@@ -17,6 +17,8 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.adapters.CountryListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.database.DatabaseHandler;
+import com.rawalinfocom.rcontact.database.TableCountryMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -49,6 +51,8 @@ public class CountryListActivity extends AppCompatActivity implements WsResponse
 
     CountryListAdapter adapterCountryList;
     ArrayList<Country> arrayListCountry;
+
+    DatabaseHandler databaseHandler;
 
     //<editor-fold desc="Override Methods">
 
@@ -84,6 +88,12 @@ public class CountryListActivity extends AppCompatActivity implements WsResponse
                         recyclerViewCountryList.setLayoutManager(new LinearLayoutManager(this));
                         adapterCountryList = new CountryListAdapter(this, arrayListCountry);
                         recyclerViewCountryList.setAdapter(adapterCountryList);
+
+                        TableCountryMaster tableCountryMaster = new TableCountryMaster
+                                (CountryListActivity.this, databaseHandler);
+                        for (int i = 0; i < arrayListCountry.size(); i++) {
+                            tableCountryMaster.addCountry(arrayListCountry.get(i));
+                        }
 
                     } else {
 
@@ -125,6 +135,8 @@ public class CountryListActivity extends AppCompatActivity implements WsResponse
     //<editor-fold desc="Private Methods">
 
     private void init() {
+
+        databaseHandler = new DatabaseHandler(CountryListActivity.this);
 
         rippleActionBack.setOnRippleCompleteListener(this);
 

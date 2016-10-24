@@ -20,22 +20,25 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".CountryListActivity"
             android:windowSoftInputMode="stateHidden">
-            <!-- <intent-filter>
+
+            <!--
+             <intent-filter>
                  <action android:name="android.intent.action.MAIN"/>
 
                  <category android:name="android.intent.category.LAUNCHER"/>
-             </intent-filter>-->
+             </intent-filter>
+            -->
         </activity>
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7"/>
 
-
+        <activity android:name=".OtpVerificationActivity">
+        </activity>
     </application>
 
 </manifest>

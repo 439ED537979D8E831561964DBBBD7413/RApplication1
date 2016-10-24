@@ -10,6 +10,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
+    private final String LOG_TAG = "DatabaseHelper";
+
     // All Static variables
     // Database Version
     private static final int DATABASE_VERSION = 1;
@@ -23,11 +25,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        // creating required tables
+        db.execSQL(TableCountryMaster.CREATE_TABLE_RC_COUNTRY_MASTER);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // on upgrade drop older tables
+        db.execSQL("DROP TABLE IF EXISTS " + TableCountryMaster.CREATE_TABLE_RC_COUNTRY_MASTER);
 
+        // create new tables
+        onCreate(db);
     }
 }
