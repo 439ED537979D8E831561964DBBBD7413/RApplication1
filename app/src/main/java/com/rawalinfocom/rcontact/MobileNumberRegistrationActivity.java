@@ -2,7 +2,6 @@ package com.rawalinfocom.rcontact;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,11 +16,14 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.database.TableOtpLogDetails;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Country;
+import com.rawalinfocom.rcontact.model.OtpLog;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class MobileNumberRegistrationActivity extends AppCompatActivity implements RippleView
+public class MobileNumberRegistrationActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
 
     @BindView(R.id.image_registration_logo)
@@ -110,11 +112,7 @@ public class MobileNumberRegistrationActivity extends AppCompatActivity implemen
                                 relativeRootMobileRegistration, getString(R.string
                                         .error_invalid_number));
                     } else {
-//                        sendOtp();
-                        Intent intent = new Intent(MobileNumberRegistrationActivity.this,
-                                OtpVerificationActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                        sendOtp();
                     }
                     break;
                 }
@@ -131,8 +129,21 @@ public class MobileNumberRegistrationActivity extends AppCompatActivity implemen
                 WsResponseObject countryListResponse = (WsResponseObject) data;
                 if (countryListResponse.getStatus().equalsIgnoreCase(WsConstants
                         .RESPONSE_STATUS_TRUE)) {
-//                    AppUtils.hideProgressDialog();
 
+                    OtpLog otpLogResponse = countryListResponse.getOtpLog();
+
+                    TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(this,
+                            databaseHandler);
+                    OtpLog otpLog = new OtpLog();
+                    otpLog.setRcProfileMasterPmId(otpLogResponse.getRcProfileMasterPmId());
+                    otpLog.setOldOtpString(otpLogResponse.getOldOtpString());
+                    otpLog.setCreatedAt(Utils.GetUtcDateTimeAsString());
+                    otpLog.setOldValidUpto(Utils.getOtpExpirationTime(otpLog.getCreatedAt()));
+
+                    tableOtpLogDetails.addOtp(otpLog);
+
+                    startActivityIntent(MobileNumberRegistrationActivity.this,
+                            OtpVerificationActivity.class);
 
                 } else {
                     Log.e("error response", countryListResponse.getMessage());
@@ -176,9 +187,14 @@ public class MobileNumberRegistrationActivity extends AppCompatActivity implemen
 
     private void sendOtp() {
 
+        WsRequestObject otpObject = new WsRequestObject();
+        otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
+        otpObject.setMobileNumber(inputNumber.getText().toString());
+
+
         if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
-                    WsResponseObject.class, WsConstants.REQ_SEND_OTP, getString(R.string
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
+                    null, WsResponseObject.class, WsConstants.REQ_SEND_OTP, getString(R.string
                     .msg_please_wait)).execute(WsConstants.WS_ROOT + WsConstants.REQ_SEND_OTP);
         } else {
             Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources()

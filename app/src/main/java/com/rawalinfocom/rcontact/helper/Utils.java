@@ -12,7 +12,12 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by Monal on 10/10/16.
@@ -21,6 +26,10 @@ import java.util.ArrayList;
  */
 
 public class Utils {
+
+    static final int OTP_VALIDITY_DURATION = 20;
+    static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    static SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 
     //<editor-fold desc="Check Android OS Version">
 
@@ -76,8 +85,55 @@ public class Utils {
 
     //</editor-fold>
 
+    //<editor-fold desc="Data Type Operations">
     public static boolean isArraylistNullOrEmpty(ArrayList arrayList) {
         return !(arrayList != null && arrayList.size() > 0);
+    }
+    //</editor-fold>
+
+    /**
+     * Returns UTC time in Date Format
+     */
+    public static Date GetUtcDateTimeAsDate() {
+        return StringDateToDate(GetUtcDateTimeAsString());
+    }
+
+    /**
+     * Returns UTC time in String Format
+     */
+    public static String GetUtcDateTimeAsString() {
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return sdf.format(new Date());
+    }
+
+    /**
+     * Converts Date to String
+     */
+    public static Date StringDateToDate(String StrDate) {
+        Date dateToReturn = null;
+        try {
+            dateToReturn = sdf.parse(StrDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return dateToReturn;
+    }
+
+    /**
+     * Returns OTP expiration Time
+     */
+    public static String getOtpExpirationTime(String startTime) {
+        String endTime = null;
+        try {
+            Date d = sdf.parse(startTime);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(d);
+            cal.add(Calendar.MINUTE, OTP_VALIDITY_DURATION);
+            endTime = sdf.format(cal.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return endTime;
     }
 
 }

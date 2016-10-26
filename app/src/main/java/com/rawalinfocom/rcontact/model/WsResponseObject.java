@@ -20,6 +20,9 @@ public class WsResponseObject {
 
     private String status;
     private String message;
+
+    private OtpLog otpLog;
+
     private ArrayList<Country> arrayListCountry;
 
     @JsonProperty("status")
@@ -47,5 +50,14 @@ public class WsResponseObject {
 
     public void setArrayListCountry(ArrayList<Country> arrayListCountry) {
         this.arrayListCountry = arrayListCountry;
+    }
+
+    @JsonProperty("otp_detail")
+    public OtpLog getOtpLog() {
+        return otpLog;
+    }
+
+    public void setOtpLog(OtpLog otpLog) {
+        this.otpLog = otpLog;
     }
 }

@@ -27,12 +27,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // creating required tables
         db.execSQL(TableCountryMaster.CREATE_TABLE_RC_COUNTRY_MASTER);
+        db.execSQL(TableOtpLogDetails.CREATE_TABLE_OTP_LOG_DETAILS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + TableCountryMaster.CREATE_TABLE_RC_COUNTRY_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableOtpLogDetails.CREATE_TABLE_OTP_LOG_DETAILS);
 
         // create new tables
         onCreate(db);

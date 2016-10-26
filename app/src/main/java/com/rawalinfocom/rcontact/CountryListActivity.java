@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.adapters.CountryListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.database.TableCountryMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
@@ -31,7 +29,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CountryListActivity extends AppCompatActivity implements WsResponseListener,
+public class CountryListActivity extends BaseActivity implements WsResponseListener,
         RippleView.OnRippleCompleteListener {
 
     @BindView(R.id.image_action_back)
@@ -52,7 +50,7 @@ public class CountryListActivity extends AppCompatActivity implements WsResponse
     CountryListAdapter adapterCountryList;
     ArrayList<Country> arrayListCountry;
 
-    DatabaseHandler databaseHandler;
+//    DatabaseHandler databaseHandler;
 
     //<editor-fold desc="Override Methods">
 
@@ -135,8 +133,6 @@ public class CountryListActivity extends AppCompatActivity implements WsResponse
     //<editor-fold desc="Private Methods">
 
     private void init() {
-
-        databaseHandler = new DatabaseHandler(CountryListActivity.this);
 
         rippleActionBack.setOnRippleCompleteListener(this);
 
