@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_root_otp_verification"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rawalinfocom.rcontact.OtpVerificationActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_otp_verification"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        android:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:layout_scrollFlags="scroll|enterAlways">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true">
+
+            <com.rawalinfocom.rcontact.helper.RippleView
+                android:id="@+id/ripple_action_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                app:rv_alpha="@integer/alpha_ripple"
+                app:rv_centered="true"
+                app:rv_color="@color/colorWhite"
+                app:rv_rippleDuration="@integer/duration_ripple">
+
+                <ImageView
+                    android:id="@+id/image_action_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/description_action_back"
+                    android:padding="@dimen/activity_half_horizontal_margin"
+                    android:src="@drawable/ic_action_back"/>
+
+            </com.rawalinfocom.rcontact.helper.RippleView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/ripple_action_back"
+                android:layout_toRightOf="@id/ripple_action_back"
+                android:text="@string/title_verification"
+                android:textColor="@color/colorWhite"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/text_verify_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar_otp_verification"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:text="@string/title_verifying_mobile_number"
+        android:textColor="@color/colorVeryDarkGrayishBlue1"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/text_enter_otp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_verify_number"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="@string/msg_enter_otp"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/colorVeryDarkGrayishBlue2"/>
+
+    <EditText
+        android:id="@+id/input_otp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_enter_otp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:ems="6"
+        android:gravity="center"
+        android:inputType="number"
+        android:maxLength="6"/>
+
+    <com.rawalinfocom.rcontact.helper.RippleView
+        android:id="@+id/ripple_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_otp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_double_vertical_margin"
+        app:rv_alpha="@integer/alpha_ripple"
+        app:rv_color="@color/colorWhite"
+        app:rv_rippleDuration="@integer/duration_ripple">
+
+        <Button
+            android:id="@+id/button_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/linear_country_number"
+            android:background="@color/colorAccent"
+            android:text="@string/action_submit"
+            android:textColor="@color/colorWhite"/>
+
+    </com.rawalinfocom.rcontact.helper.RippleView>
+
+    <com.rawalinfocom.rcontact.helper.RippleView
+        android:id="@+id/ripple_resend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ripple_submit"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        app:rv_alpha="@integer/alpha_ripple"
+        app:rv_color="@color/colorWhite"
+        app:rv_rippleDuration="@integer/duration_ripple">
+
+        <Button
+            android:id="@+id/button_resend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/vividRed"
+            android:text="@string/action_resend"
+            android:textColor="@color/colorWhite"/>
+
+    </com.rawalinfocom.rcontact.helper.RippleView>
+
+</RelativeLayout>
