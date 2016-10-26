@@ -39,6 +39,8 @@
 
         <activity android:name=".OtpVerificationActivity">
         </activity>
+        <activity android:name=".BaseActivity">
+        </activity>
     </application>
 
 </manifest>

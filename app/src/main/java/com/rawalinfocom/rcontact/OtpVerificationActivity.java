@@ -14,7 +14,7 @@ import com.rawalinfocom.rcontact.helper.RippleView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class OtpVerificationActivity extends AppCompatActivity implements RippleView
+public class OtpVerificationActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener {
 
 
@@ -59,12 +59,6 @@ public class OtpVerificationActivity extends AppCompatActivity implements Ripple
                 onBackPressed();
                 break;
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
     }
 
     //</editor-fold>
