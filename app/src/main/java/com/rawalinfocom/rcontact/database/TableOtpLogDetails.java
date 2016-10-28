@@ -29,20 +29,22 @@ public class TableOtpLogDetails {
 
     // Column Names
     private static final String COLUMN_OLD_ID = "old_id";
-    private static final String COLUMN_OLD_OTP_STRING = "old_otp_string";
+    private static final String COLUMN_OLD_OTP = "old_otp";
+    private static final String COLUMN_OLD_GENERATED_AT = "old_generated_at";
+    private static final String COLUMN_OLD_MSP_DELIVERY_TIME = "old_msp_delivery_time";
     private static final String COLUMN_OLD_VALID_UPTO = "old_valid_upto";
-    private static final String COLUMN_OLD_DELIVERED_TIME = "old_delivered_time";
-    private static final String COLUMN_CREATED_AT = "created_at";
+    private static final String COLUMN_OLD_VALIDITY_FLAG = "old_validity_flag";
     private static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
     // Table Create Statements
     public static final String CREATE_TABLE_OTP_LOG_DETAILS = "CREATE TABLE " +
-            TABLE_RC_OTP_LOG_DETAILS + " (" +
-            " " + COLUMN_OLD_ID + " integer NOT NULL PRIMARY KEY AUTOINCREMENT," +
-            " " + COLUMN_OLD_OTP_STRING + " text NOT NULL," +
+            TABLE_RC_OTP_LOG_DETAILS +
+            "(" + COLUMN_OLD_ID + " integer NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            " " + COLUMN_OLD_OTP + " text NOT NULL," +
+            " " + COLUMN_OLD_GENERATED_AT + " datetime NOT NULL," +
+            " " + COLUMN_OLD_MSP_DELIVERY_TIME + " datetime," +
             " " + COLUMN_OLD_VALID_UPTO + " datetime NOT NULL," +
-            " " + COLUMN_OLD_DELIVERED_TIME + " datetime," +
-            " " + COLUMN_CREATED_AT + " datetime NOT NULL," +
+            " " + COLUMN_OLD_VALIDITY_FLAG + " integer," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
             ");";
 
@@ -51,11 +53,11 @@ public class TableOtpLogDetails {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_OLD_ID, otpLog.getOldId());
-        values.put(COLUMN_OLD_OTP_STRING, otpLog.getOldOtpString());
+        values.put(COLUMN_OLD_OTP, otpLog.getOldOtp());
+        values.put(COLUMN_OLD_GENERATED_AT, otpLog.getOldGeneratedAt());
+        values.put(COLUMN_OLD_MSP_DELIVERY_TIME, otpLog.getOldMspDeliveryTime());
         values.put(COLUMN_OLD_VALID_UPTO, otpLog.getOldValidUpto());
-        values.put(COLUMN_OLD_DELIVERED_TIME, otpLog.getOldDeliveredTime());
-        values.put(COLUMN_CREATED_AT, otpLog.getCreatedAt());
+        values.put(COLUMN_OLD_VALIDITY_FLAG, otpLog.getOldValidityFlag());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, otpLog.getRcProfileMasterPmId());
 
         // Inserting Row
@@ -69,21 +71,22 @@ public class TableOtpLogDetails {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RC_OTP_LOG_DETAILS, new String[]{COLUMN_OLD_ID,
-                        COLUMN_OLD_OTP_STRING, COLUMN_OLD_VALID_UPTO,
-                        COLUMN_OLD_DELIVERED_TIME, COLUMN_CREATED_AT,
-                        COLUMN_RC_PROFILE_MASTER_PM_ID},
-                COLUMN_OLD_ID + "=?", new String[]{String.valueOf(otpId)}, null, null, null, null);
+                COLUMN_OLD_OTP, COLUMN_OLD_GENERATED_AT,
+                COLUMN_OLD_MSP_DELIVERY_TIME, COLUMN_OLD_VALID_UPTO, COLUMN_OLD_VALIDITY_FLAG,
+                COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_OLD_ID + "=?", new String[]{String
+                .valueOf(otpId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
         OtpLog otpLog = new OtpLog();
         if (cursor != null) {
             otpLog.setOldId(cursor.getString(0));
-            otpLog.setOldOtpString(cursor.getString(1));
-            otpLog.setOldValidUpto(cursor.getString(2));
-            otpLog.setOldDeliveredTime(cursor.getString(3));
-            otpLog.setCreatedAt(cursor.getString(4));
-            otpLog.setRcProfileMasterPmId(cursor.getString(5));
+            otpLog.setOldOtp(cursor.getString(1));
+            otpLog.setOldGeneratedAt(cursor.getString(2));
+            otpLog.setOldMspDeliveryTime(cursor.getString(3));
+            otpLog.setOldValidUpto(cursor.getString(4));
+            otpLog.setOldValidityFlag(cursor.getString(5));
+            otpLog.setRcProfileMasterPmId(cursor.getString(6));
         }
         // return otpLog
         return otpLog;
@@ -103,12 +106,13 @@ public class TableOtpLogDetails {
             do {
                 OtpLog otpLog = new OtpLog();
                 otpLog.setOldId(cursor.getString(0));
-                otpLog.setOldOtpString(cursor.getString(1));
-                otpLog.setOldValidUpto(cursor.getString(2));
-                otpLog.setOldDeliveredTime(cursor.getString(3));
-                otpLog.setCreatedAt(cursor.getString(4));
-                otpLog.setRcProfileMasterPmId(cursor.getString(5));
-                // Adding contact to list
+                otpLog.setOldOtp(cursor.getString(1));
+                otpLog.setOldGeneratedAt(cursor.getString(2));
+                otpLog.setOldMspDeliveryTime(cursor.getString(3));
+                otpLog.setOldValidUpto(cursor.getString(4));
+                otpLog.setOldValidityFlag(cursor.getString(5));
+                otpLog.setRcProfileMasterPmId(cursor.getString(6));
+                // Adding otp to list
                 arrayListOtp.add(otpLog);
             } while (cursor.moveToNext());
         }
@@ -117,16 +121,44 @@ public class TableOtpLogDetails {
         return arrayListOtp;
     }
 
+    // Getting Last Otp Details
+    public OtpLog getLastOtpDetails() {
+        OtpLog otpLog = new OtpLog();
+        // Select Query
+        String selectQuery = "SELECT * FROM " + TABLE_RC_OTP_LOG_DETAILS + " ORDER BY " +
+                COLUMN_OLD_ID + " DESC LIMIT 1;";
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows
+        if (cursor.moveToFirst()) {
+            do {
+                otpLog.setOldId(cursor.getString(0));
+                otpLog.setOldOtp(cursor.getString(1));
+                otpLog.setOldGeneratedAt(cursor.getString(2));
+                otpLog.setOldMspDeliveryTime(cursor.getString(3));
+                otpLog.setOldValidUpto(cursor.getString(4));
+                otpLog.setOldValidityFlag(cursor.getString(5));
+                otpLog.setRcProfileMasterPmId(cursor.getString(6));
+            } while (cursor.moveToNext());
+        }
+
+        // return otp
+        return otpLog;
+    }
+
     // Updating single otp
     public int updateOtp(OtpLog otpLog) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_OLD_ID, otpLog.getOldId());
-        values.put(COLUMN_OLD_OTP_STRING, otpLog.getOldOtpString());
+        values.put(COLUMN_OLD_OTP, otpLog.getOldOtp());
+        values.put(COLUMN_OLD_GENERATED_AT, otpLog.getOldGeneratedAt());
+        values.put(COLUMN_OLD_MSP_DELIVERY_TIME, otpLog.getOldMspDeliveryTime());
         values.put(COLUMN_OLD_VALID_UPTO, otpLog.getOldValidUpto());
-        values.put(COLUMN_OLD_DELIVERED_TIME, otpLog.getOldDeliveredTime());
-        values.put(COLUMN_CREATED_AT, otpLog.getCreatedAt());
+        values.put(COLUMN_OLD_VALIDITY_FLAG, otpLog.getOldValidityFlag());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, otpLog.getRcProfileMasterPmId());
 
         // updating row
@@ -140,6 +172,16 @@ public class TableOtpLogDetails {
         db.delete(TABLE_RC_OTP_LOG_DETAILS, COLUMN_OLD_ID + " = ?",
                 new String[]{String.valueOf(otpLog.getOldId())});
         db.close();
+    }
+
+    // Getting otp Count
+    public int getOtpCount() {
+        String countQuery = "SELECT  * FROM " + TABLE_RC_OTP_LOG_DETAILS;
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+
+        // return count
+        return cursor.getCount();
     }
 
     // Drop Otp Table

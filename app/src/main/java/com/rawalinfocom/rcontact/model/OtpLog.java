@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Created by Monal on 25/10/16.
  */
@@ -13,15 +15,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class OtpLog {
 
     private String oldId;
-    private String oldOtpString;
+    private String oldOtp;
+    private String oldGeneratedAt;
+    private String oldMspDeliveryTime;
     private String oldValidUpto;
-    private String oldDeliveredTime;
-    private String createdAt;
+    private String oldValidityFlag;
     private String rcProfileMasterPmId;
 
-    @JsonProperty("otp_id")
     public String getOldId() {
-        return oldId;
+        return StringUtils.defaultString(oldId);
     }
 
     public void setOldId(String oldId) {
@@ -29,43 +31,51 @@ public class OtpLog {
     }
 
     @JsonProperty("otp")
-    public String getOldOtpString() {
-        return oldOtpString;
+    public String getOldOtp() {
+        return StringUtils.defaultString(oldOtp);
     }
 
-    public void setOldOtpString(String oldOtpString) {
-        this.oldOtpString = oldOtpString;
+    public void setOldOtp(String oldOtp) {
+        this.oldOtp = oldOtp;
+    }
+
+    @JsonProperty("otp_generation_time")
+    public String getOldGeneratedAt() {
+        return StringUtils.defaultString(oldGeneratedAt);
+    }
+
+    public void setOldGeneratedAt(String oldGeneratedAt) {
+        this.oldGeneratedAt = oldGeneratedAt;
+    }
+
+    @JsonProperty("msp_delivered_time")
+    public String getOldMspDeliveryTime() {
+        return StringUtils.defaultString(oldMspDeliveryTime);
+    }
+
+    public void setOldMspDeliveryTime(String oldMspDeliveryTime) {
+        this.oldMspDeliveryTime = oldMspDeliveryTime;
     }
 
     public String getOldValidUpto() {
-        return oldValidUpto;
+        return StringUtils.defaultString(oldValidUpto);
     }
 
     public void setOldValidUpto(String oldValidUpto) {
         this.oldValidUpto = oldValidUpto;
     }
 
-    public String getOldDeliveredTime() {
-        return oldDeliveredTime;
+    public String getOldValidityFlag() {
+        return StringUtils.defaultString(oldValidityFlag);
     }
 
-
-    public void setOldDeliveredTime(String oldDeliveredTime) {
-        this.oldDeliveredTime = oldDeliveredTime;
-    }
-
-    @JsonProperty("otp_generation_time")
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+    public void setOldValidityFlag(String oldValidityFlag) {
+        this.oldValidityFlag = oldValidityFlag;
     }
 
     @JsonProperty("pm_id")
     public String getRcProfileMasterPmId() {
-        return rcProfileMasterPmId;
+        return StringUtils.defaultString(rcProfileMasterPmId);
     }
 
     public void setRcProfileMasterPmId(String rcProfileMasterPmId) {
