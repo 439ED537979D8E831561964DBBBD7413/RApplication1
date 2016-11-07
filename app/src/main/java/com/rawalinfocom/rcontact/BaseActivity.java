@@ -24,8 +24,11 @@ public class BaseActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
     }
 
-    public void startActivityIntent(Context packageContext, Class cls) {
+    public void startActivityIntent(Context packageContext, Class cls, Bundle extras) {
         Intent intent = new Intent(packageContext, cls);
+        if (extras != null) {
+            intent.putExtras(extras);
+        }
         startActivity(intent);
         overridePendingTransition(R.anim.enter, R.anim.exit);
     }
