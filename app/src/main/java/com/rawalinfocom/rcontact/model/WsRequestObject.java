@@ -12,6 +12,9 @@ public class WsRequestObject {
 
     private String countryCode;
     private String mobileNumber;
+    private String pmId;
+    private String otp;
+    private String otpGenerationTime;
 
     @JsonProperty("country_code")
     public String getCountryCode() {
@@ -29,5 +32,32 @@ public class WsRequestObject {
 
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
+    }
+
+    @JsonProperty("pm_id")
+    public String getPmId() {
+        return pmId;
+    }
+
+    public void setPmId(String pmId) {
+        this.pmId = pmId;
+    }
+
+    @JsonProperty("otp")
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
+    @JsonProperty("otp_generation_time")
+    public String getOtpGenerationTime() {
+        return otpGenerationTime;
+    }
+
+    public void setOtpGenerationTime(String otpGenerationTime) {
+        this.otpGenerationTime = otpGenerationTime;
     }
 }

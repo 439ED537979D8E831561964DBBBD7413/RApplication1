@@ -90,6 +90,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                         .EXTRA_OBJECT_COUNTRY);
                 inputCountryCode.setText("(" + selectedCountry.getCountryCode() + ")" +
                         selectedCountry.getCountryCodeNumber());
+
             }
         }
     }
@@ -126,27 +127,55 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
 
             //<editor-fold desc="REQ_SEND_OTP">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_SEND_OTP)) {
-                WsResponseObject countryListResponse = (WsResponseObject) data;
-                if (countryListResponse.getStatus().equalsIgnoreCase(WsConstants
+                WsResponseObject otpDetailResponse = (WsResponseObject) data;
+                if (otpDetailResponse.getStatus().equalsIgnoreCase(WsConstants
                         .RESPONSE_STATUS_TRUE)) {
 
-                    OtpLog otpLogResponse = countryListResponse.getOtpLog();
+                    OtpLog otpLogResponse = otpDetailResponse.getOtpLog();
 
                     TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(this,
                             databaseHandler);
-                    OtpLog otpLog = new OtpLog();
-                    otpLog.setRcProfileMasterPmId(otpLogResponse.getRcProfileMasterPmId());
-                    otpLog.setOldOtpString(otpLogResponse.getOldOtpString());
-                    otpLog.setCreatedAt(Utils.GetUtcDateTimeAsString());
-                    otpLog.setOldValidUpto(Utils.getOtpExpirationTime(otpLog.getCreatedAt()));
 
-                    tableOtpLogDetails.addOtp(otpLog);
+                    if (tableOtpLogDetails.getOtpCount() > 0 && tableOtpLogDetails
+                            .getLastOtpDetails().getOldOtp().equalsIgnoreCase
+                                    (otpLogResponse.getOldOtp())) {
+                        // Update OTP validation Timing
+                        OtpLog otpLog = new OtpLog();
+                        otpLog.setOldId(tableOtpLogDetails.getLastOtpDetails().getOldId());
+                        otpLog.setOldOtp(tableOtpLogDetails.getLastOtpDetails()
+                                .getOldOtp());
+                        otpLog.setOldGeneratedAt(tableOtpLogDetails.getLastOtpDetails()
+                                .getOldGeneratedAt());
+                        otpLog.setOldValidUpto(Utils.getOtpExpirationTime(otpLog
+                                .getOldGeneratedAt()));
+                        otpLog.setOldValidityFlag("1");
+                        otpLog.setRcProfileMasterPmId(tableOtpLogDetails.getLastOtpDetails()
+                                .getRcProfileMasterPmId());
 
+                        tableOtpLogDetails.updateOtp(otpLog);
+
+                    } else {
+                        // Add data to OTP table
+                        OtpLog otpLog = new OtpLog();
+                        otpLog.setOldOtp(otpLogResponse.getOldOtp());
+                        otpLog.setOldGeneratedAt(otpLogResponse.getOldGeneratedAt());
+                        otpLog.setOldValidUpto(Utils.getOtpExpirationTime(otpLog
+                                .getOldGeneratedAt()));
+                        otpLog.setOldValidityFlag("1");
+                        otpLog.setRcProfileMasterPmId(otpLogResponse.getRcProfileMasterPmId());
+
+                        tableOtpLogDetails.addOtp(otpLog);
+                    }
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(AppConstants.EXTRA_OBJECT_COUNTRY, selectedCountry);
+                    bundle.putString(AppConstants.EXTRA_MOBILE_NUMBER, inputNumber.getText()
+                            .toString());
                     startActivityIntent(MobileNumberRegistrationActivity.this,
-                            OtpVerificationActivity.class);
+                            OtpVerificationActivity.class, bundle);
 
                 } else {
-                    Log.e("error response", countryListResponse.getMessage());
+                    Log.e("error response", otpDetailResponse.getMessage());
                 }
             }
             //</editor-fold>
@@ -200,7 +229,6 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
             Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources()
                     .getString(R.string.msg_no_network));
         }
-
     }
 
     //</editor-fold>
