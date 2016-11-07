@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -33,12 +34,12 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
 
 
-    @BindView(R.id.image_action_back)
+    @BindView(R.id.includeToolbar)
+    LinearLayout includeToolbar;
     ImageView imageActionBack;
-    @BindView(R.id.ripple_action_back)
     RippleView rippleActionBack;
-    @BindView(R.id.toolbar_otp_verification)
     Toolbar toolbarOtpVerification;
+    TextView textToolbarTitle;
     @BindView(R.id.text_verify_number)
     TextView textVerifyNumber;
     @BindView(R.id.text_enter_otp)
@@ -163,6 +164,14 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
     //<editor-fold desc="Private Methods">
 
     private void init() {
+
+        imageActionBack = ButterKnife.findById(includeToolbar, R.id.image_action_back);
+        rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
+        toolbarOtpVerification = ButterKnife.findById(includeToolbar, R.id.toolbar);
+        textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
+
+        textToolbarTitle.setText(getString(R.string.title_verification));
+
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleResend.setOnRippleCompleteListener(this);
         rippleSubmit.setOnRippleCompleteListener(this);
@@ -187,6 +196,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                     Utils.showSuccessSnackbar(OtpVerificationActivity.this,
                             relativeRootOtpVerification, getString(R.string
                                     .msg_otp_verification_success));
+                    startActivityIntent(this, ProfileRegistrationActivity.class, null);
                 } else {
                     Utils.showErrorSnackBar(OtpVerificationActivity.this,
                             relativeRootOtpVerification, getString(R.string

@@ -45,6 +45,8 @@
         <service android:name=".services.OtpTimerService">
         </service>
 
+        <activity android:name=".ProfileRegistrationActivity">
+        </activity>
     </application>
 
 </manifest>

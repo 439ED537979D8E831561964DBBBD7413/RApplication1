@@ -20,4 +20,12 @@
     <string name="error_otp_length_incorrect">Please add %1$d digit OTP!</string>
     <string name="msg_success_otp_request">OTP Request sent successfully!</string>
     <string name="error_otp_expired">This OTP is expired. Please try again!</string>
+    <string name="action_register">Register</string>
+    <string name="hint_first_name">First Name</string>
+    <string name="hint_last_name">Last Name</string>
+    <string name="hint_email_id">Email ID</string>
+    <string name="text_or">or</string>
+    <string name="text_facebook">Facebook</string>
+    <string name="text_google">Google</string>
+    <string name="text_linked_in">LinkedIn</string>
 </resources>
