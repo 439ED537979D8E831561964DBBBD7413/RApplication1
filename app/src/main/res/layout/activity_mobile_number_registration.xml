@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_root_mobile_registration"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.rawalinfocom.rcontact.MobileNumberRegistrationActivity">
+
+
+    <ImageView
+        android:id="@+id/image_registration_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/description_registration_logo"
+        android:src="@drawable/img_registration_logo"/>
+
+    <TextView
+        android:id="@+id/text_verify_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/image_registration_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:text="@string/title_verify_number"
+        android:textColor="@color/colorVeryDarkGrayishBlue1"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/text_enter_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_verify_number"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center_horizontal"
+        android:text="@string/msg_enter_number"
+        android:textColor="@color/colorVeryDarkGrayishBlue2"/>
+
+    <LinearLayout
+        android:id="@+id/linear_country_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_enter_number"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:orientation="horizontal">
+
+        <!-- <LinearLayout
+             android:id="@+id/linear_country_code"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:clickable="true"
+             android:orientation="horizontal">-->
+
+        <EditText
+            android:id="@+id/input_country_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/activity_half_horizontal_margin"
+            android:drawableRight="@drawable/ic_drop_down_arrow"
+            android:focusableInTouchMode="false"
+            android:inputType="number"
+            android:singleLine="true"
+            android:text="(IN)+91"
+            android:textColor="@drawable/selector_registration_number_edittext"/>
+
+        <!-- <ImageView
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center"
+             android:src="@drawable/ic_drop_down_arrow"/>-->
+
+        <!-- </LinearLayout>-->
+
+        <EditText
+            android:id="@+id/input_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/input_country_code"
+            android:hint="Mobile Number"
+            android:inputType="number"
+            android:singleLine="true"/>
+
+    </LinearLayout>
+
+    <com.rawalinfocom.rcontact.helper.RippleView
+        android:id="@+id/ripple_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linear_country_number"
+        android:layout_marginTop="@dimen/activity_double_vertical_margin"
+        app:rv_alpha="@integer/alpha_ripple"
+        app:rv_color="@color/colorWhite"
+        app:rv_rippleDuration="@integer/duration_ripple">
+
+        <Button
+            android:id="@+id/button_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/linear_country_number"
+            android:background="@color/colorAccent"
+            android:text="@string/action_submit"
+            android:textColor="@color/colorWhite"/>
+
+    </com.rawalinfocom.rcontact.helper.RippleView>
+
+</RelativeLayout>

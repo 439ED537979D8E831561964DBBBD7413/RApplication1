@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.rawalinfocom.rcontact">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <application
+        android:name=".RContactApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity"/>
+        <activity android:name=".MobileNumberRegistrationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".CountryListActivity"
+            android:windowSoftInputMode="stateHidden">
+
+            <!--
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN"/>
+
+                 <category android:name="android.intent.category.LAUNCHER"/>
+             </intent-filter>
+            -->
+        </activity>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7"/>
+
+        <activity android:name=".OtpVerificationActivity">
+        </activity>
+        <activity android:name=".BaseActivity">
+        </activity>
+    </application>
+
+</manifest>
