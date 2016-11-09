@@ -47,6 +47,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@id/ripple_action_back"
                 android:layout_toRightOf="@id/ripple_action_back"
+                android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/colorWhite"
                 tools:text="Title"/>
 

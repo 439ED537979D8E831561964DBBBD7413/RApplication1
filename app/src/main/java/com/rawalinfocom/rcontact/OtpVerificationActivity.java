@@ -1,5 +1,7 @@
 package com.rawalinfocom.rcontact;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -78,12 +80,23 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        mobileNumber = bundle.getString(AppConstants.EXTRA_MOBILE_NUMBER);
-        selectedCountry = (Country) bundle.getSerializable(AppConstants.EXTRA_OBJECT_COUNTRY);
+        /*mobileNumber = bundle.getString(AppConstants.EXTRA_MOBILE_NUMBER);
+        selectedCountry = (Country) bundle.getSerializable(AppConstants.EXTRA_OBJECT_COUNTRY);*/
+
+        mobileNumber = Utils.getStringPreference(OtpVerificationActivity.this, AppConstants
+                .PREF_REGS_MOBILE_NUMBER, "");
+        selectedCountry = (Country) Utils.getObjectPreference(OtpVerificationActivity.this,
+                AppConstants.PREF_SELECTED_COUNTRY_OBJECT, Country.class);
+
+        if (selectedCountry == null) {
+            selectedCountry = new Country();
+        }
 
         init();
 
-        startOtpService();
+        if (bundle != null && bundle.getBoolean(AppConstants.EXTRA_IS_FROM_MOBILE_REGIS, false)) {
+            startOtpService();
+        }
 
         AppConstants.DEVICE_TOKEN_ID = getRegistrationId();
 
@@ -104,7 +117,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                 break;
 
             case R.id.ripple_resend:
-                stopService(otpServiceIntent);
+                stopService(new Intent(OtpVerificationActivity.this, OtpTimerService.class));
                 Utils.showSuccessSnackbar(OtpVerificationActivity.this,
                         relativeRootOtpVerification, getString(R.string.msg_success_otp_request));
                 inputOtp.setText("");
@@ -172,9 +185,23 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
                     UserProfile userProfile = confirmOtpResponse.getUserProfile();
 
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(AppConstants.EXTRA_OBJECT_USER, userProfile);
-                    startActivityIntent(this, ProfileRegistrationActivity.class, bundle);
+                    Utils.setObjectPreference(OtpVerificationActivity.this, AppConstants
+                            .PREF_REGS_USER_OBJECT, userProfile);
+
+                    // set launch screen as OtpVerificationActivity
+                    Utils.setIntegerPreference(OtpVerificationActivity.this,
+                            AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
+                                    .integer.launch_profile_registration));
+
+
+                    // Redirect to ProfileRegistrationActivity
+                    Intent intent = new Intent(this, ProfileRegistrationActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+
                 } else {
                     Log.e("error response", confirmOtpResponse.getMessage());
                 }
@@ -201,6 +228,13 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
         textToolbarTitle.setText(getString(R.string.title_verification));
 
+        textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
+        textVerifyNumber.setTypeface(Utils.typefaceRegular(this));
+        textEnterOtp.setTypeface(Utils.typefaceRegular(this));
+        inputOtp.setTypeface(Utils.typefaceRegular(this));
+        buttonSubmit.setTypeface(Utils.typefaceSemiBold(this));
+        buttonResend.setTypeface(Utils.typefaceSemiBold(this));
+
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleResend.setOnRippleCompleteListener(this);
         rippleSubmit.setOnRippleCompleteListener(this);
@@ -221,7 +255,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             OtpLog otpLog = tableOtpLogDetails.getLastOtpDetails();
             if (otpLog.getOldValidityFlag().equalsIgnoreCase("1")) {
                 if (otpLog.getOldOtp().equals(inputOtp.getText().toString())) {
-                    stopService(otpServiceIntent);
+                    stopService(new Intent(OtpVerificationActivity.this, OtpTimerService.class));
                     otpConfirmed(otpLog);
                 } else {
                     Utils.showErrorSnackBar(OtpVerificationActivity.this,
@@ -267,6 +301,17 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             return "";
         }
         return registrationId;
+    }
+
+    private boolean isOtpServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer
+                .MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     //</editor-fold>

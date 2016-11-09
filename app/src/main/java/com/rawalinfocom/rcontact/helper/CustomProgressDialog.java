@@ -46,8 +46,8 @@ public class CustomProgressDialog extends ProgressDialog {
 
         TextView progressText = (TextView) findViewById(R.id.text_progress);
         progressText.setText(text);
-/*        if (context != null)
-            progressText.setTypeface(AppUtils.typefaceRegular(context));*/
+        if (context != null)
+            progressText.setTypeface(Utils.typefaceRegular(context));
 
         Rect displayRectangle = new Rect();
         getWindow().getDecorView().getWindowVisibleDisplayFrame(displayRectangle);

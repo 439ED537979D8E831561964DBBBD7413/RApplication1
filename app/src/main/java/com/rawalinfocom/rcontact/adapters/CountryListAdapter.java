@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.RippleView;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.Country;
 
 import java.util.ArrayList;
@@ -104,6 +105,9 @@ public class CountryListAdapter extends RecyclerView.Adapter<CountryListAdapter.
         CountryViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            textCountryName.setTypeface(Utils.typefaceRegular(context));
+
         }
     }
 

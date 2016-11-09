@@ -69,9 +69,11 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         setContentView(R.layout.activity_profile_registration);
         ButterKnife.bind(this);
 
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        userProfile = (UserProfile) bundle.getSerializable(AppConstants.EXTRA_OBJECT_USER);
+        userProfile = (UserProfile) Utils.getObjectPreference(ProfileRegistrationActivity.this,
+                AppConstants.PREF_REGS_USER_OBJECT, UserProfile.class);
+        if (userProfile == null) {
+            userProfile = new UserProfile();
+        }
 
         init();
     }
@@ -94,7 +96,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                             "First Name and Last Name");
                 } else {
                     profileRegistration(firstName, lastName, emailId, userProfile.getPmId(),
-                            AppConstants.REGISTRATION_VIA_EMAIL, AppConstants.DEVICE_TOKEN_ID);
+                            getResources().getInteger(R.integer.registration_via_email),
+                            AppConstants.DEVICE_TOKEN_ID);
                 }
 
                 break;
@@ -111,8 +114,21 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 if (userProfileResponse.getStatus().equalsIgnoreCase(WsConstants
                         .RESPONSE_STATUS_TRUE)) {
 
-                    Utils.showSuccessSnackbar(this, relativeRootProfileRegistration,
-                            userProfileResponse.getMessage());
+                   /* Utils.showSuccessSnackbar(this, relativeRootProfileRegistration,
+                            userProfileResponse.getMessage());*/
+
+                    // set launch screen as MainActivity
+                    Utils.setIntegerPreference(ProfileRegistrationActivity.this,
+                            AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
+                                    .integer.launch_main_activity));
+
+                    // Redirect to MainActivity
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
 
                 } else {
                     Log.e("error response", userProfileResponse.getMessage());
@@ -141,6 +157,16 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
 
         textToolbarTitle.setText(R.string.title_profile_registration);
+
+        textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
+        inputFirstName.setTypeface(Utils.typefaceRegular(this));
+        inputLastName.setTypeface(Utils.typefaceRegular(this));
+        inputEmailId.setTypeface(Utils.typefaceRegular(this));
+        buttonRegister.setTypeface(Utils.typefaceSemiBold(this));
+        buttonFacebook.setTypeface(Utils.typefaceSemiBold(this));
+        buttonGoogle.setTypeface(Utils.typefaceSemiBold(this));
+        buttonLinkedIn.setTypeface(Utils.typefaceSemiBold(this));
+        textOr.setTypeface(Utils.typefaceSemiBold(this));
 
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleRegister.setOnRippleCompleteListener(this);
