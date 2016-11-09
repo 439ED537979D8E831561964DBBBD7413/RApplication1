@@ -3,12 +3,14 @@ package com.rawalinfocom.rcontact.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -32,7 +34,10 @@ import java.util.TimeZone;
 
 public class Utils {
 
+    private static String LOG_TAG = Utils.class.getSimpleName();
+
     static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
 
     //<editor-fold desc="Check Android OS Version">
@@ -166,22 +171,6 @@ public class Utils {
         return sharedpreferences.getString(key, defaultValue);
     }
 
-    public static void setStringSetPreference(Context context, String key, @Nullable Set<String>
-            value) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
-                .KEY_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedpreferences.edit();
-        editor.putStringSet(key, value);
-        editor.apply();
-    }
-
-    public static Set<String> getStringSetPreference(Context context, String key, Set<String>
-            defaultValue) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
-                .KEY_PREFERENCES, Context.MODE_PRIVATE);
-        return sharedpreferences.getStringSet(key, defaultValue);
-    }
-
     public static void setIntegerPreference(Context context, String key, int value) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
@@ -218,6 +207,84 @@ public class Utils {
         String json = gson.toJson(object);
         editor.putString(key, json);
         editor.apply();
+    }
+
+    public static Object getObjectPreference(Context context, String key, Class classObject) {
+        try {
+            SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                    .KEY_PREFERENCES, Context.MODE_PRIVATE);
+            Gson gson = new Gson();
+            String json = sharedpreferences.getString(key, "");
+            return gson.fromJson(json, classObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "method : getObjectPreference()");
+            return null;
+        }
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Progress Dialog">
+    private static CustomProgressDialog progressDialog;
+
+    public static void showProgressDialog(Context context, String msg, boolean isCancelable) {
+        if (context != null) {
+
+            progressDialog = (CustomProgressDialog) CustomProgressDialog.ctor(context, msg);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setCancelable(isCancelable);
+            progressDialog.show();
+
+        }
+    }
+
+    public static void hideProgressDialog() {
+        try {
+            progressDialog.dismiss();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(LOG_TAG, "method : hideProgressDialog()");
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Typeface">
+
+    public static Typeface typefaceRegular(Context context) {
+        if (context != null) {
+            return Typeface.createFromAsset(context.getAssets(), "fonts/OpenSans-Regular.ttf");
+        } else {
+            Log.e(LOG_TAG, "method : typefaceRegular() , Null context");
+            return null;
+        }
+    }
+
+    public static Typeface typefaceBold(Context context) {
+        if (context != null) {
+            return Typeface.createFromAsset(context.getAssets(), "fonts/OpenSans-Bold.ttf");
+        } else {
+            Log.e(LOG_TAG, "method : typefaceBold() , Null context");
+            return null;
+        }
+    }
+
+    public static Typeface typefaceItalic(Context context) {
+        if (context != null) {
+            return Typeface.createFromAsset(context.getAssets(), "fonts/OpenSans-Italic.ttf");
+        } else {
+            Log.e(LOG_TAG, "method : typefaceItalic() , Null context");
+            return null;
+        }
+    }
+
+    public static Typeface typefaceSemiBold(Context context) {
+        if (context != null) {
+            return Typeface.createFromAsset(context.getAssets(), "fonts/OpenSans-Semibold.ttf");
+        } else {
+            Log.e(LOG_TAG, "method : typefaceSemiBold() , Null context");
+            return null;
+        }
     }
 
     //</editor-fold>

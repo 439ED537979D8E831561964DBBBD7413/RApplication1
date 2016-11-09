@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Launcher Screen Constants -->
+    <integer name="launch_mobile_registration">0</integer>
+    <integer name="launch_otp_verification">1</integer>
+    <integer name="launch_profile_registration">2</integer>
+    <integer name="launch_main_activity">3</integer>
+
+    <!-- Profile Registration Constants -->
+    <integer name="registration_via_email">0</integer>
+    <integer name="registration_via_facebook">1</integer>
+    <integer name="registration_via_google">2</integer>
+    <integer name="registration_via_lined_in">3</integer>
+
+</resources>

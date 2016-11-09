@@ -167,10 +167,22 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                         tableOtpLogDetails.addOtp(otpLog);
                     }
 
+                    Utils.setObjectPreference(MobileNumberRegistrationActivity.this, AppConstants
+                            .PREF_SELECTED_COUNTRY_OBJECT, selectedCountry);
+                    Utils.setStringPreference(MobileNumberRegistrationActivity.this, AppConstants
+                            .PREF_REGS_MOBILE_NUMBER, inputNumber.getText().toString());
+
+                    // set launch screen as OtpVerificationActivity
+                    Utils.setIntegerPreference(MobileNumberRegistrationActivity.this,
+                            AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
+                                    .integer.launch_otp_verification));
+
+                    // Redirect to OtpVerificationActivity
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable(AppConstants.EXTRA_OBJECT_COUNTRY, selectedCountry);
+                    /*bundle.putSerializable(AppConstants.EXTRA_OBJECT_COUNTRY, selectedCountry);
                     bundle.putString(AppConstants.EXTRA_MOBILE_NUMBER, inputNumber.getText()
-                            .toString());
+                            .toString());*/
+                    bundle.putBoolean(AppConstants.EXTRA_IS_FROM_MOBILE_REGIS, true);
                     startActivityIntent(MobileNumberRegistrationActivity.this,
                             OtpVerificationActivity.class, bundle);
 
@@ -192,6 +204,12 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
     //<editor-fold desc="Private Methods">
 
     private void init() {
+
+        textVerifyNumber.setTypeface(Utils.typefaceRegular(this));
+        textEnterNumber.setTypeface(Utils.typefaceRegular(this));
+        inputCountryCode.setTypeface(Utils.typefaceRegular(this));
+        inputNumber.setTypeface(Utils.typefaceRegular(this));
+        buttonSubmit.setTypeface(Utils.typefaceSemiBold(this));
 
         rippleSubmit.setOnRippleCompleteListener(this);
 

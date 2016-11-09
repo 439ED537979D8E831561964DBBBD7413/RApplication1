@@ -22,6 +22,7 @@ public class WsResponseObject {
     private String message;
 
     private OtpLog otpLog;
+    private UserProfile userProfile;
 
     private ArrayList<Country> arrayListCountry;
 
@@ -59,5 +60,14 @@ public class WsResponseObject {
 
     public void setOtpLog(OtpLog otpLog) {
         this.otpLog = otpLog;
+    }
+
+    @JsonProperty("profile_data")
+    public UserProfile getUserProfile() {
+        return userProfile;
+    }
+
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 }
