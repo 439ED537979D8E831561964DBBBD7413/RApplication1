@@ -7,6 +7,10 @@
     <color name="colorSnackBarNegative">#C14143</color>
     <color name="colorSnackBarPositive">#3FC08E</color>
 
+    <color name="colorFacebookBlue">#3A559F</color>
+    <color name="colorGoogleRed">#DD4B39</color>
+    <color name="colorLinkedInBlue">#007BB6</color>
+
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
     <color name="colorVeryDarkGrayishBlue1">#4C4C4D</color>
