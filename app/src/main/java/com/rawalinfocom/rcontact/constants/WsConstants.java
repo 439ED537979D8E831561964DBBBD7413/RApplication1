@@ -15,6 +15,8 @@ public class WsConstants {
     public static final String REQ_COUNTRY_CODE_DETAIL = "country-code-detail";
     public static final String REQ_SEND_OTP = "send_otp";
     public static final String REQ_MSP_DELIVERY_TIME = "msp-delivery-time";
+    public static final String REQ_OTP_CONFIRMED = "otp_confirmed";
+    public static final String REQ_PROFILE_REGISTRATION = "profile_registration";
 
 
 }

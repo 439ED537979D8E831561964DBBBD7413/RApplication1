@@ -9,6 +9,7 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -33,6 +34,7 @@ import java.util.TimeZone;
 public class Utils {
 
     static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
 
     //<editor-fold desc="Check Android OS Version">
@@ -220,6 +222,30 @@ public class Utils {
         editor.apply();
     }
 
+    //</editor-fold>
+
+    //<editor-fold desc="Progress Dialog">
+    public static CustomProgressDialog progressDialog;
+
+    public static void showProgressDialog(Context context, String msg, boolean isCancelable) {
+        if (context != null) {
+
+            progressDialog = (CustomProgressDialog) CustomProgressDialog.ctor(context, msg);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setCancelable(isCancelable);
+            progressDialog.show();
+
+        }
+    }
+
+    public static void hideProgressDialog() {
+        try {
+            progressDialog.dismiss();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(Utils.class.getSimpleName(), "method : hideProgressDialog()");
+        }
+    }
     //</editor-fold>
 
 }

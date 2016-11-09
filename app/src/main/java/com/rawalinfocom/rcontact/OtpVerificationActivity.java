@@ -11,6 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.rawalinfocom.rcontact.asynctasks.AsyncGetDeviceToken;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -21,6 +24,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Country;
 import com.rawalinfocom.rcontact.model.OtpLog;
+import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.services.OtpTimerService;
@@ -29,6 +33,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.rawalinfocom.rcontact.helper.Utils.PLAY_SERVICES_RESOLUTION_REQUEST;
 
 public class OtpVerificationActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
@@ -78,6 +84,12 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         init();
 
         startOtpService();
+
+        AppConstants.DEVICE_TOKEN_ID = getRegistrationId();
+
+        if (AppConstants.DEVICE_TOKEN_ID.equals("")) {
+            new AsyncGetDeviceToken(this).execute();
+        }
     }
 
     @Override
@@ -152,6 +164,23 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             }
             //</editor-fold>
 
+            // <editor-fold desc="REQ_OTP_CONFIRMED">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_OTP_CONFIRMED)) {
+                WsResponseObject confirmOtpResponse = (WsResponseObject) data;
+                if (confirmOtpResponse.getStatus().equalsIgnoreCase(WsConstants
+                        .RESPONSE_STATUS_TRUE)) {
+
+                    UserProfile userProfile = confirmOtpResponse.getUserProfile();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(AppConstants.EXTRA_OBJECT_USER, userProfile);
+                    startActivityIntent(this, ProfileRegistrationActivity.class, bundle);
+                } else {
+                    Log.e("error response", confirmOtpResponse.getMessage());
+                }
+            }
+            //</editor-fold>
+
         } else {
 //            AppUtils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootOtpVerification, "" + error
@@ -193,10 +222,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             if (otpLog.getOldValidityFlag().equalsIgnoreCase("1")) {
                 if (otpLog.getOldOtp().equals(inputOtp.getText().toString())) {
                     stopService(otpServiceIntent);
-                    Utils.showSuccessSnackbar(OtpVerificationActivity.this,
-                            relativeRootOtpVerification, getString(R.string
-                                    .msg_otp_verification_success));
-                    startActivityIntent(this, ProfileRegistrationActivity.class, null);
+                    otpConfirmed(otpLog);
                 } else {
                     Utils.showErrorSnackBar(OtpVerificationActivity.this,
                             relativeRootOtpVerification, getString(R.string
@@ -211,6 +237,36 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                     relativeRootOtpVerification, getString(R.string
                             .error_otp_length_incorrect, AppConstants.OTP_LENGTH));
         }
+    }
+
+    private boolean checkPlayServices() {
+
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i("Reg key Error", "This device is not supported.");
+                // finish();
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    private String getRegistrationId() {
+
+        String registrationId = Utils.getStringPreference(this, AppConstants
+                .PREF_DEVICE_TOKEN_ID, "");
+
+        if (registrationId.equals("")) {
+            Log.i("Reg key Error", "Registration not found.");
+            return "";
+        }
+        return registrationId;
     }
 
     //</editor-fold>
@@ -232,6 +288,31 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             Utils.showErrorSnackBar(this, relativeRootOtpVerification, getResources()
                     .getString(R.string.msg_no_network));
         }
+    }
+
+    private void otpConfirmed(OtpLog otpLog) {
+
+        WsRequestObject otpObject = new WsRequestObject();
+        otpObject.setPmId(otpLog.getRcProfileMasterPmId());
+        otpObject.setStatus(AppConstants.OTP_CONFIRMED_STATUS);
+        otpObject.setLdOtpDeliveredTimeFromCloudToDevice(otpLog.getOldMspDeliveryTime());
+        otpObject.setOtp(otpLog.getOldOtp());
+        otpObject.setOtpGenerationTime(otpLog.getOldGeneratedAt());
+        otpObject.setMobileNumber(mobileNumber);
+        otpObject.setAccessToken(AppConstants.DEVICE_TOKEN_ID + "_" + otpLog
+                .getRcProfileMasterPmId());
+
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
+                    null, WsResponseObject.class, WsConstants.REQ_OTP_CONFIRMED, getString(R
+                    .string.msg_please_wait)).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_OTP_CONFIRMED);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootOtpVerification, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+
     }
 
     //</editor-fold>

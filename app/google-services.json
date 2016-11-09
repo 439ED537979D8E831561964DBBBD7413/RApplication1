@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "842331483294",
+    "firebase_url": "https://rcontact-fd109.firebaseio.com",
+    "project_id": "rcontact-fd109",
+    "storage_bucket": "rcontact-fd109.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:842331483294:android:23cc3b50347b8f26",
+        "android_client_info": {
+          "package_name": "com.rawalinfocom.rcontact"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "842331483294-ehe2r3r6mdbn6e1g9b33ecuakb5j0n28.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhtzSvTGUw8vKo21xBEcoBjexPE0gCvBo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

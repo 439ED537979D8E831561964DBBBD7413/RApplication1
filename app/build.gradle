@@ -12,18 +12,19 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'android-apt'
 
+
 repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion "24.0.3"
     defaultConfig {
         applicationId "com.rawalinfocom.rcontact"
         minSdkVersion 16
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -55,7 +56,8 @@ android {
     }
 }
 
-final SUPPORT_LIBRARY_VERSION = '24.2.1'
+final SUPPORT_LIBRARY_VERSION = '25.0.0'
+final PLAY_SERVICES_VERSION = '9.8.0'
 final JACKSON_CORE_VERSION = '2.8.3'
 final BUTTER_KNIFE_VERSION = '8.4.0'
 
@@ -76,6 +78,8 @@ dependencies {
     compile "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:palette-v7:$SUPPORT_LIBRARY_VERSION"
 
+    compile "com.google.android.gms:play-services-gcm:$PLAY_SERVICES_VERSION"
+
     compile "com.fasterxml.jackson.core:jackson-core:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-databind:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-annotations:$JACKSON_CORE_VERSION"
@@ -86,3 +90,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.7'
     compile 'org.apache.commons:commons-lang3:3.5'
 }
+
+apply plugin: 'com.google.gms.google-services'
