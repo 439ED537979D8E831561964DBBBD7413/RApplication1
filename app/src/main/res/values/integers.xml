@@ -13,4 +13,8 @@
     <integer name="registration_via_google">2</integer>
     <integer name="registration_via_lined_in">3</integer>
 
+    <!-- User Profile Verification Constants -->
+    <integer name="profile_not_verified">0</integer>
+    <integer name="profile_already_verified">1</integer>
+
 </resources>

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">RContacts</string>
 
+    <string name="facebook_app_id">1410546345629965</string>
+    <string name="fb_login_protocol_scheme">fb1410546345629965</string>
+
     <string name="description_registration_logo">Registration Logo</string>
     <string name="title_verify_number">Verify Your Phone Number</string>
     <string name="msg_enter_number">Please Confirm your Country Code and Enter Your Phone Number</string>

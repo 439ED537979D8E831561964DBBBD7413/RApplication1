@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.UserProfile;
 
 public class MainActivity extends BaseActivity {
 
@@ -25,8 +26,15 @@ public class MainActivity extends BaseActivity {
         } else if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT,
                 getResources().getInteger(R.integer.launch_mobile_registration)) == getResources
                 ().getInteger(R.integer.launch_profile_registration)) {
+            UserProfile userProfile = (UserProfile) Utils.getObjectPreference(this, AppConstants
+                    .PREF_REGS_USER_OBJECT, UserProfile.class);
+            //TODO uncomment code
+           /* if (userProfile != null && StringUtils.equalsIgnoreCase(userProfile
+                    .getIsAlreadyVerified(), String.valueOf(getResources().getInteger(R.integer
+                    .profile_not_verified)))) {*/
             finish();
             startActivityIntent(this, ProfileRegistrationActivity.class, null);
+            /*}*/
         }
 
     }

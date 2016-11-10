@@ -194,6 +194,18 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                                     .integer.launch_profile_registration));
 
 
+                    //TODO uncomment code
+                  /*  if (StringUtils.equalsIgnoreCase(userProfile.getIsAlreadyVerified(),
+                            String.valueOf(getResources().getInteger(R.integer
+                                    .profile_already_verified)))) {
+                        // Redirect to MainActivity
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                    } else {*/
                     // Redirect to ProfileRegistrationActivity
                     Intent intent = new Intent(this, ProfileRegistrationActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -201,6 +213,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(intent);
                     overridePendingTransition(R.anim.enter, R.anim.exit);
+                    /*}*/
 
                 } else {
                     Log.e("error response", confirmOtpResponse.getMessage());
@@ -362,3 +375,4 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
     //</editor-fold>
 }
+

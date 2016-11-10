@@ -20,6 +20,7 @@ public class UserProfile implements Serializable {
     private String firstName;
     private String lastName;
     private String emailId;
+    private String isAlreadyVerified;
 
     @JsonProperty("first_name")
     public String getFirstName() {
@@ -50,10 +51,19 @@ public class UserProfile implements Serializable {
 
     @JsonProperty("pm_id")
     public String getPmId() {
-        return pmId;
+        return StringUtils.defaultString(pmId);
     }
 
     public void setPmId(String pmId) {
         this.pmId = pmId;
+    }
+
+    @JsonProperty("is_already_verified")
+    public String getIsAlreadyVerified() {
+        return StringUtils.defaultString(isAlreadyVerified);
+    }
+
+    public void setIsAlreadyVerified(String isAlreadyVerified) {
+        this.isAlreadyVerified = isAlreadyVerified;
     }
 }
