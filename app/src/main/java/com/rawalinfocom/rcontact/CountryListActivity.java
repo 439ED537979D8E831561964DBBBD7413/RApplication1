@@ -134,6 +134,8 @@ public class CountryListActivity extends BaseActivity implements WsResponseListe
 
     private void init() {
 
+        textEmptyCountry.setTypeface(Utils.typefaceRegular(this));
+        inputSearch.setTypeface(Utils.typefaceRegular(this));
         rippleActionBack.setOnRippleCompleteListener(this);
 
         inputSearch.addTextChangedListener(new TextWatcher() {
