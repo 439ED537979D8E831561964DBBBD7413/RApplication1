@@ -136,6 +136,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                     TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(this,
                             databaseHandler);
 
+                    Log.e("OTP: ", otpLogResponse.getOldOtp());
+
                     if (tableOtpLogDetails.getOtpCount() > 0 && tableOtpLogDetails
                             .getLastOtpDetails().getOldOtp().equalsIgnoreCase
                                     (otpLogResponse.getOldOtp())) {

@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">RContacts</string>
 
+    <!-- facebook -->
     <string name="facebook_app_id">1410546345629965</string>
     <string name="fb_login_protocol_scheme">fb1410546345629965</string>
+
+    <!-- Google -->
+    <string name="server_client_id">842331483294-os1beu18aonoukiskj67li7l0e4orn61.apps.googleusercontent.com</string>
 
     <string name="description_registration_logo">Registration Logo</string>
     <string name="title_verify_number">Verify Your Phone Number</string>

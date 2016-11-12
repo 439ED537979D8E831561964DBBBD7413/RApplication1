@@ -1,13 +1,20 @@
 package com.rawalinfocom.rcontact;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -17,6 +24,22 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.linkedin.platform.APIHelper;
+import com.linkedin.platform.LISessionManager;
+import com.linkedin.platform.errors.LIApiError;
+import com.linkedin.platform.errors.LIAuthError;
+import com.linkedin.platform.listeners.ApiListener;
+import com.linkedin.platform.listeners.ApiResponse;
+import com.linkedin.platform.listeners.AuthListener;
+import com.linkedin.platform.utils.Scope;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -32,20 +55,27 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ProfileRegistrationActivity extends BaseActivity implements RippleView
-        .OnRippleCompleteListener, WsResponseListener {
+        .OnRippleCompleteListener, WsResponseListener, GoogleApiClient.OnConnectionFailedListener {
+
+    private final int RC_SIGN_IN = 7;
+
+    private final String host = "api.linkedin.com";
+    private final String topCardUrl = "https://" + host + "/v1/people/~:(email-address," +
+            "first-name,last-name,phone-numbers,picture-url,picture-urls::(original))";
 
     final String FIRST_NAME = "first_name";
     final String LAST_NAME = "last_name";
     final String PROFILE_IMAGE = "profile_image";
     final String EMAIL_ID = "email_id";
     final String GENDER = "gender";
-
 
     @BindView(R.id.includeToolbar)
     LinearLayout includeToolbar;
@@ -70,7 +100,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     @BindView(R.id.ripple_facebook)
     RippleView rippleFacebook;
     @BindView(R.id.button_google)
-    Button buttonGoogle;
+    SignInButton buttonGoogle;
     @BindView(R.id.ripple_google)
     RippleView rippleGoogle;
     @BindView(R.id.button_linked_in)
@@ -85,12 +115,17 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     // Facebook Callback Manager
     CallbackManager callbackManager;
 
+    // Google API Client
+    private GoogleApiClient googleApiClient;
+
     //<editor-fold desc="Override Methods">
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_registration);
         ButterKnife.bind(this);
+
+//        generateHashkey();
 
         /*// Facebook Initialization
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -102,15 +137,84 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             userProfile = new UserProfile();
         }
 
+       /* try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.rawalinfocom.rcontact", PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d("Key Hash", e.getMessage(), e);
+        } catch (NoSuchAlgorithmException e) {
+            Log.d("Key Hash", e.getMessage(), e);
+        }*/
+
 //        registerFacebookCallback();
+
+       /* // Google+ Registration
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions
+                .DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        // Customizing G+ button
+        buttonGoogle.setSize(SignInButton.SIZE_STANDARD);
+        buttonGoogle.setScopes(gso.getScopeArray());*/
 
         init();
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        /*OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn
+                (googleApiClient);
+        if (opr.isDone()) {
+            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+            // and the GoogleSignInResult will be available instantly.
+            Log.d("On Start", "Got cached sign-in");
+            GoogleSignInResult result = opr.get();
+            handleSignInResult(result);
+        } else {
+            // If the user has not previously signed in on this device or the sign-in has expired,
+            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
+            // single sign-on will occur in this branch.
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(GoogleSignInResult googleSignInResult) {
+                    handleSignInResult(googleSignInResult);
+                }
+            });
+        }*/
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        //TODO uncomment
+//        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+       /* // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }*/
+
+        LISessionManager.getInstance(getApplicationContext()).onActivityResult(this, requestCode,
+                resultCode, data);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Log.d("onConnectionFailed:", connectionResult.getErrorMessage());
     }
 
     @Override
@@ -140,7 +244,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 break;
             //</editor-fold>
 
-            //<editor-fold desc="button_facebook">
+            //<editor-fold desc="ripple_facebook">
             case R.id.ripple_facebook:
 
                 // Facebook Initialization
@@ -152,6 +256,18 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                 LoginManager.getInstance().logInWithReadPermissions(ProfileRegistrationActivity
                         .this, Arrays.asList("public_profile", "email"));
+                break;
+            //</editor-fold>
+
+            //<editor-fold desc="ripple_google">
+            case R.id.ripple_google:
+//                googleSignIn();
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="ripple_linked_in">
+            case R.id.ripple_linked_in:
+                linkedInSignIn();
                 break;
             //</editor-fold>
         }
@@ -217,14 +333,34 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         inputEmailId.setTypeface(Utils.typefaceRegular(this));
         buttonRegister.setTypeface(Utils.typefaceSemiBold(this));
         buttonFacebook.setTypeface(Utils.typefaceSemiBold(this));
-        buttonGoogle.setTypeface(Utils.typefaceSemiBold(this));
+//        buttonGoogle.setTypeface(Utils.typefaceSemiBold(this));
         buttonLinkedIn.setTypeface(Utils.typefaceSemiBold(this));
         textOr.setTypeface(Utils.typefaceSemiBold(this));
 
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleRegister.setOnRippleCompleteListener(this);
         rippleFacebook.setOnRippleCompleteListener(this);
+        rippleLinkedIn.setOnRippleCompleteListener(this);
 
+    }
+
+    public void generateHashkey() {
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.rawalinfocom.rcontact",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+
+                Log.e("generateHashkey: ", "Package Name: " + info.packageName);
+                Log.e("generateHashkey: ", "Hash Key: " + Base64.encodeToString(md.digest(),
+                        Base64.NO_WRAP));
+
+            }
+        } catch (PackageManager.NameNotFoundException | NoSuchAlgorithmException e) {
+            Log.d("Hash Key", e.getMessage(), e);
+        }
     }
 
     //</editor-fold>
@@ -344,6 +480,122 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             e.printStackTrace();
         }
         return bundle;
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Google Registration">
+
+    private void googleSignIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void signOut() {
+        Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+//                        updateUI(false);
+                        Log.e("onResult: Sign Out!", status.getStatusMessage());
+                    }
+                });
+    }
+
+    private void revokeAccess() {
+        Auth.GoogleSignInApi.revokeAccess(googleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @SuppressLint("LongLogTag")
+                    @Override
+                    public void onResult(@NonNull Status status) {
+//                        updateUI(false);
+                        Log.e("onResult: Revoke Access!", status.getStatusMessage());
+                    }
+                });
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.e("Sign In Result", "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+
+            Log.e("display name: ", acct.getDisplayName());
+
+            String personName = acct.getDisplayName();
+            String personPhotoUrl = acct.getPhotoUrl().toString();
+            String email = acct.getEmail();
+
+            Log.e("Info", "Name: " + personName + ", email: " + email
+                    + ", Image: " + personPhotoUrl);
+
+        } else {
+            // Signed out, show unauthenticated UI.
+            Log.e("handleSignInResult: ", "unauthenticated UI");
+        }
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Linked In Registration">
+
+    // This method is used to make permissions to retrieve data from linkedin
+
+    private static Scope buildScope() {
+        return Scope.build(Scope.R_BASICPROFILE, Scope.R_EMAILADDRESS);
+    }
+
+    public void linkedInSignIn() {
+        LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new
+                AuthListener() {
+                    @Override
+                    public void onAuthSuccess() {
+
+                      /*  Toast.makeText(getApplicationContext(), "success" + LISessionManager
+                                .getInstance
+                                        (getApplicationContext()).getSession().getAccessToken()
+                                .toString
+                                        (), Toast
+                                .LENGTH_LONG).show();*/
+                        getUserData();
+
+                    }
+
+                    @Override
+                    public void onAuthError(LIAuthError error) {
+
+                        Toast.makeText(getApplicationContext(), "failed " + error.toString(), Toast
+                                .LENGTH_LONG).show();
+                    }
+                }, true);
+    }
+
+    public void getUserData() {
+        APIHelper apiHelper = APIHelper.getInstance(getApplicationContext());
+        apiHelper.getRequest(ProfileRegistrationActivity.this, topCardUrl, new ApiListener() {
+            @Override
+            public void onApiSuccess(ApiResponse result) {
+                try {
+
+                    JSONObject response = result.getResponseDataAsJson();
+
+                    profileRegistration(response.get("firstName").toString(), response.get
+                                    ("lastName").toString(), response.get("emailAddress")
+                                    .toString(),
+                            getResources().getInteger(R.integer.registration_via_lined_in));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onApiError(LIApiError error) {
+                Log.e("onApiError: ", error.toString());
+
+            }
+        });
     }
 
     //</editor-fold>

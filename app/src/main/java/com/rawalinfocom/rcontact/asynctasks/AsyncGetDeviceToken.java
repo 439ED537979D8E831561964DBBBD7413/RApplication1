@@ -34,16 +34,16 @@ public class AsyncGetDeviceToken extends AsyncTask<Void, Void, Void> {
 
         InstanceID instanceID = InstanceID.getInstance(context);
 
+//        AppConstants.DEVICE_TOKEN_ID = FirebaseInstanceId.getInstance().getToken();
         try {
             AppConstants.DEVICE_TOKEN_ID = instanceID.getToken(AppConstants.GCM_SENDER_ID,
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-
-            Utils.setStringPreference(context, AppConstants.DEVICE_TOKEN_ID, AppConstants
-                    .PREF_DEVICE_TOKEN_ID);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Utils.setStringPreference(context, AppConstants.DEVICE_TOKEN_ID, AppConstants
+                .PREF_DEVICE_TOKEN_ID);
 
         Log.i("AsyncGetDeviceToken", "GCM Registration Token: " + AppConstants.DEVICE_TOKEN_ID);
 

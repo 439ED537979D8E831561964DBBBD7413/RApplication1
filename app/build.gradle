@@ -79,6 +79,7 @@ dependencies {
     compile "com.android.support:palette-v7:$SUPPORT_LIBRARY_VERSION"
 
     compile "com.google.android.gms:play-services-gcm:$PLAY_SERVICES_VERSION"
+    compile "com.google.android.gms:play-services-auth:$PLAY_SERVICES_VERSION"
 
     compile "com.fasterxml.jackson.core:jackson-core:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-databind:$JACKSON_CORE_VERSION"
@@ -91,6 +92,7 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.5'
 
     compile 'com.facebook.android:facebook-android-sdk:4.17.0'
+    compile project(path: ':linkedin-sdk')
 }
 
 apply plugin: 'com.google.gms.google-services'
