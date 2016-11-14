@@ -10,6 +10,7 @@
     <string name="server_client_id">842331483294-ehe2r3r6mdbn6e1g9b33ecuakb5j0n28.apps.googleusercontent.com</string>
 
     <string name="description_registration_logo">Registration Logo</string>
+    <string name="str_content_description">Content Description</string>
     <string name="title_verify_number">Verify Your Phone Number</string>
     <string name="msg_enter_number">Please Confirm your Country Code and Enter Your Phone Number</string>
     <string name="action_submit">Submit</string>

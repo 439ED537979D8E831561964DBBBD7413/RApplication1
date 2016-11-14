@@ -29,7 +29,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -102,7 +101,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     @BindView(R.id.ripple_facebook)
     RippleView rippleFacebook;
     @BindView(R.id.button_google)
-    SignInButton buttonGoogle;
+    Button buttonGoogle;
     @BindView(R.id.ripple_google)
     RippleView rippleGoogle;
     @BindView(R.id.button_linked_in)
@@ -113,6 +112,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     RelativeLayout relativeRootProfileRegistration;
 
     UserProfile userProfile;
+
+    int setLoginVia = 0;
 
     // Facebook Callback Manager
     CallbackManager callbackManager;
@@ -149,9 +150,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi
                 (Auth.GOOGLE_SIGN_IN_API, gso).build();
 
-        // Customizing G+ button
-        buttonGoogle.setSize(SignInButton.SIZE_STANDARD);
-        buttonGoogle.setScopes(gso.getScopeArray());
 
         init();
     }
@@ -183,14 +181,16 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //TODO uncomment
-        // Facebook Callback
-//        callbackManager.onActivityResult(requestCode, resultCode, data);
 
-        // LinkedIn Callback
-       /* LISessionManager.getInstance(getApplicationContext()).onActivityResult(this, requestCode,
-                resultCode, data);*/
-
+        if (setLoginVia == getResources().getInteger(R.integer.registration_via_facebook)) {
+            // Facebook Callback
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        } else if (setLoginVia == getResources().getInteger(R.integer.registration_via_facebook)) {
+            // LinkedIn Callback
+            LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
+                    requestCode, resultCode, data);
+        }
+        
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -237,6 +237,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             //<editor-fold desc="ripple_facebook">
             case R.id.ripple_facebook:
 
+                setLoginVia = getResources().getInteger(R.integer.registration_via_facebook);
+
                 // Facebook Initialization
                 FacebookSdk.sdkInitialize(getApplicationContext());
                 callbackManager = CallbackManager.Factory.create();
@@ -251,13 +253,21 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
             //<editor-fold desc="ripple_google">
             case R.id.ripple_google:
+
+                setLoginVia = getResources().getInteger(R.integer.registration_via_google);
+
                 googleSignIn();
+
                 break;
             //</editor-fold>
 
             // <editor-fold desc="ripple_linked_in">
             case R.id.ripple_linked_in:
+
+                setLoginVia = getResources().getInteger(R.integer.registration_via_lined_in);
+
                 linkedInSignIn();
+
                 break;
             //</editor-fold>
         }
@@ -272,9 +282,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 WsResponseObject userProfileResponse = (WsResponseObject) data;
                 if (userProfileResponse.getStatus().equalsIgnoreCase(WsConstants
                         .RESPONSE_STATUS_TRUE)) {
-
-                   /* Utils.showSuccessSnackbar(this, relativeRootProfileRegistration,
-                            userProfileResponse.getMessage());*/
 
                     // set launch screen as MainActivity
                     Utils.setIntegerPreference(ProfileRegistrationActivity.this,
@@ -323,7 +330,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         inputEmailId.setTypeface(Utils.typefaceRegular(this));
         buttonRegister.setTypeface(Utils.typefaceSemiBold(this));
         buttonFacebook.setTypeface(Utils.typefaceSemiBold(this));
-//        buttonGoogle.setTypeface(Utils.typefaceSemiBold(this));
+        buttonGoogle.setTypeface(Utils.typefaceSemiBold(this));
         buttonLinkedIn.setTypeface(Utils.typefaceSemiBold(this));
         textOr.setTypeface(Utils.typefaceSemiBold(this));
 
