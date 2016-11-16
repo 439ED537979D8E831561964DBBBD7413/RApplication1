@@ -28,6 +28,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // creating required tables
         db.execSQL(TableCountryMaster.CREATE_TABLE_RC_COUNTRY_MASTER);
         db.execSQL(TableOtpLogDetails.CREATE_TABLE_OTP_LOG_DETAILS);
+        db.execSQL(TableProfileMaster.CREATE_TABLE_RC_PROFILE_MASTER);
+        db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER);
+        db.execSQL(TableMobileMaster.CREATE_TABLE_RC_MOBILE_NUMBER_MASTER);
     }
 
     @Override
@@ -35,6 +38,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + TableCountryMaster.CREATE_TABLE_RC_COUNTRY_MASTER);
         db.execSQL("DROP TABLE IF EXISTS " + TableOtpLogDetails.CREATE_TABLE_OTP_LOG_DETAILS);
+        db.execSQL("DROP TABLE IF EXISTS " + TableProfileMaster.CREATE_TABLE_RC_PROFILE_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableMobileMaster
+                .CREATE_TABLE_RC_MOBILE_NUMBER_MASTER);
 
         // create new tables
         onCreate(db);

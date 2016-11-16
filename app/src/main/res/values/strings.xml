@@ -1,7 +1,16 @@
 <resources>
     <string name="app_name">RContacts</string>
 
+    <!-- facebook -->
+    <string name="facebook_app_id">1410546345629965</string>
+    <string name="fb_login_protocol_scheme">fb1410546345629965</string>
+
+    <!-- Google -->
+    <!--<string name="server_client_id">842331483294-os1beu18aonoukiskj67li7l0e4orn61.apps.googleusercontent.com</string>-->
+    <string name="server_client_id">842331483294-ehe2r3r6mdbn6e1g9b33ecuakb5j0n28.apps.googleusercontent.com</string>
+
     <string name="description_registration_logo">Registration Logo</string>
+    <string name="str_content_description">Content Description</string>
     <string name="title_verify_number">Verify Your Phone Number</string>
     <string name="msg_enter_number">Please Confirm your Country Code and Enter Your Phone Number</string>
     <string name="action_submit">Submit</string>
@@ -29,4 +38,5 @@
     <string name="text_google">Google</string>
     <string name="text_linked_in">LinkedIn</string>
     <string name="title_profile_registration">Profile Registration</string>
+    <string name="msg_try_later">There is some error! Please try again later.</string>
 </resources>
