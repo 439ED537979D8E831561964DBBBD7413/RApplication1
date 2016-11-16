@@ -23,10 +23,6 @@ public class AppConstants {
     public static final int OTP_LENGTH = 6;
     //</editor-fold>
 
-    //<editor-fold desc="Device Token">
-    public static String DEVICE_TOKEN_ID = "";
-    //</editor-fold>
-
     //<editor-fold desc="Request Codes">
 
     public static int REQUEST_CODE_COUNTRY_REGISTRATION = 2;

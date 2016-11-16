@@ -78,6 +78,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         setContentView(R.layout.activity_otp_verification);
         ButterKnife.bind(this);
 
+        new AsyncGetDeviceToken(this).execute();
+
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         /*mobileNumber = bundle.getString(AppConstants.EXTRA_MOBILE_NUMBER);
@@ -96,12 +98,6 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
         if (bundle != null && bundle.getBoolean(AppConstants.EXTRA_IS_FROM_MOBILE_REGIS, false)) {
             startOtpService();
-        }
-
-        AppConstants.DEVICE_TOKEN_ID = getRegistrationId();
-
-        if (AppConstants.DEVICE_TOKEN_ID.equals("")) {
-            new AsyncGetDeviceToken(this).execute();
         }
     }
 
@@ -133,8 +129,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             //<editor-fold desc="REQ_SEND_OTP">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_SEND_OTP)) {
                 WsResponseObject otpDetailResponse = (WsResponseObject) data;
-                if (otpDetailResponse.getStatus().equalsIgnoreCase(WsConstants
-                        .RESPONSE_STATUS_TRUE)) {
+                if (otpDetailResponse != null && StringUtils.equalsIgnoreCase(otpDetailResponse
+                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     OtpLog otpLogResponse = otpDetailResponse.getOtpLog();
 
@@ -172,7 +168,13 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                     startOtpService();
 
                 } else {
-                    Log.e("error response", otpDetailResponse.getMessage());
+                    if (otpDetailResponse != null) {
+                        Log.e("error response", otpDetailResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootOtpVerification, getString(R
+                                .string.msg_try_later));
+                    }
                 }
             }
             //</editor-fold>
@@ -180,8 +182,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             // <editor-fold desc="REQ_OTP_CONFIRMED">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_OTP_CONFIRMED)) {
                 WsResponseObject confirmOtpResponse = (WsResponseObject) data;
-                if (confirmOtpResponse.getStatus().equalsIgnoreCase(WsConstants
-                        .RESPONSE_STATUS_TRUE)) {
+                if (confirmOtpResponse != null && StringUtils.equalsIgnoreCase(confirmOtpResponse
+                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     UserProfile userProfile = confirmOtpResponse.getUserProfile();
 
@@ -194,16 +196,33 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                                     .integer.launch_profile_registration));
 
 
-                    // Redirect to ProfileRegistrationActivity
-                    Intent intent = new Intent(this, ProfileRegistrationActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.enter, R.anim.exit);
-
+                    if (StringUtils.equalsIgnoreCase(userProfile.getIsAlreadyVerified(),
+                            String.valueOf(getResources().getInteger(R.integer
+                                    .profile_already_verified)))) {
+                        // Redirect to MainActivity
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                    } else {
+                        // Redirect to ProfileRegistrationActivity
+                        Intent intent = new Intent(this, ProfileRegistrationActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                    }
                 } else {
-                    Log.e("error response", confirmOtpResponse.getMessage());
+                    if (confirmOtpResponse != null) {
+                        Log.e("error response", confirmOtpResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootOtpVerification, getString(R
+                                .string.msg_try_later));
+                    }
                 }
             }
             //</editor-fold>
@@ -291,18 +310,6 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         return true;
     }
 
-    private String getRegistrationId() {
-
-        String registrationId = Utils.getStringPreference(this, AppConstants
-                .PREF_DEVICE_TOKEN_ID, "");
-
-        if (registrationId.equals("")) {
-            Log.i("Reg key Error", "Registration not found.");
-            return "";
-        }
-        return registrationId;
-    }
-
     private boolean isOtpServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer
@@ -344,7 +351,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         otpObject.setOtp(otpLog.getOldOtp());
         otpObject.setOtpGenerationTime(otpLog.getOldGeneratedAt());
         otpObject.setMobileNumber(mobileNumber);
-        otpObject.setAccessToken(AppConstants.DEVICE_TOKEN_ID + "_" + otpLog
+        otpObject.setAccessToken(getDeviceTokenId() + "_" + otpLog
                 .getRcProfileMasterPmId());
 
 
@@ -362,3 +369,4 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
     //</editor-fold>
 }
+

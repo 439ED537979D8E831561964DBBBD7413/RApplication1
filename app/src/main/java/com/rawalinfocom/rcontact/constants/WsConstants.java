@@ -8,7 +8,7 @@ package com.rawalinfocom.rcontact.constants;
 
 public class WsConstants {
 
-    public static final String WS_ROOT = "http://10.0.21.21:8000/api/v1/";
+    public static final String WS_ROOT = "http://10.0.21.14:8080/api/v1/";
 
     public static final String RESPONSE_STATUS_TRUE = "true";
 
@@ -17,6 +17,7 @@ public class WsConstants {
     public static final String REQ_MSP_DELIVERY_TIME = "msp-delivery-time";
     public static final String REQ_OTP_CONFIRMED = "otp_confirmed";
     public static final String REQ_PROFILE_REGISTRATION = "profile_registration";
+    public static final String REQ_UPLOAD_IMAGE = "upload-image";
 
 
 }

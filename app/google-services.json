@@ -15,6 +15,18 @@
       },
       "oauth_client": [
         {
+          "client_id": "842331483294-ulqgsuae2ummoqolhruf8b8th4fho1kp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rawalinfocom.rcontact",
+            "certificate_hash": "4C55F6717220E41E60DCF4491243AF5CE92D6E56"
+          }
+        },
+        {
+          "client_id": "842331483294-os1beu18aonoukiskj67li7l0e4orn61.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
           "client_id": "842331483294-ehe2r3r6mdbn6e1g9b33ecuakb5j0n28.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +41,20 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "842331483294-os1beu18aonoukiskj67li7l0e4orn61.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "842331483294-ofk2cbhhfjoga35u1575t4hbq9ek87ii.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rawalInfoCom.rContact"
+              }
+            }
+          ]
         },
         "ads_service": {
           "status": 2
