@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
@@ -10,6 +11,7 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -18,12 +20,12 @@ import com.google.gson.Gson;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Set;
 import java.util.TimeZone;
 
 /**
@@ -285,6 +287,17 @@ public class Utils {
             Log.e(LOG_TAG, "method : typefaceSemiBold() , Null context");
             return null;
         }
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Image Conversion">
+
+    public static String convertBitmapToBase64(Bitmap imgBitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        imgBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
     //</editor-fold>

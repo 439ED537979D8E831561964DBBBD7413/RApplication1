@@ -1,6 +1,8 @@
 package com.rawalinfocom.rcontact;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -13,11 +15,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableOtpLogDetails;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.FileUtils;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
@@ -128,15 +133,15 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
             //<editor-fold desc="REQ_SEND_OTP">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_SEND_OTP)) {
                 WsResponseObject otpDetailResponse = (WsResponseObject) data;
-                if (otpDetailResponse.getStatus().equalsIgnoreCase(WsConstants
-                        .RESPONSE_STATUS_TRUE)) {
+                if (otpDetailResponse != null && StringUtils.equalsIgnoreCase(otpDetailResponse
+                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     OtpLog otpLogResponse = otpDetailResponse.getOtpLog();
 
                     TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(this,
                             databaseHandler);
 
-                    Log.e("OTP: ", otpLogResponse.getOldOtp());
+                    Log.i("OTP: ", otpLogResponse.getOldOtp());
 
                     if (tableOtpLogDetails.getOtpCount() > 0 && tableOtpLogDetails
                             .getLastOtpDetails().getOldOtp().equalsIgnoreCase
@@ -189,6 +194,27 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                             OtpVerificationActivity.class, bundle);
 
                 } else {
+                    if (otpDetailResponse != null) {
+                        Log.e("error response", otpDetailResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
+            // <editor-fold desc="REQ_UPLOAD_IMAGE">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_IMAGE)) {
+                WsResponseObject otpDetailResponse = (WsResponseObject) data;
+                if (otpDetailResponse.getStatus().equalsIgnoreCase(WsConstants
+                        .RESPONSE_STATUS_TRUE)) {
+
+                    Utils.showSuccessSnackbar(this, relativeRootMobileRegistration, "" +
+                            "Uploaded Successfully");
+
+                } else {
                     Log.e("error response", otpDetailResponse.getMessage());
                 }
             }
@@ -228,7 +254,31 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                 return true;
             }
         });
+
+       /* Glide.with(this)
+                .load("http://www.newsread.in/wp-content/uploads/2016/06/Images-10.jpg")
+                .asBitmap()
+                .placeholder(R.mipmap.ic_launcher)
+                .override(100, 100)
+                .into(target);*/
     }
+
+    private SimpleTarget target = new SimpleTarget<Bitmap>() {
+        @Override
+        public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+//            imageRegistrationLogo.setImageBitmap(bitmap);
+
+            FileUtils fileUtils = new FileUtils(bitmap);
+            if (fileUtils.saveImageToDirectory()) {
+                Log.i("file absolute path: ", fileUtils.getrContactDir().getAbsolutePath());
+                uploadImage(Utils.convertBitmapToBase64(BitmapFactory.decodeFile(fileUtils
+                        .getrContactDir().getAbsolutePath())));
+            } else {
+                Log.e("onResourceReady: ", "There is some error in storing Image!");
+            }
+
+        }
+    };
 
     //</editor-fold>
 
@@ -250,6 +300,24 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                     .getString(R.string.msg_no_network));
         }
     }
+
+    private void uploadImage(String userImage) {
+
+        WsRequestObject otpObject = new WsRequestObject();
+       /* otpObject.setUserName("Monal");
+        otpObject.setUserImage(userImage);*/
+
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
+                    null, WsResponseObject.class, WsConstants.REQ_UPLOAD_IMAGE, getString(R.string
+                    .msg_please_wait)).execute(WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_IMAGE);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
 
     //</editor-fold>
 }

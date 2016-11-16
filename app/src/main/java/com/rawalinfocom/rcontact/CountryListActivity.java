@@ -24,6 +24,8 @@ import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Country;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -71,8 +73,8 @@ public class CountryListActivity extends BaseActivity implements WsResponseListe
             //<editor-fold desc="REQ_COUNTRY_CODE_DETAIL">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_COUNTRY_CODE_DETAIL)) {
                 WsResponseObject countryListResponse = (WsResponseObject) data;
-                if (countryListResponse.getStatus().equalsIgnoreCase(WsConstants
-                        .RESPONSE_STATUS_TRUE)) {
+                if (countryListResponse != null && StringUtils.equalsIgnoreCase(countryListResponse
+                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 //                    AppUtils.hideProgressDialog();
 
                     arrayListCountry = new ArrayList<>();
@@ -101,7 +103,13 @@ public class CountryListActivity extends BaseActivity implements WsResponseListe
                     }
 
                 } else {
-                    Log.e("error response", countryListResponse.getMessage());
+                    if (countryListResponse != null) {
+                        Log.e("error response", countryListResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootCountryList, getString(R
+                                .string.msg_try_later));
+                    }
                 }
             }
             //</editor-fold>

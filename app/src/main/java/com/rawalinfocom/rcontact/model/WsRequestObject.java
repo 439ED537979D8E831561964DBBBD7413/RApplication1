@@ -25,6 +25,9 @@ public class WsRequestObject {
     private String emailId;
     private String type;
     private String deviceId;
+    private String socialMediaTokenId;
+
+    private String profileImage;
 
     @JsonProperty("country_code")
     public String getCountryCode() {
@@ -141,5 +144,23 @@ public class WsRequestObject {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    @JsonProperty("social_media_token_id")
+    public String getSocialMediaTokenId() {
+        return socialMediaTokenId;
+    }
+
+    public void setSocialMediaTokenId(String socialMediaTokenId) {
+        this.socialMediaTokenId = socialMediaTokenId;
+    }
+
+    @JsonProperty("profile_image")
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }

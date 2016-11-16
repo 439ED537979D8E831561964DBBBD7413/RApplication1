@@ -80,6 +80,7 @@ dependencies {
 
     compile "com.google.android.gms:play-services-gcm:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-auth:$PLAY_SERVICES_VERSION"
+    compile "com.google.android.gms:play-services-plus:$PLAY_SERVICES_VERSION"
 
     compile "com.fasterxml.jackson.core:jackson-core:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-databind:$JACKSON_CORE_VERSION"
@@ -89,6 +90,7 @@ dependencies {
     apt "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
 
     compile 'com.google.code.gson:gson:2.7'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'org.apache.commons:commons-lang3:3.5'
 
     compile 'com.facebook.android:facebook-android-sdk:4.17.0'

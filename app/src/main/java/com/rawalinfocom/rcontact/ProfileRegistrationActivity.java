@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Base64;
@@ -16,6 +18,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -43,7 +48,9 @@ import com.linkedin.platform.utils.Scope;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.FileUtils;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
@@ -52,6 +59,7 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
@@ -112,6 +120,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     RelativeLayout relativeRootProfileRegistration;
 
     UserProfile userProfile;
+    UserProfile userProfileRegistered;
 
     int setLoginVia = 0;
 
@@ -185,12 +194,12 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         if (setLoginVia == getResources().getInteger(R.integer.registration_via_facebook)) {
             // Facebook Callback
             callbackManager.onActivityResult(requestCode, resultCode, data);
-        } else if (setLoginVia == getResources().getInteger(R.integer.registration_via_facebook)) {
+        } else if (setLoginVia == getResources().getInteger(R.integer.registration_via_lined_in)) {
             // LinkedIn Callback
             LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
                     requestCode, resultCode, data);
         }
-        
+
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -228,7 +237,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "Please add " +
                             "First Name and Last Name");
                 } else {
-                    profileRegistration(firstName, lastName, emailId,
+                    profileRegistration(firstName, lastName, emailId, null, "",
                             getResources().getInteger(R.integer.registration_via_email));
                 }
                 break;
@@ -280,13 +289,21 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             //<editor-fold desc="REQ_PROFILE_REGISTRATION">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_REGISTRATION)) {
                 WsResponseObject userProfileResponse = (WsResponseObject) data;
-                if (userProfileResponse.getStatus().equalsIgnoreCase(WsConstants
-                        .RESPONSE_STATUS_TRUE)) {
+                if (userProfileResponse != null && StringUtils.equalsIgnoreCase(userProfileResponse
+                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     // set launch screen as MainActivity
                     Utils.setIntegerPreference(ProfileRegistrationActivity.this,
                             AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
                                     .integer.launch_main_activity));
+
+                    TableProfileMaster tableProfileMaster = new TableProfileMaster(this,
+                            databaseHandler);
+                    if (userProfileRegistered != null) {
+                        tableProfileMaster.addProfile(userProfileRegistered);
+                        Toast.makeText(this, tableProfileMaster.getUserProfileCount() + "", Toast
+                                .LENGTH_SHORT).show();
+                    }
 
                     // Redirect to MainActivity
                     Intent intent = new Intent(this, MainActivity.class);
@@ -297,7 +314,13 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     overridePendingTransition(R.anim.enter, R.anim.exit);
 
                 } else {
-                    Log.e("error response", userProfileResponse.getMessage());
+                    if (userProfileResponse != null) {
+                        Log.e("error response", userProfileResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R
+                                .string.msg_try_later));
+                    }
                 }
             }
             //</editor-fold>
@@ -315,8 +338,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     private void init() {
 
-        inputFirstName.setText(userProfile.getFirstName());
-        inputLastName.setText(userProfile.getLastName());
+        inputFirstName.setText(userProfile.getPmFirstName());
+        inputLastName.setText(userProfile.getPmLastName());
         inputEmailId.setText(userProfile.getEmailId());
 
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
@@ -342,6 +365,132 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     }
 
+    private void getFacebookBitmapFromUrl(final Bundle facebookData, final LoginResult
+            loginResult) {
+
+        SimpleTarget facebookTarget = new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                FileUtils fileUtils = new FileUtils(bitmap);
+                if (fileUtils.saveImageToDirectory()) {
+                    Log.i("file absolute path: ", fileUtils.getrContactDir().getAbsolutePath());
+                    String imageToBase64 = Utils.convertBitmapToBase64(BitmapFactory.decodeFile
+                            (fileUtils.getrContactDir().getAbsolutePath()));
+                    profileRegistration(facebookData.getString(FIRST_NAME), facebookData
+                                    .getString(LAST_NAME), facebookData.getString(EMAIL_ID),
+                            imageToBase64, loginResult.getAccessToken().getToken(), getResources
+                                    ().getInteger(R.integer.registration_via_facebook));
+                } else {
+                    Log.e("onResourceReady: ", "There is some error in storing Image!");
+                    profileRegistration(facebookData.getString(FIRST_NAME), facebookData
+                                    .getString(LAST_NAME), facebookData.getString(EMAIL_ID),
+                            null, loginResult.getAccessToken().getToken(), getResources
+                                    ().getInteger(R.integer.registration_via_facebook));
+                }
+            }
+        };
+
+        Glide.with(this)
+                .load(facebookData.getString(PROFILE_IMAGE))
+                .asBitmap()
+                .into(facebookTarget);
+
+    }
+
+    private void getGoogleBitmapFromUrl(GoogleSignInAccount acct) {
+
+        String personPhotoUrl = "";
+        String givenName = StringUtils.defaultString(acct.getGivenName());
+        if (StringUtils.contains(givenName, " ")) {
+            String[] names = givenName.split(" ");
+            givenName = names[0];
+        }
+        final String firstName = givenName;
+        final String lastName = StringUtils.defaultString(acct.getFamilyName());
+        final String email = StringUtils.defaultString(acct.getEmail());
+        if (acct.getPhotoUrl() != null) {
+            personPhotoUrl = StringUtils.defaultString(acct.getPhotoUrl().toString());
+        } else {
+            profileRegistration(firstName, lastName, email, null, null,
+                    getResources().getInteger(R.integer.registration_via_google));
+        }
+
+        SimpleTarget googleTarget = new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                FileUtils fileUtils = new FileUtils(bitmap);
+                if (fileUtils.saveImageToDirectory()) {
+                    Log.i("file absolute path: ", fileUtils.getrContactDir().getAbsolutePath());
+                    String imageToBase64 = Utils.convertBitmapToBase64(BitmapFactory.decodeFile
+                            (fileUtils.getrContactDir().getAbsolutePath()));
+
+                    profileRegistration(firstName, lastName, email, imageToBase64, null,
+                            getResources().getInteger(R.integer.registration_via_google));
+                } else {
+                    Log.e("onResourceReady: ", "There is some error in storing Image!");
+                    profileRegistration(firstName, lastName, email, null, null,
+                            getResources().getInteger(R.integer.registration_via_google));
+                }
+            }
+        };
+
+        Glide.with(this)
+                .load(personPhotoUrl)
+                .asBitmap()
+                .into(googleTarget);
+
+    }
+
+    private void getLinkedInBitmapFromUrl(final JSONObject response) {
+
+        String firstName, lastName, emailAddress, pictureUrl;
+
+        try {
+            firstName = response.get("firstName").toString();
+            lastName = response.get("lastName").toString();
+            emailAddress = response.get("emailAddress").toString();
+            pictureUrl = response.get("pictureUrl").toString();
+        } catch (JSONException e) {
+            firstName = "";
+            lastName = "";
+            emailAddress = "";
+            pictureUrl = "";
+            e.printStackTrace();
+        }
+
+        final String finalFirstName = firstName;
+        final String finalLastName = lastName;
+        final String finalEmailAddress = emailAddress;
+
+        SimpleTarget googleTarget = new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                FileUtils fileUtils = new FileUtils(bitmap);
+                if (fileUtils.saveImageToDirectory()) {
+                    Log.i("file absolute path: ", fileUtils.getrContactDir().getAbsolutePath());
+                    String imageToBase64 = Utils.convertBitmapToBase64(BitmapFactory.decodeFile
+                            (fileUtils.getrContactDir().getAbsolutePath()));
+
+                    profileRegistration(finalFirstName, finalLastName, finalEmailAddress,
+                            imageToBase64, null, getResources().getInteger(R.integer
+                                    .registration_via_lined_in));
+
+                } else {
+                    Log.e("onResourceReady: ", "There is some error in storing Image!");
+                    profileRegistration(finalFirstName, finalLastName, finalEmailAddress, null,
+                            null, getResources().getInteger(R.integer.registration_via_lined_in));
+
+                }
+            }
+        };
+
+        Glide.with(this)
+                .load(pictureUrl)
+                .asBitmap()
+                .into(googleTarget);
+
+    }
+
     /**
      * To get key hash
      */
@@ -354,8 +503,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
 
-                Log.e("generateHashkey: ", "Package Name: " + info.packageName);
-                Log.e("generateHashkey: ", "Hash Key: " + Base64.encodeToString(md.digest(),
+                Log.i("generateHashkey: ", "Package Name: " + info.packageName);
+                Log.i("generateHashkey: ", "Hash Key: " + Base64.encodeToString(md.digest(),
                         Base64.NO_WRAP));
 
             }
@@ -368,15 +517,26 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     //<editor-fold desc="Web Service Call">
 
-    private void profileRegistration(String firstName, String lastName, String emailId, int type) {
+    private void profileRegistration(String firstName, String lastName, String emailId, String
+            profileImage, String socialMediaToken, int type) {
 
         WsRequestObject profileRegistrationObject = new WsRequestObject();
         profileRegistrationObject.setFirstName(firstName);
         profileRegistrationObject.setLastName(lastName);
         profileRegistrationObject.setEmailId(emailId);
         profileRegistrationObject.setPmId(userProfile.getPmId());
+        profileRegistrationObject.setProfileImage(profileImage);
         profileRegistrationObject.setType(String.valueOf(type));
-        profileRegistrationObject.setDeviceId(AppConstants.DEVICE_TOKEN_ID);
+        profileRegistrationObject.setSocialMediaTokenId(socialMediaToken);
+        profileRegistrationObject.setDeviceId(getDeviceTokenId());
+
+        userProfileRegistered = new UserProfile();
+        userProfileRegistered.setPmId(userProfile.getPmId());
+        userProfileRegistered.setPmFirstName(userProfile.getPmFirstName());
+        userProfileRegistered.setPmLastName(userProfile.getPmLastName());
+        userProfileRegistered.setPmSignupSocialMediaType(String.valueOf(type));
+        userProfileRegistered.setPmAccessToken(getDeviceTokenId() + "_" + userProfile
+                .getPmId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
@@ -397,9 +557,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
-                    public void onSuccess(LoginResult loginResult) {
-
-                        Log.e("facebook access token: ", loginResult.getAccessToken().getToken());
+                    public void onSuccess(final LoginResult loginResult) {
 
                         GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult
                                 .getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
@@ -411,12 +569,17 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                                 if (facebookData != null) {
 
-                                    profileRegistration(facebookData.getString(FIRST_NAME),
-                                            facebookData.getString(LAST_NAME), facebookData
-                                                    .getString(EMAIL_ID), getResources()
-                                                    .getInteger(R.integer
-                                                            .registration_via_facebook));
-
+                                    if (StringUtils.length(facebookData.getString(PROFILE_IMAGE))
+                                            > 0) {
+                                        getFacebookBitmapFromUrl(facebookData, loginResult);
+                                    } else {
+                                        profileRegistration(facebookData.getString(FIRST_NAME),
+                                                facebookData.getString(LAST_NAME), facebookData
+                                                        .getString(EMAIL_ID), null, loginResult
+                                                        .getAccessToken().getToken(),
+                                                getResources().getInteger(R.integer
+                                                        .registration_via_facebook));
+                                    }
                                 }
 
                             }
@@ -515,19 +678,22 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
-        Log.e("Sign In Result", "handleSignInResult:" + result.isSuccess());
+        Log.i("Sign In Result", "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully.
             GoogleSignInAccount acct = result.getSignInAccount();
 
             if (acct != null) {
-                String firstName = StringUtils.defaultString(acct.getGivenName());
+
+             /*   String firstName = StringUtils.defaultString(acct.getGivenName());
                 String lastName = StringUtils.defaultString(acct.getFamilyName());
                 String personPhotoUrl = StringUtils.defaultString(acct.getPhotoUrl().toString());
                 String email = StringUtils.defaultString(acct.getEmail());
 
-                profileRegistration(firstName, lastName, email, getResources().getInteger(R
-                        .integer.registration_via_google));
+                profileRegistration(firstName, lastName, email, null, getResources().getInteger(R
+                        .integer.registration_via_google));*/
+
+                getGoogleBitmapFromUrl(acct);
 
             }
 
@@ -574,11 +740,12 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 try {
 
                     JSONObject response = result.getResponseDataAsJson();
-
+/*
                     profileRegistration(response.get("firstName").toString(), response.get
                                     ("lastName").toString(), response.get("emailAddress")
-                                    .toString(),
-                            getResources().getInteger(R.integer.registration_via_lined_in));
+                                    .toString(), null,
+                            getResources().getInteger(R.integer.registration_via_lined_in));*/
+                    getLinkedInBitmapFromUrl(response);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -593,4 +760,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     }
 
     //</editor-fold>
+
+
 }
