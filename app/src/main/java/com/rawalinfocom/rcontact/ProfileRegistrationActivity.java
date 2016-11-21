@@ -287,6 +287,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         if (error == null) {
 
             //<editor-fold desc="REQ_PROFILE_REGISTRATION">
+
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_REGISTRATION)) {
                 WsResponseObject userProfileResponse = (WsResponseObject) data;
                 if (userProfileResponse != null && StringUtils.equalsIgnoreCase(userProfileResponse

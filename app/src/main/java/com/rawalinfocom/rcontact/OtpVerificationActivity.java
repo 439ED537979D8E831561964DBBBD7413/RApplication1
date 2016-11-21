@@ -195,6 +195,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                             AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
                                     .integer.launch_profile_registration));
 
+                    stopService(new Intent(OtpVerificationActivity.this, OtpTimerService.class));
 
                     if (StringUtils.equalsIgnoreCase(userProfile.getIsAlreadyVerified(),
                             String.valueOf(getResources().getInteger(R.integer
@@ -351,8 +352,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         otpObject.setOtp(otpLog.getOldOtp());
         otpObject.setOtpGenerationTime(otpLog.getOldGeneratedAt());
         otpObject.setMobileNumber(mobileNumber);
-        otpObject.setAccessToken(getDeviceTokenId() + "_" + otpLog
-                .getRcProfileMasterPmId());
+        otpObject.setAccessToken(getDeviceTokenId() + "_" + otpLog.getRcProfileMasterPmId());
 
 
         if (Utils.isNetworkAvailable(this)) {

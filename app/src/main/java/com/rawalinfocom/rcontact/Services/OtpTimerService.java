@@ -19,6 +19,8 @@ import com.rawalinfocom.rcontact.model.OtpLog;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Date;
 
 /**
@@ -50,19 +52,17 @@ public class OtpTimerService extends Service implements WsResponseListener {
         serviceEndTime = intent.getLongExtra(AppConstants.EXTRA_OTP_SERVICE_END_TIME, 20);
         callMspServer = intent.getBooleanExtra(AppConstants.EXTRA_CALL_MSP_SERVER, true);
 
-        Log.e("onStartCommand: ", mobileNumber + " : " + serviceEndTime + " : " + callMspServer);
-
         //        cdt = new CountDownTimer(Utils.OTP_VALIDITY_DURATION * 60 * 1000, 5 * 60 * 1000) {
         cdt = new CountDownTimer(serviceEndTime, 10000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
-                Log.e(LOG_TAG, "Countdown seconds remaining: " + millisUntilFinished / 1000);
+                Log.i(LOG_TAG, "Countdown seconds remaining: " + millisUntilFinished / 1000);
             }
 
             @Override
             public void onFinish() {
-                Log.e(LOG_TAG, "Timer finished");
+                Log.i(LOG_TAG, "Timer finished");
 
                 databaseHandler = new DatabaseHandler(OtpTimerService.this);
 
@@ -105,8 +105,9 @@ public class OtpTimerService extends Service implements WsResponseListener {
             //<editor-fold desc="REQ_MSP_DELIVERY_TIME">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_MSP_DELIVERY_TIME)) {
                 WsResponseObject mspDeliveryStatusResponse = (WsResponseObject) data;
-                if (mspDeliveryStatusResponse.getStatus().equalsIgnoreCase(WsConstants
-                        .RESPONSE_STATUS_TRUE)) {
+                if (mspDeliveryStatusResponse != null && StringUtils.equalsIgnoreCase
+                        (mspDeliveryStatusResponse
+                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     if (mspDeliveryStatusResponse.getOtpLog().getOldMspDeliveryTime() == null) {
                         Log.e(LOG_TAG, "MSP Server not responding.");
                     } else {
@@ -122,9 +123,9 @@ public class OtpTimerService extends Service implements WsResponseListener {
                         Date mspValidityTime = Utils.getStringDateToDate(Utils.getOtpExpirationTime
                                 (mspDeliveryStatusResponse.getOtpLog().getOldMspDeliveryTime()));
 
-                        Log.e("currentValidityTime: ", currentValidityTime.toString() + " ");
-                        Log.e("mspValidityTime: ", mspValidityTime + " ");
-                        Log.e("difference: ", mspValidityTime.getTime() -
+                        Log.i("currentValidityTime: ", currentValidityTime.toString() + " ");
+                        Log.i("mspValidityTime: ", mspValidityTime + " ");
+                        Log.i("difference: ", mspValidityTime.getTime() -
                                 currentValidityTime.getTime() + " ");
 
                         try {
@@ -161,7 +162,11 @@ public class OtpTimerService extends Service implements WsResponseListener {
                                 .getOldMspDeliveryTime(), Toast.LENGTH_SHORT).show();*/
                     }
                 } else {
-                    Log.e("error response", mspDeliveryStatusResponse.getMessage());
+                    if (mspDeliveryStatusResponse != null) {
+                        Log.e("error response", mspDeliveryStatusResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                    }
                 }
             }
             //</editor-fold>
