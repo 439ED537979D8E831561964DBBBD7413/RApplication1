@@ -39,4 +39,10 @@
     <string name="text_linked_in">LinkedIn</string>
     <string name="title_profile_registration">Profile Registration</string>
     <string name="msg_try_later">There is some error! Please try again later.</string>
+    <string name="title_activity_contacts_main">ContactsMainActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 </resources>

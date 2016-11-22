@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity {
+public class MainActivityTemp extends BaseActivity {
 
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
@@ -43,10 +43,10 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_temp);
         ButterKnife.bind(this);
 
-//        stopService(new Intent(MainActivity.this, OtpTimerService.class));
+//        stopService(new Intent(MainActivityTemp.this, OtpTimerService.class));
 
         //TODO uncomment
         /*if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()

@@ -293,7 +293,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 if (userProfileResponse != null && StringUtils.equalsIgnoreCase(userProfileResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    // set launch screen as MainActivity
+                    // set launch screen as MainActivityTemp
                     Utils.setIntegerPreference(ProfileRegistrationActivity.this,
                             AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
                                     .integer.launch_main_activity));
@@ -306,8 +306,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                                 .LENGTH_SHORT).show();
                     }
 
-                    // Redirect to MainActivity
-                    Intent intent = new Intent(this, MainActivity.class);
+                    // Redirect to MainActivityTemp
+                    Intent intent = new Intent(this, MainActivityTemp.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

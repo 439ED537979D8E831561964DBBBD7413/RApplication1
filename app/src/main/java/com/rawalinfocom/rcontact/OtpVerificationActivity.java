@@ -200,8 +200,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                     if (StringUtils.equalsIgnoreCase(userProfile.getIsAlreadyVerified(),
                             String.valueOf(getResources().getInteger(R.integer
                                     .profile_already_verified)))) {
-                        // Redirect to MainActivity
-                        Intent intent = new Intent(this, MainActivity.class);
+                        // Redirect to MainActivityTemp
+                        Intent intent = new Intent(this, MainActivityTemp.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
