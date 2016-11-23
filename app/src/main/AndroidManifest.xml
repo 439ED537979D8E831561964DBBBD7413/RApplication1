@@ -47,7 +47,7 @@
         <activity android:name=".BaseActivity"/>
         <activity android:name=".ProfileRegistrationActivity"/>
         <activity
-            android:name=".contacts.ContactsMainActivity"
+            android:name=".MainActivity"
             android:label="@string/title_activity_contacts_main"
             android:theme="@style/AppTheme">
 
