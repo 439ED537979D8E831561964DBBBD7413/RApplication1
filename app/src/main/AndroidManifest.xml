@@ -32,11 +32,14 @@
         <service android:name=".services.OtpTimerService"/>
 
         <activity android:name=".MainActivityTemp">
-            <!--  <intent-filter>
-                  <action android:name="android.intent.action.MAIN"/>
 
-                  <category android:name="android.intent.category.LAUNCHER"/>
-              </intent-filter>-->
+            <!--
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN"/>
+
+                 <category android:name="android.intent.category.LAUNCHER"/>
+             </intent-filter>
+            -->
         </activity>
         <activity android:name=".MobileNumberRegistrationActivity"/>
         <activity
@@ -46,17 +49,19 @@
         <activity android:name=".OtpVerificationActivity"/>
         <activity android:name=".BaseActivity"/>
         <activity android:name=".ProfileRegistrationActivity"/>
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_contacts_main"
-            android:theme="@style/AppTheme">
-
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-
         </activity>
+
+        <service
+            android:name=".services.ContactIdFetchService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

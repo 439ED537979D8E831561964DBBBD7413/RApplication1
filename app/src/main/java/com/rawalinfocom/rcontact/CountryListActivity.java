@@ -73,9 +73,9 @@ public class CountryListActivity extends BaseActivity implements WsResponseListe
             //<editor-fold desc="REQ_COUNTRY_CODE_DETAIL">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_COUNTRY_CODE_DETAIL)) {
                 WsResponseObject countryListResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
                 if (countryListResponse != null && StringUtils.equalsIgnoreCase(countryListResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-//                    AppUtils.hideProgressDialog();
 
                     arrayListCountry = new ArrayList<>();
                     arrayListCountry.addAll(countryListResponse.getArrayListCountry());

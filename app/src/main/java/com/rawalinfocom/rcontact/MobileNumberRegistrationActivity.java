@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -133,6 +134,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
             //<editor-fold desc="REQ_SEND_OTP">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_SEND_OTP)) {
                 WsResponseObject otpDetailResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
                 if (otpDetailResponse != null && StringUtils.equalsIgnoreCase(otpDetailResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
@@ -142,6 +144,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                             databaseHandler);
 
                     Log.i("OTP: ", otpLogResponse.getOldOtp());
+                    Toast.makeText(this, otpLogResponse.getOldOtp(), Toast.LENGTH_LONG).show();
 
                     if (tableOtpLogDetails.getOtpCount() > 0 && tableOtpLogDetails
                             .getLastOtpDetails().getOldOtp().equalsIgnoreCase
@@ -177,7 +180,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                     Utils.setObjectPreference(MobileNumberRegistrationActivity.this, AppConstants
                             .PREF_SELECTED_COUNTRY_OBJECT, selectedCountry);
                     Utils.setStringPreference(MobileNumberRegistrationActivity.this, AppConstants
-                            .PREF_REGS_MOBILE_NUMBER, inputNumber.getText().toString());
+                            .PREF_REGS_MOBILE_NUMBER, selectedCountry.getCountryCodeNumber() +
+                            inputNumber.getText().toString());
 
                     // set launch screen as OtpVerificationActivity
                     Utils.setIntegerPreference(MobileNumberRegistrationActivity.this,

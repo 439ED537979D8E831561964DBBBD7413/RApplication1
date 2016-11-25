@@ -12,6 +12,8 @@ import android.widget.RelativeLayout;
 
 import com.google.gson.Gson;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.MobileNumber;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
@@ -24,6 +26,8 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationRelationship;
 import com.rawalinfocom.rcontact.model.UserContact;
 import com.rawalinfocom.rcontact.model.UserProfile;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -48,8 +52,8 @@ public class MainActivityTemp extends BaseActivity {
 
 //        stopService(new Intent(MainActivityTemp.this, OtpTimerService.class));
 
-        //TODO uncomment
-        /*if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()
+        /*
+        if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()
                 .getInteger(R.integer.launch_mobile_registration)) == getResources().getInteger(R
                 .integer.launch_mobile_registration)) {
             finish();

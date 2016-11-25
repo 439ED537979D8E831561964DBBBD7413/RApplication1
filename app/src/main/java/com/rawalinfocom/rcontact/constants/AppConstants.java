@@ -37,6 +37,13 @@ public class AppConstants {
     public static String EXTRA_OTP_SERVICE_END_TIME = "extra_otp_service_end_time";
     public static String EXTRA_CALL_MSP_SERVER = "extra_call_msp_server";
     public static String EXTRA_IS_FROM_MOBILE_REGIS = "extra_is_from_mobile_regis";
+    public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
+
+    //</editor-fold>
+
+    //<editor-fold desc="Intent Action">
+
+    public static String ACTION_CONTACT_FETCH = "action_contact_fetch";
 
     //</editor-fold>
 
@@ -49,9 +56,12 @@ public class AppConstants {
     public static String PREF_LAUNCH_SCREEN_INT = "pref_launch_screen_int";
     public static String PREF_REGS_USER_OBJECT = "pref_regs_user_object";
     public static String PREF_REGS_MOBILE_NUMBER = "pref_regs_mobile_number";
+    public static String PREF_CONTACT_ID_SET = "pref_contact_id_set";
+    public static String PREF_SYNCED_CONTACTS = "pref_synced_contacts";
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
-            PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER};
+            PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
+            PREF_CONTACT_ID_SET};
 
     //</editor-fold>
 

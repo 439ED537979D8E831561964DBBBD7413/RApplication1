@@ -129,6 +129,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             //<editor-fold desc="REQ_SEND_OTP">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_SEND_OTP)) {
                 WsResponseObject otpDetailResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
                 if (otpDetailResponse != null && StringUtils.equalsIgnoreCase(otpDetailResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
@@ -182,6 +183,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             // <editor-fold desc="REQ_OTP_CONFIRMED">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_OTP_CONFIRMED)) {
                 WsResponseObject confirmOtpResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
                 if (confirmOtpResponse != null && StringUtils.equalsIgnoreCase(confirmOtpResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
@@ -200,8 +202,13 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                     if (StringUtils.equalsIgnoreCase(userProfile.getIsAlreadyVerified(),
                             String.valueOf(getResources().getInteger(R.integer
                                     .profile_already_verified)))) {
+
+                        Utils.setIntegerPreference(OtpVerificationActivity.this,
+                                AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
+                                        .integer.launch_main_activity));
+
                         // Redirect to MainActivityTemp
-                        Intent intent = new Intent(this, MainActivityTemp.class);
+                        Intent intent = new Intent(this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -263,7 +270,9 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
     private void startOtpService() {
         otpServiceIntent = new Intent(this, OtpTimerService.class);
         otpServiceIntent.putExtra(AppConstants.EXTRA_MOBILE_NUMBER, mobileNumber);
-        otpServiceIntent.putExtra(AppConstants.EXTRA_OTP_SERVICE_END_TIME, (long) 60 * 1000);
+        otpServiceIntent.putExtra(AppConstants.EXTRA_OTP_SERVICE_END_TIME, (long) (AppConstants
+                .OTP_VALIDITY_DURATION * 60 * 1000));
+//        otpServiceIntent.putExtra(AppConstants.EXTRA_OTP_SERVICE_END_TIME, (long) 60 * 1000);
         otpServiceIntent.putExtra(AppConstants.EXTRA_CALL_MSP_SERVER, true);
         startService(otpServiceIntent);
     }

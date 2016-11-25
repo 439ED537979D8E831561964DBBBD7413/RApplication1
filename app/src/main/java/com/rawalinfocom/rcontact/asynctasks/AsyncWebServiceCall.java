@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.webservice.RequestWs;
@@ -68,9 +69,9 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-       /* if (progressDialogMessage != null) {
-            AppUtils.showProgressDialog(context, progressDialogMessage, true);
-        }*/
+        if (progressDialogMessage != null) {
+            Utils.showProgressDialog(context, progressDialogMessage, true);
+        }
     }
 
     @Override

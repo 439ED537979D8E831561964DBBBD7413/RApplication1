@@ -290,10 +290,12 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_REGISTRATION)) {
                 WsResponseObject userProfileResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
                 if (userProfileResponse != null && StringUtils.equalsIgnoreCase(userProfileResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    // set launch screen as MainActivityTemp
+
+                    // set launch screen as MainActivity
                     Utils.setIntegerPreference(ProfileRegistrationActivity.this,
                             AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
                                     .integer.launch_main_activity));
@@ -302,12 +304,10 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                             databaseHandler);
                     if (userProfileRegistered != null) {
                         tableProfileMaster.addProfile(userProfileRegistered);
-                        Toast.makeText(this, tableProfileMaster.getUserProfileCount() + "", Toast
-                                .LENGTH_SHORT).show();
                     }
 
-                    // Redirect to MainActivityTemp
-                    Intent intent = new Intent(this, MainActivityTemp.class);
+                    // Redirect to MainActivity
+                    Intent intent = new Intent(this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -533,11 +533,10 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
         userProfileRegistered = new UserProfile();
         userProfileRegistered.setPmId(userProfile.getPmId());
-        userProfileRegistered.setPmFirstName(userProfile.getPmFirstName());
-        userProfileRegistered.setPmLastName(userProfile.getPmLastName());
+        userProfileRegistered.setPmFirstName(profileRegistrationObject.getFirstName());
+        userProfileRegistered.setPmLastName(profileRegistrationObject.getLastName());
         userProfileRegistered.setPmSignupSocialMediaType(String.valueOf(type));
-        userProfileRegistered.setPmAccessToken(getDeviceTokenId() + "_" + userProfile
-                .getPmId());
+        userProfileRegistered.setPmAccessToken(getDeviceTokenId() + "_" + userProfile.getPmId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),

@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Set;
 import java.util.TimeZone;
 
 /**
@@ -171,6 +172,21 @@ public class Utils {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         return sharedpreferences.getString(key, defaultValue);
+    }
+
+    public static void setStringSetPreference(Context context, String key, @Nullable Set<String>
+            value) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putStringSet(key, value);
+        editor.apply();
+    }
+
+    public static Set<String> getStringSetPreference(Context context, String key) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        return sharedpreferences.getStringSet(key, null);
     }
 
     public static void setIntegerPreference(Context context, String key, int value) {

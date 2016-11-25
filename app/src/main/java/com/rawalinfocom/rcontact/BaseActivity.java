@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.helper.Utils;
+
+import java.util.List;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -23,7 +26,9 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
+        if (!isTaskRoot()) {
+            overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
+        }
     }
 
     public void startActivityIntent(Context packageContext, Class cls, Bundle extras) {

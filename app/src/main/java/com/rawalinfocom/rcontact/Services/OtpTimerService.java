@@ -48,40 +48,44 @@ public class OtpTimerService extends Service implements WsResponseListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mobileNumber = intent.getStringExtra(AppConstants.EXTRA_MOBILE_NUMBER);
-        serviceEndTime = intent.getLongExtra(AppConstants.EXTRA_OTP_SERVICE_END_TIME, 20);
-        callMspServer = intent.getBooleanExtra(AppConstants.EXTRA_CALL_MSP_SERVER, true);
+        try {
+            mobileNumber = intent.getStringExtra(AppConstants.EXTRA_MOBILE_NUMBER);
+            serviceEndTime = intent.getLongExtra(AppConstants.EXTRA_OTP_SERVICE_END_TIME, (long)
+                    (AppConstants.OTP_VALIDITY_DURATION * 60 * 1000));
+            callMspServer = intent.getBooleanExtra(AppConstants.EXTRA_CALL_MSP_SERVER, true);
 
-        //        cdt = new CountDownTimer(Utils.OTP_VALIDITY_DURATION * 60 * 1000, 5 * 60 * 1000) {
-        cdt = new CountDownTimer(serviceEndTime, 10000) {
+            cdt = new CountDownTimer(serviceEndTime, 2 * 60 * 1000) {
 
-            @Override
-            public void onTick(long millisUntilFinished) {
-                Log.i(LOG_TAG, "Countdown seconds remaining: " + millisUntilFinished / 1000);
-            }
-
-            @Override
-            public void onFinish() {
-                Log.i(LOG_TAG, "Timer finished");
-
-                databaseHandler = new DatabaseHandler(OtpTimerService.this);
-
-                TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(OtpTimerService
-                        .this, databaseHandler);
-                OtpLog otpLog = tableOtpLogDetails.getLastOtpDetails();
-
-                // Update OTP validity Flag to 0
-                otpLog.setOldValidityFlag("0");
-                tableOtpLogDetails.updateOtp(otpLog);
-
-                if (callMspServer) {
-                    // Get SMS status from third party
-                    getMspDeliveryStatus(otpLog);
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    Log.i(LOG_TAG, "Countdown seconds remaining: " + millisUntilFinished / 1000);
                 }
-            }
-        };
 
-        cdt.start();
+                @Override
+                public void onFinish() {
+                    Log.i(LOG_TAG, "Timer finished");
+
+                    databaseHandler = new DatabaseHandler(OtpTimerService.this);
+
+                    TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(OtpTimerService
+                            .this, databaseHandler);
+                    OtpLog otpLog = tableOtpLogDetails.getLastOtpDetails();
+
+                    // Update OTP validity Flag to 0
+                    otpLog.setOldValidityFlag("0");
+                    tableOtpLogDetails.updateOtp(otpLog);
+
+                    if (callMspServer) {
+                        // Get SMS status from third party
+                        getMspDeliveryStatus(otpLog);
+                    }
+                }
+            };
+
+            cdt.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -107,7 +111,7 @@ public class OtpTimerService extends Service implements WsResponseListener {
                 WsResponseObject mspDeliveryStatusResponse = (WsResponseObject) data;
                 if (mspDeliveryStatusResponse != null && StringUtils.equalsIgnoreCase
                         (mspDeliveryStatusResponse
-                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     if (mspDeliveryStatusResponse.getOtpLog().getOldMspDeliveryTime() == null) {
                         Log.e(LOG_TAG, "MSP Server not responding.");
                     } else {
