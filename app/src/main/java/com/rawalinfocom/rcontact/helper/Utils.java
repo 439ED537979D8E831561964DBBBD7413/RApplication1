@@ -241,6 +241,12 @@ public class Utils {
         }
     }
 
+    public static void removePreference(Context context, String key) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        sharedpreferences.edit().remove(key).apply();
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Progress Dialog">

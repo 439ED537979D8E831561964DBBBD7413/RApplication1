@@ -76,6 +76,9 @@ public class WebServicePost {
 
 
                 if (request != null) {
+                    /**
+                     * Json string passed as request
+                     */
                     jsonObject = writer.writeValueAsString(request);
 //					 FileUtilities utilities = new FileUtilities();
 //					 utilities.write("Filter file", jsonObject);

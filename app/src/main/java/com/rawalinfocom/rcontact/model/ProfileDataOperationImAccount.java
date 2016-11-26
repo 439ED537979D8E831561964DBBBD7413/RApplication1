@@ -1,30 +1,42 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationImAccount {
-    private String IM_account_type;
-    private String IM_account_details;
-    private String IM_account_protocol;
-    private String IM_account_public;
+    private String IMAccountType;
+    private String IMAccountDetails;
+    private String IMAccountProtocol;
+    private String IMAccountPublic;
 
-    public String getIMAccountType() {return this.IM_account_type;}
+    @JsonProperty("IM_account_type")
+    public String getIMAccountType() {return this.IMAccountType;}
 
-    public void setIMAccountType(String IM_account_type) {this.IM_account_type = IM_account_type;}
+    public void setIMAccountType(String IMAccountType) {this.IMAccountType = IMAccountType;}
 
-    public String getIMAccountDetails() {return this.IM_account_details;}
+    @JsonProperty("IM_account_details")
+    public String getIMAccountDetails() {return this.IMAccountDetails;}
 
-    public void setIMAccountDetails(String IM_account_details) {this.IM_account_details =
-            IM_account_details;}
-
-    public String getIMAccountPublic() {return this.IM_account_public;}
-
-    public void setIMAccountPublic(String IM_account_public) {this.IM_account_public = IM_account_public;}
-
-
-    public String getIMAccountProtocol() {
-        return IM_account_protocol;
+    public void setIMAccountDetails(String IMAccountDetails) {
+        this.IMAccountDetails = IMAccountDetails;
     }
 
-    public void setIMAccountProtocol(String IM_account_protocol) {
-        this.IM_account_protocol = IM_account_protocol;
+    @JsonProperty("IM_account_public")
+    public String getIMAccountPublic() {return this.IMAccountPublic;}
+
+    public void setIMAccountPublic(String IMAccountPublic) {
+        this.IMAccountPublic = IMAccountPublic;
+    }
+
+    @JsonProperty("IM_account_protocol")
+    public String getIMAccountProtocol() {
+        return IMAccountProtocol;
+    }
+
+    public void setIMAccountProtocol(String IMAccountProtocol) {
+        this.IMAccountProtocol = IMAccountProtocol;
     }
 }

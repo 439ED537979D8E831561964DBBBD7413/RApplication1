@@ -12,8 +12,6 @@ import android.widget.RelativeLayout;
 
 import com.google.gson.Gson;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
-import com.rawalinfocom.rcontact.constants.AppConstants;
-import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.MobileNumber;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
@@ -26,8 +24,6 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationRelationship;
 import com.rawalinfocom.rcontact.model.UserContact;
 import com.rawalinfocom.rcontact.model.UserProfile;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -100,10 +96,10 @@ public class MainActivityTemp extends BaseActivity {
                 String rawId = contactNameCursor.getString(contactNameCursor
                         .getColumnIndex(ContactsContract.Contacts._ID));
 
-                profileData.setLocalPhonebookId(rawId);
+                profileData.setLocalPhoneBookId(rawId);
 
-                profileData.setGivenName(contactNameCursor.getString(contactNameCursor
-                        .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
+               /* profileData.setGivenName(contactNameCursor.getString(contactNameCursor
+                        .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));*/
 
                 ProfileDataOperation operation = new ProfileDataOperation();
 

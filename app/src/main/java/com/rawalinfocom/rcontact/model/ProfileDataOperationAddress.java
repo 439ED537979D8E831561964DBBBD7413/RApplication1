@@ -1,68 +1,87 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationAddress {
+
     private String country;
-    private String address_type;
+    private String addressType;
     private String city;
-    private String post_code;
-    private String Street;
-    private String google_log;
-    private String google_address;
+    private String postCode;
+    private String street;
+    private String googleLongitude;
+    private String googleAddress;
     private String neighborhood;
     private String state;
-    private String po_box;
-    private String google_lat;
-    private String formatted_address;
+    private String PoBox;
+    private String googleLatitude;
+    private String formattedAddress;
 
+    @JsonProperty("country")
     public String getCountry() {return this.country;}
 
     public void setCountry(String country) {this.country = country;}
 
-    public String getAddressType() {return this.address_type;}
+    @JsonProperty("address_type")
+    public String getAddressType() {return this.addressType;}
 
-    public void setAddressType(String address_type) {this.address_type = address_type;}
+    public void setAddressType(String addressType) {this.addressType = addressType;}
 
+    @JsonProperty("city")
     public String getCity() {return this.city;}
 
     public void setCity(String city) {this.city = city;}
 
-    public String getPostCode() {return this.post_code;}
+    @JsonProperty("post_code")
+    public String getPostCode() {return this.postCode;}
 
-    public void setPostCode(String post_code) {this.post_code = post_code;}
+    public void setPostCode(String postCode) {this.postCode = postCode;}
 
-    public String getStreet() {return this.Street;}
+    @JsonProperty("street")
+    public String getStreet() {return this.street;}
 
-    public void setStreet(String Street) {this.Street = Street;}
+    public void setStreet(String street) {this.street = street;}
 
-    public String getGoogleLog() {return this.google_log;}
+    @JsonProperty("google_log")
+    public String getGoogleLongitude() {return this.googleLongitude;}
 
-    public void setGoogleLog(String google_log) {this.google_log = google_log;}
+    public void setGoogleLongitude(String googleLongitude) {this.googleLongitude = googleLongitude;}
 
-    public String getGoogleAddress() {return this.google_address;}
+    @JsonProperty("google_address")
+    public String getGoogleAddress() {return this.googleAddress;}
 
-    public void setGoogleAddress(String googledddress) {this.google_address = googledddress;}
+    public void setGoogleAddress(String googleAddress) {this.googleAddress = googleAddress;}
 
+    @JsonProperty("neighborhood")
     public String getNeighborhood() {return this.neighborhood;}
 
     public void setNeighborhood(String neighborhood) {this.neighborhood = neighborhood;}
 
+    @JsonProperty("state")
     public String getState() {return this.state;}
 
     public void setState(String state) {this.state = state;}
 
-    public String getPoBox() {return this.po_box;}
+    @JsonProperty("po_box")
+    public String getPoBox() {return this.PoBox;}
 
-    public void setPoBox(String po_box) {this.po_box = po_box;}
+    public void setPoBox(String po_box) {this.PoBox = po_box;}
 
-    public String getGoogleLat() {return this.google_lat;}
+    @JsonProperty("google_lat")
+    public String getGoogleLatitude() {return this.googleLatitude;}
 
-    public void setGoogleLat(String google_lat) {this.google_lat = google_lat;}
+    public void setGoogleLatitude(String googleLatitude) {this.googleLatitude = googleLatitude;}
 
+    @JsonProperty("formatted_address")
     public String getFormattedAddress() {
-        return formatted_address;
+        return formattedAddress;
     }
 
     public void setFormattedAddress(String formatted_address) {
-        this.formatted_address = formatted_address;
+        this.formattedAddress = formatted_address;
     }
 }

@@ -1,162 +1,177 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperation {
 
-    private ArrayList<ProfileDataOperationPhoneNumber> pb_phone_number;
+    private ArrayList<ProfileDataOperationPhoneNumber> pbPhoneNumber;
     private String flag;
-    private ArrayList<String> pb_web_address;
-    private ArrayList<ProfileDataOperationEvent> pb_event;
-    private String device_update_at;
-    private String pb_name_suffix;
-    private ArrayList<ProfileDataOperationEmail> pb_email_id;
-    private String pb_name_first;
-    private String pb_name_middle;
-    private ArrayList<ProfileDataOperationOrganization> pb_organization;
-    private String is_favourite;
-    private ArrayList<ProfileDataOperationRelationship> pb_relationship;
-//    private ProfileDataOperationRelationship[] pb_relationship;
-    private String pb_source;
-    private String pb_name_prefix;
-    private String pb_name_last;
-    private String pb_phonetic_name_first;
-    private String pb_phonetic_name_last;
-    private ArrayList<ProfileDataOperationImAccount> pb_IM_accounts;
-    private String pb_phonetic_name_middle;
-    private ArrayList<ProfileDataOperationAddress> pb_address;
-    private String pb_note;
-    private String pb_nickname;
+    private ArrayList<String> pbWebAddress;
+    private ArrayList<ProfileDataOperationEvent> pbEvent;
+    private String pbNameSuffix;
+    private ArrayList<ProfileDataOperationEmail> pbEmailId;
+    private String pbNameFirst;
+    private String pbNameMiddle;
+    private ArrayList<ProfileDataOperationOrganization> pbOrganization;
+    private String isFavourite;
+    private ArrayList<ProfileDataOperationRelationship> pbRelationship;
+    private String pbSource;
+    private String pbNamePrefix;
+    private String pbNameLast;
+    private String pbPhoneticNameFirst;
+    private String pbPhoneticNameLast;
+    private ArrayList<ProfileDataOperationImAccount> pbIMAccounts;
+    private String pbPhoneticNameMiddle;
+    private ArrayList<ProfileDataOperationAddress> pbAddress;
+    private String pbNote;
+    private String pbNickname;
 
+    @JsonProperty("pb_phone_number")
     public ArrayList<ProfileDataOperationPhoneNumber> getPbPhoneNumber() {
-        return pb_phone_number;
+        return pbPhoneNumber;
     }
 
-    public void setPbPhoneNumber(ArrayList<ProfileDataOperationPhoneNumber> pb_phone_number) {
-        this.pb_phone_number = pb_phone_number;
+    public void setPbPhoneNumber(ArrayList<ProfileDataOperationPhoneNumber> pbPhoneNumber) {
+        this.pbPhoneNumber = pbPhoneNumber;
     }
 
+    @JsonProperty("flag")
     public String getFlag() {return this.flag;}
 
     public void setFlag(String flag) {this.flag = flag;}
 
+    @JsonProperty("pb_web_address")
     public ArrayList<String> getPbWebAddress() {
-        return pb_web_address;
+        return pbWebAddress;
     }
 
-    public void setPbWebAddress(ArrayList<String> pb_web_address) {
-        this.pb_web_address = pb_web_address;
+    public void setPbWebAddress(ArrayList<String> pbWebAddress) {
+        this.pbWebAddress = pbWebAddress;
     }
 
+    @JsonProperty("pb_event")
     public ArrayList<ProfileDataOperationEvent> getPbEvent() {
-        return pb_event;
+        return pbEvent;
     }
 
-    public void setPbEvent(ArrayList<ProfileDataOperationEvent> pb_event) {
-        this.pb_event = pb_event;
+    public void setPbEvent(ArrayList<ProfileDataOperationEvent> pbEvent) {
+        this.pbEvent = pbEvent;
     }
 
-    public String getDeviceUpdateAt() {return this.device_update_at;}
+    @JsonProperty("pb_name_suffix")
+    public String getPbNameSuffix() {return this.pbNameSuffix;}
 
-    public void setDeviceUpdateAt(String device_update_at) {
-        this.device_update_at =
-                device_update_at;
-    }
+    public void setPbNameSuffix(String pbNameSuffix) {this.pbNameSuffix = pbNameSuffix;}
 
-    public String getPbNameSuffix() {return this.pb_name_suffix;}
-
-    public void setPbNameSuffix(String pb_name_suffix) {this.pb_name_suffix = pb_name_suffix;}
-
+    @JsonProperty("pb_email_id")
     public ArrayList<ProfileDataOperationEmail> getPbEmailId() {
-        return pb_email_id;
+        return pbEmailId;
     }
 
-    public void setPbEmailId(ArrayList<ProfileDataOperationEmail> pb_email_id) {
-        this.pb_email_id = pb_email_id;
+    public void setPbEmailId(ArrayList<ProfileDataOperationEmail> pbEmailId) {
+        this.pbEmailId = pbEmailId;
     }
 
-    public String getPbNameFirst() {return this.pb_name_first;}
+    @JsonProperty("pb_name_first")
+    public String getPbNameFirst() {return this.pbNameFirst;}
 
-    public void setPbNameFirst(String pb_name_first) {this.pb_name_first = pb_name_first;}
+    public void setPbNameFirst(String pbNameFirst) {this.pbNameFirst = pbNameFirst;}
 
-    public String getPbNameMiddle() {return this.pb_name_middle;}
+    @JsonProperty("pb_name_middle")
+    public String getPbNameMiddle() {return this.pbNameMiddle;}
 
-    public void setPbNameMiddle(String pb_name_middle) {this.pb_name_middle = pb_name_middle;}
+    public void setPbNameMiddle(String pbNameMiddle) {this.pbNameMiddle = pbNameMiddle;}
 
+    @JsonProperty("pb_organization")
     public ArrayList<ProfileDataOperationOrganization> getPbOrganization() {
-        return pb_organization;
+        return pbOrganization;
     }
 
-    public void setPbOrganization(ArrayList<ProfileDataOperationOrganization> pb_organization) {
-        this.pb_organization = pb_organization;
+    public void setPbOrganization(ArrayList<ProfileDataOperationOrganization> pbOrganization) {
+        this.pbOrganization = pbOrganization;
     }
 
-    public String getIsFavourite() {return this.is_favourite;}
+    @JsonProperty("is_favourite")
+    public String getIsFavourite() {return this.isFavourite;}
 
-    public void setIsFavourite(String is_favourite) {this.is_favourite = is_favourite;}
+    public void setIsFavourite(String isFavourite) {this.isFavourite = isFavourite;}
 
+    @JsonProperty("pb_relationship")
     public ArrayList<ProfileDataOperationRelationship> getPbRelationship() {
-        return pb_relationship;
+        return pbRelationship;
     }
 
-    public void setPbRelationship(ArrayList<ProfileDataOperationRelationship> pb_relationship) {
-        this.pb_relationship = pb_relationship;
+    public void setPbRelationship(ArrayList<ProfileDataOperationRelationship> pbRelationship) {
+        this.pbRelationship = pbRelationship;
     }
 
-    public String getPbSource() {return this.pb_source;}
+    @JsonProperty("pb_source")
+    public String getPbSource() {return this.pbSource;}
 
-    public void setPbSource(String pb_source) {this.pb_source = pb_source;}
+    public void setPbSource(String pbSource) {this.pbSource = pbSource;}
 
-    public String getPbNamePrefix() {return this.pb_name_prefix;}
+    @JsonProperty("pb_name_prefix")
+    public String getPbNamePrefix() {return this.pbNamePrefix;}
 
-    public void setPbNamePrefix(String pb_name_prefix) {this.pb_name_prefix = pb_name_prefix;}
+    public void setPbNamePrefix(String pbNamePrefix) {this.pbNamePrefix = pbNamePrefix;}
 
-    public String getPbNameLast() {return this.pb_name_last;}
+    @JsonProperty("pb_name_last")
+    public String getPbNameLast() {return this.pbNameLast;}
 
-    public void setPbNameLast(String pb_name_last) {this.pb_name_last = pb_name_last;}
+    public void setPbNameLast(String pbNameLast) {this.pbNameLast = pbNameLast;}
 
-    public String getPbPhoneticNameFirst() {return this.pb_phonetic_name_first;}
+    @JsonProperty("pb_phonetic_name_first")
+    public String getPbPhoneticNameFirst() {return this.pbPhoneticNameFirst;}
 
-    public void setPbPhoneticNameFirst(String pb_phonetic_name_first) {
-        this
-                .pb_phonetic_name_first = pb_phonetic_name_first;
+    public void setPbPhoneticNameFirst(String pbPhoneticNameFirst) {
+        this.pbPhoneticNameFirst = pbPhoneticNameFirst;
     }
 
-    public String getPbPhoneticNameLast() {return this.pb_phonetic_name_last;}
+    @JsonProperty("pb_phonetic_name_last")
+    public String getPbPhoneticNameLast() {return this.pbPhoneticNameLast;}
 
-    public void setPbPhoneticNameLast(String pb_phonetic_name_last) {
-        this
-                .pb_phonetic_name_last = pb_phonetic_name_last;
+    public void setPbPhoneticNameLast(String pbPhoneticNameLast) {
+        this.pbPhoneticNameLast = pbPhoneticNameLast;
     }
 
+    @JsonProperty("pb_IM_accounts")
     public ArrayList<ProfileDataOperationImAccount> getPbIMAccounts() {
-        return pb_IM_accounts;
+        return pbIMAccounts;
     }
 
-    public void setPbIMAccounts(ArrayList<ProfileDataOperationImAccount> pb_IM_accounts) {
-        this.pb_IM_accounts = pb_IM_accounts;
+    public void setPbIMAccounts(ArrayList<ProfileDataOperationImAccount> pbIMAccounts) {
+        this.pbIMAccounts = pbIMAccounts;
     }
 
-    public String getPbPhoneticNameMiddle() {return this.pb_phonetic_name_middle;}
+    @JsonProperty("pb_phonetic_name_middle")
+    public String getPbPhoneticNameMiddle() {return this.pbPhoneticNameMiddle;}
 
-    public void setPbPhoneticNameMiddle(String pb_phonetic_name_middle) {
-        this
-                .pb_phonetic_name_middle = pb_phonetic_name_middle;
+    public void setPbPhoneticNameMiddle(String pbPhoneticNameMiddle) {
+        this.pbPhoneticNameMiddle = pbPhoneticNameMiddle;
     }
 
+    @JsonProperty("pb_address")
     public ArrayList<ProfileDataOperationAddress> getPbAddress() {
-        return pb_address;
+        return pbAddress;
     }
 
-    public void setPbAddress(ArrayList<ProfileDataOperationAddress> pb_address) {
-        this.pb_address = pb_address;
+    public void setPbAddress(ArrayList<ProfileDataOperationAddress> pbAddress) {
+        this.pbAddress = pbAddress;
     }
 
-    public String getPbNote() {return this.pb_note;}
+    @JsonProperty("pb_note")
+    public String getPbNote() {return this.pbNote;}
 
-    public void setPbNote(String pb_note) {this.pb_note = pb_note;}
+    public void setPbNote(String pbNote) {this.pbNote = pbNote;}
 
-    public String getPbNickname() {return this.pb_nickname;}
+    @JsonProperty("pb_nickname")
+    public String getPbNickname() {return this.pbNickname;}
 
-    public void setPbNickname(String pb_nickname) {this.pb_nickname = pb_nickname;}
+    public void setPbNickname(String pbNickname) {this.pbNickname = pbNickname;}
 }

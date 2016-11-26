@@ -26,16 +26,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.google.gson.Gson;
+import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
+import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
-import com.rawalinfocom.rcontact.model.UserProfile;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.services.ContactIdFetchService;
 import com.rawalinfocom.rcontact.sms.SmsFragment;
 
@@ -44,12 +47,16 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends BaseActivity implements NavigationView
-        .OnNavigationItemSelectedListener {
+        .OnNavigationItemSelectedListener, WsResponseListener {
 
-    private final int CONTACT_CHUNK = 2;
+    private final int CONTACT_CHUNK = 5;
 
-    RelativeLayout contentContactsMain;
+    @BindView(R.id.relative_root_contacts_main)
+    RelativeLayout relativeRootContactsMain;
     Toolbar toolbar;
     FloatingActionButton fab;
     DrawerLayout drawer;
@@ -63,14 +70,17 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     ArrayList<ProfileData> arrayListUserContact;
 
+    ArrayList<String> arrayListContactId;
+
     //<editor-fold desc="Override Methods">
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts_main);
+        ButterKnife.bind(this);
 
         // TODO uncomment code
-        if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()
+       /* if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()
                 .getInteger(R.integer.launch_mobile_registration)) == getResources().getInteger(R
                 .integer.launch_mobile_registration)) {
             finish();
@@ -91,27 +101,27 @@ public class MainActivity extends BaseActivity implements NavigationView
                 finish();
                 startActivityIntent(this, ProfileRegistrationActivity.class, null);
             }
+        } else {*/
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        init();
+
+        HashSet<String> retrievedContactIdSet = (HashSet<String>) Utils.getStringSetPreference
+                (this, AppConstants.PREF_CONTACT_ID_SET);
+        if (retrievedContactIdSet != null) {
+            arrayListContactId = new ArrayList<>(retrievedContactIdSet);
+            phoneBookOperations();
         } else {
-
-            toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-
-            init();
-
-            HashSet<String> retrievedContactIdSet = (HashSet<String>) Utils.getStringSetPreference
-                    (this, AppConstants.PREF_CONTACT_ID_SET);
-            if (retrievedContactIdSet != null) {
-                ArrayList<String> list = new ArrayList<>(retrievedContactIdSet);
-                phoneBookOperations(list, "From onCreate Raw Contact Id: ");
-            } else {
-                LocalBroadcastManager.getInstance(this).registerReceiver(cursorListReceiver,
-                        new IntentFilter(AppConstants.ACTION_CONTACT_FETCH));
-                Intent contactIdFetchService = new Intent(this, ContactIdFetchService.class);
-                startService(contactIdFetchService);
-            }
-
-
+            LocalBroadcastManager.getInstance(this).registerReceiver(cursorListReceiver,
+                    new IntentFilter(AppConstants.ACTION_CONTACT_FETCH));
+            Intent contactIdFetchService = new Intent(this, ContactIdFetchService.class);
+            startService(contactIdFetchService);
         }
+
+
+//        }
 
     }
 
@@ -148,6 +158,47 @@ public class MainActivity extends BaseActivity implements NavigationView
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onDeliveryResponse(String serviceType, Object data, Exception error) {
+        if (error == null) {
+
+            //<editor-fold desc="REQ_UPLOAD_CONTACTS">
+
+            if (serviceType.contains(WsConstants.REQ_UPLOAD_CONTACTS)) {
+                WsResponseObject uploadContactResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (uploadContactResponse != null && StringUtils.equalsIgnoreCase
+                        (uploadContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    String previouslySyncedData = (StringUtils.split(serviceType, "_"))[1];
+                    int nextNumber = Integer.parseInt(StringUtils.defaultString
+                            (previouslySyncedData, "0")) + CONTACT_CHUNK;
+                    Utils.setIntegerPreference(MainActivity.this, AppConstants
+                            .PREF_SYNCED_CONTACTS, nextNumber);
+
+                    if (nextNumber < arrayListContactId.size()) {
+                        phoneBookOperations();
+                    }
+
+                } else {
+                    if (uploadContactResponse != null) {
+                        Log.e("error response", uploadContactResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "uploadContactResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootContactsMain, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
+        } else {
+//            AppUtils.hideProgressDialog();
+            Utils.showErrorSnackBar(this, relativeRootContactsMain, "" + error
+                    .getLocalizedMessage());
+        }
     }
 
     @Override
@@ -248,8 +299,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                         .getStringSetPreference(MainActivity.this, AppConstants
                                 .PREF_CONTACT_ID_SET);
                 if (retrievedContactIdSet != null) {
-                    ArrayList<String> list = new ArrayList<>(retrievedContactIdSet);
-                    phoneBookOperations(list, "From Receiver Raw Contact Id: ");
+                    arrayListContactId = new ArrayList<>(retrievedContactIdSet);
+                    phoneBookOperations();
                 } else {
                     Log.e("Local Broadcast Receiver onReceive: ", "Error while Retriving Ids!");
                 }
@@ -262,18 +313,22 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     //<editor-fold desc="Phone book Data Cursor">
 
-    private void phoneBookOperations(ArrayList<String> arrayListContactId, String logString) {
+    private void phoneBookOperations() {
         arrayListUserContact = new ArrayList<>();
         int previouslySyncedData = Utils.getIntegerPreference(MainActivity.this, AppConstants
                 .PREF_SYNCED_CONTACTS, 0);
+        int forFrom = previouslySyncedData + CONTACT_CHUNK;
+        if (forFrom > arrayListContactId.size()) {
+            forFrom = arrayListContactId.size();
+        }
 
-        for (int i = previouslySyncedData; i < CONTACT_CHUNK; i++) {
+        for (int i = previouslySyncedData; i < forFrom; i++) {
 
             ProfileData profileData = new ProfileData();
 
             String rawId = arrayListContactId.get(i);
 
-            profileData.setLocalPhonebookId(rawId);
+            profileData.setLocalPhoneBookId(rawId);
 
             /* profileData.setGivenName(contactNameCursor.getString(contactNameCursor
             .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));*/
@@ -376,12 +431,8 @@ public class MainActivity extends BaseActivity implements NavigationView
 
 //        }
 
-        for (int i = 0; i < arrayListUserContact.size(); i++) {
-            Gson gson = new Gson();
-            String json = gson.toJson(arrayListUserContact.get(i));
-            Log.i("JSON String " + i, json);
-//            arrayListContactJson.add(json);
-        }
+        uploadContacts(previouslySyncedData);
+
     }
 
     private Cursor getAllContactNames() {
@@ -519,4 +570,26 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
     //</editor-fold>
 
+    //<editor-fold desc="Web Service Call">
+
+    private void uploadContacts(int previouslySyncedData) {
+
+        WsRequestObject uploadContactObject = new WsRequestObject();
+        //TODO pmid Modification
+        uploadContactObject.setPmId("1");
+        uploadContactObject.setProfileData(arrayListUserContact);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    uploadContactObject, null, WsResponseObject.class, WsConstants
+                    .REQ_UPLOAD_CONTACTS + "_" + previouslySyncedData, getString(R.string
+                    .msg_please_wait)).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_UPLOAD_CONTACTS);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootContactsMain, getResources().getString(R
+                    .string.msg_no_network));
+        }
+    }
+
+    //</editor-fold>
 }

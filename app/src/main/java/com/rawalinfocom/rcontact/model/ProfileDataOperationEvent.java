@@ -1,19 +1,28 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationEvent {
-    private String event_type;
-    private String event_date;
-    private String event_public;
+    private String eventType;
+    private String eventDate;
+    private String eventPublic;
 
-    public String getEventType() {return this.event_type;}
+    @JsonProperty("event_type")
+    public String getEventType() {return this.eventType;}
 
-    public void setEventType(String event_type) {this.event_type = event_type;}
+    public void setEventType(String eventType) {this.eventType = eventType;}
 
-    public String getEventDate() {return this.event_date;}
+    @JsonProperty("event_date")
+    public String getEventDate() {return this.eventDate;}
 
-    public void setEventDate(String event_date) {this.event_date = event_date;}
+    public void setEventDate(String eventDate) {this.eventDate = eventDate;}
 
-    public String getEventPublic() {return this.event_public;}
+    @JsonProperty("event_public")
+    public String getEventPublic() {return this.eventPublic;}
 
-    public void setEventPublic(String event_public) {this.event_public = event_public;}
+    public void setEventPublic(String eventPublic) {this.eventPublic = eventPublic;}
 }

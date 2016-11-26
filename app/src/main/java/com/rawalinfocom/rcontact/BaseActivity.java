@@ -1,6 +1,5 @@
 package com.rawalinfocom.rcontact;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,8 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.helper.Utils;
-
-import java.util.List;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -42,6 +39,10 @@ public class BaseActivity extends AppCompatActivity {
 
     public String getDeviceTokenId() {
         return Utils.getStringPreference(this, AppConstants.PREF_DEVICE_TOKEN_ID, "");
+    }
+
+    public String getUserPmId() {
+        return Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0");
     }
 
 

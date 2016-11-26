@@ -1,46 +1,59 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationOrganization {
-    private String org_job_title;
-    private String org_department;
-    private String org_name;
-    private String org_type;
-    private String org_job_description;
-    private String org_office_location;
 
-    public String getOrgJobTitle() {return this.org_job_title;}
+    private String orgJobTitle;
+    private String orgDepartment;
+    private String orgName;
+    private String orgType;
+    private String orgJobDescription;
+    private String orgOfficeLocation;
 
-    public void setOrgJobTitle(String org_job_title) {this.org_job_title = org_job_title;}
+    @JsonProperty("org_job_title")
+    public String getOrgJobTitle() {return this.orgJobTitle;}
 
-    public String getOrgDepartment() {return this.org_department;}
+    public void setOrgJobTitle(String orgJobTitle) {this.orgJobTitle = orgJobTitle;}
 
-    public void setOrgDepartment(String org_department) {this.org_department = org_department;}
+    @JsonProperty("org_department")
+    public String getOrgDepartment() {return this.orgDepartment;}
 
-    public String getOrgName() {return this.org_name;}
+    public void setOrgDepartment(String orgDepartment) {this.orgDepartment = orgDepartment;}
 
-    public void setOrgName(String org_name) {this.org_name = org_name;}
+    @JsonProperty("org_name")
+    public String getOrgName() {return this.orgName;}
 
+    public void setOrgName(String orgName) {this.orgName = orgName;}
+
+    @JsonProperty("org_type")
     public String getOrgType() {
-        return org_type;
+        return orgType;
     }
 
-    public void setOrgType(String org_type) {
-        this.org_type = org_type;
+    public void setOrgType(String orgType) {
+        this.orgType = orgType;
     }
 
+    @JsonProperty("org_job_description")
     public String getOrgJobDescription() {
-        return org_job_description;
+        return orgJobDescription;
     }
 
-    public void setOrgJobDescription(String org_job_description) {
-        this.org_job_description = org_job_description;
+    public void setOrgJobDescription(String orgJobDescription) {
+        this.orgJobDescription = orgJobDescription;
     }
 
+    @JsonProperty("org_office_location")
     public String getOrgOfficeLocation() {
-        return org_office_location;
+        return orgOfficeLocation;
     }
 
-    public void setOrgOfficeLocation(String org_office_location) {
-        this.org_office_location = org_office_location;
+    public void setOrgOfficeLocation(String orgOfficeLocation) {
+        this.orgOfficeLocation = orgOfficeLocation;
     }
 }

@@ -191,6 +191,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
                     Utils.setObjectPreference(OtpVerificationActivity.this, AppConstants
                             .PREF_REGS_USER_OBJECT, userProfile);
+                    Utils.setStringPreference(OtpVerificationActivity.this, AppConstants
+                            .PREF_USER_PM_ID, userProfile.getPmId());
 
                     // set launch screen as OtpVerificationActivity
                     Utils.setIntegerPreference(OtpVerificationActivity.this,

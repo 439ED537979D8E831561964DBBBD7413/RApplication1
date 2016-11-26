@@ -1,24 +1,34 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationEmail {
-    private int em_id;
-    private String em_email_id;
-    private String em_type;
-    private int em_public;
+    private int emId;
+    private String emEmailId;
+    private String emType;
+    private int emPublic;
 
-    public int getEmId() {return this.em_id;}
+    @JsonProperty("em_id")
+    public int getEmId() {return this.emId;}
 
-    public void setEmId(int em_id) {this.em_id = em_id;}
+    public void setEmId(int emId) {this.emId = emId;}
 
-    public String getEmEmailId() {return this.em_email_id;}
+    @JsonProperty("em_email_id")
+    public String getEmEmailId() {return this.emEmailId;}
 
-    public void setEmEmailId(String em_email_id) {this.em_email_id = em_email_id;}
+    public void setEmEmailId(String emEmailId) {this.emEmailId = emEmailId;}
 
-    public String getEmType() {return this.em_type;}
+    @JsonProperty("em_type")
+    public String getEmType() {return this.emType;}
 
-    public void setEmType(String em_type) {this.em_type = em_type;}
+    public void setEmType(String emType) {this.emType = emType;}
 
-    public int getEmPublic() {return this.em_public;}
+    @JsonProperty("em_public")
+    public int getEmPublic() {return this.emPublic;}
 
-    public void setEmPublic(int em_public) {this.em_public = em_public;}
+    public void setEmPublic(int emPublic) {this.emPublic = emPublic;}
 }

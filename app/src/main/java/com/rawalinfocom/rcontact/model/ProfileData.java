@@ -1,19 +1,29 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileData {
 
-    private String local_phonebook_id;
-    private String givenName;
+    private String localPhoneBookId;
+    //    private String givenName;
     private ArrayList<ProfileDataOperation> operation;
 
-    public String getLocalPhonebookId() {return this.local_phonebook_id;}
-
-    public void setLocalPhonebookId(String local_phonebook_id) {
-        this.local_phonebook_id = local_phonebook_id;
+    @JsonProperty("pb_local_phonebook_id")
+    public String getLocalPhoneBookId() {
+        return this.localPhoneBookId;
     }
 
+    public void setLocalPhoneBookId(String localPhoneBookId) {
+        this.localPhoneBookId = localPhoneBookId;
+    }
+
+    @JsonProperty("operation")
     public ArrayList<ProfileDataOperation> getOperation() {
         return operation;
     }
@@ -22,11 +32,11 @@ public class ProfileData {
         this.operation = operation;
     }
 
-    public String getGivenName() {
+   /* public String getGivenName() {
         return givenName;
     }
 
     public void setGivenName(String givenName) {
         this.givenName = givenName;
-    }
+    }*/
 }

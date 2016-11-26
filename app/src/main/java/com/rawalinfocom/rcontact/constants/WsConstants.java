@@ -18,6 +18,7 @@ public class WsConstants {
     public static final String REQ_OTP_CONFIRMED = "otp_confirmed";
     public static final String REQ_PROFILE_REGISTRATION = "profile_registration";
     public static final String REQ_UPLOAD_IMAGE = "upload-image";
+    public static final String REQ_UPLOAD_CONTACTS = "uploadContacts";
 
 
 }

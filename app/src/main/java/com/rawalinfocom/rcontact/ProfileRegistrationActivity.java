@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -88,7 +89,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     @BindView(R.id.includeToolbar)
     LinearLayout includeToolbar;
-    RippleView rippleActionBack;
+    RelativeLayout relativeActionBack;
     TextView textToolbarTitle;
     @BindView(R.id.input_first_name)
     EditText inputFirstName;
@@ -304,6 +305,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                             databaseHandler);
                     if (userProfileRegistered != null) {
                         tableProfileMaster.addProfile(userProfileRegistered);
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
+                                userProfileRegistered.getPmId());
                     }
 
                     // Redirect to MainActivity
@@ -343,8 +346,10 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         inputLastName.setText(userProfile.getPmLastName());
         inputEmailId.setText(userProfile.getEmailId());
 
-        rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
+        relativeActionBack = ButterKnife.findById(includeToolbar, R.id.relative_action_back);
+
+        relativeActionBack.setVisibility(View.GONE);
 
         textToolbarTitle.setText(R.string.title_profile_registration);
 
@@ -358,7 +363,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         buttonLinkedIn.setTypeface(Utils.typefaceSemiBold(this));
         textOr.setTypeface(Utils.typefaceSemiBold(this));
 
-        rippleActionBack.setOnRippleCompleteListener(this);
         rippleRegister.setOnRippleCompleteListener(this);
         rippleFacebook.setOnRippleCompleteListener(this);
         rippleGoogle.setOnRippleCompleteListener(this);

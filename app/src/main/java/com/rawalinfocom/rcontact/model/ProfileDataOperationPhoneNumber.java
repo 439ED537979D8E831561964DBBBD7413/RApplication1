@@ -1,24 +1,34 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationPhoneNumber {
-    private String ph_type;
-    private String ph_no;
-    private int ph_public;
-    private int ph_id;
+    private String phoneType;
+    private String phoneNumber;
+    private int phonePublic;
+    private int phoneId;
 
-    public String getPhoneType() {return this.ph_type;}
+    @JsonProperty("ph_type")
+    public String getPhoneType() {return this.phoneType;}
 
-    public void setPhoneType(String ph_type) {this.ph_type = ph_type;}
+    public void setPhoneType(String phoneType) {this.phoneType = phoneType;}
 
-    public String getPhoneNumber() {return this.ph_no;}
+    @JsonProperty("ph_no")
+    public String getPhoneNumber() {return this.phoneNumber;}
 
-    public void setPhoneNumber(String ph_no) {this.ph_no = ph_no;}
+    public void setPhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber;}
 
-    public int getPhonePublic() {return this.ph_public;}
+    @JsonProperty("ph_public")
+    public int getPhonePublic() {return this.phonePublic;}
 
-    public void setPhonePublic(int ph_public) {this.ph_public = ph_public;}
+    public void setPhonePublic(int phonePublic) {this.phonePublic = phonePublic;}
 
-    public int getPhoneId() {return this.ph_id;}
+    @JsonProperty("ph_id")
+    public int getPhoneId() {return this.phoneId;}
 
-    public void setPhoneId(int ph_id) {this.ph_id = ph_id;}
+    public void setPhoneId(int phoneId) {this.phoneId = phoneId;}
 }
