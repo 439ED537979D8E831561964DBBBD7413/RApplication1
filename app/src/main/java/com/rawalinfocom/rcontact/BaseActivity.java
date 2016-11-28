@@ -11,7 +11,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 
 public class BaseActivity extends AppCompatActivity {
 
-    DatabaseHandler databaseHandler;
+    public DatabaseHandler databaseHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

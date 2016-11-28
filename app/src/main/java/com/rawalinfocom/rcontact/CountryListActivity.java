@@ -90,7 +90,7 @@ public class CountryListActivity extends BaseActivity implements WsResponseListe
                         recyclerViewCountryList.setAdapter(adapterCountryList);
 
                         TableCountryMaster tableCountryMaster = new TableCountryMaster
-                                (CountryListActivity.this, databaseHandler);
+                                (databaseHandler);
                         for (int i = 0; i < arrayListCountry.size(); i++) {
                             tableCountryMaster.addCountry(arrayListCountry.get(i));
                         }

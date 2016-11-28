@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact.database;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -11,15 +10,15 @@ import java.util.ArrayList;
 
 /**
  * Created by Monal on 14/11/16.
+ * <p>
+ * Table operations rc_profile_master
  */
 
 public class TableProfileMaster {
 
-    Context context;
-    DatabaseHandler databaseHandler;
+    private DatabaseHandler databaseHandler;
 
-    public TableProfileMaster(Context context, DatabaseHandler databaseHandler) {
-        this.context = context;
+    public TableProfileMaster(DatabaseHandler databaseHandler) {
         this.databaseHandler = databaseHandler;
     }
 
@@ -50,12 +49,9 @@ public class TableProfileMaster {
     private static final String COLUMN_PM_ACCESS_TOKEN = "pm_access_token";
     private static final String COLUMN_PM_NOSQL_MASTER_ID = "pm_nosql_master_id";
     private static final String COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE = "pm_signup_social_media_type";
-    private static final String COLUMN_PM_UPDATED_AT = "pm_updated_at";
-    private static final String COLUMN_PM_UPDATED_DATA = "pm_updated_data";
-    private static final String COLUMN_PM_DELETED_AT = "pm_deleted_at";
 
     // Table Create Statements
-    public static final String CREATE_TABLE_RC_PROFILE_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_RC_PROFILE_MASTER = "CREATE TABLE " +
             TABLE_RC_PROFILE_MASTER + " (" +
             " " + COLUMN_PM_ID + " integer NOT NULL CONSTRAINT rc_profile_master_pk PRIMARY KEY " +
             "AUTOINCREMENT," +
@@ -80,10 +76,7 @@ public class TableProfileMaster {
             " " + COLUMN_PM_IS_FAVOURITE_PRIVACY + " integer DEFAULT 1," +
             " " + COLUMN_PM_ACCESS_TOKEN + " text NOT NULL," +
             " " + COLUMN_PM_NOSQL_MASTER_ID + " text," +
-            " " + COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE + " integer," +
-            " " + COLUMN_PM_UPDATED_AT + " datetime," +
-            " " + COLUMN_PM_UPDATED_DATA + " integer," +
-            " " + COLUMN_PM_DELETED_AT + " datetime" +
+            " " + COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE + " integer" +
             ");";
 
     // Adding new Profile
@@ -114,9 +107,6 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_ACCESS_TOKEN, userProfile.getPmAccessToken());
         values.put(COLUMN_PM_NOSQL_MASTER_ID, userProfile.getPmNosqlMasterId());
         values.put(COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE, userProfile.getPmSignupSocialMediaType());
-        values.put(COLUMN_PM_UPDATED_AT, userProfile.getPmUpdatedAt());
-        values.put(COLUMN_PM_UPDATED_DATA, userProfile.getPmUpdatedData());
-        values.put(COLUMN_PM_DELETED_AT, userProfile.getPmDeletedAt());
 
         // Inserting Row
         db.insert(TABLE_RC_PROFILE_MASTER, null, values);
@@ -136,9 +126,8 @@ public class TableProfileMaster {
                 COLUMN_PM_NICK_NAME_PRIVACY, COLUMN_PM_NOTES, COLUMN_PM_NOTES_PRIVACY,
                 COLUMN_PM_GENDER, COLUMN_PM_GENDER_PRIVACY, COLUMN_PM_IS_FAVOURITE,
                 COLUMN_PM_IS_FAVOURITE_PRIVACY, COLUMN_PM_ACCESS_TOKEN, COLUMN_PM_NOSQL_MASTER_ID,
-                COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE, COLUMN_PM_UPDATED_AT, COLUMN_PM_UPDATED_DATA,
-                COLUMN_PM_DELETED_AT}, COLUMN_PM_ID + "=?", new String[]{String.valueOf
-                (profileId)}, null, null, null, null);
+                COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE}, COLUMN_PM_ID + "=?", new String[]{String
+                .valueOf(profileId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -167,10 +156,12 @@ public class TableProfileMaster {
             userProfile.setPmAccessToken(cursor.getString(20));
             userProfile.setPmNosqlMasterId(cursor.getString(21));
             userProfile.setPmSignupSocialMediaType(cursor.getString(22));
-            userProfile.setPmUpdatedAt(cursor.getString(23));
-            userProfile.setPmUpdatedData(cursor.getString(24));
-            userProfile.setPmDeletedAt(cursor.getString(25));
+
+            cursor.close();
         }
+
+        db.close();
+
         // return Profile
         return userProfile;
     }
@@ -211,13 +202,15 @@ public class TableProfileMaster {
                 userProfile.setPmAccessToken(cursor.getString(20));
                 userProfile.setPmNosqlMasterId(cursor.getString(21));
                 userProfile.setPmSignupSocialMediaType(cursor.getString(22));
-                userProfile.setPmUpdatedAt(cursor.getString(23));
-                userProfile.setPmUpdatedData(cursor.getString(24));
-                userProfile.setPmDeletedAt(cursor.getString(25));
                 // Adding user profile to list
                 arrayListUserProfile.add(userProfile);
             } while (cursor.moveToNext());
+
+            cursor.close();
+
         }
+
+        db.close();
 
         // return user profile list
         return arrayListUserProfile;
@@ -228,10 +221,11 @@ public class TableProfileMaster {
         String countQuery = "SELECT  * FROM " + TABLE_RC_PROFILE_MASTER;
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
-//        cursor.close();
-
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
         // return count
-        return cursor.getCount();
+        return count;
     }
 
     // Updating single profile
@@ -262,13 +256,14 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_ACCESS_TOKEN, userProfile.getPmAccessToken());
         values.put(COLUMN_PM_NOSQL_MASTER_ID, userProfile.getPmNosqlMasterId());
         values.put(COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE, userProfile.getPmSignupSocialMediaType());
-        values.put(COLUMN_PM_UPDATED_AT, userProfile.getPmUpdatedAt());
-        values.put(COLUMN_PM_UPDATED_DATA, userProfile.getPmUpdatedData());
-        values.put(COLUMN_PM_DELETED_AT, userProfile.getPmDeletedAt());
+
+        int isUpdated = db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_ID + " = ?",
+                new String[]{String.valueOf(userProfile.getPmId())});
+
+        db.close();
 
         // updating row
-        return db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_ID + " = ?",
-                new String[]{String.valueOf(userProfile.getPmId())});
+        return isUpdated;
     }
 
     // Deleting single profile

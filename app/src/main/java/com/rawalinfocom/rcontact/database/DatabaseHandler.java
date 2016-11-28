@@ -31,6 +31,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableProfileMaster.CREATE_TABLE_RC_PROFILE_MASTER);
         db.execSQL(TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER);
         db.execSQL(TableMobileMaster.CREATE_TABLE_RC_MOBILE_NUMBER_MASTER);
+        db.execSQL(TableProfileMobileMapping.CREATE_TABLE_PB_PROFILE_MOBILE_MAPPING);
+        db.execSQL(TableProfileEmailMapping.CREATE_TABLE_PB_PROFILE_EMAIL_MAPPING);
     }
 
     @Override
@@ -42,6 +44,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TableEmailMaster.CREATE_TABLE_RC_EMAIL_MASTER);
         db.execSQL("DROP TABLE IF EXISTS " + TableMobileMaster
                 .CREATE_TABLE_RC_MOBILE_NUMBER_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableProfileMobileMapping
+                .CREATE_TABLE_PB_PROFILE_MOBILE_MAPPING);
+        db.execSQL("DROP TABLE IF EXISTS " + TableProfileEmailMapping
+                .CREATE_TABLE_PB_PROFILE_EMAIL_MAPPING);
 
         // create new tables
         onCreate(db);

@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact.database;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -11,15 +10,15 @@ import java.util.ArrayList;
 
 /**
  * Created by Monal on 25/10/16.
+ * <p>
+ * Table operations rc_otp_log_details
  */
 
 public class TableOtpLogDetails {
 
-    Context context;
-    DatabaseHandler databaseHandler;
+    private DatabaseHandler databaseHandler;
 
-    public TableOtpLogDetails(Context context, DatabaseHandler databaseHandler) {
-        this.context = context;
+    public TableOtpLogDetails(DatabaseHandler databaseHandler) {
         this.databaseHandler = databaseHandler;
     }
 
@@ -37,7 +36,7 @@ public class TableOtpLogDetails {
     private static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
     // Table Create Statements
-    public static final String CREATE_TABLE_OTP_LOG_DETAILS = "CREATE TABLE " +
+    static final String CREATE_TABLE_OTP_LOG_DETAILS = "CREATE TABLE " +
             TABLE_RC_OTP_LOG_DETAILS +
             "(" + COLUMN_OLD_ID + " integer NOT NULL PRIMARY KEY AUTOINCREMENT," +
             " " + COLUMN_OLD_OTP + " text NOT NULL," +
@@ -87,7 +86,12 @@ public class TableOtpLogDetails {
             otpLog.setOldValidUpto(cursor.getString(4));
             otpLog.setOldValidityFlag(cursor.getString(5));
             otpLog.setRcProfileMasterPmId(cursor.getString(6));
+
+            cursor.close();
         }
+
+        db.close();
+
         // return otpLog
         return otpLog;
     }
@@ -115,7 +119,12 @@ public class TableOtpLogDetails {
                 // Adding otp to list
                 arrayListOtp.add(otpLog);
             } while (cursor.moveToNext());
+
+            cursor.close();
+
         }
+
+        db.close();
 
         // return otp list
         return arrayListOtp;
@@ -142,7 +151,12 @@ public class TableOtpLogDetails {
                 otpLog.setOldValidityFlag(cursor.getString(5));
                 otpLog.setRcProfileMasterPmId(cursor.getString(6));
             } while (cursor.moveToNext());
+
+            cursor.close();
+
         }
+
+        db.close();
 
         // return otp
         return otpLog;
@@ -162,8 +176,12 @@ public class TableOtpLogDetails {
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, otpLog.getRcProfileMasterPmId());
 
         // updating row
-        return db.update(TABLE_RC_OTP_LOG_DETAILS, values, COLUMN_OLD_ID + " = ?",
+        int isUpdated = db.update(TABLE_RC_OTP_LOG_DETAILS, values, COLUMN_OLD_ID + " = ?",
                 new String[]{String.valueOf(otpLog.getOldId())});
+
+        db.close();
+
+        return isUpdated;
     }
 
     // Deleting single otp
@@ -179,14 +197,20 @@ public class TableOtpLogDetails {
         String countQuery = "SELECT  * FROM " + TABLE_RC_OTP_LOG_DETAILS;
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+
+        cursor.close();
+
+        db.close();
 
         // return count
-        return cursor.getCount();
+        return count;
     }
 
     // Drop Otp Table
     public void dropOtpTable() {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RC_OTP_LOG_DETAILS);
+        db.close();
     }
 }

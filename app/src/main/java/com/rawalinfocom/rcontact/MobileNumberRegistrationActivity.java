@@ -140,8 +140,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
 
                     OtpLog otpLogResponse = otpDetailResponse.getOtpLog();
 
-                    TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(this,
-                            databaseHandler);
+                    TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(databaseHandler);
 
                     Log.i("OTP: ", otpLogResponse.getOldOtp());
                     Toast.makeText(this, otpLogResponse.getOldOtp(), Toast.LENGTH_LONG).show();

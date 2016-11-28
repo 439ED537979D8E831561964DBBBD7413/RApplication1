@@ -67,8 +67,7 @@ public class OtpTimerService extends Service implements WsResponseListener {
 
                     databaseHandler = new DatabaseHandler(OtpTimerService.this);
 
-                    TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(OtpTimerService
-                            .this, databaseHandler);
+                    TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(databaseHandler);
                     OtpLog otpLog = tableOtpLogDetails.getLastOtpDetails();
 
                     // Update OTP validity Flag to 0
@@ -119,7 +118,7 @@ public class OtpTimerService extends Service implements WsResponseListener {
                         databaseHandler = new DatabaseHandler(OtpTimerService.this);
 
                         TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails
-                                (OtpTimerService.this, databaseHandler);
+                                (databaseHandler);
                         OtpLog otpLog = tableOtpLogDetails.getLastOtpDetails();
 
                         Date currentValidityTime = Utils.getStringDateToDate(otpLog

@@ -301,8 +301,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                             AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
                                     .integer.launch_main_activity));
 
-                    TableProfileMaster tableProfileMaster = new TableProfileMaster(this,
-                            databaseHandler);
+                    TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
                     if (userProfileRegistered != null) {
                         tableProfileMaster.addProfile(userProfileRegistered);
                         Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,

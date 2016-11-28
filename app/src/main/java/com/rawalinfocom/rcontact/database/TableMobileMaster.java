@@ -1,26 +1,24 @@
 package com.rawalinfocom.rcontact.database;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.MobileNumber;
 
 import java.util.ArrayList;
 
 /**
  * Created by Monal on 15/11/16.
+ * <p>
+ * Table operations rc_mobile_number_master
  */
 
 public class TableMobileMaster {
 
-    Context context;
-    DatabaseHandler databaseHandler;
+    private DatabaseHandler databaseHandler;
 
-    public TableMobileMaster(Context context, DatabaseHandler databaseHandler) {
-        this.context = context;
+    public TableMobileMaster(DatabaseHandler databaseHandler) {
         this.databaseHandler = databaseHandler;
     }
 
@@ -39,14 +37,11 @@ public class TableMobileMaster {
     private static final String COLUMN_MNM_MOBILE_SERVICE_PROVIDER = "mnm_mobile_service_provider";
     private static final String COLUMN_MNM_CIRCLE_OF_SERVICE = "mnm_circle_of_service";
     private static final String COLUMN_MNM_SPAM_COUNT = "mnm_spam_count";
-    private static final String COLUMN_MNM_UPDATED_AT = "mnm_updated_at";
-    private static final String COLUMN_MNM_UPDATED_DATA = "mnm_updated_data";
-    private static final String COLUMN_MNM_DELETED_AT = "mnm_deleted_at";
     private static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
 
     // Table Create Statements
-    public static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE " +
             TABLE_RC_MOBILE_NUMBER_MASTER + " (" +
             " " + COLUMN_MNM_ID + " integer NOT NULL CONSTRAINT rc_mobile_number_master_pk " +
             "PRIMARY KEY," +
@@ -60,9 +55,6 @@ public class TableMobileMaster {
             " " + COLUMN_MNM_MOBILE_SERVICE_PROVIDER + " text," +
             " " + COLUMN_MNM_CIRCLE_OF_SERVICE + " text," +
             " " + COLUMN_MNM_SPAM_COUNT + " integer," +
-            " " + COLUMN_MNM_UPDATED_AT + " datetime," +
-            " " + COLUMN_MNM_UPDATED_DATA + " integer," +
-            " " + COLUMN_MNM_DELETED_AT + " datetime," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
             ");";
 
@@ -82,9 +74,6 @@ public class TableMobileMaster {
         values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, mobileNumber.getMnmMobileServiceProvider());
         values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, mobileNumber.getMnmCircleOfService());
         values.put(COLUMN_MNM_SPAM_COUNT, mobileNumber.getMnmSpamCount());
-        values.put(COLUMN_MNM_UPDATED_AT, mobileNumber.getMnmUpdatedAt());
-        values.put(COLUMN_MNM_UPDATED_DATA, mobileNumber.getMnmUpdatedData());
-        values.put(COLUMN_MNM_DELETED_AT, mobileNumber.getMnmDeletedAt());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, mobileNumber.getRcProfileMasterPmId());
 
 
@@ -102,11 +91,9 @@ public class TableMobileMaster {
                 COLUMN_MNM_MOBILE_NUMBER, COLUMN_MNM_NUMBER_TYPE, COLUMN_MNM_CUSTOM_TYPE,
                 COLUMN_MNM_IS_PRIMARY, COLUMN_MNM_NUMBER_PRIVACY, COLUMN_MNM_IS_DEFAULT,
                 COLUMN_MNM_IS_VERIFIED, COLUMN_MNM_MOBILE_SERVICE_PROVIDER,
-                COLUMN_MNM_CIRCLE_OF_SERVICE,
-                COLUMN_MNM_SPAM_COUNT, COLUMN_MNM_UPDATED_AT, COLUMN_MNM_UPDATED_DATA,
-                COLUMN_MNM_DELETED_AT, COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_MNM_ID + "=?", new
-                String[]{String.valueOf
-                (mnmId)}, null, null, null, null);
+                COLUMN_MNM_CIRCLE_OF_SERVICE, COLUMN_MNM_SPAM_COUNT,
+                COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_MNM_ID + "=?", new String[]{String
+                .valueOf(mnmId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -122,11 +109,13 @@ public class TableMobileMaster {
             mobileNumber.setMnmIsVerified(cursor.getString(7));
             mobileNumber.setMnmCircleOfService(cursor.getString(8));
             mobileNumber.setMnmSpamCount(cursor.getString(9));
-            mobileNumber.setMnmUpdatedAt(cursor.getString(10));
-            mobileNumber.setMnmUpdatedData(cursor.getString(11));
-            mobileNumber.setMnmDeletedAt(cursor.getString(12));
-            mobileNumber.setRcProfileMasterPmId(cursor.getString(13));
+            mobileNumber.setRcProfileMasterPmId(cursor.getString(10));
+
+            cursor.close();
         }
+
+        db.close();
+
         // return Mobile Number
         return mobileNumber;
     }
@@ -154,14 +143,16 @@ public class TableMobileMaster {
                 mobileNumber.setMnmIsVerified(cursor.getString(7));
                 mobileNumber.setMnmCircleOfService(cursor.getString(8));
                 mobileNumber.setMnmSpamCount(cursor.getString(9));
-                mobileNumber.setMnmUpdatedAt(cursor.getString(10));
-                mobileNumber.setMnmUpdatedData(cursor.getString(11));
-                mobileNumber.setMnmDeletedAt(cursor.getString(12));
-                mobileNumber.setRcProfileMasterPmId(cursor.getString(13));
+                mobileNumber.setRcProfileMasterPmId(cursor.getString(10));
                 // Adding Mobile Number to list
                 arrayListMobileNumber.add(mobileNumber);
             } while (cursor.moveToNext());
+
+            cursor.close();
+
         }
+
+        db.close();
 
         // return Mobile Number list
         return arrayListMobileNumber;
@@ -172,10 +163,11 @@ public class TableMobileMaster {
         String countQuery = "SELECT  * FROM " + TABLE_RC_MOBILE_NUMBER_MASTER;
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
         cursor.close();
-
+        db.close();
         // return count
-        return cursor.getCount();
+        return count;
     }
 
     // Updating single Mobile Number
@@ -194,14 +186,15 @@ public class TableMobileMaster {
         values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, mobileNumber.getMnmMobileServiceProvider());
         values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, mobileNumber.getMnmCircleOfService());
         values.put(COLUMN_MNM_SPAM_COUNT, mobileNumber.getMnmSpamCount());
-        values.put(COLUMN_MNM_UPDATED_AT, mobileNumber.getMnmUpdatedAt());
-        values.put(COLUMN_MNM_UPDATED_DATA, mobileNumber.getMnmUpdatedData());
-        values.put(COLUMN_MNM_DELETED_AT, mobileNumber.getMnmDeletedAt());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, mobileNumber.getRcProfileMasterPmId());
 
         // updating row
-        return db.update(TABLE_RC_MOBILE_NUMBER_MASTER, values, COLUMN_MNM_ID + " = ?",
+        int isUpdated = db.update(TABLE_RC_MOBILE_NUMBER_MASTER, values, COLUMN_MNM_ID + " = ?",
                 new String[]{String.valueOf(mobileNumber.getMnmId())});
+
+        db.close();
+
+        return isUpdated;
     }
 
     // Deleting single Mobile Number

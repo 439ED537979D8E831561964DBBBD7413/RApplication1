@@ -135,8 +135,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
                     OtpLog otpLogResponse = otpDetailResponse.getOtpLog();
 
-                    TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(this,
-                            databaseHandler);
+                    TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(databaseHandler);
 
                     if (tableOtpLogDetails.getOtpCount() > 0 && tableOtpLogDetails
                             .getLastOtpDetails().getOldOtp().equalsIgnoreCase
@@ -281,8 +280,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
     private void verifyOtp() {
         if (StringUtils.length(inputOtp.getText().toString()) == AppConstants.OTP_LENGTH) {
-            TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails
-                    (OtpVerificationActivity.this, databaseHandler);
+            TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(databaseHandler);
             OtpLog otpLog = tableOtpLogDetails.getLastOtpDetails();
             if (otpLog.getOldValidityFlag().equalsIgnoreCase("1")) {
                 if (otpLog.getOldOtp().equals(inputOtp.getText().toString())) {

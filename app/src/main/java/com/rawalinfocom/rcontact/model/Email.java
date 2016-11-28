@@ -14,9 +14,6 @@ public class Email {
     private String emEmailPrivacy;
     private String emIsDefault;
     private String emIsVerified;
-    private String emUpdatedAt;
-    private String emUpdatedData;
-    private String emDeletedAt;
     private String rcProfileMasterPmId;
 
     public String getEmId() {
@@ -81,30 +78,6 @@ public class Email {
 
     public void setEmIsVerified(String emIsVerified) {
         this.emIsVerified = emIsVerified;
-    }
-
-    public String getEmUpdatedAt() {
-        return emUpdatedAt;
-    }
-
-    public void setEmUpdatedAt(String emUpdatedAt) {
-        this.emUpdatedAt = emUpdatedAt;
-    }
-
-    public String getEmUpdatedData() {
-        return emUpdatedData;
-    }
-
-    public void setEmUpdatedData(String emUpdatedData) {
-        this.emUpdatedData = emUpdatedData;
-    }
-
-    public String getEmDeletedAt() {
-        return emDeletedAt;
-    }
-
-    public void setEmDeletedAt(String emDeletedAt) {
-        this.emDeletedAt = emDeletedAt;
     }
 
     public String getRcProfileMasterPmId() {

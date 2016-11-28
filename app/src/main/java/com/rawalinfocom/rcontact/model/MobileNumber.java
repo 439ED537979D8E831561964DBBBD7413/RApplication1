@@ -17,9 +17,6 @@ public class MobileNumber {
     private String mnmMobileServiceProvider;
     private String mnmCircleOfService;
     private String mnmSpamCount;
-    private String mnmUpdatedAt;
-    private String mnmUpdatedData;
-    private String mnmDeletedAt;
     private String rcProfileMasterPmId;
 
     public String getMnmId() {
@@ -108,30 +105,6 @@ public class MobileNumber {
 
     public void setMnmSpamCount(String mnmSpamCount) {
         this.mnmSpamCount = mnmSpamCount;
-    }
-
-    public String getMnmUpdatedAt() {
-        return mnmUpdatedAt;
-    }
-
-    public void setMnmUpdatedAt(String mnmUpdatedAt) {
-        this.mnmUpdatedAt = mnmUpdatedAt;
-    }
-
-    public String getMnmUpdatedData() {
-        return mnmUpdatedData;
-    }
-
-    public void setMnmUpdatedData(String mnmUpdatedData) {
-        this.mnmUpdatedData = mnmUpdatedData;
-    }
-
-    public String getMnmDeletedAt() {
-        return mnmDeletedAt;
-    }
-
-    public void setMnmDeletedAt(String mnmDeletedAt) {
-        this.mnmDeletedAt = mnmDeletedAt;
     }
 
     public String getRcProfileMasterPmId() {

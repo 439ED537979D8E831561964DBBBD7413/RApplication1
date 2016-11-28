@@ -1,12 +1,28 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
+                xmlns:wheel="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/relative_root_all_contacts"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
 
-    <TextView
+    <com.rawalinfocom.rcontact.helper.ProgressWheel
+        android:id="@+id/progress_all_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        wheel:matProg_barColor="@color/colorAccent"
+        wheel:matProg_progressIndeterminate="true"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_contact_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="All Contacts"/>
+        android:layout_height="wrap_content"/>
+
+    <include
+        layout="@layout/layout_recyclerview_emptyview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
 
 </RelativeLayout>
