@@ -27,6 +27,7 @@ public class TableMobileMaster {
 
     // Column Names
     private static final String COLUMN_MNM_ID = "mnm_id";
+    private static final String COLUMN_MNM_CLOUD_ID = "mnm_cloud_id";
     private static final String COLUMN_MNM_MOBILE_NUMBER = "mnm_mobile_number";
     private static final String COLUMN_MNM_NUMBER_TYPE = "mnm_number_type";
     private static final String COLUMN_MNM_CUSTOM_TYPE = "mnm_custom_type";
@@ -45,6 +46,7 @@ public class TableMobileMaster {
             TABLE_RC_MOBILE_NUMBER_MASTER + " (" +
             " " + COLUMN_MNM_ID + " integer NOT NULL CONSTRAINT rc_mobile_number_master_pk " +
             "PRIMARY KEY," +
+            " " + COLUMN_MNM_CLOUD_ID + " integer," +
             " " + COLUMN_MNM_MOBILE_NUMBER + " text NOT NULL," +
             " " + COLUMN_MNM_NUMBER_TYPE + " text NOT NULL," +
             " " + COLUMN_MNM_CUSTOM_TYPE + " text," +
@@ -64,6 +66,7 @@ public class TableMobileMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_MNM_ID, mobileNumber.getMnmId());
+        values.put(COLUMN_MNM_CLOUD_ID, mobileNumber.getMnmCloudId());
         values.put(COLUMN_MNM_MOBILE_NUMBER, mobileNumber.getMnmMobileNumber());
         values.put(COLUMN_MNM_NUMBER_TYPE, mobileNumber.getMnmNumberType());
         values.put(COLUMN_MNM_CUSTOM_TYPE, mobileNumber.getMnmCustomType());
@@ -88,28 +91,29 @@ public class TableMobileMaster {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RC_MOBILE_NUMBER_MASTER, new String[]{COLUMN_MNM_ID,
-                COLUMN_MNM_MOBILE_NUMBER, COLUMN_MNM_NUMBER_TYPE, COLUMN_MNM_CUSTOM_TYPE,
-                COLUMN_MNM_IS_PRIMARY, COLUMN_MNM_NUMBER_PRIVACY, COLUMN_MNM_IS_DEFAULT,
-                COLUMN_MNM_IS_VERIFIED, COLUMN_MNM_MOBILE_SERVICE_PROVIDER,
-                COLUMN_MNM_CIRCLE_OF_SERVICE, COLUMN_MNM_SPAM_COUNT,
-                COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_MNM_ID + "=?", new String[]{String
-                .valueOf(mnmId)}, null, null, null, null);
+                COLUMN_MNM_CLOUD_ID, COLUMN_MNM_MOBILE_NUMBER, COLUMN_MNM_NUMBER_TYPE,
+                COLUMN_MNM_CUSTOM_TYPE, COLUMN_MNM_IS_PRIMARY, COLUMN_MNM_NUMBER_PRIVACY,
+                COLUMN_MNM_IS_DEFAULT, COLUMN_MNM_IS_VERIFIED,
+                COLUMN_MNM_MOBILE_SERVICE_PROVIDER, COLUMN_MNM_CIRCLE_OF_SERVICE,
+                COLUMN_MNM_SPAM_COUNT, COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_MNM_ID + "=?", new
+                String[]{String.valueOf(mnmId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
         MobileNumber mobileNumber = new MobileNumber();
         if (cursor != null) {
             mobileNumber.setMnmId(cursor.getString(0));
-            mobileNumber.setMnmMobileNumber(cursor.getString(1));
-            mobileNumber.setMnmNumberType(cursor.getString(2));
-            mobileNumber.setMnmCustomType(cursor.getString(3));
-            mobileNumber.setMnmIsPrimary(cursor.getString(4));
-            mobileNumber.setMnmNumberPrivacy(cursor.getString(5));
-            mobileNumber.setMnmIsDefault(cursor.getString(6));
-            mobileNumber.setMnmIsVerified(cursor.getString(7));
-            mobileNumber.setMnmCircleOfService(cursor.getString(8));
-            mobileNumber.setMnmSpamCount(cursor.getString(9));
-            mobileNumber.setRcProfileMasterPmId(cursor.getString(10));
+            mobileNumber.setMnmCloudId(cursor.getString(1));
+            mobileNumber.setMnmMobileNumber(cursor.getString(2));
+            mobileNumber.setMnmNumberType(cursor.getString(3));
+            mobileNumber.setMnmCustomType(cursor.getString(4));
+            mobileNumber.setMnmIsPrimary(cursor.getString(5));
+            mobileNumber.setMnmNumberPrivacy(cursor.getString(6));
+            mobileNumber.setMnmIsDefault(cursor.getString(7));
+            mobileNumber.setMnmIsVerified(cursor.getString(8));
+            mobileNumber.setMnmCircleOfService(cursor.getString(9));
+            mobileNumber.setMnmSpamCount(cursor.getString(10));
+            mobileNumber.setRcProfileMasterPmId(cursor.getString(11));
 
             cursor.close();
         }
@@ -134,16 +138,17 @@ public class TableMobileMaster {
             do {
                 MobileNumber mobileNumber = new MobileNumber();
                 mobileNumber.setMnmId(cursor.getString(0));
-                mobileNumber.setMnmMobileNumber(cursor.getString(1));
-                mobileNumber.setMnmNumberType(cursor.getString(2));
-                mobileNumber.setMnmCustomType(cursor.getString(3));
-                mobileNumber.setMnmIsPrimary(cursor.getString(4));
-                mobileNumber.setMnmNumberPrivacy(cursor.getString(5));
-                mobileNumber.setMnmIsDefault(cursor.getString(6));
-                mobileNumber.setMnmIsVerified(cursor.getString(7));
-                mobileNumber.setMnmCircleOfService(cursor.getString(8));
-                mobileNumber.setMnmSpamCount(cursor.getString(9));
-                mobileNumber.setRcProfileMasterPmId(cursor.getString(10));
+                mobileNumber.setMnmCloudId(cursor.getString(1));
+                mobileNumber.setMnmMobileNumber(cursor.getString(2));
+                mobileNumber.setMnmNumberType(cursor.getString(3));
+                mobileNumber.setMnmCustomType(cursor.getString(4));
+                mobileNumber.setMnmIsPrimary(cursor.getString(5));
+                mobileNumber.setMnmNumberPrivacy(cursor.getString(6));
+                mobileNumber.setMnmIsDefault(cursor.getString(7));
+                mobileNumber.setMnmIsVerified(cursor.getString(8));
+                mobileNumber.setMnmCircleOfService(cursor.getString(9));
+                mobileNumber.setMnmSpamCount(cursor.getString(10));
+                mobileNumber.setRcProfileMasterPmId(cursor.getString(11));
                 // Adding Mobile Number to list
                 arrayListMobileNumber.add(mobileNumber);
             } while (cursor.moveToNext());
@@ -176,6 +181,7 @@ public class TableMobileMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_MNM_ID, mobileNumber.getMnmId());
+        values.put(COLUMN_MNM_CLOUD_ID, mobileNumber.getMnmCloudId());
         values.put(COLUMN_MNM_MOBILE_NUMBER, mobileNumber.getMnmMobileNumber());
         values.put(COLUMN_MNM_NUMBER_TYPE, mobileNumber.getMnmNumberType());
         values.put(COLUMN_MNM_CUSTOM_TYPE, mobileNumber.getMnmCustomType());

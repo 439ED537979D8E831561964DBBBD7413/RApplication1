@@ -27,6 +27,7 @@ public class TableEmailMaster {
 
     // Column Names
     private static final String COLUMN_EM_ID = "em_id";
+    private static final String COLUMN_EM_CLOUD_ID = "em_cloud_id";
     private static final String COLUMN_EM_EMAIL_ADDRESS = "em_email_address";
     private static final String COLUMN_EM_EMAIL_TYPE = "em_email_type";
     private static final String COLUMN_EM_CUSTOM_TYPE = "em_custom_type";
@@ -41,6 +42,7 @@ public class TableEmailMaster {
     static final String CREATE_TABLE_RC_EMAIL_MASTER = "CREATE TABLE " +
             TABLE_RC_EMAIL_MASTER + " (" +
             " " + COLUMN_EM_ID + " integer NOT NULL CONSTRAINT rc_email_master_pk PRIMARY KEY," +
+            " " + COLUMN_EM_CLOUD_ID + " integer," +
             " " + COLUMN_EM_EMAIL_ADDRESS + " text NOT NULL," +
             " " + COLUMN_EM_EMAIL_TYPE + " text NOT NULL," +
             " " + COLUMN_EM_CUSTOM_TYPE + " text," +
@@ -57,6 +59,7 @@ public class TableEmailMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_EM_ID, email.getEmId());
+        values.put(COLUMN_EM_CLOUD_ID, email.getEmCloudId());
         values.put(COLUMN_EM_EMAIL_ADDRESS, email.getEmEmailAddress());
         values.put(COLUMN_EM_EMAIL_TYPE, email.getEmEmailType());
         values.put(COLUMN_EM_CUSTOM_TYPE, email.getEmCustomType());
@@ -77,24 +80,26 @@ public class TableEmailMaster {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RC_EMAIL_MASTER, new String[]{COLUMN_EM_ID,
-                COLUMN_EM_EMAIL_ADDRESS, COLUMN_EM_EMAIL_TYPE, COLUMN_EM_CUSTOM_TYPE,
-                COLUMN_EM_IS_PRIMARY, COLUMN_EM_EMAIL_PRIVACY, COLUMN_EM_IS_DEFAULT,
-                COLUMN_EM_IS_VERIFIED, COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_EM_ID + "=?", new
-                String[]{String.valueOf(emId)}, null, null, null, null);
+                        COLUMN_EM_CLOUD_ID, COLUMN_EM_EMAIL_ADDRESS, COLUMN_EM_EMAIL_TYPE,
+                        COLUMN_EM_CUSTOM_TYPE, COLUMN_EM_IS_PRIMARY, COLUMN_EM_EMAIL_PRIVACY,
+                        COLUMN_EM_IS_DEFAULT, COLUMN_EM_IS_VERIFIED,
+                COLUMN_RC_PROFILE_MASTER_PM_ID},
+                COLUMN_EM_ID + "=?", new String[]{String.valueOf(emId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
         Email email = new Email();
         if (cursor != null) {
             email.setEmId(cursor.getString(0));
-            email.setEmEmailAddress(cursor.getString(1));
-            email.setEmEmailType(cursor.getString(2));
-            email.setEmCustomType(cursor.getString(3));
-            email.setEmIsPrimary(cursor.getString(4));
-            email.setEmEmailPrivacy(cursor.getString(5));
-            email.setEmIsDefault(cursor.getString(6));
-            email.setEmIsVerified(cursor.getString(7));
-            email.setRcProfileMasterPmId(cursor.getString(8));
+            email.setEmCloudId(cursor.getString(1));
+            email.setEmEmailAddress(cursor.getString(2));
+            email.setEmEmailType(cursor.getString(3));
+            email.setEmCustomType(cursor.getString(4));
+            email.setEmIsPrimary(cursor.getString(5));
+            email.setEmEmailPrivacy(cursor.getString(6));
+            email.setEmIsDefault(cursor.getString(7));
+            email.setEmIsVerified(cursor.getString(8));
+            email.setRcProfileMasterPmId(cursor.getString(9));
 
             cursor.close();
         }
@@ -119,14 +124,15 @@ public class TableEmailMaster {
             do {
                 Email email = new Email();
                 email.setEmId(cursor.getString(0));
-                email.setEmEmailAddress(cursor.getString(1));
-                email.setEmEmailType(cursor.getString(2));
-                email.setEmCustomType(cursor.getString(3));
-                email.setEmIsPrimary(cursor.getString(4));
-                email.setEmEmailPrivacy(cursor.getString(5));
-                email.setEmIsDefault(cursor.getString(6));
-                email.setEmIsVerified(cursor.getString(7));
-                email.setRcProfileMasterPmId(cursor.getString(8));
+                email.setEmCloudId(cursor.getString(1));
+                email.setEmEmailAddress(cursor.getString(2));
+                email.setEmEmailType(cursor.getString(3));
+                email.setEmCustomType(cursor.getString(4));
+                email.setEmIsPrimary(cursor.getString(5));
+                email.setEmEmailPrivacy(cursor.getString(6));
+                email.setEmIsDefault(cursor.getString(7));
+                email.setEmIsVerified(cursor.getString(8));
+                email.setRcProfileMasterPmId(cursor.getString(9));
                 // Adding email to list
                 arrayListEmail.add(email);
             } while (cursor.moveToNext());
@@ -161,6 +167,7 @@ public class TableEmailMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_EM_ID, email.getEmId());
+        values.put(COLUMN_EM_CLOUD_ID, email.getEmCloudId());
         values.put(COLUMN_EM_EMAIL_ADDRESS, email.getEmEmailAddress());
         values.put(COLUMN_EM_EMAIL_TYPE, email.getEmEmailType());
         values.put(COLUMN_EM_CUSTOM_TYPE, email.getEmCustomType());

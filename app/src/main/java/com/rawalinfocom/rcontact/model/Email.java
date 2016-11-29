@@ -7,6 +7,7 @@ package com.rawalinfocom.rcontact.model;
 public class Email {
 
     private String emId;
+    private String emCloudId;
     private String emEmailAddress;
     private String emEmailType;
     private String emCustomType;
@@ -22,6 +23,14 @@ public class Email {
 
     public void setEmId(String emId) {
         this.emId = emId;
+    }
+
+    public String getEmCloudId() {
+        return emCloudId;
+    }
+
+    public void setEmCloudId(String emCloudId) {
+        this.emCloudId = emCloudId;
     }
 
     public String getEmEmailAddress() {

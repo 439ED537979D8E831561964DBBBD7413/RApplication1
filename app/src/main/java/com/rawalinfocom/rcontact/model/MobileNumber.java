@@ -7,6 +7,7 @@ package com.rawalinfocom.rcontact.model;
 public class MobileNumber {
 
     private String mnmId;
+    private String mnmCloudId;
     private String mnmMobileNumber;
     private String mnmNumberType;
     private String mnmCustomType;
@@ -25,6 +26,14 @@ public class MobileNumber {
 
     public void setMnmId(String mnmId) {
         this.mnmId = mnmId;
+    }
+
+    public String getMnmCloudId() {
+        return mnmCloudId;
+    }
+
+    public void setMnmCloudId(String mnmCloudId) {
+        this.mnmCloudId = mnmCloudId;
     }
 
     public String getMnmMobileNumber() {
