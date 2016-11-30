@@ -33,6 +33,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableMobileMaster.CREATE_TABLE_RC_MOBILE_NUMBER_MASTER);
         db.execSQL(TableProfileMobileMapping.CREATE_TABLE_PB_PROFILE_MOBILE_MAPPING);
         db.execSQL(TableProfileEmailMapping.CREATE_TABLE_PB_PROFILE_EMAIL_MAPPING);
+        db.execSQL(TableAddressMaster.CREATE_TABLE_RC_ADDRESS_MASTER);
+        db.execSQL(TableEventMaster.CREATE_TABLE_RC_EVENT_MASTER);
+        db.execSQL(TableFlagMaster.CREATE_TABLE_RC_FLAG_MASTER);
+        db.execSQL(TableImMaster.CREATE_TABLE_RC_IM_MASTER);
+        db.execSQL(TableOfflineBackupMaster.CREATE_TABLE_PB_OFFLINE_BACKUP_MASTER);
+        db.execSQL(TableOrganizationMaster.CREATE_TABLE_RC_ORGANIZATION_MASTER);
+        db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
+        db.execSQL(TableWebsiteMaster.CREATE_TABLE_RC_EMAIL_MASTER);
     }
 
     @Override
@@ -48,6 +56,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 .CREATE_TABLE_PB_PROFILE_MOBILE_MAPPING);
         db.execSQL("DROP TABLE IF EXISTS " + TableProfileEmailMapping
                 .CREATE_TABLE_PB_PROFILE_EMAIL_MAPPING);
+        db.execSQL("DROP TABLE IF EXISTS " + TableAddressMaster.CREATE_TABLE_RC_ADDRESS_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableEventMaster.CREATE_TABLE_RC_EVENT_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableFlagMaster.CREATE_TABLE_RC_FLAG_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableImMaster.CREATE_TABLE_RC_IM_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableOfflineBackupMaster
+                .CREATE_TABLE_PB_OFFLINE_BACKUP_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableOrganizationMaster
+                .CREATE_TABLE_RC_ORGANIZATION_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableWebsiteMaster.CREATE_TABLE_RC_EMAIL_MASTER);
 
         // create new tables
         onCreate(db);

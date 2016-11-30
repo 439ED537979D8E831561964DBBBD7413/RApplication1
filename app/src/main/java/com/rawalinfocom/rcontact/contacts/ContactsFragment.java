@@ -104,6 +104,9 @@ public class ContactsFragment extends BaseFragment {
                 replaceFragment(favoritesFragment);
             }
         });
+
+        buttonAllContacts.setSelected(true);
+        buttonAllContacts.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
     }
 
     private void replaceFragment(Fragment fragment) {

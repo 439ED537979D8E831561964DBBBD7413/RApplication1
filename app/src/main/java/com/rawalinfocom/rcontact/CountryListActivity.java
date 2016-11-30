@@ -189,7 +189,7 @@ public class CountryListActivity extends BaseActivity implements WsResponseListe
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
                     WsResponseObject.class, WsConstants.REQ_COUNTRY_CODE_DETAIL, getString(R
-                    .string.msg_please_wait)).execute(WsConstants.WS_ROOT + WsConstants
+                    .string.msg_please_wait), false).execute(WsConstants.WS_ROOT + WsConstants
                     .REQ_COUNTRY_CODE_DETAIL);
         } else {
             Utils.showErrorSnackBar(this, relativeRootCountryList, getResources()

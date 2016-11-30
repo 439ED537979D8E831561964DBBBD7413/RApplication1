@@ -111,6 +111,38 @@ public class TableProfileMobileMapping {
         return profileMobileMapping;
     }
 
+    // Getting Profile Mobile Mapping from Mobile Numbers
+    public ArrayList<String> getProfileMobileMappingFromNumber(String[] mobileNumbers) {
+
+        ArrayList<String> arrayListMobileNumbers = new ArrayList<>();
+
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+
+        String query = "SELECT " + COLUMN_MPM_MOBILE_NUMBER + " FROM " +
+                TABLE_PB_PROFILE_MOBILE_MAPPING + " where " + COLUMN_MPM_IS_RCP + " = 1 and " +
+                COLUMN_MPM_MOBILE_NUMBER + " IN (" + makePlaceholders(mobileNumbers.length) + ")";
+
+        Cursor cursor = db.rawQuery(query, mobileNumbers);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                String number = cursor.getString(0);
+
+                // Adding mobile number to list
+                arrayListMobileNumbers.add(number);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        // return Mobile Number list
+        return arrayListMobileNumbers;
+    }
+
     // Getting single Profile Mobile Mapping from MobileNumber
     public boolean getIsMobileNumberExists(String mobileNumber) {
 
@@ -206,5 +238,19 @@ public class TableProfileMobileMapping {
         db.delete(TABLE_PB_PROFILE_MOBILE_MAPPING, COLUMN_MPM_ID + " = ?",
                 new String[]{String.valueOf(profileMobileMapping.getMpmId())});
         db.close();
+    }
+
+    String makePlaceholders(int len) {
+        if (len < 1) {
+            // It will lead to an invalid query anyway ..
+            throw new RuntimeException("No placeholders");
+        } else {
+            StringBuilder sb = new StringBuilder(len * 2 - 1);
+            sb.append("?");
+            for (int i = 1; i < len; i++) {
+                sb.append(",?");
+            }
+            return sb.toString();
+        }
     }
 }

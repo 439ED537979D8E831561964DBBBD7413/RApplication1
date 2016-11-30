@@ -192,6 +192,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                             .PREF_REGS_USER_OBJECT, userProfile);
                     Utils.setStringPreference(OtpVerificationActivity.this, AppConstants
                             .PREF_USER_PM_ID, userProfile.getPmId());
+                    Utils.setStringPreference(OtpVerificationActivity.this, AppConstants
+                            .PREF_ACCESS_TOKEN, getDeviceTokenId() + "_" + userProfile.getPmId());
 
                     // set launch screen as OtpVerificationActivity
                     Utils.setIntegerPreference(OtpVerificationActivity.this,
@@ -345,7 +347,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_SEND_OTP, getString(R.string
-                    .msg_please_wait)).execute(WsConstants.WS_ROOT + WsConstants.REQ_SEND_OTP);
+                    .msg_please_wait), false).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_SEND_OTP);
         } else {
             Utils.showErrorSnackBar(this, relativeRootOtpVerification, getResources()
                     .getString(R.string.msg_no_network));
@@ -367,7 +370,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_OTP_CONFIRMED, getString(R
-                    .string.msg_please_wait)).execute
+                    .string.msg_please_wait), false).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_OTP_CONFIRMED);
         } else {
             Utils.showErrorSnackBar(this, relativeRootOtpVerification, getResources()

@@ -297,7 +297,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_SEND_OTP, getString(R.string
-                    .msg_please_wait)).execute(WsConstants.WS_ROOT + WsConstants.REQ_SEND_OTP);
+                    .msg_please_wait), false).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_SEND_OTP);
         } else {
             Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources()
                     .getString(R.string.msg_no_network));
@@ -314,7 +315,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_UPLOAD_IMAGE, getString(R.string
-                    .msg_please_wait)).execute(WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_IMAGE);
+                    .msg_please_wait), false).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_UPLOAD_IMAGE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources()
                     .getString(R.string.msg_no_network));

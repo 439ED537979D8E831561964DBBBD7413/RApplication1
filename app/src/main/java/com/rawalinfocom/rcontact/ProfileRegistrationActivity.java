@@ -89,7 +89,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     @BindView(R.id.includeToolbar)
     LinearLayout includeToolbar;
-    RelativeLayout relativeActionBack;
+    RippleView rippleActionBack;
     TextView textToolbarTitle;
     @BindView(R.id.input_first_name)
     EditText inputFirstName;
@@ -346,9 +346,9 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         inputEmailId.setText(userProfile.getEmailId());
 
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
-        relativeActionBack = ButterKnife.findById(includeToolbar, R.id.relative_action_back);
+        rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
 
-        relativeActionBack.setVisibility(View.GONE);
+        rippleActionBack.setVisibility(View.INVISIBLE);
 
         textToolbarTitle.setText(R.string.title_profile_registration);
 
@@ -544,7 +544,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     profileRegistrationObject, null, WsResponseObject.class, WsConstants
-                    .REQ_PROFILE_REGISTRATION, getString(R.string.msg_please_wait)).execute
+                    .REQ_PROFILE_REGISTRATION, getString(R.string.msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_REGISTRATION);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()

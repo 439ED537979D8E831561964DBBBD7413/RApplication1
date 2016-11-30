@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,9 +23,12 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.database.DatabaseHandler;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
@@ -40,6 +44,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationRelationship;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
+import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.services.ContactIdFetchService;
@@ -54,7 +59,7 @@ import butterknife.ButterKnife;
 
 public class AllContactsFragment extends BaseFragment implements WsResponseListener {
 
-    private final int CONTACT_CHUNK = 5;
+    private final int CONTACT_CHUNK = 4;
 
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
@@ -65,13 +70,19 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
 
+    ArrayList<ProfileData> arrayListPhoneBookContacts;
     ArrayList<ProfileData> arrayListUserContact;
     ArrayList<String> arrayListContactId;
     ArrayList<String> arrayListContactNumbers;
 
+    DatabaseHandler databaseHandler;
+
+    AllContactListAdapter allContactListAdapter;
+
 
     public AllContactsFragment() {
         // Required empty public constructor
+
     }
 
 
@@ -82,6 +93,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
+        arrayListPhoneBookContacts = new ArrayList<>();
     }
 
     @Override
@@ -115,38 +128,38 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 if (uploadContactResponse != null && StringUtils.equalsIgnoreCase
                         (uploadContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
+                    /* Save synced data details */
                     String previouslySyncedData = (StringUtils.split(serviceType, "_"))[1];
                     int nextNumber = Integer.parseInt(StringUtils.defaultString
                             (previouslySyncedData, "0")) + CONTACT_CHUNK;
                     Utils.setIntegerPreference(getActivity(), AppConstants.PREF_SYNCED_CONTACTS,
                             nextNumber);
 
-                    if (!Utils.isArraylistNullOrEmpty(arrayListContactNumbers)) {
-                        TableProfileMobileMapping tableProfileMobileMapping = new
-                                TableProfileMobileMapping(((BaseActivity) getActivity())
-                                .databaseHandler);
-                        ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new
-                                ArrayList<>();
-                        for (int i = 0; i < arrayListContactNumbers.size(); i++) {
-                            if (!tableProfileMobileMapping.getIsMobileNumberExists
-                                    (arrayListContactNumbers.get(i))) {
+                    if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+                            .getArrayListUserRcProfile())) {
 
-                                ProfileMobileMapping profileMobileMapping = new
-                                        ProfileMobileMapping();
-                                profileMobileMapping.setMpmMobileNumber(arrayListContactNumbers
-                                        .get(i));
-                                profileMobileMapping.setMpmIsRcp("0");
-                                arrayListProfileMobileMapping.add(profileMobileMapping);
-                            }
-                        }
-                        tableProfileMobileMapping.addArrayProfileMobileMapping
-                                (arrayListProfileMobileMapping);
+                        /* Store Unique Contacts to ProfileMobileMapping */
+                        storeToMobileMapping(uploadContactResponse.getArrayListUserRcProfile());
+
+                        /* Store Profile Details to respective Table */
+                        storeProfileDataToDb(uploadContactResponse.getArrayListUserRcProfile());
+                    } else {
+
+                        /* Store Unique Contacts to ProfileMobileMapping */
+                        storeToMobileMapping(null);
 
                     }
 
+                    /* Call uploadContact api if there is more data to sync */
                     if (nextNumber < arrayListContactId.size()) {
                         phoneBookOperations();
+                    } else {
+                        Utils.showSuccessSnackbar(getActivity(), relativeRootAllContacts, "All " +
+                                "Contact Synced");
                     }
+
+                    /* Populate recycler view */
+                    populateRecyclerView();
 
                 } else {
                     if (uploadContactResponse != null) {
@@ -161,7 +174,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
         } else {
-//            AppUtils.hideProgressDialog();
+            progressAllContact.setVisibility(View.GONE);
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, "" + error
                     .getLocalizedMessage());
         }
@@ -174,6 +187,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     }
 
     //<editor-fold desc="Private Methods">
+
     private void init() {
         HashSet<String> retrievedContactIdSet = (HashSet<String>) Utils.getStringSetPreference
                 (getActivity(), AppConstants.PREF_CONTACT_ID_SET);
@@ -186,7 +200,85 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             Intent contactIdFetchService = new Intent(getActivity(), ContactIdFetchService.class);
             getActivity().startService(contactIdFetchService);
         }
+
+        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
+
+    private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
+        if (!Utils.isArraylistNullOrEmpty(arrayListContactNumbers)) {
+            TableProfileMobileMapping tableProfileMobileMapping = new
+                    TableProfileMobileMapping(databaseHandler);
+            ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new
+                    ArrayList<>();
+            for (int i = 0; i < arrayListContactNumbers.size(); i++) {
+                if (!tableProfileMobileMapping.getIsMobileNumberExists
+                        (arrayListContactNumbers.get(i))) {
+
+                    ProfileMobileMapping profileMobileMapping = new
+                            ProfileMobileMapping();
+                    profileMobileMapping.setMpmMobileNumber(arrayListContactNumbers
+                            .get(i));
+                    profileMobileMapping.setMpmIsRcp("0");
+                    if (!Utils.isArraylistNullOrEmpty(profileData)) {
+                        for (int j = 0; j < profileData.size(); j++) {
+                            if (StringUtils.equalsIgnoreCase(arrayListContactNumbers.get(i),
+                                    profileData.get(j).getVerifiedMobileNumber())) {
+                                profileMobileMapping.setMpmCloudMnmId(profileData.get(j)
+                                        .getMnmCloudId());
+                                profileMobileMapping.setMpmCloudPmId(profileData.get(j)
+                                        .getRcpPmId());
+                                profileMobileMapping.setMpmIsRcp("1");
+                            }
+                        }
+                    }
+
+                    arrayListProfileMobileMapping.add(profileMobileMapping);
+                }
+            }
+            tableProfileMobileMapping.addArrayProfileMobileMapping
+                    (arrayListProfileMobileMapping);
+        }
+
+
+    }
+
+    private void storeProfileDataToDb(ArrayList<ProfileDataOperation> profileData) {
+
+        // Basic Profile Data
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+
+        ArrayList<UserProfile> arrayListUserProfile = new ArrayList<>();
+        for (int i = 0; i < profileData.size(); i++) {
+            UserProfile userProfile = new UserProfile();
+            userProfile.setPmSuffix(profileData.get(i).getPbNameSuffix());
+            userProfile.setPmPrefix(profileData.get(i).getPbNamePrefix());
+            userProfile.setPmFirstName(profileData.get(i).getPbNameFirst());
+            userProfile.setPmMiddleName(profileData.get(i).getPbNameMiddle());
+            userProfile.setPmLastName(profileData.get(i).getPbNameLast());
+            userProfile.setPmPhoneticFirstName(profileData.get(i).getPbPhoneticNameFirst());
+            userProfile.setPmPhoneticMiddleName(profileData.get(i).getPbPhoneticNameMiddle());
+            userProfile.setPmPhoneticLastName(profileData.get(i).getPbPhoneticNameLast());
+            userProfile.setPmIsFavourite(profileData.get(i).getIsFavourite());
+            userProfile.setPmNotes(profileData.get(i).getPbNote());
+            userProfile.setPmNickName(profileData.get(i).getPbNickname());
+            userProfile.setPmRcpId(profileData.get(i).getRcpPmId());
+            userProfile.setPmNosqlMasterId(profileData.get(i).getNoSqlMasterId());
+
+            arrayListUserProfile.add(userProfile);
+        }
+
+        tableProfileMaster.addArrayProfile(arrayListUserProfile);
+
+    }
+
+    private void populateRecyclerView() {
+
+        allContactListAdapter = new AllContactListAdapter(getActivity(),
+                arrayListPhoneBookContacts);
+        recyclerViewContactList.setAdapter(allContactListAdapter);
+
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Local Broadcast Receiver">
@@ -218,12 +310,22 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         arrayListContactNumbers = new ArrayList<>();
         int previouslySyncedData = Utils.getIntegerPreference(getActivity(), AppConstants
                 .PREF_SYNCED_CONTACTS, 0);
-        int forFrom = previouslySyncedData + CONTACT_CHUNK;
-        if (forFrom > arrayListContactId.size()) {
-            forFrom = arrayListContactId.size();
+        int previousTo = previouslySyncedData + CONTACT_CHUNK;
+        if (previousTo > arrayListContactId.size()) {
+            previousTo = arrayListContactId.size();
         }
 
-        for (int i = previouslySyncedData; i < forFrom; i++) {
+        int forFrom, forTo;
+
+        if (previouslySyncedData < previousTo) {
+            forFrom = previouslySyncedData;
+            forTo = previousTo;
+        } else {
+            forFrom = 0;
+            forTo = arrayListContactId.size();
+        }
+
+        for (int i = forFrom; i < forTo; i++) {
 
             ProfileData profileData = new ProfileData();
 
@@ -576,12 +678,15 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             arrayListUserContact.add(profileData);
 
         }
-//            contactNameCursor.close();
-
-//        }
 
         if (arrayListUserContact.size() > 0) {
-            uploadContacts(previouslySyncedData);
+            arrayListPhoneBookContacts.addAll(arrayListUserContact);
+            if (previouslySyncedData < previousTo) {
+                uploadContacts(previouslySyncedData);
+            } else {
+                progressAllContact.setVisibility(View.GONE);
+                populateRecyclerView();
+            }
         } else {
             progressAllContact.setVisibility(View.GONE);
         }
@@ -1061,14 +1166,14 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         WsRequestObject uploadContactObject = new WsRequestObject();
         //TODO pmid Modification
-        uploadContactObject.setPmId("1");
+        uploadContactObject.setPmId(((BaseActivity) getActivity()).getUserPmId());
         uploadContactObject.setProfileData(arrayListUserContact);
 
         if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_UPLOAD_CONTACTS + "_" + previouslySyncedData, null).execute(WsConstants
-                    .WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
+                    .REQ_UPLOAD_CONTACTS + "_" + previouslySyncedData, null, true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
         } else {
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
                     .getString(R.string.msg_no_network));

@@ -190,7 +190,7 @@ public class OtpTimerService extends Service implements WsResponseListener {
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     mspDeliveryStatusObject, null, WsResponseObject.class, WsConstants
-                    .REQ_MSP_DELIVERY_TIME, null).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_MSP_DELIVERY_TIME, null, false).execute(WsConstants.WS_ROOT + WsConstants
                     .REQ_MSP_DELIVERY_TIME);
         }
     }

@@ -57,7 +57,7 @@ public class TableProfileMaster {
             "AUTOINCREMENT," +
             " " + COLUMN_PM_RAW_ID + " text," +
             " " + COLUMN_PM_PREFIX + " text," +
-            " " + COLUMN_PM_FIRST_NAME + " text NOT NULL," +
+            " " + COLUMN_PM_FIRST_NAME + " text," +
             " " + COLUMN_PM_MIDDLE_NAME + " text," +
             " " + COLUMN_PM_LAST_NAME + " text," +
             " " + COLUMN_PM_SUFFIX + " text," +
@@ -74,7 +74,7 @@ public class TableProfileMaster {
             " " + COLUMN_PM_GENDER_PRIVACY + " integer DEFAULT 1," +
             " " + COLUMN_PM_IS_FAVOURITE + " integer," +
             " " + COLUMN_PM_IS_FAVOURITE_PRIVACY + " integer DEFAULT 1," +
-            " " + COLUMN_PM_ACCESS_TOKEN + " text NOT NULL," +
+            " " + COLUMN_PM_ACCESS_TOKEN + " text," +
             " " + COLUMN_PM_NOSQL_MASTER_ID + " text," +
             " " + COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE + " integer" +
             ");";
@@ -84,7 +84,7 @@ public class TableProfileMaster {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_PM_ID, userProfile.getPmId());
+//        values.put(COLUMN_PM_ID, userProfile.getPmId());
         values.put(COLUMN_PM_RAW_ID, userProfile.getPmRawId());
         values.put(COLUMN_PM_PREFIX, userProfile.getPmPrefix());
         values.put(COLUMN_PM_FIRST_NAME, userProfile.getPmFirstName());
@@ -110,6 +110,49 @@ public class TableProfileMaster {
 
         // Inserting Row
         db.insert(TABLE_RC_PROFILE_MASTER, null, values);
+        // insertWithOnConflict
+        db.close(); // Closing database connection
+    }
+
+    // Adding Array new Profile
+    public void addArrayProfile(ArrayList<UserProfile> arrayListUserProfile) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        for (int i = 0; i < arrayListUserProfile.size(); i++) {
+
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_PM_RAW_ID, arrayListUserProfile.get(i).getPmRawId());
+            values.put(COLUMN_PM_PREFIX, arrayListUserProfile.get(i).getPmPrefix());
+            values.put(COLUMN_PM_FIRST_NAME, arrayListUserProfile.get(i).getPmFirstName());
+            values.put(COLUMN_PM_MIDDLE_NAME, arrayListUserProfile.get(i).getPmMiddleName());
+            values.put(COLUMN_PM_LAST_NAME, arrayListUserProfile.get(i).getPmLastName());
+            values.put(COLUMN_PM_SUFFIX, arrayListUserProfile.get(i).getPmSuffix());
+            values.put(COLUMN_PM_NICK_NAME, arrayListUserProfile.get(i).getPmNickName());
+            values.put(COLUMN_PM_PHONETIC_FIRST_NAME, arrayListUserProfile.get(i)
+                    .getPmPhoneticFirstName());
+            values.put(COLUMN_PM_PHONETIC_MIDDLE_NAME, arrayListUserProfile.get(i)
+                    .getPmPhoneticMiddleName());
+            values.put(COLUMN_PM_PHONETIC_LAST_NAME, arrayListUserProfile.get(i)
+                    .getPmPhoneticLastName());
+            values.put(COLUMN_PM_PROFILE_IMAGE, arrayListUserProfile.get(i).getPmProfileImage());
+            values.put(COLUMN_PM_RCP_ID, arrayListUserProfile.get(i).getPmRcpId());
+            values.put(COLUMN_PM_NICK_NAME_PRIVACY, arrayListUserProfile.get(i)
+                    .getPmNickNamePrivacy());
+            values.put(COLUMN_PM_NOTES, arrayListUserProfile.get(i).getPmNotes());
+            values.put(COLUMN_PM_NOTES_PRIVACY, arrayListUserProfile.get(i).getPmNotesPrivacy());
+            values.put(COLUMN_PM_GENDER, arrayListUserProfile.get(i).getPmGender());
+            values.put(COLUMN_PM_GENDER_PRIVACY, arrayListUserProfile.get(i).getPmGenderPrivacy());
+            values.put(COLUMN_PM_IS_FAVOURITE, arrayListUserProfile.get(i).getPmIsFavourite());
+            values.put(COLUMN_PM_IS_FAVOURITE_PRIVACY, arrayListUserProfile.get(i)
+                    .getPmIsFavouritePrivacy());
+            values.put(COLUMN_PM_ACCESS_TOKEN, arrayListUserProfile.get(i).getPmAccessToken());
+            values.put(COLUMN_PM_NOSQL_MASTER_ID, arrayListUserProfile.get(i).getPmNosqlMasterId());
+            values.put(COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE, arrayListUserProfile.get(i)
+                    .getPmSignupSocialMediaType());
+
+            // Inserting Row
+            db.insert(TABLE_RC_PROFILE_MASTER, null, values);
+        }
         // insertWithOnConflict
         db.close(); // Closing database connection
     }

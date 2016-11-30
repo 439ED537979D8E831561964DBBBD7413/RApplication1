@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.webservice;
 
 import android.content.ContentValues;
+import android.content.Context;
 
 /**
  * Created by Monal on 10/10/16.
@@ -22,9 +23,11 @@ public class RequestWs {
     /**
      * Post HttpUrlConnection Request
      **/
-    public <CLS> CLS getPostRequest(String url, int requestType, Object reqCls, Class<CLS> cls,
-                                    ContentValues contentValues) throws Exception {
-        return new WebServicePost(url, requestType).execute(cls, reqCls, contentValues);
+    public <CLS> CLS getPostRequest(Context context, String url, int requestType, Object reqCls,
+                                    Class<CLS> cls, ContentValues contentValues, boolean
+                                            setHeader) throws Exception {
+        return new WebServicePost(context, url, requestType, setHeader).execute(cls, reqCls,
+                contentValues);
     }
 
 }

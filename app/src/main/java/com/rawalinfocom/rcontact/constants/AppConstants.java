@@ -59,10 +59,11 @@ public class AppConstants {
     public static String PREF_CONTACT_ID_SET = "pref_contact_id_set";
     public static String PREF_SYNCED_CONTACTS = "pref_synced_contacts";
     public static String PREF_USER_PM_ID = "pref_user_pm_id";
+    public static String PREF_ACCESS_TOKEN = "pref_access_token";
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
-            PREF_CONTACT_ID_SET, PREF_USER_PM_ID};
+            PREF_CONTACT_ID_SET, PREF_USER_PM_ID, PREF_ACCESS_TOKEN};
 
     //</editor-fold>
 

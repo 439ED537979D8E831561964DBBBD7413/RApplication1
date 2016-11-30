@@ -32,6 +32,16 @@ public class ProfileDataOperation {
     private String pbNote;
     private String pbNickname;
 
+    private String createdAt;
+    private String rcpPmId;
+    private String updatedAt;
+    private String noSqlMasterId;
+    private String verifiedEmailAddress;
+    private String emCloudId;
+    private String verifiedMobileNumber;
+    private String mnmCloudId;
+
+
     @JsonProperty("pb_phone_number")
     public ArrayList<ProfileDataOperationPhoneNumber> getPbPhoneNumber() {
         return pbPhoneNumber;
@@ -174,4 +184,76 @@ public class ProfileDataOperation {
     public String getPbNickname() {return this.pbNickname;}
 
     public void setPbNickname(String pbNickname) {this.pbNickname = pbNickname;}
+
+    @JsonProperty("created_at")
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @JsonProperty("rcp_pm_id")
+    public String getRcpPmId() {
+        return rcpPmId;
+    }
+
+    public void setRcpPmId(String rcpPmId) {
+        this.rcpPmId = rcpPmId;
+    }
+
+    @JsonProperty("updated_at")
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @JsonProperty("_id")
+    public String getNoSqlMasterId() {
+        return noSqlMasterId;
+    }
+
+    public void setNoSqlMasterId(String noSqlMasterId) {
+        this.noSqlMasterId = noSqlMasterId;
+    }
+
+    @JsonProperty("email_address")
+    public String getVerifiedEmailAddress() {
+        return verifiedEmailAddress;
+    }
+
+    public void setVerifiedEmailAddress(String verifiedEmailAddress) {
+        this.verifiedEmailAddress = verifiedEmailAddress;
+    }
+
+    @JsonProperty("em_id")
+    public String getEmCloudId() {
+        return emCloudId;
+    }
+
+    public void setEmCloudId(String emCloudId) {
+        this.emCloudId = emCloudId;
+    }
+
+    @JsonProperty("mobile_number")
+    public String getVerifiedMobileNumber() {
+        return verifiedMobileNumber;
+    }
+
+    public void setVerifiedMobileNumber(String verifiedMobileNumber) {
+        this.verifiedMobileNumber = verifiedMobileNumber;
+    }
+
+    @JsonProperty("mnm_id")
+    public String getMnmCloudId() {
+        return mnmCloudId;
+    }
+
+    public void setMnmCloudId(String mnmCloudId) {
+        this.mnmCloudId = mnmCloudId;
+    }
 }

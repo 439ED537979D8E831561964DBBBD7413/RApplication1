@@ -1003,10 +1003,10 @@ public class MainActivityTemp extends BaseActivity {
                 }
             }
 
-            AllContactListAdapter contactAdapter = new AllContactListAdapter
+           /* AllContactListAdapter contactAdapter = new AllContactListAdapter
                     (getApplicationContext(), contactVOList);
             recyclerViewContactList.setLayoutManager(new LinearLayoutManager(this));
-            recyclerViewContactList.setAdapter(contactAdapter);
+            recyclerViewContactList.setAdapter(contactAdapter);*/
         }
     }
 
