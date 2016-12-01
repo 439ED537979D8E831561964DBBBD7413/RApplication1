@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
-import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 
 import java.util.ArrayList;
 
@@ -61,14 +60,36 @@ public class TableProfileEmailMapping {
         db.close(); // Closing database connection
     }
 
+    // Adding array Profile Email Mapping
+    public void addArrayProfileEmailMapping(ArrayList<ProfileEmailMapping>
+                                                    arrayListProfileEmailMapping) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+//        ContentValues values = new ContentValues();
+        for (int i = 0; i < arrayListProfileEmailMapping.size(); i++) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_EPM_ID, arrayListProfileEmailMapping.get(i).getEpmId());
+            values.put(COLUMN_EPM_EMAIL_ID, arrayListProfileEmailMapping.get(i).getEpmEmailId());
+            values.put(COLUMN_EPM_CLOUD_EM_ID, arrayListProfileEmailMapping.get(i)
+                    .getEpmCloudEmId());
+            values.put(COLUMN_EPM_CLOUD_PM_ID, arrayListProfileEmailMapping.get(i)
+                    .getEpmCloudPmId());
+            values.put(COLUMN_EPM_IS_RCP, arrayListProfileEmailMapping.get(i).getEpmIsRcp());
+
+            // Inserting Row
+            db.insert(TABLE_PB_PROFILE_EMAIL_MAPPING, null, values);
+        }
+        db.close(); // Closing database connection
+    }
+
     // Getting single Profile Email Mapping
-    public ProfileEmailMapping getProfileMobileMapping(int mpmId) {
+    public ProfileEmailMapping getProfileEmailMapping(int emId) {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_PB_PROFILE_EMAIL_MAPPING, new String[]{COLUMN_EPM_ID,
                 COLUMN_EPM_EMAIL_ID, COLUMN_EPM_CLOUD_EM_ID, COLUMN_EPM_CLOUD_PM_ID,
                 COLUMN_EPM_IS_RCP}, COLUMN_EPM_ID + "=?", new
-                String[]{String.valueOf(mpmId)}, null, null, null, null);
+                String[]{String.valueOf(emId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -87,6 +108,63 @@ public class TableProfileEmailMapping {
 
         // return Profile Email Mapping
         return profileEmailMapping;
+    }
+
+    // Getting Profile Email Mapping from EmailId
+    public ArrayList<ProfileEmailMapping> getProfileEmailMappingFromEmailId(String[] emailIds) {
+
+        ArrayList<ProfileEmailMapping> arrayListProfileMapping = new ArrayList<>();
+
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+
+        String query = "SELECT " + COLUMN_EPM_EMAIL_ID + ", " + COLUMN_EPM_CLOUD_PM_ID + " " +
+                "FROM " + TABLE_PB_PROFILE_EMAIL_MAPPING + " where " + COLUMN_EPM_IS_RCP + " = 1" +
+                " and " + COLUMN_EPM_EMAIL_ID + " IN (" + makePlaceholders(emailIds.length) + ")";
+
+        Cursor cursor = db.rawQuery(query, emailIds);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                ProfileEmailMapping profileEmailMapping = new ProfileEmailMapping();
+                profileEmailMapping.setEpmEmailId(cursor.getString(0));
+                profileEmailMapping.setEpmCloudPmId(cursor.getString(1));
+
+                // Adding profileMapping to list
+                arrayListProfileMapping.add(profileEmailMapping);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        // return profileMapping list
+        return arrayListProfileMapping;
+    }
+
+    // Check whether Email Id exists
+    public boolean getIsEmailIdExists(String emailId) {
+
+        int count = 0;
+
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_PB_PROFILE_EMAIL_MAPPING, new String[]{COLUMN_EPM_ID,
+                        COLUMN_EPM_CLOUD_EM_ID, COLUMN_EPM_CLOUD_PM_ID, COLUMN_EPM_IS_RCP},
+                COLUMN_EPM_EMAIL_ID + "=?", new String[]{String.valueOf(emailId)},
+                null, null, null, null);
+
+        if (cursor != null) {
+            count = cursor.getCount();
+            cursor.close();
+        }
+
+        db.close();
+
+        // return Profile Email Mapping Count
+        return count > 0;
     }
 
     // Getting All Profile Email Mapping
@@ -161,5 +239,19 @@ public class TableProfileEmailMapping {
         db.delete(TABLE_PB_PROFILE_EMAIL_MAPPING, COLUMN_EPM_ID + " = ?",
                 new String[]{String.valueOf(profileEmailMapping.getEpmId())});
         db.close();
+    }
+
+    String makePlaceholders(int len) {
+        if (len < 1) {
+            // It will lead to an invalid query anyway ..
+            throw new RuntimeException("No placeholders");
+        } else {
+            StringBuilder sb = new StringBuilder(len * 2 - 1);
+            sb.append("?");
+            for (int i = 1; i < len; i++) {
+                sb.append(",?");
+            }
+            return sb.toString();
+        }
     }
 }

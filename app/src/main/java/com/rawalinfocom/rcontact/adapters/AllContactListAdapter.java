@@ -11,10 +11,12 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileData;
+import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
@@ -31,6 +33,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
         .AllContactViewHolder> {
 
     private Context context;
+    /* phone book contacts */
     private ArrayList<ProfileData> arrayListUserContact;
 
     int colorBlack, colorPineGreen;
@@ -55,8 +58,24 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
 
         ProfileData profileData = arrayListUserContact.get(position);
 
+
+        if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
+            displayNumberName(holder, profileData);
+        } else if (profileData.getOperation().get(0).getPbEmailId().size() > 0) {
+            displayEmailName(holder, profileData,null);
+        }
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return arrayListUserContact.size();
+    }
+
+    private void displayNumberName(AllContactViewHolder holder, ProfileData profileData) {
         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping((
                 (BaseActivity) context).databaseHandler);
+
         ArrayList<String> arrayListMobileNumbers = new ArrayList<>();
         for (int i = 0; i < profileData.getOperation().get(0).getPbPhoneNumber().size(); i++) {
             arrayListMobileNumbers.add(profileData.getOperation().get(0).getPbPhoneNumber().get
@@ -88,32 +107,85 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
                 displayName = " (" + arrayListDbMobileNumbers.size() + "RC)";
             }
 
+            holder.textContactNumber.setTextColor(colorPineGreen);
             isRcp = true;
-
         } else {
-            displayNumber = profileData.getOperation().get(0).getPbPhoneNumber().get
-                    (0).getPhoneNumber();
+            displayNumber = profileData.getOperation().get(0).getPbPhoneNumber().get(0)
+                    .getPhoneNumber();
             displayName = "";
+            holder.textContactNumber.setTextColor(colorBlack);
             isRcp = false;
         }
 
-        if (isRcp) {
-            holder.textContactNumber.setTextColor(colorPineGreen);
-        } else {
-            holder.textContactNumber.setTextColor(colorBlack);
-        }
 
-        holder.textContactName.setText(profileData.getOperation().get(0).getPbNameFirst() + " " +
+        holder.textContactName.setText(profileData.getOperation().get(0).getPbNameFirst() + "" +
+                " " +
+
                 profileData.getOperation().get(0).getPbNameLast());
         holder.textCloudContactName.setText(displayName);
         holder.textContactNumber.setText(displayNumber);
 
+        if (!isRcp) {
+            displayEmailName(holder, profileData, displayNumber);
+        }
 
     }
 
-    @Override
-    public int getItemCount() {
-        return arrayListUserContact.size();
+    private void displayEmailName(AllContactViewHolder holder, ProfileData profileData, String
+            displayNumber) {
+        TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping((
+                (BaseActivity) context).databaseHandler);
+
+        ArrayList<String> arrayListEmails = new ArrayList<>();
+        for (int i = 0; i < profileData.getOperation().get(0).getPbEmailId().size(); i++) {
+            arrayListEmails.add(profileData.getOperation().get(0).getPbEmailId().get
+                    (i).getEmEmailId());
+        }
+
+        ArrayList<ProfileEmailMapping> arrayListDbEmailIds = tableProfileEmailMapping
+                .getProfileEmailMappingFromEmailId(arrayListEmails.toArray(new
+                        String[arrayListEmails.size()]));
+
+        String displayEmailId, displayName;
+        boolean isRcp;
+        if (arrayListDbEmailIds.size() > 0) {
+            displayEmailId = arrayListDbEmailIds.get(0).getEpmEmailId();
+            String displayNamePmId = arrayListDbEmailIds.get(0).getEpmCloudPmId();
+
+            if (arrayListDbEmailIds.size() == 1) {
+                TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
+                        context).databaseHandler);
+                UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
+                        .parseInt(displayNamePmId));
+
+                displayName = ((userProfile.getPmFirstName().length() > 0 || userProfile
+                        .getPmLastName().length() > 0) ? " (" + userProfile
+                        .getPmFirstName() + " " + userProfile
+                        .getPmLastName() + ")" : "");
+
+            } else {
+                displayName = " (" + arrayListDbEmailIds.size() + "RC)";
+            }
+
+            holder.textContactNumber.setTextColor(colorPineGreen);
+            isRcp = true;
+
+        } else {
+            displayEmailId = profileData.getOperation().get(0).getPbEmailId().get(0)
+                    .getEmEmailId();
+            displayName = "";
+            holder.textContactNumber.setTextColor(colorBlack);
+            isRcp = false;
+            /* Display mobile number if Email Id is not rcp */
+            if (displayNumber != null) {
+                displayEmailId = displayNumber;
+            }
+        }
+
+        holder.textContactName.setText(profileData.getOperation().get(0).getPbNameFirst() + "" +
+                " " + profileData.getOperation().get(0).getPbNameLast());
+        holder.textCloudContactName.setText(displayName);
+        holder.textContactNumber.setText(displayEmailId);
     }
 
     class AllContactViewHolder extends RecyclerView.ViewHolder {

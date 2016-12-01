@@ -229,7 +229,7 @@ public class ProfileDataOperation {
 
     @JsonProperty("email_address")
     public String getVerifiedEmailAddress() {
-        return verifiedEmailAddress;
+        return StringUtils.defaultString(verifiedEmailAddress);
     }
 
     public void setVerifiedEmailAddress(String verifiedEmailAddress) {

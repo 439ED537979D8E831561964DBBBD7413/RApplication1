@@ -28,6 +28,7 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
+import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -43,6 +44,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationRelationship;
+import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
@@ -74,6 +76,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ArrayList<ProfileData> arrayListUserContact;
     ArrayList<String> arrayListContactId;
     ArrayList<String> arrayListContactNumbers;
+    ArrayList<String> arrayListContactEmails;
 
     DatabaseHandler databaseHandler;
 
@@ -141,12 +144,19 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         /* Store Unique Contacts to ProfileMobileMapping */
                         storeToMobileMapping(uploadContactResponse.getArrayListUserRcProfile());
 
+                        /* Store Unique Emails to ProfileEmailMapping */
+                        storeToEmailMapping(uploadContactResponse.getArrayListUserRcProfile());
+
                         /* Store Profile Details to respective Table */
                         storeProfileDataToDb(uploadContactResponse.getArrayListUserRcProfile());
+
                     } else {
 
                         /* Store Unique Contacts to ProfileMobileMapping */
                         storeToMobileMapping(null);
+
+                        /* Store Unique Contacts to ProfileMobileMapping */
+                        storeToEmailMapping(null);
 
                     }
 
@@ -206,10 +216,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
         if (!Utils.isArraylistNullOrEmpty(arrayListContactNumbers)) {
-            TableProfileMobileMapping tableProfileMobileMapping = new
-                    TableProfileMobileMapping(databaseHandler);
-            ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new
-                    ArrayList<>();
+            TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
+                    (databaseHandler);
+            ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new ArrayList<>();
             for (int i = 0; i < arrayListContactNumbers.size(); i++) {
                 if (!tableProfileMobileMapping.getIsMobileNumberExists
                         (arrayListContactNumbers.get(i))) {
@@ -237,6 +246,39 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             }
             tableProfileMobileMapping.addArrayProfileMobileMapping
                     (arrayListProfileMobileMapping);
+        }
+
+
+    }
+
+    private void storeToEmailMapping(ArrayList<ProfileDataOperation> profileData) {
+        if (!Utils.isArraylistNullOrEmpty(arrayListContactEmails)) {
+            TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping
+                    (databaseHandler);
+            ArrayList<ProfileEmailMapping> arrayListProfileEmailMapping = new ArrayList<>();
+            for (int i = 0; i < arrayListContactEmails.size(); i++) {
+                if (!tableProfileEmailMapping.getIsEmailIdExists(arrayListContactEmails.get(i))) {
+
+                    ProfileEmailMapping profileEmailMapping = new ProfileEmailMapping();
+                    profileEmailMapping.setEpmEmailId(arrayListContactEmails.get(i));
+                    profileEmailMapping.setEpmIsRcp("0");
+                    if (!Utils.isArraylistNullOrEmpty(profileData)) {
+                        for (int j = 0; j < profileData.size(); j++) {
+                            if (StringUtils.equalsIgnoreCase(arrayListContactEmails.get(i),
+                                    profileData.get(j).getVerifiedEmailAddress())) {
+                                profileEmailMapping.setEpmCloudEmId(profileData.get(j)
+                                        .getEmCloudId());
+                                profileEmailMapping.setEpmCloudPmId(profileData.get(j)
+                                        .getRcpPmId());
+                                profileEmailMapping.setEpmIsRcp("1");
+                            }
+                        }
+                    }
+
+                    arrayListProfileEmailMapping.add(profileEmailMapping);
+                }
+            }
+            tableProfileEmailMapping.addArrayProfileEmailMapping(arrayListProfileEmailMapping);
         }
 
 
@@ -273,8 +315,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     private void populateRecyclerView() {
 
-        allContactListAdapter = new AllContactListAdapter(getActivity(),
-                arrayListPhoneBookContacts);
+        allContactListAdapter = new AllContactListAdapter(getActivity(), arrayListPhoneBookContacts);
         recyclerViewContactList.setAdapter(allContactListAdapter);
 
     }
@@ -308,6 +349,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private void phoneBookOperations() {
         arrayListUserContact = new ArrayList<>();
         arrayListContactNumbers = new ArrayList<>();
+        arrayListContactEmails = new ArrayList<>();
         int previouslySyncedData = Utils.getIntegerPreference(getActivity(), AppConstants
                 .PREF_SYNCED_CONTACTS, 0);
         int previousTo = previouslySyncedData + CONTACT_CHUNK;
@@ -444,7 +486,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     emailId.setEmPublic(1);
 
                     arrayListEmailId.add(emailId);
-
+                    arrayListContactEmails.add(emailId.getEmEmailId());
                 }
                 contactEmailCursor.close();
             }
