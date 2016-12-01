@@ -112,25 +112,29 @@ public class TableProfileMobileMapping {
     }
 
     // Getting Profile Mobile Mapping from Mobile Numbers
-    public ArrayList<String> getProfileMobileMappingFromNumber(String[] mobileNumbers) {
+    public ArrayList<ProfileMobileMapping> getProfileMobileMappingFromNumber(String[]
+                                                                                     mobileNumbers) {
 
-        ArrayList<String> arrayListMobileNumbers = new ArrayList<>();
+        ArrayList<ProfileMobileMapping> arrayListProfileMapping = new ArrayList<>();
 
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
-        String query = "SELECT " + COLUMN_MPM_MOBILE_NUMBER + " FROM " +
-                TABLE_PB_PROFILE_MOBILE_MAPPING + " where " + COLUMN_MPM_IS_RCP + " = 1 and " +
-                COLUMN_MPM_MOBILE_NUMBER + " IN (" + makePlaceholders(mobileNumbers.length) + ")";
+        String query = "SELECT " + COLUMN_MPM_MOBILE_NUMBER + ", " + COLUMN_MPM_CLOUD_PM_ID + " " +
+                "FROM " + TABLE_PB_PROFILE_MOBILE_MAPPING + " where " + COLUMN_MPM_IS_RCP + " = 1" +
+                " and " + COLUMN_MPM_MOBILE_NUMBER + " IN (" + makePlaceholders(mobileNumbers
+                .length) + ")";
 
         Cursor cursor = db.rawQuery(query, mobileNumbers);
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                String number = cursor.getString(0);
+                ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
+                profileMobileMapping.setMpmMobileNumber(cursor.getString(0));
+                profileMobileMapping.setMpmCloudPmId(cursor.getString(1));
 
-                // Adding mobile number to list
-                arrayListMobileNumbers.add(number);
+                // Adding profileMapping to list
+                arrayListProfileMapping.add(profileMobileMapping);
             } while (cursor.moveToNext());
 
             cursor.close();
@@ -139,8 +143,8 @@ public class TableProfileMobileMapping {
 
         db.close();
 
-        // return Mobile Number list
-        return arrayListMobileNumbers;
+        // return profileMapping list
+        return arrayListProfileMapping;
     }
 
     // Getting single Profile Mobile Mapping from MobileNumber

@@ -209,6 +209,58 @@ public class TableProfileMaster {
         return userProfile;
     }
 
+    // Getting single Profile from Cloud Pm id
+    public UserProfile getProfileFromCloudPmId(int cloudPmd) {
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_ID,
+                COLUMN_PM_RAW_ID, COLUMN_PM_PREFIX, COLUMN_PM_FIRST_NAME, COLUMN_PM_MIDDLE_NAME,
+                COLUMN_PM_LAST_NAME, COLUMN_PM_SUFFIX, COLUMN_PM_NICK_NAME,
+                COLUMN_PM_PHONETIC_FIRST_NAME, COLUMN_PM_PHONETIC_MIDDLE_NAME,
+                COLUMN_PM_PHONETIC_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_RCP_ID,
+                COLUMN_PM_NICK_NAME_PRIVACY, COLUMN_PM_NOTES, COLUMN_PM_NOTES_PRIVACY,
+                COLUMN_PM_GENDER, COLUMN_PM_GENDER_PRIVACY, COLUMN_PM_IS_FAVOURITE,
+                COLUMN_PM_IS_FAVOURITE_PRIVACY, COLUMN_PM_ACCESS_TOKEN, COLUMN_PM_NOSQL_MASTER_ID,
+                COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE}, COLUMN_PM_RCP_ID + "=?", new String[]{String
+                .valueOf(cloudPmd)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        UserProfile userProfile = new UserProfile();
+        if (cursor != null) {
+            userProfile.setPmId(cursor.getString(0));
+            userProfile.setPmRawId(cursor.getString(1));
+            userProfile.setPmPrefix(cursor.getString(2));
+            userProfile.setPmFirstName(cursor.getString(3));
+            userProfile.setPmMiddleName(cursor.getString(4));
+            userProfile.setPmLastName(cursor.getString(5));
+            userProfile.setPmSuffix(cursor.getString(6));
+            userProfile.setPmNickName(cursor.getString(7));
+            userProfile.setPmPhoneticFirstName(cursor.getString(8));
+            userProfile.setPmPhoneticMiddleName(cursor.getString(9));
+            userProfile.setPmPhoneticLastName(cursor.getString(10));
+            userProfile.setPmProfileImage(cursor.getString(11));
+            userProfile.setPmRcpId(cursor.getString(12));
+            userProfile.setPmNickNamePrivacy(cursor.getString(13));
+            userProfile.setPmNotes(cursor.getString(14));
+            userProfile.setPmNotesPrivacy(cursor.getString(15));
+            userProfile.setPmGender(cursor.getString(16));
+            userProfile.setPmGenderPrivacy(cursor.getString(17));
+            userProfile.setPmIsFavourite(cursor.getString(18));
+            userProfile.setPmIsFavouritePrivacy(cursor.getString(19));
+            userProfile.setPmAccessToken(cursor.getString(20));
+            userProfile.setPmNosqlMasterId(cursor.getString(21));
+            userProfile.setPmSignupSocialMediaType(cursor.getString(22));
+
+            cursor.close();
+        }
+
+        db.close();
+
+        // return Profile
+        return userProfile;
+    }
+
     // Getting All Profiles
     public ArrayList<UserProfile> getAllUserProfiles() {
         ArrayList<UserProfile> arrayListUserProfile = new ArrayList<>();

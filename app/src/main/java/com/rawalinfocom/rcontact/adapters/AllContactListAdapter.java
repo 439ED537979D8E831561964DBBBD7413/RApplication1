@@ -11,9 +11,12 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileData;
+import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
+import com.rawalinfocom.rcontact.model.UserProfile;
 
 import java.util.ArrayList;
 
@@ -30,11 +33,14 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
     private Context context;
     private ArrayList<ProfileData> arrayListUserContact;
 
-    private int defaultNameColor, defaultNumberColor;
+    int colorBlack, colorPineGreen;
 
     public AllContactListAdapter(Context context, ArrayList<ProfileData> arrayListUserContact) {
         this.context = context;
         this.arrayListUserContact = arrayListUserContact;
+
+        colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
+        colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
     }
 
     @Override
@@ -57,29 +63,49 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
                     (i).getPhoneNumber());
         }
 
-        ArrayList<String> arrayListDbMobileNumbers = tableProfileMobileMapping
+        ArrayList<ProfileMobileMapping> arrayListDbMobileNumbers = tableProfileMobileMapping
                 .getProfileMobileMappingFromNumber(arrayListMobileNumbers.toArray(new
                         String[arrayListMobileNumbers.size()]));
 
-        String displayNumber;
+        String displayNumber, displayName;
         boolean isRcp;
         if (arrayListDbMobileNumbers.size() > 0) {
-            displayNumber = arrayListDbMobileNumbers.get(0);
+            displayNumber = arrayListDbMobileNumbers.get(0).getMpmMobileNumber();
+            String displayNamePmId = arrayListDbMobileNumbers.get(0).getMpmCloudPmId();
+
+            if (arrayListDbMobileNumbers.size() == 1) {
+                TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
+                        context).databaseHandler);
+                UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
+                        .parseInt(displayNamePmId));
+
+                displayName = ((userProfile.getPmFirstName().length() > 0 || userProfile
+                        .getPmLastName().length() > 0) ? " (" + userProfile
+                        .getPmFirstName() + " " + userProfile
+                        .getPmLastName() + ")" : "");
+
+            } else {
+                displayName = " (" + arrayListDbMobileNumbers.size() + "RC)";
+            }
+
             isRcp = true;
+
         } else {
             displayNumber = profileData.getOperation().get(0).getPbPhoneNumber().get
                     (0).getPhoneNumber();
+            displayName = "";
             isRcp = false;
         }
 
         if (isRcp) {
-            holder.textContactNumber.setTextColor(ContextCompat.getColor(context, R.color
-                    .colorPrimary));
+            holder.textContactNumber.setTextColor(colorPineGreen);
         } else {
-            holder.textContactNumber.setTextColor(defaultNumberColor);
+            holder.textContactNumber.setTextColor(colorBlack);
         }
 
-        holder.textContactName.setText(profileData.getOperation().get(0).getPbNameFirst());
+        holder.textContactName.setText(profileData.getOperation().get(0).getPbNameFirst() + " " +
+                profileData.getOperation().get(0).getPbNameLast());
+        holder.textCloudContactName.setText(displayName);
         holder.textContactNumber.setText(displayNumber);
 
 
@@ -96,6 +122,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
         ImageView imageProfile;
         @BindView(R.id.text_contact_name)
         TextView textContactName;
+        @BindView(R.id.text_cloud_contact_name)
+        TextView textCloudContactName;
         @BindView(R.id.text_contact_number)
         TextView textContactNumber;
 
@@ -103,11 +131,14 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textContactName.setTypeface(Utils.typefaceRegular(context));
+            textContactName.setTypeface(Utils.typefaceSemiBold(context));
+            textCloudContactName.setTypeface(Utils.typefaceSemiBold(context));
             textContactNumber.setTypeface(Utils.typefaceRegular(context));
 
-            defaultNameColor = textContactName.getTextColors().getDefaultColor();
-            defaultNumberColor = textContactNumber.getTextColors().getDefaultColor();
+            textContactName.setTextColor(colorBlack);
+            textContactNumber.setTextColor(colorBlack);
+
+            textCloudContactName.setTextColor(colorPineGreen);
 
         }
     }

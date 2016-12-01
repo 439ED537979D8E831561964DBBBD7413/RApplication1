@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -89,7 +91,9 @@ public class ProfileDataOperation {
     }
 
     @JsonProperty("pb_name_first")
-    public String getPbNameFirst() {return this.pbNameFirst;}
+    public String getPbNameFirst() {
+        return StringUtils.defaultString(this.pbNameFirst);
+    }
 
     public void setPbNameFirst(String pbNameFirst) {this.pbNameFirst = pbNameFirst;}
 
@@ -132,7 +136,9 @@ public class ProfileDataOperation {
     public void setPbNamePrefix(String pbNamePrefix) {this.pbNamePrefix = pbNamePrefix;}
 
     @JsonProperty("pb_name_last")
-    public String getPbNameLast() {return this.pbNameLast;}
+    public String getPbNameLast() {
+        return StringUtils.defaultString(this.pbNameLast);
+    }
 
     public void setPbNameLast(String pbNameLast) {this.pbNameLast = pbNameLast;}
 
