@@ -38,6 +38,8 @@ android {
         debug {
             minifyEnabled false
 
+//            resValue("string", "PORT_NUMBER", "8082")
+
             proguardFiles 'proguard-support-design.pro'
             proguardFiles 'proguard-support-v7-appcompat.pro'
             proguardFiles 'proguard-support-v7-recyclerview.pro'
@@ -88,6 +90,7 @@ dependencies {
     compile "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
     apt "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
 
+    debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
 
     compile project(path: ':linkedin-sdk')
     compile 'com.google.code.gson:gson:2.7'

@@ -35,6 +35,7 @@ import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.Country;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -81,6 +82,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     DatabaseHandler databaseHandler;
 
     AllContactListAdapter allContactListAdapter;
+
+
 
 
     public AllContactsFragment() {
@@ -315,7 +318,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     private void populateRecyclerView() {
 
-        allContactListAdapter = new AllContactListAdapter(getActivity(), arrayListPhoneBookContacts);
+        allContactListAdapter = new AllContactListAdapter(getActivity(),
+                arrayListPhoneBookContacts);
         recyclerViewContactList.setAdapter(allContactListAdapter);
 
     }

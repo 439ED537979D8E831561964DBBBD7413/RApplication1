@@ -11,14 +11,18 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.Country;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.UserProfile;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -36,7 +40,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
     /* phone book contacts */
     private ArrayList<ProfileData> arrayListUserContact;
 
-    int colorBlack, colorPineGreen;
+    private int colorBlack, colorPineGreen;
+    String defaultCountryCode;
 
     public AllContactListAdapter(Context context, ArrayList<ProfileData> arrayListUserContact) {
         this.context = context;
@@ -44,6 +49,12 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
 
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
+
+        Country country = (Country) Utils.getObjectPreference(context, AppConstants
+                .PREF_SELECTED_COUNTRY_OBJECT, Country.class);
+        if (country != null) {
+            defaultCountryCode = country.getCountryCodeNumber();
+        }
     }
 
     @Override
@@ -62,7 +73,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
         if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
             displayNumberName(holder, profileData);
         } else if (profileData.getOperation().get(0).getPbEmailId().size() > 0) {
-            displayEmailName(holder, profileData,null);
+            displayEmailName(holder, profileData, null);
         }
 
     }
@@ -117,11 +128,16 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
             isRcp = false;
         }
 
+        if (!StringUtils.startsWith(displayNumber, "+")) {
+            if (StringUtils.startsWith(displayNumber, "0")) {
+                displayNumber = defaultCountryCode + StringUtils.substring(displayNumber, 1);
+            } else {
+                displayNumber = defaultCountryCode + displayNumber;
+            }
+        }
 
         holder.textContactName.setText(profileData.getOperation().get(0).getPbNameFirst() + "" +
-                " " +
-
-                profileData.getOperation().get(0).getPbNameLast());
+                " " + profileData.getOperation().get(0).getPbNameLast());
         holder.textCloudContactName.setText(displayName);
         holder.textContactNumber.setText(displayNumber);
 

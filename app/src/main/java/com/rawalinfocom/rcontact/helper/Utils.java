@@ -71,6 +71,7 @@ public class Utils {
     //</editor-fold>
 
     //<editor-fold desc="SnackBar">
+
     public static void showErrorSnackBar(Context context, View view, String message) {
         Snackbar snackbar = Snackbar
                 .make(view, message, Snackbar.LENGTH_LONG);
