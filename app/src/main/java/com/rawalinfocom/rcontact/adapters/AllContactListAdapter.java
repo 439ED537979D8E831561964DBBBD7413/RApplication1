@@ -70,10 +70,14 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
         ProfileData profileData = arrayListUserContact.get(position);
 
 
+        String contactDisplayName = profileData.getOperation().get(0).getPbNameFirst() + "" +
+                " " + profileData.getOperation().get(0).getPbNameLast();
+        holder.textContactName.setText(contactDisplayName);
+
         if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
-            displayNumberName(holder, profileData);
+            displayNumber(holder, profileData, contactDisplayName);
         } else if (profileData.getOperation().get(0).getPbEmailId().size() > 0) {
-            displayEmailName(holder, profileData, null);
+            displayEmail(holder, profileData, null, contactDisplayName);
         }
 
     }
@@ -83,7 +87,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
         return arrayListUserContact.size();
     }
 
-    private void displayNumberName(AllContactViewHolder holder, ProfileData profileData) {
+    private void displayNumber(AllContactViewHolder holder, ProfileData profileData, String
+            contactDisplayName) {
         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping((
                 (BaseActivity) context).databaseHandler);
 
@@ -118,6 +123,14 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
                 displayName = " (" + arrayListDbMobileNumbers.size() + "RC)";
             }
 
+            if (StringUtils.equalsIgnoreCase(displayName, (" (" + contactDisplayName + ")"))) {
+                holder.textCloudContactName.setVisibility(View.GONE);
+                holder.textContactName.setTextColor(colorPineGreen);
+            } else {
+                holder.textCloudContactName.setVisibility(View.VISIBLE);
+                holder.textContactName.setTextColor(colorBlack);
+            }
+
             holder.textContactNumber.setTextColor(colorPineGreen);
             isRcp = true;
         } else {
@@ -136,19 +149,17 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
             }
         }
 
-        holder.textContactName.setText(profileData.getOperation().get(0).getPbNameFirst() + "" +
-                " " + profileData.getOperation().get(0).getPbNameLast());
         holder.textCloudContactName.setText(displayName);
         holder.textContactNumber.setText(displayNumber);
 
         if (!isRcp) {
-            displayEmailName(holder, profileData, displayNumber);
+            displayEmail(holder, profileData, displayNumber, contactDisplayName);
         }
 
     }
 
-    private void displayEmailName(AllContactViewHolder holder, ProfileData profileData, String
-            displayNumber) {
+    private void displayEmail(AllContactViewHolder holder, ProfileData profileData, String
+            displayNumber, String contactDisplayName) {
         TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping((
                 (BaseActivity) context).databaseHandler);
 
@@ -183,6 +194,14 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
                 displayName = " (" + arrayListDbEmailIds.size() + "RC)";
             }
 
+            if (StringUtils.equalsIgnoreCase(displayName, (" (" + contactDisplayName + ")"))) {
+                holder.textCloudContactName.setVisibility(View.GONE);
+                holder.textContactName.setTextColor(colorPineGreen);
+            } else {
+                holder.textCloudContactName.setVisibility(View.VISIBLE);
+                holder.textContactName.setTextColor(colorBlack);
+            }
+
             holder.textContactNumber.setTextColor(colorPineGreen);
             isRcp = true;
 
@@ -198,8 +217,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
             }
         }
 
-        holder.textContactName.setText(profileData.getOperation().get(0).getPbNameFirst() + "" +
-                " " + profileData.getOperation().get(0).getPbNameLast());
         holder.textCloudContactName.setText(displayName);
         holder.textContactNumber.setText(displayEmailId);
     }

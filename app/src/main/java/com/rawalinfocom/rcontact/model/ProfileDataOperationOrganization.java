@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.apache.commons.lang3.StringUtils;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationOrganization {
@@ -16,23 +18,35 @@ public class ProfileDataOperationOrganization {
     private String orgOfficeLocation;
 
     @JsonProperty("org_job_title")
-    public String getOrgJobTitle() {return this.orgJobTitle;}
+    public String getOrgJobTitle() {
+        return StringUtils.defaultString(this.orgJobTitle);
+    }
 
-    public void setOrgJobTitle(String orgJobTitle) {this.orgJobTitle = orgJobTitle;}
+    public void setOrgJobTitle(String orgJobTitle) {
+        this.orgJobTitle = orgJobTitle;
+    }
 
     @JsonProperty("org_department")
-    public String getOrgDepartment() {return this.orgDepartment;}
+    public String getOrgDepartment() {
+        return StringUtils.defaultString(this.orgDepartment);
+    }
 
-    public void setOrgDepartment(String orgDepartment) {this.orgDepartment = orgDepartment;}
+    public void setOrgDepartment(String orgDepartment) {
+        this.orgDepartment = orgDepartment;
+    }
 
     @JsonProperty("org_name")
-    public String getOrgName() {return this.orgName;}
+    public String getOrgName() {
+        return StringUtils.defaultString(this.orgName);
+    }
 
-    public void setOrgName(String orgName) {this.orgName = orgName;}
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
 
     @JsonProperty("org_type")
     public String getOrgType() {
-        return orgType;
+        return StringUtils.defaultString(orgType);
     }
 
     public void setOrgType(String orgType) {
@@ -41,7 +55,7 @@ public class ProfileDataOperationOrganization {
 
     @JsonProperty("org_job_description")
     public String getOrgJobDescription() {
-        return orgJobDescription;
+        return StringUtils.defaultString(orgJobDescription);
     }
 
     public void setOrgJobDescription(String orgJobDescription) {
@@ -50,7 +64,7 @@ public class ProfileDataOperationOrganization {
 
     @JsonProperty("org_office_location")
     public String getOrgOfficeLocation() {
-        return orgOfficeLocation;
+        return StringUtils.defaultString(orgOfficeLocation);
     }
 
     public void setOrgOfficeLocation(String orgOfficeLocation) {

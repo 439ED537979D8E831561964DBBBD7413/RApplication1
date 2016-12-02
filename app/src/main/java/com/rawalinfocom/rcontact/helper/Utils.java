@@ -17,16 +17,17 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Set;
 import java.util.TimeZone;
 
 /**
@@ -175,7 +176,7 @@ public class Utils {
         return sharedpreferences.getString(key, defaultValue);
     }
 
-    public static void setStringSetPreference(Context context, String key, @Nullable Set<String>
+  /*  public static void setStringSetPreference(Context context, String key, @Nullable Set<String>
             value) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
@@ -188,6 +189,27 @@ public class Utils {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         return sharedpreferences.getStringSet(key, null);
+    }*/
+
+    public static void setArrayListPreference(Context context, String key, @Nullable ArrayList
+            arrayList) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(arrayList);
+        editor.putString(key, json);
+        editor.apply();
+    }
+
+    public static ArrayList<String> getArrayListPreference(Context context, String key) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedpreferences.getString(key, null);
+        Type type = new TypeToken<ArrayList>() {
+        }.getType();
+        return gson.fromJson(json, type);
     }
 
     public static void setIntegerPreference(Context context, String key, int value) {

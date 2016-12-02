@@ -13,7 +13,6 @@ import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class ContactIdFetchService extends Service {
     public ContactIdFetchService() {
@@ -36,8 +35,7 @@ public class ContactIdFetchService extends Service {
                     .getColumnIndex(ContactsContract.Contacts._ID)));
         }
 
-        HashSet<String> contactIdSet = new HashSet<>(arrayListContactIds);
-        Utils.setStringSetPreference(this, AppConstants.PREF_CONTACT_ID_SET, contactIdSet);
+        Utils.setArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET, arrayListContactIds);
         sendMessage();
 
         return super.onStartCommand(intent, flags, startId);
@@ -52,7 +50,10 @@ public class ContactIdFetchService extends Service {
         String[] selectionArgs = null;
         String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
 
-//        return getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
+       /* return getContentResolver().query(uri, projection, ContactsContract.RawContacts
+                .ACCOUNT_TYPE + " <> 'com.android.contacts.sim' "
+                + " AND " + ContactsContract.RawContacts.ACCOUNT_TYPE + " <> 'com.google' ",
+                null, sortOrder);*/
         return getContentResolver().query(uri, projection, null, null, sortOrder);
     }
 

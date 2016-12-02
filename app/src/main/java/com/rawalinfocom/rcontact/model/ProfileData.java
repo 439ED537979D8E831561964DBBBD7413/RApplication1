@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -16,7 +18,7 @@ public class ProfileData {
 
     @JsonProperty("pb_local_phonebook_id")
     public String getLocalPhoneBookId() {
-        return this.localPhoneBookId;
+        return StringUtils.defaultString(this.localPhoneBookId);
     }
 
     public void setLocalPhoneBookId(String localPhoneBookId) {

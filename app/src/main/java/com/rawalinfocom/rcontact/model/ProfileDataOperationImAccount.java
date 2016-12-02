@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.apache.commons.lang3.StringUtils;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationImAccount {
@@ -13,19 +15,27 @@ public class ProfileDataOperationImAccount {
     private String IMAccountPublic;
 
     @JsonProperty("IM_account_type")
-    public String getIMAccountType() {return this.IMAccountType;}
+    public String getIMAccountType() {
+        return StringUtils.defaultString(this.IMAccountType);
+    }
 
-    public void setIMAccountType(String IMAccountType) {this.IMAccountType = IMAccountType;}
+    public void setIMAccountType(String IMAccountType) {
+        this.IMAccountType = IMAccountType;
+    }
 
     @JsonProperty("IM_account_details")
-    public String getIMAccountDetails() {return this.IMAccountDetails;}
+    public String getIMAccountDetails() {
+        return StringUtils.defaultString(this.IMAccountDetails);
+    }
 
     public void setIMAccountDetails(String IMAccountDetails) {
         this.IMAccountDetails = IMAccountDetails;
     }
 
     @JsonProperty("IM_account_public")
-    public String getIMAccountPublic() {return this.IMAccountPublic;}
+    public String getIMAccountPublic() {
+        return StringUtils.defaultString(this.IMAccountPublic);
+    }
 
     public void setIMAccountPublic(String IMAccountPublic) {
         this.IMAccountPublic = IMAccountPublic;
@@ -33,7 +43,7 @@ public class ProfileDataOperationImAccount {
 
     @JsonProperty("IM_account_protocol")
     public String getIMAccountProtocol() {
-        return IMAccountProtocol;
+        return StringUtils.defaultString(IMAccountProtocol);
     }
 
     public void setIMAccountProtocol(String IMAccountProtocol) {

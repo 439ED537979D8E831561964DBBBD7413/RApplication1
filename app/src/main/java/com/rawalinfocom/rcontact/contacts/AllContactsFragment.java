@@ -35,7 +35,6 @@ import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
-import com.rawalinfocom.rcontact.model.Country;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -55,7 +54,6 @@ import com.rawalinfocom.rcontact.services.ContactIdFetchService;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -82,8 +80,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     DatabaseHandler databaseHandler;
 
     AllContactListAdapter allContactListAdapter;
-
-
 
 
     public AllContactsFragment() {
@@ -202,10 +198,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     //<editor-fold desc="Private Methods">
 
     private void init() {
-        HashSet<String> retrievedContactIdSet = (HashSet<String>) Utils.getStringSetPreference
-                (getActivity(), AppConstants.PREF_CONTACT_ID_SET);
-        if (retrievedContactIdSet != null) {
-            arrayListContactId = new ArrayList<>(retrievedContactIdSet);
+        /*HashSet<String> retrievedContactIdSet = (HashSet<String>) Utils.getStringSetPreference
+                (getActivity(), AppConstants.PREF_CONTACT_ID_SET);*/
+        ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity(),
+                AppConstants.PREF_CONTACT_ID_SET);
+        if (arrayListContactIds != null) {
+            arrayListContactId = new ArrayList<>(arrayListContactIds);
             phoneBookOperations();
         } else {
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(cursorListReceiver,
@@ -332,11 +330,13 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         public void onReceive(Context context, Intent intent) {
             String message = intent.getStringExtra(AppConstants.EXTRA_LOCAL_BROADCAST_MESSAGE);
             if (StringUtils.equals(message, WsConstants.RESPONSE_STATUS_TRUE)) {
-                HashSet<String> retrievedContactIdSet = (HashSet<String>) Utils
+                /*HashSet<String> retrievedContactIdSet = (HashSet<String>) Utils
                         .getStringSetPreference(getActivity(), AppConstants
-                                .PREF_CONTACT_ID_SET);
-                if (retrievedContactIdSet != null) {
-                    arrayListContactId = new ArrayList<>(retrievedContactIdSet);
+                                .PREF_CONTACT_ID_SET);*/
+                ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity(),
+                        AppConstants.PREF_CONTACT_ID_SET);
+                if (arrayListContactIds != null) {
+                    arrayListContactId = new ArrayList<>(arrayListContactIds);
                     phoneBookOperations();
                 } else {
                     Log.e("Local Broadcast Receiver onReceive: ", "Error while Retriving Ids!");

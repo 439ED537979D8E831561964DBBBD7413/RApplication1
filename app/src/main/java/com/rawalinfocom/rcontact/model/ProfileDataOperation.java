@@ -54,9 +54,13 @@ public class ProfileDataOperation {
     }
 
     @JsonProperty("flag")
-    public String getFlag() {return this.flag;}
+    public String getFlag() {
+        return StringUtils.defaultString(this.flag);
+    }
 
-    public void setFlag(String flag) {this.flag = flag;}
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
 
     @JsonProperty("pb_web_address")
     public ArrayList<String> getPbWebAddress() {
@@ -77,9 +81,13 @@ public class ProfileDataOperation {
     }
 
     @JsonProperty("pb_name_suffix")
-    public String getPbNameSuffix() {return this.pbNameSuffix;}
+    public String getPbNameSuffix() {
+        return StringUtils.defaultString(this.pbNameSuffix);
+    }
 
-    public void setPbNameSuffix(String pbNameSuffix) {this.pbNameSuffix = pbNameSuffix;}
+    public void setPbNameSuffix(String pbNameSuffix) {
+        this.pbNameSuffix = pbNameSuffix;
+    }
 
     @JsonProperty("pb_email_id")
     public ArrayList<ProfileDataOperationEmail> getPbEmailId() {
@@ -95,12 +103,18 @@ public class ProfileDataOperation {
         return StringUtils.defaultString(this.pbNameFirst);
     }
 
-    public void setPbNameFirst(String pbNameFirst) {this.pbNameFirst = pbNameFirst;}
+    public void setPbNameFirst(String pbNameFirst) {
+        this.pbNameFirst = pbNameFirst;
+    }
 
     @JsonProperty("pb_name_middle")
-    public String getPbNameMiddle() {return this.pbNameMiddle;}
+    public String getPbNameMiddle() {
+        return StringUtils.defaultString(this.pbNameMiddle);
+    }
 
-    public void setPbNameMiddle(String pbNameMiddle) {this.pbNameMiddle = pbNameMiddle;}
+    public void setPbNameMiddle(String pbNameMiddle) {
+        this.pbNameMiddle = pbNameMiddle;
+    }
 
     @JsonProperty("pb_organization")
     public ArrayList<ProfileDataOperationOrganization> getPbOrganization() {
@@ -112,9 +126,13 @@ public class ProfileDataOperation {
     }
 
     @JsonProperty("is_favourite")
-    public String getIsFavourite() {return this.isFavourite;}
+    public String getIsFavourite() {
+        return StringUtils.defaultString(this.isFavourite);
+    }
 
-    public void setIsFavourite(String isFavourite) {this.isFavourite = isFavourite;}
+    public void setIsFavourite(String isFavourite) {
+        this.isFavourite = isFavourite;
+    }
 
     @JsonProperty("pb_relationship")
     public ArrayList<ProfileDataOperationRelationship> getPbRelationship() {
@@ -126,31 +144,45 @@ public class ProfileDataOperation {
     }
 
     @JsonProperty("pb_source")
-    public String getPbSource() {return this.pbSource;}
+    public String getPbSource() {
+        return StringUtils.defaultString(this.pbSource);
+    }
 
-    public void setPbSource(String pbSource) {this.pbSource = pbSource;}
+    public void setPbSource(String pbSource) {
+        this.pbSource = pbSource;
+    }
 
     @JsonProperty("pb_name_prefix")
-    public String getPbNamePrefix() {return this.pbNamePrefix;}
+    public String getPbNamePrefix() {
+        return StringUtils.defaultString(this.pbNamePrefix);
+    }
 
-    public void setPbNamePrefix(String pbNamePrefix) {this.pbNamePrefix = pbNamePrefix;}
+    public void setPbNamePrefix(String pbNamePrefix) {
+        this.pbNamePrefix = pbNamePrefix;
+    }
 
     @JsonProperty("pb_name_last")
     public String getPbNameLast() {
         return StringUtils.defaultString(this.pbNameLast);
     }
 
-    public void setPbNameLast(String pbNameLast) {this.pbNameLast = pbNameLast;}
+    public void setPbNameLast(String pbNameLast) {
+        this.pbNameLast = pbNameLast;
+    }
 
     @JsonProperty("pb_phonetic_name_first")
-    public String getPbPhoneticNameFirst() {return this.pbPhoneticNameFirst;}
+    public String getPbPhoneticNameFirst() {
+        return StringUtils.defaultString(this.pbPhoneticNameFirst);
+    }
 
     public void setPbPhoneticNameFirst(String pbPhoneticNameFirst) {
         this.pbPhoneticNameFirst = pbPhoneticNameFirst;
     }
 
     @JsonProperty("pb_phonetic_name_last")
-    public String getPbPhoneticNameLast() {return this.pbPhoneticNameLast;}
+    public String getPbPhoneticNameLast() {
+        return StringUtils.defaultString(this.pbPhoneticNameLast);
+    }
 
     public void setPbPhoneticNameLast(String pbPhoneticNameLast) {
         this.pbPhoneticNameLast = pbPhoneticNameLast;
@@ -166,7 +198,9 @@ public class ProfileDataOperation {
     }
 
     @JsonProperty("pb_phonetic_name_middle")
-    public String getPbPhoneticNameMiddle() {return this.pbPhoneticNameMiddle;}
+    public String getPbPhoneticNameMiddle() {
+        return StringUtils.defaultString(this.pbPhoneticNameMiddle);
+    }
 
     public void setPbPhoneticNameMiddle(String pbPhoneticNameMiddle) {
         this.pbPhoneticNameMiddle = pbPhoneticNameMiddle;
@@ -182,18 +216,26 @@ public class ProfileDataOperation {
     }
 
     @JsonProperty("pb_note")
-    public String getPbNote() {return this.pbNote;}
+    public String getPbNote() {
+        return StringUtils.defaultString(this.pbNote);
+    }
 
-    public void setPbNote(String pbNote) {this.pbNote = pbNote;}
+    public void setPbNote(String pbNote) {
+        this.pbNote = pbNote;
+    }
 
     @JsonProperty("pb_nickname")
-    public String getPbNickname() {return this.pbNickname;}
+    public String getPbNickname() {
+        return StringUtils.defaultString(this.pbNickname);
+    }
 
-    public void setPbNickname(String pbNickname) {this.pbNickname = pbNickname;}
+    public void setPbNickname(String pbNickname) {
+        this.pbNickname = pbNickname;
+    }
 
     @JsonProperty("created_at")
     public String getCreatedAt() {
-        return createdAt;
+        return StringUtils.defaultString(createdAt);
     }
 
     public void setCreatedAt(String createdAt) {
@@ -202,7 +244,7 @@ public class ProfileDataOperation {
 
     @JsonProperty("rcp_pm_id")
     public String getRcpPmId() {
-        return rcpPmId;
+        return StringUtils.defaultString(rcpPmId);
     }
 
     public void setRcpPmId(String rcpPmId) {
@@ -211,7 +253,7 @@ public class ProfileDataOperation {
 
     @JsonProperty("updated_at")
     public String getUpdatedAt() {
-        return updatedAt;
+        return StringUtils.defaultString(updatedAt);
     }
 
     public void setUpdatedAt(String updatedAt) {
@@ -220,7 +262,7 @@ public class ProfileDataOperation {
 
     @JsonProperty("_id")
     public String getNoSqlMasterId() {
-        return noSqlMasterId;
+        return StringUtils.defaultString(noSqlMasterId);
     }
 
     public void setNoSqlMasterId(String noSqlMasterId) {
@@ -238,7 +280,7 @@ public class ProfileDataOperation {
 
     @JsonProperty("em_id")
     public String getEmCloudId() {
-        return emCloudId;
+        return StringUtils.defaultString(emCloudId);
     }
 
     public void setEmCloudId(String emCloudId) {
@@ -247,7 +289,7 @@ public class ProfileDataOperation {
 
     @JsonProperty("mobile_number")
     public String getVerifiedMobileNumber() {
-        return verifiedMobileNumber;
+        return StringUtils.defaultString(verifiedMobileNumber);
     }
 
     public void setVerifiedMobileNumber(String verifiedMobileNumber) {
@@ -256,7 +298,7 @@ public class ProfileDataOperation {
 
     @JsonProperty("mnm_id")
     public String getMnmCloudId() {
-        return mnmCloudId;
+        return StringUtils.defaultString(mnmCloudId);
     }
 
     public void setMnmCloudId(String mnmCloudId) {
