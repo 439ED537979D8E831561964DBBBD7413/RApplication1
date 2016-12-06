@@ -11,7 +11,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 
 public class BaseActivity extends AppCompatActivity {
 
-    DatabaseHandler databaseHandler;
+    public DatabaseHandler databaseHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +23,9 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
+        if (!isTaskRoot()) {
+            overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
+        }
     }
 
     public void startActivityIntent(Context packageContext, Class cls, Bundle extras) {
@@ -37,6 +39,10 @@ public class BaseActivity extends AppCompatActivity {
 
     public String getDeviceTokenId() {
         return Utils.getStringPreference(this, AppConstants.PREF_DEVICE_TOKEN_ID, "");
+    }
+
+    public String getUserPmId() {
+        return Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0");
     }
 
 

@@ -129,13 +129,13 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             //<editor-fold desc="REQ_SEND_OTP">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_SEND_OTP)) {
                 WsResponseObject otpDetailResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
                 if (otpDetailResponse != null && StringUtils.equalsIgnoreCase(otpDetailResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     OtpLog otpLogResponse = otpDetailResponse.getOtpLog();
 
-                    TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(this,
-                            databaseHandler);
+                    TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(databaseHandler);
 
                     if (tableOtpLogDetails.getOtpCount() > 0 && tableOtpLogDetails
                             .getLastOtpDetails().getOldOtp().equalsIgnoreCase
@@ -182,6 +182,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             // <editor-fold desc="REQ_OTP_CONFIRMED">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_OTP_CONFIRMED)) {
                 WsResponseObject confirmOtpResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
                 if (confirmOtpResponse != null && StringUtils.equalsIgnoreCase(confirmOtpResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
@@ -189,17 +190,27 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
                     Utils.setObjectPreference(OtpVerificationActivity.this, AppConstants
                             .PREF_REGS_USER_OBJECT, userProfile);
+                    Utils.setStringPreference(OtpVerificationActivity.this, AppConstants
+                            .PREF_USER_PM_ID, userProfile.getPmId());
+                    Utils.setStringPreference(OtpVerificationActivity.this, AppConstants
+                            .PREF_ACCESS_TOKEN, getDeviceTokenId() + "_" + userProfile.getPmId());
 
                     // set launch screen as OtpVerificationActivity
                     Utils.setIntegerPreference(OtpVerificationActivity.this,
                             AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
                                     .integer.launch_profile_registration));
 
+                    stopService(new Intent(OtpVerificationActivity.this, OtpTimerService.class));
 
                     if (StringUtils.equalsIgnoreCase(userProfile.getIsAlreadyVerified(),
                             String.valueOf(getResources().getInteger(R.integer
                                     .profile_already_verified)))) {
-                        // Redirect to MainActivity
+
+                        Utils.setIntegerPreference(OtpVerificationActivity.this,
+                                AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
+                                        .integer.launch_main_activity));
+
+                        // Redirect to MainActivityTemp
                         Intent intent = new Intent(this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -262,15 +273,16 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
     private void startOtpService() {
         otpServiceIntent = new Intent(this, OtpTimerService.class);
         otpServiceIntent.putExtra(AppConstants.EXTRA_MOBILE_NUMBER, mobileNumber);
-        otpServiceIntent.putExtra(AppConstants.EXTRA_OTP_SERVICE_END_TIME, (long) 60 * 1000);
+        otpServiceIntent.putExtra(AppConstants.EXTRA_OTP_SERVICE_END_TIME, (long) (AppConstants
+                .OTP_VALIDITY_DURATION * 60 * 1000));
+//        otpServiceIntent.putExtra(AppConstants.EXTRA_OTP_SERVICE_END_TIME, (long) 60 * 1000);
         otpServiceIntent.putExtra(AppConstants.EXTRA_CALL_MSP_SERVER, true);
         startService(otpServiceIntent);
     }
 
     private void verifyOtp() {
         if (StringUtils.length(inputOtp.getText().toString()) == AppConstants.OTP_LENGTH) {
-            TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails
-                    (OtpVerificationActivity.this, databaseHandler);
+            TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(databaseHandler);
             OtpLog otpLog = tableOtpLogDetails.getLastOtpDetails();
             if (otpLog.getOldValidityFlag().equalsIgnoreCase("1")) {
                 if (otpLog.getOldOtp().equals(inputOtp.getText().toString())) {
@@ -335,7 +347,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_SEND_OTP, getString(R.string
-                    .msg_please_wait)).execute(WsConstants.WS_ROOT + WsConstants.REQ_SEND_OTP);
+                    .msg_please_wait), false).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_SEND_OTP);
         } else {
             Utils.showErrorSnackBar(this, relativeRootOtpVerification, getResources()
                     .getString(R.string.msg_no_network));
@@ -351,14 +364,13 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         otpObject.setOtp(otpLog.getOldOtp());
         otpObject.setOtpGenerationTime(otpLog.getOldGeneratedAt());
         otpObject.setMobileNumber(mobileNumber);
-        otpObject.setAccessToken(getDeviceTokenId() + "_" + otpLog
-                .getRcProfileMasterPmId());
+        otpObject.setAccessToken(getDeviceTokenId() + "_" + otpLog.getRcProfileMasterPmId());
 
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_OTP_CONFIRMED, getString(R
-                    .string.msg_please_wait)).execute
+                    .string.msg_please_wait), false).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_OTP_CONFIRMED);
         } else {
             Utils.showErrorSnackBar(this, relativeRootOtpVerification, getResources()

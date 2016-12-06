@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -133,15 +134,16 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
             //<editor-fold desc="REQ_SEND_OTP">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_SEND_OTP)) {
                 WsResponseObject otpDetailResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
                 if (otpDetailResponse != null && StringUtils.equalsIgnoreCase(otpDetailResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     OtpLog otpLogResponse = otpDetailResponse.getOtpLog();
 
-                    TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(this,
-                            databaseHandler);
+                    TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(databaseHandler);
 
                     Log.i("OTP: ", otpLogResponse.getOldOtp());
+                    Toast.makeText(this, otpLogResponse.getOldOtp(), Toast.LENGTH_LONG).show();
 
                     if (tableOtpLogDetails.getOtpCount() > 0 && tableOtpLogDetails
                             .getLastOtpDetails().getOldOtp().equalsIgnoreCase
@@ -177,7 +179,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                     Utils.setObjectPreference(MobileNumberRegistrationActivity.this, AppConstants
                             .PREF_SELECTED_COUNTRY_OBJECT, selectedCountry);
                     Utils.setStringPreference(MobileNumberRegistrationActivity.this, AppConstants
-                            .PREF_REGS_MOBILE_NUMBER, inputNumber.getText().toString());
+                            .PREF_REGS_MOBILE_NUMBER, selectedCountry.getCountryCodeNumber() +
+                            inputNumber.getText().toString());
 
                     // set launch screen as OtpVerificationActivity
                     Utils.setIntegerPreference(MobileNumberRegistrationActivity.this,
@@ -294,7 +297,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_SEND_OTP, getString(R.string
-                    .msg_please_wait)).execute(WsConstants.WS_ROOT + WsConstants.REQ_SEND_OTP);
+                    .msg_please_wait), false).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_SEND_OTP);
         } else {
             Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources()
                     .getString(R.string.msg_no_network));
@@ -311,7 +315,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_UPLOAD_IMAGE, getString(R.string
-                    .msg_please_wait)).execute(WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_IMAGE);
+                    .msg_please_wait), false).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_UPLOAD_IMAGE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources()
                     .getString(R.string.msg_no_network));

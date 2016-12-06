@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact.database;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -11,15 +10,15 @@ import java.util.ArrayList;
 
 /**
  * Created by Monal on 14/11/16.
+ * <p>
+ * Table operations rc_profile_master
  */
 
 public class TableProfileMaster {
 
-    Context context;
-    DatabaseHandler databaseHandler;
+    private DatabaseHandler databaseHandler;
 
-    public TableProfileMaster(Context context, DatabaseHandler databaseHandler) {
-        this.context = context;
+    public TableProfileMaster(DatabaseHandler databaseHandler) {
         this.databaseHandler = databaseHandler;
     }
 
@@ -50,18 +49,15 @@ public class TableProfileMaster {
     private static final String COLUMN_PM_ACCESS_TOKEN = "pm_access_token";
     private static final String COLUMN_PM_NOSQL_MASTER_ID = "pm_nosql_master_id";
     private static final String COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE = "pm_signup_social_media_type";
-    private static final String COLUMN_PM_UPDATED_AT = "pm_updated_at";
-    private static final String COLUMN_PM_UPDATED_DATA = "pm_updated_data";
-    private static final String COLUMN_PM_DELETED_AT = "pm_deleted_at";
 
     // Table Create Statements
-    public static final String CREATE_TABLE_RC_PROFILE_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_RC_PROFILE_MASTER = "CREATE TABLE " +
             TABLE_RC_PROFILE_MASTER + " (" +
             " " + COLUMN_PM_ID + " integer NOT NULL CONSTRAINT rc_profile_master_pk PRIMARY KEY " +
             "AUTOINCREMENT," +
             " " + COLUMN_PM_RAW_ID + " text," +
             " " + COLUMN_PM_PREFIX + " text," +
-            " " + COLUMN_PM_FIRST_NAME + " text NOT NULL," +
+            " " + COLUMN_PM_FIRST_NAME + " text," +
             " " + COLUMN_PM_MIDDLE_NAME + " text," +
             " " + COLUMN_PM_LAST_NAME + " text," +
             " " + COLUMN_PM_SUFFIX + " text," +
@@ -78,12 +74,9 @@ public class TableProfileMaster {
             " " + COLUMN_PM_GENDER_PRIVACY + " integer DEFAULT 1," +
             " " + COLUMN_PM_IS_FAVOURITE + " integer," +
             " " + COLUMN_PM_IS_FAVOURITE_PRIVACY + " integer DEFAULT 1," +
-            " " + COLUMN_PM_ACCESS_TOKEN + " text NOT NULL," +
+            " " + COLUMN_PM_ACCESS_TOKEN + " text," +
             " " + COLUMN_PM_NOSQL_MASTER_ID + " text," +
-            " " + COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE + " integer," +
-            " " + COLUMN_PM_UPDATED_AT + " datetime," +
-            " " + COLUMN_PM_UPDATED_DATA + " integer," +
-            " " + COLUMN_PM_DELETED_AT + " datetime" +
+            " " + COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE + " integer" +
             ");";
 
     // Adding new Profile
@@ -91,7 +84,7 @@ public class TableProfileMaster {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_PM_ID, userProfile.getPmId());
+//        values.put(COLUMN_PM_ID, userProfile.getPmId());
         values.put(COLUMN_PM_RAW_ID, userProfile.getPmRawId());
         values.put(COLUMN_PM_PREFIX, userProfile.getPmPrefix());
         values.put(COLUMN_PM_FIRST_NAME, userProfile.getPmFirstName());
@@ -114,12 +107,52 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_ACCESS_TOKEN, userProfile.getPmAccessToken());
         values.put(COLUMN_PM_NOSQL_MASTER_ID, userProfile.getPmNosqlMasterId());
         values.put(COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE, userProfile.getPmSignupSocialMediaType());
-        values.put(COLUMN_PM_UPDATED_AT, userProfile.getPmUpdatedAt());
-        values.put(COLUMN_PM_UPDATED_DATA, userProfile.getPmUpdatedData());
-        values.put(COLUMN_PM_DELETED_AT, userProfile.getPmDeletedAt());
 
         // Inserting Row
         db.insert(TABLE_RC_PROFILE_MASTER, null, values);
+        // insertWithOnConflict
+        db.close(); // Closing database connection
+    }
+
+    // Adding Array new Profile
+    public void addArrayProfile(ArrayList<UserProfile> arrayListUserProfile) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        for (int i = 0; i < arrayListUserProfile.size(); i++) {
+
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_PM_RAW_ID, arrayListUserProfile.get(i).getPmRawId());
+            values.put(COLUMN_PM_PREFIX, arrayListUserProfile.get(i).getPmPrefix());
+            values.put(COLUMN_PM_FIRST_NAME, arrayListUserProfile.get(i).getPmFirstName());
+            values.put(COLUMN_PM_MIDDLE_NAME, arrayListUserProfile.get(i).getPmMiddleName());
+            values.put(COLUMN_PM_LAST_NAME, arrayListUserProfile.get(i).getPmLastName());
+            values.put(COLUMN_PM_SUFFIX, arrayListUserProfile.get(i).getPmSuffix());
+            values.put(COLUMN_PM_NICK_NAME, arrayListUserProfile.get(i).getPmNickName());
+            values.put(COLUMN_PM_PHONETIC_FIRST_NAME, arrayListUserProfile.get(i)
+                    .getPmPhoneticFirstName());
+            values.put(COLUMN_PM_PHONETIC_MIDDLE_NAME, arrayListUserProfile.get(i)
+                    .getPmPhoneticMiddleName());
+            values.put(COLUMN_PM_PHONETIC_LAST_NAME, arrayListUserProfile.get(i)
+                    .getPmPhoneticLastName());
+            values.put(COLUMN_PM_PROFILE_IMAGE, arrayListUserProfile.get(i).getPmProfileImage());
+            values.put(COLUMN_PM_RCP_ID, arrayListUserProfile.get(i).getPmRcpId());
+            values.put(COLUMN_PM_NICK_NAME_PRIVACY, arrayListUserProfile.get(i)
+                    .getPmNickNamePrivacy());
+            values.put(COLUMN_PM_NOTES, arrayListUserProfile.get(i).getPmNotes());
+            values.put(COLUMN_PM_NOTES_PRIVACY, arrayListUserProfile.get(i).getPmNotesPrivacy());
+            values.put(COLUMN_PM_GENDER, arrayListUserProfile.get(i).getPmGender());
+            values.put(COLUMN_PM_GENDER_PRIVACY, arrayListUserProfile.get(i).getPmGenderPrivacy());
+            values.put(COLUMN_PM_IS_FAVOURITE, arrayListUserProfile.get(i).getPmIsFavourite());
+            values.put(COLUMN_PM_IS_FAVOURITE_PRIVACY, arrayListUserProfile.get(i)
+                    .getPmIsFavouritePrivacy());
+            values.put(COLUMN_PM_ACCESS_TOKEN, arrayListUserProfile.get(i).getPmAccessToken());
+            values.put(COLUMN_PM_NOSQL_MASTER_ID, arrayListUserProfile.get(i).getPmNosqlMasterId());
+            values.put(COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE, arrayListUserProfile.get(i)
+                    .getPmSignupSocialMediaType());
+
+            // Inserting Row
+            db.insert(TABLE_RC_PROFILE_MASTER, null, values);
+        }
         // insertWithOnConflict
         db.close(); // Closing database connection
     }
@@ -136,9 +169,8 @@ public class TableProfileMaster {
                 COLUMN_PM_NICK_NAME_PRIVACY, COLUMN_PM_NOTES, COLUMN_PM_NOTES_PRIVACY,
                 COLUMN_PM_GENDER, COLUMN_PM_GENDER_PRIVACY, COLUMN_PM_IS_FAVOURITE,
                 COLUMN_PM_IS_FAVOURITE_PRIVACY, COLUMN_PM_ACCESS_TOKEN, COLUMN_PM_NOSQL_MASTER_ID,
-                COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE, COLUMN_PM_UPDATED_AT, COLUMN_PM_UPDATED_DATA,
-                COLUMN_PM_DELETED_AT}, COLUMN_PM_ID + "=?", new String[]{String.valueOf
-                (profileId)}, null, null, null, null);
+                COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE}, COLUMN_PM_ID + "=?", new String[]{String
+                .valueOf(profileId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -167,10 +199,64 @@ public class TableProfileMaster {
             userProfile.setPmAccessToken(cursor.getString(20));
             userProfile.setPmNosqlMasterId(cursor.getString(21));
             userProfile.setPmSignupSocialMediaType(cursor.getString(22));
-            userProfile.setPmUpdatedAt(cursor.getString(23));
-            userProfile.setPmUpdatedData(cursor.getString(24));
-            userProfile.setPmDeletedAt(cursor.getString(25));
+
+            cursor.close();
         }
+
+        db.close();
+
+        // return Profile
+        return userProfile;
+    }
+
+    // Getting single Profile from Cloud Pm id
+    public UserProfile getProfileFromCloudPmId(int cloudPmd) {
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_ID,
+                COLUMN_PM_RAW_ID, COLUMN_PM_PREFIX, COLUMN_PM_FIRST_NAME, COLUMN_PM_MIDDLE_NAME,
+                COLUMN_PM_LAST_NAME, COLUMN_PM_SUFFIX, COLUMN_PM_NICK_NAME,
+                COLUMN_PM_PHONETIC_FIRST_NAME, COLUMN_PM_PHONETIC_MIDDLE_NAME,
+                COLUMN_PM_PHONETIC_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_RCP_ID,
+                COLUMN_PM_NICK_NAME_PRIVACY, COLUMN_PM_NOTES, COLUMN_PM_NOTES_PRIVACY,
+                COLUMN_PM_GENDER, COLUMN_PM_GENDER_PRIVACY, COLUMN_PM_IS_FAVOURITE,
+                COLUMN_PM_IS_FAVOURITE_PRIVACY, COLUMN_PM_ACCESS_TOKEN, COLUMN_PM_NOSQL_MASTER_ID,
+                COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE}, COLUMN_PM_RCP_ID + "=?", new String[]{String
+                .valueOf(cloudPmd)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        UserProfile userProfile = new UserProfile();
+        if (cursor != null) {
+            userProfile.setPmId(cursor.getString(0));
+            userProfile.setPmRawId(cursor.getString(1));
+            userProfile.setPmPrefix(cursor.getString(2));
+            userProfile.setPmFirstName(cursor.getString(3));
+            userProfile.setPmMiddleName(cursor.getString(4));
+            userProfile.setPmLastName(cursor.getString(5));
+            userProfile.setPmSuffix(cursor.getString(6));
+            userProfile.setPmNickName(cursor.getString(7));
+            userProfile.setPmPhoneticFirstName(cursor.getString(8));
+            userProfile.setPmPhoneticMiddleName(cursor.getString(9));
+            userProfile.setPmPhoneticLastName(cursor.getString(10));
+            userProfile.setPmProfileImage(cursor.getString(11));
+            userProfile.setPmRcpId(cursor.getString(12));
+            userProfile.setPmNickNamePrivacy(cursor.getString(13));
+            userProfile.setPmNotes(cursor.getString(14));
+            userProfile.setPmNotesPrivacy(cursor.getString(15));
+            userProfile.setPmGender(cursor.getString(16));
+            userProfile.setPmGenderPrivacy(cursor.getString(17));
+            userProfile.setPmIsFavourite(cursor.getString(18));
+            userProfile.setPmIsFavouritePrivacy(cursor.getString(19));
+            userProfile.setPmAccessToken(cursor.getString(20));
+            userProfile.setPmNosqlMasterId(cursor.getString(21));
+            userProfile.setPmSignupSocialMediaType(cursor.getString(22));
+
+            cursor.close();
+        }
+
+        db.close();
+
         // return Profile
         return userProfile;
     }
@@ -211,13 +297,15 @@ public class TableProfileMaster {
                 userProfile.setPmAccessToken(cursor.getString(20));
                 userProfile.setPmNosqlMasterId(cursor.getString(21));
                 userProfile.setPmSignupSocialMediaType(cursor.getString(22));
-                userProfile.setPmUpdatedAt(cursor.getString(23));
-                userProfile.setPmUpdatedData(cursor.getString(24));
-                userProfile.setPmDeletedAt(cursor.getString(25));
                 // Adding user profile to list
                 arrayListUserProfile.add(userProfile);
             } while (cursor.moveToNext());
+
+            cursor.close();
+
         }
+
+        db.close();
 
         // return user profile list
         return arrayListUserProfile;
@@ -228,10 +316,11 @@ public class TableProfileMaster {
         String countQuery = "SELECT  * FROM " + TABLE_RC_PROFILE_MASTER;
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
-//        cursor.close();
-
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
         // return count
-        return cursor.getCount();
+        return count;
     }
 
     // Updating single profile
@@ -262,13 +351,14 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_ACCESS_TOKEN, userProfile.getPmAccessToken());
         values.put(COLUMN_PM_NOSQL_MASTER_ID, userProfile.getPmNosqlMasterId());
         values.put(COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE, userProfile.getPmSignupSocialMediaType());
-        values.put(COLUMN_PM_UPDATED_AT, userProfile.getPmUpdatedAt());
-        values.put(COLUMN_PM_UPDATED_DATA, userProfile.getPmUpdatedData());
-        values.put(COLUMN_PM_DELETED_AT, userProfile.getPmDeletedAt());
+
+        int isUpdated = db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_ID + " = ?",
+                new String[]{String.valueOf(userProfile.getPmId())});
+
+        db.close();
 
         // updating row
-        return db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_ID + " = ?",
-                new String[]{String.valueOf(userProfile.getPmId())});
+        return isUpdated;
     }
 
     // Deleting single profile

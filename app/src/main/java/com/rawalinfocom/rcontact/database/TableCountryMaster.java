@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact.database;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -11,15 +10,15 @@ import java.util.ArrayList;
 
 /**
  * Created by Monal on 22/10/16.
+ * <p>
+ * Table operations rc_country_master
  */
 
 public class TableCountryMaster {
 
-    Context context;
-    DatabaseHandler databaseHandler;
+    private DatabaseHandler databaseHandler;
 
-    public TableCountryMaster(Context context, DatabaseHandler databaseHandler) {
-        this.context = context;
+    public TableCountryMaster(DatabaseHandler databaseHandler) {
         this.databaseHandler = databaseHandler;
     }
 
@@ -35,7 +34,7 @@ public class TableCountryMaster {
     private static final String COLUMN_CM_MAX_DIGITS = "cm_max_digits";
 
     // Table Create Statements
-    public static final String CREATE_TABLE_RC_COUNTRY_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_RC_COUNTRY_MASTER = "CREATE TABLE " +
             TABLE_RC_COUNTRY_MASTER +
             "(" + COLUMN_CM_ID + " integer NOT NULL CONSTRAINT rc_country_master_pk PRIMARY KEY," +
             " " + COLUMN_CM_COUNTRY_CODE + " text NOT NULL," +
@@ -79,7 +78,12 @@ public class TableCountryMaster {
             country.setCountryCodeNumber(cursor.getString(2));
             country.setCountryName(cursor.getString(3));
             country.setCountryNumberMaxDigits(cursor.getString(4));
+
+            cursor.close();
         }
+
+        db.close();
+
         // return Country
         return country;
     }
@@ -105,7 +109,12 @@ public class TableCountryMaster {
                 // Adding contact to list
                 arrayListCountry.add(country);
             } while (cursor.moveToNext());
+
+            cursor.close();
+
         }
+
+        db.close();
 
         // return country list
         return arrayListCountry;
@@ -116,10 +125,12 @@ public class TableCountryMaster {
         String countQuery = "SELECT  * FROM " + TABLE_RC_COUNTRY_MASTER;
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
         cursor.close();
+        db.close();
 
         // return count
-        return cursor.getCount();
+        return count;
     }
 
     // Updating single contact
@@ -134,8 +145,12 @@ public class TableCountryMaster {
         values.put(COLUMN_CM_MAX_DIGITS, country.getCountryNumberMaxDigits());
 
         // updating row
-        return db.update(TABLE_RC_COUNTRY_MASTER, values, COLUMN_CM_ID + " = ?",
+        int isUpdated = db.update(TABLE_RC_COUNTRY_MASTER, values, COLUMN_CM_ID + " = ?",
                 new String[]{String.valueOf(country.getCountryId())});
+
+        db.close();
+
+        return isUpdated;
     }
 
     // Deleting single contact

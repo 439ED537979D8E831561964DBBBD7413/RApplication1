@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
+
+    <!-- <android.support.design.widget.TabLayout
+         android:id="@+id/tab_call"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         app:tabGravity="fill"
+         app:tabMode="fixed"/>-->
+
+    <LinearLayout
+        android:id="@+id/linear_call_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_all_contacts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/tab_button_selector"
+            android:text="All Contacts"
+            android:textAppearance="?android:textAppearanceSmall"/>
+
+        <Button
+            android:id="@+id/button_r_contacts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/tab_button_selector"
+            android:text="R Contacts"
+            android:textAppearance="?android:textAppearanceSmall"/>
+
+        <Button
+            android:id="@+id/button_favorites"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/tab_button_selector"
+            android:text="Favorites"
+            android:textAppearance="?android:textAppearanceSmall"/>
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/include_elevation"
+        layout="@layout/layout_elevation"
+        android:layout_width="match_parent"
+        android:layout_below="@id/linear_call_tabs"
+        android:layout_height="@dimen/height_elevation"/>
+
+    <FrameLayout
+        android:id="@+id/frame_container_call_tab"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/linear_call_tabs"/>
+
+</RelativeLayout>

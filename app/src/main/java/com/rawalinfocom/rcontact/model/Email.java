@@ -7,6 +7,7 @@ package com.rawalinfocom.rcontact.model;
 public class Email {
 
     private String emId;
+    private String emCloudId;
     private String emEmailAddress;
     private String emEmailType;
     private String emCustomType;
@@ -14,9 +15,6 @@ public class Email {
     private String emEmailPrivacy;
     private String emIsDefault;
     private String emIsVerified;
-    private String emUpdatedAt;
-    private String emUpdatedData;
-    private String emDeletedAt;
     private String rcProfileMasterPmId;
 
     public String getEmId() {
@@ -25,6 +23,14 @@ public class Email {
 
     public void setEmId(String emId) {
         this.emId = emId;
+    }
+
+    public String getEmCloudId() {
+        return emCloudId;
+    }
+
+    public void setEmCloudId(String emCloudId) {
+        this.emCloudId = emCloudId;
     }
 
     public String getEmEmailAddress() {
@@ -81,30 +87,6 @@ public class Email {
 
     public void setEmIsVerified(String emIsVerified) {
         this.emIsVerified = emIsVerified;
-    }
-
-    public String getEmUpdatedAt() {
-        return emUpdatedAt;
-    }
-
-    public void setEmUpdatedAt(String emUpdatedAt) {
-        this.emUpdatedAt = emUpdatedAt;
-    }
-
-    public String getEmUpdatedData() {
-        return emUpdatedData;
-    }
-
-    public void setEmUpdatedData(String emUpdatedData) {
-        this.emUpdatedData = emUpdatedData;
-    }
-
-    public String getEmDeletedAt() {
-        return emDeletedAt;
-    }
-
-    public void setEmDeletedAt(String emDeletedAt) {
-        this.emDeletedAt = emDeletedAt;
     }
 
     public String getRcProfileMasterPmId() {
