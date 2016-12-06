@@ -1,12 +1,15 @@
 package com.rawalinfocom.rcontact.webservice;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.Utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -37,14 +40,18 @@ public class WebServicePost {
     private static final String TAG_LOG = "WebServicePost";
 
     private final Lock lock = new ReentrantLock();
-    String jsonObject = "";
+    private String jsonObject = "";
     private String url;
     private int requestType = 0;
     private ObjectMapper mapper = null;
+    private boolean setHeader = false;
+    private Context context;
 
-    public WebServicePost(String url, int requestType) {
+    public WebServicePost(Context context, String url, int requestType, boolean setHeader) {
         this.url = url;
         this.requestType = requestType;
+        this.setHeader = setHeader;
+        this.context = context;
     }
 
     public <Request, Response> Response execute(
@@ -70,12 +77,21 @@ public class WebServicePost {
 
                 urlConnection.setRequestProperty("Content-Type", "application/json");
                 urlConnection.setRequestProperty("Accept", "application/json");
+                if (setHeader) {
+                    urlConnection.addRequestProperty("pm_id", Utils.getStringPreference(context,
+                            AppConstants.PREF_USER_PM_ID, "0"));
+                    urlConnection.addRequestProperty("access_token", Utils.getStringPreference
+                            (context, AppConstants.PREF_ACCESS_TOKEN, ""));
+                }
                 urlConnection.connect();
 
                 ObjectWriter writer = getMapper().writer();
 
 
                 if (request != null) {
+                    /**
+                     * Json string passed as request
+                     */
                     jsonObject = writer.writeValueAsString(request);
 //					 FileUtilities utilities = new FileUtilities();
 //					 utilities.write("Filter file", jsonObject);

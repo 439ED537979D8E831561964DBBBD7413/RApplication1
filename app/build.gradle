@@ -38,6 +38,8 @@ android {
         debug {
             minifyEnabled false
 
+//            resValue("string", "PORT_NUMBER", "8082")
+
             proguardFiles 'proguard-support-design.pro'
             proguardFiles 'proguard-support-v7-appcompat.pro'
             proguardFiles 'proguard-support-v7-recyclerview.pro'
@@ -56,8 +58,8 @@ android {
     }
 }
 
-final SUPPORT_LIBRARY_VERSION = '25.0.0'
-final PLAY_SERVICES_VERSION = '9.8.0'
+final SUPPORT_LIBRARY_VERSION = '25.0.1'
+final PLAY_SERVICES_VERSION = '10.0.0'
 final JACKSON_CORE_VERSION = '2.8.3'
 final BUTTER_KNIFE_VERSION = '8.4.0'
 
@@ -66,7 +68,6 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile 'junit:junit:4.12'
 
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
@@ -89,12 +90,15 @@ dependencies {
     compile "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
     apt "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
 
+    debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
+
+    compile project(path: ':linkedin-sdk')
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'org.apache.commons:commons-lang3:3.5'
-
     compile 'com.facebook.android:facebook-android-sdk:4.17.0'
-    compile project(path: ':linkedin-sdk')
+    compile 'com.android.support:support-v4:25.0.1'
+    testCompile 'junit:junit:4.12'
 }
 
 apply plugin: 'com.google.gms.google-services'

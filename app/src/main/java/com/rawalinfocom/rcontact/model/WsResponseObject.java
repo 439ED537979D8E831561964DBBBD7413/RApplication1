@@ -25,6 +25,7 @@ public class WsResponseObject {
     private UserProfile userProfile;
 
     private ArrayList<Country> arrayListCountry;
+    private ArrayList<ProfileDataOperation> arrayListUserRcProfile;
 
     @JsonProperty("status")
     public String getStatus() {
@@ -69,5 +70,14 @@ public class WsResponseObject {
 
     public void setUserProfile(UserProfile userProfile) {
         this.userProfile = userProfile;
+    }
+
+    @JsonProperty("rcp_profiles")
+    public ArrayList<ProfileDataOperation> getArrayListUserRcProfile() {
+        return arrayListUserRcProfile;
+    }
+
+    public void setArrayListUserRcProfile(ArrayList<ProfileDataOperation> arrayListUserRcProfile) {
+        this.arrayListUserRcProfile = arrayListUserRcProfile;
     }
 }

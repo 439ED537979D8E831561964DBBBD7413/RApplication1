@@ -40,9 +40,6 @@ public class UserProfile implements Serializable {
     private String pmAccessToken;
     private String pmNosqlMasterId;
     private String pmSignupSocialMediaType;
-    private String pmUpdatedAt;
-    private String pmUpdatedData;
-    private String pmDeletedAt;
 
     private String emailId;
 
@@ -252,27 +249,4 @@ public class UserProfile implements Serializable {
         this.pmSignupSocialMediaType = pmSignupSocialMediaType;
     }
 
-    public String getPmUpdatedAt() {
-        return pmUpdatedAt;
-    }
-
-    public void setPmUpdatedAt(String pmUpdatedAt) {
-        this.pmUpdatedAt = pmUpdatedAt;
-    }
-
-    public String getPmUpdatedData() {
-        return pmUpdatedData;
-    }
-
-    public void setPmUpdatedData(String pmUpdatedData) {
-        this.pmUpdatedData = pmUpdatedData;
-    }
-
-    public String getPmDeletedAt() {
-        return pmDeletedAt;
-    }
-
-    public void setPmDeletedAt(String pmDeletedAt) {
-        this.pmDeletedAt = pmDeletedAt;
-    }
 }

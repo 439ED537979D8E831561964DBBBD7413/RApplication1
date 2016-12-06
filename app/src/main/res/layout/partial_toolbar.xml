@@ -16,6 +16,7 @@
         app:layout_scrollFlags="scroll|enterAlways">
 
         <RelativeLayout
+            android:id="@+id/relative_action_back"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true">

@@ -1,6 +1,10 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
 
 /**
  * Created by Monal on 20/10/16.
@@ -8,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Class containing all the Response Objects
  */
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WsRequestObject {
 
     private String countryCode;
@@ -28,6 +34,8 @@ public class WsRequestObject {
     private String socialMediaTokenId;
 
     private String profileImage;
+
+    private ArrayList<ProfileData> profileData;
 
     @JsonProperty("country_code")
     public String getCountryCode() {
@@ -162,5 +170,14 @@ public class WsRequestObject {
 
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    @JsonProperty("data")
+    public ArrayList<ProfileData> getProfileData() {
+        return profileData;
+    }
+
+    public void setProfileData(ArrayList<ProfileData> profileData) {
+        this.profileData = profileData;
     }
 }

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -287,22 +288,24 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         if (error == null) {
 
             //<editor-fold desc="REQ_PROFILE_REGISTRATION">
+
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_REGISTRATION)) {
                 WsResponseObject userProfileResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
                 if (userProfileResponse != null && StringUtils.equalsIgnoreCase(userProfileResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
 
                     // set launch screen as MainActivity
                     Utils.setIntegerPreference(ProfileRegistrationActivity.this,
                             AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
                                     .integer.launch_main_activity));
 
-                    TableProfileMaster tableProfileMaster = new TableProfileMaster(this,
-                            databaseHandler);
+                    TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
                     if (userProfileRegistered != null) {
                         tableProfileMaster.addProfile(userProfileRegistered);
-                        Toast.makeText(this, tableProfileMaster.getUserProfileCount() + "", Toast
-                                .LENGTH_SHORT).show();
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
+                                userProfileRegistered.getPmId());
                     }
 
                     // Redirect to MainActivity
@@ -342,8 +345,10 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         inputLastName.setText(userProfile.getPmLastName());
         inputEmailId.setText(userProfile.getEmailId());
 
-        rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
+        rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
+
+        rippleActionBack.setVisibility(View.INVISIBLE);
 
         textToolbarTitle.setText(R.string.title_profile_registration);
 
@@ -357,7 +362,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         buttonLinkedIn.setTypeface(Utils.typefaceSemiBold(this));
         textOr.setTypeface(Utils.typefaceSemiBold(this));
 
-        rippleActionBack.setOnRippleCompleteListener(this);
         rippleRegister.setOnRippleCompleteListener(this);
         rippleFacebook.setOnRippleCompleteListener(this);
         rippleGoogle.setOnRippleCompleteListener(this);
@@ -532,16 +536,15 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
         userProfileRegistered = new UserProfile();
         userProfileRegistered.setPmId(userProfile.getPmId());
-        userProfileRegistered.setPmFirstName(userProfile.getPmFirstName());
-        userProfileRegistered.setPmLastName(userProfile.getPmLastName());
+        userProfileRegistered.setPmFirstName(profileRegistrationObject.getFirstName());
+        userProfileRegistered.setPmLastName(profileRegistrationObject.getLastName());
         userProfileRegistered.setPmSignupSocialMediaType(String.valueOf(type));
-        userProfileRegistered.setPmAccessToken(getDeviceTokenId() + "_" + userProfile
-                .getPmId());
+        userProfileRegistered.setPmAccessToken(getDeviceTokenId() + "_" + userProfile.getPmId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     profileRegistrationObject, null, WsResponseObject.class, WsConstants
-                    .REQ_PROFILE_REGISTRATION, getString(R.string.msg_please_wait)).execute
+                    .REQ_PROFILE_REGISTRATION, getString(R.string.msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_REGISTRATION);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()

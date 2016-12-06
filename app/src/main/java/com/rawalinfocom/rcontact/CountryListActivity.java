@@ -73,9 +73,9 @@ public class CountryListActivity extends BaseActivity implements WsResponseListe
             //<editor-fold desc="REQ_COUNTRY_CODE_DETAIL">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_COUNTRY_CODE_DETAIL)) {
                 WsResponseObject countryListResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
                 if (countryListResponse != null && StringUtils.equalsIgnoreCase(countryListResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-//                    AppUtils.hideProgressDialog();
 
                     arrayListCountry = new ArrayList<>();
                     arrayListCountry.addAll(countryListResponse.getArrayListCountry());
@@ -90,7 +90,7 @@ public class CountryListActivity extends BaseActivity implements WsResponseListe
                         recyclerViewCountryList.setAdapter(adapterCountryList);
 
                         TableCountryMaster tableCountryMaster = new TableCountryMaster
-                                (CountryListActivity.this, databaseHandler);
+                                (databaseHandler);
                         for (int i = 0; i < arrayListCountry.size(); i++) {
                             tableCountryMaster.addCountry(arrayListCountry.get(i));
                         }
@@ -189,7 +189,7 @@ public class CountryListActivity extends BaseActivity implements WsResponseListe
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
                     WsResponseObject.class, WsConstants.REQ_COUNTRY_CODE_DETAIL, getString(R
-                    .string.msg_please_wait)).execute(WsConstants.WS_ROOT + WsConstants
+                    .string.msg_please_wait), false).execute(WsConstants.WS_ROOT + WsConstants
                     .REQ_COUNTRY_CODE_DETAIL);
         } else {
             Utils.showErrorSnackBar(this, relativeRootCountryList, getResources()
