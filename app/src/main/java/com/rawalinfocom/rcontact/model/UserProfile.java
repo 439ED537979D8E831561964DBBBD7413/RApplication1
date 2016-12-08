@@ -42,6 +42,7 @@ public class UserProfile implements Serializable {
     private String pmSignupSocialMediaType;
 
     private String emailId;
+    private String mobileNumber;
 
 
     @JsonProperty("first_name")
@@ -162,7 +163,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmRcpId() {
-        return pmRcpId;
+        return StringUtils.defaultString(pmRcpId, "0");
     }
 
     public void setPmRcpId(String pmRcpId) {
@@ -249,4 +250,11 @@ public class UserProfile implements Serializable {
         this.pmSignupSocialMediaType = pmSignupSocialMediaType;
     }
 
+    public String getMobileNumber() {
+        return StringUtils.defaultString(mobileNumber);
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
 }

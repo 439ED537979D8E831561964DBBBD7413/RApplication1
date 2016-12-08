@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
+import com.rawalinfocom.rcontact.database.DatabaseHandler;
+
 /**
  * Created by Monal on 10/10/16.
  * <p>
@@ -13,6 +15,8 @@ import android.support.v4.app.FragmentTransaction;
  */
 
 public abstract class BaseFragment extends Fragment {
+
+    DatabaseHandler databaseHandler;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -60,7 +64,13 @@ public abstract class BaseFragment extends Fragment {
         transaction.addToBackStack(null);
 
         transaction.commit();
-        getFragmentManager().executePendingTransactions();
     }
 
+    public DatabaseHandler getDatabaseHandler() {
+        return databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
+    }
+
+    public String getUserPmId() {
+        return ((BaseActivity) getActivity()).getUserPmId();
+    }
 }

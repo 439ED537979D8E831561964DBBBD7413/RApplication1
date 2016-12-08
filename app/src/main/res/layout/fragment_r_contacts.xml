@@ -1,14 +1,14 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                xmlns:wheel="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/relative_root_all_contacts"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/colorWhite"
-                tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
 
     <com.rawalinfocom.rcontact.helper.ProgressWheel
-        android:id="@+id/progress_all_contact"
+        android:id="@+id/progress_r_contact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"

@@ -27,7 +27,8 @@ import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.database.DatabaseHandler;
+import com.rawalinfocom.rcontact.database.TableEmailMaster;
+import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
@@ -35,6 +36,8 @@ import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.Email;
+import com.rawalinfocom.rcontact.model.MobileNumber;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -77,7 +80,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ArrayList<String> arrayListContactNumbers;
     ArrayList<String> arrayListContactEmails;
 
-    DatabaseHandler databaseHandler;
+//    DatabaseHandler databaseHandler;
 
     AllContactListAdapter allContactListAdapter;
 
@@ -95,7 +98,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
+//        databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
         arrayListPhoneBookContacts = new ArrayList<>();
     }
 
@@ -115,6 +118,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         init();
     }
 
@@ -130,7 +134,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 if (uploadContactResponse != null && StringUtils.equalsIgnoreCase
                         (uploadContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    /* Save synced data details */
+                    /* Save synced data details in Preference */
                     String previouslySyncedData = (StringUtils.split(serviceType, "_"))[1];
                     int nextNumber = Integer.parseInt(StringUtils.defaultString
                             (previouslySyncedData, "0")) + CONTACT_CHUNK;
@@ -218,7 +222,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
         if (!Utils.isArraylistNullOrEmpty(arrayListContactNumbers)) {
             TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
-                    (databaseHandler);
+                    (getDatabaseHandler());
             ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new ArrayList<>();
             for (int i = 0; i < arrayListContactNumbers.size(); i++) {
                 if (!tableProfileMobileMapping.getIsMobileNumberExists
@@ -255,7 +259,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private void storeToEmailMapping(ArrayList<ProfileDataOperation> profileData) {
         if (!Utils.isArraylistNullOrEmpty(arrayListContactEmails)) {
             TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping
-                    (databaseHandler);
+                    (getDatabaseHandler());
             ArrayList<ProfileEmailMapping> arrayListProfileEmailMapping = new ArrayList<>();
             for (int i = 0; i < arrayListContactEmails.size(); i++) {
                 if (!tableProfileEmailMapping.getIsEmailIdExists(arrayListContactEmails.get(i))) {
@@ -288,7 +292,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private void storeProfileDataToDb(ArrayList<ProfileDataOperation> profileData) {
 
         // Basic Profile Data
-        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
 
         ArrayList<UserProfile> arrayListUserProfile = new ArrayList<>();
         for (int i = 0; i < profileData.size(); i++) {
@@ -307,6 +311,33 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             userProfile.setPmRcpId(profileData.get(i).getRcpPmId());
             userProfile.setPmNosqlMasterId(profileData.get(i).getNoSqlMasterId());
 
+            ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = profileData.get(i)
+                    .getPbPhoneNumber();
+            ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
+            for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
+                MobileNumber mobileNumber = new MobileNumber();
+                mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(j).getPhoneNumber());
+                mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+//                arrayListPhoneNumber.get(j).
+                arrayListMobileNumber.add(mobileNumber);
+            }
+
+            TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
+            tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
+
+            ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileData.get(i)
+                    .getPbEmailId();
+            ArrayList<Email> arrayListEmail = new ArrayList<>();
+            for (int j = 0; j < arrayListEmailId.size(); j++) {
+                Email email = new Email();
+                email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+                email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                arrayListEmail.add(email);
+            }
+
+            TableEmailMaster tableEmailMaster = new TableEmailMaster(getDatabaseHandler());
+            tableEmailMaster.addArrayEmail(arrayListEmail);
+
             arrayListUserProfile.add(userProfile);
         }
 
@@ -316,9 +347,13 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     private void populateRecyclerView() {
 
-        allContactListAdapter = new AllContactListAdapter(getActivity(),
-                arrayListPhoneBookContacts);
-        recyclerViewContactList.setAdapter(allContactListAdapter);
+        if (allContactListAdapter == null) {
+            allContactListAdapter = new AllContactListAdapter(getActivity(),
+                    arrayListPhoneBookContacts);
+            recyclerViewContactList.setAdapter(allContactListAdapter);
+        } else {
+            allContactListAdapter.notifyDataSetChanged();
+        }
 
     }
 

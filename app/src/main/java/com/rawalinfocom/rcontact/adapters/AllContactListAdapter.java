@@ -69,7 +69,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
 
         ProfileData profileData = arrayListUserContact.get(position);
 
-
         String contactDisplayName = profileData.getOperation().get(0).getPbNameFirst() + "" +
                 " " + profileData.getOperation().get(0).getPbNameLast();
         holder.textContactName.setText(contactDisplayName);

@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,13 +63,13 @@ public class ContactsFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
-        ButterKnife.bind(this, view);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
         init();
         replaceFragment(allContactsFragment);
     }
@@ -84,24 +85,24 @@ public class ContactsFragment extends BaseFragment {
         buttonAllContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectButton((Button) view);
                 replaceFragment(allContactsFragment);
+                selectButton((Button) view);
             }
         });
 
         buttonRContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectButton((Button) view);
                 replaceFragment(rContactsFragment);
+                selectButton((Button) view);
             }
         });
 
         buttonFavorites.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectButton((Button) view);
                 replaceFragment(favoritesFragment);
+                selectButton((Button) view);
             }
         });
 
@@ -116,6 +117,14 @@ public class ContactsFragment extends BaseFragment {
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commit();
     }
+
+   /* private void addFragment(Fragment fragment) {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(R.id.frame_container_call_tab, fragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.commit();
+    }*/
 
     private void selectButton(Button button) {
 

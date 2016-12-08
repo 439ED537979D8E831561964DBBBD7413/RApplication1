@@ -289,6 +289,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                     stopService(new Intent(OtpVerificationActivity.this, OtpTimerService.class));
                     otpConfirmed(otpLog);
                 } else {
+                    Utils.hideSoftKeyboard(this, inputOtp);
                     Utils.showErrorSnackBar(OtpVerificationActivity.this,
                             relativeRootOtpVerification, getString(R.string
                                     .error_otp_verification_fail));

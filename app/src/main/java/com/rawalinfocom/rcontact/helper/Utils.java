@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.helper;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -14,6 +15,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -345,6 +348,21 @@ public class Utils {
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
+    //</editor-fold>
+
+    //<editor-fold desc="Keyboard Visibility">
+    public static void hideSoftKeyboard(Context context, EditText editText) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService
+                (Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+    }
+
+
+    public static void showSoftKeyboard(Context context, EditText editText) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context
+                .INPUT_METHOD_SERVICE);
+        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+    }
     //</editor-fold>
 
 }
