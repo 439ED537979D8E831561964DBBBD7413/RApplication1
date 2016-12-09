@@ -33,17 +33,18 @@ import butterknife.ButterKnife;
  * Created by Monal on 21/10/16.
  */
 
-public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAdapter
-        .AllContactViewHolder> {
+public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
     /* phone book contacts */
-    private ArrayList<ProfileData> arrayListUserContact;
+    private ArrayList<Object> arrayListUserContact;
+
+    private final int HEADER = 0, CONTACT = 1;
 
     private int colorBlack, colorPineGreen;
-    String defaultCountryCode;
+    private String defaultCountryCode;
 
-    public AllContactListAdapter(Context context, ArrayList<ProfileData> arrayListUserContact) {
+    public AllContactListAdapter(Context context, ArrayList<Object> arrayListUserContact) {
         this.context = context;
         this.arrayListUserContact = arrayListUserContact;
 
@@ -58,16 +59,73 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
     }
 
     @Override
-    public AllContactViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_all_contacts,
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        RecyclerView.ViewHolder viewHolder = null;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+        switch (viewType) {
+            case HEADER:
+                View v1 = inflater.inflate(R.layout.list_item_header_contact, parent, false);
+                viewHolder = new ContactHeaderViewHolder(v1);
+                break;
+            case CONTACT:
+                View v2 = inflater.inflate(R.layout.list_item_all_contacts, parent, false);
+                viewHolder = new AllContactViewHolder(v2);
+                break;
+        }
+        return viewHolder;
+
+        /*View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_all_contacts,
                 parent, false);
-        return new AllContactViewHolder(v);
+        return new AllContactViewHolder(v);*/
     }
 
     @Override
-    public void onBindViewHolder(AllContactViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        ProfileData profileData = arrayListUserContact.get(position);
+        switch (holder.getItemViewType()) {
+            case HEADER:
+                ContactHeaderViewHolder contactHeaderViewHolder = (ContactHeaderViewHolder) holder;
+                configureHeaderViewHolder(contactHeaderViewHolder, position);
+                break;
+            case CONTACT:
+                AllContactViewHolder contactViewHolder = (AllContactViewHolder) holder;
+                configureAllContactViewHolder(contactViewHolder, position);
+                break;
+        }
+
+       /* ProfileData profileData = arrayListUserContact.get(position);
+
+        String contactDisplayName = profileData.getOperation().get(0).getPbNameFirst() + "" +
+                " " + profileData.getOperation().get(0).getPbNameLast();
+        holder.textContactName.setText(contactDisplayName);
+
+        if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
+            displayNumber(holder, profileData, contactDisplayName);
+        } else if (profileData.getOperation().get(0).getPbEmailId().size() > 0) {
+            displayEmail(holder, profileData, null, contactDisplayName);
+        }*/
+
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (arrayListUserContact.get(position) instanceof ProfileData) {
+            return CONTACT;
+        } else if (arrayListUserContact.get(position) instanceof String) {
+            return HEADER;
+        }
+        return -1;
+    }
+
+    @Override
+    public int getItemCount() {
+        return arrayListUserContact.size();
+    }
+
+    private void configureAllContactViewHolder(AllContactViewHolder holder, int position) {
+        ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
 
         String contactDisplayName = profileData.getOperation().get(0).getPbNameFirst() + "" +
                 " " + profileData.getOperation().get(0).getPbNameLast();
@@ -78,12 +136,11 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
         } else if (profileData.getOperation().get(0).getPbEmailId().size() > 0) {
             displayEmail(holder, profileData, null, contactDisplayName);
         }
-
     }
 
-    @Override
-    public int getItemCount() {
-        return arrayListUserContact.size();
+    private void configureHeaderViewHolder(ContactHeaderViewHolder holder, int position) {
+        String letter = (String) arrayListUserContact.get(position);
+        holder.textHeader.setText(letter);
     }
 
     private void displayNumber(AllContactViewHolder holder, ProfileData profileData, String
@@ -245,6 +302,20 @@ public class AllContactListAdapter extends RecyclerView.Adapter<AllContactListAd
             textContactNumber.setTextColor(colorBlack);
 
             textCloudContactName.setTextColor(colorPineGreen);
+
+        }
+    }
+
+     class ContactHeaderViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.text_header)
+        TextView textHeader;
+
+        ContactHeaderViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+
+            textHeader.setTypeface(Utils.typefaceSemiBold(context));
 
         }
     }

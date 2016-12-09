@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.adapters.RContactListAdapter;
 import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
@@ -24,6 +23,8 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.UserProfile;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -86,8 +87,22 @@ public class RContactsFragment extends BaseFragment {
         progressRContact.setVisibility(View.GONE);
         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
                 (getDatabaseHandler());
-        rContactListAdapter = new RContactListAdapter(getActivity(), tableProfileMobileMapping.getRContactList());
-        recyclerViewContactList.setAdapter(rContactListAdapter);
+
+        ArrayList<UserProfile> arrayListDisplayProfile = tableProfileMobileMapping
+                .getRContactList();
+        ArrayList<Object> arrayListRContact = new ArrayList<>();
+        if (arrayListDisplayProfile.size() > 0) {
+            for (int i = 0; i < arrayListDisplayProfile.size(); i++) {
+                String headerLetter = StringUtils.upperCase(StringUtils.substring
+                        (arrayListDisplayProfile.get(i).getPmFirstName(), 0, 1));
+                if (!arrayListRContact.contains(headerLetter)) {
+                    arrayListRContact.add(headerLetter);
+                }
+                arrayListRContact.add(arrayListDisplayProfile.get(i));
+            }
+            rContactListAdapter = new RContactListAdapter(getActivity(), arrayListRContact);
+            recyclerViewContactList.setAdapter(rContactListAdapter);
+        }
     }
 
     private void fetchData() {

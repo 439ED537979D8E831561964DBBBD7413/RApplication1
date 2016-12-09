@@ -82,7 +82,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @BindView(R.id.title_indicator)
     ColorGroupSectionTitleIndicator titleIndicator;
 
-    ArrayList<ProfileData> arrayListPhoneBookContacts;
+    ArrayList<Object> arrayListPhoneBookContacts;
+    //    ArrayList<ProfileData> arrayListPhoneBookContacts;
     ArrayList<ProfileData> arrayListUserContact;
     ArrayList<String> arrayListContactId;
     ArrayList<String> arrayListContactNumbers;
@@ -805,13 +806,24 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         }
 
         if (arrayListUserContact.size() > 0) {
-            arrayListPhoneBookContacts.addAll(arrayListUserContact);
+//            arrayListPhoneBookContacts.addAll(arrayListUserContact);
+
+            for (int i = 0; i < arrayListUserContact.size(); i++) {
+                String headerLetter = StringUtils.upperCase(StringUtils.substring
+                        (arrayListUserContact.get(i).getOperation().get(0).getPbNameFirst(), 0, 1));
+                if (!arrayListPhoneBookContacts.contains(headerLetter)) {
+                    arrayListPhoneBookContacts.add(headerLetter);
+                }
+                arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
+            }
+
             if (previouslySyncedData < previousTo) {
                 uploadContacts(previouslySyncedData);
             } else {
                 progressAllContact.setVisibility(View.GONE);
                 populateRecyclerView();
             }
+
         } else {
             progressAllContact.setVisibility(View.GONE);
         }
