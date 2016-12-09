@@ -35,6 +35,10 @@ import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
+        .ColorGroupSectionTitleIndicator;
+import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical
+        .VerticalRecyclerViewFastScroller;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.MobileNumber;
@@ -73,6 +77,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ProgressWheel progressAllContact;
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
+    @BindView(R.id.scroller_all_contact)
+    VerticalRecyclerViewFastScroller scrollerAllContact;
+    @BindView(R.id.title_indicator)
+    ColorGroupSectionTitleIndicator titleIndicator;
 
     ArrayList<ProfileData> arrayListPhoneBookContacts;
     ArrayList<ProfileData> arrayListUserContact;
@@ -85,15 +93,18 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     AllContactListAdapter allContactListAdapter;
 
 
+    //<editor-fold desc="Constructors">
     public AllContactsFragment() {
         // Required empty public constructor
 
     }
 
-
     public static AllContactsFragment newInstance() {
         return new AllContactsFragment();
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Override Methods">
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -199,11 +210,25 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(cursorListReceiver);
     }
 
+    //</editor-fold>
+
     //<editor-fold desc="Private Methods">
 
     private void init() {
-        /*HashSet<String> retrievedContactIdSet = (HashSet<String>) Utils.getStringSetPreference
-                (getActivity(), AppConstants.PREF_CONTACT_ID_SET);*/
+
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
+        scrollerAllContact.setRecyclerView(recyclerViewContactList);
+
+        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
+        recyclerViewContactList.setOnScrollListener(scrollerAllContact.getOnScrollListener());
+
+        // Connect the section indicator to the scroller
+        scrollerAllContact.setSectionIndicator(titleIndicator);
+        titleIndicator.setTitleText("A");
+
+        setRecyclerViewLayoutManager(recyclerViewContactList);
+//        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity(),
                 AppConstants.PREF_CONTACT_ID_SET);
         if (arrayListContactIds != null) {
@@ -216,7 +241,26 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             getActivity().startService(contactIdFetchService);
         }
 
-        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+    }
+
+    /**
+     * Set RecyclerView's LayoutManager
+     */
+    public void setRecyclerViewLayoutManager(RecyclerView recyclerView) {
+        int scrollPosition = 0;
+
+        // If a layout manager has already been set, get current scroll position.
+        if (recyclerView.getLayoutManager() != null) {
+            scrollPosition =
+                    ((LinearLayoutManager) recyclerView.getLayoutManager())
+                            .findFirstCompletelyVisibleItemPosition();
+        }
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.scrollToPosition(scrollPosition);
     }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
