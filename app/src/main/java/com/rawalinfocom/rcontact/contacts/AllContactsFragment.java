@@ -83,6 +83,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ColorGroupSectionTitleIndicator titleIndicator;
 
     ArrayList<Object> arrayListPhoneBookContacts;
+    ArrayList<String> getArrayListContactHeaders;
     //    ArrayList<ProfileData> arrayListPhoneBookContacts;
     ArrayList<ProfileData> arrayListUserContact;
     ArrayList<String> arrayListContactId;
@@ -112,6 +113,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         super.onCreate(savedInstanceState);
 //        databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
         arrayListPhoneBookContacts = new ArrayList<>();
+        getArrayListContactHeaders = new ArrayList<>();
     }
 
     @Override
@@ -217,7 +219,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     private void init() {
 
-        // Connect the recycler to the scroller (to let the scroller scroll the list)
+       /* // Connect the recycler to the scroller (to let the scroller scroll the list)
         scrollerAllContact.setRecyclerView(recyclerViewContactList);
 
         // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
@@ -225,9 +227,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         // Connect the section indicator to the scroller
         scrollerAllContact.setSectionIndicator(titleIndicator);
-        titleIndicator.setTitleText("A");
+//        titleIndicator.setTitleText("A");
 
-        setRecyclerViewLayoutManager(recyclerViewContactList);
+        setRecyclerViewLayoutManager(recyclerViewContactList);*/
 //        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity(),
@@ -394,11 +396,26 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         if (allContactListAdapter == null) {
             allContactListAdapter = new AllContactListAdapter(getActivity(),
-                    arrayListPhoneBookContacts);
+                    arrayListPhoneBookContacts, getArrayListContactHeaders);
             recyclerViewContactList.setAdapter(allContactListAdapter);
+
+            // Connect the recycler to the scroller (to let the scroller scroll the list)
+            scrollerAllContact.setRecyclerView(recyclerViewContactList);
+
+            // Connect the scroller to the recycler (to let the recycler scroll the scroller's
+            // handle)
+            recyclerViewContactList.setOnScrollListener(scrollerAllContact.getOnScrollListener());
+
+            // Connect the section indicator to the scroller
+            scrollerAllContact.setSectionIndicator(titleIndicator);
+//        titleIndicator.setTitleText("A");
+
+            setRecyclerViewLayoutManager(recyclerViewContactList);
+
         } else {
             allContactListAdapter.notifyDataSetChanged();
         }
+
 
     }
 
@@ -812,6 +829,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 String headerLetter = StringUtils.upperCase(StringUtils.substring
                         (arrayListUserContact.get(i).getOperation().get(0).getPbNameFirst(), 0, 1));
                 if (!arrayListPhoneBookContacts.contains(headerLetter)) {
+                    getArrayListContactHeaders.add(headerLetter);
                     arrayListPhoneBookContacts.add(headerLetter);
                 }
                 arrayListPhoneBookContacts.add(arrayListUserContact.get(i));

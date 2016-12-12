@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
@@ -33,20 +34,26 @@ import butterknife.ButterKnife;
  * Created by Monal on 21/10/16.
  */
 
-public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+        implements SectionIndexer {
 
     private Context context;
     /* phone book contacts */
     private ArrayList<Object> arrayListUserContact;
+    private ArrayList<String> arrayListContactHeader;
 
     private final int HEADER = 0, CONTACT = 1;
 
     private int colorBlack, colorPineGreen;
     private String defaultCountryCode;
+    private int previousPosition = 0;
 
-    public AllContactListAdapter(Context context, ArrayList<Object> arrayListUserContact) {
+    //<editor-fold desc="Constructor">
+    public AllContactListAdapter(Context context, ArrayList<Object> arrayListUserContact,
+                                 ArrayList<String> arrayListContactHeader) {
         this.context = context;
         this.arrayListUserContact = arrayListUserContact;
+        this.arrayListContactHeader = arrayListContactHeader;
 
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
@@ -57,6 +64,9 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             defaultCountryCode = country.getCountryCodeNumber();
         }
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Override Methods">
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -75,10 +85,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 break;
         }
         return viewHolder;
-
-        /*View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_all_contacts,
-                parent, false);
-        return new AllContactViewHolder(v);*/
     }
 
     @Override
@@ -94,18 +100,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 configureAllContactViewHolder(contactViewHolder, position);
                 break;
         }
-
-       /* ProfileData profileData = arrayListUserContact.get(position);
-
-        String contactDisplayName = profileData.getOperation().get(0).getPbNameFirst() + "" +
-                " " + profileData.getOperation().get(0).getPbNameLast();
-        holder.textContactName.setText(contactDisplayName);
-
-        if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
-            displayNumber(holder, profileData, contactDisplayName);
-        } else if (profileData.getOperation().get(0).getPbEmailId().size() > 0) {
-            displayEmail(holder, profileData, null, contactDisplayName);
-        }*/
 
     }
 
@@ -124,6 +118,39 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return arrayListUserContact.size();
     }
 
+    /**
+     * Section Indexer
+     */
+
+    @Override
+    public Object[] getSections() {
+        return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
+//        return new Object[0];
+    }
+
+    @Override
+    public int getPositionForSection(int sectionIndex) {
+        return 0;
+    }
+
+    @Override
+    public int getSectionForPosition(int position) {
+        if (position >= arrayListUserContact.size()) {
+            position = arrayListUserContact.size() - 1;
+        }
+
+        if (arrayListUserContact.get(position) instanceof String) {
+            String letter = (String) arrayListUserContact.get(position);
+            previousPosition = arrayListContactHeader.indexOf(letter);
+        }
+
+        return previousPosition;
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Private Methods">
+
     private void configureAllContactViewHolder(AllContactViewHolder holder, int position) {
         ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
 
@@ -136,6 +163,16 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         } else if (profileData.getOperation().get(0).getPbEmailId().size() > 0) {
             displayEmail(holder, profileData, null, contactDisplayName);
         }
+
+        /* Hide Divider if row is last in Section */
+        if ((position + 1) < arrayListUserContact.size()) {
+            if (arrayListUserContact.get(position + 1) instanceof String) {
+                holder.dividerAllContact.setVisibility(View.GONE);
+            } else {
+                holder.dividerAllContact.setVisibility(View.VISIBLE);
+            }
+        }
+
     }
 
     private void configureHeaderViewHolder(ContactHeaderViewHolder holder, int position) {
@@ -279,6 +316,10 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     }
 
+    //</editor-fold>
+
+    //<editor-fold desc="View Holders">
+
     class AllContactViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.image_profile)
@@ -289,6 +330,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         TextView textCloudContactName;
         @BindView(R.id.text_contact_number)
         TextView textContactNumber;
+        @BindView(R.id.divider_all_contact)
+        View dividerAllContact;
 
         AllContactViewHolder(View itemView) {
             super(itemView);
@@ -306,7 +349,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-     class ContactHeaderViewHolder extends RecyclerView.ViewHolder {
+    class ContactHeaderViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.text_header)
         TextView textHeader;
@@ -319,5 +362,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         }
     }
+
+    //</editor-fold>
 
 }

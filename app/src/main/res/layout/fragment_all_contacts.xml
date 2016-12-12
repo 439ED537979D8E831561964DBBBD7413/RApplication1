@@ -13,13 +13,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        tools:visibility="gone"
         wheel:matProg_barColor="@color/colorAccent"
         wheel:matProg_progressIndeterminate="true"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_contact_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 
     <com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
         android:id="@+id/scroller_all_contact"
@@ -31,6 +27,13 @@
         android:paddingRight="@dimen/margin_small"
         recyclerviewfastscroller:rfs_barColor="@color/colorPrimaryDark"
         recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle_rounded"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_contact_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/scroller_all_contact"
+        tools:listitem="@layout/list_item_all_contacts"/>
 
     <com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble.ColorGroupSectionTitleIndicator
         android:id="@+id/title_indicator"
@@ -45,6 +48,7 @@
         layout="@layout/layout_recyclerview_emptyview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        tools:visibility="gone"/>
 
 </RelativeLayout>

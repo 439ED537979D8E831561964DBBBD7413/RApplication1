@@ -11,9 +11,9 @@ import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.sectionindicato
         .SectionTitleIndicator;
 
 /**
- * Indicator for sections of type {@link ColorGroup}
+ * Indicator for sections of type
  */
-public class ColorGroupSectionTitleIndicator extends SectionTitleIndicator<ColorGroup> {
+public class ColorGroupSectionTitleIndicator extends SectionTitleIndicator<String> {
 
     public ColorGroupSectionTitleIndicator(Context context) {
         super(context);
@@ -28,15 +28,11 @@ public class ColorGroupSectionTitleIndicator extends SectionTitleIndicator<Color
     }
 
     @Override
-    public void setSection(ColorGroup colorGroup) {
-        // Example of using a single character
-//        setTitleText(colorGroup.getName().charAt(0) + "");
-        setTitleText("A");
+    public void setSection(String string) {
 
-        // Example of using a longer string
-        // setTitleText(colorGroup.getName());
+        // Using a single character
+        setTitleText(string);
 
-        setIndicatorTextColor(colorGroup.getAsColor());
     }
 
 }
