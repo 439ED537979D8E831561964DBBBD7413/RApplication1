@@ -17,6 +17,12 @@
         wheel:matProg_barColor="@color/colorAccent"
         wheel:matProg_progressIndeterminate="true"/>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_contact_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/list_item_all_contacts"/>
+
     <com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
         android:id="@+id/scroller_all_contact"
         android:layout_width="24dp"
@@ -28,12 +34,6 @@
         recyclerviewfastscroller:rfs_barColor="@color/colorPrimaryDark"
         recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle_rounded"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_contact_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/scroller_all_contact"
-        tools:listitem="@layout/list_item_all_contacts"/>
 
     <com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble.ColorGroupSectionTitleIndicator
         android:id="@+id/title_indicator"

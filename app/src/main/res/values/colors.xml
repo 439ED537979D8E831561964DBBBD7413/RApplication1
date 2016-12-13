@@ -18,4 +18,8 @@
     <color name="colorVeryLightGray">#EFEFEF</color>
     <color name="grayishMagenta">#D0CFD0</color>
     <color name="vividRed">#DA1F31</color>
+
+    <!--swipe call SMS-->
+    <color name="darkModerateLimeGreen">#388E3C</color>
+    <color name="brightOrange">#EFAE35</color>
 </resources>

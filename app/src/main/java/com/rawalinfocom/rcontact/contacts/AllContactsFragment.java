@@ -5,18 +5,30 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -94,6 +106,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     AllContactListAdapter allContactListAdapter;
 
+    BottomSheetDialog bottomSheetDialog;
 
     //<editor-fold desc="Constructors">
     public AllContactsFragment() {
@@ -177,7 +190,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     }
 
-                    /* Call uploadContact api if there is more data to sync */
+                 /* Call uploadContact api if there is more data to sync */
                     if (nextNumber < arrayListContactId.size()) {
                         phoneBookOperations();
                     } else {
@@ -219,7 +232,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     private void init() {
 
-       /* // Connect the recycler to the scroller (to let the scroller scroll the list)
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
         scrollerAllContact.setRecyclerView(recyclerViewContactList);
 
         // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
@@ -229,8 +242,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         scrollerAllContact.setSectionIndicator(titleIndicator);
 //        titleIndicator.setTitleText("A");
 
-        setRecyclerViewLayoutManager(recyclerViewContactList);*/
+        setRecyclerViewLayoutManager(recyclerViewContactList);
 //        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        initSwipe();
 
         ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity(),
                 AppConstants.PREF_CONTACT_ID_SET);
@@ -244,6 +259,114 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             getActivity().startService(contactIdFetchService);
         }
 
+    }
+
+    private void initSwipe() {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
+                .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+
+                if (direction == ItemTouchHelper.LEFT) {
+                  /*  Toast.makeText(getActivity(), "Left Swipe " + position, Toast.LENGTH_SHORT)
+                            .show();*/
+                    Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                    smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                    smsIntent.setType("vnd.android-dir/mms-sms");
+                    smsIntent.setData(Uri.parse("sms:" + ((ProfileData)
+                            arrayListPhoneBookContacts.get(position)).getOperation().get(0)
+                            .getPbPhoneNumber().get(0).getPhoneNumber()));
+                    startActivity(smsIntent);
+
+                } else {
+                   /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + ((ProfileData)
+                            arrayListPhoneBookContacts.get(position)).getOperation().get(0)
+                            .getPbPhoneNumber().get(0).getPhoneNumber()));
+                    startActivity(intent);*/
+                    showBottomSheet();
+                }
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        allContactListAdapter.notifyDataSetChanged();
+                    }
+                }, 1500);
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder
+                    viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                Bitmap icon;
+                Paint p = new Paint();
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+                    View itemView = viewHolder.itemView;
+                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                    float width = height / 3;
+
+                    if (dX > 0) {
+                        p.setColor(ContextCompat.getColor(getActivity(), R.color
+                                .darkModerateLimeGreen));
+                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView
+                                .getTop(), dX, (float) itemView.getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable
+                                .ic_action_call);
+                        RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
+                                itemView.getTop() + width, (float) itemView.getLeft() + 2 *
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    } else {
+                        p.setColor(ContextCompat.getColor(getActivity(), R.color.brightOrange));
+                        RectF background = new RectF((float) itemView.getRight() + dX, (float)
+                                itemView.getTop(), (float) itemView.getRight(), (float) itemView
+                                .getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable
+                                .ic_action_sms);
+                        RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width,
+                                (float) itemView.getTop() + width, (float) itemView.getRight() -
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState,
+                        isCurrentlyActive);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerViewContactList);
+    }
+
+    private void showBottomSheet() {
+
+//        SharableAppAdapter adapter = new SharableAppAdapter(fragment, arylstSharableApps, intentShare);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 4);
+
+        View view = getActivity().getLayoutInflater().inflate(R.layout.layout_bottom_sheet, null);
+        RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
+        TextView textSheetHeader = ButterKnife.findById(view, R.id.text_sheet_header);
+
+        textSheetHeader.setText("Social Media");
+        textSheetHeader.setTypeface(Utils.typefaceBold(getActivity()));
+
+        recyclerViewShare.setLayoutManager(gridLayoutManager);
+//        recyclerViewShare.setAdapter(adapter);
+
+        bottomSheetDialog = new BottomSheetDialog(getActivity());
+        bottomSheetDialog.setContentView(view);
+        bottomSheetDialog.show();
 
     }
 
@@ -398,17 +521,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             allContactListAdapter = new AllContactListAdapter(getActivity(),
                     arrayListPhoneBookContacts, getArrayListContactHeaders);
             recyclerViewContactList.setAdapter(allContactListAdapter);
-
-            // Connect the recycler to the scroller (to let the scroller scroll the list)
-            scrollerAllContact.setRecyclerView(recyclerViewContactList);
-
-            // Connect the scroller to the recycler (to let the recycler scroll the scroller's
-            // handle)
-            recyclerViewContactList.setOnScrollListener(scrollerAllContact.getOnScrollListener());
-
-            // Connect the section indicator to the scroller
-            scrollerAllContact.setSectionIndicator(titleIndicator);
-//        titleIndicator.setTitleText("A");
 
             setRecyclerViewLayoutManager(recyclerViewContactList);
 

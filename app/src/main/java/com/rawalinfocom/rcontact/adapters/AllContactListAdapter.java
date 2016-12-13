@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -142,6 +143,21 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if (arrayListUserContact.get(position) instanceof String) {
             String letter = (String) arrayListUserContact.get(position);
             previousPosition = arrayListContactHeader.indexOf(letter);
+        } else {
+            /*for (int i = position; i < arrayListUserContact.size(); i++) {
+                if (arrayListUserContact.get(i) instanceof String) {
+                    String letter = (String) arrayListUserContact.get(i);
+                    previousPosition = arrayListContactHeader.indexOf(letter);
+                    break;
+                }
+            }*/
+            for (int i = position; i >= 0; i--) {
+                if (arrayListUserContact.get(i) instanceof String) {
+                    String letter = (String) arrayListUserContact.get(i);
+                    previousPosition = arrayListContactHeader.indexOf(letter);
+                    break;
+                }
+            }
         }
 
         return previousPosition;
