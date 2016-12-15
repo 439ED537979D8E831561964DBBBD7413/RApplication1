@@ -238,7 +238,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         // Connect the section indicator to the scroller
         scrollerAllContact.setSectionIndicator(titleIndicator);
-//        titleIndicator.setTitleText("A");
 
         setRecyclerViewLayoutManager(recyclerViewContactList);
 //        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));

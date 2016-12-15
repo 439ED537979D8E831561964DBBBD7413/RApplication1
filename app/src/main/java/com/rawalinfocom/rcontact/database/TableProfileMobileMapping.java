@@ -306,10 +306,11 @@ public class TableProfileMobileMapping {
     public ArrayList<UserProfile> getRContactList() {
         ArrayList<UserProfile> arrayListRContact = new ArrayList<>();
         // Select All Query
-        String selectQuery = "select " + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_FIRST_NAME +
+        String selectQuery = "SELECT " + TABLE_RC_PROFILE_MASTER + "." +
+                COLUMN_PM_FIRST_NAME +
                 "," + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_LAST_NAME + "," +
                 TABLE_PB_PROFILE_EMAIL_MAPPING + "." + COLUMN_EPM_EMAIL_ID + "," +
-                TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_MOBILE_NUMBER + " from " +
+                TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_MOBILE_NUMBER + " FROM " +
                 TABLE_RC_PROFILE_MASTER + " LEFT JOIN " + TABLE_PB_PROFILE_MOBILE_MAPPING + " ON " +
                 "" + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RCP_ID + " = " +
                 TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_CLOUD_PM_ID + " LEFT JOIN " +

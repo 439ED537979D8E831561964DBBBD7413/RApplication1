@@ -125,7 +125,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public Object[] getSections() {
         return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
-//        return new Object[0];
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
@@ -26,18 +27,24 @@ import butterknife.ButterKnife;
  * Created by Monal on 07/12/16.
  */
 
-public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements
+        SectionIndexer {
 
     private Context context;
     private ArrayList<Object> arrayListUserProfile;
+    private ArrayList<String> arrayListContactHeader;
 
     private final int HEADER = 0, CONTACT = 1;
 
     private String defaultCountryCode;
+    private int previousPosition = 0;
 
-    public RContactListAdapter(Context context, ArrayList<Object> arrayListUserProfile) {
+    //<editor-fold desc="Constructor">
+    public RContactListAdapter(Context context, ArrayList<Object> arrayListUserProfile,
+                               ArrayList<String> arrayListContactHeader) {
         this.context = context;
         this.arrayListUserProfile = arrayListUserProfile;
+        this.arrayListContactHeader = arrayListContactHeader;
 
         Country country = (Country) Utils.getObjectPreference(context, AppConstants
                 .PREF_SELECTED_COUNTRY_OBJECT, Country.class);
@@ -45,7 +52,9 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             defaultCountryCode = country.getCountryCodeNumber();
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Overrride Methods">
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -59,30 +68,15 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 break;
             case CONTACT:
                 View v2 = inflater.inflate(R.layout.list_item_all_contacts, parent, false);
-                viewHolder = new AllContactViewHolder(v2);
+                viewHolder = new RContactViewHolder(v2);
                 break;
         }
         return viewHolder;
 
-        /* View v = LayoutInflater.from(parent.getContext()).inflate(R.layout
-        .list_item_all_contacts,
-                parent, false);
-        return new AllContactViewHolder(v);*/
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-       /* UserProfile userProfile = arrayListUserProfile.get(position);
-
-        String contactDisplayName = userProfile.getPmFirstName() + " " + userProfile
-                .getPmLastName();
-        holder.textContactName.setText(contactDisplayName);
-        if (StringUtils.length(userProfile.getMobileNumber()) > 0) {
-            holder.textContactNumber.setText(userProfile.getMobileNumber());
-        } else if (StringUtils.length(userProfile.getEmailId()) > 0) {
-            holder.textContactNumber.setText(userProfile.getEmailId());
-        }*/
 
         switch (holder.getItemViewType()) {
             case HEADER:
@@ -90,7 +84,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 configureHeaderViewHolder(contactHeaderViewHolder, position);
                 break;
             case CONTACT:
-                AllContactViewHolder contactViewHolder = (AllContactViewHolder) holder;
+                RContactViewHolder contactViewHolder = (RContactViewHolder) holder;
                 configureRContactViewHolder(contactViewHolder, position);
                 break;
         }
@@ -107,7 +101,51 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return -1;
     }
 
-    private void configureRContactViewHolder(AllContactViewHolder holder, int position) {
+    @Override
+    public int getItemCount() {
+        return arrayListUserProfile.size();
+    }
+
+    /**
+     * Section Indexer
+     */
+
+    @Override
+    public Object[] getSections() {
+        return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
+    }
+
+    @Override
+    public int getPositionForSection(int sectionIndex) {
+        return 0;
+    }
+
+    @Override
+    public int getSectionForPosition(int position) {
+        if (position >= arrayListUserProfile.size()) {
+            position = arrayListUserProfile.size() - 1;
+        }
+
+        if (arrayListUserProfile.get(position) instanceof String) {
+            String letter = (String) arrayListUserProfile.get(position);
+            previousPosition = arrayListContactHeader.indexOf(letter);
+        } else {
+            for (int i = position; i >= 0; i--) {
+                if (arrayListUserProfile.get(i) instanceof String) {
+                    String letter = (String) arrayListUserProfile.get(i);
+                    previousPosition = arrayListContactHeader.indexOf(letter);
+                    break;
+                }
+            }
+        }
+
+        return previousPosition;
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Private Methods">
+    private void configureRContactViewHolder(RContactViewHolder holder, int position) {
 
         UserProfile userProfile = (UserProfile) arrayListUserProfile.get(position);
 
@@ -119,6 +157,16 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (StringUtils.length(userProfile.getEmailId()) > 0) {
             holder.textContactNumber.setText(userProfile.getEmailId());
         }
+
+          /* Hide Divider if row is last in Section */
+        if ((position + 1) < arrayListUserProfile.size()) {
+            if (arrayListUserProfile.get(position + 1) instanceof String) {
+                holder.dividerAllContact.setVisibility(View.GONE);
+            } else {
+                holder.dividerAllContact.setVisibility(View.VISIBLE);
+            }
+        }
+
     }
 
     private void configureHeaderViewHolder(ContactHeaderViewHolder holder, int position) {
@@ -126,12 +174,10 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.textHeader.setText(letter);
     }
 
-    @Override
-    public int getItemCount() {
-        return arrayListUserProfile.size();
-    }
+    //</editor-fold>
 
-    class AllContactViewHolder extends RecyclerView.ViewHolder {
+    //<editor-fold desc="View Holders">
+    public class RContactViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
@@ -140,9 +186,11 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @BindView(R.id.text_cloud_contact_name)
         TextView textCloudContactName;
         @BindView(R.id.text_contact_number)
-        TextView textContactNumber;
+        public TextView textContactNumber;
+        @BindView(R.id.divider_all_contact)
+        View dividerAllContact;
 
-        AllContactViewHolder(View itemView) {
+        RContactViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
@@ -171,5 +219,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         }
     }
+    //</editor-fold>
 
 }
