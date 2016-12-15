@@ -28,9 +28,9 @@ import butterknife.ButterKnife;
 
 public class CountryListAdapter extends RecyclerView.Adapter<CountryListAdapter.CountryViewHolder> {
 
-    Context context;
-    ArrayList<Country> arrayListCountry;
-    ArrayList<Country> arrayListTempCountry;
+    private Context context;
+    private ArrayList<Country> arrayListCountry;
+    private ArrayList<Country> arrayListTempCountry;
 
     public CountryListAdapter(Context context, ArrayList<Country> arrayListCountry) {
         this.context = context;

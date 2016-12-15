@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -312,14 +311,14 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     holder.textContactName.setTextColor(colorBlack);
                 }
 
-                holder.textContactNumber.setTextColor(colorPineGreen);
+//                holder.textContactNumber.setTextColor(colorPineGreen);
                 isRcp = true;
 
             } else {
                 displayEmailId = profileData.getOperation().get(0).getPbEmailId().get(0)
                         .getEmEmailId();
                 displayName = "";
-                holder.textContactNumber.setTextColor(colorBlack);
+//                holder.textContactNumber.setTextColor(colorBlack);
                 isRcp = false;
             /* Display mobile number if Email Id is not rcp */
                 if (displayNumber != null) {
@@ -327,7 +326,18 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 }
             }
             holder.textCloudContactName.setText(displayName);
-            holder.textContactNumber.setText(displayEmailId);
+             /*holder.textContactNumber.setText(displayEmailId);*/
+            if (displayNumber != null) {
+                holder.textContactNumber.setText(displayNumber);
+            } else {
+                if (isRcp) {
+                    holder.textContactNumber.setTextColor(colorPineGreen);
+                } else {
+                    holder.textContactNumber.setTextColor(colorBlack);
+                }
+                holder.textContactNumber.setText(displayEmailId);
+            }
+
         }
 
     }
@@ -336,7 +346,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     //<editor-fold desc="View Holders">
 
-    class AllContactViewHolder extends RecyclerView.ViewHolder {
+    public class AllContactViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
@@ -345,7 +355,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         @BindView(R.id.text_cloud_contact_name)
         TextView textCloudContactName;
         @BindView(R.id.text_contact_number)
-        TextView textContactNumber;
+        public TextView textContactNumber;
         @BindView(R.id.divider_all_contact)
         View dividerAllContact;
 
@@ -365,7 +375,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    class ContactHeaderViewHolder extends RecyclerView.ViewHolder {
+    public class ContactHeaderViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.text_header)
         TextView textHeader;

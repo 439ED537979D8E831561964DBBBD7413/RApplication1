@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,7 +27,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -36,6 +34,7 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
+import com.rawalinfocom.rcontact.adapters.BottomSheetSocialMediaAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -96,7 +95,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> getArrayListContactHeaders;
-    //    ArrayList<ProfileData> arrayListPhoneBookContacts;
     ArrayList<ProfileData> arrayListUserContact;
     ArrayList<String> arrayListContactId;
     ArrayList<String> arrayListContactNumbers;
@@ -274,22 +272,23 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
-
+                String actionNumber = StringUtils.defaultString(((AllContactListAdapter
+                        .AllContactViewHolder) viewHolder).textContactNumber.getText()
+                        .toString());
                 if (direction == ItemTouchHelper.LEFT) {
-                  /*  Toast.makeText(getActivity(), "Left Swipe " + position, Toast.LENGTH_SHORT)
-                            .show();*/
+                    /* SMS */
                     Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
                     smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
                     smsIntent.setType("vnd.android-dir/mms-sms");
-                    smsIntent.setData(Uri.parse("sms:" + ((ProfileData)
+                  /*  smsIntent.setData(Uri.parse("sms:" + ((ProfileData)
                             arrayListPhoneBookContacts.get(position)).getOperation().get(0)
-                            .getPbPhoneNumber().get(0).getPhoneNumber()));
+                            .getPbPhoneNumber().get(0).getPhoneNumber()));*/
+                    smsIntent.setData(Uri.parse("sms:" + actionNumber));
                     startActivity(smsIntent);
 
                 } else {
-                   /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + ((ProfileData)
-                            arrayListPhoneBookContacts.get(position)).getOperation().get(0)
-                            .getPbPhoneNumber().get(0).getPhoneNumber()));
+                    /*Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                            actionNumber));
                     startActivity(intent);*/
                     showBottomSheet();
                 }
@@ -300,6 +299,15 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         allContactListAdapter.notifyDataSetChanged();
                     }
                 }, 1500);
+            }
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                /* Disable swiping in headers */
+                if (viewHolder instanceof AllContactListAdapter.ContactHeaderViewHolder) {
+                    return 0;
+                }
+                return super.getSwipeDirs(recyclerView, viewHolder);
             }
 
             @Override
@@ -350,9 +358,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     private void showBottomSheet() {
 
-//        SharableAppAdapter adapter = new SharableAppAdapter(fragment, arylstSharableApps, intentShare);
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 4);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
 
         View view = getActivity().getLayoutInflater().inflate(R.layout.layout_bottom_sheet, null);
         RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
@@ -361,8 +367,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         textSheetHeader.setText("Social Media");
         textSheetHeader.setTypeface(Utils.typefaceBold(getActivity()));
 
+        BottomSheetSocialMediaAdapter adapter = new BottomSheetSocialMediaAdapter(getActivity());
+
         recyclerViewShare.setLayoutManager(gridLayoutManager);
-//        recyclerViewShare.setAdapter(adapter);
+        recyclerViewShare.setAdapter(adapter);
 
         bottomSheetDialog = new BottomSheetDialog(getActivity());
         bottomSheetDialog.setContentView(view);
