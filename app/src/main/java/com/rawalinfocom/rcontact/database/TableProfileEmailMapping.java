@@ -23,14 +23,14 @@ public class TableProfileEmailMapping {
     }
 
     // Table Names
-    private static final String TABLE_PB_PROFILE_EMAIL_MAPPING = "pb_profile_email_mapping";
+    static final String TABLE_PB_PROFILE_EMAIL_MAPPING = "pb_profile_email_mapping";
 
     // Column Names
     private static final String COLUMN_EPM_ID = "epm_id";
-    private static final String COLUMN_EPM_EMAIL_ID = "epm_email_id";
+    static final String COLUMN_EPM_EMAIL_ID = "epm_email_id";
     private static final String COLUMN_EPM_CLOUD_EM_ID = "epm_cloud_em_id";
-    private static final String COLUMN_EPM_CLOUD_PM_ID = "epm_cloud_pm_id";
-    private static final String COLUMN_EPM_IS_RCP = "epm_is_rcp";
+    static final String COLUMN_EPM_CLOUD_PM_ID = "epm_cloud_pm_id";
+    static final String COLUMN_EPM_IS_RCP = "epm_is_rcp";
 
 
     // Table Create Statements
