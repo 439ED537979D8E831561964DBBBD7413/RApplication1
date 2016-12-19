@@ -78,7 +78,7 @@ import butterknife.ButterKnife;
 
 public class AllContactsFragment extends BaseFragment implements WsResponseListener {
 
-    private final int CONTACT_CHUNK = 4;
+    private final int CONTACT_CHUNK = 10;
 
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
@@ -143,13 +143,20 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+      /*  if (view != null) {
+            //this will prevent the fragment from re-inflating(when you come back from B)
+            ViewGroup parent = (ViewGroup) view.getParent();
+            parent.removeView(view);
+        } else {
+            //inflate the view and do what you done in onCreateView()
+            init();
+        }*/
         init();
     }
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
-        if (error == null) {
+        if (error == null && getActivity() != null) {
 
             //<editor-fold desc="REQ_UPLOAD_CONTACTS">
 
@@ -238,6 +245,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         // Connect the section indicator to the scroller
         scrollerAllContact.setSectionIndicator(titleIndicator);
+//        titleIndicator.setTitleText("A");
 
         setRecyclerViewLayoutManager(recyclerViewContactList);
 //        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -538,6 +546,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        allContactListAdapter = null;
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Local Broadcast Receiver">
@@ -604,8 +618,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             Cursor contactStructuredNameCursor = getStructuredName(rawId);
             ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
 
-            if (contactStructuredNameCursor != null && contactStructuredNameCursor.getCount()
-                    > 0) {
+            if (contactStructuredNameCursor != null && contactStructuredNameCursor.getCount() > 0) {
 
                 /*   operation.setIsFavourite(contactNameCursor.getString(contactNameCursor
                 .getColumnIndex(ContactsContract.Contacts.STARRED)));*/
