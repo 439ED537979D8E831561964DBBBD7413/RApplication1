@@ -10,17 +10,23 @@ package com.rawalinfocom.rcontact.constants;
 public class AppConstants {
 
     //<editor-fold desc="App Specific final constants">
+
     public static final String OTP_CONFIRMED_STATUS = "2";
+
     //</editor-fold>
 
     //<editor-fold desc="GCM Constants">
+
     public static final String GCM_SERVER_KEY = "AIzaSyBv-bFhNJmIhNW4_8jROcy46_axuK3Fl6g";
     public static final String GCM_SENDER_ID = "842331483294";
+
     //</editor-fold>
 
     //<editor-fold desc="OTP Constants">
+
     public static final int OTP_VALIDITY_DURATION = 20;
     public static final int OTP_LENGTH = 6;
+
     //</editor-fold>
 
     //<editor-fold desc="Request Codes">
@@ -44,6 +50,14 @@ public class AppConstants {
     //<editor-fold desc="Intent Action">
 
     public static String ACTION_CONTACT_FETCH = "action_contact_fetch";
+
+    //</editor-fold>
+
+    //<editor-fold desc="Fragment Tags">
+
+    public static String TAG_FRAGMENT_ALL_CONTACTS = "tag_fragment_all_contacts";
+    public static String TAG_FRAGMENT_R_CONTACTS = "tag_fragment_r_contacts";
+    public static String TAG_FRAGMENT_FAVORITES = "tag_fragment_favorites";
 
     //</editor-fold>
 

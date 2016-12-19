@@ -5,8 +5,19 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
+import com.rawalinfocom.rcontact.model.UserProfile;
 
 import java.util.ArrayList;
+
+import static com.rawalinfocom.rcontact.database.TableProfileEmailMapping.COLUMN_EPM_CLOUD_PM_ID;
+import static com.rawalinfocom.rcontact.database.TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID;
+import static com.rawalinfocom.rcontact.database.TableProfileEmailMapping.COLUMN_EPM_IS_RCP;
+import static com.rawalinfocom.rcontact.database.TableProfileEmailMapping
+        .TABLE_PB_PROFILE_EMAIL_MAPPING;
+import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_FIRST_NAME;
+import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_LAST_NAME;
+import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_RCP_ID;
+import static com.rawalinfocom.rcontact.database.TableProfileMaster.TABLE_RC_PROFILE_MASTER;
 
 /**
  * Created by Monal on 14/11/16.
@@ -147,6 +158,39 @@ public class TableProfileMobileMapping {
         return arrayListProfileMapping;
     }
 
+    // Getting Profile Mobile Mapping from pm id
+    public ArrayList<ProfileMobileMapping> getProfileMobileMappingPmId(int pmId) {
+
+        ArrayList<ProfileMobileMapping> arrayListProfileMapping = new ArrayList<>();
+
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+
+        String query = "SELECT " + COLUMN_MPM_MOBILE_NUMBER + " FROM " +
+                TABLE_PB_PROFILE_MOBILE_MAPPING + " where " + COLUMN_MPM_IS_RCP + " = 1 and " +
+                COLUMN_MPM_CLOUD_PM_ID + " = " + pmId;
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
+                profileMobileMapping.setMpmMobileNumber(cursor.getString(0));
+
+                // Adding profileMapping to list
+                arrayListProfileMapping.add(profileMobileMapping);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        // return profileMapping list
+        return arrayListProfileMapping;
+    }
+
     // Getting single Profile Mobile Mapping from MobileNumber
     public boolean getIsMobileNumberExists(String mobileNumber) {
 
@@ -256,5 +300,49 @@ public class TableProfileMobileMapping {
             }
             return sb.toString();
         }
+    }
+
+    // Getting RContact List
+    public ArrayList<UserProfile> getRContactList() {
+        ArrayList<UserProfile> arrayListRContact = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT DISTINCT " + TABLE_RC_PROFILE_MASTER + "." +
+                COLUMN_PM_FIRST_NAME +
+                "," + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_LAST_NAME + "," +
+                TABLE_PB_PROFILE_EMAIL_MAPPING + "." + COLUMN_EPM_EMAIL_ID + "," +
+                TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_MOBILE_NUMBER + " FROM " +
+                TABLE_RC_PROFILE_MASTER + " LEFT JOIN " + TABLE_PB_PROFILE_MOBILE_MAPPING + " ON " +
+                "" + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RCP_ID + " = " +
+                TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_CLOUD_PM_ID + " LEFT JOIN " +
+                TABLE_PB_PROFILE_EMAIL_MAPPING + " ON " + TABLE_RC_PROFILE_MASTER + "." +
+                COLUMN_PM_RCP_ID + " = " + TABLE_PB_PROFILE_EMAIL_MAPPING + "." +
+                COLUMN_EPM_CLOUD_PM_ID + " WHERE " + TABLE_PB_PROFILE_MOBILE_MAPPING + "." +
+                COLUMN_MPM_IS_RCP + " = 1 OR " + TABLE_PB_PROFILE_EMAIL_MAPPING + "." +
+                COLUMN_EPM_IS_RCP + " = 1 ORDER BY " + TABLE_RC_PROFILE_MASTER + "." +
+                COLUMN_PM_FIRST_NAME;
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                UserProfile userProfile = new UserProfile();
+                userProfile.setPmFirstName(cursor.getString(0));
+                userProfile.setPmLastName(cursor.getString(1));
+                userProfile.setMobileNumber(cursor.getString(2));
+                userProfile.setEmailId(cursor.getString(3));
+                // Adding profileMobileMapping to list
+                arrayListRContact.add(userProfile);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        // return RContact list
+        return arrayListRContact;
     }
 }
