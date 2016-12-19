@@ -3,36 +3,28 @@ package com.rawalinfocom.rcontact.contacts;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.helper.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ContactsFragment extends BaseFragment {
 
-    @BindView(R.id.linear_call_tabs)
-    LinearLayout linearCallTabs;
     @BindView(R.id.frame_container_call_tab)
     FrameLayout frameContainerCallTab;
-    @BindView(R.id.button_all_contacts)
-    Button buttonAllContacts;
-    @BindView(R.id.button_r_contacts)
-    Button buttonRContacts;
-    @BindView(R.id.button_favorites)
-    Button buttonFavorites;
+    @BindView(R.id.tab_contact)
+    TabLayout tabContact;
 
     AllContactsFragment allContactsFragment;
     RContactsFragment rContactsFragment;
@@ -76,38 +68,14 @@ public class ContactsFragment extends BaseFragment {
 
     private void init() {
 
-        defaultButtonTextColor = buttonFavorites.getTextColors().getDefaultColor();
-
         allContactsFragment = AllContactsFragment.newInstance();
         rContactsFragment = RContactsFragment.newInstance();
         favoritesFragment = FavoritesFragment.newInstance();
 
-        buttonAllContacts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                replaceFragment(allContactsFragment);
-                selectButton((Button) view);
-            }
-        });
+        bindWidgetsWithAnEvent();
+        setupTabLayout();
+        Utils.changeTabsFont(getActivity(), tabContact);
 
-        buttonRContacts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                replaceFragment(rContactsFragment);
-                selectButton((Button) view);
-            }
-        });
-
-        buttonFavorites.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                replaceFragment(favoritesFragment);
-                selectButton((Button) view);
-            }
-        });
-
-        buttonAllContacts.setSelected(true);
-        buttonAllContacts.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
     }
 
     private void replaceFragment(Fragment fragment) {
@@ -118,27 +86,43 @@ public class ContactsFragment extends BaseFragment {
         ft.commit();
     }
 
-   /* private void addFragment(Fragment fragment) {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.add(R.id.frame_container_call_tab, fragment);
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.commit();
-    }*/
-
-    private void selectButton(Button button) {
-
-        Button[] buttons = {buttonAllContacts, buttonRContacts, buttonFavorites};
-
-        for (Button button1 : buttons) {
-            if (button1 == button) {
-                button1.setSelected(true);
-                button1.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
-            } else {
-                button1.setSelected(false);
-                button1.setTextColor(defaultButtonTextColor);
-            }
-        }
-
+    private void setupTabLayout() {
+        tabContact.addTab(tabContact.newTab().setText("All Contacts"), true);
+        tabContact.addTab(tabContact.newTab().setText("R Contacts"));
+        tabContact.addTab(tabContact.newTab().setText("Favorites"));
     }
+
+    private void bindWidgetsWithAnEvent() {
+        tabContact.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                setCurrentTabFragment(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    private void setCurrentTabFragment(int tabPosition) {
+        switch (tabPosition) {
+            case 0:
+                replaceFragment(allContactsFragment);
+                break;
+            case 1:
+                replaceFragment(rContactsFragment);
+                break;
+            case 2:
+                replaceFragment(favoritesFragment);
+                break;
+        }
+    }
+
 }

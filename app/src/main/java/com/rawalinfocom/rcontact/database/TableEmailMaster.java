@@ -44,7 +44,7 @@ public class TableEmailMaster {
             " " + COLUMN_EM_ID + " integer NOT NULL CONSTRAINT rc_email_master_pk PRIMARY KEY," +
             " " + COLUMN_EM_CLOUD_ID + " integer," +
             " " + COLUMN_EM_EMAIL_ADDRESS + " text NOT NULL," +
-            " " + COLUMN_EM_EMAIL_TYPE + " text NOT NULL," +
+            " " + COLUMN_EM_EMAIL_TYPE + " text," +
             " " + COLUMN_EM_CUSTOM_TYPE + " text," +
             " " + COLUMN_EM_IS_PRIMARY + " integer," +
             " " + COLUMN_EM_EMAIL_PRIVACY + " integer," +

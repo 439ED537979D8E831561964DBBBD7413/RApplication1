@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -11,7 +12,7 @@
          app:tabGravity="fill"
          app:tabMode="fixed"/>-->
 
-    <LinearLayout
+    <!--<LinearLayout
         android:id="@+id/linear_call_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,7 +23,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/tab_button_selector"
+            android:background="@drawable/selector_tab_button"
             android:text="All Contacts"
             android:textAppearance="?android:textAppearanceSmall"/>
 
@@ -31,7 +32,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/tab_button_selector"
+            android:background="@drawable/selector_tab_button"
             android:text="R Contacts"
             android:textAppearance="?android:textAppearanceSmall"/>
 
@@ -40,23 +41,34 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/tab_button_selector"
+            android:background="@drawable/selector_tab_button"
             android:text="Favorites"
             android:textAppearance="?android:textAppearanceSmall"/>
 
-    </LinearLayout>
+    </LinearLayout>-->
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabBackground="@drawable/selector_tab_button"
+        app:tabGravity="fill"
+        app:tabIndicatorHeight="0dp"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/colorPrimary"
+        app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"/>
 
     <include
         android:id="@+id/include_elevation"
         layout="@layout/layout_elevation"
         android:layout_width="match_parent"
-        android:layout_below="@id/linear_call_tabs"
-        android:layout_height="@dimen/height_elevation"/>
+        android:layout_height="@dimen/height_elevation"
+        android:layout_below="@id/tab_contact"/>
 
     <FrameLayout
         android:id="@+id/frame_container_call_tab"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/linear_call_tabs"/>
+        android:layout_below="@id/tab_contact"/>
 
 </RelativeLayout>

@@ -143,6 +143,7 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         bindWidgetsWithAnEvent();
         setupTabLayout();
+        Utils.changeTabsFont(this, tabMain);
     }
 
     private void setupTabLayout() {

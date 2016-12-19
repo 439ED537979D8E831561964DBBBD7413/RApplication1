@@ -256,6 +256,10 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             }
         }
 
+        /* remove special characters from number */
+        displayNumber = "+" + StringUtils.replaceAll(StringUtils.substring(displayNumber, 1),
+                "[\\D]", "");
+
         holder.textCloudContactName.setText(displayName);
         holder.textContactNumber.setText(displayNumber);
 
