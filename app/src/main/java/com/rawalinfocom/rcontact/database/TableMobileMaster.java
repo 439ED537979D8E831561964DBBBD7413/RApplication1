@@ -45,10 +45,10 @@ public class TableMobileMaster {
     static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE " +
             TABLE_RC_MOBILE_NUMBER_MASTER + " (" +
             " " + COLUMN_MNM_ID + " integer NOT NULL CONSTRAINT rc_mobile_number_master_pk " +
-            "PRIMARY KEY," +
+            "PRIMARY KEY AUTOINCREMENT," +
             " " + COLUMN_MNM_CLOUD_ID + " integer," +
             " " + COLUMN_MNM_MOBILE_NUMBER + " text NOT NULL," +
-            " " + COLUMN_MNM_NUMBER_TYPE + " text NOT NULL," +
+            " " + COLUMN_MNM_NUMBER_TYPE + " text," +
             " " + COLUMN_MNM_CUSTOM_TYPE + " text," +
             " " + COLUMN_MNM_IS_PRIMARY + " integer," +
             " " + COLUMN_MNM_NUMBER_PRIVACY + " integer DEFAULT 1," +
@@ -83,6 +83,37 @@ public class TableMobileMaster {
         // Inserting Row
         db.insert(TABLE_RC_MOBILE_NUMBER_MASTER, null, values);
         // insertWithOnConflict
+        db.close(); // Closing database connection
+    }
+
+    // Adding array Mobile Number
+    public void addArrayMobileNumber(ArrayList<MobileNumber> arrayListMobileNumber) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+//        ContentValues values = new ContentValues();
+        for (int i = 0; i < arrayListMobileNumber.size(); i++) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_MNM_ID, arrayListMobileNumber.get(i).getMnmId());
+            values.put(COLUMN_MNM_CLOUD_ID, arrayListMobileNumber.get(i).getMnmCloudId());
+            values.put(COLUMN_MNM_MOBILE_NUMBER, arrayListMobileNumber.get(i).getMnmMobileNumber());
+            values.put(COLUMN_MNM_NUMBER_TYPE, arrayListMobileNumber.get(i).getMnmNumberType());
+            values.put(COLUMN_MNM_CUSTOM_TYPE, arrayListMobileNumber.get(i).getMnmCustomType());
+            values.put(COLUMN_MNM_IS_PRIMARY, arrayListMobileNumber.get(i).getMnmIsPrimary());
+            values.put(COLUMN_MNM_NUMBER_PRIVACY, arrayListMobileNumber.get(i)
+                    .getMnmNumberPrivacy());
+            values.put(COLUMN_MNM_IS_DEFAULT, arrayListMobileNumber.get(i).getMnmIsDefault());
+            values.put(COLUMN_MNM_IS_VERIFIED, arrayListMobileNumber.get(i).getMnmIsVerified());
+            values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, arrayListMobileNumber.get(i)
+                    .getMnmMobileServiceProvider());
+            values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, arrayListMobileNumber.get(i)
+                    .getMnmCircleOfService());
+            values.put(COLUMN_MNM_SPAM_COUNT, arrayListMobileNumber.get(i).getMnmSpamCount());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListMobileNumber.get(i)
+                    .getRcProfileMasterPmId());
+
+            // Inserting Row
+            db.insert(TABLE_RC_MOBILE_NUMBER_MASTER, null, values);
+        }
         db.close(); // Closing database connection
     }
 
@@ -129,6 +160,46 @@ public class TableMobileMaster {
         ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_RC_MOBILE_NUMBER_MASTER;
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                MobileNumber mobileNumber = new MobileNumber();
+                mobileNumber.setMnmId(cursor.getString(0));
+                mobileNumber.setMnmCloudId(cursor.getString(1));
+                mobileNumber.setMnmMobileNumber(cursor.getString(2));
+                mobileNumber.setMnmNumberType(cursor.getString(3));
+                mobileNumber.setMnmCustomType(cursor.getString(4));
+                mobileNumber.setMnmIsPrimary(cursor.getString(5));
+                mobileNumber.setMnmNumberPrivacy(cursor.getString(6));
+                mobileNumber.setMnmIsDefault(cursor.getString(7));
+                mobileNumber.setMnmIsVerified(cursor.getString(8));
+                mobileNumber.setMnmCircleOfService(cursor.getString(9));
+                mobileNumber.setMnmSpamCount(cursor.getString(10));
+                mobileNumber.setRcProfileMasterPmId(cursor.getString(11));
+                // Adding Mobile Number to list
+                arrayListMobileNumber.add(mobileNumber);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        // return Mobile Number list
+        return arrayListMobileNumber;
+    }
+
+    // Getting All Mobile Numbers from Profile Master Id
+    public ArrayList<MobileNumber> getMobileNumbersFromPmId(int pmId) {
+        ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_RC_MOBILE_NUMBER_MASTER + " WHERE " +
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

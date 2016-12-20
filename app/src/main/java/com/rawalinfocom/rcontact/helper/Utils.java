@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.helper;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -10,10 +11,14 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -346,5 +351,35 @@ public class Utils {
     }
 
     //</editor-fold>
+
+    //<editor-fold desc="Keyboard Visibility">
+    public static void hideSoftKeyboard(Context context, EditText editText) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService
+                (Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+    }
+
+
+    public static void showSoftKeyboard(Context context, EditText editText) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context
+                .INPUT_METHOD_SERVICE);
+        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+    }
+    //</editor-fold>
+
+    public static void changeTabsFont(Context context, TabLayout tabLayout) {
+        ViewGroup vg = (ViewGroup) tabLayout.getChildAt(0);
+        int tabsCount = vg.getChildCount();
+        for (int j = 0; j < tabsCount; j++) {
+            ViewGroup vgTab = (ViewGroup) vg.getChildAt(j);
+            int tabChildCount = vgTab.getChildCount();
+            for (int i = 0; i < tabChildCount; i++) {
+                View tabViewChild = vgTab.getChildAt(i);
+                if (tabViewChild instanceof TextView) {
+                    ((TextView) tabViewChild).setTypeface(Utils.typefaceSemiBold(context));
+                }
+            }
+        }
+    }
 
 }

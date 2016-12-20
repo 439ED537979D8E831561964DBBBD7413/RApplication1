@@ -6,13 +6,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,17 +34,25 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
+import com.rawalinfocom.rcontact.adapters.BottomSheetSocialMediaAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.database.DatabaseHandler;
+import com.rawalinfocom.rcontact.database.TableEmailMaster;
+import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
+        .ColorGroupSectionTitleIndicator;
+import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical
+        .VerticalRecyclerViewFastScroller;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.Email;
+import com.rawalinfocom.rcontact.model.MobileNumber;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -60,7 +78,7 @@ import butterknife.ButterKnife;
 
 public class AllContactsFragment extends BaseFragment implements WsResponseListener {
 
-    private final int CONTACT_CHUNK = 4;
+    private final int CONTACT_CHUNK = 10;
 
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
@@ -70,33 +88,43 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ProgressWheel progressAllContact;
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
+    @BindView(R.id.scroller_all_contact)
+    VerticalRecyclerViewFastScroller scrollerAllContact;
+    @BindView(R.id.title_indicator)
+    ColorGroupSectionTitleIndicator titleIndicator;
 
-    ArrayList<ProfileData> arrayListPhoneBookContacts;
+    ArrayList<Object> arrayListPhoneBookContacts;
+    ArrayList<String> getArrayListContactHeaders;
     ArrayList<ProfileData> arrayListUserContact;
     ArrayList<String> arrayListContactId;
     ArrayList<String> arrayListContactNumbers;
     ArrayList<String> arrayListContactEmails;
 
-    DatabaseHandler databaseHandler;
+//    DatabaseHandler databaseHandler;
 
     AllContactListAdapter allContactListAdapter;
 
+    BottomSheetDialog bottomSheetDialog;
 
+    //<editor-fold desc="Constructors">
     public AllContactsFragment() {
         // Required empty public constructor
 
     }
 
-
     public static AllContactsFragment newInstance() {
         return new AllContactsFragment();
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Override Methods">
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
+//        databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
         arrayListPhoneBookContacts = new ArrayList<>();
+        getArrayListContactHeaders = new ArrayList<>();
     }
 
     @Override
@@ -115,12 +143,20 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+      /*  if (view != null) {
+            //this will prevent the fragment from re-inflating(when you come back from B)
+            ViewGroup parent = (ViewGroup) view.getParent();
+            parent.removeView(view);
+        } else {
+            //inflate the view and do what you done in onCreateView()
+            init();
+        }*/
         init();
     }
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
-        if (error == null) {
+        if (error == null && getActivity() != null) {
 
             //<editor-fold desc="REQ_UPLOAD_CONTACTS">
 
@@ -130,7 +166,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 if (uploadContactResponse != null && StringUtils.equalsIgnoreCase
                         (uploadContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    /* Save synced data details */
+                    /* Save synced data details in Preference */
                     String previouslySyncedData = (StringUtils.split(serviceType, "_"))[1];
                     int nextNumber = Integer.parseInt(StringUtils.defaultString
                             (previouslySyncedData, "0")) + CONTACT_CHUNK;
@@ -159,7 +195,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     }
 
-                    /* Call uploadContact api if there is more data to sync */
+                 /* Call uploadContact api if there is more data to sync */
                     if (nextNumber < arrayListContactId.size()) {
                         phoneBookOperations();
                     } else {
@@ -195,11 +231,27 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(cursorListReceiver);
     }
 
+    //</editor-fold>
+
     //<editor-fold desc="Private Methods">
 
     private void init() {
-        /*HashSet<String> retrievedContactIdSet = (HashSet<String>) Utils.getStringSetPreference
-                (getActivity(), AppConstants.PREF_CONTACT_ID_SET);*/
+
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
+        scrollerAllContact.setRecyclerView(recyclerViewContactList);
+
+        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
+        recyclerViewContactList.setOnScrollListener(scrollerAllContact.getOnScrollListener());
+
+        // Connect the section indicator to the scroller
+        scrollerAllContact.setSectionIndicator(titleIndicator);
+//        titleIndicator.setTitleText("A");
+
+        setRecyclerViewLayoutManager(recyclerViewContactList);
+//        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        initSwipe();
+
         ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity(),
                 AppConstants.PREF_CONTACT_ID_SET);
         if (arrayListContactIds != null) {
@@ -212,13 +264,150 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             getActivity().startService(contactIdFetchService);
         }
 
-        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    private void initSwipe() {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
+                .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                String actionNumber = StringUtils.defaultString(((AllContactListAdapter
+                        .AllContactViewHolder) viewHolder).textContactNumber.getText()
+                        .toString());
+                if (direction == ItemTouchHelper.LEFT) {
+                    /* SMS */
+                    Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                    smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                    smsIntent.setType("vnd.android-dir/mms-sms");
+                  /*  smsIntent.setData(Uri.parse("sms:" + ((ProfileData)
+                            arrayListPhoneBookContacts.get(position)).getOperation().get(0)
+                            .getPbPhoneNumber().get(0).getPhoneNumber()));*/
+                    smsIntent.setData(Uri.parse("sms:" + actionNumber));
+                    startActivity(smsIntent);
+
+                } else {
+                    /*Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                            actionNumber));
+                    startActivity(intent);*/
+                    showBottomSheet();
+                }
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        allContactListAdapter.notifyDataSetChanged();
+                    }
+                }, 1500);
+            }
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                /* Disable swiping in headers */
+                if (viewHolder instanceof AllContactListAdapter.ContactHeaderViewHolder) {
+                    return 0;
+                }
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder
+                    viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                Bitmap icon;
+                Paint p = new Paint();
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+                    View itemView = viewHolder.itemView;
+                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                    float width = height / 3;
+
+                    if (dX > 0) {
+                        p.setColor(ContextCompat.getColor(getActivity(), R.color
+                                .darkModerateLimeGreen));
+                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView
+                                .getTop(), dX, (float) itemView.getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable
+                                .ic_action_call);
+                        RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
+                                itemView.getTop() + width, (float) itemView.getLeft() + 2 *
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    } else {
+                        p.setColor(ContextCompat.getColor(getActivity(), R.color.brightOrange));
+                        RectF background = new RectF((float) itemView.getRight() + dX, (float)
+                                itemView.getTop(), (float) itemView.getRight(), (float) itemView
+                                .getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable
+                                .ic_action_sms);
+                        RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width,
+                                (float) itemView.getTop() + width, (float) itemView.getRight() -
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState,
+                        isCurrentlyActive);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerViewContactList);
+    }
+
+    private void showBottomSheet() {
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
+
+        View view = getActivity().getLayoutInflater().inflate(R.layout.layout_bottom_sheet, null);
+        RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
+        TextView textSheetHeader = ButterKnife.findById(view, R.id.text_sheet_header);
+
+        textSheetHeader.setText("Social Media");
+        textSheetHeader.setTypeface(Utils.typefaceBold(getActivity()));
+
+        BottomSheetSocialMediaAdapter adapter = new BottomSheetSocialMediaAdapter(getActivity());
+
+        recyclerViewShare.setLayoutManager(gridLayoutManager);
+        recyclerViewShare.setAdapter(adapter);
+
+        bottomSheetDialog = new BottomSheetDialog(getActivity());
+        bottomSheetDialog.setContentView(view);
+        bottomSheetDialog.show();
+
+    }
+
+    /**
+     * Set RecyclerView's LayoutManager
+     */
+    public void setRecyclerViewLayoutManager(RecyclerView recyclerView) {
+        int scrollPosition = 0;
+
+        // If a layout manager has already been set, get current scroll position.
+        if (recyclerView.getLayoutManager() != null) {
+            scrollPosition =
+                    ((LinearLayoutManager) recyclerView.getLayoutManager())
+                            .findFirstCompletelyVisibleItemPosition();
+        }
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.scrollToPosition(scrollPosition);
     }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
         if (!Utils.isArraylistNullOrEmpty(arrayListContactNumbers)) {
             TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
-                    (databaseHandler);
+                    (getDatabaseHandler());
             ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new ArrayList<>();
             for (int i = 0; i < arrayListContactNumbers.size(); i++) {
                 if (!tableProfileMobileMapping.getIsMobileNumberExists
@@ -255,7 +444,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private void storeToEmailMapping(ArrayList<ProfileDataOperation> profileData) {
         if (!Utils.isArraylistNullOrEmpty(arrayListContactEmails)) {
             TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping
-                    (databaseHandler);
+                    (getDatabaseHandler());
             ArrayList<ProfileEmailMapping> arrayListProfileEmailMapping = new ArrayList<>();
             for (int i = 0; i < arrayListContactEmails.size(); i++) {
                 if (!tableProfileEmailMapping.getIsEmailIdExists(arrayListContactEmails.get(i))) {
@@ -288,7 +477,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private void storeProfileDataToDb(ArrayList<ProfileDataOperation> profileData) {
 
         // Basic Profile Data
-        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
 
         ArrayList<UserProfile> arrayListUserProfile = new ArrayList<>();
         for (int i = 0; i < profileData.size(); i++) {
@@ -307,6 +496,33 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             userProfile.setPmRcpId(profileData.get(i).getRcpPmId());
             userProfile.setPmNosqlMasterId(profileData.get(i).getNoSqlMasterId());
 
+            ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = profileData.get(i)
+                    .getPbPhoneNumber();
+            ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
+            for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
+                MobileNumber mobileNumber = new MobileNumber();
+                mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(j).getPhoneNumber());
+                mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+//                arrayListPhoneNumber.get(j).
+                arrayListMobileNumber.add(mobileNumber);
+            }
+
+            TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
+            tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
+
+            ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileData.get(i)
+                    .getPbEmailId();
+            ArrayList<Email> arrayListEmail = new ArrayList<>();
+            for (int j = 0; j < arrayListEmailId.size(); j++) {
+                Email email = new Email();
+                email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+                email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                arrayListEmail.add(email);
+            }
+
+            TableEmailMaster tableEmailMaster = new TableEmailMaster(getDatabaseHandler());
+            tableEmailMaster.addArrayEmail(arrayListEmail);
+
             arrayListUserProfile.add(userProfile);
         }
 
@@ -316,10 +532,24 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     private void populateRecyclerView() {
 
-        allContactListAdapter = new AllContactListAdapter(getActivity(),
-                arrayListPhoneBookContacts);
-        recyclerViewContactList.setAdapter(allContactListAdapter);
+        if (allContactListAdapter == null) {
+            allContactListAdapter = new AllContactListAdapter(getActivity(),
+                    arrayListPhoneBookContacts, getArrayListContactHeaders);
+            recyclerViewContactList.setAdapter(allContactListAdapter);
 
+            setRecyclerViewLayoutManager(recyclerViewContactList);
+
+        } else {
+            allContactListAdapter.notifyDataSetChanged();
+        }
+
+
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        allContactListAdapter = null;
     }
 
     //</editor-fold>
@@ -388,8 +618,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             Cursor contactStructuredNameCursor = getStructuredName(rawId);
             ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
 
-            if (contactStructuredNameCursor != null && contactStructuredNameCursor.getCount()
-                    > 0) {
+            if (contactStructuredNameCursor != null && contactStructuredNameCursor.getCount() > 0) {
 
                 /*   operation.setIsFavourite(contactNameCursor.getString(contactNameCursor
                 .getColumnIndex(ContactsContract.Contacts.STARRED)));*/
@@ -726,13 +955,25 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         }
 
         if (arrayListUserContact.size() > 0) {
-            arrayListPhoneBookContacts.addAll(arrayListUserContact);
+//            arrayListPhoneBookContacts.addAll(arrayListUserContact);
+
+            for (int i = 0; i < arrayListUserContact.size(); i++) {
+                String headerLetter = StringUtils.upperCase(StringUtils.substring
+                        (arrayListUserContact.get(i).getOperation().get(0).getPbNameFirst(), 0, 1));
+                if (!arrayListPhoneBookContacts.contains(headerLetter)) {
+                    getArrayListContactHeaders.add(headerLetter);
+                    arrayListPhoneBookContacts.add(headerLetter);
+                }
+                arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
+            }
+
             if (previouslySyncedData < previousTo) {
                 uploadContacts(previouslySyncedData);
             } else {
                 progressAllContact.setVisibility(View.GONE);
                 populateRecyclerView();
             }
+
         } else {
             progressAllContact.setVisibility(View.GONE);
         }

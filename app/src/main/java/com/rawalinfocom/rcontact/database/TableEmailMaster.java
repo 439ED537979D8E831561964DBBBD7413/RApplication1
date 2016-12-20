@@ -44,7 +44,7 @@ public class TableEmailMaster {
             " " + COLUMN_EM_ID + " integer NOT NULL CONSTRAINT rc_email_master_pk PRIMARY KEY," +
             " " + COLUMN_EM_CLOUD_ID + " integer," +
             " " + COLUMN_EM_EMAIL_ADDRESS + " text NOT NULL," +
-            " " + COLUMN_EM_EMAIL_TYPE + " text NOT NULL," +
+            " " + COLUMN_EM_EMAIL_TYPE + " text," +
             " " + COLUMN_EM_CUSTOM_TYPE + " text," +
             " " + COLUMN_EM_IS_PRIMARY + " integer," +
             " " + COLUMN_EM_EMAIL_PRIVACY + " integer," +
@@ -75,6 +75,31 @@ public class TableEmailMaster {
         db.close(); // Closing database connection
     }
 
+    // Adding array Email
+    public void addArrayEmail(ArrayList<Email> arrayListEmail) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+//        ContentValues values = new ContentValues();
+        for (int i = 0; i < arrayListEmail.size(); i++) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_EM_ID, arrayListEmail.get(i).getEmId());
+            values.put(COLUMN_EM_CLOUD_ID, arrayListEmail.get(i).getEmCloudId());
+            values.put(COLUMN_EM_EMAIL_ADDRESS, arrayListEmail.get(i).getEmEmailAddress());
+            values.put(COLUMN_EM_EMAIL_TYPE, arrayListEmail.get(i).getEmEmailType());
+            values.put(COLUMN_EM_CUSTOM_TYPE, arrayListEmail.get(i).getEmCustomType());
+            values.put(COLUMN_EM_IS_PRIMARY, arrayListEmail.get(i).getEmIsPrimary());
+            values.put(COLUMN_EM_EMAIL_PRIVACY, arrayListEmail.get(i).getEmEmailPrivacy());
+            values.put(COLUMN_EM_IS_DEFAULT, arrayListEmail.get(i).getEmIsDefault());
+            values.put(COLUMN_EM_IS_VERIFIED, arrayListEmail.get(i).getEmIsVerified());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListEmail.get(i)
+                    .getRcProfileMasterPmId());
+
+            // Inserting Row
+            db.insert(TABLE_RC_EMAIL_MASTER, null, values);
+        }
+        db.close(); // Closing database connection
+    }
+
     // Getting single Email
     public Email getEmail(int emId) {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
@@ -83,7 +108,7 @@ public class TableEmailMaster {
                         COLUMN_EM_CLOUD_ID, COLUMN_EM_EMAIL_ADDRESS, COLUMN_EM_EMAIL_TYPE,
                         COLUMN_EM_CUSTOM_TYPE, COLUMN_EM_IS_PRIMARY, COLUMN_EM_EMAIL_PRIVACY,
                         COLUMN_EM_IS_DEFAULT, COLUMN_EM_IS_VERIFIED,
-                COLUMN_RC_PROFILE_MASTER_PM_ID},
+                        COLUMN_RC_PROFILE_MASTER_PM_ID},
                 COLUMN_EM_ID + "=?", new String[]{String.valueOf(emId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();

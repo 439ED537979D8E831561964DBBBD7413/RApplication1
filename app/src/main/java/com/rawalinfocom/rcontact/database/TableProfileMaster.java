@@ -23,22 +23,22 @@ public class TableProfileMaster {
     }
 
     // Table Names
-    private static final String TABLE_RC_PROFILE_MASTER = "rc_profile_master";
+    static final String TABLE_RC_PROFILE_MASTER = "rc_profile_master";
 
     // Column Names
     private static final String COLUMN_PM_ID = "pm_id";
     private static final String COLUMN_PM_RAW_ID = "pm_raw_id";
     private static final String COLUMN_PM_PREFIX = "pm_prefix";
-    private static final String COLUMN_PM_FIRST_NAME = "pm_first_name";
+    static final String COLUMN_PM_FIRST_NAME = "pm_first_name";
     private static final String COLUMN_PM_MIDDLE_NAME = "pm_middle_name";
-    private static final String COLUMN_PM_LAST_NAME = "pm_last_name";
+    static final String COLUMN_PM_LAST_NAME = "pm_last_name";
     private static final String COLUMN_PM_SUFFIX = "pm_suffix";
     private static final String COLUMN_PM_NICK_NAME = "pm_nick_name";
     private static final String COLUMN_PM_PHONETIC_FIRST_NAME = "pm_phonetic_first_name";
     private static final String COLUMN_PM_PHONETIC_MIDDLE_NAME = "pm_phonetic_middle_name";
     private static final String COLUMN_PM_PHONETIC_LAST_NAME = "pm_phonetic_last_name";
     private static final String COLUMN_PM_PROFILE_IMAGE = "pm_profile_image";
-    private static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
+     static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
     private static final String COLUMN_PM_NICK_NAME_PRIVACY = "pm_nick_name_privacy";
     private static final String COLUMN_PM_NOTES = "pm_notes";
     private static final String COLUMN_PM_NOTES_PRIVACY = "pm_notes_privacy";
