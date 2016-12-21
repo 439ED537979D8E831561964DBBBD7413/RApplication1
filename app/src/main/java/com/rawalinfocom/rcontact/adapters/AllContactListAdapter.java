@@ -1,18 +1,21 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
@@ -38,6 +41,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         implements SectionIndexer {
 
     private Context context;
+    private Fragment fragment;
     /* phone book contacts */
     private ArrayList<Object> arrayListUserContact;
     private ArrayList<String> arrayListContactHeader;
@@ -49,9 +53,10 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private int previousPosition = 0;
 
     //<editor-fold desc="Constructor">
-    public AllContactListAdapter(Context context, ArrayList<Object> arrayListUserContact,
+    public AllContactListAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
                                  ArrayList<String> arrayListContactHeader) {
-        this.context = context;
+        this.context = fragment.getActivity();
+        this.fragment = fragment;
         this.arrayListUserContact = arrayListUserContact;
         this.arrayListContactHeader = arrayListContactHeader;
 
@@ -168,6 +173,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private void configureAllContactViewHolder(AllContactViewHolder holder, int position) {
         ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
 
+        holder.relativeRowAllContact.setTag(position);
+
         String contactDisplayName = profileData.getOperation().get(0).getPbNameFirst() + "" +
                 " " + profileData.getOperation().get(0).getPbNameLast();
         holder.textContactName.setText(contactDisplayName);
@@ -186,6 +193,17 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 holder.dividerAllContact.setVisibility(View.VISIBLE);
             }
         }
+
+        holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /* My Profile View */
+                if (((int) view.getTag()) == 1) {
+                    ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
+                            .class, null);
+                }
+            }
+        });
 
     }
 
@@ -361,6 +379,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         public TextView textContactNumber;
         @BindView(R.id.divider_all_contact)
         View dividerAllContact;
+        @BindView(R.id.relative_row_all_contact)
+        RelativeLayout relativeRowAllContact;
 
         AllContactViewHolder(View itemView) {
             super(itemView);

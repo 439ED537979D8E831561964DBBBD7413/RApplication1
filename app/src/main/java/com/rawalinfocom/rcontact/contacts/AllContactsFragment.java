@@ -94,7 +94,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ColorGroupSectionTitleIndicator titleIndicator;
 
     ArrayList<Object> arrayListPhoneBookContacts;
-    ArrayList<String> getArrayListContactHeaders;
+    ArrayList<String> arrayListContactHeaders;
     ArrayList<ProfileData> arrayListUserContact;
     ArrayList<String> arrayListContactId;
     ArrayList<String> arrayListContactNumbers;
@@ -105,6 +105,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     AllContactListAdapter allContactListAdapter;
 
     BottomSheetDialog bottomSheetDialog;
+
+    UserProfile meProfile;
 
     //<editor-fold desc="Constructors">
     public AllContactsFragment() {
@@ -124,7 +126,34 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         super.onCreate(savedInstanceState);
 //        databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
         arrayListPhoneBookContacts = new ArrayList<>();
-        getArrayListContactHeaders = new ArrayList<>();
+        arrayListContactHeaders = new ArrayList<>();
+
+        arrayListContactHeaders.add(" ");
+
+        meProfile = ((BaseActivity) getActivity()).getUserProfile();
+
+        arrayListPhoneBookContacts.add("My Profile");
+        ProfileData myProfileData = new ProfileData();
+
+        ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
+        ProfileDataOperation myOperation = new ProfileDataOperation();
+        myOperation.setPbNameFirst(meProfile.getPmFirstName());
+        myOperation.setPbNameLast(meProfile.getPmLastName());
+
+        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
+        ProfileDataOperationPhoneNumber myNumber = new ProfileDataOperationPhoneNumber();
+        myNumber.setPhoneNumber(meProfile.getMobileNumber());
+        arrayListPhoneNumber.add(myNumber);
+        myOperation.setPbPhoneNumber(arrayListPhoneNumber);
+
+        ArrayList<ProfileDataOperationEmail> arrayListEmail = new ArrayList<>();
+        myOperation.setPbEmailId(arrayListEmail);
+
+        arrayListOperation.add(myOperation);
+        myProfileData.setOperation(arrayListOperation);
+        arrayListPhoneBookContacts.add(myProfileData);
+
+
     }
 
     @Override
@@ -533,8 +562,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private void populateRecyclerView() {
 
         if (allContactListAdapter == null) {
-            allContactListAdapter = new AllContactListAdapter(getActivity(),
-                    arrayListPhoneBookContacts, getArrayListContactHeaders);
+            allContactListAdapter = new AllContactListAdapter(this,
+                    arrayListPhoneBookContacts, arrayListContactHeaders);
             recyclerViewContactList.setAdapter(allContactListAdapter);
 
             setRecyclerViewLayoutManager(recyclerViewContactList);
@@ -961,7 +990,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 String headerLetter = StringUtils.upperCase(StringUtils.substring
                         (arrayListUserContact.get(i).getOperation().get(0).getPbNameFirst(), 0, 1));
                 if (!arrayListPhoneBookContacts.contains(headerLetter)) {
-                    getArrayListContactHeaders.add(headerLetter);
+                    arrayListContactHeaders.add(headerLetter);
                     arrayListPhoneBookContacts.add(headerLetter);
                 }
                 arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
@@ -1452,7 +1481,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private void uploadContacts(int previouslySyncedData) {
 
         WsRequestObject uploadContactObject = new WsRequestObject();
-        //TODO pmid Modification
         uploadContactObject.setPmId(((BaseActivity) getActivity()).getUserPmId());
         uploadContactObject.setProfileData(arrayListUserContact);
 
@@ -1468,6 +1496,5 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     }
 
     //</editor-fold>
-
 
 }

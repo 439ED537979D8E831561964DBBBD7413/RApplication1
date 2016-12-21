@@ -138,28 +138,17 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         setContentView(R.layout.activity_profile_registration);
         ButterKnife.bind(this);
 
-//        generateHashkey();
-
-        /*// Facebook Initialization
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        callbackManager = CallbackManager.Factory.create();*/
-
         userProfile = (UserProfile) Utils.getObjectPreference(ProfileRegistrationActivity.this,
                 AppConstants.PREF_REGS_USER_OBJECT, UserProfile.class);
         if (userProfile == null) {
             userProfile = new UserProfile();
         }
 
-//        generateHashkey();
-
-//        registerFacebookCallback();
-
         // Google+ Registration
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions
                 .DEFAULT_SIGN_IN).requestEmail().build();
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi
                 (Auth.GOOGLE_SIGN_IN_API, gso).build();
-
 
         init();
     }
@@ -295,7 +284,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 if (userProfileResponse != null && StringUtils.equalsIgnoreCase(userProfileResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-
                     // set launch screen as MainActivity
                     Utils.setIntegerPreference(ProfileRegistrationActivity.this,
                             AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
@@ -307,6 +295,20 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                         Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
                                 userProfileRegistered.getPmId());
                     }
+
+                    UserProfile responseUserProfile = userProfileResponse.getUserProfile();
+                    userProfileRegistered = new UserProfile();
+                    userProfileRegistered.setPmFirstName(responseUserProfile.getPmFirstName());
+                    userProfileRegistered.setPmLastName(responseUserProfile.getPmLastName());
+                    userProfileRegistered.setMobileNumber(responseUserProfile.getMobileNumber());
+                    userProfileRegistered.setPmProfileImage(responseUserProfile.getPmProfileImage
+                            ());
+                    userProfileRegistered.setProfileRating(responseUserProfile.getProfileRating());
+                    userProfileRegistered.setTotalProfileRateUser(responseUserProfile
+                            .getTotalProfileRateUser());
+
+                    Utils.setObjectPreference(ProfileRegistrationActivity.this, AppConstants
+                            .PREF_REGS_USER_OBJECT, userProfileRegistered);
 
                     // Redirect to MainActivity
                     Intent intent = new Intent(this, MainActivity.class);

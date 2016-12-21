@@ -202,7 +202,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
                     stopService(new Intent(OtpVerificationActivity.this, OtpTimerService.class));
 
-                    if (StringUtils.equalsIgnoreCase(userProfile.getIsAlreadyVerified(),
+                  /*  if (StringUtils.equalsIgnoreCase(userProfile.getIsAlreadyVerified(),
                             String.valueOf(getResources().getInteger(R.integer
                                     .profile_already_verified)))) {
 
@@ -217,15 +217,18 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
                         overridePendingTransition(R.anim.enter, R.anim.exit);
-                    } else {
-                        // Redirect to ProfileRegistrationActivity
-                        Intent intent = new Intent(this, ProfileRegistrationActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.enter, R.anim.exit);
-                    }
+                    } else {*/
+
+                    // Redirect to ProfileRegistrationActivity
+                    Intent intent = new Intent(this, ProfileRegistrationActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+
+                    // }
+
                 } else {
                     if (confirmOtpResponse != null) {
                         Log.e("error response", confirmOtpResponse.getMessage());

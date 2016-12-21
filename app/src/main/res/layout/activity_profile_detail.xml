@@ -1,0 +1,452 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorWhite">
+
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_toolbar_profile_detail"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"/>
+
+    <TextView
+        android:id="@+id/text_joining_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/include_toolbar"
+        android:background="@color/colorAccent"
+        android:padding="@dimen/margin_tiny"
+        android:textColor="@color/colorWhite"
+        tools:text="Joining Date:- 15th May, 2016"/>
+
+    <RelativeLayout
+        android:id="@+id/relative_basic_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_joining_date"
+        android:background="@color/colorLightGrayishCyan"
+        android:padding="@dimen/margin_small">
+
+        <ImageView
+            android:id="@+id/image_profile"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/str_content_description"
+            android:src="@mipmap/ic_launcher"/>
+
+        <LinearLayout
+            android:id="@+id/linear_basic_detail_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_user_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/margin_tiny"
+                tools:text="12345"/>
+
+            <RatingBar
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isIndicator="true"
+                android:rating="4"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_basic_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/linear_basic_detail_rating"
+            android:layout_toRightOf="@id/image_profile"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/colorAccent"
+                tools:text="Monal Godiwala"/>
+
+            <TextView
+                android:id="@+id/text_profession"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:textColor="@color/colorAccent"
+                tools:text="Managing Director"/>
+
+            <TextView
+                android:id="@+id/text_organization"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:textColor="@color/colorAccent"
+                tools:text="Blazze Apps"/>
+
+            <TextView
+                android:id="@+id/text_view_all_organization"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                tools:text="View All Organizations"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/relative_basic_detail"
+        android:background="@color/colorVeryLightGray">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/activity_half_horizontal_margin">
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/card_contact_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_tiny"
+                android:padding="@dimen/activity_half_horizontal_margin"
+                app:cardCornerRadius="3dp"
+                card_view:cardElevation="0dp"
+                tools:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/linear_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/image_call"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:contentDescription="@string/str_content_description"
+                            android:src="@drawable/ic_action_call"
+                            android:tint="@color/colorVeryDarkGrayishBlue2"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_label_phone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:text="Phone"
+                                android:textColor="@color/colorBlack"/>
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/recycler_view_contact_number"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/linear_phone"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/image_email"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:contentDescription="@string/str_content_description"
+                            android:src="@drawable/ic_action_sms"
+                            android:tint="@color/colorVeryDarkGrayishBlue2"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_label_email"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:text="Email"
+                                android:textColor="@color/colorBlack"/>
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/recycler_view_email"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_website"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/linear_email"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/image_website"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:contentDescription="@string/str_content_description"
+                            android:src="@drawable/ic_action_sms"
+                            android:tint="@color/colorVeryDarkGrayishBlue2"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_label_website"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:text="Website"
+                                android:textColor="@color/colorBlack"/>
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/recycler_view_website"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/linear_website"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/image_address"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:contentDescription="@string/str_content_description"
+                            android:src="@drawable/ic_action_sms"
+                            android:tint="@color/colorVeryDarkGrayishBlue2"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_label_address"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:text="Address"
+                                android:textColor="@color/colorBlack"/>
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/recycler_view_address"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_social_contact"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/linear_address"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/image_social_contact"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:contentDescription="@string/str_content_description"
+                            android:src="@drawable/ic_action_sms"
+                            android:tint="@color/colorVeryDarkGrayishBlue2"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_label_social_contact"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:text="Social Contact"
+                                android:textColor="@color/colorBlack"/>
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/recycler_view_social_contact"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/card_other_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/card_contact_details"
+                android:layout_marginTop="@dimen/margin_tiny"
+                android:padding="@dimen/activity_half_horizontal_margin"
+                app:cardCornerRadius="3dp"
+                card_view:cardElevation="0dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/linear_event"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/image_event"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:contentDescription="@string/str_content_description"
+                            android:src="@drawable/ic_action_call"
+                            android:tint="@color/colorVeryDarkGrayishBlue2"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_label_event"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:text="Event"
+                                android:textColor="@color/colorBlack"/>
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/recycler_view_event"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_gender"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/linear_event"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/image_gender"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:contentDescription="@string/str_content_description"
+                            android:src="@drawable/ic_action_sms"
+                            android:tint="@color/colorVeryDarkGrayishBlue2"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_label_gender"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:text="Gender"
+                                android:textColor="@color/colorBlack"/>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny">
+
+                                <ImageView
+                                    android:id="@+id/image_icon_gender"
+                                    android:layout_width="15dp"
+                                    android:layout_height="15dp"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_margin="@dimen/activity_half_horizontal_margin"
+                                    android:contentDescription="@string/str_content_description"
+                                    android:src="@drawable/ic_action_sms"
+                                    android:tint="@color/colorVeryDarkGrayishBlue2"/>
+
+                                <TextView
+                                    android:id="@+id/text_gender"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_toLeftOf="@id/image_icon_gender"
+                                    tools:text="Male"/>
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>
