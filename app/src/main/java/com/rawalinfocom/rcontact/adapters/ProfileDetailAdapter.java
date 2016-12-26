@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -30,14 +31,6 @@ import butterknife.ButterKnife;
 
 public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdapter
         .ProfileDetailViewHolder> {
-
-    private final int PHONE_NUMBER = 0;
-    private final int EMAIL = 1;
-    private final int WEBSITE = 2;
-    private final int ADDRESS = 3;
-    private final int IM_ACCOUNT = 4;
-    private final int EVENT = 5;
-    private final int GENDER = 6;
 
     private Context context;
     private ArrayList<Object> arrayList;
@@ -62,31 +55,31 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     public void onBindViewHolder(ProfileDetailViewHolder holder, int position) {
 
         switch (profileDetailType) {
-            case PHONE_NUMBER:
+            case AppConstants.PHONE_NUMBER:
                 displayPhoneNumber(holder, position);
                 break;
 
-            case EMAIL:
+            case AppConstants.EMAIL:
                 displayEmail(holder, position);
                 break;
 
-            case WEBSITE:
+            case AppConstants.WEBSITE:
                 displayWebsite(holder, position);
                 break;
 
-            case ADDRESS:
+            case AppConstants.ADDRESS:
                 displayAddress(holder, position);
                 break;
 
-            case IM_ACCOUNT:
+            case AppConstants.IM_ACCOUNT:
                 displayImAccount(holder, position);
                 break;
 
-            case EVENT:
+            case AppConstants.EVENT:
                 displayEvent(holder, position);
                 break;
 
-            case GENDER:
+            case AppConstants.GENDER:
                 displayGender(holder, position);
                 break;
         }
@@ -96,7 +89,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     private void displayPhoneNumber(ProfileDetailViewHolder holder, int position) {
         ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                 arrayList.get(position);
-        holder.textMain.setText(phoneNumber.getPhoneNumber());
+        String number = phoneNumber.getPhoneNumber();
         holder.textSub.setText(phoneNumber.getPhoneType());
         holder.textSub.setVisibility(View.VISIBLE);
 
@@ -111,11 +104,18 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
+        if (phoneNumber.getPbRcpType() == context.getResources().getInteger(R.integer
+                .rcp_type_primary)) {
+            holder.textMain.setText(number + " ◊");
+        } else {
+            holder.textMain.setText(number);
+        }
+
     }
 
     private void displayEmail(final ProfileDetailViewHolder holder, int position) {
         ProfileDataOperationEmail email = (ProfileDataOperationEmail) arrayList.get(position);
-        holder.textMain.setText(email.getEmEmailId());
+        String emailId = email.getEmEmailId();
         holder.textSub.setText(email.getEmType());
         holder.textSub.setVisibility(View.VISIBLE);
 
@@ -138,6 +138,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 return false;
             }
         });
+
+        if (email.getEmRcpType() == context.getResources().getInteger(R.integer.rcp_type_primary)) {
+            holder.textMain.setText(emailId + " ◊");
+        } else {
+            holder.textMain.setText(emailId);
+        }
 
     }
 
@@ -199,6 +205,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 (position);
         holder.textMain.setText(imAccount.getIMAccountDetails());
         holder.textSub.setText(imAccount.getIMAccountType());
+
+        holder.textSub.setVisibility(View.GONE);
     }
 
     private void displayEvent(ProfileDetailViewHolder holder, int position) {

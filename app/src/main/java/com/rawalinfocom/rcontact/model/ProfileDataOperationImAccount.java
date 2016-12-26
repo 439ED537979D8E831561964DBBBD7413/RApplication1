@@ -14,7 +14,7 @@ public class ProfileDataOperationImAccount {
     private String IMAccountProtocol;
     private String IMAccountPublic;
 
-    @JsonProperty("IM_account_type")
+    @JsonProperty("im_account_type")
     public String getIMAccountType() {
         return StringUtils.defaultString(this.IMAccountType);
     }
@@ -23,7 +23,7 @@ public class ProfileDataOperationImAccount {
         this.IMAccountType = IMAccountType;
     }
 
-    @JsonProperty("IM_account_details")
+    @JsonProperty("im_account_details")
     public String getIMAccountDetails() {
         return StringUtils.defaultString(this.IMAccountDetails);
     }
@@ -32,7 +32,7 @@ public class ProfileDataOperationImAccount {
         this.IMAccountDetails = IMAccountDetails;
     }
 
-    @JsonProperty("IM_account_public")
+    @JsonProperty("im_account_public")
     public String getIMAccountPublic() {
         return StringUtils.defaultString(this.IMAccountPublic);
     }
@@ -41,7 +41,7 @@ public class ProfileDataOperationImAccount {
         this.IMAccountPublic = IMAccountPublic;
     }
 
-    @JsonProperty("IM_account_protocol")
+    @JsonProperty("im_account_protocol")
     public String getIMAccountProtocol() {
         return StringUtils.defaultString(IMAccountProtocol);
     }

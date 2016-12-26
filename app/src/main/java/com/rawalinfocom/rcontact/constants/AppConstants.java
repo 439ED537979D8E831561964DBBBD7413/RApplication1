@@ -9,6 +9,16 @@ package com.rawalinfocom.rcontact.constants;
 
 public class AppConstants {
 
+    //<editor-fold desc="Profile Detail Section">
+    public static final int PHONE_NUMBER = 0;
+    public static final int EMAIL = 1;
+    public static final int WEBSITE = 2;
+    public static final int ADDRESS = 3;
+    public static final int IM_ACCOUNT = 4;
+    public static final int EVENT = 5;
+    public static final int GENDER = 6;
+    //</editor-fold>
+
     //<editor-fold desc="App Specific final constants">
 
     public static final String OTP_CONFIRMED_STATUS = "2";

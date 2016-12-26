@@ -180,9 +180,9 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         holder.textContactName.setText(contactDisplayName);
 
         if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
-            displayNumber(holder, profileData, contactDisplayName);
+            displayNumber(holder, profileData, contactDisplayName, position);
         } else if (profileData.getOperation().get(0).getPbEmailId().size() > 0) {
-            displayEmail(holder, profileData, null, contactDisplayName);
+            displayEmail(holder, profileData, null, contactDisplayName, position);
         }
 
         /* Hide Divider if row is last in Section */
@@ -213,7 +213,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private void displayNumber(AllContactViewHolder holder, ProfileData profileData, String
-            contactDisplayName) {
+            contactDisplayName, int position) {
         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping((
                 (BaseActivity) context).databaseHandler);
 
@@ -253,7 +253,11 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 holder.textContactName.setTextColor(colorPineGreen);
             } else {
                 holder.textCloudContactName.setVisibility(View.VISIBLE);
-                holder.textContactName.setTextColor(colorBlack);
+                if (position != 1) {
+                    holder.textContactName.setTextColor(colorBlack);
+                } else {
+                    holder.textContactName.setTextColor(colorPineGreen);
+                }
             }
 
             holder.textContactNumber.setTextColor(colorPineGreen);
@@ -262,7 +266,13 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             displayNumber = profileData.getOperation().get(0).getPbPhoneNumber().get(0)
                     .getPhoneNumber();
             displayName = "";
-            holder.textContactNumber.setTextColor(colorBlack);
+            if (position != 1) {
+                holder.textContactName.setTextColor(colorBlack);
+                holder.textContactNumber.setTextColor(colorBlack);
+            } else {
+                holder.textContactName.setTextColor(colorPineGreen);
+                holder.textContactNumber.setTextColor(colorPineGreen);
+            }
             isRcp = false;
         }
 
@@ -282,13 +292,13 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         holder.textContactNumber.setText(displayNumber);
 
         if (!isRcp) {
-            displayEmail(holder, profileData, displayNumber, contactDisplayName);
+            displayEmail(holder, profileData, displayNumber, contactDisplayName, position);
         }
 
     }
 
     private void displayEmail(AllContactViewHolder holder, ProfileData profileData, String
-            displayNumber, String contactDisplayName) {
+            displayNumber, String contactDisplayName, int position) {
         TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping((
                 (BaseActivity) context).databaseHandler);
 
@@ -329,7 +339,11 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     holder.textContactName.setTextColor(colorPineGreen);
                 } else {
                     holder.textCloudContactName.setVisibility(View.VISIBLE);
-                    holder.textContactName.setTextColor(colorBlack);
+                    if (position == 1) {
+                        holder.textContactName.setTextColor(colorPineGreen);
+                    } else {
+                        holder.textContactName.setTextColor(colorBlack);
+                    }
                 }
 
 //                holder.textContactNumber.setTextColor(colorPineGreen);
@@ -351,7 +365,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             if (displayNumber != null) {
                 holder.textContactNumber.setText(displayNumber);
             } else {
-                if (isRcp) {
+                if (isRcp || position == 1) {
                     holder.textContactNumber.setTextColor(colorPineGreen);
                 } else {
                     holder.textContactNumber.setTextColor(colorBlack);

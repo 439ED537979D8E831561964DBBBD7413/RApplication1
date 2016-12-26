@@ -193,7 +193,7 @@ public class ProfileDataOperation {
         this.pbPhoneticNameLast = pbPhoneticNameLast;
     }
 
-    @JsonProperty("pb_IM_accounts")
+    @JsonProperty("pb_im_accounts")
     public ArrayList<ProfileDataOperationImAccount> getPbIMAccounts() {
         return pbIMAccounts;
     }
