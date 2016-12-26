@@ -32,16 +32,7 @@
 
         <service android:name=".services.OtpTimerService"/>
 
-        <activity android:name=".MainActivityTemp">
-
-            <!--
-             <intent-filter>
-                 <action android:name="android.intent.action.MAIN"/>
-
-                 <category android:name="android.intent.category.LAUNCHER"/>
-             </intent-filter>
-            -->
-        </activity>
+        <activity android:name=".MainActivityTemp"/>
         <activity android:name=".MobileNumberRegistrationActivity"/>
         <activity
             android:name=".CountryListActivity"
@@ -51,11 +42,11 @@
         <activity android:name=".BaseActivity"/>
         <activity android:name=".ProfileRegistrationActivity"/>
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+            <!-- <intent-filter>
+                 <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
+                 <category android:name="android.intent.category.LAUNCHER"/>
+             </intent-filter>-->
         </activity>
 
         <service
@@ -65,6 +56,11 @@
         </service>
 
         <activity android:name=".contacts.ProfileDetailActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
     </application>
 

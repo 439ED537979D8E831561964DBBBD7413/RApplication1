@@ -43,6 +43,11 @@ public class ProfileDataOperation {
     private String verifiedMobileNumber;
     private String mnmCloudId;
 
+    private String joiningDate;
+    private String pbRcpVerify;
+    private String profileRating;
+    private String totalProfileRateUser;
+
 
     @JsonProperty("pb_phone_number")
     public ArrayList<ProfileDataOperationPhoneNumber> getPbPhoneNumber() {
@@ -303,5 +308,41 @@ public class ProfileDataOperation {
 
     public void setMnmCloudId(String mnmCloudId) {
         this.mnmCloudId = mnmCloudId;
+    }
+
+    @JsonProperty("joining_date")
+    public String getJoiningDate() {
+        return StringUtils.defaultString(joiningDate);
+    }
+
+    public void setJoiningDate(String joiningDate) {
+        this.joiningDate = joiningDate;
+    }
+
+    @JsonProperty("pb_rcp_verify")
+    public String getPbRcpVerify() {
+        return StringUtils.defaultString(pbRcpVerify);
+    }
+
+    public void setPbRcpVerify(String pbRcpVerify) {
+        this.pbRcpVerify = pbRcpVerify;
+    }
+
+    @JsonProperty("profile_rating")
+    public String getProfileRating() {
+        return StringUtils.defaultString(profileRating, "0");
+    }
+
+    public void setProfileRating(String profileRating) {
+        this.profileRating = profileRating;
+    }
+
+    @JsonProperty("total_profile_rate_user")
+    public String getTotalProfileRateUser() {
+        return StringUtils.defaultString(totalProfileRateUser, "0");
+    }
+
+    public void setTotalProfileRateUser(String totalProfileRateUser) {
+        this.totalProfileRateUser = totalProfileRateUser;
     }
 }

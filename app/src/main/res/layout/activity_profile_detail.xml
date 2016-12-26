@@ -2,6 +2,7 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/relative_root_profile_detail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/colorWhite">
@@ -55,6 +56,7 @@
                 tools:text="12345"/>
 
             <RatingBar
+                android:id="@+id/rating_user"
                 style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -81,28 +83,36 @@
                 android:textColor="@color/colorAccent"
                 tools:text="Monal Godiwala"/>
 
-            <TextView
-                android:id="@+id/text_profession"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/linear_organization_detail"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="2dp"
-                android:textColor="@color/colorAccent"
-                tools:text="Managing Director"/>
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/text_organization"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"
-                android:textColor="@color/colorAccent"
-                tools:text="Blazze Apps"/>
+                <TextView
+                    android:id="@+id/text_designation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:textColor="@color/colorAccent"
+                    tools:text="Managing Director"/>
 
-            <TextView
-                android:id="@+id/text_view_all_organization"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"
-                tools:text="View All Organizations"/>
+                <TextView
+                    android:id="@+id/text_organization"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:textColor="@color/colorAccent"
+                    tools:text="Blazze Apps"/>
+
+                <TextView
+                    android:id="@+id/text_view_all_organization"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:text="View All Organizations"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -124,20 +134,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_tiny"
-                android:padding="@dimen/activity_half_horizontal_margin"
                 app:cardCornerRadius="3dp"
                 card_view:cardElevation="0dp"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/activity_half_horizontal_margin">
 
                     <LinearLayout
                         android:id="@+id/linear_phone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        tools:visibility="gone">
 
                         <ImageView
                             android:id="@+id/image_call"
@@ -210,122 +221,152 @@
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/linear_website"
+                    <RelativeLayout
+                        android:id="@+id/relative_section_view_more"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/linear_email"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/image_website"
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:layout_margin="@dimen/margin_tiny"
-                            android:contentDescription="@string/str_content_description"
-                            android:src="@drawable/ic_action_sms"
-                            android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                        android:visibility="gone">
 
                         <LinearLayout
+                            android:id="@+id/linear_website"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/text_label_website"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                            <ImageView
+                                android:id="@+id/image_website"
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
                                 android:layout_margin="@dimen/margin_tiny"
-                                android:text="Website"
-                                android:textColor="@color/colorBlack"/>
+                                android:contentDescription="@string/str_content_description"
+                                android:src="@drawable/ic_action_sms"
+                                android:tint="@color/colorVeryDarkGrayishBlue2"/>
 
-                            <android.support.v7.widget.RecyclerView
-                                android:id="@+id/recycler_view_website"
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/margin_tiny"/>
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/text_label_website"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/margin_tiny"
+                                    android:text="Website"
+                                    android:textColor="@color/colorBlack"/>
+
+                                <android.support.v7.widget.RecyclerView
+                                    android:id="@+id/recycler_view_website"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/margin_tiny"/>
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
-                    </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/linear_address"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/linear_website"
+                            android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:id="@+id/linear_address"
+                            <ImageView
+                                android:id="@+id/image_address"
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:contentDescription="@string/str_content_description"
+                                android:src="@drawable/ic_action_sms"
+                                android:tint="@color/colorVeryDarkGrayishBlue2"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/text_label_address"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/margin_tiny"
+                                    android:text="Address"
+                                    android:textColor="@color/colorBlack"/>
+
+                                <android.support.v7.widget.RecyclerView
+                                    android:id="@+id/recycler_view_address"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/margin_tiny"/>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linear_social_contact"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/linear_address"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/image_social_contact"
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:contentDescription="@string/str_content_description"
+                                android:src="@drawable/ic_action_sms"
+                                android:tint="@color/colorVeryDarkGrayishBlue2"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/text_label_social_contact"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/margin_tiny"
+                                    android:text="Social Contact"
+                                    android:textColor="@color/colorBlack"/>
+
+                                <android.support.v7.widget.RecyclerView
+                                    android:id="@+id/recycler_view_social_contact"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/margin_tiny"/>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                    <com.rawalinfocom.rcontact.helper.RippleView
+                        android:id="@+id/ripple_view_more"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/linear_website"
-                        android:orientation="horizontal">
+                        android:layout_below="@id/relative_section_view_more"
+                        app:rv_alpha="@integer/alpha_ripple"
+                        app:rv_centered="true"
+                        app:rv_color="@color/colorAccent"
+                        app:rv_rippleDuration="@integer/duration_ripple">
 
-                        <ImageView
-                            android:id="@+id/image_address"
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:layout_margin="@dimen/margin_tiny"
-                            android:contentDescription="@string/str_content_description"
-                            android:src="@drawable/ic_action_sms"
-                            android:tint="@color/colorVeryDarkGrayishBlue2"/>
-
-                        <LinearLayout
+                        <Button
+                            android:id="@+id/button_view_more"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:background="@null"
+                            android:gravity="left|center_vertical"
+                            android:padding="@dimen/activity_half_horizontal_margin"
+                            android:text="View More"
+                            android:textAllCaps="false"/>
 
-                            <TextView
-                                android:id="@+id/text_label_address"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/margin_tiny"
-                                android:text="Address"
-                                android:textColor="@color/colorBlack"/>
-
-                            <android.support.v7.widget.RecyclerView
-                                android:id="@+id/recycler_view_address"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/margin_tiny"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/linear_social_contact"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/linear_address"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/image_social_contact"
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:layout_margin="@dimen/margin_tiny"
-                            android:contentDescription="@string/str_content_description"
-                            android:src="@drawable/ic_action_sms"
-                            android:tint="@color/colorVeryDarkGrayishBlue2"/>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/text_label_social_contact"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/margin_tiny"
-                                android:text="Social Contact"
-                                android:textColor="@color/colorBlack"/>
-
-                            <android.support.v7.widget.RecyclerView
-                                android:id="@+id/recycler_view_social_contact"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/margin_tiny"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
+                    </com.rawalinfocom.rcontact.helper.RippleView>
 
                 </RelativeLayout>
 
@@ -337,13 +378,14 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/card_contact_details"
                 android:layout_marginTop="@dimen/margin_tiny"
-                android:padding="@dimen/activity_half_horizontal_margin"
                 app:cardCornerRadius="3dp"
-                card_view:cardElevation="0dp">
+                card_view:cardElevation="0dp"
+                tools:visibility="visible">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/activity_half_horizontal_margin">
 
                     <LinearLayout
                         android:id="@+id/linear_event"
@@ -433,7 +475,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:layout_toLeftOf="@id/image_icon_gender"
-                                    tools:text="Male"/>
+                                    android:text="Female"
+                                    android:textColor="@color/colorAccent"/>
 
                             </RelativeLayout>
 

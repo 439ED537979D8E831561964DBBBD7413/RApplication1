@@ -71,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/activity_half_horizontal_margin"
-                    tools:src="@drawable/ic_action_edit"/>
+                    android:src="@drawable/ic_action_edit"/>
 
             </com.rawalinfocom.rcontact.helper.RippleView>
 

@@ -1,6 +1,9 @@
 package com.rawalinfocom.rcontact.helper;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -163,6 +166,21 @@ public class Utils {
         }
         return endTime;
     }
+
+    @SuppressLint("SimpleDateFormat")
+    public static String convertDateFormat(String oldFormattedDate, String oldFormat, String
+            newFormat) {
+        SimpleDateFormat oldDateFormatter = new SimpleDateFormat(oldFormat);
+        try {
+            Date tempDate = oldDateFormatter.parse(oldFormattedDate);
+            SimpleDateFormat newDateFormatter = new SimpleDateFormat(newFormat);
+            return newDateFormatter.format(tempDate);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "";
+        }
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Shared Preferences">
@@ -278,12 +296,12 @@ public class Utils {
     //</editor-fold>
 
     //<editor-fold desc="Progress Dialog">
-    private static CustomProgressDialog progressDialog;
+    private static MaterialProgressDialog progressDialog;
 
     public static void showProgressDialog(Context context, String msg, boolean isCancelable) {
         if (context != null) {
 
-            progressDialog = (CustomProgressDialog) CustomProgressDialog.ctor(context, msg);
+            progressDialog = (MaterialProgressDialog) MaterialProgressDialog.ctor(context, msg);
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setCancelable(isCancelable);
             progressDialog.show();
@@ -339,6 +357,15 @@ public class Utils {
         }
     }
 
+    public static Typeface typefaceIcons(Context context) {
+        if (context != null) {
+            return Typeface.createFromAsset(context.getAssets(), "fonts/icon_fonts.ttf");
+        } else {
+            Log.e(LOG_TAG, "method : typefaceSemiBold() , Null context");
+            return null;
+        }
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Image Conversion">
@@ -366,6 +393,13 @@ public class Utils {
         imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
     }
     //</editor-fold>
+
+    public static void copyToClipboard(Context context, String label, String text) {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context
+                .CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(label, text);
+        clipboard.setPrimaryClip(clip);
+    }
 
     public static void changeTabsFont(Context context, TabLayout tabLayout) {
         ViewGroup vg = (ViewGroup) tabLayout.getChildAt(0);

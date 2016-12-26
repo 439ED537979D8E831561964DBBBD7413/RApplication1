@@ -9,10 +9,12 @@ import org.apache.commons.lang3.StringUtils;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationEmail {
+
     private int emId;
     private String emEmailId;
     private String emType;
     private int emPublic;
+    private int emRcpType;
 
     @JsonProperty("em_id")
     public int getEmId() {
@@ -48,5 +50,14 @@ public class ProfileDataOperationEmail {
 
     public void setEmPublic(int emPublic) {
         this.emPublic = emPublic;
+    }
+
+    @JsonProperty("em_rcp_type")
+    public int getEmRcpType() {
+        return emRcpType;
+    }
+
+    public void setEmRcpType(int emRcpType) {
+        this.emRcpType = emRcpType;
     }
 }

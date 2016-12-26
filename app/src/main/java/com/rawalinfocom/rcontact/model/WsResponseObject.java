@@ -24,6 +24,8 @@ public class WsResponseObject {
     private OtpLog otpLog;
     private UserProfile userProfile;
 
+    private ProfileDataOperation profileDetail;
+
     private ArrayList<Country> arrayListCountry;
     private ArrayList<ProfileDataOperation> arrayListUserRcProfile;
 
@@ -79,5 +81,14 @@ public class WsResponseObject {
 
     public void setArrayListUserRcProfile(ArrayList<ProfileDataOperation> arrayListUserRcProfile) {
         this.arrayListUserRcProfile = arrayListUserRcProfile;
+    }
+
+    @JsonProperty("profile_details")
+    public ProfileDataOperation getProfileDetail() {
+        return profileDetail;
+    }
+
+    public void setProfileDetail(ProfileDataOperation profileDetail) {
+        this.profileDetail = profileDetail;
     }
 }

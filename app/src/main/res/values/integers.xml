@@ -17,4 +17,9 @@
     <integer name="profile_not_verified">0</integer>
     <integer name="profile_already_verified">1</integer>
 
+    <!-- RCP Type Constants (For Mobile Number and Email Id) -->
+    <integer name="type_phone_book">0</integer>
+    <integer name="type_primary">1</integer> <!-- verified -->
+    <integer name="type_secondary">2</integer>
+
 </resources>
