@@ -28,6 +28,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.model.Country;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
@@ -198,21 +201,6 @@ public class Utils {
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         return sharedpreferences.getString(key, defaultValue);
     }
-
-  /*  public static void setStringSetPreference(Context context, String key, @Nullable Set<String>
-            value) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
-                .KEY_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedpreferences.edit();
-        editor.putStringSet(key, value);
-        editor.apply();
-    }
-
-    public static Set<String> getStringSetPreference(Context context, String key) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
-                .KEY_PREFERENCES, Context.MODE_PRIVATE);
-        return sharedpreferences.getStringSet(key, null);
-    }*/
 
     public static void setArrayListPreference(Context context, String key, @Nullable ArrayList
             arrayList) {
@@ -414,6 +402,26 @@ public class Utils {
                 }
             }
         }
+    }
+
+    public static String getFormattedNumber(Context context, String phoneNumber) {
+        Country country = (Country) Utils.getObjectPreference(context, AppConstants
+                .PREF_SELECTED_COUNTRY_OBJECT, Country.class);
+        String defaultCountryCode = "+91";
+        if (country != null) {
+            defaultCountryCode = country.getCountryCodeNumber();
+        }
+        if (!StringUtils.startsWith(phoneNumber, "+")) {
+            if (StringUtils.startsWith(phoneNumber, "0")) {
+                phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber, 1);
+            } else {
+                phoneNumber = defaultCountryCode + phoneNumber;
+            }
+        }
+
+        /* remove special characters from number */
+        return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
+                "[\\D]", "");
     }
 
 }

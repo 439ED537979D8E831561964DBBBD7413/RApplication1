@@ -1,7 +1,10 @@
 package com.rawalinfocom.rcontact.contacts;
 
 import android.app.Dialog;
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +27,7 @@ import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -149,8 +153,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     LinearLayout linearOrganizationDetail;
     @BindView(R.id.rating_user)
     RatingBar ratingUser;
+    @BindView(R.id.linear_call_sms)
+    LinearLayout linearCallSms;
+    @BindView(R.id.button_call_log)
+    Button buttonCallLog;
+    @BindView(R.id.button_sms)
+    Button buttonSms;
 
     ProfileDataOperation profileDetail;
+
+    String pmId, phoneBookId;
+    boolean displayOwnProfile = false;
+
+    PhoneBookContacts phoneBookContacts;
 
     //<editor-fold desc="Override Methods">
 
@@ -159,6 +174,27 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_detail);
         ButterKnife.bind(this);
+
+        phoneBookContacts = new PhoneBookContacts(this);
+
+        Intent intent = getIntent();
+
+        if (intent != null && intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
+            pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
+        } else {
+            pmId = "-1";
+        }
+
+        if (intent != null && intent.hasExtra(AppConstants.EXTRA_PHONE_BOOK_ID)) {
+            phoneBookId = intent.getStringExtra(AppConstants.EXTRA_PHONE_BOOK_ID);
+        } else {
+            phoneBookId = "-1";
+        }
+
+        if (pmId.equalsIgnoreCase(getUserPmId())) {
+            displayOwnProfile = true;
+        }
+
         init();
     }
 
@@ -228,7 +264,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleActionRightRight = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_right);
 
-        textToolbarTitle.setText(getString(R.string.title_my_profile));
+        if (displayOwnProfile) {
+            textToolbarTitle.setText(getString(R.string.title_my_profile));
+            linearCallSms.setVisibility(View.GONE);
+        } else {
+            textToolbarTitle.setText("Profile Detail");
+            linearCallSms.setVisibility(View.VISIBLE);
+        }
 
         recyclerViewContactNumber.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEmail.setLayoutManager(new LinearLayoutManager(this));
@@ -255,7 +297,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
         });
 
-        getProfileDetail();
+        if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
+            getProfileDetail();
+        }
     }
 
     private void setUpView() {
@@ -288,11 +332,50 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         //</editor-fold>
 
         //<editor-fold desc="Phone Number">
-        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = profileDetail
-                .getPbPhoneNumber();
-        if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber)) {
+
+        // From Cloud
+        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
+        ArrayList<String> arrayListCloudNumber = new ArrayList<>();
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbPhoneNumber())) {
+            arrayListPhoneNumber.addAll(profileDetail.getPbPhoneNumber());
+            for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
+                String number = Utils.getFormattedNumber(this, arrayListPhoneNumber.get(i)
+                        .getPhoneNumber());
+                arrayListCloudNumber.add(number);
+            }
+        }
+
+        // From PhoneBook
+        Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(phoneBookId);
+        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneBookNumber = new ArrayList<>();
+
+        if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
+            while (contactNumberCursor.moveToNext()) {
+
+                ProfileDataOperationPhoneNumber phoneNumber = new
+                        ProfileDataOperationPhoneNumber();
+
+                phoneNumber.setPhoneNumber(Utils.getFormattedNumber(this, contactNumberCursor
+                        .getString(contactNumberCursor.getColumnIndex(ContactsContract
+                                .CommonDataKinds.Phone.NUMBER))));
+                phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
+                        (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.Phone.TYPE))));
+
+                if (!arrayListCloudNumber.contains(phoneNumber.getPhoneNumber())) {
+                    arrayListPhoneBookNumber.add(phoneNumber);
+                }
+
+            }
+            contactNumberCursor.close();
+        }
+
+        if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber) || !Utils.isArraylistNullOrEmpty
+                (arrayListPhoneBookNumber)) {
             ArrayList<Object> tempPhoneNumber = new ArrayList<>();
             tempPhoneNumber.addAll(arrayListPhoneNumber);
+            tempPhoneNumber.addAll(arrayListPhoneBookNumber);
+
             linearPhone.setVisibility(View.VISIBLE);
             ProfileDetailAdapter phoneDetailAdapter = new ProfileDetailAdapter(this,
                     tempPhoneNumber, AppConstants.PHONE_NUMBER);
@@ -303,10 +386,47 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         //</editor-fold>
 
         // <editor-fold desc="Email Id">
-        ArrayList<ProfileDataOperationEmail> arrayListEmail = profileDetail.getPbEmailId();
-        if (!Utils.isArraylistNullOrEmpty(arrayListEmail)) {
+
+        // From Cloud
+        ArrayList<ProfileDataOperationEmail> arrayListEmail = new ArrayList<>();
+        ArrayList<String> arrayListCloudEmail = new ArrayList<>();
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
+            arrayListEmail.addAll(profileDetail.getPbEmailId());
+            for (int i = 0; i < arrayListEmail.size(); i++) {
+                String email = arrayListEmail.get(i).getEmEmailId();
+                arrayListCloudEmail.add(email);
+            }
+        }
+
+        // From PhoneBook
+        Cursor contactEmailCursor = phoneBookContacts.getContactEmail(phoneBookId);
+        ArrayList<ProfileDataOperationEmail> arrayListPhoneBookEmail = new ArrayList<>();
+
+        if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
+            while (contactEmailCursor.moveToNext()) {
+
+                ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
+
+                emailId.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+                emailId.setEmType(phoneBookContacts.getEmailType(contactEmailCursor,
+                        contactEmailCursor.getInt
+                                (contactEmailCursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.Email.TYPE))));
+
+                if (!arrayListCloudEmail.contains(emailId.getEmEmailId())) {
+                    arrayListPhoneBookEmail.add(emailId);
+                }
+
+            }
+            contactEmailCursor.close();
+        }
+
+        if (!Utils.isArraylistNullOrEmpty(arrayListEmail) || !Utils.isArraylistNullOrEmpty
+                (arrayListPhoneBookEmail)) {
             ArrayList<Object> tempEmail = new ArrayList<>();
             tempEmail.addAll(arrayListEmail);
+            tempEmail.addAll(arrayListPhoneBookEmail);
             linearEmail.setVisibility(View.VISIBLE);
             ProfileDetailAdapter emailDetailAdapter = new ProfileDetailAdapter(this, tempEmail,
                     AppConstants.EMAIL);
@@ -317,10 +437,37 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         //</editor-fold>
 
         // <editor-fold desc="Website">
-        ArrayList<String> arrayListWebsite = profileDetail.getPbWebAddress();
-        if (!Utils.isArraylistNullOrEmpty(arrayListWebsite)) {
+
+        // From Cloud
+        ArrayList<String> arrayListWebsite = new ArrayList<>();
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
+            arrayListWebsite.addAll(profileDetail.getPbWebAddress());
+        }
+
+        // From PhoneBook
+        Cursor contactWebsiteCursor = phoneBookContacts.getContactWebsite(phoneBookId);
+        ArrayList<String> arrayListPhoneBookWebsite = new ArrayList<>();
+
+        if (contactWebsiteCursor != null && contactWebsiteCursor.getCount() > 0) {
+            while (contactWebsiteCursor.moveToNext()) {
+
+                String website = contactWebsiteCursor.getString(contactWebsiteCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));
+
+                if (!arrayListWebsite.contains(website)) {
+                    arrayListPhoneBookWebsite.add(website);
+                }
+
+            }
+            contactWebsiteCursor.close();
+        }
+
+        if (!Utils.isArraylistNullOrEmpty(arrayListWebsite) || !Utils.isArraylistNullOrEmpty
+                (arrayListPhoneBookWebsite)) {
             ArrayList<Object> tempWebsite = new ArrayList<>();
             tempWebsite.addAll(arrayListWebsite);
+            tempWebsite.addAll(arrayListPhoneBookWebsite);
+
             linearWebsite.setVisibility(View.VISIBLE);
             ProfileDetailAdapter websiteDetailAdapter = new ProfileDetailAdapter(this,
                     tempWebsite, AppConstants.WEBSITE);
@@ -331,10 +478,65 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         //</editor-fold>
 
         // <editor-fold desc="Address">
-        ArrayList<ProfileDataOperationAddress> arrayListAddress = profileDetail.getPbAddress();
-        if (!Utils.isArraylistNullOrEmpty(arrayListAddress)) {
+
+        // From Cloud
+        ArrayList<ProfileDataOperationAddress> arrayListAddress = new ArrayList<>();
+        ArrayList<String> arrayListCloudAddress = new ArrayList<>();
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
+            arrayListAddress.addAll(profileDetail.getPbAddress());
+            for (int i = 0; i < arrayListAddress.size(); i++) {
+                String address = arrayListAddress.get(i).getFormattedAddress();
+                arrayListCloudAddress.add(address);
+            }
+        }
+
+        // From PhoneBook
+        Cursor contactAddressCursor = phoneBookContacts.getContactAddress(phoneBookId);
+        ArrayList<ProfileDataOperationAddress> arrayListPhoneBookAddress = new ArrayList<>();
+
+        if (contactAddressCursor != null && contactAddressCursor.getCount() > 0) {
+            while (contactAddressCursor.moveToNext()) {
+
+                ProfileDataOperationAddress address = new ProfileDataOperationAddress();
+
+                address.setFormattedAddress(contactAddressCursor.getString
+                        (contactAddressCursor.getColumnIndex(ContactsContract
+                                .CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS)));
+                address.setCity(contactAddressCursor.getString(contactAddressCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                .CITY)));
+                address.setCountry(contactAddressCursor.getString(contactAddressCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                .COUNTRY)));
+                address.setNeighborhood(contactAddressCursor.getString(contactAddressCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                .NEIGHBORHOOD)));
+                address.setPostCode(contactAddressCursor.getString(contactAddressCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                .POSTCODE)));
+                address.setPoBox(contactAddressCursor.getString(contactAddressCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                .POBOX)));
+                address.setStreet(contactAddressCursor.getString(contactAddressCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                .STREET)));
+                address.setAddressType(phoneBookContacts.getAddressType(contactAddressCursor,
+                        contactAddressCursor.getInt(contactAddressCursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.StructuredPostal.TYPE))));
+
+                if (!arrayListCloudAddress.contains(address.getFormattedAddress())) {
+                    arrayListPhoneBookAddress.add(address);
+                }
+
+            }
+            contactAddressCursor.close();
+        }
+
+        if (!Utils.isArraylistNullOrEmpty(arrayListAddress) || !Utils.isArraylistNullOrEmpty
+                (arrayListPhoneBookAddress)) {
             ArrayList<Object> tempAddress = new ArrayList<>();
             tempAddress.addAll(arrayListAddress);
+            tempAddress.addAll(arrayListPhoneBookAddress);
             linearAddress.setVisibility(View.VISIBLE);
             ProfileDetailAdapter addressDetailAdapter = new ProfileDetailAdapter(this,
                     tempAddress, AppConstants.ADDRESS);
@@ -345,11 +547,53 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         //</editor-fold>
 
         // <editor-fold desc="Im Account">
-        ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileDetail
-                .getPbIMAccounts();
-        if (!Utils.isArraylistNullOrEmpty(arrayListImAccount)) {
+
+        // From Cloud
+        ArrayList<ProfileDataOperationImAccount> arrayListImAccount = new ArrayList<>();
+        ArrayList<String> arrayListCloudImAccount = new ArrayList<>();
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
+            arrayListImAccount.addAll(profileDetail.getPbIMAccounts());
+            for (int i = 0; i < arrayListImAccount.size(); i++) {
+                String imAccount = arrayListImAccount.get(i).getIMAccountProtocol();
+                arrayListCloudImAccount.add(imAccount);
+            }
+        }
+
+        // From PhoneBook
+        Cursor contactImAccountCursor = phoneBookContacts.getContactIm(phoneBookId);
+        ArrayList<ProfileDataOperationImAccount> arrayListPhoneBookImAccount = new ArrayList<>();
+
+        if (contactImAccountCursor != null && contactImAccountCursor.getCount() > 0) {
+            while (contactImAccountCursor.moveToNext()) {
+
+                ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+
+                imAccount.setIMAccountDetails(contactImAccountCursor.getString
+                        (contactImAccountCursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Im.DATA1)));
+
+                imAccount.setIMAccountType(phoneBookContacts.getImAccountType
+                        (contactImAccountCursor,
+                                contactImAccountCursor.getInt(contactImAccountCursor.getColumnIndex
+                                        (ContactsContract.CommonDataKinds.Im.TYPE))));
+
+                imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
+                        (contactImAccountCursor.getInt((contactImAccountCursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
+
+                if (!arrayListCloudImAccount.contains(imAccount.getIMAccountDetails())) {
+                    arrayListPhoneBookImAccount.add(imAccount);
+                }
+
+            }
+            contactImAccountCursor.close();
+        }
+
+        if (!Utils.isArraylistNullOrEmpty(arrayListImAccount) || !Utils.isArraylistNullOrEmpty
+                (arrayListPhoneBookImAccount)) {
             ArrayList<Object> tempImAccount = new ArrayList<>();
             tempImAccount.addAll(arrayListImAccount);
+            tempImAccount.addAll(arrayListPhoneBookImAccount);
             linearSocialContact.setVisibility(View.VISIBLE);
             ProfileDetailAdapter imAccountDetailAdapter = new ProfileDetailAdapter(this,
                     tempImAccount, AppConstants.IM_ACCOUNT);
@@ -367,10 +611,44 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
 
         // <editor-fold desc="Event">
-        ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail.getPbEvent();
-        if (!Utils.isArraylistNullOrEmpty(arrayListEvent)) {
+
+        // From Cloud
+        ArrayList<ProfileDataOperationEvent> arrayListEvent = new ArrayList<>();
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
+            arrayListEvent.addAll(profileDetail.getPbEvent());
+        }
+
+        // From PhoneBook
+        Cursor contactEventCursor = phoneBookContacts.getContactEvent(phoneBookId);
+        ArrayList<ProfileDataOperationEvent> arrayListPhoneBookEvent = new ArrayList<>();
+
+        if (contactEventCursor != null && contactEventCursor.getCount() > 0) {
+            while (contactEventCursor.moveToNext()) {
+
+                ProfileDataOperationEvent event = new ProfileDataOperationEvent();
+
+                event.setEventType(phoneBookContacts.getEventType(contactEventCursor,
+                        contactEventCursor
+                                .getInt(contactEventCursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.Event.TYPE))));
+
+                event.setEventDate(contactEventCursor.getString(contactEventCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Event
+                                .START_DATE)));
+
+                if (!arrayListEvent.contains(event)) {
+                    arrayListPhoneBookEvent.add(event);
+                }
+
+            }
+            contactEventCursor.close();
+        }
+
+        if (!Utils.isArraylistNullOrEmpty(arrayListEvent) || !Utils.isArraylistNullOrEmpty
+                (arrayListPhoneBookEvent)) {
             ArrayList<Object> tempEvent = new ArrayList<>();
             tempEvent.addAll(arrayListEvent);
+            tempEvent.addAll(arrayListPhoneBookEvent);
             linearEvent.setVisibility(View.VISIBLE);
             ProfileDetailAdapter eventDetailAdapter = new ProfileDetailAdapter(this, tempEvent,
                     AppConstants.EVENT);
@@ -390,8 +668,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             cardOtherDetails.setVisibility(View.VISIBLE);
         }
 
-
     }
+
 
     private void showAllOrganizations() {
         final Dialog dialog = new Dialog(this);
@@ -445,9 +723,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void getProfileDetail() {
 
         WsRequestObject profileDetailObject = new WsRequestObject();
-        // TODO: 22/12/16 pmId
-        profileDetailObject.setPmId("4");
-//        profileDetailObject.setPmId(getUserPmId());
+        profileDetailObject.setPmId(pmId);
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),

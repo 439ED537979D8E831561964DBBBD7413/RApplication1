@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +21,6 @@ import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.model.Country;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
@@ -40,6 +40,13 @@ import butterknife.ButterKnife;
 public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements SectionIndexer {
 
+    /**
+     * relativeRowAllContact tag :
+     * rcp Contact: pm id
+     * non rcp: -1
+     * own profile: 0
+     */
+
     private Context context;
     private Fragment fragment;
     /* phone book contacts */
@@ -49,7 +56,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private final int HEADER = 0, CONTACT = 1;
 
     private int colorBlack, colorPineGreen;
-    private String defaultCountryCode;
     private int previousPosition = 0;
 
     //<editor-fold desc="Constructor">
@@ -62,12 +68,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
-
-        Country country = (Country) Utils.getObjectPreference(context, AppConstants
-                .PREF_SELECTED_COUNTRY_OBJECT, Country.class);
-        if (country != null) {
-            defaultCountryCode = country.getCountryCodeNumber();
-        }
     }
     //</editor-fold>
 
@@ -171,9 +171,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     //<editor-fold desc="Private Methods">
 
     private void configureAllContactViewHolder(AllContactViewHolder holder, int position) {
-        ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
-
-        holder.relativeRowAllContact.setTag(position);
+        final ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
 
         String contactDisplayName = profileData.getOperation().get(0).getPbNameFirst() + "" +
                 " " + profileData.getOperation().get(0).getPbNameLast();
@@ -197,11 +195,26 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /* My Profile View */
-                if (((int) view.getTag()) == 1) {
-                    ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
-                            .class, null);
+
+                Bundle bundle = new Bundle();
+                if (StringUtils.equalsIgnoreCase(view.getTag().toString(), "0")) {
+                    // Display own profile
+                    bundle.putString(AppConstants.EXTRA_PM_ID, ((BaseActivity) context)
+                            .getUserPmId());
+                    bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
+                } else if (!StringUtils.equalsIgnoreCase(view.getTag().toString(), "-1")) {
+                    // RCP profile
+                    bundle.putString(AppConstants.EXTRA_PM_ID, String.valueOf(view.getTag()));
+                    bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, profileData
+                            .getLocalPhoneBookId());
+                } else {
+                    // Non RCP profile
+                    bundle.putString(AppConstants.EXTRA_PM_ID, "-1");
+                    bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, profileData
+                            .getLocalPhoneBookId());
                 }
+                ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
+                        .class, bundle);
             }
         });
 
@@ -233,6 +246,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             displayNumber = arrayListDbMobileNumbers.get(0).getMpmMobileNumber();
             String displayNamePmId = arrayListDbMobileNumbers.get(0).getMpmCloudPmId();
 
+            holder.relativeRowAllContact.setTag(displayNamePmId);
+
             if (arrayListDbMobileNumbers.size() == 1) {
                 TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
                         context).databaseHandler);
@@ -240,9 +255,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                         .parseInt(displayNamePmId));
 
                 displayName = ((userProfile.getPmFirstName().length() > 0 || userProfile
-                        .getPmLastName().length() > 0) ? " (" + userProfile
-                        .getPmFirstName() + " " + userProfile
-                        .getPmLastName() + ")" : "");
+                        .getPmLastName().length() > 0) ? " (" + userProfile.getPmFirstName() + " " +
+                        "" + userProfile.getPmLastName() + ")" : "");
 
             } else {
                 displayName = " (" + arrayListDbMobileNumbers.size() + "RC)";
@@ -267,16 +281,20 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     .getPhoneNumber();
             displayName = "";
             if (position != 1) {
+                holder.relativeRowAllContact.setTag("-1");
                 holder.textContactName.setTextColor(colorBlack);
                 holder.textContactNumber.setTextColor(colorBlack);
             } else {
+                holder.relativeRowAllContact.setTag("0");
                 holder.textContactName.setTextColor(colorPineGreen);
                 holder.textContactNumber.setTextColor(colorPineGreen);
             }
             isRcp = false;
         }
 
-        if (!StringUtils.startsWith(displayNumber, "+")) {
+        displayNumber = Utils.getFormattedNumber(context, displayNumber);
+
+        /*if (!StringUtils.startsWith(displayNumber, "+")) {
             if (StringUtils.startsWith(displayNumber, "0")) {
                 displayNumber = defaultCountryCode + StringUtils.substring(displayNumber, 1);
             } else {
@@ -284,9 +302,9 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             }
         }
 
-        /* remove special characters from number */
+        *//* remove special characters from number *//*
         displayNumber = "+" + StringUtils.replaceAll(StringUtils.substring(displayNumber, 1),
-                "[\\D]", "");
+                "[\\D]", "");*/
 
         holder.textCloudContactName.setText(displayName);
         holder.textContactNumber.setText(displayNumber);
@@ -318,6 +336,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             if (arrayListDbEmailIds.size() > 0) {
                 displayEmailId = arrayListDbEmailIds.get(0).getEpmEmailId();
                 String displayNamePmId = arrayListDbEmailIds.get(0).getEpmCloudPmId();
+                holder.relativeRowAllContact.setTag(displayNamePmId);
 
                 if (arrayListDbEmailIds.size() == 1) {
                     TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
@@ -350,6 +369,11 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 isRcp = true;
 
             } else {
+                if (position != 1) {
+                    holder.relativeRowAllContact.setTag("0");
+                } else {
+                    holder.relativeRowAllContact.setTag("-1");
+                }
                 displayEmailId = profileData.getOperation().get(0).getPbEmailId().get(0)
                         .getEmEmailId();
                 displayName = "";

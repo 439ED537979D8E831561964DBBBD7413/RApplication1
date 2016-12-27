@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_joining_date"
-        android:background="@color/colorLightGrayishCyan"
+        android:background="@color/colorLightGrayishCyan1"
         android:padding="@dimen/margin_small">
 
         <ImageView
@@ -118,10 +118,43 @@
 
     </RelativeLayout>
 
+    <LinearLayout
+        android:id="@+id/linear_call_sms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relative_basic_detail"
+        android:background="@color/colorLightGrayishCyan2"
+        android:orientation="horizontal"
+        android:padding="@dimen/activity_half_horizontal_margin">
+
+        <Button
+            android:id="@+id/button_call_log"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/height_button"
+            android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_half_horizontal_margin"
+            android:layout_weight="1"
+            android:background="@color/colorAccent"
+            android:text="Call Log"
+            android:textColor="@color/colorWhite"/>
+
+        <Button
+            android:id="@+id/button_sms"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/height_button"
+            android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_half_horizontal_margin"
+            android:layout_weight="1"
+            android:background="@color/colorAccent"
+            android:text="SMS"
+            android:textColor="@color/colorWhite"/>
+
+    </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/relative_basic_detail"
+        android:layout_below="@id/linear_call_sms"
         android:background="@color/colorVeryLightGray">
 
         <RelativeLayout

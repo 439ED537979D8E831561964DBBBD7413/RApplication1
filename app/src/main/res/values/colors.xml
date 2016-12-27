@@ -7,7 +7,8 @@
     <color name="colorSnackBarNegative">#C14143</color>
     <color name="colorSnackBarPositive">#3FC08E</color>
 
-    <color name="colorLightGrayishCyan">#E5F1F0</color>
+    <color name="colorLightGrayishCyan1">#E5F1F0</color>
+    <color name="colorLightGrayishCyan2">#D9EBE9</color>
 
     <color name="colorFacebookBlue">#3A559F</color>
     <color name="colorGoogleRed">#DD4B39</color>
