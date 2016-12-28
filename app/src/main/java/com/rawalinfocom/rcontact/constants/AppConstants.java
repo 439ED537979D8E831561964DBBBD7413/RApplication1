@@ -56,6 +56,8 @@ public class AppConstants {
     public static String EXTRA_CALL_MSP_SERVER = "extra_call_msp_server";
     public static String EXTRA_IS_FROM_MOBILE_REGIS = "extra_is_from_mobile_regis";
     public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
+    public static String EXTRA_CONTACT_NAME = "contact_name";
+    public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
 
     //</editor-fold>
 

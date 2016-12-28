@@ -1,9 +1,12 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -170,7 +173,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     //<editor-fold desc="Private Methods">
 
-    private void configureAllContactViewHolder(AllContactViewHolder holder, int position) {
+    private void configureAllContactViewHolder(final AllContactViewHolder holder, final int
+            position) {
         final ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
 
         String contactDisplayName = profileData.getOperation().get(0).getPbNameFirst() + "" +
@@ -213,8 +217,20 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, profileData
                             .getLocalPhoneBookId());
                 }
+                TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
+                TextView textCloudName = (TextView) view.findViewById(R.id.text_cloud_contact_name);
+                bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
+                bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textCloudName.getText()
+                        .toString());
                 ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
                         .class, bundle);
+            }
+        });
+
+        holder.imageSocialMedia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showBottomSheet();
             }
         });
 
@@ -294,18 +310,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         displayNumber = Utils.getFormattedNumber(context, displayNumber);
 
-        /*if (!StringUtils.startsWith(displayNumber, "+")) {
-            if (StringUtils.startsWith(displayNumber, "0")) {
-                displayNumber = defaultCountryCode + StringUtils.substring(displayNumber, 1);
-            } else {
-                displayNumber = defaultCountryCode + displayNumber;
-            }
-        }
-
-        *//* remove special characters from number *//*
-        displayNumber = "+" + StringUtils.replaceAll(StringUtils.substring(displayNumber, 1),
-                "[\\D]", "");*/
-
         holder.textCloudContactName.setText(displayName);
         holder.textContactNumber.setText(displayNumber);
 
@@ -369,7 +373,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 isRcp = true;
 
             } else {
-                if (position != 1) {
+                if (position == 1) {
                     holder.relativeRowAllContact.setTag("0");
                 } else {
                     holder.relativeRowAllContact.setTag("-1");
@@ -401,6 +405,29 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     }
 
+    private void showBottomSheet() {
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
+
+        View view = ((Activity) context).getLayoutInflater().inflate(R.layout
+                .layout_bottom_sheet, null);
+        RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
+        TextView textSheetHeader = ButterKnife.findById(view, R.id.text_sheet_header);
+
+        textSheetHeader.setText("Social Media");
+        textSheetHeader.setTypeface(Utils.typefaceBold(context));
+
+        BottomSheetSocialMediaAdapter adapter = new BottomSheetSocialMediaAdapter(context);
+
+        recyclerViewShare.setLayoutManager(gridLayoutManager);
+        recyclerViewShare.setAdapter(adapter);
+
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+        bottomSheetDialog.setContentView(view);
+        bottomSheetDialog.show();
+
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="View Holders">
@@ -409,6 +436,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
+        @BindView(R.id.image_social_media)
+        ImageView imageSocialMedia;
         @BindView(R.id.text_contact_name)
         TextView textContactName;
         @BindView(R.id.text_cloud_contact_name)

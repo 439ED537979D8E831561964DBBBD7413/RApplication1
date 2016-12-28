@@ -37,6 +37,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
@@ -69,6 +70,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     LinearLayout linearBasicDetailRating;
     @BindView(R.id.text_name)
     TextView textName;
+    @BindView(R.id.text_cloud_name)
+    TextView textCloudName;
     @BindView(R.id.text_designation)
     TextView textDesignation;
     @BindView(R.id.text_organization)
@@ -160,9 +163,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @BindView(R.id.button_sms)
     Button buttonSms;
 
-    ProfileDataOperation profileDetail;
-
-    String pmId, phoneBookId;
+    String pmId, phoneBookId, contactName = "", cloudContactName = null;
     boolean displayOwnProfile = false;
 
     PhoneBookContacts phoneBookContacts;
@@ -179,16 +180,28 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         Intent intent = getIntent();
 
-        if (intent != null && intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
-            pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
-        } else {
-            pmId = "-1";
-        }
+        if (intent != null) {
+            if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
+                pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
+            } else {
+                pmId = "-1";
+            }
 
-        if (intent != null && intent.hasExtra(AppConstants.EXTRA_PHONE_BOOK_ID)) {
-            phoneBookId = intent.getStringExtra(AppConstants.EXTRA_PHONE_BOOK_ID);
-        } else {
-            phoneBookId = "-1";
+            if (intent.hasExtra(AppConstants.EXTRA_PHONE_BOOK_ID)) {
+                phoneBookId = intent.getStringExtra(AppConstants.EXTRA_PHONE_BOOK_ID);
+            } else {
+                phoneBookId = "-1";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NAME)) {
+                contactName = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NAME);
+            } else {
+                contactName = "";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
+                cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
+            }
         }
 
         if (pmId.equalsIgnoreCase(getUserPmId())) {
@@ -228,8 +241,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (profileDetailResponse != null && StringUtils.equalsIgnoreCase
                         (profileDetailResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    profileDetail = profileDetailResponse.getProfileDetail();
-                    setUpView();
+                    final ProfileDataOperation profileDetail = profileDetailResponse
+                            .getProfileDetail();
+                    setUpView(profileDetail);
 
                 } else {
                     if (profileDetailResponse != null) {
@@ -264,14 +278,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleActionRightRight = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_right);
 
-        if (displayOwnProfile) {
-            textToolbarTitle.setText(getString(R.string.title_my_profile));
-            linearCallSms.setVisibility(View.GONE);
-        } else {
-            textToolbarTitle.setText("Profile Detail");
-            linearCallSms.setVisibility(View.VISIBLE);
-        }
-
         recyclerViewContactNumber.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEmail.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewWebsite.setLayoutManager(new LinearLayoutManager(this));
@@ -282,6 +288,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
         textJoiningDate.setTypeface(Utils.typefaceRegular(this));
         textName.setTypeface(Utils.typefaceSemiBold(this));
+        textCloudName.setTypeface(Utils.typefaceSemiBold(this));
         textDesignation.setTypeface(Utils.typefaceRegular(this));
         textOrganization.setTypeface(Utils.typefaceRegular(this));
         textViewAllOrganization.setTypeface(Utils.typefaceRegular(this));
@@ -290,45 +297,134 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleViewMore.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
 
-        textViewAllOrganization.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAllOrganizations();
-            }
-        });
-
         if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
+            // RC Profile
             getProfileDetail();
+        } else {
+            // Non-RC Profile
+            textJoiningDate.setVisibility(View.GONE);
+            setUpView(null);
         }
+
+        textName.setText(contactName);
+        if (StringUtils.length(cloudContactName) > 0) {
+            textCloudName.setText(cloudContactName);
+        } else {
+            textCloudName.setVisibility(View.GONE);
+        }
+
+        if (displayOwnProfile) {
+            textToolbarTitle.setText(getString(R.string.title_my_profile));
+            linearCallSms.setVisibility(View.GONE);
+        } else {
+            textToolbarTitle.setText("Profile Detail");
+            linearCallSms.setVisibility(View.VISIBLE);
+        }
+
     }
 
-    private void setUpView() {
+    private void setUpView(final ProfileDataOperation profileDetail) {
 
         //<editor-fold desc="Joining Date">
-        String joiningDate = StringUtils.defaultString(Utils.convertDateFormat(profileDetail
-                .getJoiningDate(), "yyyy-MM-dd HH:mm:ss", "dd'th' MMM, yyyy"), "-");
-        textJoiningDate.setText("Joining Date:- " + joiningDate);
-        textName.setText(profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
+        if (profileDetail != null) {
+            String joiningDate = StringUtils.defaultString(Utils.convertDateFormat(profileDetail
+                    .getJoiningDate(), "yyyy-MM-dd HH:mm:ss", "dd'th' MMM, yyyy"), "-");
+            textJoiningDate.setText("Joining Date:- " + joiningDate);
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="User Name">
+        /*if (profileDetail != null) {
+            textName.setText(profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
+        }*/
         //</editor-fold>
 
         //<editor-fold desc="Organization Detail">
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
-            linearOrganizationDetail.setVisibility(View.VISIBLE);
-            if (profileDetail.getPbOrganization().size() == 1) {
+
+        // From Cloud
+        ArrayList<ProfileDataOperationOrganization> arrayListOrganization = new ArrayList<>();
+
+        if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail
+                .getPbOrganization())) {
+            arrayListOrganization.addAll(profileDetail.getPbOrganization());
+        }
+
+        // From PhoneBook
+        Cursor contactOrganizationCursor = phoneBookContacts.getContactOrganization(phoneBookId);
+        ArrayList<ProfileDataOperationOrganization> arrayListPhoneBookOrganization = new
+                ArrayList<>();
+
+        if (contactOrganizationCursor != null && contactOrganizationCursor.getCount() > 0) {
+            while (contactOrganizationCursor.moveToNext()) {
+
+                ProfileDataOperationOrganization organization = new
+                        ProfileDataOperationOrganization();
+
+                organization.setOrgName(contactOrganizationCursor.getString
+                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+                                .CommonDataKinds.Organization.COMPANY)));
+                organization.setOrgJobTitle(contactOrganizationCursor.getString
+                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+                                .CommonDataKinds.Organization.TITLE)));
+                organization.setOrgDepartment(contactOrganizationCursor.getString
+                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+                                .CommonDataKinds.Organization.DEPARTMENT)));
+                organization.setOrgType(phoneBookContacts.getOrganizationType
+                        (contactOrganizationCursor,
+                                contactOrganizationCursor.getInt((contactOrganizationCursor
+                                        .getColumnIndex(ContactsContract.CommonDataKinds
+                                                .Organization.TYPE)))));
+                organization.setOrgJobDescription(contactOrganizationCursor.getString
+                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+                                .CommonDataKinds.Organization.JOB_DESCRIPTION)));
+                organization.setOrgOfficeLocation(contactOrganizationCursor.getString
+                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+                                .CommonDataKinds.Organization.OFFICE_LOCATION)));
+
+                if (!arrayListOrganization.contains(organization)) {
+                    arrayListPhoneBookOrganization.add(organization);
+                }
+
+            }
+            contactOrganizationCursor.close();
+        }
+
+        if (!Utils.isArraylistNullOrEmpty(arrayListOrganization) || !Utils.isArraylistNullOrEmpty
+                (arrayListPhoneBookOrganization)) {
+
+            final ArrayList<ProfileDataOperationOrganization> tempOrganization = new ArrayList<>();
+            tempOrganization.addAll(arrayListOrganization);
+            tempOrganization.addAll(arrayListPhoneBookOrganization);
+
+            if (tempOrganization.size() == 1) {
                 textViewAllOrganization.setVisibility(View.GONE);
             } else {
                 textViewAllOrganization.setVisibility(View.VISIBLE);
             }
-            textDesignation.setText(profileDetail.getPbOrganization().get(0).getOrgJobTitle());
-            textOrganization.setText(profileDetail.getPbOrganization().get(0).getOrgName());
+            textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
+            textOrganization.setText(tempOrganization.get(0).getOrgName());
+
+            textViewAllOrganization.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showAllOrganizations(tempOrganization);
+                }
+            });
+
         } else {
             linearOrganizationDetail.setVisibility(View.INVISIBLE);
         }
         //</editor-fold>
 
         //<editor-fold desc="User Rating">
-        textUserRating.setText(profileDetail.getTotalProfileRateUser());
-        ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
+        if (profileDetail != null) {
+            textUserRating.setText(profileDetail.getTotalProfileRateUser());
+            ratingUser.setRating(Float.parseFloat(profileDetail.getProfileRating()));
+        } else {
+            textUserRating.setText("0");
+            ratingUser.setRating(0);
+            ratingUser.setEnabled(false);
+        }
         //</editor-fold>
 
         //<editor-fold desc="Phone Number">
@@ -336,7 +432,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         // From Cloud
         ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
         ArrayList<String> arrayListCloudNumber = new ArrayList<>();
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbPhoneNumber())) {
+
+        if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbPhoneNumber
+                ())) {
             arrayListPhoneNumber.addAll(profileDetail.getPbPhoneNumber());
             for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
                 String number = Utils.getFormattedNumber(this, arrayListPhoneNumber.get(i)
@@ -390,7 +488,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         // From Cloud
         ArrayList<ProfileDataOperationEmail> arrayListEmail = new ArrayList<>();
         ArrayList<String> arrayListCloudEmail = new ArrayList<>();
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
+        if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
             arrayListEmail.addAll(profileDetail.getPbEmailId());
             for (int i = 0; i < arrayListEmail.size(); i++) {
                 String email = arrayListEmail.get(i).getEmEmailId();
@@ -440,7 +538,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         // From Cloud
         ArrayList<String> arrayListWebsite = new ArrayList<>();
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
+        if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress
+                ())) {
             arrayListWebsite.addAll(profileDetail.getPbWebAddress());
         }
 
@@ -482,7 +581,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         // From Cloud
         ArrayList<ProfileDataOperationAddress> arrayListAddress = new ArrayList<>();
         ArrayList<String> arrayListCloudAddress = new ArrayList<>();
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
+        if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
             arrayListAddress.addAll(profileDetail.getPbAddress());
             for (int i = 0; i < arrayListAddress.size(); i++) {
                 String address = arrayListAddress.get(i).getFormattedAddress();
@@ -551,7 +650,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         // From Cloud
         ArrayList<ProfileDataOperationImAccount> arrayListImAccount = new ArrayList<>();
         ArrayList<String> arrayListCloudImAccount = new ArrayList<>();
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
+        if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts
+                ())) {
             arrayListImAccount.addAll(profileDetail.getPbIMAccounts());
             for (int i = 0; i < arrayListImAccount.size(); i++) {
                 String imAccount = arrayListImAccount.get(i).getIMAccountProtocol();
@@ -603,18 +703,25 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
         //</editor-fold>
 
-        if (Utils.isArraylistNullOrEmpty(arrayListWebsite) && Utils.isArraylistNullOrEmpty
-                (arrayListAddress) && Utils.isArraylistNullOrEmpty(arrayListImAccount)) {
-            rippleViewMore.setVisibility(View.GONE);
-        } else {
+        if ((!Utils.isArraylistNullOrEmpty(arrayListWebsite) || !Utils.isArraylistNullOrEmpty
+                (arrayListPhoneBookWebsite))
+                ||
+                (!Utils.isArraylistNullOrEmpty(arrayListAddress) || !Utils
+                        .isArraylistNullOrEmpty(arrayListPhoneBookAddress))
+                ||
+                (!Utils.isArraylistNullOrEmpty(arrayListImAccount) || !Utils
+                        .isArraylistNullOrEmpty(arrayListPhoneBookImAccount))
+                ) {
             rippleViewMore.setVisibility(View.VISIBLE);
+        } else {
+            rippleViewMore.setVisibility(View.GONE);
         }
 
         // <editor-fold desc="Event">
 
         // From Cloud
         ArrayList<ProfileDataOperationEvent> arrayListEvent = new ArrayList<>();
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
+        if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
             arrayListEvent.addAll(profileDetail.getPbEvent());
         }
 
@@ -671,7 +778,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
 
-    private void showAllOrganizations() {
+    //    private void showAllOrganizations(ProfileDataOperation profileDetail) {
+    private void showAllOrganizations(ArrayList<ProfileDataOperationOrganization>
+                                              arraylistOrganization) {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_all_organization);
@@ -705,8 +814,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
-        OrganizationListAdapter adapter = new OrganizationListAdapter(this, profileDetail
-                .getPbOrganization());
+        /*OrganizationListAdapter adapter = new OrganizationListAdapter(this, profileDetail
+                .getPbOrganization());*/
+        OrganizationListAdapter adapter = new OrganizationListAdapter(this, arraylistOrganization);
         recyclerViewDialogList.setAdapter(adapter);
 
         dialog.show();
