@@ -13,6 +13,8 @@ public class ProfileDataOperationEvent {
     private String eventDate;
     private String eventPublic;
 
+    private int eventRcType;
+
     @JsonProperty("event_type")
     public String getEventType() {
         return StringUtils.defaultString(this.eventType);
@@ -38,5 +40,13 @@ public class ProfileDataOperationEvent {
 
     public void setEventPublic(String eventPublic) {
         this.eventPublic = eventPublic;
+    }
+
+    public int getEventRcType() {
+        return eventRcType;
+    }
+
+    public void setEventRcType(int eventRcType) {
+        this.eventRcType = eventRcType;
     }
 }

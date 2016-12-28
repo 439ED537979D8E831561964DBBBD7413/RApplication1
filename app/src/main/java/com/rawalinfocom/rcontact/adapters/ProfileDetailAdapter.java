@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,8 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -37,11 +40,17 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
     private int profileDetailType;
 
+    private int colorBlack, colorPineGreen;
+
     public ProfileDetailAdapter(Context context, ArrayList<Object> arrayList, int
             profileDetailType) {
         this.context = context;
         this.profileDetailType = profileDetailType;
         this.arrayList = arrayList;
+
+        colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
+        colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
+
     }
 
     @Override
@@ -107,8 +116,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         if (phoneNumber.getPbRcpType() == context.getResources().getInteger(R.integer
                 .rcp_type_primary)) {
             holder.textMain.setText(number + " ◊");
+            holder.textMain.setTextColor(colorPineGreen);
+        } else if (phoneNumber.getPbRcpType() == context.getResources().getInteger(R.integer
+                .rcp_type_secondary)) {
+            holder.textMain.setText(number);
+            holder.textMain.setTextColor(colorPineGreen);
         } else {
             holder.textMain.setText(number);
+            holder.textMain.setTextColor(colorBlack);
         }
 
     }
@@ -141,16 +156,31 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         if (email.getEmRcpType() == context.getResources().getInteger(R.integer.rcp_type_primary)) {
             holder.textMain.setText(emailId + " ◊");
+            holder.textMain.setTextColor(colorPineGreen);
+        } else if (email.getEmRcpType() == context.getResources().getInteger(R.integer
+                .rcp_type_secondary)) {
+            holder.textMain.setText(emailId);
+            holder.textMain.setTextColor(colorPineGreen);
         } else {
             holder.textMain.setText(emailId);
+            holder.textMain.setTextColor(colorBlack);
         }
 
     }
 
     private void displayWebsite(final ProfileDetailViewHolder holder, int position) {
         String website = (String) arrayList.get(position);
-        holder.textMain.setText(website);
+        int rcpType = 0;
+
         holder.textSub.setVisibility(View.GONE);
+
+        if (website.contains(";")) {
+            String[] websiteSplit = website.split(";");
+            website = websiteSplit[0];
+            rcpType = Integer.parseInt(websiteSplit[1]);
+        }
+
+        holder.textMain.setText(website);
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,6 +201,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 return false;
             }
         });
+
+        if (rcpType == context.getResources().getInteger(R.integer
+                .rcp_type_local_phone_book)) {
+            holder.textMain.setTextColor(colorBlack);
+        } else {
+            holder.textMain.setTextColor(colorPineGreen);
+        }
     }
 
     private void displayAddress(final ProfileDetailViewHolder holder, int position) {
@@ -198,6 +235,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 return false;
             }
         });
+
+        if (address.getRcpType() == context.getResources().getInteger(R.integer
+                .rcp_type_local_phone_book)) {
+            holder.textMain.setTextColor(colorBlack);
+        } else {
+            holder.textMain.setTextColor(colorPineGreen);
+        }
+
     }
 
     private void displayImAccount(ProfileDetailViewHolder holder, int position) {
@@ -207,13 +252,26 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textSub.setText(imAccount.getIMAccountType());
 
         holder.textSub.setVisibility(View.GONE);
+
+        if (imAccount.getIMRcpType() == context.getResources().getInteger(R.integer
+                .rcp_type_local_phone_book)) {
+            holder.textMain.setTextColor(colorBlack);
+        } else {
+            holder.textMain.setTextColor(colorPineGreen);
+        }
+
     }
 
     private void displayEvent(ProfileDetailViewHolder holder, int position) {
         ProfileDataOperationEvent event = (ProfileDataOperationEvent) arrayList.get(position);
 
-        String convertedDate = Utils.convertDateFormat(event.getEventDate(), "yyyy-MM-dd",
-                "dd'th' MMM, yyyy");
+        String convertedDate;
+        if (StringUtils.startsWith(event.getEventDate(), "--")) {
+            convertedDate = Utils.convertDateFormat(event.getEventDate(), "--MM-dd", "dd'th' MMM");
+        } else {
+            convertedDate = Utils.convertDateFormat(event.getEventDate(), "yyyy-MM-dd", "dd'th' " +
+                    "MMM, yyyy");
+        }
 
         holder.textMain.setText(convertedDate);
         holder.textSub.setText(event.getEventType());
@@ -224,6 +282,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         String gender = (String) arrayList.get(position);
         holder.textMain.setText(gender);
         holder.textSub.setVisibility(View.GONE);
+
+        holder.textMain.setTextColor(colorBlack);
     }
 
     @Override

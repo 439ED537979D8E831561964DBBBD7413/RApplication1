@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -309,7 +310,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textName.setText(contactName);
         if (StringUtils.length(cloudContactName) > 0) {
             textCloudName.setText(cloudContactName);
+            textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
         } else {
+            if (StringUtils.equalsIgnoreCase(pmId, "-1")) {
+                textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+            } else {
+                textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+            }
             textCloudName.setVisibility(View.GONE);
         }
 
@@ -380,6 +387,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 organization.setOrgOfficeLocation(contactOrganizationCursor.getString
                         (contactOrganizationCursor.getColumnIndex(ContactsContract
                                 .CommonDataKinds.Organization.OFFICE_LOCATION)));
+                organization.setOrgRcpType(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book));
 
                 if (!arrayListOrganization.contains(organization)) {
                     arrayListPhoneBookOrganization.add(organization);
@@ -552,6 +561,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 String website = contactWebsiteCursor.getString(contactWebsiteCursor
                         .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));
+                website = website + ";" + getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book);
 
                 if (!arrayListWebsite.contains(website)) {
                     arrayListPhoneBookWebsite.add(website);
@@ -622,6 +633,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 address.setAddressType(phoneBookContacts.getAddressType(contactAddressCursor,
                         contactAddressCursor.getInt(contactAddressCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.StructuredPostal.TYPE))));
+                address.setRcpType(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book));
 
                 if (!arrayListCloudAddress.contains(address.getFormattedAddress())) {
                     arrayListPhoneBookAddress.add(address);
@@ -680,6 +693,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
                         (contactImAccountCursor.getInt((contactImAccountCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
+
+                imAccount.setIMRcpType(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book));
 
                 if (!arrayListCloudImAccount.contains(imAccount.getIMAccountDetails())) {
                     arrayListPhoneBookImAccount.add(imAccount);
@@ -743,6 +759,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         .getColumnIndex(ContactsContract.CommonDataKinds.Event
                                 .START_DATE)));
 
+                event.setEventRcType(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book));
+
                 if (!arrayListEvent.contains(event)) {
                     arrayListPhoneBookEvent.add(event);
                 }
@@ -767,7 +786,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
 //        linearGender.setVisibility(View.GONE);
 
-        if (Utils.isArraylistNullOrEmpty(arrayListEvent)
+        if (Utils.isArraylistNullOrEmpty(arrayListEvent) && Utils.isArraylistNullOrEmpty
+                (arrayListPhoneBookEvent)
 //                && Utils.isArraylistNullOrEmpty(arrayListAddress)
                 ) {
             cardOtherDetails.setVisibility(View.GONE);
