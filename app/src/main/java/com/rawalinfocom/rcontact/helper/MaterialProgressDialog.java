@@ -15,7 +15,7 @@ import com.rawalinfocom.rcontact.R;
  * A class for customised Progress Dialog
  */
 
-public class CustomProgressDialog extends ProgressDialog {
+public class MaterialProgressDialog extends ProgressDialog {
 
     private static String text = "";
     private static Context context = null;
@@ -23,15 +23,15 @@ public class CustomProgressDialog extends ProgressDialog {
 
     public static ProgressDialog ctor(Context context, String text) {
 
-        CustomProgressDialog dialog = new CustomProgressDialog(context);
+        MaterialProgressDialog dialog = new MaterialProgressDialog(context);
         dialog.setIndeterminate(true);
-        CustomProgressDialog.text = text;
-        CustomProgressDialog.context = context;
+        MaterialProgressDialog.text = text;
+        MaterialProgressDialog.context = context;
         // dialog.setCancelable(false);
         return dialog;
     }
 
-    public CustomProgressDialog(Context context) {
+    public MaterialProgressDialog(Context context) {
         super(context);
     }
 

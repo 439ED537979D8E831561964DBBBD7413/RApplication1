@@ -19,6 +19,7 @@ public class WsRequestObject {
     private String countryCode;
     private String mobileNumber;
     private String pmId;
+    private String cmId;
     private String otp;
     private String otpGenerationTime;
 
@@ -179,5 +180,14 @@ public class WsRequestObject {
 
     public void setProfileData(ArrayList<ProfileData> profileData) {
         this.profileData = profileData;
+    }
+
+    @JsonProperty("cm_id")
+    public String getCmId() {
+        return cmId;
+    }
+
+    public void setCmId(String cmId) {
+        this.cmId = cmId;
     }
 }

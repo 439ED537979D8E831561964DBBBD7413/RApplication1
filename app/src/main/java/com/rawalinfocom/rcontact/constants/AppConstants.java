@@ -9,6 +9,16 @@ package com.rawalinfocom.rcontact.constants;
 
 public class AppConstants {
 
+    //<editor-fold desc="Profile Detail Section">
+    public static final int PHONE_NUMBER = 0;
+    public static final int EMAIL = 1;
+    public static final int WEBSITE = 2;
+    public static final int ADDRESS = 3;
+    public static final int IM_ACCOUNT = 4;
+    public static final int EVENT = 5;
+    public static final int GENDER = 6;
+    //</editor-fold>
+
     //<editor-fold desc="App Specific final constants">
 
     public static final String OTP_CONFIRMED_STATUS = "2";
@@ -38,12 +48,16 @@ public class AppConstants {
     //<editor-fold desc="Intent Extra">
 
     public static String EXTRA_OBJECT_COUNTRY = "extra_object_country";
+    public static String EXTRA_PM_ID = "extra_pm_id";
+    public static String EXTRA_PHONE_BOOK_ID = "extra_phone_book_id";
     public static String EXTRA_OBJECT_USER = "extra_object_user";
     public static String EXTRA_MOBILE_NUMBER = "extra_mobile_number";
     public static String EXTRA_OTP_SERVICE_END_TIME = "extra_otp_service_end_time";
     public static String EXTRA_CALL_MSP_SERVER = "extra_call_msp_server";
     public static String EXTRA_IS_FROM_MOBILE_REGIS = "extra_is_from_mobile_regis";
     public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
+    public static String EXTRA_CONTACT_NAME = "contact_name";
+    public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
 
     //</editor-fold>
 

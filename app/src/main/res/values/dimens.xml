@@ -26,4 +26,10 @@
 
     <dimen name="list_item_height">72dp</dimen>
 
+    <dimen name="padding_around_content_area">24dp</dimen>
+    <dimen name="padding_between_title_body">20dp</dimen>
+    <dimen name="padding_around_button">8dp</dimen>
+    <dimen name="height_button">36dp</dimen>
+    <dimen name="min_width_button">64dp</dimen>
+
 </resources>

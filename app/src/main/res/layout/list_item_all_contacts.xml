@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/relative_row_all_contact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/activity_half_horizontal_margin">
@@ -13,9 +14,19 @@
         android:contentDescription="@string/str_content_description"
         android:src="@mipmap/ic_launcher"/>
 
+    <ImageView
+        android:id="@+id/image_social_media"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:contentDescription="@string/str_content_description"
+        android:src="@drawable/ic_arrow_bottom"/>
+
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/image_social_media"
         android:layout_toRightOf="@id/image_profile"
         android:orientation="vertical">
 
@@ -45,6 +56,7 @@
             tools:text="+911234567890"/>
 
     </LinearLayout>
+
 
     <View
         android:id="@+id/divider_all_contact"

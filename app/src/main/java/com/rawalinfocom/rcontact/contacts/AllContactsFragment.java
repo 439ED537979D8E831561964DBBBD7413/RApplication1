@@ -16,10 +16,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -34,10 +32,10 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
-import com.rawalinfocom.rcontact.adapters.BottomSheetSocialMediaAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
@@ -94,17 +92,19 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ColorGroupSectionTitleIndicator titleIndicator;
 
     ArrayList<Object> arrayListPhoneBookContacts;
-    ArrayList<String> getArrayListContactHeaders;
+    ArrayList<String> arrayListContactHeaders;
     ArrayList<ProfileData> arrayListUserContact;
     ArrayList<String> arrayListContactId;
     ArrayList<String> arrayListContactNumbers;
     ArrayList<String> arrayListContactEmails;
 
+    PhoneBookContacts phoneBookContacts;
+
 //    DatabaseHandler databaseHandler;
 
     AllContactListAdapter allContactListAdapter;
 
-    BottomSheetDialog bottomSheetDialog;
+    UserProfile meProfile;
 
     //<editor-fold desc="Constructors">
     public AllContactsFragment() {
@@ -124,7 +124,35 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         super.onCreate(savedInstanceState);
 //        databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
         arrayListPhoneBookContacts = new ArrayList<>();
-        getArrayListContactHeaders = new ArrayList<>();
+        arrayListContactHeaders = new ArrayList<>();
+
+        arrayListContactHeaders.add(" ");
+
+        meProfile = ((BaseActivity) getActivity()).getUserProfile();
+
+        arrayListPhoneBookContacts.add("My Profile");
+        ProfileData myProfileData = new ProfileData();
+
+        ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
+        ProfileDataOperation myOperation = new ProfileDataOperation();
+        myOperation.setPbNameFirst(meProfile.getPmFirstName());
+        myOperation.setPbNameLast(meProfile.getPmLastName());
+
+        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
+        ProfileDataOperationPhoneNumber myNumber = new ProfileDataOperationPhoneNumber();
+        myNumber.setPhoneNumber(meProfile.getMobileNumber());
+        arrayListPhoneNumber.add(myNumber);
+        myOperation.setPbPhoneNumber(arrayListPhoneNumber);
+
+        ArrayList<ProfileDataOperationEmail> arrayListEmail = new ArrayList<>();
+        myOperation.setPbEmailId(arrayListEmail);
+
+        arrayListOperation.add(myOperation);
+        myProfileData.setOperation(arrayListOperation);
+        arrayListPhoneBookContacts.add(myProfileData);
+
+        phoneBookContacts = new PhoneBookContacts(getActivity());
+
     }
 
     @Override
@@ -294,10 +322,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     startActivity(smsIntent);
 
                 } else {
-                    /*Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
                             actionNumber));
-                    startActivity(intent);*/
-                    showBottomSheet();
+                    startActivity(intent);
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -361,28 +388,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(recyclerViewContactList);
-    }
-
-    private void showBottomSheet() {
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
-
-        View view = getActivity().getLayoutInflater().inflate(R.layout.layout_bottom_sheet, null);
-        RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
-        TextView textSheetHeader = ButterKnife.findById(view, R.id.text_sheet_header);
-
-        textSheetHeader.setText("Social Media");
-        textSheetHeader.setTypeface(Utils.typefaceBold(getActivity()));
-
-        BottomSheetSocialMediaAdapter adapter = new BottomSheetSocialMediaAdapter(getActivity());
-
-        recyclerViewShare.setLayoutManager(gridLayoutManager);
-        recyclerViewShare.setAdapter(adapter);
-
-        bottomSheetDialog = new BottomSheetDialog(getActivity());
-        bottomSheetDialog.setContentView(view);
-        bottomSheetDialog.show();
-
     }
 
     /**
@@ -533,8 +538,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private void populateRecyclerView() {
 
         if (allContactListAdapter == null) {
-            allContactListAdapter = new AllContactListAdapter(getActivity(),
-                    arrayListPhoneBookContacts, getArrayListContactHeaders);
+            allContactListAdapter = new AllContactListAdapter(this,
+                    arrayListPhoneBookContacts, arrayListContactHeaders);
             recyclerViewContactList.setAdapter(allContactListAdapter);
 
             setRecyclerViewLayoutManager(recyclerViewContactList);
@@ -542,7 +547,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         } else {
             allContactListAdapter.notifyDataSetChanged();
         }
-
 
     }
 
@@ -615,7 +619,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             ProfileDataOperation operation = new ProfileDataOperation();
 
             //<editor-fold desc="Structured Name">
-            Cursor contactStructuredNameCursor = getStructuredName(rawId);
+            Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);
             ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
 
             if (contactStructuredNameCursor != null && contactStructuredNameCursor.getCount() > 0) {
@@ -657,7 +661,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             // <editor-fold desc="Starred Contact">
-            Cursor starredContactCursor = getStarredStatus(rawId);
+            Cursor starredContactCursor = phoneBookContacts.getStarredStatus(rawId);
 
             if (starredContactCursor != null && starredContactCursor.getCount() > 0) {
 
@@ -673,7 +677,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="Contact Number">
-            Cursor contactNumberCursor = getContactNumbers(rawId);
+            Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(rawId);
             ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
 
             if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
@@ -686,9 +690,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     phoneNumber.setPhoneId(++numberCount);
                     phoneNumber.setPhoneNumber(contactNumberCursor.getString(contactNumberCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
-                    phoneNumber.setPhoneType(getPhoneNumberType(contactNumberCursor.getInt
-                            (contactNumberCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.Phone.TYPE))));
+                    phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
+                            (contactNumberCursor.getInt
+                                    (contactNumberCursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.Phone.TYPE))));
                     phoneNumber.setPhonePublic(1);
 
                     arrayListPhoneNumber.add(phoneNumber);
@@ -701,7 +706,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="Email Id">
-            Cursor contactEmailCursor = getContactEmail(rawId);
+            Cursor contactEmailCursor = phoneBookContacts.getContactEmail(rawId);
             ArrayList<ProfileDataOperationEmail> arrayListEmailId = new ArrayList<>();
 
             if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
@@ -713,9 +718,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     emailId.setEmId(++emailCount);
                     emailId.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
-                    emailId.setEmType(getEmailType(contactEmailCursor, contactEmailCursor.getInt
-                            (contactEmailCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.Email.TYPE))));
+                    emailId.setEmType(phoneBookContacts.getEmailType(contactEmailCursor,
+                            contactEmailCursor.getInt
+                                    (contactEmailCursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.Email.TYPE))));
                     emailId.setEmPublic(1);
 
                     arrayListEmailId.add(emailId);
@@ -727,7 +733,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="Nick Name">
-            Cursor contactNickNameCursor = getContactNickName(rawId);
+            Cursor contactNickNameCursor = phoneBookContacts.getContactNickName(rawId);
 
             if (contactNickNameCursor != null && contactNickNameCursor.getCount() > 0) {
                 while (contactNickNameCursor.moveToNext()) {
@@ -742,7 +748,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="Note">
-            Cursor contactNoteCursor = getContactNote(rawId);
+            Cursor contactNoteCursor = phoneBookContacts.getContactNote(rawId);
 
             if (contactNoteCursor != null && contactNoteCursor.getCount() > 0) {
                 while (contactNoteCursor.moveToNext()) {
@@ -756,7 +762,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="Website">
-            Cursor contactWebsiteCursor = getContactWebsite(rawId);
+            Cursor contactWebsiteCursor = phoneBookContacts.getContactWebsite(rawId);
             ArrayList<String> arrayListWebsite = new ArrayList<>();
 
             if (contactWebsiteCursor != null && contactWebsiteCursor.getCount() > 0) {
@@ -775,7 +781,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="Organization">
-            Cursor contactOrganizationCursor = getContactOrganization(rawId);
+            Cursor contactOrganizationCursor = phoneBookContacts.getContactOrganization(rawId);
             ArrayList<ProfileDataOperationOrganization> arrayListOrganization = new
                     ArrayList<>();
 
@@ -794,10 +800,11 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     organization.setOrgDepartment(contactOrganizationCursor.getString
                             (contactOrganizationCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.Organization.DEPARTMENT)));
-                    organization.setOrgType(getOrganizationType(contactOrganizationCursor,
-                            contactOrganizationCursor.getInt((contactOrganizationCursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds
-                                            .Organization.TYPE)))));
+                    organization.setOrgType(phoneBookContacts.getOrganizationType
+                            (contactOrganizationCursor,
+                                    contactOrganizationCursor.getInt((contactOrganizationCursor
+                                            .getColumnIndex(ContactsContract.CommonDataKinds
+                                                    .Organization.TYPE)))));
                     organization.setOrgJobDescription(contactOrganizationCursor.getString
                             (contactOrganizationCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.Organization.JOB_DESCRIPTION)));
@@ -815,7 +822,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="Address">
-            Cursor contactAddressCursor = getContactAddress(rawId);
+            Cursor contactAddressCursor = phoneBookContacts.getContactAddress(rawId);
             ArrayList<ProfileDataOperationAddress> arrayListAddress = new ArrayList<>();
 
             if (contactAddressCursor != null && contactAddressCursor.getCount() > 0) {
@@ -844,7 +851,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     address.setStreet(contactAddressCursor.getString(contactAddressCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
                                     .STREET)));
-                    address.setAddressType(getAddressType(contactAddressCursor,
+                    address.setAddressType(phoneBookContacts.getAddressType(contactAddressCursor,
                             contactAddressCursor.getInt(contactAddressCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.StructuredPostal.TYPE))));
 
@@ -858,25 +865,25 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="IM Account">
-            Cursor contactImCursor = getContactIm(rawId);
+            Cursor contactImCursor = phoneBookContacts.getContactIm(rawId);
             ArrayList<ProfileDataOperationImAccount> arrayListImAccount = new ArrayList<>();
 
             if (contactImCursor != null && contactImCursor.getCount() > 0) {
                 while (contactImCursor.moveToNext()) {
 
-                    ProfileDataOperationImAccount imAccount = new
-                            ProfileDataOperationImAccount();
+                    ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
 
                     imAccount.setIMAccountDetails(contactImCursor.getString(contactImCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Im.DATA1)));
 
-                    imAccount.setIMAccountType(getImAccountType(contactImCursor,
+                    imAccount.setIMAccountType(phoneBookContacts.getImAccountType(contactImCursor,
                             contactImCursor.getInt(contactImCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Im.TYPE))));
 
-                    imAccount.setIMAccountProtocol(getImProtocol(contactImCursor.getInt(
-                            (contactImCursor.getColumnIndex(ContactsContract.CommonDataKinds
-                                    .Im.PROTOCOL)))));
+                    imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
+                            (contactImCursor.getInt(
+                                    (contactImCursor.getColumnIndex(ContactsContract.CommonDataKinds
+                                            .Im.PROTOCOL)))));
 
                     imAccount.setIMAccountPublic("1");
 
@@ -891,7 +898,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="Event">
-            Cursor contactEventCursor = getContactEvent(rawId);
+            Cursor contactEventCursor = phoneBookContacts.getContactEvent(rawId);
             ArrayList<ProfileDataOperationEvent> arrayListEvent = new ArrayList<>();
 
             if (contactEventCursor != null && contactEventCursor.getCount() > 0) {
@@ -899,9 +906,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     ProfileDataOperationEvent event = new ProfileDataOperationEvent();
 
-                    event.setEventType(getEventType(contactEventCursor, contactEventCursor
-                            .getInt(contactEventCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.Event.TYPE))));
+                    event.setEventType(phoneBookContacts.getEventType(contactEventCursor,
+                            contactEventCursor
+                                    .getInt(contactEventCursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.Event.TYPE))));
 
                     event.setEventDate(contactEventCursor.getString(contactEventCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Event
@@ -919,7 +927,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="Relation">
-            Cursor contactRelationCursor = getContactRelationShip(rawId);
+            Cursor contactRelationCursor = phoneBookContacts.getContactRelationShip(rawId);
             ArrayList<ProfileDataOperationRelationship> arrayListRelationship = new
                     ArrayList<>();
 
@@ -932,10 +940,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     relationship.setRelationshipDetails(contactRelationCursor.getString
                             (contactRelationCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.Relation.NAME)));
-                    relationship.setRelationshipType(getRelationType(contactRelationCursor,
-                            contactRelationCursor.getInt((contactRelationCursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.Relation
-                                            .TYPE)))));
+                    relationship.setRelationshipType(phoneBookContacts.getRelationType
+                            (contactRelationCursor,
+                                    contactRelationCursor.getInt((contactRelationCursor
+                                            .getColumnIndex(ContactsContract.CommonDataKinds
+                                                    .Relation
+                                                    .TYPE)))));
                     relationship.setRelationshipPublic("1");
 
                     arrayListRelationship.add(relationship);
@@ -961,7 +971,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 String headerLetter = StringUtils.upperCase(StringUtils.substring
                         (arrayListUserContact.get(i).getOperation().get(0).getPbNameFirst(), 0, 1));
                 if (!arrayListPhoneBookContacts.contains(headerLetter)) {
-                    getArrayListContactHeaders.add(headerLetter);
+                    arrayListContactHeaders.add(headerLetter);
                     arrayListPhoneBookContacts.add(headerLetter);
                 }
                 arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
@@ -980,471 +990,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     }
 
-    private Cursor getStarredStatus(String contactId) {
-        Uri uri = ContactsContract.Contacts.CONTENT_URI;
-        String[] projection = new String[]{
-                ContactsContract.Contacts.STARRED,
-        };
-
-        String selection = ContactsContract.Contacts._ID + " = ?";
-        String[] selectionArgs = new String[]{contactId};
-
-        return getActivity().getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);
-    }
-
-    public Cursor getStructuredName(String contactId) {
-        Uri uri = ContactsContract.Data.CONTENT_URI;
-        String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.StructuredName._ID,
-                ContactsContract.CommonDataKinds.StructuredName.PREFIX,
-                ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.SUFFIX,
-                ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.PHONETIC_GIVEN_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.PHONETIC_MIDDLE_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.PHONETIC_FAMILY_NAME,
-        };
-
-        String selection = ContactsContract.Data.MIMETYPE + " = '" +
-                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE + "' AND " +
-                ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID
-                + " = ?";
-        String[] selectionArgs = new String[]{contactId};
-
-        return getActivity().getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);
-    }
-
-    public Cursor getContactNumbers(String contactId) {
-        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-        String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.Phone._ID,
-                ContactsContract.CommonDataKinds.Phone.NUMBER,
-                ContactsContract.CommonDataKinds.Phone.TYPE
-        };
-
-        String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
-        String[] selectionArgs = new String[]{contactId};
-
-        return getActivity().getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);
-    }
-
-    public Cursor getContactNickName(String contactId) {
-        Uri uri = ContactsContract.Data.CONTENT_URI;
-        String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.Nickname.DATA1,
-        };
-
-        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
-                + ContactsContract.Data.MIMETYPE + " = ?";
-        String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
-                .Nickname.CONTENT_ITEM_TYPE};
-
-        return getActivity().getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);
-    }
-
-    public Cursor getContactNote(String contactId) {
-        Uri uri = ContactsContract.Data.CONTENT_URI;
-        String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.Note.DATA1,
-        };
-
-        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
-                + ContactsContract.Data.MIMETYPE + " = ?";
-        String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
-                .Note.CONTENT_ITEM_TYPE};
-
-        return getActivity().getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);
-    }
-
-    public Cursor getContactEmail(String contactId) {
-        Uri uri = ContactsContract.CommonDataKinds.Email.CONTENT_URI;
-        String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.Email._ID,
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.TYPE,
-                ContactsContract.CommonDataKinds.Email.LABEL,
-        };
-
-        String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
-        String[] selectionArgs = new String[]{contactId};
-
-        return getActivity().getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);
-    }
-
-    public Cursor getContactOrganization(String contactId) {
-        Uri uri = ContactsContract.Data.CONTENT_URI;
-        String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.Organization.COMPANY,
-                ContactsContract.CommonDataKinds.Organization.TITLE,
-                ContactsContract.CommonDataKinds.Organization.TYPE,
-                ContactsContract.CommonDataKinds.Organization.DEPARTMENT,
-                ContactsContract.CommonDataKinds.Organization.JOB_DESCRIPTION,
-                ContactsContract.CommonDataKinds.Organization.OFFICE_LOCATION,
-                ContactsContract.CommonDataKinds.Organization.LABEL,
-        };
-
-        String selection = ContactsContract.CommonDataKinds.Organization.CONTACT_ID + " = ? AND "
-                + ContactsContract.Data.MIMETYPE + " = ?";
-        String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
-                .Organization.CONTENT_ITEM_TYPE};
-
-        return getActivity().getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);
-    }
-
-    public Cursor getContactAddress(String contactId) {
-        Uri uri = ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI;
-        String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.StructuredPostal._ID,
-                ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS,
-                ContactsContract.CommonDataKinds.StructuredPostal.CITY,
-                ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY,
-                ContactsContract.CommonDataKinds.StructuredPostal.NEIGHBORHOOD,
-                ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE,
-                ContactsContract.CommonDataKinds.StructuredPostal.POBOX,
-                ContactsContract.CommonDataKinds.StructuredPostal.REGION,
-                ContactsContract.CommonDataKinds.StructuredPostal.STREET,
-                ContactsContract.CommonDataKinds.StructuredPostal.TYPE,
-                ContactsContract.CommonDataKinds.StructuredPostal.LABEL,
-        };
-
-        String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
-        String[] selectionArgs = new String[]{contactId};
-
-        return getActivity().getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);
-    }
-
-    public Cursor getContactWebsite(String contactId) {
-        Uri uri = ContactsContract.Data.CONTENT_URI;
-        String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.Website.TYPE,
-                ContactsContract.CommonDataKinds.Website.URL,
-        };
-
-        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
-                + ContactsContract.Data.MIMETYPE + " = ?";
-        String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
-                .Website.CONTENT_ITEM_TYPE};
-
-        return getActivity().getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);
-    }
-
-    public Cursor getContactIm(String contactId) {
-        Uri uri = ContactsContract.Data.CONTENT_URI;
-        String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.Im.TYPE,
-                ContactsContract.CommonDataKinds.Im.LABEL,
-                ContactsContract.CommonDataKinds.Im.DATA1,
-                ContactsContract.CommonDataKinds.Im.PROTOCOL,
-        };
-
-        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
-                + ContactsContract.Data.MIMETYPE + " = ?";
-        String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
-                .Im.CONTENT_ITEM_TYPE};
-
-        return getActivity().getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);
-    }
-
-    public Cursor getContactEvent(String contactId) {
-        Uri uri = ContactsContract.Data.CONTENT_URI;
-        String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.Event.TYPE,
-                ContactsContract.CommonDataKinds.Event.LABEL,
-                ContactsContract.CommonDataKinds.Event.START_DATE,
-        };
-
-        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
-                + ContactsContract.Data.MIMETYPE + " = ?";
-        String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
-                .Event.CONTENT_ITEM_TYPE};
-
-        return getActivity().getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);
-    }
-
-    public Cursor getContactRelationShip(String contactId) {
-        Uri uri = ContactsContract.Data.CONTENT_URI;
-        String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.Relation.NAME,
-                ContactsContract.CommonDataKinds.Relation.TYPE,
-                ContactsContract.CommonDataKinds.Relation.LABEL,
-        };
-
-        String selection = ContactsContract.CommonDataKinds.Relation.CONTACT_ID + " = ? AND "
-                + ContactsContract.Data.MIMETYPE + " = ?";
-        String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
-                .Relation.CONTENT_ITEM_TYPE};
-
-        return getActivity().getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);
-    }
-
-    //</editor-fold>
-
-    //<editor-fold desc="Types">
-
-    public String getPhoneNumberType(int type) {
-        switch (type) {
-            case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
-                return "Home";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
-                return "Mobile";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
-                return "Work";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
-                return "Fax Work";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
-                return "Fax Home";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_PAGER:
-                return "Pager";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
-                return "Other";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK:
-                return "Callback";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_CAR:
-                return "Car";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
-                return "Company Main";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
-                return "ISDN";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
-                return "Main";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX:
-                return "Other Fax";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_RADIO:
-                return "Radio";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_TELEX:
-                return "Telex";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD:
-                return "Tty Tdd";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
-                return "Work Mobile";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER:
-                return "Work Pager";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT:
-                return "Assistant";
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
-                return "MMS";
-
-        }
-        return "Other";
-    }
-
-    public String getEmailType(Cursor cursor, int type) {
-        switch (type) {
-            case ContactsContract.CommonDataKinds.Email.TYPE_HOME:
-                return "Home";
-
-            case ContactsContract.CommonDataKinds.Email.TYPE_MOBILE:
-                return "Mobile";
-
-            case ContactsContract.CommonDataKinds.Email.TYPE_WORK:
-                return "Work";
-
-            case ContactsContract.CommonDataKinds.Email.TYPE_OTHER:
-                return "Other";
-
-            case ContactsContract.CommonDataKinds.Email.TYPE_CUSTOM:
-                return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
-                        .Email.LABEL));
-        }
-        return "Other";
-    }
-
-    public String getOrganizationType(Cursor cursor, int type) {
-        switch (type) {
-
-            case ContactsContract.CommonDataKinds.Organization.TYPE_WORK:
-                return "Home";
-
-            case ContactsContract.CommonDataKinds.Organization.TYPE_OTHER:
-                return "Other";
-
-            case ContactsContract.CommonDataKinds.Organization.TYPE_CUSTOM:
-                return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
-                        .Organization.LABEL));
-        }
-        return "Other";
-    }
-
-    public String getAddressType(Cursor cursor, int type) {
-        switch (type) {
-            case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME:
-                return "Home";
-
-            case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_WORK:
-                return "Work";
-
-            case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_OTHER:
-                return "Other";
-
-            case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_CUSTOM:
-                return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
-                        .StructuredPostal.LABEL));
-        }
-        return "Other";
-    }
-
-    public String getImAccountType(Cursor cursor, int type) {
-        switch (type) {
-            case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME:
-                return "Home";
-
-            case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_WORK:
-                return "Work";
-
-            case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_OTHER:
-                return "Other";
-
-            case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_CUSTOM:
-                return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
-                        .StructuredPostal.LABEL));
-        }
-        return "Other";
-    }
-
-    public String getImProtocol(int protocol) {
-        switch (protocol) {
-            case ContactsContract.CommonDataKinds.Im.PROTOCOL_AIM:
-                return "AIM";
-
-            case ContactsContract.CommonDataKinds.Im.PROTOCOL_MSN:
-                return "MSN";
-
-            case ContactsContract.CommonDataKinds.Im.PROTOCOL_YAHOO:
-                return "Yahoo";
-
-            case ContactsContract.CommonDataKinds.Im.PROTOCOL_SKYPE:
-                return "Skype";
-
-            case ContactsContract.CommonDataKinds.Im.PROTOCOL_QQ:
-                return "QQ";
-
-            case ContactsContract.CommonDataKinds.Im.PROTOCOL_GOOGLE_TALK:
-                return "Google Talk";
-
-            case ContactsContract.CommonDataKinds.Im.PROTOCOL_ICQ:
-                return "ICQ";
-
-            case ContactsContract.CommonDataKinds.Im.PROTOCOL_JABBER:
-                return "Jabber";
-
-            case ContactsContract.CommonDataKinds.Im.PROTOCOL_NETMEETING:
-                return "NetMeeting";
-
-            case 9:
-                return "WhatsApp";
-
-            case 10:
-                return "Facebook";
-
-            case ContactsContract.CommonDataKinds.Im.PROTOCOL_CUSTOM:
-                return ContactsContract.CommonDataKinds.Im.CUSTOM_PROTOCOL;
-        }
-        return "Other";
-    }
-
-    public String getEventType(Cursor cursor, int type) {
-        switch (type) {
-            case ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY:
-                return "Anniversary";
-
-            case ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY:
-                return "Birthday";
-
-            case ContactsContract.CommonDataKinds.Event.TYPE_OTHER:
-                return "Other";
-
-            case ContactsContract.CommonDataKinds.Event.TYPE_CUSTOM:
-                return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
-                        .Event.LABEL));
-        }
-        return "Other";
-    }
-
-    public String getRelationType(Cursor cursor, int type) {
-        switch (type) {
-            case ContactsContract.CommonDataKinds.Relation.TYPE_ASSISTANT:
-                return "Assistant";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_BROTHER:
-                return "Brother";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_CHILD:
-                return "Child";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_DOMESTIC_PARTNER:
-                return "Domestic Partner";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_FATHER:
-                return "Father";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_FRIEND:
-                return "Friend";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_MANAGER:
-                return "Manager";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_MOTHER:
-                return "Mother";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_PARENT:
-                return "Parent";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_PARTNER:
-                return "Partner";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_REFERRED_BY:
-                return "Referred By";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_RELATIVE:
-                return "Relative";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_SISTER:
-                return "Sister";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_SPOUSE:
-                return "Spouse";
-
-            case ContactsContract.CommonDataKinds.Relation.TYPE_CUSTOM:
-                return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
-                        .Relation.LABEL));
-
-        }
-        return "Other";
-    }
-
     //</editor-fold>
 
     //<editor-fold desc="Web Service Call">
@@ -1452,7 +997,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private void uploadContacts(int previouslySyncedData) {
 
         WsRequestObject uploadContactObject = new WsRequestObject();
-        //TODO pmid Modification
         uploadContactObject.setPmId(((BaseActivity) getActivity()).getUserPmId());
         uploadContactObject.setProfileData(arrayListUserContact);
 
@@ -1468,6 +1012,5 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     }
 
     //</editor-fold>
-
 
 }
