@@ -42,7 +42,9 @@ import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
+import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
         .ColorGroupSectionTitleIndicator;
@@ -97,6 +99,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ArrayList<String> arrayListContactId;
     ArrayList<String> arrayListContactNumbers;
     ArrayList<String> arrayListContactEmails;
+
+    MaterialDialog callConfirmationDialog;
 
     PhoneBookContacts phoneBookContacts;
 
@@ -259,6 +263,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(cursorListReceiver);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        allContactListAdapter = null;
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
@@ -322,9 +332,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     startActivity(smsIntent);
 
                 } else {
-                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                            actionNumber));
-                    startActivity(intent);
+                    showCallConfirmationDialog(actionNumber);
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -549,10 +557,36 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        allContactListAdapter = null;
+    private void showCallConfirmationDialog(final String number) {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        callConfirmationDialog.dismissDialog();
+                        break;
+
+                    case R.id.rippleRight:
+                        callConfirmationDialog.dismissDialog();
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                                number));
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+        callConfirmationDialog.setTitleVisibility(View.GONE);
+        callConfirmationDialog.setLeftButtonText("Cancel");
+        callConfirmationDialog.setRightButtonText("Call");
+        callConfirmationDialog.setDialogBody("Call " + number + "?");
+
+        callConfirmationDialog.showDialog();
+
     }
 
     //</editor-fold>

@@ -27,7 +27,9 @@ import com.rawalinfocom.rcontact.adapters.RContactListAdapter;
 import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
+import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
+import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
         .ColorGroupSectionTitleIndicator;
 import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical
@@ -67,6 +69,8 @@ public class RContactsFragment extends BaseFragment {
     ArrayList<String> arrayListContactHeaders;
 
     RContactListAdapter rContactListAdapter;
+
+    MaterialDialog callConfirmationDialog;
 
     //<editor-fold desc="Constructors">
     public RContactsFragment() {
@@ -173,9 +177,7 @@ public class RContactsFragment extends BaseFragment {
                     startActivity(smsIntent);
 
                 } else {
-                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                            actionNumber));
-                    startActivity(intent);
+                    showCallConfirmationDialog(actionNumber);
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -258,6 +260,38 @@ public class RContactsFragment extends BaseFragment {
 
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.scrollToPosition(scrollPosition);
+    }
+
+    private void showCallConfirmationDialog(final String number) {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        callConfirmationDialog.dismissDialog();
+                        break;
+
+                    case R.id.rippleRight:
+                        callConfirmationDialog.dismissDialog();
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                                number));
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+        callConfirmationDialog.setTitleVisibility(View.GONE);
+        callConfirmationDialog.setLeftButtonText("Cancel");
+        callConfirmationDialog.setRightButtonText("Call");
+        callConfirmationDialog.setDialogBody("Call " + number + "?");
+
+        callConfirmationDialog.showDialog();
+
     }
 
     private void fetchData() {
