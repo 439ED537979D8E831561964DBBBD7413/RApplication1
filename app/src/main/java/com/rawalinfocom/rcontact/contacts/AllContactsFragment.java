@@ -276,7 +276,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 //        titleIndicator.setTitleText("A");
 
         setRecyclerViewLayoutManager(recyclerViewContactList);
-//        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity-()));
 
         initSwipe();
 
@@ -415,8 +415,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     (getDatabaseHandler());
             ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new ArrayList<>();
             for (int i = 0; i < arrayListContactNumbers.size(); i++) {
-                if (!tableProfileMobileMapping.getIsMobileNumberExists
-                        (arrayListContactNumbers.get(i))) {
+                if (!tableProfileMobileMapping.getIsMobileNumberExists(arrayListContactNumbers
+                        .get(i))) {
 
                     ProfileMobileMapping profileMobileMapping = new
                             ProfileMobileMapping();
@@ -435,7 +435,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             }
                         }
                     }
-
                     arrayListProfileMobileMapping.add(profileMobileMapping);
                 }
             }
@@ -688,8 +687,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             ProfileDataOperationPhoneNumber();
 
                     phoneNumber.setPhoneId(++numberCount);
-                    phoneNumber.setPhoneNumber(contactNumberCursor.getString(contactNumberCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phoneNumber.setPhoneNumber(Utils.getFormattedNumber(getActivity(),
+                            contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Phone.NUMBER))));
                     phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                             (contactNumberCursor.getInt
                                     (contactNumberCursor.getColumnIndex(ContactsContract
@@ -697,7 +697,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     phoneNumber.setPhonePublic(1);
 
                     arrayListPhoneNumber.add(phoneNumber);
-                    arrayListContactNumbers.add(phoneNumber.getPhoneNumber());
+
+                    if (!arrayListContactNumbers.contains(Utils.getFormattedNumber(getActivity(),
+                            phoneNumber.getPhoneNumber()))) {
+                        arrayListContactNumbers.add(Utils.getFormattedNumber(getActivity(),
+                                phoneNumber.getPhoneNumber()));
+                    }
 
                 }
                 contactNumberCursor.close();

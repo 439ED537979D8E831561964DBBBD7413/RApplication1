@@ -11,7 +11,7 @@ import android.provider.ContactsContract;
 
 public class PhoneBookContacts {
 
-    Context context;
+    private Context context;
 
     public PhoneBookContacts(Context context) {
         this.context = context;
@@ -27,6 +27,20 @@ public class PhoneBookContacts {
 
         String selection = ContactsContract.Contacts._ID + " = ?";
         String[] selectionArgs = new String[]{contactId};
+
+        return context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, null);
+    }
+
+    public Cursor getStarredContacts() {
+        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        String[] projection = new String[]{
+                ContactsContract.Contacts._ID,
+//                ContactsContract.Contacts.STARRED,
+        };
+
+        String selection =  "starred = ?";
+        String[] selectionArgs = new String[]{"1"};
 
         return context.getContentResolver().query(uri, projection, selection,
                 selectionArgs, null);

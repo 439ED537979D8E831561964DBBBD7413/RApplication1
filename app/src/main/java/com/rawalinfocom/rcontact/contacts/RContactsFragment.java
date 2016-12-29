@@ -68,15 +68,17 @@ public class RContactsFragment extends BaseFragment {
 
     RContactListAdapter rContactListAdapter;
 
+    //<editor-fold desc="Constructors">
     public RContactsFragment() {
         // Required empty public constructor
     }
 
-
     public static RContactsFragment newInstance() {
         return new RContactsFragment();
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Override Methods">
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +103,9 @@ public class RContactsFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         init();
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Private Methods">
     private void init() {
 
         // Connect the recycler to the scroller (to let the scroller scroll the list)
@@ -294,4 +298,5 @@ public class RContactsFragment extends BaseFragment {
             arrayListProfileData.add(profileData);
         }
     }
+    //</editor-fold>
 }

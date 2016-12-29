@@ -1,19 +1,22 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.model.Country;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +39,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private final int HEADER = 0, CONTACT = 1;
 
-    private String defaultCountryCode;
     private int previousPosition = 0;
 
     //<editor-fold desc="Constructor">
@@ -45,16 +47,11 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.context = context;
         this.arrayListUserProfile = arrayListUserProfile;
         this.arrayListContactHeader = arrayListContactHeader;
-
-        Country country = (Country) Utils.getObjectPreference(context, AppConstants
-                .PREF_SELECTED_COUNTRY_OBJECT, Country.class);
-        if (country != null) {
-            defaultCountryCode = country.getCountryCodeNumber();
-        }
     }
     //</editor-fold>
 
-    //<editor-fold desc="Overrride Methods">
+    //<editor-fold desc="Override Methods">
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -145,9 +142,10 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
+
     private void configureRContactViewHolder(RContactViewHolder holder, int position) {
 
-        UserProfile userProfile = (UserProfile) arrayListUserProfile.get(position);
+        final UserProfile userProfile = (UserProfile) arrayListUserProfile.get(position);
 
         String contactDisplayName = userProfile.getPmFirstName() + " " + userProfile
                 .getPmLastName();
@@ -166,6 +164,20 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder.dividerAllContact.setVisibility(View.VISIBLE);
             }
         }
+
+        holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putString(AppConstants.EXTRA_PM_ID, userProfile.getPmId());
+//                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
+                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, userProfile.getPmRawId());
+                TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
+                bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
+                ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
+                        .class, bundle);
+            }
+        });
 
     }
 
@@ -189,6 +201,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public TextView textContactNumber;
         @BindView(R.id.divider_all_contact)
         View dividerAllContact;
+        @BindView(R.id.relative_row_all_contact)
+        RelativeLayout relativeRowAllContact;
 
         RContactViewHolder(View itemView) {
             super(itemView);

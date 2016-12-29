@@ -60,6 +60,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RippleView rippleActionRightLeft;
     RippleView rippleActionRightCenter;
     RippleView rippleActionRightRight;
+    ImageView imageRightLeft;
 
     @BindView(R.id.text_joining_date)
     TextView textJoiningDate;
@@ -273,6 +274,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
+        imageRightLeft = ButterKnife.findById(includeToolbar, R.id.image_right_left);
         rippleActionRightLeft = ButterKnife.findById(includeToolbar, R.id.ripple_action_right_left);
         rippleActionRightCenter = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_center);
@@ -323,6 +325,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (displayOwnProfile) {
             textToolbarTitle.setText(getString(R.string.title_my_profile));
             linearCallSms.setVisibility(View.GONE);
+            imageRightLeft.setImageResource(R.drawable.ic_action_edit);
         } else {
             textToolbarTitle.setText("Profile Detail");
             linearCallSms.setVisibility(View.VISIBLE);
@@ -331,6 +334,30 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private void setUpView(final ProfileDataOperation profileDetail) {
+
+        //<editor-fold desc="Favourite">
+
+        if (!displayOwnProfile) {
+
+            int isFavourite = 0;
+            Cursor contactFavouriteCursor = phoneBookContacts.getStarredStatus(phoneBookId);
+
+            if (contactFavouriteCursor != null && contactFavouriteCursor.getCount() > 0) {
+                while (contactFavouriteCursor.moveToNext()) {
+                    isFavourite = contactFavouriteCursor.getInt(contactFavouriteCursor
+                            .getColumnIndex(ContactsContract.Contacts.STARRED));
+                }
+                contactFavouriteCursor.close();
+            }
+
+            if (isFavourite == 0) {
+                imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
+            } else {
+                imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
+            }
+        }
+
+        //</editor-fold>
 
         //<editor-fold desc="Joining Date">
         if (profileDetail != null) {

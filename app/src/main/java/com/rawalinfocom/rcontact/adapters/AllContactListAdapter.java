@@ -220,10 +220,9 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
                 TextView textCloudName = (TextView) view.findViewById(R.id.text_cloud_contact_name);
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
-                if (textCloudName.getVisibility() == View.VISIBLE) {
+                if (textCloudName.getVisibility() == View.VISIBLE)
                     bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textCloudName.getText()
                             .toString());
-                }
                 ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
                         .class, bundle);
             }

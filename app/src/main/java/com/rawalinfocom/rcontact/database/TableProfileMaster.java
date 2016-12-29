@@ -27,7 +27,7 @@ public class TableProfileMaster {
 
     // Column Names
     private static final String COLUMN_PM_ID = "pm_id";
-    private static final String COLUMN_PM_RAW_ID = "pm_raw_id";
+     static final String COLUMN_PM_RAW_ID = "pm_raw_id";
     private static final String COLUMN_PM_PREFIX = "pm_prefix";
     static final String COLUMN_PM_FIRST_NAME = "pm_first_name";
     private static final String COLUMN_PM_MIDDLE_NAME = "pm_middle_name";

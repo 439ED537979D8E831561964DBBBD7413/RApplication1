@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
@@ -16,6 +17,7 @@ import static com.rawalinfocom.rcontact.database.TableProfileEmailMapping
         .TABLE_PB_PROFILE_EMAIL_MAPPING;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_FIRST_NAME;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_LAST_NAME;
+import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_RAW_ID;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_RCP_ID;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.TABLE_RC_PROFILE_MASTER;
 
@@ -194,24 +196,13 @@ public class TableProfileMobileMapping {
     // Getting single Profile Mobile Mapping from MobileNumber
     public boolean getIsMobileNumberExists(String mobileNumber) {
 
-        int count = 0;
-
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
-
-        Cursor cursor = db.query(TABLE_PB_PROFILE_MOBILE_MAPPING, new String[]{COLUMN_MPM_ID,
-                        COLUMN_MPM_CLOUD_MNM_ID, COLUMN_MPM_CLOUD_PM_ID, COLUMN_MPM_IS_RCP},
-                COLUMN_MPM_MOBILE_NUMBER + "=?", new String[]{String.valueOf(mobileNumber)},
-                null, null, null, null);
-
-        if (cursor != null) {
-            count = cursor.getCount();
-            cursor.close();
-        }
-
+        long count = DatabaseUtils.queryNumEntries(db, TABLE_PB_PROFILE_MOBILE_MAPPING,
+                COLUMN_MPM_MOBILE_NUMBER + "=?", new String[]{mobileNumber});
         db.close();
 
-        // return Profile Mobile Mapping Count
         return count > 0;
+
     }
 
     // Getting All Profile Mobile Mapping
@@ -306,9 +297,11 @@ public class TableProfileMobileMapping {
     public ArrayList<UserProfile> getRContactList() {
         ArrayList<UserProfile> arrayListRContact = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT DISTINCT " + TABLE_RC_PROFILE_MASTER + "." +
+        String selectQuery = "SELECT " + TABLE_RC_PROFILE_MASTER + "." +
                 COLUMN_PM_FIRST_NAME +
                 "," + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_LAST_NAME + "," +
+                TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RCP_ID + "," +
+                TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RAW_ID + "," +
                 TABLE_PB_PROFILE_EMAIL_MAPPING + "." + COLUMN_EPM_EMAIL_ID + "," +
                 TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_MOBILE_NUMBER + " FROM " +
                 TABLE_RC_PROFILE_MASTER + " LEFT JOIN " + TABLE_PB_PROFILE_MOBILE_MAPPING + " ON " +
@@ -330,8 +323,10 @@ public class TableProfileMobileMapping {
                 UserProfile userProfile = new UserProfile();
                 userProfile.setPmFirstName(cursor.getString(0));
                 userProfile.setPmLastName(cursor.getString(1));
-                userProfile.setMobileNumber(cursor.getString(2));
-                userProfile.setEmailId(cursor.getString(3));
+                userProfile.setPmId(cursor.getString(2));
+                userProfile.setPmRawId(cursor.getString(3));
+                userProfile.setEmailId(cursor.getString(4));
+                userProfile.setMobileNumber(cursor.getString(5));
                 // Adding profileMobileMapping to list
                 arrayListRContact.add(userProfile);
             } while (cursor.moveToNext());
