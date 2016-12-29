@@ -68,6 +68,9 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.fragment = fragment;
         this.arrayListUserContact = arrayListUserContact;
         this.arrayListContactHeader = arrayListContactHeader;
+        this.arrayListContactHeader = new ArrayList<>();
+        this.arrayListContactHeader.add("#");
+        this.arrayListContactHeader.addAll(arrayListContactHeader);
 
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
@@ -149,6 +152,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if (arrayListUserContact.get(position) instanceof String) {
             String letter = (String) arrayListUserContact.get(position);
             previousPosition = arrayListContactHeader.indexOf(letter);
+
         } else {
             /*for (int i = position; i < arrayListUserContact.size(); i++) {
                 if (arrayListUserContact.get(i) instanceof String) {
