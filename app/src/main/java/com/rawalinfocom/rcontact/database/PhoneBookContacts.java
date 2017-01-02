@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,6 +11,9 @@ import android.provider.ContactsContract;
  */
 
 public class PhoneBookContacts {
+
+    public static final int status_favourite = 1;
+    public static final int status_un_favourite = 0;
 
     private Context context;
 
@@ -39,7 +43,7 @@ public class PhoneBookContacts {
 //                ContactsContract.Contacts.STARRED,
         };
 
-        String selection =  "starred = ?";
+        String selection = "starred = ?";
         String[] selectionArgs = new String[]{"1"};
 
         return context.getContentResolver().query(uri, projection, selection,
@@ -499,5 +503,12 @@ public class PhoneBookContacts {
     }
 
     //</editor-fold>
+
+    public int setFavouriteStatus(String contactRawId, int status) throws NullPointerException {
+        ContentValues values = new ContentValues();
+        values.put(ContactsContract.Contacts.STARRED, status);
+        return context.getContentResolver().update(ContactsContract.Contacts.CONTENT_URI, values,
+                ContactsContract.Contacts._ID + "= ?", new String[]{String.valueOf(contactRawId)});
+    }
 
 }

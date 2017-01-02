@@ -53,6 +53,10 @@ import butterknife.ButterKnife;
 public class ProfileDetailActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
 
+    private final String TAG_IMAGE_EDIT = "tag_edit";
+    private final String TAG_IMAGE_FAVOURITE = "tag_favourite";
+    private final String TAG_IMAGE_UN_FAVOURITE = "tag_un_favourite";
+
     @BindView(R.id.include_toolbar)
     Toolbar includeToolbar;
     TextView textToolbarTitle;
@@ -166,7 +170,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Button buttonSms;
 
     String pmId, phoneBookId, contactName = "", cloudContactName = null;
-    boolean displayOwnProfile = false;
+    boolean displayOwnProfile = false, isHidefavourite = false;
 
     PhoneBookContacts phoneBookContacts;
 
@@ -204,6 +208,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
                 cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
             }
+
+            if (intent.hasExtra(AppConstants.EXTRA_IS_HIDE_FAVOURITE)) {
+                isHidefavourite = intent.getBooleanExtra(AppConstants.EXTRA_IS_HIDE_FAVOURITE,
+                        false);
+            }
         }
 
         if (pmId.equalsIgnoreCase(getUserPmId())) {
@@ -228,6 +237,25 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             case R.id.ripple_action_back:
                 onBackPressed();
+                break;
+
+            case R.id.ripple_action_right_left:
+                int favStatus = -1;
+                if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_FAVOURITE)) {
+                    favStatus = PhoneBookContacts.status_un_favourite;
+                    imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
+                    imageRightLeft.setTag(TAG_IMAGE_UN_FAVOURITE);
+                } else if (StringUtils.equals(imageRightLeft.getTag().toString(),
+                        TAG_IMAGE_UN_FAVOURITE)) {
+                    favStatus = PhoneBookContacts.status_favourite;
+                    imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
+                    imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);
+                }
+                int updateStatus = phoneBookContacts.setFavouriteStatus(phoneBookId, favStatus);
+                if (updateStatus != 1) {
+                    Utils.showErrorSnackBar(this, relativeRootProfileDetail, "Error while " +
+                            "updating favourite status!");
+                }
                 break;
         }
     }
@@ -299,6 +327,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         rippleViewMore.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
+        rippleActionRightLeft.setOnRippleCompleteListener(this);
 
         if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
             // RC Profile
@@ -326,9 +355,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             textToolbarTitle.setText(getString(R.string.title_my_profile));
             linearCallSms.setVisibility(View.GONE);
             imageRightLeft.setImageResource(R.drawable.ic_action_edit);
+            imageRightLeft.setTag(TAG_IMAGE_EDIT);
         } else {
             textToolbarTitle.setText("Profile Detail");
             linearCallSms.setVisibility(View.VISIBLE);
+        }
+
+        if (isHidefavourite) {
+            imageRightLeft.setVisibility(View.GONE);
         }
 
     }
@@ -337,7 +371,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         //<editor-fold desc="Favourite">
 
-        if (!displayOwnProfile) {
+        if (!displayOwnProfile && !isHidefavourite) {
 
             int isFavourite = 0;
             Cursor contactFavouriteCursor = phoneBookContacts.getStarredStatus(phoneBookId);
@@ -352,8 +386,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (isFavourite == 0) {
                 imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
+                imageRightLeft.setTag(TAG_IMAGE_UN_FAVOURITE);
             } else {
                 imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
+                imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);
             }
         }
 

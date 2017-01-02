@@ -5,11 +5,8 @@ import android.app.Application;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
-import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
-
-import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by Monal on 20/10/16.
@@ -24,7 +21,7 @@ public class RContactApplication extends Application {
         super.onCreate();
 
         // Fabric Initialization
-        Fabric.with(this, new Crashlytics());
+//        Fabric.with(this, new Crashlytics());
 
         // Facebook Initialization
         FacebookSdk.sdkInitialize(getApplicationContext());

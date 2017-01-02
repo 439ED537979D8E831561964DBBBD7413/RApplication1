@@ -522,18 +522,20 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
             tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
 
-            ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileData.get(i)
-                    .getPbEmailId();
-            ArrayList<Email> arrayListEmail = new ArrayList<>();
-            for (int j = 0; j < arrayListEmailId.size(); j++) {
-                Email email = new Email();
-                email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
-                email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                arrayListEmail.add(email);
-            }
+            if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbEmailId())) {
+                ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileData.get(i)
+                        .getPbEmailId();
+                ArrayList<Email> arrayListEmail = new ArrayList<>();
+                for (int j = 0; j < arrayListEmailId.size(); j++) {
+                    Email email = new Email();
+                    email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+                    email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                    arrayListEmail.add(email);
+                }
 
-            TableEmailMaster tableEmailMaster = new TableEmailMaster(getDatabaseHandler());
-            tableEmailMaster.addArrayEmail(arrayListEmail);
+                TableEmailMaster tableEmailMaster = new TableEmailMaster(getDatabaseHandler());
+                tableEmailMaster.addArrayEmail(arrayListEmail);
+            }
 
             arrayListUserProfile.add(userProfile);
         }
