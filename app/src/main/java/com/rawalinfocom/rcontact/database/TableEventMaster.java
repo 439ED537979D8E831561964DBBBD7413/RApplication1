@@ -63,6 +63,27 @@ public class TableEventMaster {
         db.close(); // Closing database connection
     }
 
+    // Adding array Event
+    public void addArrayEvent(ArrayList<Event> arrayListEvent) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+//        ContentValues values = new ContentValues();
+        for (int i = 0; i < arrayListEvent.size(); i++) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_EVM_ID, arrayListEvent.get(i).getEvmId());
+            values.put(COLUMN_EVM_START_DATE, arrayListEvent.get(i).getEvmStartDate());
+            values.put(COLUMN_EVM_EVENT_TYPE, arrayListEvent.get(i).getEvmEventType());
+            values.put(COLUMN_EVM_CUSTOM_TYPE, arrayListEvent.get(i).getEvmCustomType());
+            values.put(COLUMN_EVM_EVENT_PRIVACY, arrayListEvent.get(i).getEvmEventPrivacy());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListEvent.get(i)
+                    .getRcProfileMasterPmId());
+
+            // Inserting Row
+            db.insert(TABLE_RC_EVENT_MASTER, null, values);
+        }
+        db.close(); // Closing database connection
+    }
+
     // Getting single Event
     public Event getEvent(int evmId) {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();

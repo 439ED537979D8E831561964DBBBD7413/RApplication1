@@ -316,6 +316,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         recyclerViewEvent.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewSocialContact.setLayoutManager(new LinearLayoutManager(this));
 
+        recyclerViewContactNumber.setNestedScrollingEnabled(false);
+        recyclerViewEmail.setNestedScrollingEnabled(false);
+        recyclerViewWebsite.setNestedScrollingEnabled(false);
+        recyclerViewAddress.setNestedScrollingEnabled(false);
+        recyclerViewEvent.setNestedScrollingEnabled(false);
+        recyclerViewSocialContact.setNestedScrollingEnabled(false);
+
         textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
         textJoiningDate.setTypeface(Utils.typefaceRegular(this));
         textName.setTypeface(Utils.typefaceSemiBold(this));

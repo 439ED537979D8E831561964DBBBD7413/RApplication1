@@ -93,6 +93,36 @@ public class TableAddressMaster {
         db.close(); // Closing database connection
     }
 
+    // Adding array Address
+    public void addArrayAddress(ArrayList<Address> arrayListAddress) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+//        ContentValues values = new ContentValues();
+        for (int i = 0; i < arrayListAddress.size(); i++) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_AM_ID, arrayListAddress.get(i).getAmId());
+            values.put(COLUMN_AM_CITY, arrayListAddress.get(i).getAmCity());
+            values.put(COLUMN_AM_COUNTRY, arrayListAddress.get(i).getAmCountry());
+            values.put(COLUMN_AM_FORMATTED_ADDRESS, arrayListAddress.get(i).getAmFormattedAddress());
+            values.put(COLUMN_AM_NEIGHBORHOOD, arrayListAddress.get(i).getAmNeighborhood());
+            values.put(COLUMN_AM_POST_CODE, arrayListAddress.get(i).getAmPostCode());
+            values.put(COLUMN_AM_PO_BOX, arrayListAddress.get(i).getAmPoBox());
+            values.put(COLUMN_AM_REGION, arrayListAddress.get(i).getAmRegion());
+            values.put(COLUMN_AM_STREET, arrayListAddress.get(i).getAmStreet());
+            values.put(COLUMN_AM_ADDRESS_TYPE, arrayListAddress.get(i).getAmAddressType());
+            values.put(COLUMN_AM_CUSTOM_TYPE, arrayListAddress.get(i).getAmCustomType());
+            values.put(COLUMN_AM_GOOGLE_LATITUDE, arrayListAddress.get(i).getAmGoogleLatitude());
+            values.put(COLUMN_AM_GOOGLE_LONGITUDE, arrayListAddress.get(i).getAmGoogleLongitude());
+            values.put(COLUMN_AM_GOOGLE_ADDRESS, arrayListAddress.get(i).getAmGoogleAddress());
+            values.put(COLUMN_AM_ADDRESS_PRIVACY, arrayListAddress.get(i).getAmAddressPrivacy());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListAddress.get(i).getRcProfileMasterPmId());
+
+            // Inserting Row
+            db.insert(TABLE_RC_ADDRESS_MASTER, null, values);
+        }
+        db.close(); // Closing database connection
+    }
+
     // Getting single Address
     public Address getAddress(int amId) {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();

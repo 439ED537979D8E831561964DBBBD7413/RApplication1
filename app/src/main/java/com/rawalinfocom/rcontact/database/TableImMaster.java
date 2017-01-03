@@ -62,6 +62,26 @@ public class TableImMaster {
         db.close(); // Closing database connection
     }
 
+    // Adding array Im Account
+    public void addArrayImAccount(ArrayList<ImAccount> arrayListImAccount) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+//        ContentValues values = new ContentValues();
+        for (int i = 0; i < arrayListImAccount.size(); i++) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_IM_ID, arrayListImAccount.get(i).getImId());
+            values.put(COLUMN_IM_IM_TYPE, arrayListImAccount.get(i).getImImType());
+            values.put(COLUMN_IM_CUSTOM_TYPE, arrayListImAccount.get(i).getImCustomType());
+            values.put(COLUMN_IM_IM_PROTOCOL, arrayListImAccount.get(i).getImImProtocol());
+            values.put(COLUMN_IM_IM_PRIVACY, arrayListImAccount.get(i).getImImPrivacy());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListImAccount.get(i).getRcProfileMasterPmId());
+
+            // Inserting Row
+            db.insert(TABLE_RC_IM_MASTER, null, values);
+        }
+        db.close(); // Closing database connection
+    }
+
     // Getting single Im Account
     public ImAccount getImAccount(int imId) {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();

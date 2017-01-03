@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.Organization;
 
 import java.util.ArrayList;
@@ -74,6 +73,38 @@ public class TableOrganizationMaster {
         // Inserting Row
         db.insert(TABLE_RC_ORGANIZATION_MASTER, null, values);
         // insertWithOnConflict
+        db.close(); // Closing database connection
+    }
+
+    // Adding array Org
+    public void addArrayOrganization(ArrayList<Organization> arrayListOrganization) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+//        ContentValues values = new ContentValues();
+        for (int i = 0; i < arrayListOrganization.size(); i++) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_OM_ID, arrayListOrganization.get(i).getOmId());
+            values.put(COLUMN_OM_ORGANIZATION_COMPANY, arrayListOrganization.get(i)
+                    .getOmOrganizationCompany());
+            values.put(COLUMN_OM_ORGANIZATION_TYPE, arrayListOrganization.get(i)
+                    .getOmOrganizationType());
+            values.put(COLUMN_OM_CUSTOM_TYPE, arrayListOrganization.get(i).getOmCustomType());
+            values.put(COLUMN_OM_ORGANIZATION_TITLE, arrayListOrganization.get(i)
+                    .getOmOrganizationTitle());
+            values.put(COLUMN_OM_ORGANIZATION_DEPARTMENT, arrayListOrganization.get(i)
+                    .getOmOrganizationDepartment());
+            values.put(COLUMN_OM_JOB_DESCRIPTION, arrayListOrganization.get(i)
+                    .getOmJobDescription());
+            values.put(COLUMN_OM_OFFICE_LOCATION, arrayListOrganization.get(i)
+                    .getOmOfficeLocation());
+            values.put(COLUMN_OM_ORGANIZATION_PRIVACY, arrayListOrganization.get(i)
+                    .getOmOrganizationPrivacy());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListOrganization.get(i)
+                    .getRcProfileMasterPmId());
+
+            // Inserting Row
+            db.insert(TABLE_RC_ORGANIZATION_MASTER, null, values);
+        }
         db.close(); // Closing database connection
     }
 

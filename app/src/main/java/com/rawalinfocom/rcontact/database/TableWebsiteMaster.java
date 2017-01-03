@@ -39,7 +39,7 @@ public class TableWebsiteMaster {
             + " (" +
             " " + COLUMN_WM_ID + " integer NOT NULL CONSTRAINT rc_website_master_pk PRIMARY KEY," +
             " " + COLUMN_WM_WEBSITE_URL + " text NOT NULL," +
-            " " + COLUMN_WM_WEBSITE_TYPE + " text NOT NULL," +
+            " " + COLUMN_WM_WEBSITE_TYPE + " text," +
             " " + COLUMN_WM_CUSTOM_TYPE + " text," +
             " " + COLUMN_WM_WEBSITE_PRIVACY + " integer DEFAULT 1," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
@@ -90,6 +90,27 @@ public class TableWebsiteMaster {
 
         // return Website
         return website;
+    }
+
+    // Adding array website
+    public void addArrayWebsite(ArrayList<Website> arrayListWebsite) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+//        ContentValues values = new ContentValues();
+        for (int i = 0; i < arrayListWebsite.size(); i++) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_WM_ID, arrayListWebsite.get(i).getWmId());
+            values.put(COLUMN_WM_WEBSITE_URL, arrayListWebsite.get(i).getWmWebsiteUrl());
+            values.put(COLUMN_WM_WEBSITE_TYPE, arrayListWebsite.get(i).getWmWebsiteType());
+            values.put(COLUMN_WM_CUSTOM_TYPE, arrayListWebsite.get(i).getWmCustomType());
+            values.put(COLUMN_WM_WEBSITE_PRIVACY, arrayListWebsite.get(i).getWmWebsitePrivacy());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListWebsite.get(i)
+                    .getRcProfileMasterPmId());
+
+            // Inserting Row
+            db.insert(TABLE_RC_WEBSITE_MASTER, null, values);
+        }
+        db.close(); // Closing database connection
     }
 
     // Getting All Websites
