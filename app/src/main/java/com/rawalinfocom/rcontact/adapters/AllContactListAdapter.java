@@ -60,6 +60,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     private int colorBlack, colorPineGreen;
     private int previousPosition = 0;
+    int listClickedPosition = -1;
 
     //<editor-fold desc="Constructor">
     public AllContactListAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
@@ -181,6 +182,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             position) {
         final ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
 
+        holder.textContactName.setTag(position);
+
         String contactDisplayName = profileData.getOperation().get(0).getPbNameFirst() + "" +
                 " " + profileData.getOperation().get(0).getPbNameLast();
         holder.textContactName.setText(contactDisplayName);
@@ -224,9 +227,11 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
                 TextView textCloudName = (TextView) view.findViewById(R.id.text_cloud_contact_name);
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
-                if (textCloudName.getVisibility() == View.VISIBLE)
+                listClickedPosition = (int) textName.getTag();
+                if (textCloudName.getVisibility() == View.VISIBLE) {
                     bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textCloudName.getText()
                             .toString());
+                }
                 ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
                         .class, bundle);
             }
@@ -431,6 +436,10 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         bottomSheetDialog.setContentView(view);
         bottomSheetDialog.show();
 
+    }
+
+    public int getListClickedPosition() {
+        return listClickedPosition;
     }
 
     //</editor-fold>

@@ -23,15 +23,15 @@ public class TableImMaster {
     }
 
     // Table Names
-    private static final String TABLE_RC_IM_MASTER = "rc_im_master";
+    static final String TABLE_RC_IM_MASTER = "rc_im_master";
 
     // Column Names
     private static final String COLUMN_IM_ID = "im_id";
-    private static final String COLUMN_IM_IM_TYPE = "im_im_type";
+    static final String COLUMN_IM_IM_TYPE = "im_im_type";
     private static final String COLUMN_IM_CUSTOM_TYPE = "im_custom_type";
-    private static final String COLUMN_IM_IM_PROTOCOL = "im_im_protocol";
-    private static final String COLUMN_IM_IM_PRIVACY = "im_im_privacy";
-    private static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
+    static final String COLUMN_IM_IM_PROTOCOL = "im_im_protocol";
+    static final String COLUMN_IM_IM_PRIVACY = "im_im_privacy";
+    static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
 
     // Table Create Statements

@@ -311,8 +311,8 @@ public class TableProfileMobileMapping {
                 COLUMN_PM_RCP_ID + " = " + TABLE_PB_PROFILE_EMAIL_MAPPING + "." +
                 COLUMN_EPM_CLOUD_PM_ID + " WHERE " + TABLE_PB_PROFILE_MOBILE_MAPPING + "." +
                 COLUMN_MPM_IS_RCP + " = 1 OR " + TABLE_PB_PROFILE_EMAIL_MAPPING + "." +
-                COLUMN_EPM_IS_RCP + " = 1 ORDER BY " + TABLE_RC_PROFILE_MASTER + "." +
-                COLUMN_PM_FIRST_NAME;
+                COLUMN_EPM_IS_RCP + " = 1 ORDER BY UPPER(" + TABLE_RC_PROFILE_MASTER + "." +
+                COLUMN_PM_FIRST_NAME + ")";
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

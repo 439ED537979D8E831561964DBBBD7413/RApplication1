@@ -33,6 +33,7 @@ import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
@@ -173,6 +174,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     boolean displayOwnProfile = false, isHidefavourite = false;
 
     PhoneBookContacts phoneBookContacts;
+    int listClickedPosition = -1;
 
     //<editor-fold desc="Override Methods">
 
@@ -212,6 +214,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (intent.hasExtra(AppConstants.EXTRA_IS_HIDE_FAVOURITE)) {
                 isHidefavourite = intent.getBooleanExtra(AppConstants.EXTRA_IS_HIDE_FAVOURITE,
                         false);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_POSITION)) {
+                listClickedPosition = intent.getIntExtra(AppConstants.EXTRA_CONTACT_POSITION, -1);
             }
         }
 
@@ -256,6 +262,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     Utils.showErrorSnackBar(this, relativeRootProfileDetail, "Error while " +
                             "updating favourite status!");
                 }
+                ArrayList<ProfileData> arrayListFavourites = new ArrayList<>();
+                ProfileData favouriteStatus = new ProfileData();
+                favouriteStatus.setLocalPhoneBookId(phoneBookId);
+                favouriteStatus.setIsFavourite(String.valueOf(favStatus));
+                arrayListFavourites.add(favouriteStatus);
+                setFavouriteStatus(arrayListFavourites);
                 break;
         }
     }
@@ -278,6 +290,24 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     if (profileDetailResponse != null) {
                         Log.e("error response", profileDetailResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
+            // <editor-fold desc="REQ_MARK_AS_FAVOURITE">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_MARK_AS_FAVOURITE)) {
+                WsResponseObject favouriteStatusResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (favouriteStatusResponse != null && StringUtils.equalsIgnoreCase
+                        (favouriteStatusResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                } else {
+                    if (favouriteStatusResponse != null) {
+                        Log.e("error response", favouriteStatusResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -916,6 +946,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         return relativeRootProfileDetail;
     }
 
+    public int getListClickedPosition() {
+        return listClickedPosition;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Web Service Call">
@@ -930,6 +969,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     profileDetailObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_PROFILE_DETAIL, getString(R.string.msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_DETAIL);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
+                    .string.msg_no_network));
+        }
+    }
+
+    private void setFavouriteStatus(ArrayList<ProfileData> favourites) {
+
+        WsRequestObject favouriteStatusObject = new WsRequestObject();
+        favouriteStatusObject.setPmId(getUserPmId());
+        favouriteStatusObject.setFavourites(favourites);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    favouriteStatusObject, null, WsResponseObject.class, WsConstants
+                    .REQ_MARK_AS_FAVOURITE, null, true).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_MARK_AS_FAVOURITE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
                     .string.msg_no_network));

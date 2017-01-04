@@ -23,19 +23,19 @@ public class TableOrganizationMaster {
     }
 
     // Table Names
-    private static final String TABLE_RC_ORGANIZATION_MASTER = "rc_organization_master";
+    static final String TABLE_RC_ORGANIZATION_MASTER = "rc_organization_master";
 
     // Column Names
     private static final String COLUMN_OM_ID = "om_id";
     private static final String COLUMN_OM_ORGANIZATION_COMPANY = "om_organization_company";
     private static final String COLUMN_OM_ORGANIZATION_TYPE = "om_organization_type";
     private static final String COLUMN_OM_CUSTOM_TYPE = "om_custom_type";
-    private static final String COLUMN_OM_ORGANIZATION_TITLE = "om_organization_title";
+    static final String COLUMN_OM_ORGANIZATION_TITLE = "om_organization_title";
     private static final String COLUMN_OM_ORGANIZATION_DEPARTMENT = "om_organization_department";
-    private static final String COLUMN_OM_JOB_DESCRIPTION = "om_job_description";
+    static final String COLUMN_OM_JOB_DESCRIPTION = "om_job_description";
     private static final String COLUMN_OM_OFFICE_LOCATION = "om_office_location";
     private static final String COLUMN_OM_ORGANIZATION_PRIVACY = "om_organization_privacy";
-    private static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
+    static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
 
     // Table Create Statements

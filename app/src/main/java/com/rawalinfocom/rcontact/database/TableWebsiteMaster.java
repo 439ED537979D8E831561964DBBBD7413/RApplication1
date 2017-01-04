@@ -23,15 +23,15 @@ public class TableWebsiteMaster {
     }
 
     // Table Names
-    private static final String TABLE_RC_WEBSITE_MASTER = "rc_website_master";
+    static final String TABLE_RC_WEBSITE_MASTER = "rc_website_master";
 
     // Column Names
     private static final String COLUMN_WM_ID = "wm_id";
-    private static final String COLUMN_WM_WEBSITE_URL = "wm_website_url";
+    static final String COLUMN_WM_WEBSITE_URL = "wm_website_url";
     private static final String COLUMN_WM_WEBSITE_TYPE = "wm_website_type";
     private static final String COLUMN_WM_CUSTOM_TYPE = "wm_custom_type";
     private static final String COLUMN_WM_WEBSITE_PRIVACY = "wm_website_privacy";
-    private static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
+    static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
 
     // Table Create Statements

@@ -103,6 +103,7 @@ public class FavoritesFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         init();
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
@@ -242,7 +243,7 @@ public class FavoritesFragment extends BaseFragment {
         recyclerView.scrollToPosition(scrollPosition);
     }
 
-    private void getFavouriteContacts() {
+    public void getFavouriteContacts() {
         phoneBookContacts = new PhoneBookContacts(getActivity());
         Cursor favouriteContactCursor = phoneBookContacts.getStarredContacts();
 
@@ -481,6 +482,18 @@ public class FavoritesFragment extends BaseFragment {
 
         setRecyclerViewLayoutManager(recyclerViewContactList);
 
+    }
+
+    public AllContactListAdapter getAllContactListAdapter() {
+        return allContactListAdapter;
+    }
+
+    public ArrayList<Object> getArrayListPhoneBookContacts() {
+        return arrayListPhoneBookContacts;
+    }
+
+    public RecyclerView getRecyclerViewContactList() {
+        return recyclerViewContactList;
     }
 
     //</editor-fold>

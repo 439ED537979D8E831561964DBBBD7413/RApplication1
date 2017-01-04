@@ -23,15 +23,15 @@ public class TableEventMaster {
     }
 
     // Table Names
-    private static final String TABLE_RC_EVENT_MASTER = "rc_event_master";
+    static final String TABLE_RC_EVENT_MASTER = "rc_event_master";
 
     // Column Names
     private static final String COLUMN_EVM_ID = "evm_id";
-    private static final String COLUMN_EVM_START_DATE = "evm_start_date";
-    private static final String COLUMN_EVM_EVENT_TYPE = "evm_event_type";
+    static final String COLUMN_EVM_START_DATE = "evm_start_date";
+    static final String COLUMN_EVM_EVENT_TYPE = "evm_event_type";
     private static final String COLUMN_EVM_CUSTOM_TYPE = "evm_custom_type";
-    private static final String COLUMN_EVM_EVENT_PRIVACY = "evm_event_privacy";
-    private static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
+    static final String COLUMN_EVM_EVENT_PRIVACY = "evm_event_privacy";
+    static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
 
     // Table Create Statements

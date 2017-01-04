@@ -27,7 +27,7 @@ public class TableProfileMaster {
 
     // Column Names
     private static final String COLUMN_PM_ID = "pm_id";
-     static final String COLUMN_PM_RAW_ID = "pm_raw_id";
+    static final String COLUMN_PM_RAW_ID = "pm_raw_id";
     private static final String COLUMN_PM_PREFIX = "pm_prefix";
     static final String COLUMN_PM_FIRST_NAME = "pm_first_name";
     private static final String COLUMN_PM_MIDDLE_NAME = "pm_middle_name";
@@ -38,7 +38,7 @@ public class TableProfileMaster {
     private static final String COLUMN_PM_PHONETIC_MIDDLE_NAME = "pm_phonetic_middle_name";
     private static final String COLUMN_PM_PHONETIC_LAST_NAME = "pm_phonetic_last_name";
     private static final String COLUMN_PM_PROFILE_IMAGE = "pm_profile_image";
-     static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
+    static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
     private static final String COLUMN_PM_NICK_NAME_PRIVACY = "pm_nick_name_privacy";
     private static final String COLUMN_PM_NOTES = "pm_notes";
     private static final String COLUMN_PM_NOTES_PRIVACY = "pm_notes_privacy";
@@ -368,4 +368,79 @@ public class TableProfileMaster {
                 new String[]{String.valueOf(userProfile.getPmId())});
         db.close();
     }
+
+   /* public void getRcProfileDetail(String rcpId) {
+        ArrayList<UserProfile> arrayListRContact = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "select DISTINCT profile." + COLUMN_PM_RAW_ID + ", profile." +
+                COLUMN_PM_PREFIX + ", profile." + COLUMN_PM_FIRST_NAME + ", profile." +
+                COLUMN_PM_MIDDLE_NAME + ", profile." + COLUMN_PM_LAST_NAME + ", profile." +
+                COLUMN_PM_SUFFIX + ", profile." + COLUMN_PM_NICK_NAME + ", profile." +
+                COLUMN_PM_PHONETIC_FIRST_NAME + ", profile." + COLUMN_PM_PHONETIC_MIDDLE_NAME + ", " +
+                "profile." + COLUMN_PM_PHONETIC_LAST_NAME + ", profile." + COLUMN_PM_PROFILE_IMAGE
+                + ", profile." + COLUMN_PM_NICK_NAME_PRIVACY + ", profile." + COLUMN_PM_NOTES + ", " +
+                "profile." + COLUMN_PM_NOTES_PRIVACY + ", profile." + COLUMN_PM_GENDER + ", profile" +
+                "." + COLUMN_PM_GENDER_PRIVACY + ", profile." + COLUMN_PM_IS_FAVOURITE + ", profile" +
+                "." + COLUMN_PM_IS_FAVOURITE_PRIVACY + ", mobile." + TableMobileMaster
+                .COLUMN_MNM_MOBILE_NUMBER + ", mobile." + TableMobileMaster.COLUMN_MNM_NUMBER_TYPE
+                + ", mobile." + TableMobileMaster.COLUMN_MNM_IS_PRIMARY + ", mobile." +
+                TableMobileMaster.COLUMN_MNM_NUMBER_PRIVACY + ", email." + TableEmailMaster
+                .COLUMN_EM_EMAIL_ADDRESS + ", email." + TableEmailMaster.COLUMN_EM_EMAIL_ADDRESS +
+                ", email." + TableEmailMaster.COLUMN_EM_EMAIL_PRIVACY + ", email." +
+                TableEmailMaster.COLUMN_EM_IS_VERIFIED + ", org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_TITLE + ", org." + TableOrganizationMaster
+                .COLUMN_OM_JOB_DESCRIPTION + ", event." + TableEventMaster
+                .COLUMN_EVM_START_DATE + ", event." + TableEventMaster.COLUMN_EVM_EVENT_TYPE + ", " +
+                "event." + TableEventMaster.COLUMN_EVM_EVENT_PRIVACY + ", im." + TableImMaster
+                .COLUMN_IM_IM_TYPE + ", im." + TableImMaster.COLUMN_IM_IM_PROTOCOL + ", im." +
+                TableImMaster.COLUMN_IM_IM_PRIVACY + ", address." + TableAddressMaster
+                .COLUMN_AM_FORMATTED_ADDRESS + ", address." + TableAddressMaster
+                .COLUMN_AM_ADDRESS_TYPE + ", address." + TableAddressMaster
+                .COLUMN_AM_ADDRESS_PRIVACY + ", website." + TableWebsiteMaster
+                .COLUMN_WM_WEBSITE_URL + " FROM " + TABLE_RC_PROFILE_MASTER + " " +
+                "profile INNER JOIN " + TableMobileMaster.TABLE_RC_MOBILE_NUMBER_MASTER + " " +
+                "mobile ON profile." + COLUMN_PM_RCP_ID + " = mobile." + TableMobileMaster
+                .COLUMN_RC_PROFILE_MASTER_PM_ID + " INNER JOIN " + TableEmailMaster
+                .TABLE_RC_EMAIL_MASTER + " email ON profile." + COLUMN_PM_RCP_ID + " = email." +
+                TableEmailMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " INNER JOIN " +
+                TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER + " org ON profile." +
+                COLUMN_PM_RCP_ID + " = org." + TableOrganizationMaster
+                .COLUMN_RC_PROFILE_MASTER_PM_ID + " INNER JOIN " + TableEventMaster
+                .TABLE_RC_EVENT_MASTER + " event ON profile." + COLUMN_PM_RCP_ID + " = event." +
+                TableEventMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " INNER JOIN " +
+                TableImMaster.TABLE_RC_IM_MASTER + " im ON profile." + COLUMN_PM_RCP_ID + " = im" +
+                "." + TableImMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " INNER JOIN " +
+                TableAddressMaster.TABLE_RC_ADDRESS_MASTER + " address ON profile." +
+                COLUMN_PM_RCP_ID + " = address." + TableAddressMaster
+                .COLUMN_RC_PROFILE_MASTER_PM_ID + " INNER JOIN " + TableWebsiteMaster
+                .TABLE_RC_WEBSITE_MASTER + " website ON profile." + COLUMN_PM_RCP_ID + " = " +
+                "website." + TableWebsiteMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " WHERE " +
+                "profile." + COLUMN_PM_RCP_ID + " = " + rcpId;
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                UserProfile userProfile = new UserProfile();
+                userProfile.setPmFirstName(cursor.getString(0));
+                userProfile.setPmLastName(cursor.getString(1));
+                userProfile.setPmId(cursor.getString(2));
+                userProfile.setPmRawId(cursor.getString(3));
+                userProfile.setEmailId(cursor.getString(4));
+                userProfile.setMobileNumber(cursor.getString(5));
+                // Adding profileMobileMapping to list
+                arrayListRContact.add(userProfile);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        // return RContact list
+        return arrayListRContact;
+    }*/
 }

@@ -45,9 +45,10 @@ public class PhoneBookContacts {
 
         String selection = "starred = ?";
         String[] selectionArgs = new String[]{"1"};
+        String sortOrder = "UPPER(" + ContactsContract.Contacts.DISPLAY_NAME + ") ASC";
 
         return context.getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);
+                selectionArgs, sortOrder);
     }
 
     public Cursor getStructuredName(String contactId) {

@@ -23,25 +23,25 @@ public class TableAddressMaster {
     }
 
     // Table Names
-    private static final String TABLE_RC_ADDRESS_MASTER = "rc_address_master";
+    static final String TABLE_RC_ADDRESS_MASTER = "rc_address_master";
 
     // Column Names
     private static final String COLUMN_AM_ID = "am_id";
     private static final String COLUMN_AM_CITY = "am_city";
     private static final String COLUMN_AM_COUNTRY = "am_country";
-    private static final String COLUMN_AM_FORMATTED_ADDRESS = "am_formatted_address";
+    static final String COLUMN_AM_FORMATTED_ADDRESS = "am_formatted_address";
     private static final String COLUMN_AM_NEIGHBORHOOD = "am_neighborhood";
     private static final String COLUMN_AM_POST_CODE = "am_post_code";
     private static final String COLUMN_AM_PO_BOX = "am_po_box";
     private static final String COLUMN_AM_REGION = "am_region";
     private static final String COLUMN_AM_STREET = "am_street";
-    private static final String COLUMN_AM_ADDRESS_TYPE = "am_address_type";
+    static final String COLUMN_AM_ADDRESS_TYPE = "am_address_type";
     private static final String COLUMN_AM_CUSTOM_TYPE = "am_custom_type";
     private static final String COLUMN_AM_GOOGLE_LATITUDE = "am_google_latitude";
     private static final String COLUMN_AM_GOOGLE_LONGITUDE = "am_google_longitude";
     private static final String COLUMN_AM_GOOGLE_ADDRESS = "am_google_address";
-    private static final String COLUMN_AM_ADDRESS_PRIVACY = "am_address_privacy";
-    private static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
+    static final String COLUMN_AM_ADDRESS_PRIVACY = "am_address_privacy";
+    static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
 
     // Table Create Statements

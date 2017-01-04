@@ -59,6 +59,7 @@ public class AppConstants {
     public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
     public static String EXTRA_CONTACT_NAME = "contact_name";
     public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
+    public static String EXTRA_CONTACT_POSITION = "contact_position";
 
     //</editor-fold>
 
