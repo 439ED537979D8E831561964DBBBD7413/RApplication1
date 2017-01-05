@@ -519,6 +519,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             userProfile.setPmNickName(profileData.get(i).getPbNickname());
             userProfile.setPmRcpId(profileData.get(i).getRcpPmId());
             userProfile.setPmNosqlMasterId(profileData.get(i).getNoSqlMasterId());
+            userProfile.setProfileRating(profileData.get(i).getProfileRating());
+            userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
 
             arrayListUserProfile.add(userProfile);
             tableProfileMaster.addArrayProfile(arrayListUserProfile);
@@ -529,12 +531,21 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     .getPbPhoneNumber();
             ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
             for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
+
                 MobileNumber mobileNumber = new MobileNumber();
                 mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(j).getPhoneNumber());
                 mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
                         .getPhonePublic()));
                 mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber(),
+                        mobileNumber.getMnmMobileNumber())) {
+                    mobileNumber.setMnmIsPrimary(String.valueOf(getActivity().getResources()
+                            .getInteger(R.integer.rcp_type_primary)));
+                } else {
+                    mobileNumber.setMnmIsPrimary(String.valueOf(getActivity().getResources()
+                            .getInteger(R.integer.rcp_type_secondary)));
+                }
 //                arrayListPhoneNumber.get(j).
                 arrayListMobileNumber.add(mobileNumber);
             }
@@ -552,9 +563,20 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     Email email = new Email();
                     email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
                     email.setEmEmailType(arrayListEmailId.get(j).getEmType());
-                    email.setEmEmailType(arrayListEmailId.get(j).getEmType());
                     email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j).getEmPublic()));
                     email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+
+                    if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedEmailAddress(),
+                            email.getEmEmailAddress())) {
+                        email.setEmIsVerified("1");
+                        email.setEmEmailPrivacy(String.valueOf(getActivity().getResources()
+                                .getInteger(R.integer.rcp_type_primary)));
+                    } else {
+                        email.setEmIsVerified("0");
+                        email.setEmEmailPrivacy(String.valueOf(getActivity().getResources()
+                                .getInteger(R.integer.rcp_type_secondary)));
+                    }
+
                     arrayListEmail.add(email);
                 }
 

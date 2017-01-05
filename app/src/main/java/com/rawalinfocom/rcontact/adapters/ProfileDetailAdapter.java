@@ -166,6 +166,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.textMain.setTextColor(colorBlack);
         }
 
+
     }
 
     private void displayWebsite(final ProfileDetailViewHolder holder, int position) {

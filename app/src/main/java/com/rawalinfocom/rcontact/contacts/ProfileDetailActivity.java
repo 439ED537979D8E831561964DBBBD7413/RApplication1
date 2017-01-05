@@ -29,6 +29,7 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -171,7 +172,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Button buttonSms;
 
     String pmId, phoneBookId, contactName = "", cloudContactName = null;
-    boolean displayOwnProfile = false, isHidefavourite = false;
+    boolean displayOwnProfile = false, isHideFavourite = false;
 
     PhoneBookContacts phoneBookContacts;
     int listClickedPosition = -1;
@@ -212,7 +213,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_IS_HIDE_FAVOURITE)) {
-                isHidefavourite = intent.getBooleanExtra(AppConstants.EXTRA_IS_HIDE_FAVOURITE,
+                isHideFavourite = intent.getBooleanExtra(AppConstants.EXTRA_IS_HIDE_FAVOURITE,
                         false);
             }
 
@@ -368,7 +369,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
             // RC Profile
-            getProfileDetail();
+//            getProfileDetail();
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+            ProfileDataOperation profileDataOperation = tableProfileMaster.getRcProfileDetail
+                    (this, pmId);
+            setUpView(profileDataOperation);
         } else {
             // Non-RC Profile
             textJoiningDate.setVisibility(View.GONE);
@@ -398,7 +403,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             linearCallSms.setVisibility(View.VISIBLE);
         }
 
-        if (isHidefavourite) {
+        if (isHideFavourite) {
             imageRightLeft.setVisibility(View.GONE);
         }
 
@@ -408,7 +413,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         //<editor-fold desc="Favourite">
 
-        if (!displayOwnProfile && !isHidefavourite) {
+        if (!displayOwnProfile && !isHideFavourite) {
 
             int isFavourite = 0;
             Cursor contactFavouriteCursor = phoneBookContacts.getStarredStatus(phoneBookId);

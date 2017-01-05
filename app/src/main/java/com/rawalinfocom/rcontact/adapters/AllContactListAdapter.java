@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
@@ -274,11 +276,16 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             holder.relativeRowAllContact.setTag(displayNamePmId);
 
+
             if (arrayListDbMobileNumbers.size() == 1) {
                 TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
                         context).databaseHandler);
                 UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                         .parseInt(displayNamePmId));
+
+                holder.linearRating.setVisibility(View.VISIBLE);
+                holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
+                holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
 
                 displayName = ((userProfile.getPmFirstName().length() > 0 || userProfile
                         .getPmLastName().length() > 0) ? " (" + userProfile.getPmFirstName() + " " +
@@ -286,6 +293,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             } else {
                 displayName = " (" + arrayListDbMobileNumbers.size() + "RC)";
+                holder.linearRating.setVisibility(View.GONE);
             }
 
             if (StringUtils.equals(displayName, (" (" + contactDisplayName + ")"))) {
@@ -302,6 +310,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             holder.textContactNumber.setTextColor(colorPineGreen);
             isRcp = true;
+            holder.linearRating.setVisibility(View.VISIBLE);
         } else {
             displayNumber = profileData.getOperation().get(0).getPbPhoneNumber().get(0)
                     .getPhoneNumber();
@@ -310,10 +319,12 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 holder.relativeRowAllContact.setTag("-1");
                 holder.textContactName.setTextColor(colorBlack);
                 holder.textContactNumber.setTextColor(colorBlack);
+                holder.linearRating.setVisibility(View.GONE);
             } else {
                 holder.relativeRowAllContact.setTag("0");
                 holder.textContactName.setTextColor(colorPineGreen);
                 holder.textContactNumber.setTextColor(colorPineGreen);
+                holder.linearRating.setVisibility(View.VISIBLE);
             }
             isRcp = false;
         }
@@ -358,6 +369,10 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                             .parseInt(displayNamePmId));
 
+                    holder.linearRating.setVisibility(View.VISIBLE);
+                    holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
+                    holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+
                     displayName = ((userProfile.getPmFirstName().length() > 0 || userProfile
                             .getPmLastName().length() > 0) ? " (" + userProfile
                             .getPmFirstName() + " " + userProfile
@@ -365,6 +380,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 } else {
                     displayName = " (" + arrayListDbEmailIds.size() + "RC)";
+                    holder.linearRating.setVisibility(View.GONE);
                 }
 
                 if (StringUtils.equals(displayName, (" (" + contactDisplayName + ")"))) {
@@ -381,11 +397,13 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
 //                holder.textContactNumber.setTextColor(colorPineGreen);
                 isRcp = true;
-
+                holder.linearRating.setVisibility(View.VISIBLE);
             } else {
                 if (position == 1) {
+                    holder.linearRating.setVisibility(View.VISIBLE);
                     holder.relativeRowAllContact.setTag("0");
                 } else {
+                    holder.linearRating.setVisibility(View.GONE);
                     holder.relativeRowAllContact.setTag("-1");
                 }
                 displayEmailId = profileData.getOperation().get(0).getPbEmailId().get(0)
@@ -456,12 +474,18 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         TextView textContactName;
         @BindView(R.id.text_cloud_contact_name)
         TextView textCloudContactName;
+        @BindView(R.id.text_rating_user_count)
+        TextView textRatingUserCount;
+        @BindView(R.id.rating_user)
+        RatingBar ratingUser;
         @BindView(R.id.text_contact_number)
         public TextView textContactNumber;
         @BindView(R.id.divider_all_contact)
         View dividerAllContact;
         @BindView(R.id.relative_row_all_contact)
         RelativeLayout relativeRowAllContact;
+        @BindView(R.id.linear_rating)
+        LinearLayout linearRating;
 
         AllContactViewHolder(View itemView) {
             super(itemView);
@@ -470,11 +494,14 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             textContactName.setTypeface(Utils.typefaceSemiBold(context));
             textCloudContactName.setTypeface(Utils.typefaceSemiBold(context));
             textContactNumber.setTypeface(Utils.typefaceRegular(context));
+            textRatingUserCount.setTypeface(Utils.typefaceRegular(context));
 
             textContactName.setTextColor(colorBlack);
             textContactNumber.setTextColor(colorBlack);
 
             textCloudContactName.setTextColor(colorPineGreen);
+
+//            textRatingUserCount.setText("0");
 
         }
     }
