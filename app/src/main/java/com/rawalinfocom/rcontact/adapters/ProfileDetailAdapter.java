@@ -249,7 +249,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     private void displayImAccount(ProfileDetailViewHolder holder, int position) {
         ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount) arrayList.get
                 (position);
-        holder.textMain.setText(imAccount.getIMAccountDetails());
+        holder.textMain.setText(imAccount.getIMAccountProtocol());
         holder.textSub.setText(imAccount.getIMAccountType());
 
         holder.textSub.setVisibility(View.GONE);
@@ -277,6 +277,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textMain.setText(convertedDate);
         holder.textSub.setText(event.getEventType());
         holder.textSub.setVisibility(View.VISIBLE);
+
+        if (event.getEventRcType() == context.getResources().getInteger(R.integer
+                .rcp_type_cloud_phone_book)) {
+            holder.textMain.setTextColor(colorPineGreen);
+        } else {
+            holder.textMain.setTextColor(colorBlack);
+        }
     }
 
     private void displayGender(ProfileDetailViewHolder holder, int position) {
@@ -292,10 +299,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         return arrayList.size();
     }
 
-    class ProfileDetailViewHolder extends RecyclerView.ViewHolder {
+    public class ProfileDetailViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.text_main)
-        TextView textMain;
+        public TextView textMain;
         @BindView(R.id.text_sub)
         TextView textSub;
         @BindView(R.id.image_view)

@@ -11,6 +11,9 @@ public class WsConstants {
     // Monal
     public static final String WS_ROOT = "http://10.0.21.123:8080/api/v1/";
 
+    // Satyam bhai
+//    public static final String WS_ROOT = "http://10.0.21.115:8080/api/v1/";
+
     // Pooja
 //    public static final String WS_ROOT = "http://10.0.21.124:8080/api/v1/";
 

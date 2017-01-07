@@ -118,7 +118,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     AllContactListAdapter allContactListAdapter;
 
-    UserProfile meProfile;
+//    UserProfile meProfile;
 
     //<editor-fold desc="Constructors">
     public AllContactsFragment() {
@@ -142,25 +142,14 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         arrayListContactHeaders.add(" ");
 
-        meProfile = ((BaseActivity) getActivity()).getUserProfile();
+//        meProfile = ((BaseActivity) getActivity()).getUserProfile();
 
         arrayListPhoneBookContacts.add("My Profile");
+
         ProfileData myProfileData = new ProfileData();
-
         ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
-        ProfileDataOperation myOperation = new ProfileDataOperation();
-        myOperation.setPbNameFirst(meProfile.getPmFirstName());
-        myOperation.setPbNameLast(meProfile.getPmLastName());
-
-        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
-        ProfileDataOperationPhoneNumber myNumber = new ProfileDataOperationPhoneNumber();
-        myNumber.setPhoneNumber(meProfile.getMobileNumber());
-        arrayListPhoneNumber.add(myNumber);
-        myOperation.setPbPhoneNumber(arrayListPhoneNumber);
-
-        ArrayList<ProfileDataOperationEmail> arrayListEmail = new ArrayList<>();
-        myOperation.setPbEmailId(arrayListEmail);
-
+        ProfileDataOperation myOperation = (ProfileDataOperation) Utils.getObjectPreference
+                (getActivity(), AppConstants.PREF_REGS_USER_OBJECT, ProfileDataOperation.class);
         arrayListOperation.add(myOperation);
         myProfileData.setOperation(arrayListOperation);
         arrayListPhoneBookContacts.add(myProfileData);
@@ -480,8 +469,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                                     profileData.get(j).getVerifiedEmailAddress())) {
                                 profileEmailMapping.setEpmCloudEmId(profileData.get(j)
                                         .getEmCloudId());
-                                profileEmailMapping.setEpmCloudPmId(profileData.get(j)
-                                        .getRcpPmId());
+                                profileEmailMapping.setEpmCloudPmId(profileData.get(j).getRcpPmId
+                                        ());
                                 profileEmailMapping.setEpmIsRcp("1");
                             }
                         }
@@ -568,13 +557,13 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedEmailAddress(),
                             email.getEmEmailAddress())) {
-                        email.setEmIsVerified("1");
-                        email.setEmEmailPrivacy(String.valueOf(getActivity().getResources()
+                        email.setEmIsPrimary(String.valueOf(getActivity().getResources()
                                 .getInteger(R.integer.rcp_type_primary)));
+                        email.setEmIsVerified("1");
                     } else {
-                        email.setEmIsVerified("0");
-                        email.setEmEmailPrivacy(String.valueOf(getActivity().getResources()
+                        email.setEmIsPrimary(String.valueOf(getActivity().getResources()
                                 .getInteger(R.integer.rcp_type_secondary)));
+                        email.setEmIsVerified("0");
                     }
 
                     arrayListEmail.add(email);

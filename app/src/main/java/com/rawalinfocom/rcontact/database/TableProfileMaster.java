@@ -123,7 +123,6 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_IS_FAVOURITE_PRIVACY, userProfile.getPmIsFavouritePrivacy());
         values.put(COLUMN_PM_ACCESS_TOKEN, userProfile.getPmAccessToken());
         values.put(COLUMN_PM_NOSQL_MASTER_ID, userProfile.getPmNosqlMasterId());
-        values.put(COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE, userProfile.getPmSignupSocialMediaType());
 
         // Inserting Row
         db.insert(TABLE_RC_PROFILE_MASTER, null, values);
@@ -414,8 +413,8 @@ public class TableProfileMaster {
                 "profile.pm_nick_name_privacy,profile.pm_notes,profile.pm_notes_privacy,profile" +
                 ".pm_gender,profile.pm_gender_privacy,profile.pm_is_favourite,profile" +
                 ".pm_is_favourite_privacy, profile.pm_profile_rating, profile" +
-                ".pm_profile_rate_user from rc_profile_master profile where profile.pm_rcp_id = "
-                + rcpId;
+                ".pm_profile_rate_user from rc_profile_master profile where profile.pm_rcp_id IN ("
+                + rcpId + ")";
 
         Cursor cursor = db.rawQuery(profileDetailQuery, null);
 
@@ -448,8 +447,8 @@ public class TableProfileMaster {
 
         //<editor-fold desc="Phone Number">
         String mobileNumberQuery = "select mobile.mnm_mobile_number,mobile.mnm_number_type,mobile" +
-                ".mnm_is_primary,mobile.mnm_number_privacy from " +
-                "rc_mobile_number_master mobile where mobile.rc_profile_master_pm_id = " + rcpId;
+                ".mnm_is_primary,mobile.mnm_number_privacy from rc_mobile_number_master mobile " +
+                "where mobile.rc_profile_master_pm_id IN (" + rcpId + ")";
 
         Cursor mobileNumberCursor = db.rawQuery(mobileNumberQuery, null);
 
@@ -464,7 +463,7 @@ public class TableProfileMaster {
                 phoneNumber.setPhoneType(StringUtils.defaultString(mobileNumberCursor.getString
                         (1)));
                 phoneNumber.setPbRcpType(Integer.parseInt(StringUtils.defaultString
-                        (mobileNumberCursor.getString(2), "0")));
+                        (mobileNumberCursor.getString(2), "1")));
                 phoneNumber.setPhonePublic(Integer.parseInt(StringUtils.defaultString
                         (mobileNumberCursor.getString(3), "0")));
                 arrayListPhoneNumber.add(phoneNumber);
@@ -476,8 +475,8 @@ public class TableProfileMaster {
 
         //<editor-fold desc="EmailId">
         String emailIdQuery = "select email.em_email_address,email.em_email_type,email" +
-                ".em_email_privacy,email.em_is_verified from " +
-                "rc_email_master email where email.rc_profile_master_pm_id = " + rcpId;
+                ".em_email_privacy,email.em_is_primary ,email.em_is_verified from " +
+                "rc_email_master email where email.rc_profile_master_pm_id IN (" + rcpId + ")";
 
         Cursor emailIdCursor = db.rawQuery(emailIdQuery, null);
 
@@ -492,7 +491,7 @@ public class TableProfileMaster {
                 email.setEmPublic(Integer.parseInt(StringUtils.defaultString(emailIdCursor
                         .getString(2), "0")));
                 email.setEmRcpType(Integer.parseInt(StringUtils.defaultString(emailIdCursor
-                        .getString(3), "0")));
+                        .getString(3), "1")));
                 arrayListEmail.add(email);
             } while (emailIdCursor.moveToNext());
             emailIdCursor.close();
@@ -502,7 +501,7 @@ public class TableProfileMaster {
 
         // <editor-fold desc="Organization">
         String organizationQuery = "select org.om_organization_title, org.om_job_description from" +
-                " rc_organization_master org where org.rc_profile_master_pm_id = " + rcpId;
+                " rc_organization_master org where org.rc_profile_master_pm_id IN (" + rcpId + ")";
 
         Cursor organizationCursor = db.rawQuery(organizationQuery, null);
 
@@ -528,7 +527,7 @@ public class TableProfileMaster {
         // <editor-fold desc="Event">
         String eventQuery = "select event.evm_start_date,event.evm_event_type,event" +
                 ".evm_event_privacy from rc_event_master event where event" +
-                ".rc_profile_master_pm_id = " + rcpId;
+                ".rc_profile_master_pm_id IN (" + rcpId + ")";
 
         Cursor eventCursor = db.rawQuery(eventQuery, null);
 
@@ -552,7 +551,7 @@ public class TableProfileMaster {
 
         // <editor-fold desc="Im Account">
         String imAccountQuery = "select im.im_im_type, im.im_im_protocol, im.im_im_privacy from " +
-                "rc_im_master im where im.rc_profile_master_pm_id = " + rcpId;
+                "rc_im_master im where im.rc_profile_master_pm_id IN (" + rcpId + ")";
 
         Cursor imAccountCursor = db.rawQuery(imAccountQuery, null);
 
@@ -579,7 +578,7 @@ public class TableProfileMaster {
         // <editor-fold desc="Address">
         String addressQuery = "select address.am_formatted_address, address.am_address_type, " +
                 "address.am_address_privacy from rc_address_master address where address" +
-                ".rc_profile_master_pm_id = " + rcpId;
+                ".rc_profile_master_pm_id IN (" + rcpId + ")";
 
         Cursor addressCursor = db.rawQuery(addressQuery, null);
 
@@ -602,7 +601,7 @@ public class TableProfileMaster {
 
         // <editor-fold desc="Website">
         String websiteQuery = "select website.wm_website_url from rc_website_master website where" +
-                " website.rc_profile_master_pm_id = " + rcpId;
+                " website.rc_profile_master_pm_id IN (" + rcpId + ")";
 
         Cursor websiteCursor = db.rawQuery(websiteQuery, null);
 

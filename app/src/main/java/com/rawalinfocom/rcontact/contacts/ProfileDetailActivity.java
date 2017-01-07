@@ -3,13 +3,21 @@ package com.rawalinfocom.rcontact.contacts;
 import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -31,6 +39,7 @@ import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
@@ -176,6 +185,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     PhoneBookContacts phoneBookContacts;
     int listClickedPosition = -1;
+
+    ProfileDetailAdapter phoneDetailAdapter;
+    MaterialDialog callConfirmationDialog;
 
     //<editor-fold desc="Override Methods">
 
@@ -370,10 +382,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
             // RC Profile
 //            getProfileDetail();
-            TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-            ProfileDataOperation profileDataOperation = tableProfileMaster.getRcProfileDetail
-                    (this, pmId);
-            setUpView(profileDataOperation);
+            if (displayOwnProfile) {
+                ProfileDataOperation profileDataOperation = (ProfileDataOperation) Utils
+                        .getObjectPreference(this, AppConstants.PREF_REGS_USER_OBJECT,
+                                ProfileDataOperation.class);
+                setUpView(profileDataOperation);
+            } else {
+                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                ProfileDataOperation profileDataOperation = tableProfileMaster.getRcProfileDetail
+                        (this, pmId);
+                setUpView(profileDataOperation);
+            }
         } else {
             // Non-RC Profile
             textJoiningDate.setVisibility(View.GONE);
@@ -406,6 +425,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (isHideFavourite) {
             imageRightLeft.setVisibility(View.GONE);
         }
+
+        initSwipe();
 
     }
 
@@ -589,7 +610,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             tempPhoneNumber.addAll(arrayListPhoneBookNumber);
 
             linearPhone.setVisibility(View.VISIBLE);
-            ProfileDetailAdapter phoneDetailAdapter = new ProfileDetailAdapter(this,
+            phoneDetailAdapter = new ProfileDetailAdapter(this,
                     tempPhoneNumber, AppConstants.PHONE_NUMBER);
             recyclerViewContactNumber.setAdapter(phoneDetailAdapter);
         } else {
@@ -802,7 +823,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imAccount.setIMRcpType(getResources().getInteger(R.integer
                         .rcp_type_local_phone_book));
 
-                if (!arrayListCloudImAccount.contains(imAccount.getIMAccountDetails())) {
+                if (!arrayListCloudImAccount.contains(imAccount.getIMAccountProtocol())) {
                     arrayListPhoneBookImAccount.add(imAccount);
                 }
 
@@ -889,7 +910,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
         //</editor-fold>
 
-//        linearGender.setVisibility(View.GONE);
+        linearGender.setVisibility(View.GONE);
 
         if (Utils.isArraylistNullOrEmpty(arrayListEvent) && Utils.isArraylistNullOrEmpty
                 (arrayListPhoneBookEvent)
@@ -945,6 +966,131 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         recyclerViewDialogList.setAdapter(adapter);
 
         dialog.show();
+    }
+
+    private void initSwipe() {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
+                .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                String actionNumber = StringUtils.defaultString(((ProfileDetailAdapter
+                        .ProfileDetailViewHolder) viewHolder).textMain.getText()
+                        .toString());
+                if (direction == ItemTouchHelper.LEFT) {
+                    /* SMS */
+                    Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                    smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                    smsIntent.setType("vnd.android-dir/mms-sms");
+                  /*  smsIntent.setData(Uri.parse("sms:" + ((ProfileData)
+                            arrayListPhoneBookContacts.get(position)).getOperation().get(0)
+                            .getPbPhoneNumber().get(0).getPhoneNumber()));*/
+                    smsIntent.setData(Uri.parse("sms:" + actionNumber));
+                    startActivity(smsIntent);
+
+                } else {
+                    showCallConfirmationDialog(actionNumber);
+                }
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (phoneDetailAdapter != null) {
+                            phoneDetailAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }, 1500);
+            }
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder
+                    viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                Bitmap icon;
+                Paint p = new Paint();
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+                    View itemView = viewHolder.itemView;
+                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                    float width = height / 3;
+
+                    if (dX > 0) {
+                        p.setColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color
+                                .darkModerateLimeGreen));
+                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView
+                                .getTop(), dX, (float) itemView.getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable
+                                .ic_action_call);
+                        RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
+                                itemView.getTop() + width, (float) itemView.getLeft() + 2 *
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    } else {
+                        p.setColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color
+                                .brightOrange));
+                        RectF background = new RectF((float) itemView.getRight() + dX, (float)
+                                itemView.getTop(), (float) itemView.getRight(), (float) itemView
+                                .getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable
+                                .ic_action_sms);
+                        RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width,
+                                (float) itemView.getTop() + width, (float) itemView.getRight() -
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState,
+                        isCurrentlyActive);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerViewContactNumber);
+    }
+
+    private void showCallConfirmationDialog(final String number) {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        callConfirmationDialog.dismissDialog();
+                        break;
+
+                    case R.id.rippleRight:
+                        callConfirmationDialog.dismissDialog();
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                                number));
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        callConfirmationDialog = new MaterialDialog(this, cancelListener);
+        callConfirmationDialog.setTitleVisibility(View.GONE);
+        callConfirmationDialog.setLeftButtonText("Cancel");
+        callConfirmationDialog.setRightButtonText("Call");
+        callConfirmationDialog.setDialogBody("Call " + number + "?");
+
+        callConfirmationDialog.showDialog();
+
     }
 
     public RelativeLayout getRelativeRootProfileDetail() {
