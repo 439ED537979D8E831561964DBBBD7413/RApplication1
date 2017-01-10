@@ -23,15 +23,15 @@ public class TableEventMaster {
     }
 
     // Table Names
-    private static final String TABLE_RC_EVENT_MASTER = "rc_event_master";
+    static final String TABLE_RC_EVENT_MASTER = "rc_event_master";
 
     // Column Names
     private static final String COLUMN_EVM_ID = "evm_id";
-    private static final String COLUMN_EVM_START_DATE = "evm_start_date";
-    private static final String COLUMN_EVM_EVENT_TYPE = "evm_event_type";
+    static final String COLUMN_EVM_START_DATE = "evm_start_date";
+    static final String COLUMN_EVM_EVENT_TYPE = "evm_event_type";
     private static final String COLUMN_EVM_CUSTOM_TYPE = "evm_custom_type";
-    private static final String COLUMN_EVM_EVENT_PRIVACY = "evm_event_privacy";
-    private static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
+    static final String COLUMN_EVM_EVENT_PRIVACY = "evm_event_privacy";
+    static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
 
     // Table Create Statements
@@ -60,6 +60,27 @@ public class TableEventMaster {
         // Inserting Row
         db.insert(TABLE_RC_EVENT_MASTER, null, values);
         // insertWithOnConflict
+        db.close(); // Closing database connection
+    }
+
+    // Adding array Event
+    public void addArrayEvent(ArrayList<Event> arrayListEvent) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+//        ContentValues values = new ContentValues();
+        for (int i = 0; i < arrayListEvent.size(); i++) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_EVM_ID, arrayListEvent.get(i).getEvmId());
+            values.put(COLUMN_EVM_START_DATE, arrayListEvent.get(i).getEvmStartDate());
+            values.put(COLUMN_EVM_EVENT_TYPE, arrayListEvent.get(i).getEvmEventType());
+            values.put(COLUMN_EVM_CUSTOM_TYPE, arrayListEvent.get(i).getEvmCustomType());
+            values.put(COLUMN_EVM_EVENT_PRIVACY, arrayListEvent.get(i).getEvmEventPrivacy());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListEvent.get(i)
+                    .getRcProfileMasterPmId());
+
+            // Inserting Row
+            db.insert(TABLE_RC_EVENT_MASTER, null, values);
+        }
         db.close(); // Closing database connection
     }
 

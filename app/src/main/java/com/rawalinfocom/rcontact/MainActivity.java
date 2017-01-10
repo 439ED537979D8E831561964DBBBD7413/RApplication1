@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -32,6 +33,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     @BindView(R.id.relative_root_contacts_main)
     RelativeLayout relativeRootContactsMain;
     Toolbar toolbar;
+    TextView textImageNotification;
     FloatingActionButton fab;
     DrawerLayout drawer;
     NavigationView navigationView;
@@ -49,7 +51,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         setContentView(R.layout.activity_contacts_main);
         ButterKnife.bind(this);
 
-        // TODO uncomment code
         if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()
                 .getInteger(R.integer.launch_mobile_registration)) == getResources().getInteger(R
                 .integer.launch_mobile_registration)) {
@@ -120,6 +121,10 @@ public class MainActivity extends BaseActivity implements NavigationView
     //<editor-fold desc="Private Methods">
 
     private void init() {
+
+        textImageNotification = (TextView) toolbar.findViewById(R.id.text_image_notification);
+        textImageNotification.setTypeface(Utils.typefaceIcons(this));
+        textImageNotification.setText("U+e966");
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

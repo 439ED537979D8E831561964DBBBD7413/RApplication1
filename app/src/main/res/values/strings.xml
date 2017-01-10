@@ -40,6 +40,7 @@
     <string name="title_profile_registration">Profile Registration</string>
     <string name="msg_try_later">There is some error! Please try again later.</string>
     <string name="title_activity_contacts_main">ContactsMainActivity</string>
+    <string name="title_my_profile">My Profile</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -47,4 +48,6 @@
     <string name="action_settings">Settings</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_all_organizations">All Organizations</string>
+    <string name="action_close">Close</string>
 </resources>

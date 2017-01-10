@@ -78,9 +78,9 @@ public class WebServicePost {
                 urlConnection.setRequestProperty("Content-Type", "application/json");
                 urlConnection.setRequestProperty("Accept", "application/json");
                 if (setHeader) {
-                    urlConnection.addRequestProperty("pm_id", Utils.getStringPreference(context,
+                    urlConnection.addRequestProperty("pm-id", Utils.getStringPreference(context,
                             AppConstants.PREF_USER_PM_ID, "0"));
-                    urlConnection.addRequestProperty("access_token", Utils.getStringPreference
+                    urlConnection.addRequestProperty("access-token", Utils.getStringPreference
                             (context, AppConstants.PREF_ACCESS_TOKEN, ""));
                 }
                 urlConnection.connect();

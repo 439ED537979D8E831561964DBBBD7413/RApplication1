@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/relative_row_all_contact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/activity_half_horizontal_margin">
@@ -9,14 +10,38 @@
         android:id="@+id/image_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:contentDescription="@string/str_content_description"
         android:src="@mipmap/ic_launcher"/>
 
+    <ImageView
+        android:id="@+id/image_social_media"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:contentDescription="@string/str_content_description"
+        android:src="@drawable/ic_arrow_bottom"/>
+
+
+    <View
+        android:id="@+id/divider_all_contact"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/image_profile"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_half_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_half_horizontal_margin"
+        android:background="@color/colorVeryLightGray"/>
+
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/image_profile"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/image_profile"
+        android:layout_toRightOf="@+id/image_profile"
         android:orientation="vertical">
 
         <LinearLayout
@@ -44,17 +69,31 @@
             android:layout_height="wrap_content"
             tools:text="+911234567890"/>
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/linear_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:orientation="horizontal">
 
-    <View
-        android:id="@+id/divider_all_contact"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/image_profile"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_half_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_half_horizontal_margin"
-        android:background="@color/colorVeryLightGray"/>
+            <TextView
+                android:id="@+id/text_rating_user_count"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="2dp"
+                tools:text="2008"/>
+
+            <RatingBar
+                android:id="@+id/rating_user"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isIndicator="true"
+                tools:rating="4"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

@@ -9,7 +9,10 @@ package com.rawalinfocom.rcontact.constants;
 public class WsConstants {
 
     // Monal
-    public static final String WS_ROOT = "http://10.0.21.123:8080/api/v1/";
+    public static final String WS_ROOT = "http://10.0.21.123/api/v1/";
+
+    // Satyam bhai
+//    public static final String WS_ROOT = "http://10.0.21.115:8080/api/v1/";
 
     // Pooja
 //    public static final String WS_ROOT = "http://10.0.21.124:8080/api/v1/";
@@ -29,6 +32,8 @@ public class WsConstants {
     public static final String REQ_PROFILE_REGISTRATION = "profile_registration";
     public static final String REQ_UPLOAD_IMAGE = "upload-image";
     public static final String REQ_UPLOAD_CONTACTS = "uploadContacts";
+    public static final String REQ_GET_PROFILE_DETAIL = "get-profile-detail";
+    public static final String REQ_MARK_AS_FAVOURITE = "mark-as-favourite";
 
 
 }

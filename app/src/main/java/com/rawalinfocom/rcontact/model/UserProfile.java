@@ -43,6 +43,8 @@ public class UserProfile implements Serializable {
 
     private String emailId;
     private String mobileNumber;
+    private String profileRating;
+    private String totalProfileRateUser;
 
 
     @JsonProperty("first_name")
@@ -90,8 +92,44 @@ public class UserProfile implements Serializable {
         this.isAlreadyVerified = isAlreadyVerified;
     }
 
+    @JsonProperty("mobile_number")
+    public String getMobileNumber() {
+        return StringUtils.defaultString(mobileNumber);
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    @JsonProperty("profile_image")
+    public String getPmProfileImage() {
+        return StringUtils.defaultString(pmProfileImage);
+    }
+
+    public void setPmProfileImage(String pmProfileImage) {
+        this.pmProfileImage = pmProfileImage;
+    }
+
+    @JsonProperty("profile_rating")
+    public String getProfileRating() {
+        return StringUtils.defaultString(profileRating, "0");
+    }
+
+    public void setProfileRating(String profileRating) {
+        this.profileRating = profileRating;
+    }
+
+    @JsonProperty("total_profile_rate_user")
+    public String getTotalProfileRateUser() {
+        return StringUtils.defaultString(totalProfileRateUser, "0");
+    }
+
+    public void setTotalProfileRateUser(String totalProfileRateUser) {
+        this.totalProfileRateUser = totalProfileRateUser;
+    }
+
     public String getPmMiddleName() {
-        return pmMiddleName;
+        return StringUtils.defaultString(pmMiddleName);
     }
 
     public void setPmMiddleName(String pmMiddleName) {
@@ -99,7 +137,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmRawId() {
-        return pmRawId;
+        return StringUtils.defaultString(pmRawId);
     }
 
     public void setPmRawId(String pmRawId) {
@@ -107,7 +145,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmPrefix() {
-        return pmPrefix;
+        return StringUtils.defaultString(pmPrefix);
     }
 
     public void setPmPrefix(String pmPrefix) {
@@ -115,7 +153,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmSuffix() {
-        return pmSuffix;
+        return StringUtils.defaultString(pmSuffix);
     }
 
     public void setPmSuffix(String pmSuffix) {
@@ -123,7 +161,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmNickName() {
-        return pmNickName;
+        return StringUtils.defaultString(pmNickName);
     }
 
     public void setPmNickName(String pmNickName) {
@@ -131,7 +169,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmPhoneticFirstName() {
-        return pmPhoneticFirstName;
+        return StringUtils.defaultString(pmPhoneticFirstName);
     }
 
     public void setPmPhoneticFirstName(String pmPhoneticFirstName) {
@@ -139,7 +177,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmPhoneticMiddleName() {
-        return pmPhoneticMiddleName;
+        return StringUtils.defaultString(pmPhoneticMiddleName);
     }
 
     public void setPmPhoneticMiddleName(String pmPhoneticMiddleName) {
@@ -147,19 +185,11 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmPhoneticLastName() {
-        return pmPhoneticLastName;
+        return StringUtils.defaultString(pmPhoneticLastName);
     }
 
     public void setPmPhoneticLastName(String pmPhoneticLastName) {
         this.pmPhoneticLastName = pmPhoneticLastName;
-    }
-
-    public String getPmProfileImage() {
-        return pmProfileImage;
-    }
-
-    public void setPmProfileImage(String pmProfileImage) {
-        this.pmProfileImage = pmProfileImage;
     }
 
     public String getPmRcpId() {
@@ -171,7 +201,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmNickNamePrivacy() {
-        return pmNickNamePrivacy;
+        return StringUtils.defaultString(pmNickNamePrivacy);
     }
 
     public void setPmNickNamePrivacy(String pmNickNamePrivacy) {
@@ -179,7 +209,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmNotes() {
-        return pmNotes;
+        return StringUtils.defaultString(pmNotes);
     }
 
     public void setPmNotes(String pmNotes) {
@@ -187,7 +217,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmNotesPrivacy() {
-        return pmNotesPrivacy;
+        return StringUtils.defaultString(pmNotesPrivacy);
     }
 
     public void setPmNotesPrivacy(String pmNotesPrivacy) {
@@ -195,7 +225,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmGender() {
-        return pmGender;
+        return StringUtils.defaultString(pmGender);
     }
 
     public void setPmGender(String pmGender) {
@@ -203,7 +233,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmGenderPrivacy() {
-        return pmGenderPrivacy;
+        return StringUtils.defaultString(pmGenderPrivacy);
     }
 
     public void setPmGenderPrivacy(String pmGenderPrivacy) {
@@ -211,7 +241,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmIsFavourite() {
-        return pmIsFavourite;
+        return StringUtils.defaultString(pmIsFavourite);
     }
 
     public void setPmIsFavourite(String pmIsFavourite) {
@@ -219,7 +249,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmIsFavouritePrivacy() {
-        return pmIsFavouritePrivacy;
+        return StringUtils.defaultString(pmIsFavouritePrivacy);
     }
 
     public void setPmIsFavouritePrivacy(String pmIsFavouritePrivacy) {
@@ -227,7 +257,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmAccessToken() {
-        return pmAccessToken;
+        return StringUtils.defaultString(pmAccessToken);
     }
 
     public void setPmAccessToken(String pmAccessToken) {
@@ -235,7 +265,7 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmNosqlMasterId() {
-        return pmNosqlMasterId;
+        return StringUtils.defaultString(pmNosqlMasterId);
     }
 
     public void setPmNosqlMasterId(String pmNosqlMasterId) {
@@ -243,18 +273,12 @@ public class UserProfile implements Serializable {
     }
 
     public String getPmSignupSocialMediaType() {
-        return pmSignupSocialMediaType;
+        return StringUtils.defaultString(pmSignupSocialMediaType);
     }
 
     public void setPmSignupSocialMediaType(String pmSignupSocialMediaType) {
         this.pmSignupSocialMediaType = pmSignupSocialMediaType;
     }
 
-    public String getMobileNumber() {
-        return StringUtils.defaultString(mobileNumber);
-    }
 
-    public void setMobileNumber(String mobileNumber) {
-        this.mobileNumber = mobileNumber;
-    }
 }

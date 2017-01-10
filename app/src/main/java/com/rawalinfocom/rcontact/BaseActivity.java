@@ -8,10 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.UserProfile;
 
 public class BaseActivity extends AppCompatActivity {
 
     public DatabaseHandler databaseHandler;
+    public UserProfile userProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,11 @@ public class BaseActivity extends AppCompatActivity {
 
     public String getUserPmId() {
         return Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0");
+    }
+
+    public UserProfile getUserProfile() {
+        return (UserProfile) Utils.getObjectPreference(this, AppConstants.PREF_REGS_USER_OBJECT,
+                UserProfile.class);
     }
 
 

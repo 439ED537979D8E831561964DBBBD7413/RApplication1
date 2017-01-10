@@ -25,7 +25,7 @@ android {
         applicationId "com.rawalinfocom.rcontact"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 1
+        versionCode 3
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -90,15 +90,15 @@ dependencies {
     compile "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
     apt "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
 
-    debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
 
     compile project(path: ':linkedin-sdk')
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'com.facebook.android:facebook-android-sdk:4.17.0'
-    compile 'com.android.support:support-v4:25.0.1'
+    compile 'com.android.support:support-v4:25.1.0'
     testCompile 'junit:junit:4.12'
+    debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
