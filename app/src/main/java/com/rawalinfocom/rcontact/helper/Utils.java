@@ -16,6 +16,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -422,6 +424,28 @@ public class Utils {
         /* remove special characters from number */
         return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
                 "[\\D]", "");
+    }
+
+    public static boolean isLastItemDisplaying(RecyclerView recyclerView) {
+        if (recyclerView.getAdapter().getItemCount() != 0) {
+            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
+                    .findLastVisibleItemPosition();
+            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition ==
+                    recyclerView.getAdapter().getItemCount() - 1)
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean isFirstItemDisplaying(RecyclerView recyclerView) {
+        if (recyclerView.getAdapter().getItemCount() != 0) {
+            int firstVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
+                    .findFirstVisibleItemPosition();
+            if (firstVisibleItemPosition != RecyclerView.NO_POSITION && firstVisibleItemPosition
+                    == 0)
+                return true;
+        }
+        return false;
     }
 
 }

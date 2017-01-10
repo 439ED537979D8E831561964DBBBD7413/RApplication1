@@ -112,7 +112,7 @@ public class UserProfile implements Serializable {
 
     @JsonProperty("profile_rating")
     public String getProfileRating() {
-        return StringUtils.defaultString(profileRating);
+        return StringUtils.defaultString(profileRating, "0");
     }
 
     public void setProfileRating(String profileRating) {
@@ -121,7 +121,7 @@ public class UserProfile implements Serializable {
 
     @JsonProperty("total_profile_rate_user")
     public String getTotalProfileRateUser() {
-        return StringUtils.defaultString(totalProfileRateUser);
+        return StringUtils.defaultString(totalProfileRateUser, "0");
     }
 
     public void setTotalProfileRateUser(String totalProfileRateUser) {

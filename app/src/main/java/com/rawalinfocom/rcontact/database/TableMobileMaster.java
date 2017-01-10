@@ -23,22 +23,22 @@ public class TableMobileMaster {
     }
 
     // Table Names
-    private static final String TABLE_RC_MOBILE_NUMBER_MASTER = "rc_mobile_number_master";
+    static final String TABLE_RC_MOBILE_NUMBER_MASTER = "rc_mobile_number_master";
 
     // Column Names
     private static final String COLUMN_MNM_ID = "mnm_id";
     private static final String COLUMN_MNM_CLOUD_ID = "mnm_cloud_id";
-    private static final String COLUMN_MNM_MOBILE_NUMBER = "mnm_mobile_number";
-    private static final String COLUMN_MNM_NUMBER_TYPE = "mnm_number_type";
+    static final String COLUMN_MNM_MOBILE_NUMBER = "mnm_mobile_number";
+    static final String COLUMN_MNM_NUMBER_TYPE = "mnm_number_type";
     private static final String COLUMN_MNM_CUSTOM_TYPE = "mnm_custom_type";
-    private static final String COLUMN_MNM_IS_PRIMARY = "mnm_is_primary";
-    private static final String COLUMN_MNM_NUMBER_PRIVACY = "mnm_number_privacy";
+    static final String COLUMN_MNM_IS_PRIMARY = "mnm_is_primary";
+    static final String COLUMN_MNM_NUMBER_PRIVACY = "mnm_number_privacy";
     private static final String COLUMN_MNM_IS_DEFAULT = "mnm_is_default";
     private static final String COLUMN_MNM_IS_VERIFIED = "mnm_is_verified";
     private static final String COLUMN_MNM_MOBILE_SERVICE_PROVIDER = "mnm_mobile_service_provider";
     private static final String COLUMN_MNM_CIRCLE_OF_SERVICE = "mnm_circle_of_service";
     private static final String COLUMN_MNM_SPAM_COUNT = "mnm_spam_count";
-    private static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
+    static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
 
     // Table Create Statements

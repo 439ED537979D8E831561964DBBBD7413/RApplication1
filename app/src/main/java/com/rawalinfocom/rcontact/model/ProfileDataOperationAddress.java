@@ -23,6 +23,8 @@ public class ProfileDataOperationAddress {
     private String googleLatitude;
     private String formattedAddress;
 
+    private int rcpType;
+
     @JsonProperty("country")
     public String getCountry() {
         return StringUtils.defaultString(this.country);
@@ -129,5 +131,13 @@ public class ProfileDataOperationAddress {
 
     public void setFormattedAddress(String formatted_address) {
         this.formattedAddress = formatted_address;
+    }
+
+    public int getRcpType() {
+        return rcpType;
+    }
+
+    public void setRcpType(int rcpType) {
+        this.rcpType = rcpType;
     }
 }

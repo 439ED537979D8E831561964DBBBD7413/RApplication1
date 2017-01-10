@@ -3,12 +3,21 @@ package com.rawalinfocom.rcontact.contacts;
 import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -28,10 +37,13 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
@@ -52,6 +64,10 @@ import butterknife.ButterKnife;
 public class ProfileDetailActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
 
+    private final String TAG_IMAGE_EDIT = "tag_edit";
+    private final String TAG_IMAGE_FAVOURITE = "tag_favourite";
+    private final String TAG_IMAGE_UN_FAVOURITE = "tag_un_favourite";
+
     @BindView(R.id.include_toolbar)
     Toolbar includeToolbar;
     TextView textToolbarTitle;
@@ -59,9 +75,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RippleView rippleActionRightLeft;
     RippleView rippleActionRightCenter;
     RippleView rippleActionRightRight;
+    ImageView imageRightLeft;
 
-    @BindView(R.id.text_joining_date)
-    TextView textJoiningDate;
+   /* @BindView(R.id.text_joining_date)
+    TextView textJoiningDate;*/
     @BindView(R.id.image_profile)
     ImageView imageProfile;
     @BindView(R.id.text_user_rating)
@@ -164,9 +181,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Button buttonSms;
 
     String pmId, phoneBookId, contactName = "", cloudContactName = null;
-    boolean displayOwnProfile = false;
+    boolean displayOwnProfile = false, isHideFavourite = false;
 
     PhoneBookContacts phoneBookContacts;
+    int listClickedPosition = -1;
+
+    ProfileDetailAdapter phoneDetailAdapter;
+    MaterialDialog callConfirmationDialog;
 
     //<editor-fold desc="Override Methods">
 
@@ -202,6 +223,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
                 cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
             }
+
+            if (intent.hasExtra(AppConstants.EXTRA_IS_HIDE_FAVOURITE)) {
+                isHideFavourite = intent.getBooleanExtra(AppConstants.EXTRA_IS_HIDE_FAVOURITE,
+                        false);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_POSITION)) {
+                listClickedPosition = intent.getIntExtra(AppConstants.EXTRA_CONTACT_POSITION, -1);
+            }
         }
 
         if (pmId.equalsIgnoreCase(getUserPmId())) {
@@ -226,6 +256,31 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             case R.id.ripple_action_back:
                 onBackPressed();
+                break;
+
+            case R.id.ripple_action_right_left:
+                int favStatus = -1;
+                if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_FAVOURITE)) {
+                    favStatus = PhoneBookContacts.status_un_favourite;
+                    imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
+                    imageRightLeft.setTag(TAG_IMAGE_UN_FAVOURITE);
+                } else if (StringUtils.equals(imageRightLeft.getTag().toString(),
+                        TAG_IMAGE_UN_FAVOURITE)) {
+                    favStatus = PhoneBookContacts.status_favourite;
+                    imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
+                    imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);
+                }
+                int updateStatus = phoneBookContacts.setFavouriteStatus(phoneBookId, favStatus);
+                if (updateStatus != 1) {
+                    Utils.showErrorSnackBar(this, relativeRootProfileDetail, "Error while " +
+                            "updating favourite status!");
+                }
+                ArrayList<ProfileData> arrayListFavourites = new ArrayList<>();
+                ProfileData favouriteStatus = new ProfileData();
+                favouriteStatus.setLocalPhoneBookId(phoneBookId);
+                favouriteStatus.setIsFavourite(String.valueOf(favStatus));
+                arrayListFavourites.add(favouriteStatus);
+                setFavouriteStatus(arrayListFavourites);
                 break;
         }
     }
@@ -257,6 +312,24 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
             //</editor-fold>
 
+            // <editor-fold desc="REQ_MARK_AS_FAVOURITE">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_MARK_AS_FAVOURITE)) {
+                WsResponseObject favouriteStatusResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (favouriteStatusResponse != null && StringUtils.equalsIgnoreCase
+                        (favouriteStatusResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                } else {
+                    if (favouriteStatusResponse != null) {
+                        Log.e("error response", favouriteStatusResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
         } else {
 //            AppUtils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, "" + error
@@ -272,6 +345,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
+        imageRightLeft = ButterKnife.findById(includeToolbar, R.id.image_right_left);
         rippleActionRightLeft = ButterKnife.findById(includeToolbar, R.id.ripple_action_right_left);
         rippleActionRightCenter = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_center);
@@ -285,8 +359,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         recyclerViewEvent.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewSocialContact.setLayoutManager(new LinearLayoutManager(this));
 
+        recyclerViewContactNumber.setNestedScrollingEnabled(false);
+        recyclerViewEmail.setNestedScrollingEnabled(false);
+        recyclerViewWebsite.setNestedScrollingEnabled(false);
+        recyclerViewAddress.setNestedScrollingEnabled(false);
+        recyclerViewEvent.setNestedScrollingEnabled(false);
+        recyclerViewSocialContact.setNestedScrollingEnabled(false);
+
         textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
-        textJoiningDate.setTypeface(Utils.typefaceRegular(this));
+//        textJoiningDate.setTypeface(Utils.typefaceRegular(this));
         textName.setTypeface(Utils.typefaceSemiBold(this));
         textCloudName.setTypeface(Utils.typefaceSemiBold(this));
         textDesignation.setTypeface(Utils.typefaceRegular(this));
@@ -296,41 +377,93 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         rippleViewMore.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
+        rippleActionRightLeft.setOnRippleCompleteListener(this);
 
         if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
             // RC Profile
-            getProfileDetail();
+//            getProfileDetail();
+            if (displayOwnProfile) {
+                ProfileDataOperation profileDataOperation = (ProfileDataOperation) Utils
+                        .getObjectPreference(this, AppConstants.PREF_REGS_USER_OBJECT,
+                                ProfileDataOperation.class);
+                setUpView(profileDataOperation);
+            } else {
+                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                ProfileDataOperation profileDataOperation = tableProfileMaster.getRcProfileDetail
+                        (this, pmId);
+                setUpView(profileDataOperation);
+            }
         } else {
             // Non-RC Profile
-            textJoiningDate.setVisibility(View.GONE);
+//            textJoiningDate.setVisibility(View.GONE);
             setUpView(null);
         }
 
         textName.setText(contactName);
         if (StringUtils.length(cloudContactName) > 0) {
             textCloudName.setText(cloudContactName);
+            textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
         } else {
+            if (StringUtils.equalsIgnoreCase(pmId, "-1")) {
+                textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+            } else {
+                textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+            }
             textCloudName.setVisibility(View.GONE);
         }
 
         if (displayOwnProfile) {
             textToolbarTitle.setText(getString(R.string.title_my_profile));
             linearCallSms.setVisibility(View.GONE);
+            imageRightLeft.setImageResource(R.drawable.ic_action_edit);
+            imageRightLeft.setTag(TAG_IMAGE_EDIT);
         } else {
             textToolbarTitle.setText("Profile Detail");
             linearCallSms.setVisibility(View.VISIBLE);
         }
 
+        if (isHideFavourite) {
+            imageRightLeft.setVisibility(View.GONE);
+        }
+
+        initSwipe();
+
     }
 
     private void setUpView(final ProfileDataOperation profileDetail) {
 
+        //<editor-fold desc="Favourite">
+
+        if (!displayOwnProfile && !isHideFavourite) {
+
+            int isFavourite = 0;
+            Cursor contactFavouriteCursor = phoneBookContacts.getStarredStatus(phoneBookId);
+
+            if (contactFavouriteCursor != null && contactFavouriteCursor.getCount() > 0) {
+                while (contactFavouriteCursor.moveToNext()) {
+                    isFavourite = contactFavouriteCursor.getInt(contactFavouriteCursor
+                            .getColumnIndex(ContactsContract.Contacts.STARRED));
+                }
+                contactFavouriteCursor.close();
+            }
+
+            if (isFavourite == 0) {
+                imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
+                imageRightLeft.setTag(TAG_IMAGE_UN_FAVOURITE);
+            } else {
+                imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
+                imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);
+            }
+        }
+
+        //</editor-fold>
+
         //<editor-fold desc="Joining Date">
-        if (profileDetail != null) {
+       /* if (profileDetail != null) {
             String joiningDate = StringUtils.defaultString(Utils.convertDateFormat(profileDetail
                     .getJoiningDate(), "yyyy-MM-dd HH:mm:ss", "dd'th' MMM, yyyy"), "-");
             textJoiningDate.setText("Joining Date:- " + joiningDate);
-        }
+        }*/
         //</editor-fold>
 
         //<editor-fold desc="User Name">
@@ -380,6 +513,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 organization.setOrgOfficeLocation(contactOrganizationCursor.getString
                         (contactOrganizationCursor.getColumnIndex(ContactsContract
                                 .CommonDataKinds.Organization.OFFICE_LOCATION)));
+                organization.setOrgRcpType(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book));
 
                 if (!arrayListOrganization.contains(organization)) {
                     arrayListPhoneBookOrganization.add(organization);
@@ -475,7 +610,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             tempPhoneNumber.addAll(arrayListPhoneBookNumber);
 
             linearPhone.setVisibility(View.VISIBLE);
-            ProfileDetailAdapter phoneDetailAdapter = new ProfileDetailAdapter(this,
+            phoneDetailAdapter = new ProfileDetailAdapter(this,
                     tempPhoneNumber, AppConstants.PHONE_NUMBER);
             recyclerViewContactNumber.setAdapter(phoneDetailAdapter);
         } else {
@@ -552,6 +687,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 String website = contactWebsiteCursor.getString(contactWebsiteCursor
                         .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));
+                website = website + ";" + getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book);
 
                 if (!arrayListWebsite.contains(website)) {
                     arrayListPhoneBookWebsite.add(website);
@@ -622,6 +759,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 address.setAddressType(phoneBookContacts.getAddressType(contactAddressCursor,
                         contactAddressCursor.getInt(contactAddressCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.StructuredPostal.TYPE))));
+                address.setRcpType(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book));
 
                 if (!arrayListCloudAddress.contains(address.getFormattedAddress())) {
                     arrayListPhoneBookAddress.add(address);
@@ -681,7 +820,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         (contactImAccountCursor.getInt((contactImAccountCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
-                if (!arrayListCloudImAccount.contains(imAccount.getIMAccountDetails())) {
+                imAccount.setIMRcpType(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book));
+
+                if (!arrayListCloudImAccount.contains(imAccount.getIMAccountProtocol())) {
                     arrayListPhoneBookImAccount.add(imAccount);
                 }
 
@@ -743,6 +885,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         .getColumnIndex(ContactsContract.CommonDataKinds.Event
                                 .START_DATE)));
 
+                event.setEventRcType(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book));
+
                 if (!arrayListEvent.contains(event)) {
                     arrayListPhoneBookEvent.add(event);
                 }
@@ -765,9 +910,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
         //</editor-fold>
 
-//        linearGender.setVisibility(View.GONE);
+        linearGender.setVisibility(View.GONE);
 
-        if (Utils.isArraylistNullOrEmpty(arrayListEvent)
+        if (Utils.isArraylistNullOrEmpty(arrayListEvent) && Utils.isArraylistNullOrEmpty
+                (arrayListPhoneBookEvent)
 //                && Utils.isArraylistNullOrEmpty(arrayListAddress)
                 ) {
             cardOtherDetails.setVisibility(View.GONE);
@@ -822,8 +968,142 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         dialog.show();
     }
 
+    private void initSwipe() {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
+                .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                String actionNumber = StringUtils.defaultString(((ProfileDetailAdapter
+                        .ProfileDetailViewHolder) viewHolder).textMain.getText()
+                        .toString());
+                if (direction == ItemTouchHelper.LEFT) {
+                    /* SMS */
+                    Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                    smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                    smsIntent.setType("vnd.android-dir/mms-sms");
+                  /*  smsIntent.setData(Uri.parse("sms:" + ((ProfileData)
+                            arrayListPhoneBookContacts.get(position)).getOperation().get(0)
+                            .getPbPhoneNumber().get(0).getPhoneNumber()));*/
+                    smsIntent.setData(Uri.parse("sms:" + actionNumber));
+                    startActivity(smsIntent);
+
+                } else {
+                    showCallConfirmationDialog(actionNumber);
+                }
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (phoneDetailAdapter != null) {
+                            phoneDetailAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }, 1500);
+            }
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder
+                    viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                Bitmap icon;
+                Paint p = new Paint();
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+                    View itemView = viewHolder.itemView;
+                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                    float width = height / 3;
+
+                    if (dX > 0) {
+                        p.setColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color
+                                .darkModerateLimeGreen));
+                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView
+                                .getTop(), dX, (float) itemView.getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable
+                                .ic_action_call);
+                        RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
+                                itemView.getTop() + width, (float) itemView.getLeft() + 2 *
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    } else {
+                        p.setColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color
+                                .brightOrange));
+                        RectF background = new RectF((float) itemView.getRight() + dX, (float)
+                                itemView.getTop(), (float) itemView.getRight(), (float) itemView
+                                .getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable
+                                .ic_action_sms);
+                        RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width,
+                                (float) itemView.getTop() + width, (float) itemView.getRight() -
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState,
+                        isCurrentlyActive);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerViewContactNumber);
+    }
+
+    private void showCallConfirmationDialog(final String number) {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        callConfirmationDialog.dismissDialog();
+                        break;
+
+                    case R.id.rippleRight:
+                        callConfirmationDialog.dismissDialog();
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                                number));
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        callConfirmationDialog = new MaterialDialog(this, cancelListener);
+        callConfirmationDialog.setTitleVisibility(View.GONE);
+        callConfirmationDialog.setLeftButtonText("Cancel");
+        callConfirmationDialog.setRightButtonText("Call");
+        callConfirmationDialog.setDialogBody("Call " + number + "?");
+
+        callConfirmationDialog.showDialog();
+
+    }
+
     public RelativeLayout getRelativeRootProfileDetail() {
         return relativeRootProfileDetail;
+    }
+
+    public int getListClickedPosition() {
+        return listClickedPosition;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     //</editor-fold>
@@ -840,6 +1120,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     profileDetailObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_PROFILE_DETAIL, getString(R.string.msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_DETAIL);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
+                    .string.msg_no_network));
+        }
+    }
+
+    private void setFavouriteStatus(ArrayList<ProfileData> favourites) {
+
+        WsRequestObject favouriteStatusObject = new WsRequestObject();
+        favouriteStatusObject.setPmId(getUserPmId());
+        favouriteStatusObject.setFavourites(favourites);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    favouriteStatusObject, null, WsResponseObject.class, WsConstants
+                    .REQ_MARK_AS_FAVOURITE, null, true).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_MARK_AS_FAVOURITE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
                     .string.msg_no_network));

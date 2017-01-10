@@ -49,6 +49,7 @@ public class AppConstants {
 
     public static String EXTRA_OBJECT_COUNTRY = "extra_object_country";
     public static String EXTRA_PM_ID = "extra_pm_id";
+    public static String EXTRA_IS_HIDE_FAVOURITE = "extra_is_hide_favourite";
     public static String EXTRA_PHONE_BOOK_ID = "extra_phone_book_id";
     public static String EXTRA_OBJECT_USER = "extra_object_user";
     public static String EXTRA_MOBILE_NUMBER = "extra_mobile_number";
@@ -58,6 +59,7 @@ public class AppConstants {
     public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
     public static String EXTRA_CONTACT_NAME = "contact_name";
     public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
+    public static String EXTRA_CONTACT_POSITION = "contact_position";
 
     //</editor-fold>
 

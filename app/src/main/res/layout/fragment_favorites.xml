@@ -9,7 +9,7 @@
     tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
 
     <com.rawalinfocom.rcontact.helper.ProgressWheel
-        android:id="@+id/progress_r_contact"
+        android:id="@+id/progress_favorite_contact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -24,10 +24,10 @@
     <RelativeLayout
         android:id="@+id/relative_scroller"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
-            android:id="@+id/scroller_all_contact"
+            android:id="@+id/scroller_favorite_contact"
             android:layout_width="24dp"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
@@ -42,8 +42,8 @@
             android:id="@+id/title_indicator"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/list_item_height"
-            android:layout_toLeftOf="@id/scroller_all_contact"
-            android:layout_toStartOf="@id/scroller_all_contact"
+            android:layout_toLeftOf="@id/scroller_favorite_contact"
+            android:layout_toStartOf="@id/scroller_favorite_contact"
             recyclerviewfastscroller:rfs_backgroundColor="@color/colorPrimary"
             recyclerviewfastscroller:rfs_textColor="@color/colorWhite"/>
 

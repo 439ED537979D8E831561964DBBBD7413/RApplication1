@@ -15,16 +15,16 @@ import com.rawalinfocom.rcontact.R;
 
 public class MaterialDialog {
 
-    Context context;
-    Dialog dialog;
+    private Context context;
+    private Dialog dialog;
 
-    String dialogTag;
+    private String dialogTag;
 
-    TextView tvDialogTitle, tvDialogBody;
-    Button btnLeft, btnRight;
-    RippleView.OnRippleCompleteListener onRippleCompleteListener;
+    private TextView tvDialogTitle, tvDialogBody;
+    private Button btnLeft, btnRight;
+    private RippleView.OnRippleCompleteListener onRippleCompleteListener;
 
-    RippleView rippleLeft, rippleRight;
+    private RippleView rippleLeft, rippleRight;
 
     public MaterialDialog(Context context, RippleView.OnRippleCompleteListener
             onRippleCompleteListener) {

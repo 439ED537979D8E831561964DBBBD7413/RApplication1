@@ -18,6 +18,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
@@ -27,7 +28,10 @@ import com.rawalinfocom.rcontact.adapters.RContactListAdapter;
 import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
+import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
+import com.rawalinfocom.rcontact.helper.RippleView;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
         .ColorGroupSectionTitleIndicator;
 import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical
@@ -52,6 +56,8 @@ public class RContactsFragment extends BaseFragment {
     ProgressWheel progressRContact;
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
+    @BindView(R.id.relative_scroller)
+    RelativeLayout relativeScroller;
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
     @BindView(R.id.scroller_all_contact)
@@ -68,15 +74,19 @@ public class RContactsFragment extends BaseFragment {
 
     RContactListAdapter rContactListAdapter;
 
+    MaterialDialog callConfirmationDialog;
+
+    //<editor-fold desc="Constructors">
     public RContactsFragment() {
         // Required empty public constructor
     }
 
-
     public static RContactsFragment newInstance() {
         return new RContactsFragment();
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Override Methods">
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +111,9 @@ public class RContactsFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         init();
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Private Methods">
     private void init() {
 
         // Connect the recycler to the scroller (to let the scroller scroll the list)
@@ -115,6 +127,18 @@ public class RContactsFragment extends BaseFragment {
 
         setRecyclerViewLayoutManager(recyclerViewContactList);
 //        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        recyclerViewContactList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (Utils.isLastItemDisplaying(recyclerViewContactList)) {
+                    relativeScroller.setVisibility(View.GONE);
+                } else {
+                    relativeScroller.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         initSwipe();
 
@@ -138,7 +162,11 @@ public class RContactsFragment extends BaseFragment {
             rContactListAdapter = new RContactListAdapter(getActivity(), arrayListRContact,
                     arrayListContactHeaders);
             recyclerViewContactList.setAdapter(rContactListAdapter);
+           /* Log.i("init", ((LinearLayoutManager) recyclerViewContactList.getLayoutManager())
+                    .findLastVisibleItemPosition() + "");*/
+
         }
+
     }
 
     private void initSwipe() {
@@ -169,9 +197,7 @@ public class RContactsFragment extends BaseFragment {
                     startActivity(smsIntent);
 
                 } else {
-                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                            actionNumber));
-                    startActivity(intent);
+                    showCallConfirmationDialog(actionNumber);
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -237,6 +263,17 @@ public class RContactsFragment extends BaseFragment {
         itemTouchHelper.attachToRecyclerView(recyclerViewContactList);
     }
 
+   /* private boolean isLastItemDisplaying(RecyclerView recyclerView) {
+        if (recyclerView.getAdapter().getItemCount() != 0) {
+            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
+                    .findLastVisibleItemPosition();
+            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition ==
+                    recyclerView.getAdapter().getItemCount() - 1)
+                return true;
+        }
+        return false;
+    }*/
+
     /**
      * Set RecyclerView's LayoutManager
      */
@@ -254,6 +291,38 @@ public class RContactsFragment extends BaseFragment {
 
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.scrollToPosition(scrollPosition);
+    }
+
+    private void showCallConfirmationDialog(final String number) {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        callConfirmationDialog.dismissDialog();
+                        break;
+
+                    case R.id.rippleRight:
+                        callConfirmationDialog.dismissDialog();
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                                number));
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+        callConfirmationDialog.setTitleVisibility(View.GONE);
+        callConfirmationDialog.setLeftButtonText("Cancel");
+        callConfirmationDialog.setRightButtonText("Call");
+        callConfirmationDialog.setDialogBody("Call " + number + "?");
+
+        callConfirmationDialog.showDialog();
+
     }
 
     private void fetchData() {
@@ -294,4 +363,6 @@ public class RContactsFragment extends BaseFragment {
             arrayListProfileData.add(profileData);
         }
     }
+
+    //</editor-fold>
 }

@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,7 +12,10 @@ import android.provider.ContactsContract;
 
 public class PhoneBookContacts {
 
-    Context context;
+    public static final int status_favourite = 1;
+    public static final int status_un_favourite = 0;
+
+    private Context context;
 
     public PhoneBookContacts(Context context) {
         this.context = context;
@@ -30,6 +34,21 @@ public class PhoneBookContacts {
 
         return context.getContentResolver().query(uri, projection, selection,
                 selectionArgs, null);
+    }
+
+    public Cursor getStarredContacts() {
+        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        String[] projection = new String[]{
+                ContactsContract.Contacts._ID,
+//                ContactsContract.Contacts.STARRED,
+        };
+
+        String selection = "starred = ?";
+        String[] selectionArgs = new String[]{"1"};
+        String sortOrder = "UPPER(" + ContactsContract.Contacts.DISPLAY_NAME + ") ASC";
+
+        return context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, sortOrder);
     }
 
     public Cursor getStructuredName(String contactId) {
@@ -485,5 +504,12 @@ public class PhoneBookContacts {
     }
 
     //</editor-fold>
+
+    public int setFavouriteStatus(String contactRawId, int status) throws NullPointerException {
+        ContentValues values = new ContentValues();
+        values.put(ContactsContract.Contacts.STARRED, status);
+        return context.getContentResolver().update(ContactsContract.Contacts.CONTENT_URI, values,
+                ContactsContract.Contacts._ID + "= ?", new String[]{String.valueOf(contactRawId)});
+    }
 
 }

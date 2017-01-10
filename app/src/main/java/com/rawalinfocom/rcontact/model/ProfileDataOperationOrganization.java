@@ -17,6 +17,8 @@ public class ProfileDataOperationOrganization {
     private String orgJobDescription;
     private String orgOfficeLocation;
 
+    private int orgRcpType;
+
     @JsonProperty("org_job_title")
     public String getOrgJobTitle() {
         return StringUtils.defaultString(this.orgJobTitle);
@@ -69,5 +71,13 @@ public class ProfileDataOperationOrganization {
 
     public void setOrgOfficeLocation(String orgOfficeLocation) {
         this.orgOfficeLocation = orgOfficeLocation;
+    }
+
+    public int getOrgRcpType() {
+        return orgRcpType;
+    }
+
+    public void setOrgRcpType(int orgRcpType) {
+        this.orgRcpType = orgRcpType;
     }
 }

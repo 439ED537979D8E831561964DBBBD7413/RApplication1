@@ -23,19 +23,19 @@ public class TableEmailMaster {
     }
 
     // Table Names
-    private static final String TABLE_RC_EMAIL_MASTER = "rc_email_master";
+    static final String TABLE_RC_EMAIL_MASTER = "rc_email_master";
 
     // Column Names
     private static final String COLUMN_EM_ID = "em_id";
     private static final String COLUMN_EM_CLOUD_ID = "em_cloud_id";
-    private static final String COLUMN_EM_EMAIL_ADDRESS = "em_email_address";
+    static final String COLUMN_EM_EMAIL_ADDRESS = "em_email_address";
     private static final String COLUMN_EM_EMAIL_TYPE = "em_email_type";
     private static final String COLUMN_EM_CUSTOM_TYPE = "em_custom_type";
     private static final String COLUMN_EM_IS_PRIMARY = "em_is_primary";
-    private static final String COLUMN_EM_EMAIL_PRIVACY = "em_email_privacy";
+    static final String COLUMN_EM_EMAIL_PRIVACY = "em_email_privacy";
     private static final String COLUMN_EM_IS_DEFAULT = "em_is_default";
-    private static final String COLUMN_EM_IS_VERIFIED = "em_is_verified";
-    private static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
+    static final String COLUMN_EM_IS_VERIFIED = "em_is_verified";
+    static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
 
     // Table Create Statements

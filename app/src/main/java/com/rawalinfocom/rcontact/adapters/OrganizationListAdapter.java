@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,13 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
 
         holder.textMain.setText(organization.getOrgName());
         holder.textSub.setText(organization.getOrgJobTitle());
+
+        if (organization.getOrgRcpType() == context.getResources().getInteger(R.integer
+                .rcp_type_local_phone_book)) {
+            holder.textSub.setTextColor(ContextCompat.getColor(context, R.color.colorBlack));
+        } else {
+            holder.textSub.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+        }
 
     }
 

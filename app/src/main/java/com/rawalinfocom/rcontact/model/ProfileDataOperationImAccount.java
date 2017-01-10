@@ -14,6 +14,8 @@ public class ProfileDataOperationImAccount {
     private String IMAccountProtocol;
     private String IMAccountPublic;
 
+    private int IMRcpType;
+
     @JsonProperty("im_account_type")
     public String getIMAccountType() {
         return StringUtils.defaultString(this.IMAccountType);
@@ -48,5 +50,13 @@ public class ProfileDataOperationImAccount {
 
     public void setIMAccountProtocol(String IMAccountProtocol) {
         this.IMAccountProtocol = IMAccountProtocol;
+    }
+
+    public int getIMRcpType() {
+        return IMRcpType;
+    }
+
+    public void setIMRcpType(int IMRcpType) {
+        this.IMRcpType = IMRcpType;
     }
 }

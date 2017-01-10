@@ -53,7 +53,7 @@
                 android:layout_height="@dimen/height_button"
                 android:background="@null"
                 android:minWidth="@dimen/min_width_button"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/colorAccent"
                 tools:text="Cancel"/>
 
         </com.rawalinfocom.rcontact.helper.RippleView>
@@ -75,7 +75,7 @@
                 android:layout_height="@dimen/height_button"
                 android:background="@null"
                 android:minWidth="@dimen/min_width_button"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/colorAccent"
                 tools:text="OK"/>
 
         </com.rawalinfocom.rcontact.helper.RippleView>

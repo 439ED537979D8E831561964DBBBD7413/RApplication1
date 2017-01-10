@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class ProfileData {
 
     private String localPhoneBookId;
+    private String isFavourite;
     //    private String givenName;
     private ArrayList<ProfileDataOperation> operation;
 
@@ -34,7 +35,16 @@ public class ProfileData {
         this.operation = operation;
     }
 
-   /* public String getGivenName() {
+    @JsonProperty("is_favourite")
+    public String getIsFavourite() {
+        return isFavourite;
+    }
+
+    public void setIsFavourite(String isFavourite) {
+        this.isFavourite = isFavourite;
+    }
+
+    /* public String getGivenName() {
         return givenName;
     }
 

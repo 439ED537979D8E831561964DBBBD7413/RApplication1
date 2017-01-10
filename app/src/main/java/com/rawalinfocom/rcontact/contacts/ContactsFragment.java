@@ -14,12 +14,17 @@ import android.widget.FrameLayout;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ContactsFragment extends BaseFragment {
+
+    public final int ALL_CONTACT_FRAGMENT = 0;
+    public final int R_CONTACT_FRAGMENT = 1;
+    public final int FAVOURITE_FRAGMENT = 2;
 
     @BindView(R.id.frame_container_call_tab)
     FrameLayout frameContainerCallTab;
@@ -29,6 +34,8 @@ public class ContactsFragment extends BaseFragment {
     AllContactsFragment allContactsFragment;
     RContactsFragment rContactsFragment;
     FavoritesFragment favoritesFragment;
+
+    int currentTabPosition = -1;
 
     private int defaultButtonTextColor;
 
@@ -44,6 +51,22 @@ public class ContactsFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (currentTabPosition == FAVOURITE_FRAGMENT && favoritesFragment != null) {
+            if (favoritesFragment.getAllContactListAdapter() != null) {
+                favoritesFragment.getFavouriteContacts();
+             /*   int clickedPosition = favoritesFragment.getAllContactListAdapter()
+                        .getListClickedPosition();
+                Log.i("onResume", String.valueOf(favoritesFragment.getAllContactListAdapter()
+                        .getListClickedPosition()));
+                favoritesFragment.getArrayListPhoneBookContacts().remove(clickedPosition);
+                favoritesFragment.getAllContactListAdapter().notifyItemRemoved(clickedPosition);*/
+            }
+        }
     }
 
     @Override
@@ -63,7 +86,7 @@ public class ContactsFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         init();
-        replaceFragment(allContactsFragment);
+        replaceFragment(allContactsFragment, AppConstants.TAG_FRAGMENT_ALL_CONTACTS);
     }
 
     private void init() {
@@ -78,10 +101,10 @@ public class ContactsFragment extends BaseFragment {
 
     }
 
-    private void replaceFragment(Fragment fragment) {
+    private void replaceFragment(Fragment fragment, String tag) {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.frame_container_call_tab, fragment);
+        ft.replace(R.id.frame_container_call_tab, fragment, tag);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commit();
     }
@@ -96,6 +119,7 @@ public class ContactsFragment extends BaseFragment {
         tabContact.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                currentTabPosition = tab.getPosition();
                 setCurrentTabFragment(tab.getPosition());
             }
 
@@ -113,14 +137,14 @@ public class ContactsFragment extends BaseFragment {
 
     private void setCurrentTabFragment(int tabPosition) {
         switch (tabPosition) {
-            case 0:
-                replaceFragment(allContactsFragment);
+            case ALL_CONTACT_FRAGMENT:
+                replaceFragment(allContactsFragment, AppConstants.TAG_FRAGMENT_ALL_CONTACTS);
                 break;
-            case 1:
-                replaceFragment(rContactsFragment);
+            case R_CONTACT_FRAGMENT:
+                replaceFragment(rContactsFragment, AppConstants.TAG_FRAGMENT_R_CONTACTS);
                 break;
-            case 2:
-                replaceFragment(favoritesFragment);
+            case FAVOURITE_FRAGMENT:
+                replaceFragment(favoritesFragment, AppConstants.TAG_FRAGMENT_FAVORITES);
                 break;
         }
     }

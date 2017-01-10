@@ -55,6 +55,7 @@ import com.rawalinfocom.rcontact.helper.FileUtils;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
@@ -291,12 +292,12 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                     TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
                     if (userProfileRegistered != null) {
-                        tableProfileMaster.addProfile(userProfileRegistered);
+//                        tableProfileMaster.addProfile(userProfileRegistered);
                         Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
                                 userProfileRegistered.getPmId());
                     }
 
-                    UserProfile responseUserProfile = userProfileResponse.getUserProfile();
+                   /* UserProfile responseUserProfile = userProfileResponse.getUserProfile();
                     userProfileRegistered = new UserProfile();
                     userProfileRegistered.setPmFirstName(responseUserProfile.getPmFirstName());
                     userProfileRegistered.setPmLastName(responseUserProfile.getPmLastName());
@@ -308,7 +309,31 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                             .getTotalProfileRateUser());
 
                     Utils.setObjectPreference(ProfileRegistrationActivity.this, AppConstants
-                            .PREF_REGS_USER_OBJECT, userProfileRegistered);
+                            .PREF_REGS_USER_OBJECT, userProfileRegistered);*/
+
+                    ProfileDataOperation profileDetail = userProfileResponse.getProfileDetail();
+                    Utils.setObjectPreference(ProfileRegistrationActivity.this, AppConstants
+                            .PREF_REGS_USER_OBJECT, profileDetail);
+
+                    UserProfile userProfile = new UserProfile();
+                    userProfile.setPmPrefix(profileDetail.getPbNamePrefix());
+                    userProfile.setPmFirstName(profileDetail.getPbNameFirst());
+                    userProfile.setPmMiddleName(profileDetail.getPbNameMiddle());
+                    userProfile.setPmLastName(profileDetail.getPbNameLast());
+                    userProfile.setPmSuffix(profileDetail.getPbNameSuffix());
+                    userProfile.setPmNickName(profileDetail.getPbNickname());
+                    userProfile.setPmPhoneticFirstName(profileDetail.getPbPhoneticNameFirst());
+                    userProfile.setPmPhoneticMiddleName(profileDetail.getPbPhoneticNameMiddle());
+                    userProfile.setPmPhoneticLastName(profileDetail.getPbPhoneticNameLast());
+                    userProfile.setPmRcpId(profileDetail.getRcpPmId());
+                    userProfile.setPmNotes(profileDetail.getPbNote());
+                    userProfile.setProfileRating(profileDetail.getProfileRating());
+                    userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
+                    userProfile.setPmIsFavourite(profileDetail.getIsFavourite());
+                    userProfile.setPmNosqlMasterId(profileDetail.getNoSqlMasterId());
+
+                    tableProfileMaster.addProfile(userProfile);
+
 
                     // Redirect to MainActivity
                     Intent intent = new Intent(this, MainActivity.class);
