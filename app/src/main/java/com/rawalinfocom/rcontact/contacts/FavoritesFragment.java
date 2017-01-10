@@ -20,6 +20,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
@@ -27,6 +28,7 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
         .ColorGroupSectionTitleIndicator;
 import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical
@@ -50,6 +52,8 @@ public class FavoritesFragment extends BaseFragment {
 
     @BindView(R.id.progress_favorite_contact)
     ProgressWheel progressFavoriteContact;
+    @BindView(R.id.relative_scroller)
+    RelativeLayout relativeScroller;
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
     @BindView(R.id.scroller_favorite_contact)
@@ -120,6 +124,19 @@ public class FavoritesFragment extends BaseFragment {
 
         setRecyclerViewLayoutManager(recyclerViewContactList);
 //        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        recyclerViewContactList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (Utils.isFirstItemDisplaying(recyclerViewContactList) && Utils
+                        .isLastItemDisplaying(recyclerViewContactList)) {
+                    relativeScroller.setVisibility(View.GONE);
+                } else {
+                    relativeScroller.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         initSwipe();
 

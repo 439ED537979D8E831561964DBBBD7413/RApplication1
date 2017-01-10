@@ -21,26 +21,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
-        android:id="@+id/scroller_all_contact"
-        android:layout_width="24dp"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:paddingEnd="@dimen/margin_small"
-        android:paddingRight="@dimen/margin_small"
-        recyclerviewfastscroller:rfs_barColor="@color/colorPrimaryDark"
-        recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle_rounded"/>
-
-
-    <com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble.ColorGroupSectionTitleIndicator
-        android:id="@+id/title_indicator"
+    <RelativeLayout
+        android:id="@+id/relative_scroller"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/list_item_height"
-        android:layout_toLeftOf="@id/scroller_all_contact"
-        android:layout_toStartOf="@id/scroller_all_contact"
-        recyclerviewfastscroller:rfs_backgroundColor="@color/colorPrimary"
-        recyclerviewfastscroller:rfs_textColor="@color/colorWhite"/>
+        android:layout_height="wrap_content">
+
+        <com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
+            android:id="@+id/scroller_all_contact"
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:paddingEnd="@dimen/margin_small"
+            android:paddingRight="@dimen/margin_small"
+            recyclerviewfastscroller:rfs_barColor="@color/colorPrimaryDark"
+            recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle_rounded"/>
+
+
+        <com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble.ColorGroupSectionTitleIndicator
+            android:id="@+id/title_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/list_item_height"
+            android:layout_toLeftOf="@id/scroller_all_contact"
+            android:layout_toStartOf="@id/scroller_all_contact"
+            recyclerviewfastscroller:rfs_backgroundColor="@color/colorPrimary"
+            recyclerviewfastscroller:rfs_textColor="@color/colorWhite"/>
+
+    </RelativeLayout>
 
     <include
         layout="@layout/layout_recyclerview_emptyview"

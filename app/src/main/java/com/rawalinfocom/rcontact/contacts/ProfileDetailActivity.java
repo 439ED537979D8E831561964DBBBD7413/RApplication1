@@ -77,8 +77,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RippleView rippleActionRightRight;
     ImageView imageRightLeft;
 
-    @BindView(R.id.text_joining_date)
-    TextView textJoiningDate;
+   /* @BindView(R.id.text_joining_date)
+    TextView textJoiningDate;*/
     @BindView(R.id.image_profile)
     ImageView imageProfile;
     @BindView(R.id.text_user_rating)
@@ -367,7 +367,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         recyclerViewSocialContact.setNestedScrollingEnabled(false);
 
         textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
-        textJoiningDate.setTypeface(Utils.typefaceRegular(this));
+//        textJoiningDate.setTypeface(Utils.typefaceRegular(this));
         textName.setTypeface(Utils.typefaceSemiBold(this));
         textCloudName.setTypeface(Utils.typefaceSemiBold(this));
         textDesignation.setTypeface(Utils.typefaceRegular(this));
@@ -395,7 +395,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
         } else {
             // Non-RC Profile
-            textJoiningDate.setVisibility(View.GONE);
+//            textJoiningDate.setVisibility(View.GONE);
             setUpView(null);
         }
 
@@ -459,11 +459,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         //</editor-fold>
 
         //<editor-fold desc="Joining Date">
-        if (profileDetail != null) {
+       /* if (profileDetail != null) {
             String joiningDate = StringUtils.defaultString(Utils.convertDateFormat(profileDetail
                     .getJoiningDate(), "yyyy-MM-dd HH:mm:ss", "dd'th' MMM, yyyy"), "-");
             textJoiningDate.setText("Joining Date:- " + joiningDate);
-        }
+        }*/
         //</editor-fold>
 
         //<editor-fold desc="User Name">

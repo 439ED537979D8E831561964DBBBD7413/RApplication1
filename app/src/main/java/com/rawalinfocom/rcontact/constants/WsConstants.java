@@ -9,7 +9,7 @@ package com.rawalinfocom.rcontact.constants;
 public class WsConstants {
 
     // Monal
-    public static final String WS_ROOT = "http://10.0.21.123:8080/api/v1/";
+    public static final String WS_ROOT = "http://10.0.21.123/api/v1/";
 
     // Satyam bhai
 //    public static final String WS_ROOT = "http://10.0.21.115:8080/api/v1/";

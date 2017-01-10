@@ -18,6 +18,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
@@ -30,6 +31,7 @@ import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.RippleView;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
         .ColorGroupSectionTitleIndicator;
 import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical
@@ -54,6 +56,8 @@ public class RContactsFragment extends BaseFragment {
     ProgressWheel progressRContact;
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
+    @BindView(R.id.relative_scroller)
+    RelativeLayout relativeScroller;
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
     @BindView(R.id.scroller_all_contact)
@@ -124,6 +128,18 @@ public class RContactsFragment extends BaseFragment {
         setRecyclerViewLayoutManager(recyclerViewContactList);
 //        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        recyclerViewContactList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (Utils.isLastItemDisplaying(recyclerViewContactList)) {
+                    relativeScroller.setVisibility(View.GONE);
+                } else {
+                    relativeScroller.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         initSwipe();
 
         progressRContact.setVisibility(View.GONE);
@@ -146,7 +162,11 @@ public class RContactsFragment extends BaseFragment {
             rContactListAdapter = new RContactListAdapter(getActivity(), arrayListRContact,
                     arrayListContactHeaders);
             recyclerViewContactList.setAdapter(rContactListAdapter);
+           /* Log.i("init", ((LinearLayoutManager) recyclerViewContactList.getLayoutManager())
+                    .findLastVisibleItemPosition() + "");*/
+
         }
+
     }
 
     private void initSwipe() {
@@ -243,6 +263,17 @@ public class RContactsFragment extends BaseFragment {
         itemTouchHelper.attachToRecyclerView(recyclerViewContactList);
     }
 
+   /* private boolean isLastItemDisplaying(RecyclerView recyclerView) {
+        if (recyclerView.getAdapter().getItemCount() != 0) {
+            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
+                    .findLastVisibleItemPosition();
+            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition ==
+                    recyclerView.getAdapter().getItemCount() - 1)
+                return true;
+        }
+        return false;
+    }*/
+
     /**
      * Set RecyclerView's LayoutManager
      */
@@ -332,5 +363,6 @@ public class RContactsFragment extends BaseFragment {
             arrayListProfileData.add(profileData);
         }
     }
+
     //</editor-fold>
 }
