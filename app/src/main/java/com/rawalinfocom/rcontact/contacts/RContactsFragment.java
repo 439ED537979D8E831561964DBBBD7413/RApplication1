@@ -25,8 +25,6 @@ import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.adapters.RContactListAdapter;
-import com.rawalinfocom.rcontact.database.TableMobileMaster;
-import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
@@ -36,11 +34,7 @@ import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
         .ColorGroupSectionTitleIndicator;
 import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical
         .VerticalRecyclerViewFastScroller;
-import com.rawalinfocom.rcontact.model.MobileNumber;
 import com.rawalinfocom.rcontact.model.ProfileData;
-import com.rawalinfocom.rcontact.model.ProfileDataOperation;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -60,6 +54,8 @@ public class RContactsFragment extends BaseFragment {
     RelativeLayout relativeScroller;
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
+    @BindView(R.id.text_total_contacts)
+    TextView textTotalContacts;
     @BindView(R.id.scroller_all_contact)
     VerticalRecyclerViewFastScroller scrollerAllContact;
     @BindView(R.id.title_indicator)
@@ -116,6 +112,8 @@ public class RContactsFragment extends BaseFragment {
     //<editor-fold desc="Private Methods">
     private void init() {
 
+        textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
+
         // Connect the recycler to the scroller (to let the scroller scroll the list)
         scrollerAllContact.setRecyclerView(recyclerViewContactList);
 
@@ -166,6 +164,8 @@ public class RContactsFragment extends BaseFragment {
                     .findLastVisibleItemPosition() + "");*/
 
         }
+
+        textTotalContacts.setText(arrayListDisplayProfile.size() + " Contacts");
 
     }
 
@@ -263,17 +263,6 @@ public class RContactsFragment extends BaseFragment {
         itemTouchHelper.attachToRecyclerView(recyclerViewContactList);
     }
 
-   /* private boolean isLastItemDisplaying(RecyclerView recyclerView) {
-        if (recyclerView.getAdapter().getItemCount() != 0) {
-            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
-                    .findLastVisibleItemPosition();
-            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition ==
-                    recyclerView.getAdapter().getItemCount() - 1)
-                return true;
-        }
-        return false;
-    }*/
-
     /**
      * Set RecyclerView's LayoutManager
      */
@@ -323,45 +312,6 @@ public class RContactsFragment extends BaseFragment {
 
         callConfirmationDialog.showDialog();
 
-    }
-
-    private void fetchData() {
-        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
-        arrayListUserProfile = new ArrayList<>();
-        arrayListUserProfile.addAll(tableProfileMaster.getAllUserProfiles());
-        arrayListProfileData = new ArrayList<>();
-        for (int i = 0; i < arrayListUserProfile.size(); i++) {
-            ProfileData profileData = new ProfileData();
-            ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
-            ProfileDataOperation profileDataOperation = new ProfileDataOperation();
-            profileDataOperation.setPbNameFirst(arrayListUserProfile.get(i).getPmFirstName());
-            profileDataOperation.setPbNameLast(arrayListUserProfile.get(i).getPmLastName());
-
-           /* TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
-                    (getDatabaseHandler());
-            tableProfileMobileMapping.getProfileMobileMappingPmId(Integer.parseInt
-                    (arrayListUserProfile.get(i).getPmRcpId()));*/
-
-            TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
-            ArrayList<MobileNumber> arrayListMobileNumber = tableMobileMaster
-                    .getMobileNumbersFromPmId(Integer.parseInt(arrayListUserProfile.get(i)
-                            .getPmRcpId()));
-            ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
-            for (int j = 0; j < arrayListMobileNumber.size(); j++) {
-                ProfileDataOperationPhoneNumber phoneNumber = new ProfileDataOperationPhoneNumber();
-                phoneNumber.setPhoneNumber(arrayListMobileNumber.get(j).getMnmMobileNumber());
-                arrayListPhoneNumber.add(phoneNumber);
-            }
-            profileDataOperation.setPbPhoneNumber(arrayListPhoneNumber);
-//            profileDataOperation.setPbPhoneNumber(new
-// ArrayList<ProfileDataOperationPhoneNumber>());
-
-            profileDataOperation.setPbEmailId(new ArrayList<ProfileDataOperationEmail>());
-
-            arrayListOperation.add(profileDataOperation);
-            profileData.setOperation(arrayListOperation);
-            arrayListProfileData.add(profileData);
-        }
     }
 
     //</editor-fold>

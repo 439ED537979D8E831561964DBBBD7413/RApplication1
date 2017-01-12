@@ -38,8 +38,9 @@ public class ProfileDataOperation {
     private String rcpPmId;
     private String updatedAt;
     private String noSqlMasterId;
-    private String verifiedEmailAddress;
-    private String emCloudId;
+    //    private String verifiedEmailAddress;
+//    private String emCloudId;
+    private ArrayList<ProfileDataOperationEmail> verifiedEmailIds;
     private String verifiedMobileNumber;
     private String mnmCloudId;
 
@@ -274,7 +275,7 @@ public class ProfileDataOperation {
         this.noSqlMasterId = noSqlMasterId;
     }
 
-    @JsonProperty("email_address")
+    /*@JsonProperty("email_address")
     public String getVerifiedEmailAddress() {
         return StringUtils.defaultString(verifiedEmailAddress);
     }
@@ -290,7 +291,7 @@ public class ProfileDataOperation {
 
     public void setEmCloudId(String emCloudId) {
         this.emCloudId = emCloudId;
-    }
+    }*/
 
     @JsonProperty("mobile_number")
     public String getVerifiedMobileNumber() {
@@ -344,5 +345,14 @@ public class ProfileDataOperation {
 
     public void setTotalProfileRateUser(String totalProfileRateUser) {
         this.totalProfileRateUser = totalProfileRateUser;
+    }
+
+    @JsonProperty("emails")
+    public ArrayList<ProfileDataOperationEmail> getVerifiedEmailIds() {
+        return verifiedEmailIds;
+    }
+
+    public void setVerifiedEmailIds(ArrayList<ProfileDataOperationEmail> verifiedEmailIds) {
+        this.verifiedEmailIds = verifiedEmailIds;
     }
 }

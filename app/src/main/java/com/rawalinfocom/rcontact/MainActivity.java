@@ -124,7 +124,8 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         textImageNotification = (TextView) toolbar.findViewById(R.id.text_image_notification);
         textImageNotification.setTypeface(Utils.typefaceIcons(this));
-        textImageNotification.setText("U+e966");
+        textImageNotification.setText("e966");
+//        textImageNotification.setText("?");
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

@@ -37,7 +37,7 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
-import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
@@ -77,8 +77,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RippleView rippleActionRightRight;
     ImageView imageRightLeft;
 
-   /* @BindView(R.id.text_joining_date)
-    TextView textJoiningDate;*/
+    /* @BindView(R.id.text_joining_date)
+     TextView textJoiningDate;*/
     @BindView(R.id.image_profile)
     ImageView imageProfile;
     @BindView(R.id.text_user_rating)
@@ -316,9 +316,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_MARK_AS_FAVOURITE)) {
                 WsResponseObject favouriteStatusResponse = (WsResponseObject) data;
                 Utils.hideProgressDialog();
-                if (favouriteStatusResponse != null && StringUtils.equalsIgnoreCase
+                if (favouriteStatusResponse == null || !StringUtils.equalsIgnoreCase
                         (favouriteStatusResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                } else {
                     if (favouriteStatusResponse != null) {
                         Log.e("error response", favouriteStatusResponse.getMessage());
                     } else {
@@ -388,8 +387,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 ProfileDataOperation.class);
                 setUpView(profileDataOperation);
             } else {
-                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-                ProfileDataOperation profileDataOperation = tableProfileMaster.getRcProfileDetail
+//                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                QueryManager queryManager = new QueryManager(databaseHandler);
+                ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
                         (this, pmId);
                 setUpView(profileDataOperation);
             }

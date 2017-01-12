@@ -62,6 +62,8 @@ public class FavoritesFragment extends BaseFragment {
     ColorGroupSectionTitleIndicator titleIndicator;
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
+    @BindView(R.id.text_total_contacts)
+    TextView textTotalContacts;
 
     PhoneBookContacts phoneBookContacts;
 
@@ -112,6 +114,8 @@ public class FavoritesFragment extends BaseFragment {
 
     //<editor-fold desc="Private Methods">
     private void init() {
+
+        textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
 
         // Connect the recycler to the scroller (to let the scroller scroll the list)
         scrollerFavoriteContact.setRecyclerView(recyclerViewContactList);
@@ -488,6 +492,8 @@ public class FavoritesFragment extends BaseFragment {
         }
 
         populateRecyclerView();
+
+        textTotalContacts.setText(arrayListUserContact.size() + " Contacts");
 
     }
 
