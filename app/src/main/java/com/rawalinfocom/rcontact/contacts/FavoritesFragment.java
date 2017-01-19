@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -72,6 +73,7 @@ public class FavoritesFragment extends BaseFragment {
     ArrayList<ProfileData> arrayListUserContact;
     ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> arrayListContactHeaders;
+
 
     //<editor-fold desc="Constructors">
     public FavoritesFragment() {
@@ -286,6 +288,7 @@ public class FavoritesFragment extends BaseFragment {
         arrayListPhoneBookContacts = new ArrayList<>();
         arrayListContactHeaders = new ArrayList<>();
 
+
         for (int i = 0; i < arrayListFavouriteRawId.size(); i++) {
 
             ProfileData profileData = new ProfileData();
@@ -332,6 +335,7 @@ public class FavoritesFragment extends BaseFragment {
 
                     arrayListPhoneNumber.add(phoneNumber);
 
+
                 }
                 contactNumberCursor.close();
             }
@@ -351,6 +355,7 @@ public class FavoritesFragment extends BaseFragment {
                             .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
 
                     arrayListEmailId.add(emailId);
+
                 }
                 contactEmailCursor.close();
             }

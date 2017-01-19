@@ -111,6 +111,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ArrayList<String> arrayListContactId;
     ArrayList<String> arrayListContactNumbers;
     ArrayList<String> arrayListContactEmails;
+    ArrayList<String> arrayListFavouriteContacts;
 
     MaterialDialog callConfirmationDialog;
 
@@ -141,6 +142,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 //        databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
         arrayListPhoneBookContacts = new ArrayList<>();
         arrayListContactHeaders = new ArrayList<>();
+        arrayListFavouriteContacts = new ArrayList<>();
 
         arrayListContactHeaders.add(" ");
 
@@ -809,6 +811,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         arrayListUserContact = new ArrayList<>();
         arrayListContactNumbers = new ArrayList<>();
         arrayListContactEmails = new ArrayList<>();
+
         int previouslySyncedData = Utils.getIntegerPreference(getActivity(), AppConstants
                 .PREF_SYNCED_CONTACTS, 0);
         int previousTo = previouslySyncedData + CONTACT_CHUNK;
@@ -831,6 +834,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             ProfileData profileData = new ProfileData();
 
             String rawId = arrayListContactId.get(i);
+            String isFavourite = "0";
 
             profileData.setLocalPhoneBookId(rawId);
 
@@ -886,12 +890,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
             if (starredContactCursor != null && starredContactCursor.getCount() > 0) {
 
-
-                while (starredContactCursor.moveToNext()) {
-
-                    operation.setIsFavourite(starredContactCursor.getString(starredContactCursor
-                            .getColumnIndex(ContactsContract.Contacts.STARRED)));
-
+                if (starredContactCursor.moveToNext()) {
+                    isFavourite = starredContactCursor.getString(starredContactCursor
+                            .getColumnIndex(ContactsContract.Contacts.STARRED));
+                    operation.setIsFavourite(isFavourite);
                 }
                 starredContactCursor.close();
             }
@@ -913,9 +915,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             contactNumberCursor.getString(contactNumberCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.NUMBER))));
                     phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
-                            (contactNumberCursor.getInt
-                                    (contactNumberCursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Phone.TYPE))));
+                            (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Phone.TYPE))));
                     phoneNumber.setPhonePublic(1);
 
                     arrayListPhoneNumber.add(phoneNumber);
@@ -923,6 +924,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     if (!arrayListContactNumbers.contains(Utils.getFormattedNumber(getActivity(),
                             phoneNumber.getPhoneNumber()))) {
                         arrayListContactNumbers.add(Utils.getFormattedNumber(getActivity(),
+                                phoneNumber.getPhoneNumber()));
+                    }
+                    if (isFavourite.equalsIgnoreCase("1")) {
+                        arrayListFavouriteContacts.add(Utils.getFormattedNumber(getActivity(),
                                 phoneNumber.getPhoneNumber()));
                     }
 
@@ -953,6 +958,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     arrayListEmailId.add(emailId);
                     arrayListContactEmails.add(emailId.getEmEmailId());
+                    if (isFavourite.equalsIgnoreCase("1")) {
+                        arrayListFavouriteContacts.add(emailId.getEmEmailId());
+                    }
                 }
                 contactEmailCursor.close();
             }
@@ -1190,6 +1198,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             arrayListUserContact.add(profileData);
 
         }
+
+        Utils.setArrayListPreference(getActivity(), AppConstants
+                .PREF_FAVOURITE_CONTACT_NUMBER_EMAIL, arrayListFavouriteContacts);
 
         if (arrayListUserContact.size() > 0) {
 //            arrayListPhoneBookContacts.addAll(arrayListUserContact);

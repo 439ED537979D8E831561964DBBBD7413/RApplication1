@@ -80,18 +80,28 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="2dp"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/colorAccent"
                         tools:text="Monal Godiwala"/>
 
-                    <TextView
-                        android:id="@+id/text_cloud_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="2dp"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/colorAccent"
-                        tools:text="Monel"/>
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scrollbars="none">
+
+                        <TextView
+                            android:id="@+id/text_cloud_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="2dp"
+                            android:singleLine="true"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/colorAccent"
+                            tools:text="Monel"/>
+
+                    </HorizontalScrollView>
 
                     <LinearLayout
                         android:id="@+id/linear_organization_detail"
@@ -104,6 +114,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="2dp"
+                            android:singleLine="true"
                             android:textColor="@color/colorAccent"
                             tools:text="Managing Director"/>
 
@@ -112,6 +123,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="2dp"
+                            android:singleLine="true"
                             android:textColor="@color/colorAccent"
                             tools:text="Blazze Apps"/>
 

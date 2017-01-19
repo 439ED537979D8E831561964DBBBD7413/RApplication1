@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <integer name="max_comment_length">200</integer>
+
     <!-- Launcher Screen Constants -->
     <integer name="launch_mobile_registration">0</integer>
     <integer name="launch_otp_verification">1</integer>
@@ -22,5 +24,9 @@
     <integer name="rcp_type_primary">1</integer> <!-- verified -->
     <integer name="rcp_type_secondary">2</integer>
     <integer name="rcp_type_local_phone_book">3</integer>
+
+    <!-- Rating Status Constants -->
+    <integer name="rating_done">1</integer> <!-- sent -->
+    <integer name="rating_received">2</integer> <!-- received -->
 
 </resources>

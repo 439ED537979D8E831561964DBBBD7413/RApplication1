@@ -329,6 +329,15 @@ public class Utils {
         }
     }
 
+    public static Typeface typefaceLight(Context context) {
+        if (context != null) {
+            return Typeface.createFromAsset(context.getAssets(), "fonts/OpenSans-Light.ttf");
+        } else {
+            Log.e(LOG_TAG, "method : typefaceLight() , Null context");
+            return null;
+        }
+    }
+
     public static Typeface typefaceItalic(Context context) {
         if (context != null) {
             return Typeface.createFromAsset(context.getAssets(), "fonts/OpenSans-Italic.ttf");

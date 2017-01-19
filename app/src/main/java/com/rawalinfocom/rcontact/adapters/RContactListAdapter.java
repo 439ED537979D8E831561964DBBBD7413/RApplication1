@@ -143,9 +143,11 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     //<editor-fold desc="Private Methods">
 
-    private void configureRContactViewHolder(RContactViewHolder holder, int position) {
+    private void configureRContactViewHolder(final RContactViewHolder holder, int position) {
 
         final UserProfile userProfile = (UserProfile) arrayListUserProfile.get(position);
+
+//        holder.relativeRowAllContact.setTag(position);
 
         String contactDisplayName = userProfile.getPmFirstName() + " " + userProfile
                 .getPmLastName();
@@ -170,7 +172,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
                 bundle.putString(AppConstants.EXTRA_PM_ID, userProfile.getPmId());
-                bundle.putBoolean(AppConstants.EXTRA_IS_HIDE_FAVOURITE, true);
+                bundle.putString(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, holder
+                        .textContactNumber.getText().toString());
 //                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, userProfile.getPmRawId());
                 TextView textName = (TextView) view.findViewById(R.id.text_contact_name);

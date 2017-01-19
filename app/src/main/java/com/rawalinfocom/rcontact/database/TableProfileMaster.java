@@ -1,21 +1,10 @@
 package com.rawalinfocom.rcontact.database;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.model.ProfileDataOperation;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.UserProfile;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
@@ -39,25 +28,25 @@ public class TableProfileMaster {
     // Column Names
     private static final String COLUMN_PM_ID = "pm_id";
     static final String COLUMN_PM_RAW_ID = "pm_raw_id";
-     static final String COLUMN_PM_PREFIX = "pm_prefix";
+    static final String COLUMN_PM_PREFIX = "pm_prefix";
     static final String COLUMN_PM_FIRST_NAME = "pm_first_name";
-     static final String COLUMN_PM_MIDDLE_NAME = "pm_middle_name";
+    static final String COLUMN_PM_MIDDLE_NAME = "pm_middle_name";
     static final String COLUMN_PM_LAST_NAME = "pm_last_name";
-     static final String COLUMN_PM_SUFFIX = "pm_suffix";
-     static final String COLUMN_PM_NICK_NAME = "pm_nick_name";
-     static final String COLUMN_PM_PHONETIC_FIRST_NAME = "pm_phonetic_first_name";
-     static final String COLUMN_PM_PHONETIC_MIDDLE_NAME = "pm_phonetic_middle_name";
-     static final String COLUMN_PM_PHONETIC_LAST_NAME = "pm_phonetic_last_name";
-     static final String COLUMN_PM_PROFILE_IMAGE = "pm_profile_image";
+    static final String COLUMN_PM_SUFFIX = "pm_suffix";
+    static final String COLUMN_PM_NICK_NAME = "pm_nick_name";
+    static final String COLUMN_PM_PHONETIC_FIRST_NAME = "pm_phonetic_first_name";
+    static final String COLUMN_PM_PHONETIC_MIDDLE_NAME = "pm_phonetic_middle_name";
+    static final String COLUMN_PM_PHONETIC_LAST_NAME = "pm_phonetic_last_name";
+    static final String COLUMN_PM_PROFILE_IMAGE = "pm_profile_image";
     static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
-     static final String COLUMN_PM_NICK_NAME_PRIVACY = "pm_nick_name_privacy";
-     static final String COLUMN_PM_NOTES = "pm_notes";
-     static final String COLUMN_PM_NOTES_PRIVACY = "pm_notes_privacy";
-     static final String COLUMN_PM_GENDER = "pm_gender";
-     static final String COLUMN_PM_GENDER_PRIVACY = "pm_gender_privacy";
-     static final String COLUMN_PM_PROFILE_RATING = "pm_profile_rating";
-     static final String COLUMN_PM_PROFILE_RATE_USER = "pm_total_user_rating";
-     static final String COLUMN_PM_IS_FAVOURITE = "pm_is_favourite";
+    static final String COLUMN_PM_NICK_NAME_PRIVACY = "pm_nick_name_privacy";
+    static final String COLUMN_PM_NOTES = "pm_notes";
+    static final String COLUMN_PM_NOTES_PRIVACY = "pm_notes_privacy";
+    static final String COLUMN_PM_GENDER = "pm_gender";
+    static final String COLUMN_PM_GENDER_PRIVACY = "pm_gender_privacy";
+    static final String COLUMN_PM_PROFILE_RATING = "pm_profile_rating";
+    static final String COLUMN_PM_PROFILE_RATE_USER = "pm_total_user_rating";
+    static final String COLUMN_PM_IS_FAVOURITE = "pm_is_favourite";
     private static final String COLUMN_PM_ACCESS_TOKEN = "pm_access_token";
     private static final String COLUMN_PM_NOSQL_MASTER_ID = "pm_nosql_master_id";
     private static final String COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE = "pm_signup_social_media_type";
@@ -405,7 +394,6 @@ public class TableProfileMaster {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_PM_ID, userProfile.getPmId());
         values.put(COLUMN_PM_RAW_ID, userProfile.getPmRawId());
         values.put(COLUMN_PM_PREFIX, userProfile.getPmPrefix());
         values.put(COLUMN_PM_FIRST_NAME, userProfile.getPmFirstName());
@@ -431,12 +419,28 @@ public class TableProfileMaster {
         values.put(COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE, userProfile.getPmSignupSocialMediaType());
         values.put(COLUMN_PM_JOINING_DATE, userProfile.getPmJoiningDate());
 
-        int isUpdated = db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_ID + " = ?",
-                new String[]{String.valueOf(userProfile.getPmId())});
+        int isUpdated = db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
+                new String[]{String.valueOf(userProfile.getPmRcpId())});
 
         db.close();
 
         // updating row
+        return isUpdated;
+    }
+
+    // Updating user rating detail
+    public int updateUserProfileRating(String rcpId, String profileRating, String totalRateUser) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PM_PROFILE_RATING, profileRating);
+        values.put(COLUMN_PM_PROFILE_RATE_USER, totalRateUser);
+
+        int isUpdated = db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
+                new String[]{String.valueOf(rcpId)});
+
+        db.close();
+
         return isUpdated;
     }
 

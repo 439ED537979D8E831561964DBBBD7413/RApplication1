@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.sql.Array;
 import java.util.ArrayList;
 
 /**
@@ -39,6 +38,10 @@ public class WsRequestObject {
 
     private ArrayList<ProfileData> profileData;
     private ArrayList<ProfileData> favourites;
+
+    @JsonProperty("submit_rating")
+    private ArrayList<Rating> ratings;
+
 
     @JsonProperty("country_code")
     public String getCountryCode() {
@@ -200,5 +203,13 @@ public class WsRequestObject {
 
     public void setFavourites(ArrayList<ProfileData> favourites) {
         this.favourites = favourites;
+    }
+
+    public ArrayList<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(ArrayList<Rating> ratings) {
+        this.ratings = ratings;
     }
 }

@@ -34,6 +34,7 @@ public class WsConstants {
     public static final String REQ_UPLOAD_CONTACTS = "uploadContacts";
     public static final String REQ_GET_PROFILE_DETAIL = "get-profile-detail";
     public static final String REQ_MARK_AS_FAVOURITE = "mark-as-favourite";
+    public static final String REQ_PROFILE_RATING = "profile-rating";
 
 
 }
