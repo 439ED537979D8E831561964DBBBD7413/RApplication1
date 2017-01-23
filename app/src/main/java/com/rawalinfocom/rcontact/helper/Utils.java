@@ -19,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,6 +111,18 @@ public class Utils {
         snackbar.show();
     }
 
+    //</editor-fold>
+
+    //<editor-fold desc="Device Dimensions">
+    public static int getDeviceHeight(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return displayMetrics.heightPixels;
+    }
+
+    public static int getDeviceWidth(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return displayMetrics.widthPixels;
+    }
     //</editor-fold>
 
     //<editor-fold desc="Data Type Operations">

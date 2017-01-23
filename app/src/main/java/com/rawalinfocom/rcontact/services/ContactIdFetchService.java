@@ -35,6 +35,9 @@ public class ContactIdFetchService extends Service {
                     .getColumnIndex(ContactsContract.Contacts._ID)));
         }
 
+        // TODO: 21/01/17 Close Cursor
+//        contactNameCursor.close();
+
         Utils.setArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET, arrayListContactIds);
         sendMessage();
 
@@ -48,7 +51,8 @@ public class ContactIdFetchService extends Service {
         };
         String selection = ContactsContract.Contacts.HAS_PHONE_NUMBER + " = '1'";
         String[] selectionArgs = null;
-        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
+//        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
+        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
 
        /* return getContentResolver().query(uri, projection, ContactsContract.RawContacts
                 .ACCOUNT_TYPE + " <> 'com.android.contacts.sim' "

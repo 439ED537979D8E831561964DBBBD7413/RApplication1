@@ -8,7 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +64,12 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     private int colorBlack, colorPineGreen;
     private int previousPosition = 0;
-    int listClickedPosition = -1;
+    private int listClickedPosition = -1;
+
+    private TableProfileMaster tableProfileMaster;
+    private TableProfileMobileMapping tableProfileMobileMapping;
+    private TableProfileEmailMapping tableProfileEmailMapping;
+
 
     //<editor-fold desc="Constructor">
     public AllContactListAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
@@ -79,6 +84,12 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
+
+        tableProfileMaster = new TableProfileMaster(((BaseActivity) context).databaseHandler);
+        tableProfileMobileMapping = new TableProfileMobileMapping(((BaseActivity) context)
+                .databaseHandler);
+        tableProfileEmailMapping = new TableProfileEmailMapping(((BaseActivity) context)
+                .databaseHandler);
     }
     //</editor-fold>
 
@@ -188,9 +199,30 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         holder.textContactName.setTag(position);
 
-        String contactDisplayName = profileData.getOperation().get(0).getPbNameFirst() + "" +
-                " " + profileData.getOperation().get(0).getPbNameLast();
-        holder.textContactName.setText(contactDisplayName);
+        String contactDisplayName = "";
+        String prefix = profileData.getOperation().get(0).getPbNamePrefix();
+        String firstName = profileData.getOperation().get(0).getPbNameFirst();
+        String lastName = profileData.getOperation().get(0).getPbNameLast();
+        String middleName = profileData.getOperation().get(0).getPbNameMiddle();
+        String suffix = profileData.getOperation().get(0).getPbNameSuffix();
+
+        if (StringUtils.length(prefix) > 0) {
+            contactDisplayName = prefix + " ";
+        } if (StringUtils.length(firstName) > 0) {
+            contactDisplayName = contactDisplayName + firstName + " ";
+        } if (StringUtils.length(middleName) > 0) {
+            contactDisplayName = contactDisplayName + middleName + " ";
+        } if (StringUtils.length(lastName) > 0) {
+            contactDisplayName = contactDisplayName + lastName + " ";
+        } if (StringUtils.length(prefix) > 0) {
+            contactDisplayName = contactDisplayName + suffix;
+        }
+
+        holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
+                "[Unknown]");
+        holder.textCloudContactName.setText("");
+        holder.textContactNumber.setText("");
+        holder.linearRating.setVisibility(View.GONE);
 
         if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
             displayNumber(holder, profileData, contactDisplayName, position);
@@ -258,8 +290,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     private void displayNumber(AllContactViewHolder holder, ProfileData profileData, String
             contactDisplayName, int position) {
-        TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping((
-                (BaseActivity) context).databaseHandler);
 
         ArrayList<String> arrayListMobileNumbers = new ArrayList<>();
         for (int i = 0; i < profileData.getOperation().get(0).getPbPhoneNumber().size(); i++) {
@@ -271,28 +301,25 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 .getProfileMobileMappingFromNumber(arrayListMobileNumbers.toArray(new
                         String[arrayListMobileNumbers.size()]));
 
-        String displayNumber, displayName;
+        String displayNumber, displayName, rating, totalRatingUser;
         boolean isRcp;
         if (arrayListDbMobileNumbers.size() > 0) {
             displayNumber = arrayListDbMobileNumbers.get(0).getMpmMobileNumber();
-//            String displayNamePmId = arrayListDbMobileNumbers.get(0).getMpmCloudPmId();
-
-//            holder.relativeRowAllContact.setTag(displayNamePmId);
-
 
             if (arrayListDbMobileNumbers.size() == 1) {
 
                 String displayNamePmId = arrayListDbMobileNumbers.get(0).getMpmCloudPmId();
                 holder.relativeRowAllContact.setTag(displayNamePmId);
 
-                TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
-                        context).databaseHandler);
                 UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                         .parseInt(displayNamePmId));
 
+                rating = userProfile.getTotalProfileRateUser();
+                totalRatingUser = userProfile.getProfileRating();
+
                 holder.linearRating.setVisibility(View.VISIBLE);
-                holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
-                holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+                holder.textRatingUserCount.setText(rating);
+                holder.ratingUser.setRating(Float.parseFloat(totalRatingUser));
 
                 displayName = ((userProfile.getPmFirstName().length() > 0 || userProfile
                         .getPmLastName().length() > 0) ? " (" + userProfile.getPmFirstName() + " " +
@@ -315,11 +342,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 holder.textContactName.setTextColor(colorPineGreen);
             } else {
                 holder.textCloudContactName.setVisibility(View.VISIBLE);
-                /*if (position != 1) {
-                    holder.textContactName.setTextColor(colorBlack);
-                } else {
-                    holder.textContactName.setTextColor(colorPineGreen);
-                }*/
+
                 if (position == 1 && fragment instanceof AllContactsFragment) {
                     holder.textContactName.setTextColor(colorPineGreen);
                 } else {
@@ -330,26 +353,21 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             holder.textContactNumber.setTextColor(colorPineGreen);
             isRcp = true;
             holder.linearRating.setVisibility(View.VISIBLE);
+
         } else {
             displayNumber = profileData.getOperation().get(0).getPbPhoneNumber().get(0)
                     .getPhoneNumber();
-            displayName = "";
-           /* if (position != 1) {
-                holder.relativeRowAllContact.setTag("-1");
-                holder.textContactName.setTextColor(colorBlack);
-                holder.textContactNumber.setTextColor(colorBlack);
-                holder.linearRating.setVisibility(View.GONE);
-            } else {
-                holder.relativeRowAllContact.setTag("0");
-                holder.textContactName.setTextColor(colorPineGreen);
-                holder.textContactNumber.setTextColor(colorPineGreen);
-                holder.linearRating.setVisibility(View.VISIBLE);
-            }*/
+            rating = profileData.getOperation().get(0).getProfileRating();
+            totalRatingUser = profileData.getOperation().get(0).getTotalProfileRateUser();
+
+            displayName = " ";
             if (position == 1 && fragment instanceof AllContactsFragment) {
                 holder.relativeRowAllContact.setTag("0");
                 holder.textContactName.setTextColor(colorPineGreen);
                 holder.textContactNumber.setTextColor(colorPineGreen);
                 holder.linearRating.setVisibility(View.VISIBLE);
+                holder.textRatingUserCount.setText(rating);
+                holder.ratingUser.setRating(Float.parseFloat(totalRatingUser));
             } else {
                 holder.relativeRowAllContact.setTag("-1");
                 holder.textContactName.setTextColor(colorBlack);
@@ -370,12 +388,23 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             displayEmail(holder, profileData, displayNumber, contactDisplayName, position);
         }
 
+       /* if (holder.textCloudContactName.getVisibility() == View.VISIBLE && holder
+                .textCloudContactName.getText().toString().length() > 0) {
+            holder.textContactName.setMaxWidth(((LinearLayout) holder.textContactName.getParent()
+            ).getWidth() / 2);
+            holder.textCloudContactName.setMaxWidth(((LinearLayout) holder
+                    .textCloudContactName.getParent()).getWidth() / 2);
+        } else {
+            holder.textContactName.setWidth(((LinearLayout) holder.textContactName.getParent())
+                    .getWidth());
+        }*/
+
     }
 
     private void displayEmail(AllContactViewHolder holder, ProfileData profileData, String
             displayNumber, String contactDisplayName, int position) {
-        TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping((
-                (BaseActivity) context).databaseHandler);
+        /*TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping((
+                (BaseActivity) context).databaseHandler);*/
 
         ArrayList<String> arrayListEmails = new ArrayList<>();
         for (int i = 0; i < profileData.getOperation().get(0).getPbEmailId().size(); i++) {
@@ -400,8 +429,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     String displayNamePmId = arrayListDbEmailIds.get(0).getEpmCloudPmId();
                     holder.relativeRowAllContact.setTag(displayNamePmId);
 
-                    TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
-                            context).databaseHandler);
                     UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                             .parseInt(displayNamePmId));
 
@@ -431,6 +458,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     holder.textContactName.setTextColor(colorPineGreen);
                 } else {
                     holder.textCloudContactName.setVisibility(View.VISIBLE);
+
                     if (position == 1) {
                         holder.textContactName.setTextColor(colorPineGreen);
                     } else {
@@ -442,13 +470,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 isRcp = true;
                 holder.linearRating.setVisibility(View.VISIBLE);
             } else {
-             /*   if (position == 1) {
-                    holder.linearRating.setVisibility(View.VISIBLE);
-                    holder.relativeRowAllContact.setTag("0");
-                } else {
-                    holder.linearRating.setVisibility(View.GONE);
-                    holder.relativeRowAllContact.setTag("-1");
-                }*/
+
                 if (position == 1 && fragment instanceof AllContactsFragment) {
                     holder.linearRating.setVisibility(View.VISIBLE);
                     holder.relativeRowAllContact.setTag("0");
@@ -465,6 +487,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 if (displayNumber != null) {
                     displayEmailId = displayNumber;
                 }
+
             }
             holder.textCloudContactName.setText(displayName);
              /*holder.textContactNumber.setText(displayEmailId);*/
@@ -476,6 +499,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 } else {
                     holder.textContactNumber.setTextColor(colorBlack);
                 }
+                Log.i("displayEmail", position + " " + displayEmailId);
                 holder.textContactNumber.setText(displayEmailId);
             }
 
@@ -551,7 +575,12 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             textCloudContactName.setTextColor(colorPineGreen);
 
+
 //            textRatingUserCount.setText("0");
+
+            /*textContactName.setMaxWidth(Utils.getDeviceWidth(context) / 2);
+            textCloudContactName.setMaxWidth(Utils.getDeviceWidth(context) / 2);*/
+
         }
     }
 

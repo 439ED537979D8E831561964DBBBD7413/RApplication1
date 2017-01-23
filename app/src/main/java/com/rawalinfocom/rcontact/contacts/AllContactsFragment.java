@@ -842,6 +842,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));*/
 
             ProfileDataOperation operation = new ProfileDataOperation();
+            operation.setFlag("1");
 
             //<editor-fold desc="Structured Name">
             Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);
@@ -853,7 +854,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 .getColumnIndex(ContactsContract.Contacts.STARRED)));*/
                 while (contactStructuredNameCursor.moveToNext()) {
 
-                    operation.setFlag("1");
                     operation.setPbNamePrefix(contactStructuredNameCursor.getString
                             (contactStructuredNameCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.StructuredName.PREFIX)));
@@ -1208,6 +1208,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             for (int i = 0; i < arrayListUserContact.size(); i++) {
                 String headerLetter = StringUtils.upperCase(StringUtils.substring
                         (arrayListUserContact.get(i).getOperation().get(0).getPbNameFirst(), 0, 1));
+                headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
                 if (!arrayListPhoneBookContacts.contains(headerLetter)) {
                     arrayListContactHeaders.add(headerLetter);
                     arrayListPhoneBookContacts.add(headerLetter);

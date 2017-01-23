@@ -26,7 +26,6 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
-import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -307,12 +306,21 @@ public class FavoritesFragment extends BaseFragment {
 
                 while (contactStructuredNameCursor.moveToNext()) {
 
+                    operation.setPbNamePrefix(contactStructuredNameCursor.getString
+                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
+                                    .CommonDataKinds.StructuredName.PREFIX)));
                     operation.setPbNameFirst(contactStructuredNameCursor.getString
                             (contactStructuredNameCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.StructuredName.GIVEN_NAME)));
+                    operation.setPbNameMiddle(contactStructuredNameCursor.getString
+                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
+                                    .CommonDataKinds.StructuredName.MIDDLE_NAME)));
                     operation.setPbNameLast(contactStructuredNameCursor.getString
                             (contactStructuredNameCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.StructuredName.FAMILY_NAME)));
+                    operation.setPbNameSuffix(contactStructuredNameCursor.getString
+                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
+                                    .CommonDataKinds.StructuredName.SUFFIX)));
 
                 }
                 contactStructuredNameCursor.close();
@@ -489,6 +497,7 @@ public class FavoritesFragment extends BaseFragment {
         for (int i = 0; i < arrayListUserContact.size(); i++) {
             String headerLetter = StringUtils.upperCase(StringUtils.substring
                     (arrayListUserContact.get(i).getOperation().get(0).getPbNameFirst(), 0, 1));
+            headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
             if (!arrayListPhoneBookContacts.contains(headerLetter)) {
                 arrayListContactHeaders.add(headerLetter);
                 arrayListPhoneBookContacts.add(headerLetter);

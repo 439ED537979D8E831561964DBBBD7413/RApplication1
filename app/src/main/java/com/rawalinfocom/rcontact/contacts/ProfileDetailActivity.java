@@ -95,8 +95,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     LinearLayout linearBasicDetailRating;
     @BindView(R.id.text_name)
     TextView textName;
-    @BindView(R.id.text_cloud_name)
-    TextView textCloudName;
+    /*  @BindView(R.id.text_cloud_name)
+      TextView textCloudName;*/
+    @BindView(R.id.text_full_screen_text)
+    TextView textFullScreenText;
     @BindView(R.id.text_designation)
     TextView textDesignation;
     @BindView(R.id.text_organization)
@@ -235,6 +237,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
                 cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
+                cloudContactName = StringUtils.substring(cloudContactName, 2, cloudContactName
+                        .length() - 1);
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE)) {
@@ -532,12 +536,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
 //        textJoiningDate.setTypeface(Utils.typefaceRegular(this));
+        textFullScreenText.setTypeface(Utils.typefaceSemiBold(this));
         textName.setTypeface(Utils.typefaceSemiBold(this));
-        textCloudName.setTypeface(Utils.typefaceSemiBold(this));
         textDesignation.setTypeface(Utils.typefaceRegular(this));
         textOrganization.setTypeface(Utils.typefaceRegular(this));
         textViewAllOrganization.setTypeface(Utils.typefaceRegular(this));
         textUserRating.setTypeface(Utils.typefaceRegular(this));
+
+        textFullScreenText.setSelected(true);
 
         rippleViewMore.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
@@ -564,17 +570,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             setUpView(null);
         }
 
-        textName.setText(contactName);
+//        textName.setText(contactName);
+        textFullScreenText.setText(contactName);
         if (StringUtils.length(cloudContactName) > 0) {
-            textCloudName.setText(cloudContactName);
-            textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+            textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+            textName.setText(cloudContactName);
+            /*textCloudName.setText(cloudContactName);
+            textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));*/
         } else {
             if (StringUtils.equalsIgnoreCase(pmId, "-1")) {
-                textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+//                textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
             } else {
-                textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+//                textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
             }
-            textCloudName.setVisibility(View.GONE);
+//            textCloudName.setVisibility(View.GONE);
+            textName.setVisibility(View.GONE);
         }
 
         if (displayOwnProfile) {
