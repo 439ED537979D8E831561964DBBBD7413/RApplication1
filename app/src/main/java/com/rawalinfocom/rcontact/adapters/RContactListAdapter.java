@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
@@ -143,9 +144,11 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     //<editor-fold desc="Private Methods">
 
-    private void configureRContactViewHolder(RContactViewHolder holder, int position) {
+    private void configureRContactViewHolder(final RContactViewHolder holder, int position) {
 
         final UserProfile userProfile = (UserProfile) arrayListUserProfile.get(position);
+
+//        holder.relativeRowAllContact.setTag(position);
 
         String contactDisplayName = userProfile.getPmFirstName() + " " + userProfile
                 .getPmLastName();
@@ -155,6 +158,9 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (StringUtils.length(userProfile.getEmailId()) > 0) {
             holder.textContactNumber.setText(userProfile.getEmailId());
         }
+
+        holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
+        holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
 
           /* Hide Divider if row is last in Section */
         if ((position + 1) < arrayListUserProfile.size()) {
@@ -170,7 +176,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
                 bundle.putString(AppConstants.EXTRA_PM_ID, userProfile.getPmId());
-                bundle.putBoolean(AppConstants.EXTRA_IS_HIDE_FAVOURITE, true);
+                bundle.putString(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, holder
+                        .textContactNumber.getText().toString());
 //                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, userProfile.getPmRawId());
                 TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
@@ -204,6 +211,10 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         View dividerAllContact;
         @BindView(R.id.relative_row_all_contact)
         RelativeLayout relativeRowAllContact;
+        @BindView(R.id.text_rating_user_count)
+        TextView textRatingUserCount;
+        @BindView(R.id.rating_user)
+        RatingBar ratingUser;
 
         RContactViewHolder(View itemView) {
             super(itemView);
@@ -212,6 +223,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             textContactName.setTypeface(Utils.typefaceSemiBold(context));
             textCloudContactName.setTypeface(Utils.typefaceSemiBold(context));
             textContactNumber.setTypeface(Utils.typefaceRegular(context));
+
+            textRatingUserCount.setTypeface(Utils.typefaceRegular(context));
 
             textContactName.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
             textContactNumber.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));

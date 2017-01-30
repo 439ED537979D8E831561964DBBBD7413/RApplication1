@@ -35,7 +35,7 @@ import javax.net.ssl.HttpsURLConnection;
  * A Class to send data to and/or get data from Post type web service
  */
 
-public class WebServicePost {
+class WebServicePost {
 
     private static final String TAG_LOG = "WebServicePost";
 
@@ -47,7 +47,7 @@ public class WebServicePost {
     private boolean setHeader = false;
     private Context context;
 
-    public WebServicePost(Context context, String url, int requestType, boolean setHeader) {
+    WebServicePost(Context context, String url, int requestType, boolean setHeader) {
         this.url = url;
         this.requestType = requestType;
         this.setHeader = setHeader;
@@ -196,7 +196,7 @@ public class WebServicePost {
         return result.toString();
     }
 
-    protected synchronized ObjectMapper getMapper() {
+    private synchronized ObjectMapper getMapper() {
 
         if (mapper != null) {
             return mapper;

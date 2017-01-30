@@ -1,9 +1,13 @@
 package com.rawalinfocom.rcontact.database;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.MobileNumber;
 
 import java.util.ArrayList;
@@ -232,6 +236,46 @@ public class TableMobileMaster {
 
         // return Mobile Number list
         return arrayListMobileNumber;
+    }
+
+    // Getting Own Verified Mobile Number
+    public MobileNumber getOwnVerifiedMobileNumbersFromPmId(Context context) {
+
+        String pmId = Utils.getStringPreference(context, AppConstants.PREF_USER_PM_ID, "0");
+        String rcpType = String.valueOf(context.getResources().getInteger(R.integer
+                .rcp_type_primary));
+
+        String selectQuery = "SELECT * FROM " + TABLE_RC_MOBILE_NUMBER_MASTER + " WHERE " +
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId + " AND " + COLUMN_MNM_IS_PRIMARY +
+                " = " + rcpType;
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        MobileNumber mobileNumber = new MobileNumber();
+
+        if (cursor.moveToFirst()) {
+
+            mobileNumber.setMnmId(cursor.getString(0));
+            mobileNumber.setMnmCloudId(cursor.getString(1));
+            mobileNumber.setMnmMobileNumber(cursor.getString(2));
+            mobileNumber.setMnmNumberType(cursor.getString(3));
+            mobileNumber.setMnmCustomType(cursor.getString(4));
+            mobileNumber.setMnmIsPrimary(cursor.getString(5));
+            mobileNumber.setMnmNumberPrivacy(cursor.getString(6));
+            mobileNumber.setMnmIsDefault(cursor.getString(7));
+            mobileNumber.setMnmIsVerified(cursor.getString(8));
+            mobileNumber.setMnmCircleOfService(cursor.getString(9));
+            mobileNumber.setMnmSpamCount(cursor.getString(10));
+            mobileNumber.setRcProfileMasterPmId(cursor.getString(11));
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        return mobileNumber;
     }
 
     // Getting Mobile Number Count
