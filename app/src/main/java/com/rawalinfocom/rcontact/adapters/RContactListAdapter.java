@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
@@ -158,6 +159,9 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.textContactNumber.setText(userProfile.getEmailId());
         }
 
+        holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
+        holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
+
           /* Hide Divider if row is last in Section */
         if ((position + 1) < arrayListUserProfile.size()) {
             if (arrayListUserProfile.get(position + 1) instanceof String) {
@@ -207,6 +211,10 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         View dividerAllContact;
         @BindView(R.id.relative_row_all_contact)
         RelativeLayout relativeRowAllContact;
+        @BindView(R.id.text_rating_user_count)
+        TextView textRatingUserCount;
+        @BindView(R.id.rating_user)
+        RatingBar ratingUser;
 
         RContactViewHolder(View itemView) {
             super(itemView);
@@ -215,6 +223,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             textContactName.setTypeface(Utils.typefaceSemiBold(context));
             textCloudContactName.setTypeface(Utils.typefaceSemiBold(context));
             textContactNumber.setTypeface(Utils.typefaceRegular(context));
+
+            textRatingUserCount.setTypeface(Utils.typefaceRegular(context));
 
             textContactName.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
             textContactNumber.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
