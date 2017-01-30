@@ -13,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -26,6 +27,8 @@ import com.rawalinfocom.rcontact.sms.SmsFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.text.Html.FROM_HTML_MODE_COMPACT;
 
 public class MainActivity extends BaseActivity implements NavigationView
         .OnNavigationItemSelectedListener {
@@ -124,7 +127,8 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         textImageNotification = (TextView) toolbar.findViewById(R.id.text_image_notification);
         textImageNotification.setTypeface(Utils.typefaceIcons(this));
-        textImageNotification.setText("U+e966");
+//        textImageNotification.setText(Html.fromHtml("&#xe966;"));
+        textImageNotification.setText(Html.fromHtml(getResources().getString(R.string.im_bell)));
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

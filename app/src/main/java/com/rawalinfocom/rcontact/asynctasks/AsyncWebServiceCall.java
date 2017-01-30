@@ -87,7 +87,7 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
                     responseClass, contentValues, setHeader);
         } catch (Exception e) {
             this.error = e;
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(LOG_TAG, e.getMessage() + "");
         }
         return null;
     }

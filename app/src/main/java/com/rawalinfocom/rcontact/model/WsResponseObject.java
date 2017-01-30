@@ -29,6 +29,9 @@ public class WsResponseObject {
     private ArrayList<Country> arrayListCountry;
     private ArrayList<ProfileDataOperation> arrayListUserRcProfile;
 
+    @JsonProperty("profile_rating")
+    private Rating profileRating;
+
     @JsonProperty("status")
     public String getStatus() {
         return StringUtils.defaultString(status);
@@ -65,7 +68,8 @@ public class WsResponseObject {
         this.otpLog = otpLog;
     }
 
-    @JsonProperty("profile_data")
+        @JsonProperty("profile_data")
+//    @JsonProperty("profile_details")
     public UserProfile getUserProfile() {
         return userProfile;
     }
@@ -90,5 +94,13 @@ public class WsResponseObject {
 
     public void setProfileDetail(ProfileDataOperation profileDetail) {
         this.profileDetail = profileDetail;
+    }
+
+    public Rating getProfileRating() {
+        return profileRating;
+    }
+
+    public void setProfileRating(Rating profileRating) {
+        this.profileRating = profileRating;
     }
 }

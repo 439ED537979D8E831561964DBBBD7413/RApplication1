@@ -12,6 +12,7 @@ import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -19,6 +20,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,7 +88,7 @@ public class Utils {
 
     //<editor-fold desc="SnackBar">
 
-    public static void showErrorSnackBar(Context context, View view, String message) {
+    public static void showErrorSnackBar(@NonNull Context context, View view, String message) {
         Snackbar snackbar = Snackbar
                 .make(view, message, Snackbar.LENGTH_LONG);
         View snackBarView = snackbar.getView();
@@ -98,7 +100,7 @@ public class Utils {
         snackbar.show();
     }
 
-    public static void showSuccessSnackbar(Context context, View view, String message) {
+    public static void showSuccessSnackBar(@NonNull Context context, View view, String message) {
         Snackbar snackbar = Snackbar
                 .make(view, message, Snackbar.LENGTH_LONG);
         View snackBarView = snackbar.getView();
@@ -110,6 +112,18 @@ public class Utils {
         snackbar.show();
     }
 
+    //</editor-fold>
+
+    //<editor-fold desc="Device Dimensions">
+    public static int getDeviceHeight(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return displayMetrics.heightPixels;
+    }
+
+    public static int getDeviceWidth(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return displayMetrics.widthPixels;
+    }
     //</editor-fold>
 
     //<editor-fold desc="Data Type Operations">
@@ -325,6 +339,15 @@ public class Utils {
             return Typeface.createFromAsset(context.getAssets(), "fonts/OpenSans-Bold.ttf");
         } else {
             Log.e(LOG_TAG, "method : typefaceBold() , Null context");
+            return null;
+        }
+    }
+
+    public static Typeface typefaceLight(Context context) {
+        if (context != null) {
+            return Typeface.createFromAsset(context.getAssets(), "fonts/OpenSans-Light.ttf");
+        } else {
+            Log.e(LOG_TAG, "method : typefaceLight() , Null context");
             return null;
         }
     }

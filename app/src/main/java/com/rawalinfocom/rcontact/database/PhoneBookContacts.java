@@ -36,6 +36,19 @@ public class PhoneBookContacts {
                 selectionArgs, null);
     }
 
+    public Cursor getStarredStatusFromNumber(String phoneNumber) {
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        String[] projection = new String[]{
+                ContactsContract.Contacts.STARRED,
+        };
+
+        String selection = ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER + " = ?";
+        String[] selectionArgs = new String[]{phoneNumber};
+
+        return context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, null);
+    }
+
     public Cursor getStarredContacts() {
         Uri uri = ContactsContract.Contacts.CONTENT_URI;
         String[] projection = new String[]{

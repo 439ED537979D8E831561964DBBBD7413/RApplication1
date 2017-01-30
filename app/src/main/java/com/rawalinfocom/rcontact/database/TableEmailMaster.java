@@ -29,9 +29,9 @@ public class TableEmailMaster {
     private static final String COLUMN_EM_ID = "em_id";
     private static final String COLUMN_EM_CLOUD_ID = "em_cloud_id";
     static final String COLUMN_EM_EMAIL_ADDRESS = "em_email_address";
-    private static final String COLUMN_EM_EMAIL_TYPE = "em_email_type";
+    static final String COLUMN_EM_EMAIL_TYPE = "em_email_type";
     private static final String COLUMN_EM_CUSTOM_TYPE = "em_custom_type";
-    private static final String COLUMN_EM_IS_PRIMARY = "em_is_primary";
+    static final String COLUMN_EM_IS_PRIMARY = "em_is_primary";
     static final String COLUMN_EM_EMAIL_PRIVACY = "em_email_privacy";
     private static final String COLUMN_EM_IS_DEFAULT = "em_is_default";
     static final String COLUMN_EM_IS_VERIFIED = "em_is_verified";

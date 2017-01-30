@@ -49,7 +49,7 @@ public class AppConstants {
 
     public static String EXTRA_OBJECT_COUNTRY = "extra_object_country";
     public static String EXTRA_PM_ID = "extra_pm_id";
-    public static String EXTRA_IS_HIDE_FAVOURITE = "extra_is_hide_favourite";
+    public static String EXTRA_CHECK_NUMBER_FAVOURITE = "extra_check_number_favourite";
     public static String EXTRA_PHONE_BOOK_ID = "extra_phone_book_id";
     public static String EXTRA_OBJECT_USER = "extra_object_user";
     public static String EXTRA_MOBILE_NUMBER = "extra_mobile_number";
@@ -90,10 +90,13 @@ public class AppConstants {
     public static String PREF_SYNCED_CONTACTS = "pref_synced_contacts";
     public static String PREF_USER_PM_ID = "pref_user_pm_id";
     public static String PREF_ACCESS_TOKEN = "pref_access_token";
+    public static String PREF_FAVOURITE_CONTACT_NUMBER_EMAIL =
+            "pref_favourite_contact_number_email";
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
-            PREF_CONTACT_ID_SET, PREF_USER_PM_ID, PREF_ACCESS_TOKEN};
+            PREF_CONTACT_ID_SET, PREF_USER_PM_ID, PREF_ACCESS_TOKEN,
+            PREF_FAVOURITE_CONTACT_NUMBER_EMAIL};
 
     //</editor-fold>
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.sql.Array;
 import java.util.ArrayList;
 
 /**
@@ -37,8 +36,17 @@ public class WsRequestObject {
 
     private String profileImage;
 
+    private String prComment;
+    private String prRatingStars;
+    private String prStatus;
+    private String prToPmId;
+
     private ArrayList<ProfileData> profileData;
     private ArrayList<ProfileData> favourites;
+
+    @JsonProperty("submit_rating")
+    private ArrayList<Rating> ratings;
+
 
     @JsonProperty("country_code")
     public String getCountryCode() {
@@ -200,5 +208,41 @@ public class WsRequestObject {
 
     public void setFavourites(ArrayList<ProfileData> favourites) {
         this.favourites = favourites;
+    }
+
+    @JsonProperty("pr_comment")
+    public String getPrComment() {
+        return prComment;
+    }
+
+    public void setPrComment(String prComment) {
+        this.prComment = prComment;
+    }
+
+    @JsonProperty("pr_rating_stars")
+    public String getPrRatingStars() {
+        return prRatingStars;
+    }
+
+    public void setPrRatingStars(String prRatingStars) {
+        this.prRatingStars = prRatingStars;
+    }
+
+    @JsonProperty("pr_status")
+    public String getPrStatus() {
+        return prStatus;
+    }
+
+    public void setPrStatus(String prStatus) {
+        this.prStatus = prStatus;
+    }
+
+    @JsonProperty("pr_to_pm_id")
+    public String getPrToPmId() {
+        return prToPmId;
+    }
+
+    public void setPrToPmId(String prToPmId) {
+        this.prToPmId = prToPmId;
     }
 }

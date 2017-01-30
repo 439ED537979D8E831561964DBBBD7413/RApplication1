@@ -18,11 +18,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -37,12 +40,15 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
+import com.rawalinfocom.rcontact.database.QueryManager;
+import com.rawalinfocom.rcontact.database.TableContactRatingMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.DbRating;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -51,6 +57,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
+import com.rawalinfocom.rcontact.model.Rating;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
@@ -60,6 +67,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ProfileDetailActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
@@ -77,8 +85,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RippleView rippleActionRightRight;
     ImageView imageRightLeft;
 
-   /* @BindView(R.id.text_joining_date)
-    TextView textJoiningDate;*/
+    /* @BindView(R.id.text_joining_date)
+     TextView textJoiningDate;*/
     @BindView(R.id.image_profile)
     ImageView imageProfile;
     @BindView(R.id.text_user_rating)
@@ -87,8 +95,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     LinearLayout linearBasicDetailRating;
     @BindView(R.id.text_name)
     TextView textName;
-    @BindView(R.id.text_cloud_name)
-    TextView textCloudName;
+    /*  @BindView(R.id.text_cloud_name)
+      TextView textCloudName;*/
+    @BindView(R.id.text_full_screen_text)
+    TextView textFullScreenText;
     @BindView(R.id.text_designation)
     TextView textDesignation;
     @BindView(R.id.text_organization)
@@ -180,7 +190,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @BindView(R.id.button_sms)
     Button buttonSms;
 
-    String pmId, phoneBookId, contactName = "", cloudContactName = null;
+    RelativeLayout relativeRootRatingDialog;
+
+    String pmId, phoneBookId, contactName = "", cloudContactName = null, checkNumberFavourite =
+            null;
     boolean displayOwnProfile = false, isHideFavourite = false;
 
     PhoneBookContacts phoneBookContacts;
@@ -188,6 +201,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     ProfileDetailAdapter phoneDetailAdapter;
     MaterialDialog callConfirmationDialog;
+
+    ArrayList<String> arrayListFavouriteContacts;
 
     //<editor-fold desc="Override Methods">
 
@@ -222,11 +237,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
                 cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
+                cloudContactName = StringUtils.substring(cloudContactName, 2, cloudContactName
+                        .length() - 1);
             }
 
-            if (intent.hasExtra(AppConstants.EXTRA_IS_HIDE_FAVOURITE)) {
-                isHideFavourite = intent.getBooleanExtra(AppConstants.EXTRA_IS_HIDE_FAVOURITE,
-                        false);
+            if (intent.hasExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE)) {
+                isHideFavourite = true;
+                checkNumberFavourite = intent.getStringExtra(AppConstants
+                        .EXTRA_CHECK_NUMBER_FAVOURITE);
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_CONTACT_POSITION)) {
@@ -237,6 +255,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (pmId.equalsIgnoreCase(getUserPmId())) {
             displayOwnProfile = true;
         }
+
+        arrayListFavouriteContacts = new ArrayList<>();
+        if (!Utils.isArraylistNullOrEmpty(Utils.getArrayListPreference(this, AppConstants
+                .PREF_FAVOURITE_CONTACT_NUMBER_EMAIL))) {
+            arrayListFavouriteContacts.addAll(Utils.getArrayListPreference(this, AppConstants
+                    .PREF_FAVOURITE_CONTACT_NUMBER_EMAIL));
+        }
+        Log.i("onCreate", arrayListFavouriteContacts.toString());
 
         init();
     }
@@ -259,28 +285,32 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 break;
 
             case R.id.ripple_action_right_left:
-                int favStatus = -1;
-                if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_FAVOURITE)) {
-                    favStatus = PhoneBookContacts.status_un_favourite;
-                    imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
-                    imageRightLeft.setTag(TAG_IMAGE_UN_FAVOURITE);
-                } else if (StringUtils.equals(imageRightLeft.getTag().toString(),
+                if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_FAVOURITE)
+                        || StringUtils.equals(imageRightLeft.getTag().toString(),
                         TAG_IMAGE_UN_FAVOURITE)) {
-                    favStatus = PhoneBookContacts.status_favourite;
-                    imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
-                    imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);
+                    int favStatus = -1;
+                    if (StringUtils.equals(imageRightLeft.getTag().toString(),
+                            TAG_IMAGE_FAVOURITE)) {
+                        favStatus = PhoneBookContacts.status_un_favourite;
+                        imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
+                        imageRightLeft.setTag(TAG_IMAGE_UN_FAVOURITE);
+                    } else {
+                        favStatus = PhoneBookContacts.status_favourite;
+                        imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
+                        imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);
+                    }
+                    int updateStatus = phoneBookContacts.setFavouriteStatus(phoneBookId, favStatus);
+                    if (updateStatus != 1) {
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, "Error while " +
+                                "updating favourite status!");
+                    }
+                    ArrayList<ProfileData> arrayListFavourites = new ArrayList<>();
+                    ProfileData favouriteStatus = new ProfileData();
+                    favouriteStatus.setLocalPhoneBookId(phoneBookId);
+                    favouriteStatus.setIsFavourite(String.valueOf(favStatus));
+                    arrayListFavourites.add(favouriteStatus);
+                    setFavouriteStatus(arrayListFavourites);
                 }
-                int updateStatus = phoneBookContacts.setFavouriteStatus(phoneBookId, favStatus);
-                if (updateStatus != 1) {
-                    Utils.showErrorSnackBar(this, relativeRootProfileDetail, "Error while " +
-                            "updating favourite status!");
-                }
-                ArrayList<ProfileData> arrayListFavourites = new ArrayList<>();
-                ProfileData favouriteStatus = new ProfileData();
-                favouriteStatus.setLocalPhoneBookId(phoneBookId);
-                favouriteStatus.setIsFavourite(String.valueOf(favStatus));
-                arrayListFavourites.add(favouriteStatus);
-                setFavouriteStatus(arrayListFavourites);
                 break;
         }
     }
@@ -316,11 +346,54 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_MARK_AS_FAVOURITE)) {
                 WsResponseObject favouriteStatusResponse = (WsResponseObject) data;
                 Utils.hideProgressDialog();
-                if (favouriteStatusResponse != null && StringUtils.equalsIgnoreCase
+                if (favouriteStatusResponse == null || !StringUtils.equalsIgnoreCase
                         (favouriteStatusResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                } else {
                     if (favouriteStatusResponse != null) {
                         Log.e("error response", favouriteStatusResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
+            // <editor-fold desc="REQ_PROFILE_RATING">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_RATING)) {
+                WsResponseObject profileRatingResponse = (WsResponseObject) data;
+                if (profileRatingResponse != null && StringUtils.equalsIgnoreCase
+                        (profileRatingResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail, "Rating Submitted");
+
+                    if (profileRatingResponse.getProfileRating() != null) {
+
+                        DbRating dbRating = new DbRating();
+                        Rating responseRating = profileRatingResponse.getProfileRating();
+                        dbRating.setRcProfileMasterPmId(String.valueOf(responseRating.getPrToPmId
+                                ()));
+                        dbRating.setCrmStatus(String.valueOf(responseRating.getPrStatus()));
+                        dbRating.setCrmRating(responseRating.getPrRatingStars());
+                        dbRating.setCrmCloudPrId(String.valueOf(responseRating.getPrId()));
+                        dbRating.setCrmComment(responseRating.getPrComment());
+                        dbRating.setCrmCreatedAt(responseRating.getCreatedAt());
+
+                        TableContactRatingMaster tableContactRatingMaster = new
+                                TableContactRatingMaster(databaseHandler);
+                        tableContactRatingMaster.addRating(dbRating);
+
+                        TableProfileMaster tableProfileMaster = new TableProfileMaster
+                                (databaseHandler);
+                        tableProfileMaster.updateUserProfileRating(pmId, responseRating
+                                .getProfileRating(), responseRating.getTotalProfileRateUser());
+
+                        ratingUser.setRating(Float.parseFloat(responseRating.getProfileRating()));
+                        textUserRating.setText(responseRating.getTotalProfileRateUser());
+                    }
+                } else {
+                    if (profileRatingResponse != null) {
+                        Log.e("error response", profileRatingResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -334,6 +407,101 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //            AppUtils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, "" + error
                     .getLocalizedMessage());
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @OnClick(R.id.linear_basic_detail_rating)
+    public void onRatingClick() {
+
+        if (!StringUtils.equalsIgnoreCase(pmId, "-1") && !displayOwnProfile) {
+
+            final Dialog dialog = new Dialog(this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.dialog_submit_rating);
+            dialog.setCancelable(false);
+
+            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+            layoutParams.copyFrom(dialog.getWindow().getAttributes());
+            layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+            dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+            TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
+            relativeRootRatingDialog = (RelativeLayout) dialog.findViewById(R.id
+                    .relative_root_rating_dialog);
+            final RatingBar ratingUser = (RatingBar) dialog.findViewById(R.id.rating_user);
+            TextView textComment = (TextView) dialog.findViewById(R.id.text_comment);
+            final TextView textRemainingCharacters = (TextView) dialog.findViewById(R.id
+                    .text_remaining_characters);
+            final EditText inputComment = (EditText) dialog.findViewById(R.id.input_comment);
+            RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+            Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
+            RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
+            Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
+
+            textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
+            textComment.setTypeface(Utils.typefaceRegular(this));
+            textRemainingCharacters.setTypeface(Utils.typefaceLight(this));
+            inputComment.setTypeface(Utils.typefaceRegular(this));
+            buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
+            buttonRight.setTypeface(Utils.typefaceSemiBold(this));
+
+            textDialogTitle.setText("Rate " + contactName);
+            textRemainingCharacters.setText(getResources().getInteger(R.integer
+                    .max_comment_length) + " characters left");
+
+            buttonRight.setText(R.string.action_submit);
+            buttonLeft.setText(R.string.action_cancel);
+
+            rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+                @Override
+                public void onComplete(RippleView rippleView) {
+                    dialog.dismiss();
+                }
+            });
+
+            rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+                @Override
+                public void onComplete(RippleView rippleView) {
+                    if (ratingUser.getRating() > 0) {
+                        submitRating(String.valueOf(ratingUser.getRating()), inputComment.getText
+                                ().toString());
+                        dialog.dismiss();
+                    } else {
+                        Utils.showErrorSnackBar(ProfileDetailActivity.this,
+                                relativeRootRatingDialog, "Please fill appropriate stars!");
+                    }
+                }
+            });
+
+            inputComment.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    int characters = getResources().getInteger(R.integer.max_comment_length) -
+                            charSequence.toString().length();
+                    textRemainingCharacters.setText(characters + (characters == 1 ? " character" :
+                            " characters" + " left"));
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            dialog.show();
+
         }
     }
 
@@ -368,12 +536,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
 //        textJoiningDate.setTypeface(Utils.typefaceRegular(this));
+        textFullScreenText.setTypeface(Utils.typefaceSemiBold(this));
         textName.setTypeface(Utils.typefaceSemiBold(this));
-        textCloudName.setTypeface(Utils.typefaceSemiBold(this));
         textDesignation.setTypeface(Utils.typefaceRegular(this));
         textOrganization.setTypeface(Utils.typefaceRegular(this));
         textViewAllOrganization.setTypeface(Utils.typefaceRegular(this));
         textUserRating.setTypeface(Utils.typefaceRegular(this));
+
+        textFullScreenText.setSelected(true);
 
         rippleViewMore.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
@@ -388,8 +558,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 ProfileDataOperation.class);
                 setUpView(profileDataOperation);
             } else {
-                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-                ProfileDataOperation profileDataOperation = tableProfileMaster.getRcProfileDetail
+//                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                QueryManager queryManager = new QueryManager(databaseHandler);
+                ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
                         (this, pmId);
                 setUpView(profileDataOperation);
             }
@@ -399,17 +570,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             setUpView(null);
         }
 
-        textName.setText(contactName);
+//        textName.setText(contactName);
+        textFullScreenText.setText(contactName);
         if (StringUtils.length(cloudContactName) > 0) {
-            textCloudName.setText(cloudContactName);
-            textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+            textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+            textName.setText(cloudContactName);
+            /*textCloudName.setText(cloudContactName);
+            textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));*/
         } else {
             if (StringUtils.equalsIgnoreCase(pmId, "-1")) {
-                textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+//                textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
             } else {
-                textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+//                textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
             }
-            textCloudName.setVisibility(View.GONE);
+//            textCloudName.setVisibility(View.GONE);
+            textName.setVisibility(View.GONE);
         }
 
         if (displayOwnProfile) {
@@ -423,12 +600,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
 
         if (isHideFavourite) {
-            imageRightLeft.setVisibility(View.GONE);
+            rippleActionRightLeft.setEnabled(false);
+            if (checkNumberFavourite != null && arrayListFavouriteContacts.contains
+                    (checkNumberFavourite)) {
+                imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
+            } else {
+                imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
+            }
         }
 
         initSwipe();
 
     }
+
 
     private void setUpView(final ProfileDataOperation profileDetail) {
 
@@ -1101,11 +1285,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         return listClickedPosition;
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
     //</editor-fold>
 
     //<editor-fold desc="Web Service Call">
@@ -1137,6 +1316,33 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     favouriteStatusObject, null, WsResponseObject.class, WsConstants
                     .REQ_MARK_AS_FAVOURITE, null, true).execute(WsConstants.WS_ROOT + WsConstants
                     .REQ_MARK_AS_FAVOURITE);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
+                    .string.msg_no_network));
+        }
+    }
+
+    private void submitRating(String ratingStar, String comment) {
+
+/*       ArrayList<Rating> ratings = new ArrayList<>();
+        Rating rating = new Rating();
+        rating.setPrToPmId(Integer.valueOf(pmId));
+        rating.setPrRatingStars(ratingStar);
+        rating.setPrComment(comment);
+        rating.setPrStatus(getResources().getInteger(R.integer.rating_done));
+        ratings.add(rating);*/
+
+        WsRequestObject ratingObject = new WsRequestObject();
+        ratingObject.setPmId(getUserPmId());
+        ratingObject.setPrComment(comment);
+        ratingObject.setPrRatingStars(ratingStar);
+        ratingObject.setPrStatus(String.valueOf(getResources().getInteger(R.integer.rating_done)));
+        ratingObject.setPrToPmId(pmId);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    ratingObject, null, WsResponseObject.class, WsConstants.REQ_PROFILE_RATING,
+                    null, true).execute(WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
                     .string.msg_no_network));
