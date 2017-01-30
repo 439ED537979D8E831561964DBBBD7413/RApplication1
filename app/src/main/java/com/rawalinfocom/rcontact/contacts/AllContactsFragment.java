@@ -121,6 +121,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     AllContactListAdapter allContactListAdapter;
 
+    private View rootView;
+
 //    UserProfile meProfile;
 
     //<editor-fold desc="Constructors">
@@ -139,6 +141,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 //        databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
         arrayListPhoneBookContacts = new ArrayList<>();
         arrayListContactHeaders = new ArrayList<>();
@@ -198,6 +201,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         View view = inflater.inflate(R.layout.fragment_all_contacts, container, false);
         ButterKnife.bind(this, view);
         return view;
+
     }
 
     @Override
@@ -261,7 +265,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         textTotalContacts.setText(previouslySyncedData + " Contacts");
                     } else {
                         textTotalContacts.setText(arrayListContactId.size() + " Contacts");
-                        Utils.showSuccessSnackbar(getActivity(), relativeRootAllContacts, "All " +
+                        Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts, "All " +
                                 "Contact Synced");
                     }
 

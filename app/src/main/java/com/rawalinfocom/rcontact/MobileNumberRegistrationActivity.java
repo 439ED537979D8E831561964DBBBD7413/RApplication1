@@ -214,7 +214,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                 if (otpDetailResponse.getStatus().equalsIgnoreCase(WsConstants
                         .RESPONSE_STATUS_TRUE)) {
 
-                    Utils.showSuccessSnackbar(this, relativeRootMobileRegistration, "" +
+                    Utils.showSuccessSnackBar(this, relativeRootMobileRegistration, "" +
                             "Uploaded Successfully");
 
                 } else {

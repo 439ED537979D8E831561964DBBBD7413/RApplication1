@@ -36,6 +36,11 @@ public class WsRequestObject {
 
     private String profileImage;
 
+    private String prComment;
+    private String prRatingStars;
+    private String prStatus;
+    private String prToPmId;
+
     private ArrayList<ProfileData> profileData;
     private ArrayList<ProfileData> favourites;
 
@@ -205,11 +210,39 @@ public class WsRequestObject {
         this.favourites = favourites;
     }
 
-    public ArrayList<Rating> getRatings() {
-        return ratings;
+    @JsonProperty("pr_comment")
+    public String getPrComment() {
+        return prComment;
     }
 
-    public void setRatings(ArrayList<Rating> ratings) {
-        this.ratings = ratings;
+    public void setPrComment(String prComment) {
+        this.prComment = prComment;
+    }
+
+    @JsonProperty("pr_rating_stars")
+    public String getPrRatingStars() {
+        return prRatingStars;
+    }
+
+    public void setPrRatingStars(String prRatingStars) {
+        this.prRatingStars = prRatingStars;
+    }
+
+    @JsonProperty("pr_status")
+    public String getPrStatus() {
+        return prStatus;
+    }
+
+    public void setPrStatus(String prStatus) {
+        this.prStatus = prStatus;
+    }
+
+    @JsonProperty("pr_to_pm_id")
+    public String getPrToPmId() {
+        return prToPmId;
+    }
+
+    public void setPrToPmId(String prToPmId) {
+        this.prToPmId = prToPmId;
     }
 }

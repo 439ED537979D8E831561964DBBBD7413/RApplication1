@@ -68,7 +68,8 @@ public class WsResponseObject {
         this.otpLog = otpLog;
     }
 
-    @JsonProperty("profile_data")
+        @JsonProperty("profile_data")
+//    @JsonProperty("profile_details")
     public UserProfile getUserProfile() {
         return userProfile;
     }

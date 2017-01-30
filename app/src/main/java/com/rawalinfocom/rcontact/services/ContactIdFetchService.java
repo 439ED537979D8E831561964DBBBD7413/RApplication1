@@ -35,8 +35,7 @@ public class ContactIdFetchService extends Service {
                     .getColumnIndex(ContactsContract.Contacts._ID)));
         }
 
-        // TODO: 21/01/17 Close Cursor
-//        contactNameCursor.close();
+        contactNameCursor.close();
 
         Utils.setArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET, arrayListContactIds);
         sendMessage();

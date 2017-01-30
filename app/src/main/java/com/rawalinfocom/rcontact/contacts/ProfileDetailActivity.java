@@ -365,7 +365,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (profileRatingResponse != null && StringUtils.equalsIgnoreCase
                         (profileRatingResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    Utils.showSuccessSnackbar(this, relativeRootProfileDetail, "Rating Submitted");
+                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail, "Rating Submitted");
 
                     if (profileRatingResponse.getProfileRating() != null) {
 
@@ -1324,17 +1324,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void submitRating(String ratingStar, String comment) {
 
-        ArrayList<Rating> ratings = new ArrayList<>();
+/*       ArrayList<Rating> ratings = new ArrayList<>();
         Rating rating = new Rating();
         rating.setPrToPmId(Integer.valueOf(pmId));
         rating.setPrRatingStars(ratingStar);
         rating.setPrComment(comment);
         rating.setPrStatus(getResources().getInteger(R.integer.rating_done));
-        ratings.add(rating);
+        ratings.add(rating);*/
 
         WsRequestObject ratingObject = new WsRequestObject();
         ratingObject.setPmId(getUserPmId());
-        ratingObject.setRatings(ratings);
+        ratingObject.setPrComment(comment);
+        ratingObject.setPrRatingStars(ratingStar);
+        ratingObject.setPrStatus(String.valueOf(getResources().getInteger(R.integer.rating_done)));
+        ratingObject.setPrToPmId(pmId);
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),

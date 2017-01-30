@@ -107,7 +107,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(context, "Copied Number", ((TextView) view).getText()
                         .toString());
-                Utils.showSuccessSnackbar(context, ((ProfileDetailActivity) context)
+                Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
                         .getRelativeRootProfileDetail(), "Number copied to Clipboard");
                 return false;
             }
@@ -148,7 +148,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(context, "Copied Email", ((TextView) view).getText()
                         .toString());
-                Utils.showSuccessSnackbar(context, ((ProfileDetailActivity) context)
+                Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
                         .getRelativeRootProfileDetail(), "Email copied to Clipboard");
                 return false;
             }
@@ -187,7 +187,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(holder.textMain.getText().toString()));
+                String url = holder.textMain.getText().toString();
+                if (!StringUtils.startsWithIgnoreCase(url, "http://") && !StringUtils
+                        .startsWithIgnoreCase(url, "https://")) {
+                    url = "http://" + url;
+                }
+                intent.setData(Uri.parse(url));
                 context.startActivity(intent);
             }
         });
@@ -197,7 +202,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(context, "Copied Website", ((TextView) view).getText()
                         .toString());
-                Utils.showSuccessSnackbar(context, ((ProfileDetailActivity) context)
+                Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
                         .getRelativeRootProfileDetail(), "Website copied to Clipboard");
                 return false;
             }
@@ -231,7 +236,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(context, "Copied Address", ((TextView) view).getText()
                         .toString());
-                Utils.showSuccessSnackbar(context, ((ProfileDetailActivity) context)
+                Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
                         .getRelativeRootProfileDetail(), "Address copied to Clipboard");
                 return false;
             }
