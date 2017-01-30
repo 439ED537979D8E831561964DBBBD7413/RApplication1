@@ -114,7 +114,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
             case R.id.ripple_resend:
                 stopService(new Intent(OtpVerificationActivity.this, OtpTimerService.class));
-                Utils.showSuccessSnackbar(OtpVerificationActivity.this,
+                Utils.showSuccessSnackBar(OtpVerificationActivity.this,
                         relativeRootOtpVerification, getString(R.string.msg_success_otp_request));
                 inputOtp.setText("");
                 sendOtp();

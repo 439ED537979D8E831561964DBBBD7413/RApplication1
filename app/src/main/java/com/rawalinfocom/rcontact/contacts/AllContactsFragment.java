@@ -102,6 +102,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     VerticalRecyclerViewFastScroller scrollerAllContact;
     @BindView(R.id.title_indicator)
     ColorGroupSectionTitleIndicator titleIndicator;
+    @BindView(R.id.text_total_contacts)
+    TextView textTotalContacts;
 
     ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> arrayListContactHeaders;
@@ -109,6 +111,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ArrayList<String> arrayListContactId;
     ArrayList<String> arrayListContactNumbers;
     ArrayList<String> arrayListContactEmails;
+    ArrayList<String> arrayListFavouriteContacts;
 
     MaterialDialog callConfirmationDialog;
 
@@ -117,6 +120,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 //    DatabaseHandler databaseHandler;
 
     AllContactListAdapter allContactListAdapter;
+
+    private View rootView;
 
 //    UserProfile meProfile;
 
@@ -136,9 +141,11 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 //        databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
         arrayListPhoneBookContacts = new ArrayList<>();
         arrayListContactHeaders = new ArrayList<>();
+        arrayListFavouriteContacts = new ArrayList<>();
 
         arrayListContactHeaders.add(" ");
 
@@ -147,9 +154,34 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         arrayListPhoneBookContacts.add("My Profile");
 
         ProfileData myProfileData = new ProfileData();
+
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt((
+                (BaseActivity) getActivity()).getUserPmId()));
+
+        TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
+        MobileNumber mobileNumber = tableMobileMaster.getOwnVerifiedMobileNumbersFromPmId
+                (getActivity());
+
         ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
-        ProfileDataOperation myOperation = (ProfileDataOperation) Utils.getObjectPreference
-                (getActivity(), AppConstants.PREF_REGS_USER_OBJECT, ProfileDataOperation.class);
+
+        /*ProfileDataOperation myOperation = (ProfileDataOperation) Utils.getObjectPreference
+                (getActivity(), AppConstants.PREF_REGS_USER_OBJECT, ProfileDataOperation.class);*/
+
+        ProfileDataOperation myOperation = new ProfileDataOperation();
+        myOperation.setPbNameFirst(userProfile.getPmFirstName());
+        myOperation.setPbNameLast(userProfile.getPmLastName());
+        myOperation.setProfileRating(userProfile.getProfileRating());
+        myOperation.setTotalProfileRateUser(userProfile.getTotalProfileRateUser());
+
+        ArrayList<ProfileDataOperationPhoneNumber> operationPhoneNumber = new ArrayList<>();
+        ProfileDataOperationPhoneNumber phoneNumber = new ProfileDataOperationPhoneNumber();
+        phoneNumber.setPhoneNumber(mobileNumber.getMnmMobileNumber());
+
+        operationPhoneNumber.add(phoneNumber);
+
+        myOperation.setPbPhoneNumber(operationPhoneNumber);
+
         arrayListOperation.add(myOperation);
         myProfileData.setOperation(arrayListOperation);
         arrayListPhoneBookContacts.add(myProfileData);
@@ -169,6 +201,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         View view = inflater.inflate(R.layout.fragment_all_contacts, container, false);
         ButterKnife.bind(this, view);
         return view;
+
     }
 
     @Override
@@ -229,8 +262,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                  /* Call uploadContact api if there is more data to sync */
                     if (nextNumber < arrayListContactId.size()) {
                         phoneBookOperations();
+                        textTotalContacts.setText(previouslySyncedData + " Contacts");
                     } else {
-                        Utils.showSuccessSnackbar(getActivity(), relativeRootAllContacts, "All " +
+                        textTotalContacts.setText(arrayListContactId.size() + " Contacts");
+                        Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts, "All " +
                                 "Contact Synced");
                     }
 
@@ -273,6 +308,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     //<editor-fold desc="Private Methods">
 
     private void init() {
+
+        textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
 
         // Connect the recycler to the scroller (to let the scroller scroll the list)
         scrollerAllContact.setRecyclerView(recyclerViewContactList);
@@ -425,10 +462,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 if (!tableProfileMobileMapping.getIsMobileNumberExists(arrayListContactNumbers
                         .get(i))) {
 
-                    ProfileMobileMapping profileMobileMapping = new
-                            ProfileMobileMapping();
-                    profileMobileMapping.setMpmMobileNumber(arrayListContactNumbers
-                            .get(i));
+                    ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
+                    profileMobileMapping.setMpmMobileNumber(arrayListContactNumbers.get(i));
                     profileMobileMapping.setMpmIsRcp("0");
                     if (!Utils.isArraylistNullOrEmpty(profileData)) {
                         for (int j = 0; j < profileData.size(); j++) {
@@ -465,13 +500,21 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     profileEmailMapping.setEpmIsRcp("0");
                     if (!Utils.isArraylistNullOrEmpty(profileData)) {
                         for (int j = 0; j < profileData.size(); j++) {
-                            if (StringUtils.equalsIgnoreCase(arrayListContactEmails.get(i),
-                                    profileData.get(j).getVerifiedEmailAddress())) {
-                                profileEmailMapping.setEpmCloudEmId(profileData.get(j)
-                                        .getEmCloudId());
-                                profileEmailMapping.setEpmCloudPmId(profileData.get(j).getRcpPmId
-                                        ());
-                                profileEmailMapping.setEpmIsRcp("1");
+                            if (!Utils.isArraylistNullOrEmpty(profileData.get(j)
+                                    .getVerifiedEmailIds())) {
+                                for (int k = 0; k < profileData.get(j).getVerifiedEmailIds().size();
+                                     k++) {
+                                    if (StringUtils.equalsIgnoreCase(arrayListContactEmails.get(i),
+                                            profileData.get(j).getVerifiedEmailIds().get(k)
+                                                    .getEmEmailId())) {
+                                        profileEmailMapping.setEpmCloudEmId(String.valueOf
+                                                (profileData.get(j).getVerifiedEmailIds().get(k)
+                                                        .getEmId()));
+                                        profileEmailMapping.setEpmCloudPmId(profileData.get(j)
+                                                .getRcpPmId());
+                                        profileEmailMapping.setEpmIsRcp("1");
+                                    }
+                                }
                             }
                         }
                     }
@@ -555,17 +598,21 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j).getEmPublic()));
                     email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
 
-                    if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedEmailAddress(),
-                            email.getEmEmailAddress())) {
-                        email.setEmIsPrimary(String.valueOf(getActivity().getResources()
-                                .getInteger(R.integer.rcp_type_primary)));
-                        email.setEmIsVerified("1");
-                    } else {
-                        email.setEmIsPrimary(String.valueOf(getActivity().getResources()
-                                .getInteger(R.integer.rcp_type_secondary)));
-                        email.setEmIsVerified("0");
+                    if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getVerifiedEmailIds())) {
+                        for (int k = 0; k < profileData.get(i).getVerifiedEmailIds().size(); k++) {
+                            if (StringUtils.equalsIgnoreCase(profileData.get(i)
+                                    .getVerifiedEmailIds().get(k).getEmEmailId(), email
+                                    .getEmEmailAddress())) {
+                                email.setEmIsPrimary(String.valueOf(getActivity().getResources()
+                                        .getInteger(R.integer.rcp_type_primary)));
+                                email.setEmIsVerified("1");
+                            } else {
+                                email.setEmIsPrimary(String.valueOf(getActivity().getResources()
+                                        .getInteger(R.integer.rcp_type_secondary)));
+                                email.setEmIsVerified("0");
+                            }
+                        }
                     }
-
                     arrayListEmail.add(email);
                 }
 
@@ -768,6 +815,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         arrayListUserContact = new ArrayList<>();
         arrayListContactNumbers = new ArrayList<>();
         arrayListContactEmails = new ArrayList<>();
+
         int previouslySyncedData = Utils.getIntegerPreference(getActivity(), AppConstants
                 .PREF_SYNCED_CONTACTS, 0);
         int previousTo = previouslySyncedData + CONTACT_CHUNK;
@@ -790,6 +838,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             ProfileData profileData = new ProfileData();
 
             String rawId = arrayListContactId.get(i);
+            String isFavourite = "0";
 
             profileData.setLocalPhoneBookId(rawId);
 
@@ -797,6 +846,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));*/
 
             ProfileDataOperation operation = new ProfileDataOperation();
+            operation.setFlag("1");
 
             //<editor-fold desc="Structured Name">
             Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);
@@ -808,7 +858,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 .getColumnIndex(ContactsContract.Contacts.STARRED)));*/
                 while (contactStructuredNameCursor.moveToNext()) {
 
-                    operation.setFlag("1");
                     operation.setPbNamePrefix(contactStructuredNameCursor.getString
                             (contactStructuredNameCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.StructuredName.PREFIX)));
@@ -845,12 +894,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
             if (starredContactCursor != null && starredContactCursor.getCount() > 0) {
 
-
-                while (starredContactCursor.moveToNext()) {
-
-                    operation.setIsFavourite(starredContactCursor.getString(starredContactCursor
-                            .getColumnIndex(ContactsContract.Contacts.STARRED)));
-
+                if (starredContactCursor.moveToNext()) {
+                    isFavourite = starredContactCursor.getString(starredContactCursor
+                            .getColumnIndex(ContactsContract.Contacts.STARRED));
+                    operation.setIsFavourite(isFavourite);
                 }
                 starredContactCursor.close();
             }
@@ -872,9 +919,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             contactNumberCursor.getString(contactNumberCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.NUMBER))));
                     phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
-                            (contactNumberCursor.getInt
-                                    (contactNumberCursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Phone.TYPE))));
+                            (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Phone.TYPE))));
                     phoneNumber.setPhonePublic(1);
 
                     arrayListPhoneNumber.add(phoneNumber);
@@ -882,6 +928,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     if (!arrayListContactNumbers.contains(Utils.getFormattedNumber(getActivity(),
                             phoneNumber.getPhoneNumber()))) {
                         arrayListContactNumbers.add(Utils.getFormattedNumber(getActivity(),
+                                phoneNumber.getPhoneNumber()));
+                    }
+                    if (isFavourite.equalsIgnoreCase("1")) {
+                        arrayListFavouriteContacts.add(Utils.getFormattedNumber(getActivity(),
                                 phoneNumber.getPhoneNumber()));
                     }
 
@@ -912,6 +962,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     arrayListEmailId.add(emailId);
                     arrayListContactEmails.add(emailId.getEmEmailId());
+                    if (isFavourite.equalsIgnoreCase("1")) {
+                        arrayListFavouriteContacts.add(emailId.getEmEmailId());
+                    }
                 }
                 contactEmailCursor.close();
             }
@@ -1150,12 +1203,16 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         }
 
+        Utils.setArrayListPreference(getActivity(), AppConstants
+                .PREF_FAVOURITE_CONTACT_NUMBER_EMAIL, arrayListFavouriteContacts);
+
         if (arrayListUserContact.size() > 0) {
 //            arrayListPhoneBookContacts.addAll(arrayListUserContact);
 
             for (int i = 0; i < arrayListUserContact.size(); i++) {
                 String headerLetter = StringUtils.upperCase(StringUtils.substring
                         (arrayListUserContact.get(i).getOperation().get(0).getPbNameFirst(), 0, 1));
+                headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
                 if (!arrayListPhoneBookContacts.contains(headerLetter)) {
                     arrayListContactHeaders.add(headerLetter);
                     arrayListPhoneBookContacts.add(headerLetter);
@@ -1166,6 +1223,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             if (previouslySyncedData < previousTo) {
                 uploadContacts(previouslySyncedData);
             } else {
+                textTotalContacts.setText(arrayListContactId.size() + " Contacts");
                 progressAllContact.setVisibility(View.GONE);
                 populateRecyclerView();
             }

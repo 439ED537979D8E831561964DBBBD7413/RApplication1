@@ -62,6 +62,8 @@ public class FavoritesFragment extends BaseFragment {
     ColorGroupSectionTitleIndicator titleIndicator;
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
+    @BindView(R.id.text_total_contacts)
+    TextView textTotalContacts;
 
     PhoneBookContacts phoneBookContacts;
 
@@ -70,6 +72,7 @@ public class FavoritesFragment extends BaseFragment {
     ArrayList<ProfileData> arrayListUserContact;
     ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> arrayListContactHeaders;
+
 
     //<editor-fold desc="Constructors">
     public FavoritesFragment() {
@@ -112,6 +115,8 @@ public class FavoritesFragment extends BaseFragment {
 
     //<editor-fold desc="Private Methods">
     private void init() {
+
+        textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
 
         // Connect the recycler to the scroller (to let the scroller scroll the list)
         scrollerFavoriteContact.setRecyclerView(recyclerViewContactList);
@@ -282,6 +287,7 @@ public class FavoritesFragment extends BaseFragment {
         arrayListPhoneBookContacts = new ArrayList<>();
         arrayListContactHeaders = new ArrayList<>();
 
+
         for (int i = 0; i < arrayListFavouriteRawId.size(); i++) {
 
             ProfileData profileData = new ProfileData();
@@ -300,12 +306,21 @@ public class FavoritesFragment extends BaseFragment {
 
                 while (contactStructuredNameCursor.moveToNext()) {
 
+                    operation.setPbNamePrefix(contactStructuredNameCursor.getString
+                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
+                                    .CommonDataKinds.StructuredName.PREFIX)));
                     operation.setPbNameFirst(contactStructuredNameCursor.getString
                             (contactStructuredNameCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.StructuredName.GIVEN_NAME)));
+                    operation.setPbNameMiddle(contactStructuredNameCursor.getString
+                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
+                                    .CommonDataKinds.StructuredName.MIDDLE_NAME)));
                     operation.setPbNameLast(contactStructuredNameCursor.getString
                             (contactStructuredNameCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.StructuredName.FAMILY_NAME)));
+                    operation.setPbNameSuffix(contactStructuredNameCursor.getString
+                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
+                                    .CommonDataKinds.StructuredName.SUFFIX)));
 
                 }
                 contactStructuredNameCursor.close();
@@ -328,6 +343,7 @@ public class FavoritesFragment extends BaseFragment {
 
                     arrayListPhoneNumber.add(phoneNumber);
 
+
                 }
                 contactNumberCursor.close();
             }
@@ -347,6 +363,7 @@ public class FavoritesFragment extends BaseFragment {
                             .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
 
                     arrayListEmailId.add(emailId);
+
                 }
                 contactEmailCursor.close();
             }
@@ -480,6 +497,7 @@ public class FavoritesFragment extends BaseFragment {
         for (int i = 0; i < arrayListUserContact.size(); i++) {
             String headerLetter = StringUtils.upperCase(StringUtils.substring
                     (arrayListUserContact.get(i).getOperation().get(0).getPbNameFirst(), 0, 1));
+            headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
             if (!arrayListPhoneBookContacts.contains(headerLetter)) {
                 arrayListContactHeaders.add(headerLetter);
                 arrayListPhoneBookContacts.add(headerLetter);
@@ -488,6 +506,8 @@ public class FavoritesFragment extends BaseFragment {
         }
 
         populateRecyclerView();
+
+        textTotalContacts.setText(arrayListUserContact.size() + " Contacts");
 
     }
 

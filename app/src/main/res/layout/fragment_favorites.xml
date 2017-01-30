@@ -8,6 +8,14 @@
     android:background="@color/colorWhite"
     tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
 
+    <TextView
+        android:id="@+id/text_total_contacts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:paddingRight="@dimen/margin_small"
+        tools:text="200 Contacts"/>
+
     <com.rawalinfocom.rcontact.helper.ProgressWheel
         android:id="@+id/progress_favorite_contact"
         android:layout_width="wrap_content"
@@ -17,6 +25,7 @@
         wheel:matProg_progressIndeterminate="true"/>
 
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/text_total_contacts"
         android:id="@+id/recycler_view_contact_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

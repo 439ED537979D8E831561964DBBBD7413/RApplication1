@@ -36,10 +36,10 @@ public class UserProfile implements Serializable {
     private String pmGender;
     private String pmGenderPrivacy;
     private String pmIsFavourite;
-    private String pmIsFavouritePrivacy;
     private String pmAccessToken;
     private String pmNosqlMasterId;
     private String pmSignupSocialMediaType;
+    private String pmJoiningDate;
 
     private String emailId;
     private String mobileNumber;
@@ -248,14 +248,6 @@ public class UserProfile implements Serializable {
         this.pmIsFavourite = pmIsFavourite;
     }
 
-    public String getPmIsFavouritePrivacy() {
-        return StringUtils.defaultString(pmIsFavouritePrivacy);
-    }
-
-    public void setPmIsFavouritePrivacy(String pmIsFavouritePrivacy) {
-        this.pmIsFavouritePrivacy = pmIsFavouritePrivacy;
-    }
-
     public String getPmAccessToken() {
         return StringUtils.defaultString(pmAccessToken);
     }
@@ -280,5 +272,11 @@ public class UserProfile implements Serializable {
         this.pmSignupSocialMediaType = pmSignupSocialMediaType;
     }
 
+    public String getPmJoiningDate() {
+        return pmJoiningDate;
+    }
 
+    public void setPmJoiningDate(String pmJoiningDate) {
+        this.pmJoiningDate = pmJoiningDate;
+    }
 }

@@ -39,6 +39,7 @@
                 android:id="@+id/text_image_notification"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:padding="@dimen/activity_half_horizontal_margin"/>
 
             <!-- <ImageView
@@ -49,13 +50,20 @@
                  android:padding="@dimen/activity_half_horizontal_margin"
                  android:src="@drawable/ic_action_notification"/>-->
 
-            <ImageView
-                android:id="@+id/image_add_contact"
+            <TextView
+                android:id="@+id/text_image_add_contact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/str_content_description"
-                android:padding="@dimen/activity_half_horizontal_margin"
-                android:src="@drawable/ic_action_add_contact"/>
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/activity_half_horizontal_margin"/>
+
+            <!-- <ImageView
+                 android:id="@+id/image_add_contact"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:contentDescription="@string/str_content_description"
+                 android:padding="@dimen/activity_half_horizontal_margin"
+                 android:src="@drawable/ic_action_add_contact"/>-->
 
         </LinearLayout>
 
