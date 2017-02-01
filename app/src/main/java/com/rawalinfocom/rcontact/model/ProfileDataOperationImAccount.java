@@ -9,12 +9,24 @@ import org.apache.commons.lang3.StringUtils;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationImAccount {
+
+    private int IMId;
     private String IMAccountType;
     private String IMAccountDetails;
     private String IMAccountProtocol;
     private String IMAccountPublic;
 
-    private int IMRcpType;
+//    private int IMRcpType;
+    private String IMRcpType;
+
+    @JsonProperty("im_id")
+    public int getIMId() {
+        return IMId;
+    }
+
+    public void setIMId(int IMId) {
+        this.IMId = IMId;
+    }
 
     @JsonProperty("im_account_type")
     public String getIMAccountType() {
@@ -52,11 +64,19 @@ public class ProfileDataOperationImAccount {
         this.IMAccountProtocol = IMAccountProtocol;
     }
 
-    public int getIMRcpType() {
+   /* public int getIMRcpType() {
         return IMRcpType;
     }
 
     public void setIMRcpType(int IMRcpType) {
+        this.IMRcpType = IMRcpType;
+    }*/
+
+    public String getIMRcpType() {
+        return IMRcpType;
+    }
+
+    public void setIMRcpType(String IMRcpType) {
         this.IMRcpType = IMRcpType;
     }
 }

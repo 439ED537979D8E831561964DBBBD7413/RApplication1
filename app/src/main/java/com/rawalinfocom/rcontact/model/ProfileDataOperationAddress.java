@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationAddress {
 
+    private int addId;
     private String country;
     private String addressType;
     private String city;
@@ -23,7 +24,17 @@ public class ProfileDataOperationAddress {
     private String googleLatitude;
     private String formattedAddress;
 
-    private int rcpType;
+    //    private int rcpType;
+    private String rcpType;
+
+    @JsonProperty("add_id")
+    public int getAddId() {
+        return addId;
+    }
+
+    public void setAddId(int addId) {
+        this.addId = addId;
+    }
 
     @JsonProperty("country")
     public String getCountry() {
@@ -133,11 +144,19 @@ public class ProfileDataOperationAddress {
         this.formattedAddress = formatted_address;
     }
 
-    public int getRcpType() {
+   /* public int getRcpType() {
         return rcpType;
     }
 
     public void setRcpType(int rcpType) {
+        this.rcpType = rcpType;
+    }*/
+
+    public String getRcpType() {
+        return rcpType;
+    }
+
+    public void setRcpType(String rcpType) {
         this.rcpType = rcpType;
     }
 }
