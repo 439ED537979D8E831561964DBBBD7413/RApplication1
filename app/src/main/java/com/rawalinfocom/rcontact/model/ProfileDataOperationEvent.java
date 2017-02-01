@@ -9,11 +9,23 @@ import org.apache.commons.lang3.StringUtils;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationEvent {
+
+    private int eventId;
     private String eventType;
     private String eventDate;
-    private String eventPublic;
+    private int eventPublic;
 
-    private int eventRcType;
+    //    private int eventRcType;
+    private String eventRcType;
+
+    @JsonProperty("event_id")
+    public int getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(int eventId) {
+        this.eventId = eventId;
+    }
 
     @JsonProperty("event_type")
     public String getEventType() {
@@ -34,19 +46,27 @@ public class ProfileDataOperationEvent {
     }
 
     @JsonProperty("event_public")
-    public String getEventPublic() {
-        return StringUtils.defaultString(this.eventPublic);
+    public int getEventPublic() {
+        return this.eventPublic;
     }
 
-    public void setEventPublic(String eventPublic) {
+    public void setEventPublic(int eventPublic) {
         this.eventPublic = eventPublic;
     }
 
-    public int getEventRcType() {
+    /*public int getEventRcType() {
         return eventRcType;
     }
 
     public void setEventRcType(int eventRcType) {
+        this.eventRcType = eventRcType;
+    }*/
+
+    public String getEventRcType() {
+        return eventRcType;
+    }
+
+    public void setEventRcType(String eventRcType) {
         this.eventRcType = eventRcType;
     }
 }

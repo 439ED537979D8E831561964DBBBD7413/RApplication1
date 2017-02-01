@@ -75,6 +75,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
@@ -609,8 +610,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                         .getPhoneNumber());
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
                         .get(i).getPhonePublic()));
-                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
-                        .getPbRcpType()));
+                mobileNumber.setMnmIsPrimary(arrayListPhoneNumber.get(i).getPbRcpType());
                 mobileNumber.setRcProfileMasterPmId(userProfileRegistered.getPmId());
                 arrayListMobileNumber.add(mobileNumber);
             }
@@ -667,11 +667,14 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
         // <editor-fold desc="Website Master">
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
-            ArrayList<String> arrayListWebsite = profileDetail.getPbWebAddress();
+//            ArrayList<String> arrayListWebsite = profileDetail.getPbWebAddress();
+            ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileDetail
+                    .getPbWebAddress();
             ArrayList<Website> websiteList = new ArrayList<>();
             for (int j = 0; j < arrayListWebsite.size(); j++) {
                 Website website = new Website();
-                website.setWmWebsiteUrl(arrayListWebsite.get(j));
+                website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
+                website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
                 website.setRcProfileMasterPmId(userProfileRegistered.getPmId());
                 websiteList.add(website);
             }
@@ -734,7 +737,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 Event event = new Event();
                 event.setEvmStartDate(arrayListEvent.get(j).getEventDate());
                 event.setEvmEventType(arrayListEvent.get(j).getEventType());
-                event.setEvmEventPrivacy(arrayListEvent.get(j).getEventPublic());
+                event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
                 event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 eventList.add(event);
             }

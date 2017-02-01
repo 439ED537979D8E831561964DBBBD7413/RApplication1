@@ -14,7 +14,8 @@ public class ProfileDataOperationEmail {
     private String emEmailId;
     private String emType;
     private int emPublic;
-    private int emRcpType;
+    private String emRcpType;
+//    private int emRcpType;
 
     @JsonProperty("em_id")
     public int getEmId() {
@@ -52,12 +53,21 @@ public class ProfileDataOperationEmail {
         this.emPublic = emPublic;
     }
 
-    @JsonProperty("em_rcp_type")
+    /*@JsonProperty("em_rcp_type")
     public int getEmRcpType() {
         return emRcpType;
     }
 
     public void setEmRcpType(int emRcpType) {
+        this.emRcpType = emRcpType;
+    }*/
+
+    @JsonProperty("em_rcp_type")
+    public String getEmRcpType() {
+        return emRcpType;
+    }
+
+    public void setEmRcpType(String emRcpType) {
         this.emRcpType = emRcpType;
     }
 }

@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationOrganization {
 
+    private int orgId;
     private String orgJobTitle;
     private String orgDepartment;
     private String orgName;
@@ -17,7 +18,17 @@ public class ProfileDataOperationOrganization {
     private String orgJobDescription;
     private String orgOfficeLocation;
 
-    private int orgRcpType;
+//    private int orgRcpType;
+    private String orgRcpType;
+
+    @JsonProperty("org_id")
+    public int getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(int orgId) {
+        this.orgId = orgId;
+    }
 
     @JsonProperty("org_job_title")
     public String getOrgJobTitle() {
@@ -73,11 +84,19 @@ public class ProfileDataOperationOrganization {
         this.orgOfficeLocation = orgOfficeLocation;
     }
 
-    public int getOrgRcpType() {
+/*    public int getOrgRcpType() {
         return orgRcpType;
     }
 
     public void setOrgRcpType(int orgRcpType) {
+        this.orgRcpType = orgRcpType;
+    }*/
+
+    public String getOrgRcpType() {
+        return orgRcpType;
+    }
+
+    public void setOrgRcpType(String orgRcpType) {
         this.orgRcpType = orgRcpType;
     }
 }

@@ -70,7 +70,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationRelationship;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.UserProfile;
@@ -650,11 +650,14 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
             // <editor-fold desc="Website Master">
             if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbWebAddress())) {
-                ArrayList<String> arrayListWebsite = profileData.get(i).getPbWebAddress();
+//                ArrayList<String> arrayListWebsite = profileData.get(i).getPbWebAddress();
+                ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileData.get(i)
+                        .getPbWebAddress();
                 ArrayList<Website> websiteList = new ArrayList<>();
                 for (int j = 0; j < arrayListWebsite.size(); j++) {
                     Website website = new Website();
-                    website.setWmWebsiteUrl(arrayListWebsite.get(j));
+                    website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
+                    website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
                     website.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                     websiteList.add(website);
                 }
@@ -721,7 +724,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     Event event = new Event();
                     event.setEvmStartDate(arrayListEvent.get(j).getEventDate());
                     event.setEvmEventType(arrayListEvent.get(j).getEventType());
-                    event.setEvmEventPrivacy(arrayListEvent.get(j).getEventPublic());
+                    event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic
+                            ()));
                     event.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                     eventList.add(event);
                 }
@@ -922,6 +926,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.TYPE))));
                     phoneNumber.setPhonePublic(1);
+                    phoneNumber.setPhonePublic(1);
 
                     arrayListPhoneNumber.add(phoneNumber);
 
@@ -1002,15 +1007,28 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
             //<editor-fold desc="Website">
             Cursor contactWebsiteCursor = phoneBookContacts.getContactWebsite(rawId);
-            ArrayList<String> arrayListWebsite = new ArrayList<>();
+//            ArrayList<String> arrayListWebsite = new ArrayList<>();
+            ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = new ArrayList<>();
 
             if (contactWebsiteCursor != null && contactWebsiteCursor.getCount() > 0) {
+                int websiteCount = 0;
                 while (contactWebsiteCursor.moveToNext()) {
 
-                    String website = contactWebsiteCursor.getString(contactWebsiteCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));
+                    ProfileDataOperationWebAddress webAddress = new
+                            ProfileDataOperationWebAddress();
 
-                    arrayListWebsite.add(website);
+                    webAddress.setWebId(++websiteCount);
+                    webAddress.setWebAddress(contactWebsiteCursor.getString(contactWebsiteCursor
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
+                    webAddress.setWebType(phoneBookContacts.getWebsiteType(contactWebsiteCursor,
+                            (contactWebsiteCursor.getInt(contactWebsiteCursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Website.TYPE)))));
+
+                   /* String website = contactWebsiteCursor.getString(contactWebsiteCursor
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));*/
+
+//                    arrayListWebsite.add(website);
+                    arrayListWebsite.add(webAddress);
 
                 }
                 contactWebsiteCursor.close();
@@ -1025,11 +1043,15 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     ArrayList<>();
 
             if (contactOrganizationCursor != null && contactOrganizationCursor.getCount() > 0) {
+
+                int organizationCount = 0;
+
                 while (contactOrganizationCursor.moveToNext()) {
 
                     ProfileDataOperationOrganization organization = new
                             ProfileDataOperationOrganization();
 
+                    organization.setOrgId(++organizationCount);
                     organization.setOrgName(contactOrganizationCursor.getString
                             (contactOrganizationCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.Organization.COMPANY)));
@@ -1065,10 +1087,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             ArrayList<ProfileDataOperationAddress> arrayListAddress = new ArrayList<>();
 
             if (contactAddressCursor != null && contactAddressCursor.getCount() > 0) {
+                int addressCount = 0;
                 while (contactAddressCursor.moveToNext()) {
 
                     ProfileDataOperationAddress address = new ProfileDataOperationAddress();
 
+                    address.setAddId(++addressCount);
                     address.setFormattedAddress(contactAddressCursor.getString
                             (contactAddressCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS)));
@@ -1108,10 +1132,13 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             ArrayList<ProfileDataOperationImAccount> arrayListImAccount = new ArrayList<>();
 
             if (contactImCursor != null && contactImCursor.getCount() > 0) {
+
+                int imCount = 0;
                 while (contactImCursor.moveToNext()) {
 
                     ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
 
+                    imAccount.setIMId(++imCount);
                     imAccount.setIMAccountDetails(contactImCursor.getString(contactImCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Im.DATA1)));
 
@@ -1141,20 +1168,31 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             ArrayList<ProfileDataOperationEvent> arrayListEvent = new ArrayList<>();
 
             if (contactEventCursor != null && contactEventCursor.getCount() > 0) {
+                int eventCount = 0;
                 while (contactEventCursor.moveToNext()) {
 
                     ProfileDataOperationEvent event = new ProfileDataOperationEvent();
 
+                    event.setEventId(++eventCount);
                     event.setEventType(phoneBookContacts.getEventType(contactEventCursor,
                             contactEventCursor
                                     .getInt(contactEventCursor.getColumnIndex(ContactsContract
                                             .CommonDataKinds.Event.TYPE))));
 
-                    event.setEventDate(contactEventCursor.getString(contactEventCursor
+                    String eventDate = contactEventCursor.getString(contactEventCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Event
-                                    .START_DATE)));
+                                    .START_DATE));
 
-                    event.setEventPublic("1");
+                    if (StringUtils.startsWith(eventDate, "--")) {
+                        eventDate = "0000" + eventDate.substring(1, StringUtils.length(eventDate));
+                    }
+
+                    /*event.setEventDate(contactEventCursor.getString(contactEventCursor
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Event
+                                    .START_DATE)));*/
+                    event.setEventDate(eventDate);
+
+                    event.setEventPublic(1);
 
                     arrayListEvent.add(event);
 
@@ -1166,7 +1204,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="Relation">
-            Cursor contactRelationCursor = phoneBookContacts.getContactRelationShip(rawId);
+            /*Cursor contactRelationCursor = phoneBookContacts.getContactRelationShip(rawId);
             ArrayList<ProfileDataOperationRelationship> arrayListRelationship = new
                     ArrayList<>();
 
@@ -1193,7 +1231,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 contactRelationCursor.close();
             }
 
-            operation.setPbRelationship(arrayListRelationship);
+            operation.setPbRelationship(arrayListRelationship);*/
             //</editor-fold>
 
             arrayListOperation.add(operation);

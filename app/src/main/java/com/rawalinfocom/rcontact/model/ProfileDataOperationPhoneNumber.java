@@ -14,7 +14,8 @@ public class ProfileDataOperationPhoneNumber {
     private String phoneNumber;
     private int phonePublic;
     private int phoneId;
-    private int pbRcpType;
+    private String pbRcpType;
+//    private int pbRcpType;
 
     @JsonProperty("ph_type")
     public String getPhoneType() {
@@ -52,12 +53,22 @@ public class ProfileDataOperationPhoneNumber {
         this.phoneId = phoneId;
     }
 
-    @JsonProperty("pb_rcp_type")
+    //    @JsonIgnore
+   /* @JsonProperty("pb_rcp_type")
     public int getPbRcpType() {
         return pbRcpType;
     }
 
     public void setPbRcpType(int pbRcpType) {
+        this.pbRcpType = pbRcpType;
+    }*/
+
+    @JsonProperty("pb_rcp_type")
+    public String getPbRcpType() {
+        return pbRcpType;
+    }
+
+    public void setPbRcpType(String pbRcpType) {
         this.pbRcpType = pbRcpType;
     }
 }

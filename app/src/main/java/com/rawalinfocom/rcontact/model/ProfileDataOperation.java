@@ -14,7 +14,8 @@ public class ProfileDataOperation {
 
     private ArrayList<ProfileDataOperationPhoneNumber> pbPhoneNumber;
     private String flag;
-    private ArrayList<String> pbWebAddress;
+    //    private ArrayList<String> pbWebAddress;
+    private ArrayList<ProfileDataOperationWebAddress> pbWebAddress;
     private ArrayList<ProfileDataOperationEvent> pbEvent;
     private String pbNameSuffix;
     private ArrayList<ProfileDataOperationEmail> pbEmailId;
@@ -22,7 +23,7 @@ public class ProfileDataOperation {
     private String pbNameMiddle;
     private ArrayList<ProfileDataOperationOrganization> pbOrganization;
     private String isFavourite;
-    private ArrayList<ProfileDataOperationRelationship> pbRelationship;
+    //    private ArrayList<ProfileDataOperationRelationship> pbRelationship;
     private String pbSource;
     private String pbNamePrefix;
     private String pbNameLast;
@@ -68,14 +69,14 @@ public class ProfileDataOperation {
         this.flag = flag;
     }
 
-    @JsonProperty("pb_web_address")
+   /* @JsonProperty("pb_web_address")
     public ArrayList<String> getPbWebAddress() {
         return pbWebAddress;
     }
 
     public void setPbWebAddress(ArrayList<String> pbWebAddress) {
         this.pbWebAddress = pbWebAddress;
-    }
+    }*/
 
     @JsonProperty("pb_event")
     public ArrayList<ProfileDataOperationEvent> getPbEvent() {
@@ -140,14 +141,14 @@ public class ProfileDataOperation {
         this.isFavourite = isFavourite;
     }
 
-    @JsonProperty("pb_relationship")
+   /* @JsonProperty("pb_relationship")
     public ArrayList<ProfileDataOperationRelationship> getPbRelationship() {
         return pbRelationship;
     }
 
     public void setPbRelationship(ArrayList<ProfileDataOperationRelationship> pbRelationship) {
         this.pbRelationship = pbRelationship;
-    }
+    }*/
 
     @JsonProperty("pb_source")
     public String getPbSource() {
@@ -354,5 +355,14 @@ public class ProfileDataOperation {
 
     public void setVerifiedEmailIds(ArrayList<ProfileDataOperationEmail> verifiedEmailIds) {
         this.verifiedEmailIds = verifiedEmailIds;
+    }
+
+    @JsonProperty("pb_web_address")
+    public ArrayList<ProfileDataOperationWebAddress> getPbWebAddress() {
+        return pbWebAddress;
+    }
+
+    public void setPbWebAddress(ArrayList<ProfileDataOperationWebAddress> pbWebAddress) {
+        this.pbWebAddress = pbWebAddress;
     }
 }
