@@ -12,6 +12,8 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -48,8 +50,11 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
         holder.textMain.setText(organization.getOrgName());
         holder.textSub.setText(organization.getOrgJobTitle());
 
-        if (organization.getOrgRcpType() == context.getResources().getInteger(R.integer
-                .rcp_type_local_phone_book)) {
+        int orgRcpType = Integer.parseInt(StringUtils.defaultString(organization.getOrgRcpType()
+                , String.valueOf(context.getResources().getInteger(R.integer
+                        .rcp_type_cloud_phone_book))));
+
+        if (orgRcpType == context.getResources().getInteger(R.integer.rcp_type_local_phone_book)) {
             holder.textSub.setTextColor(ContextCompat.getColor(context, R.color.colorBlack));
         } else {
             holder.textSub.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));

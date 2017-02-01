@@ -20,6 +20,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -113,12 +114,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        if (phoneNumber.getPbRcpType() == context.getResources().getInteger(R.integer
-                .rcp_type_primary)) {
+        int pbRcpType = Integer.parseInt(StringUtils.defaultString(phoneNumber.getPbRcpType(),
+                String.valueOf(context.getResources().getInteger(R.integer
+                        .rcp_type_cloud_phone_book))));
+
+        if (pbRcpType == context.getResources().getInteger(R.integer.rcp_type_primary)) {
             holder.textMain.setText(number + " ◊");
             holder.textMain.setTextColor(colorPineGreen);
-        } else if (phoneNumber.getPbRcpType() == context.getResources().getInteger(R.integer
-                .rcp_type_secondary)) {
+        } else if (pbRcpType == context.getResources().getInteger(R.integer.rcp_type_secondary)) {
             holder.textMain.setText(number);
             holder.textMain.setTextColor(colorPineGreen);
         } else {
@@ -154,10 +157,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        if (email.getEmRcpType() == context.getResources().getInteger(R.integer.rcp_type_primary)) {
+        int emRcpType = Integer.parseInt(StringUtils.defaultString(email.getEmRcpType(), String
+                .valueOf(context.getResources().getInteger(R.integer.rcp_type_cloud_phone_book))));
+
+        if (emRcpType == context.getResources().getInteger(R.integer.rcp_type_primary)) {
             holder.textMain.setText(emailId + " ◊");
             holder.textMain.setTextColor(colorPineGreen);
-        } else if (email.getEmRcpType() == context.getResources().getInteger(R.integer
+        } else if (emRcpType == context.getResources().getInteger(R.integer
                 .rcp_type_secondary)) {
             holder.textMain.setText(emailId);
             holder.textMain.setTextColor(colorPineGreen);
@@ -170,18 +176,19 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     }
 
     private void displayWebsite(final ProfileDetailViewHolder holder, int position) {
-        String website = (String) arrayList.get(position);
-        int rcpType = 0;
+//        String website = (String) arrayList.get(position);
+        ProfileDataOperationWebAddress webAddress = (ProfileDataOperationWebAddress) arrayList
+                .get(position);
 
         holder.textSub.setVisibility(View.GONE);
-
+/*
         if (website.contains(";")) {
             String[] websiteSplit = website.split(";");
             website = websiteSplit[0];
             rcpType = Integer.parseInt(websiteSplit[1]);
-        }
+        }*/
 
-        holder.textMain.setText(website);
+        holder.textMain.setText(webAddress.getWebAddress());
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,6 +214,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 return false;
             }
         });
+
+        int rcpType = Integer.parseInt(StringUtils.defaultString(webAddress.getWebRcpType(),
+                String.valueOf(context.getResources().getInteger(R.integer
+                        .rcp_type_cloud_phone_book))));
 
         if (rcpType == context.getResources().getInteger(R.integer
                 .rcp_type_local_phone_book)) {
@@ -242,7 +253,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        if (address.getRcpType() == context.getResources().getInteger(R.integer
+        int addressRcpType = Integer.parseInt(StringUtils.defaultString(address.getRcpType(),
+                String.valueOf(context.getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book))));
+
+        if (addressRcpType == context.getResources().getInteger(R.integer
                 .rcp_type_local_phone_book)) {
             holder.textMain.setTextColor(colorBlack);
         } else {
@@ -259,8 +274,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         holder.textSub.setVisibility(View.GONE);
 
-        if (imAccount.getIMRcpType() == context.getResources().getInteger(R.integer
-                .rcp_type_local_phone_book)) {
+        int imRcpType = Integer.parseInt(StringUtils.defaultString(imAccount.getIMRcpType(),
+                String.valueOf(context.getResources().getInteger(R.integer
+                        .rcp_type_cloud_phone_book))));
+
+        if (imRcpType == context.getResources().getInteger(R.integer.rcp_type_local_phone_book)) {
             holder.textMain.setTextColor(colorBlack);
         } else {
             holder.textMain.setTextColor(colorPineGreen);
@@ -283,8 +301,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textSub.setText(event.getEventType());
         holder.textSub.setVisibility(View.VISIBLE);
 
-        if (event.getEventRcType() == context.getResources().getInteger(R.integer
-                .rcp_type_cloud_phone_book)) {
+        int eventRcType = Integer.parseInt(StringUtils.defaultString(event.getEventRcType(),
+                String.valueOf(context.getResources().getInteger(R.integer
+                        .rcp_type_cloud_phone_book))));
+
+        if (eventRcType == context.getResources().getInteger(R.integer.rcp_type_cloud_phone_book)) {
             holder.textMain.setTextColor(colorPineGreen);
         } else {
             holder.textMain.setTextColor(colorBlack);

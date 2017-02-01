@@ -57,6 +57,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 import com.rawalinfocom.rcontact.model.Rating;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
@@ -697,8 +698,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 organization.setOrgOfficeLocation(contactOrganizationCursor.getString
                         (contactOrganizationCursor.getColumnIndex(ContactsContract
                                 .CommonDataKinds.Organization.OFFICE_LOCATION)));
-                organization.setOrgRcpType(getResources().getInteger(R.integer
-                        .rcp_type_local_phone_book));
+                organization.setOrgRcpType(String.valueOf(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book)));
 
                 if (!arrayListOrganization.contains(organization)) {
                     arrayListPhoneBookOrganization.add(organization);
@@ -856,14 +857,44 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         // <editor-fold desc="Website">
 
         // From Cloud
-        ArrayList<String> arrayListWebsite = new ArrayList<>();
+        ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = new ArrayList<>();
+        ArrayList<String> arrayListCloudWebsite = new ArrayList<>();
         if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress
                 ())) {
             arrayListWebsite.addAll(profileDetail.getPbWebAddress());
+            for (int i = 0; i < arrayListWebsite.size(); i++) {
+                String website = arrayListWebsite.get(i).getWebAddress();
+                arrayListCloudWebsite.add(website);
+            }
         }
+       /* ArrayList<String> arrayListWebsite = new ArrayList<>();
+        if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress
+                ())) {
+            arrayListWebsite.addAll(profileDetail.getPbWebAddress());
+        }*/
 
         // From PhoneBook
         Cursor contactWebsiteCursor = phoneBookContacts.getContactWebsite(phoneBookId);
+        ArrayList<ProfileDataOperationWebAddress> arrayListPhoneBookWebsite = new ArrayList<>();
+
+        if (contactWebsiteCursor != null && contactWebsiteCursor.getCount() > 0) {
+            while (contactWebsiteCursor.moveToNext()) {
+
+                ProfileDataOperationWebAddress webAddress = new ProfileDataOperationWebAddress();
+
+                webAddress.setWebAddress(contactWebsiteCursor.getString(contactWebsiteCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
+                webAddress.setWebRcpType(String.valueOf(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book)));
+
+                if (!arrayListCloudWebsite.contains(webAddress.getWebAddress())) {
+                    arrayListPhoneBookWebsite.add(webAddress);
+                }
+
+            }
+            contactWebsiteCursor.close();
+        }
+       /* Cursor contactWebsiteCursor = phoneBookContacts.getContactWebsite(phoneBookId);
         ArrayList<String> arrayListPhoneBookWebsite = new ArrayList<>();
 
         if (contactWebsiteCursor != null && contactWebsiteCursor.getCount() > 0) {
@@ -880,7 +911,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             }
             contactWebsiteCursor.close();
-        }
+        }*/
 
         if (!Utils.isArraylistNullOrEmpty(arrayListWebsite) || !Utils.isArraylistNullOrEmpty
                 (arrayListPhoneBookWebsite)) {
@@ -943,8 +974,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 address.setAddressType(phoneBookContacts.getAddressType(contactAddressCursor,
                         contactAddressCursor.getInt(contactAddressCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.StructuredPostal.TYPE))));
-                address.setRcpType(getResources().getInteger(R.integer
-                        .rcp_type_local_phone_book));
+                address.setRcpType(String.valueOf(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book)));
 
                 if (!arrayListCloudAddress.contains(address.getFormattedAddress())) {
                     arrayListPhoneBookAddress.add(address);
@@ -1004,8 +1035,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         (contactImAccountCursor.getInt((contactImAccountCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
-                imAccount.setIMRcpType(getResources().getInteger(R.integer
-                        .rcp_type_local_phone_book));
+                imAccount.setIMRcpType(String.valueOf(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book)));
 
                 if (!arrayListCloudImAccount.contains(imAccount.getIMAccountProtocol())) {
                     arrayListPhoneBookImAccount.add(imAccount);
@@ -1069,8 +1100,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         .getColumnIndex(ContactsContract.CommonDataKinds.Event
                                 .START_DATE)));
 
-                event.setEventRcType(getResources().getInteger(R.integer
-                        .rcp_type_local_phone_book));
+                event.setEventRcType(String.valueOf(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book)));
 
                 if (!arrayListEvent.contains(event)) {
                     arrayListPhoneBookEvent.add(event);

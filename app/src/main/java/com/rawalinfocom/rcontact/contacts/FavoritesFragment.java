@@ -40,6 +40,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -401,15 +402,28 @@ public class FavoritesFragment extends BaseFragment {
 
             //<editor-fold desc="Website">
             Cursor contactWebsiteCursor = phoneBookContacts.getContactWebsite(rawId);
-            ArrayList<String> arrayListWebsite = new ArrayList<>();
+//            ArrayList<String> arrayListWebsite = new ArrayList<>();
+            ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = new ArrayList<>();
 
             if (contactWebsiteCursor != null && contactWebsiteCursor.getCount() > 0) {
                 while (contactWebsiteCursor.moveToNext()) {
 
-                    String website = contactWebsiteCursor.getString(contactWebsiteCursor
+                   /* String website = contactWebsiteCursor.getString(contactWebsiteCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));
 
-                    arrayListWebsite.add(website);
+                    arrayListWebsite.add(website);*/
+
+                    ProfileDataOperationWebAddress webAddress = new
+                            ProfileDataOperationWebAddress();
+
+                    webAddress.setWebAddress(contactWebsiteCursor.getString(contactWebsiteCursor
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
+
+                   /* String website = contactWebsiteCursor.getString(contactWebsiteCursor
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));*/
+
+//                    arrayListWebsite.add(website);
+                    arrayListWebsite.add(webAddress);
 
                 }
                 contactWebsiteCursor.close();

@@ -516,6 +516,37 @@ public class PhoneBookContacts {
         return "Other";
     }
 
+    public String getWebsiteType(Cursor cursor, int type) {
+        switch (type) {
+            case ContactsContract.CommonDataKinds.Website.TYPE_HOMEPAGE:
+                return "Homepage";
+
+            case ContactsContract.CommonDataKinds.Website.TYPE_BLOG:
+                return "Blog";
+
+            case ContactsContract.CommonDataKinds.Website.TYPE_PROFILE:
+                return "Profile";
+
+            case ContactsContract.CommonDataKinds.Website.TYPE_HOME:
+                return "Home";
+
+            case ContactsContract.CommonDataKinds.Website.TYPE_WORK:
+                return "Work";
+
+            case ContactsContract.CommonDataKinds.Website.TYPE_FTP:
+                return "FTP";
+
+            case ContactsContract.CommonDataKinds.Website.TYPE_OTHER:
+                return "Other";
+
+            case ContactsContract.CommonDataKinds.Website.TYPE_CUSTOM:
+                return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
+                        .Website.LABEL));
+
+        }
+        return "Other";
+    }
+
     //</editor-fold>
 
     public int setFavouriteStatus(String contactRawId, int status) throws NullPointerException {
