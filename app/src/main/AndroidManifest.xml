@@ -33,7 +33,6 @@
 
         <service android:name=".services.OtpTimerService"/>
 
-        <activity android:name=".MainActivityTemp"/>
         <activity android:name=".MobileNumberRegistrationActivity"/>
         <activity
             android:name=".CountryListActivity"
