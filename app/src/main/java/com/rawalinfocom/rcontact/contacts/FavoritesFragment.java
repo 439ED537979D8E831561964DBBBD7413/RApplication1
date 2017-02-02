@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
@@ -76,6 +77,7 @@ public class FavoritesFragment extends BaseFragment {
 
     private View rootView;
     private boolean isReload = false;
+    RContactApplication rContactApplication;
 
     //<editor-fold desc="Constructors">
 
@@ -94,6 +96,7 @@ public class FavoritesFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        rContactApplication = (RContactApplication) getActivity().getApplicationContext();
         if (arrayListPhoneBookContacts == null) {
             arrayListContactHeaders = new ArrayList<>();
         } else {
@@ -117,7 +120,6 @@ public class FavoritesFragment extends BaseFragment {
             rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
             ButterKnife.bind(this, rootView);
         }
-
         return rootView;
     }
 
@@ -127,9 +129,6 @@ public class FavoritesFragment extends BaseFragment {
         if (!isReload) {
             init();
         }
-        /*else {
-            populateRecyclerView();
-        }*/
     }
 
     //</editor-fold>
@@ -169,7 +168,14 @@ public class FavoritesFragment extends BaseFragment {
 
         progressFavoriteContact.setVisibility(View.GONE);
 
-        getFavouriteContacts();
+//        getFavouriteContacts();
+        if (rContactApplication.getArrayListFavPhoneBookContacts().size() <= 0) {
+            getFavouriteContacts();
+        } else {
+            arrayListPhoneBookContacts = rContactApplication.getArrayListFavPhoneBookContacts();
+            arrayListContactHeaders = rContactApplication.getArrayListFavContactHeaders();
+            populateRecyclerView();
+        }
 
     }
 
@@ -308,7 +314,6 @@ public class FavoritesFragment extends BaseFragment {
         arrayListUserContact = new ArrayList<>();
         arrayListPhoneBookContacts = new ArrayList<>();
         arrayListContactHeaders = new ArrayList<>();
-
 
         for (int i = 0; i < arrayListFavouriteRawId.size(); i++) {
 

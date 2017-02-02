@@ -34,7 +34,6 @@ import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
         .ColorGroupSectionTitleIndicator;
 import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical
         .VerticalRecyclerViewFastScroller;
-import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -61,11 +60,6 @@ public class RContactsFragment extends BaseFragment {
     @BindView(R.id.title_indicator)
     ColorGroupSectionTitleIndicator titleIndicator;
 
-    // Fetch from local Profile Master
-    ArrayList<UserProfile> arrayListUserProfile;
-
-    // for Adapter
-    ArrayList<ProfileData> arrayListProfileData;
     ArrayList<String> arrayListContactHeaders;
     ArrayList<Object> arrayListRContact;
 
@@ -107,9 +101,6 @@ public class RContactsFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-      /*  View view = inflater.inflate(R.layout.fragment_r_contacts, container, false);
-        ButterKnife.bind(this, view);
-        return view;*/
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_r_contacts, container, false);
             ButterKnife.bind(this, rootView);
@@ -124,11 +115,6 @@ public class RContactsFragment extends BaseFragment {
         if (!isReload) {
             init();
         }
-        /*else {
-            rContactListAdapter = new RContactListAdapter(getActivity(), arrayListRContact,
-                    arrayListContactHeaders);
-            recyclerViewContactList.setAdapter(rContactListAdapter);
-        }*/
     }
     //</editor-fold>
 
@@ -183,8 +169,6 @@ public class RContactsFragment extends BaseFragment {
             rContactListAdapter = new RContactListAdapter(getActivity(), arrayListRContact,
                     arrayListContactHeaders);
             recyclerViewContactList.setAdapter(rContactListAdapter);
-           /* Log.i("init", ((LinearLayoutManager) recyclerViewContactList.getLayoutManager())
-                    .findLastVisibleItemPosition() + "");*/
 
         }
 

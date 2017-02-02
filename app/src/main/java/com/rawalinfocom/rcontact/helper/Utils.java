@@ -373,6 +373,7 @@ public class Utils {
     public static Typeface typefaceIcons(Context context) {
         if (context != null) {
             return Typeface.createFromAsset(context.getAssets(), "fonts/icon_fonts.ttf");
+//            return Typeface.createFromAsset(context.getAssets(), "fonts/icomoon_latest.ttf");
         } else {
             Log.e(LOG_TAG, "method : typefaceSemiBold() , Null context");
             return null;

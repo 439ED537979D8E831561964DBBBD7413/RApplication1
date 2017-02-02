@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -121,6 +122,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     private View rootView;
     private boolean isReload = false;
+    RContactApplication rContactApplication;
 
     //<editor-fold desc="Constructors">
 
@@ -141,6 +143,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        rContactApplication = (RContactApplication) getActivity().getApplicationContext();
 
         if (arrayListPhoneBookContacts == null) {
 
@@ -198,16 +202,11 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-     /*   View view = inflater.inflate(R.layout.fragment_all_contacts, container, false);
-        ButterKnife.bind(this, view);
-        return view;*/
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_all_contacts, container, false);
             ButterKnife.bind(this, rootView);
         }
-
         return rootView;
-
     }
 
     @Override
@@ -216,9 +215,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         if (!isReload) {
             init();
         }
-        /*else {
-            populateRecyclerView();
-        }*/
     }
 
     @Override
@@ -331,7 +327,14 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 AppConstants.PREF_CONTACT_ID_SET);
         if (arrayListContactIds != null) {
             arrayListContactId = new ArrayList<>(arrayListContactIds);
-            phoneBookOperations();
+            if (rContactApplication.getArrayListAllPhoneBookContacts().size() <= 0) {
+                phoneBookOperations();
+            } else {
+                progressAllContact.setVisibility(View.GONE);
+                arrayListPhoneBookContacts = rContactApplication.getArrayListAllPhoneBookContacts();
+                arrayListContactHeaders = rContactApplication.getArrayListAllContactHeaders();
+                populateRecyclerView();
+            }
         } else {
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(cursorListReceiver,
                     new IntentFilter(AppConstants.ACTION_CONTACT_FETCH));
@@ -484,8 +487,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             tableProfileMobileMapping.addArrayProfileMobileMapping
                     (arrayListProfileMobileMapping);
         }
-
-
     }
 
     private void storeToEmailMapping(ArrayList<ProfileDataOperation> profileData) {
@@ -525,8 +526,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             }
             tableProfileEmailMapping.addArrayProfileEmailMapping(arrayListProfileEmailMapping);
         }
-
-
     }
 
     private void storeProfileDataToDb(ArrayList<ProfileDataOperation> profileData) {
@@ -737,8 +736,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
         }
-
-
     }
 
     private void populateRecyclerView() {
@@ -1257,7 +1254,11 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     arrayListPhoneBookContacts.add(headerLetter);
                 }
                 arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
+
             }
+
+            rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
+            rContactApplication.setArrayListAllContactHeaders(arrayListContactHeaders);
 
             if (previouslySyncedData < previousTo) {
                 uploadContacts(previouslySyncedData);

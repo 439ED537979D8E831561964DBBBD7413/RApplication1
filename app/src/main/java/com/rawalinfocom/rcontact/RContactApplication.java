@@ -5,11 +5,10 @@ import android.app.Application;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
-import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
-import io.fabric.sdk.android.Fabric;
+import java.util.ArrayList;
 
 /**
  * Created by Monal on 20/10/16.
@@ -19,12 +18,22 @@ import io.fabric.sdk.android.Fabric;
 
 public class RContactApplication extends Application {
 
+    ArrayList<Object> arrayListAllPhoneBookContacts;
+    ArrayList<String> arrayListAllContactHeaders;
+    ArrayList<Object> arrayListFavPhoneBookContacts;
+    ArrayList<String> arrayListFavContactHeaders;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
         // Fabric Initialization
 //        Fabric.with(this, new Crashlytics());
+
+        arrayListAllPhoneBookContacts = new ArrayList<>();
+        arrayListAllContactHeaders = new ArrayList<>();
+        arrayListFavPhoneBookContacts = new ArrayList<>();
+        arrayListFavContactHeaders = new ArrayList<>();
 
         // Facebook Initialization
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -67,5 +76,37 @@ public class RContactApplication extends Application {
 
             }
         });
+    }
+
+    public ArrayList<Object> getArrayListAllPhoneBookContacts() {
+        return arrayListAllPhoneBookContacts;
+    }
+
+    public void setArrayListAllPhoneBookContacts(ArrayList<Object> arrayListAllPhoneBookContacts) {
+        this.arrayListAllPhoneBookContacts = arrayListAllPhoneBookContacts;
+    }
+
+    public ArrayList<String> getArrayListAllContactHeaders() {
+        return arrayListAllContactHeaders;
+    }
+
+    public void setArrayListAllContactHeaders(ArrayList<String> arrayListAllContactHeaders) {
+        this.arrayListAllContactHeaders = arrayListAllContactHeaders;
+    }
+
+    public ArrayList<Object> getArrayListFavPhoneBookContacts() {
+        return arrayListFavPhoneBookContacts;
+    }
+
+    public void setArrayListFavPhoneBookContacts(ArrayList<Object> arrayListFavPhoneBookContacts) {
+        this.arrayListFavPhoneBookContacts = arrayListFavPhoneBookContacts;
+    }
+
+    public ArrayList<String> getArrayListFavContactHeaders() {
+        return arrayListFavContactHeaders;
+    }
+
+    public void setArrayListFavContactHeaders(ArrayList<String> arrayListFavContactHeaders) {
+        this.arrayListFavContactHeaders = arrayListFavContactHeaders;
     }
 }
