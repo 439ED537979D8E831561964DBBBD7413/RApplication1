@@ -74,8 +74,11 @@ public class FavoritesFragment extends BaseFragment {
     ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> arrayListContactHeaders;
 
+    private View rootView;
+    private boolean isReload = false;
 
     //<editor-fold desc="Constructors">
+
     public FavoritesFragment() {
         // Required empty public constructor
     }
@@ -83,13 +86,19 @@ public class FavoritesFragment extends BaseFragment {
     public static FavoritesFragment newInstance() {
         return new FavoritesFragment();
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Override Methods">
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        arrayListContactHeaders = new ArrayList<>();
+        if (arrayListPhoneBookContacts == null) {
+            arrayListContactHeaders = new ArrayList<>();
+        } else {
+            isReload = true;
+        }
     }
 
     @Override
@@ -100,21 +109,33 @@ public class FavoritesFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+       /* // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
         ButterKnife.bind(this, view);
-        return view;
+        return view;*/
+        if (rootView == null) {
+            rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
+            ButterKnife.bind(this, rootView);
+        }
+
+        return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        init();
+        if (!isReload) {
+            init();
+        }
+        /*else {
+            populateRecyclerView();
+        }*/
     }
 
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
+
     private void init() {
 
         textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
