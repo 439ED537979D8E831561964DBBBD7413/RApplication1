@@ -126,7 +126,7 @@ public class FavoritesFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (!isReload) {
+        if (!isReload || rContactApplication.isFavouriteModified()) {
             init();
         }
     }
@@ -168,7 +168,6 @@ public class FavoritesFragment extends BaseFragment {
 
         progressFavoriteContact.setVisibility(View.GONE);
 
-//        getFavouriteContacts();
         if (rContactApplication.getArrayListFavPhoneBookContacts().size() <= 0) {
             getFavouriteContacts();
         } else {
@@ -544,6 +543,10 @@ public class FavoritesFragment extends BaseFragment {
             }
             arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
         }
+
+      /*  rContactApplication.setArrayListFavPhoneBookContacts(arrayListPhoneBookContacts);
+        rContactApplication.setArrayListFavContactHeaders(arrayListContactHeaders);*/
+        rContactApplication.setFavouriteModified(false);
 
         populateRecyclerView();
 

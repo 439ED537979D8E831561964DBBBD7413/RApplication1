@@ -20,8 +20,11 @@ public class RContactApplication extends Application {
 
     ArrayList<Object> arrayListAllPhoneBookContacts;
     ArrayList<String> arrayListAllContactHeaders;
+
     ArrayList<Object> arrayListFavPhoneBookContacts;
     ArrayList<String> arrayListFavContactHeaders;
+
+    boolean isFavouriteModified;
 
     @Override
     public void onCreate() {
@@ -108,5 +111,13 @@ public class RContactApplication extends Application {
 
     public void setArrayListFavContactHeaders(ArrayList<String> arrayListFavContactHeaders) {
         this.arrayListFavContactHeaders = arrayListFavContactHeaders;
+    }
+
+    public boolean isFavouriteModified() {
+        return isFavouriteModified;
+    }
+
+    public void setFavouriteModified(boolean favouriteModified) {
+        isFavouriteModified = favouriteModified;
     }
 }
