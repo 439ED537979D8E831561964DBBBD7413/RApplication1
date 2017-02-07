@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -117,15 +118,14 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     PhoneBookContacts phoneBookContacts;
 
-//    DatabaseHandler databaseHandler;
-
     AllContactListAdapter allContactListAdapter;
 
     private View rootView;
-
-//    UserProfile meProfile;
+    private boolean isReload = false;
+    RContactApplication rContactApplication;
 
     //<editor-fold desc="Constructors">
+
     public AllContactsFragment() {
         // Required empty public constructor
 
@@ -134,59 +134,63 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     public static AllContactsFragment newInstance() {
         return new AllContactsFragment();
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Override Methods">
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
-//        databaseHandler = ((BaseActivity) getActivity()).databaseHandler;
-        arrayListPhoneBookContacts = new ArrayList<>();
-        arrayListContactHeaders = new ArrayList<>();
-        arrayListFavouriteContacts = new ArrayList<>();
+        rContactApplication = (RContactApplication) getActivity().getApplicationContext();
 
-        arrayListContactHeaders.add(" ");
+        if (arrayListPhoneBookContacts == null) {
 
-//        meProfile = ((BaseActivity) getActivity()).getUserProfile();
+            arrayListPhoneBookContacts = new ArrayList<>();
+            arrayListContactHeaders = new ArrayList<>();
+            arrayListFavouriteContacts = new ArrayList<>();
 
-        arrayListPhoneBookContacts.add("My Profile");
+            arrayListContactHeaders.add(" ");
 
-        ProfileData myProfileData = new ProfileData();
+            arrayListPhoneBookContacts.add("My Profile");
 
-        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
-        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt((
-                (BaseActivity) getActivity()).getUserPmId()));
+            ProfileData myProfileData = new ProfileData();
 
-        TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
-        MobileNumber mobileNumber = tableMobileMaster.getOwnVerifiedMobileNumbersFromPmId
-                (getActivity());
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt((
+                    (BaseActivity) getActivity()).getUserPmId()));
 
-        ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
+            TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
+            MobileNumber mobileNumber = tableMobileMaster.getOwnVerifiedMobileNumbersFromPmId
+                    (getActivity());
 
-        /*ProfileDataOperation myOperation = (ProfileDataOperation) Utils.getObjectPreference
-                (getActivity(), AppConstants.PREF_REGS_USER_OBJECT, ProfileDataOperation.class);*/
+            ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
 
-        ProfileDataOperation myOperation = new ProfileDataOperation();
-        myOperation.setPbNameFirst(userProfile.getPmFirstName());
-        myOperation.setPbNameLast(userProfile.getPmLastName());
-        myOperation.setProfileRating(userProfile.getProfileRating());
-        myOperation.setTotalProfileRateUser(userProfile.getTotalProfileRateUser());
+            ProfileDataOperation myOperation = new ProfileDataOperation();
+            myOperation.setPbNameFirst(userProfile.getPmFirstName());
+            myOperation.setPbNameLast(userProfile.getPmLastName());
+            myOperation.setProfileRating(userProfile.getProfileRating());
+            myOperation.setTotalProfileRateUser(userProfile.getTotalProfileRateUser());
 
-        ArrayList<ProfileDataOperationPhoneNumber> operationPhoneNumber = new ArrayList<>();
-        ProfileDataOperationPhoneNumber phoneNumber = new ProfileDataOperationPhoneNumber();
-        phoneNumber.setPhoneNumber(mobileNumber.getMnmMobileNumber());
+            ArrayList<ProfileDataOperationPhoneNumber> operationPhoneNumber = new ArrayList<>();
+            ProfileDataOperationPhoneNumber phoneNumber = new ProfileDataOperationPhoneNumber();
+            phoneNumber.setPhoneNumber(mobileNumber.getMnmMobileNumber());
 
-        operationPhoneNumber.add(phoneNumber);
+            operationPhoneNumber.add(phoneNumber);
 
-        myOperation.setPbPhoneNumber(operationPhoneNumber);
+            myOperation.setPbPhoneNumber(operationPhoneNumber);
 
-        arrayListOperation.add(myOperation);
-        myProfileData.setOperation(arrayListOperation);
-        arrayListPhoneBookContacts.add(myProfileData);
+            arrayListOperation.add(myOperation);
+            myProfileData.setOperation(arrayListOperation);
+            arrayListPhoneBookContacts.add(myProfileData);
 
-        phoneBookContacts = new PhoneBookContacts(getActivity());
+            phoneBookContacts = new PhoneBookContacts(getActivity());
+
+        } else {
+            isReload = true;
+        }
 
     }
 
@@ -198,24 +202,19 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_all_contacts, container, false);
-        ButterKnife.bind(this, view);
-        return view;
-
+        if (rootView == null) {
+            rootView = inflater.inflate(R.layout.fragment_all_contacts, container, false);
+            ButterKnife.bind(this, rootView);
+        }
+        return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-      /*  if (view != null) {
-            //this will prevent the fragment from re-inflating(when you come back from B)
-            ViewGroup parent = (ViewGroup) view.getParent();
-            parent.removeView(view);
-        } else {
-            //inflate the view and do what you done in onCreateView()
+        if (!isReload) {
             init();
-        }*/
-        init();
+        }
     }
 
     @Override
@@ -286,8 +285,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         } else {
             progressAllContact.setVisibility(View.GONE);
-            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, "" + error
-                    .getLocalizedMessage());
+            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, "" + (error != null ?
+                    error.getLocalizedMessage() : null));
         }
     }
 
@@ -319,10 +318,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         // Connect the section indicator to the scroller
         scrollerAllContact.setSectionIndicator(titleIndicator);
-//        titleIndicator.setTitleText("A");
 
         setRecyclerViewLayoutManager(recyclerViewContactList);
-//        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity-()));
 
         initSwipe();
 
@@ -330,7 +327,14 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 AppConstants.PREF_CONTACT_ID_SET);
         if (arrayListContactIds != null) {
             arrayListContactId = new ArrayList<>(arrayListContactIds);
-            phoneBookOperations();
+            if (rContactApplication.getArrayListAllPhoneBookContacts().size() <= 0) {
+                phoneBookOperations();
+            } else {
+                progressAllContact.setVisibility(View.GONE);
+                arrayListPhoneBookContacts = rContactApplication.getArrayListAllPhoneBookContacts();
+                arrayListContactHeaders = rContactApplication.getArrayListAllContactHeaders();
+                populateRecyclerView();
+            }
         } else {
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(cursorListReceiver,
                     new IntentFilter(AppConstants.ACTION_CONTACT_FETCH));
@@ -483,8 +487,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             tableProfileMobileMapping.addArrayProfileMobileMapping
                     (arrayListProfileMobileMapping);
         }
-
-
     }
 
     private void storeToEmailMapping(ArrayList<ProfileDataOperation> profileData) {
@@ -524,8 +526,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             }
             tableProfileEmailMapping.addArrayProfileEmailMapping(arrayListProfileEmailMapping);
         }
-
-
     }
 
     private void storeProfileDataToDb(ArrayList<ProfileDataOperation> profileData) {
@@ -736,8 +736,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
         }
-
-
     }
 
     private void populateRecyclerView() {
@@ -1256,7 +1254,11 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     arrayListPhoneBookContacts.add(headerLetter);
                 }
                 arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
+
             }
+
+            rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
+            rContactApplication.setArrayListAllContactHeaders(arrayListContactHeaders);
 
             if (previouslySyncedData < previousTo) {
                 uploadContacts(previouslySyncedData);

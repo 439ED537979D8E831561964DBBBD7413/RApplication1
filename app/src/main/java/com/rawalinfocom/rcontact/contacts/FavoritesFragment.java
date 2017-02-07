@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
@@ -74,8 +75,12 @@ public class FavoritesFragment extends BaseFragment {
     ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> arrayListContactHeaders;
 
+    private View rootView;
+    private boolean isReload = false;
+    RContactApplication rContactApplication;
 
     //<editor-fold desc="Constructors">
+
     public FavoritesFragment() {
         // Required empty public constructor
     }
@@ -83,13 +88,20 @@ public class FavoritesFragment extends BaseFragment {
     public static FavoritesFragment newInstance() {
         return new FavoritesFragment();
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Override Methods">
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        arrayListContactHeaders = new ArrayList<>();
+        rContactApplication = (RContactApplication) getActivity().getApplicationContext();
+        if (arrayListPhoneBookContacts == null) {
+            arrayListContactHeaders = new ArrayList<>();
+        } else {
+            isReload = true;
+        }
     }
 
     @Override
@@ -100,21 +112,29 @@ public class FavoritesFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+       /* // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
         ButterKnife.bind(this, view);
-        return view;
+        return view;*/
+        if (rootView == null) {
+            rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
+            ButterKnife.bind(this, rootView);
+        }
+        return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        init();
+        if (!isReload || rContactApplication.isFavouriteModified()) {
+            init();
+        }
     }
 
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
+
     private void init() {
 
         textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
@@ -148,7 +168,13 @@ public class FavoritesFragment extends BaseFragment {
 
         progressFavoriteContact.setVisibility(View.GONE);
 
-        getFavouriteContacts();
+        if (rContactApplication.getArrayListFavPhoneBookContacts().size() <= 0) {
+            getFavouriteContacts();
+        } else {
+            arrayListPhoneBookContacts = rContactApplication.getArrayListFavPhoneBookContacts();
+            arrayListContactHeaders = rContactApplication.getArrayListFavContactHeaders();
+            populateRecyclerView();
+        }
 
     }
 
@@ -287,7 +313,6 @@ public class FavoritesFragment extends BaseFragment {
         arrayListUserContact = new ArrayList<>();
         arrayListPhoneBookContacts = new ArrayList<>();
         arrayListContactHeaders = new ArrayList<>();
-
 
         for (int i = 0; i < arrayListFavouriteRawId.size(); i++) {
 
@@ -518,6 +543,10 @@ public class FavoritesFragment extends BaseFragment {
             }
             arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
         }
+
+      /*  rContactApplication.setArrayListFavPhoneBookContacts(arrayListPhoneBookContacts);
+        rContactApplication.setArrayListFavContactHeaders(arrayListContactHeaders);*/
+        rContactApplication.setFavouriteModified(false);
 
         populateRecyclerView();
 

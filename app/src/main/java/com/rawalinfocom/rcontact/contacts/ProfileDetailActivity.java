@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
 import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -204,6 +205,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     MaterialDialog callConfirmationDialog;
 
     ArrayList<String> arrayListFavouriteContacts;
+    RContactApplication rContactApplication;
 
     //<editor-fold desc="Override Methods">
 
@@ -211,6 +213,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_detail);
+        rContactApplication = (RContactApplication) getApplicationContext();
         ButterKnife.bind(this);
 
         phoneBookContacts = new PhoneBookContacts(this);
@@ -289,7 +292,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_FAVOURITE)
                         || StringUtils.equals(imageRightLeft.getTag().toString(),
                         TAG_IMAGE_UN_FAVOURITE)) {
-                    int favStatus = -1;
+                    int favStatus;
                     if (StringUtils.equals(imageRightLeft.getTag().toString(),
                             TAG_IMAGE_FAVOURITE)) {
                         favStatus = PhoneBookContacts.status_un_favourite;
@@ -311,6 +314,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     favouriteStatus.setIsFavourite(String.valueOf(favStatus));
                     arrayListFavourites.add(favouriteStatus);
                     setFavouriteStatus(arrayListFavourites);
+
+                    rContactApplication.setFavouriteModified(true);
+
                 }
                 break;
         }
