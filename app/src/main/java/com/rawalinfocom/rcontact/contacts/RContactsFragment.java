@@ -34,7 +34,6 @@ import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
         .ColorGroupSectionTitleIndicator;
 import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical
         .VerticalRecyclerViewFastScroller;
-import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -61,18 +60,18 @@ public class RContactsFragment extends BaseFragment {
     @BindView(R.id.title_indicator)
     ColorGroupSectionTitleIndicator titleIndicator;
 
-    // Fetch from local Profile Master
-    ArrayList<UserProfile> arrayListUserProfile;
-
-    // for Adapter
-    ArrayList<ProfileData> arrayListProfileData;
     ArrayList<String> arrayListContactHeaders;
+    ArrayList<Object> arrayListRContact;
 
     RContactListAdapter rContactListAdapter;
 
     MaterialDialog callConfirmationDialog;
 
+    private View rootView;
+    private boolean isReload = false;
+
     //<editor-fold desc="Constructors">
+
     public RContactsFragment() {
         // Required empty public constructor
     }
@@ -80,13 +79,18 @@ public class RContactsFragment extends BaseFragment {
     public static RContactsFragment newInstance() {
         return new RContactsFragment();
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Override Methods">
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        arrayListContactHeaders = new ArrayList<>();
+        if (arrayListRContact == null) {
+            arrayListContactHeaders = new ArrayList<>();
+        } else {
+            isReload = true;
+        }
     }
 
     @Override
@@ -97,15 +101,20 @@ public class RContactsFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_r_contacts, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+        if (rootView == null) {
+            rootView = inflater.inflate(R.layout.fragment_r_contacts, container, false);
+            ButterKnife.bind(this, rootView);
+        }
+
+        return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        init();
+        if (!isReload) {
+            init();
+        }
     }
     //</editor-fold>
 
@@ -146,7 +155,7 @@ public class RContactsFragment extends BaseFragment {
 
         ArrayList<UserProfile> arrayListDisplayProfile = tableProfileMobileMapping
                 .getRContactList();
-        ArrayList<Object> arrayListRContact = new ArrayList<>();
+        arrayListRContact = new ArrayList<>();
         if (arrayListDisplayProfile.size() > 0) {
             for (int i = 0; i < arrayListDisplayProfile.size(); i++) {
                 String headerLetter = StringUtils.upperCase(StringUtils.substring
@@ -160,8 +169,6 @@ public class RContactsFragment extends BaseFragment {
             rContactListAdapter = new RContactListAdapter(getActivity(), arrayListRContact,
                     arrayListContactHeaders);
             recyclerViewContactList.setAdapter(rContactListAdapter);
-           /* Log.i("init", ((LinearLayoutManager) recyclerViewContactList.getLayoutManager())
-                    .findLastVisibleItemPosition() + "");*/
 
         }
 

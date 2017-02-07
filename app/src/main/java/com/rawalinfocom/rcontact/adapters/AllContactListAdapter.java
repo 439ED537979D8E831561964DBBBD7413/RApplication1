@@ -499,7 +499,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 } else {
                     holder.textContactNumber.setTextColor(colorBlack);
                 }
-                Log.i("displayEmail", position + " " + displayEmailId);
                 holder.textContactNumber.setText(displayEmailId);
             }
 
