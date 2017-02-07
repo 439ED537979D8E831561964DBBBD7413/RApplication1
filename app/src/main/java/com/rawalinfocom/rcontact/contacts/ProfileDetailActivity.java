@@ -266,7 +266,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             arrayListFavouriteContacts.addAll(Utils.getArrayListPreference(this, AppConstants
                     .PREF_FAVOURITE_CONTACT_NUMBER_EMAIL));
         }
-        Log.i("onCreate", arrayListFavouriteContacts.toString());
 
         init();
     }
