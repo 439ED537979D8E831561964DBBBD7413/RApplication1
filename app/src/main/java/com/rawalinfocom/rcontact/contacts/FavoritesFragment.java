@@ -364,11 +364,11 @@ public class FavoritesFragment extends BaseFragment {
                     ProfileDataOperationPhoneNumber phoneNumber = new
                             ProfileDataOperationPhoneNumber();
 
-                    phoneNumber.setPhoneNumber(contactNumberCursor.getString(contactNumberCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phoneNumber.setPhoneNumber(Utils.getFormattedNumber(getActivity(),
+                            contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Phone.NUMBER))));
 
                     arrayListPhoneNumber.add(phoneNumber);
-
 
                 }
                 contactNumberCursor.close();
@@ -397,7 +397,7 @@ public class FavoritesFragment extends BaseFragment {
             //</editor-fold>
 
             //<editor-fold desc="Nick Name">
-            Cursor contactNickNameCursor = phoneBookContacts.getContactNickName(rawId);
+         /*   Cursor contactNickNameCursor = phoneBookContacts.getContactNickName(rawId);
 
             if (contactNickNameCursor != null && contactNickNameCursor.getCount() > 0) {
                 while (contactNickNameCursor.moveToNext()) {
@@ -408,11 +408,11 @@ public class FavoritesFragment extends BaseFragment {
 
                 }
                 contactNickNameCursor.close();
-            }
+            }*/
             //</editor-fold>
 
             //<editor-fold desc="Note">
-            Cursor contactNoteCursor = phoneBookContacts.getContactNote(rawId);
+            /*Cursor contactNoteCursor = phoneBookContacts.getContactNote(rawId);
 
             if (contactNoteCursor != null && contactNoteCursor.getCount() > 0) {
                 while (contactNoteCursor.moveToNext()) {
@@ -422,21 +422,21 @@ public class FavoritesFragment extends BaseFragment {
 
                 }
                 contactNoteCursor.close();
-            }
+            }*/
             //</editor-fold>
 
             //<editor-fold desc="Website">
-            Cursor contactWebsiteCursor = phoneBookContacts.getContactWebsite(rawId);
+          /*  Cursor contactWebsiteCursor = phoneBookContacts.getContactWebsite(rawId);
 //            ArrayList<String> arrayListWebsite = new ArrayList<>();
             ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = new ArrayList<>();
 
             if (contactWebsiteCursor != null && contactWebsiteCursor.getCount() > 0) {
                 while (contactWebsiteCursor.moveToNext()) {
 
-                   /* String website = contactWebsiteCursor.getString(contactWebsiteCursor
+                   *//* String website = contactWebsiteCursor.getString(contactWebsiteCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));
 
-                    arrayListWebsite.add(website);*/
+                    arrayListWebsite.add(website);*//*
 
                     ProfileDataOperationWebAddress webAddress = new
                             ProfileDataOperationWebAddress();
@@ -444,8 +444,8 @@ public class FavoritesFragment extends BaseFragment {
                     webAddress.setWebAddress(contactWebsiteCursor.getString(contactWebsiteCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
 
-                   /* String website = contactWebsiteCursor.getString(contactWebsiteCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));*/
+                   *//* String website = contactWebsiteCursor.getString(contactWebsiteCursor
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));*//*
 
 //                    arrayListWebsite.add(website);
                     arrayListWebsite.add(webAddress);
@@ -454,11 +454,11 @@ public class FavoritesFragment extends BaseFragment {
                 contactWebsiteCursor.close();
             }
 
-            operation.setPbWebAddress(arrayListWebsite);
+            operation.setPbWebAddress(arrayListWebsite);*/
             //</editor-fold>
 
             //<editor-fold desc="Organization">
-            Cursor contactOrganizationCursor = phoneBookContacts.getContactOrganization(rawId);
+          /*  Cursor contactOrganizationCursor = phoneBookContacts.getContactOrganization(rawId);
             ArrayList<ProfileDataOperationOrganization> arrayListOrganization = new ArrayList<>();
 
             if (contactOrganizationCursor != null && contactOrganizationCursor.getCount() > 0) {
@@ -480,11 +480,11 @@ public class FavoritesFragment extends BaseFragment {
                 contactOrganizationCursor.close();
             }
 
-            operation.setPbOrganization(arrayListOrganization);
+            operation.setPbOrganization(arrayListOrganization);*/
             //</editor-fold>
 
             //<editor-fold desc="Address">
-            Cursor contactAddressCursor = phoneBookContacts.getContactAddress(rawId);
+         /*   Cursor contactAddressCursor = phoneBookContacts.getContactAddress(rawId);
             ArrayList<ProfileDataOperationAddress> arrayListAddress = new ArrayList<>();
 
             if (contactAddressCursor != null && contactAddressCursor.getCount() > 0) {
@@ -502,11 +502,11 @@ public class FavoritesFragment extends BaseFragment {
                 contactAddressCursor.close();
             }
 
-            operation.setPbAddress(arrayListAddress);
+            operation.setPbAddress(arrayListAddress);*/
             //</editor-fold>
 
             //<editor-fold desc="IM Account">
-            Cursor contactImCursor = phoneBookContacts.getContactIm(rawId);
+          /*  Cursor contactImCursor = phoneBookContacts.getContactIm(rawId);
             ArrayList<ProfileDataOperationImAccount> arrayListImAccount = new ArrayList<>();
 
             if (contactImCursor != null && contactImCursor.getCount() > 0) {
@@ -523,7 +523,7 @@ public class FavoritesFragment extends BaseFragment {
                 contactImCursor.close();
             }
 
-            operation.setPbIMAccounts(arrayListImAccount);
+            operation.setPbIMAccounts(arrayListImAccount);*/
             //</editor-fold>
 
             arrayListOperation.add(operation);
@@ -531,9 +531,18 @@ public class FavoritesFragment extends BaseFragment {
 
             arrayListUserContact.add(profileData);
 
+            String headerLetter = StringUtils.upperCase(StringUtils.substring
+                    (profileData.getOperation().get(0).getPbNameFirst(), 0, 1));
+            headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
+            if (!arrayListPhoneBookContacts.contains(headerLetter)) {
+                arrayListContactHeaders.add(headerLetter);
+                arrayListPhoneBookContacts.add(headerLetter);
+            }
+            arrayListPhoneBookContacts.add(profileData);
+
         }
 
-        for (int i = 0; i < arrayListUserContact.size(); i++) {
+      /*  for (int i = 0; i < arrayListUserContact.size(); i++) {
             String headerLetter = StringUtils.upperCase(StringUtils.substring
                     (arrayListUserContact.get(i).getOperation().get(0).getPbNameFirst(), 0, 1));
             headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
@@ -542,7 +551,7 @@ public class FavoritesFragment extends BaseFragment {
                 arrayListPhoneBookContacts.add(headerLetter);
             }
             arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
-        }
+        }*/
 
       /*  rContactApplication.setArrayListFavPhoneBookContacts(arrayListPhoneBookContacts);
         rContactApplication.setArrayListFavContactHeaders(arrayListContactHeaders);*/

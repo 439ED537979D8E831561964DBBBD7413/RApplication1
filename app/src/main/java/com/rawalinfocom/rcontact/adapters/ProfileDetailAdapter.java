@@ -114,9 +114,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        int pbRcpType = Integer.parseInt(StringUtils.defaultString(phoneNumber.getPbRcpType(),
+        int pbRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(phoneNumber.getPbRcpType(),
                 String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_cloud_phone_book))));
+                        .rcp_type_secondary))));
 
         if (pbRcpType == context.getResources().getInteger(R.integer.rcp_type_primary)) {
             holder.textMain.setText(number + " ◊");
@@ -157,8 +157,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        int emRcpType = Integer.parseInt(StringUtils.defaultString(email.getEmRcpType(), String
-                .valueOf(context.getResources().getInteger(R.integer.rcp_type_cloud_phone_book))));
+        int emRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(email.getEmRcpType(), String
+                .valueOf(context.getResources().getInteger(R.integer.rcp_type_secondary))));
 
         if (emRcpType == context.getResources().getInteger(R.integer.rcp_type_primary)) {
             holder.textMain.setText(emailId + " ◊");
@@ -215,9 +215,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        int rcpType = Integer.parseInt(StringUtils.defaultString(webAddress.getWebRcpType(),
+        int rcpType = Integer.parseInt(StringUtils.defaultIfEmpty(webAddress.getWebRcpType(),
                 String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_cloud_phone_book))));
+                        .rcp_type_secondary))));
 
         if (rcpType == context.getResources().getInteger(R.integer
                 .rcp_type_local_phone_book)) {
@@ -253,9 +253,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        int addressRcpType = Integer.parseInt(StringUtils.defaultString(address.getRcpType(),
+        int addressRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(address.getRcpType(),
                 String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_local_phone_book))));
+                        .rcp_type_secondary))));
 
         if (addressRcpType == context.getResources().getInteger(R.integer
                 .rcp_type_local_phone_book)) {
@@ -274,9 +274,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         holder.textSub.setVisibility(View.GONE);
 
-        int imRcpType = Integer.parseInt(StringUtils.defaultString(imAccount.getIMRcpType(),
+        int imRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(imAccount.getIMRcpType(),
                 String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_cloud_phone_book))));
+                        .rcp_type_secondary))));
 
         if (imRcpType == context.getResources().getInteger(R.integer.rcp_type_local_phone_book)) {
             holder.textMain.setTextColor(colorBlack);
@@ -301,9 +301,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textSub.setText(event.getEventType());
         holder.textSub.setVisibility(View.VISIBLE);
 
-        int eventRcType = Integer.parseInt(StringUtils.defaultString(event.getEventRcType(),
+        int eventRcType = Integer.parseInt(StringUtils.defaultIfEmpty(event.getEventRcType(),
                 String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_cloud_phone_book))));
+                        .rcp_type_secondary))));
 
         if (eventRcType == context.getResources().getInteger(R.integer.rcp_type_cloud_phone_book)) {
             holder.textMain.setTextColor(colorPineGreen);

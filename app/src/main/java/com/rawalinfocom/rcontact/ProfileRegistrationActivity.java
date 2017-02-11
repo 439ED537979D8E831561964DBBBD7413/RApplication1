@@ -101,7 +101,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     private final int RC_SIGN_IN = 7;
 
     private final String host = "api.linkedin.com";
-    private final String topCardUrl = "https://" + host + "/v1/people/~:(email-address," +
+    private final String topCardUrl = "https://" + host + "/v1/people/~:(id,email-address," +
             "first-name,last-name,phone-numbers,picture-url,picture-urls::(original))";
 
     final String FIRST_NAME = "first_name";
@@ -109,6 +109,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     final String PROFILE_IMAGE = "profile_image";
     final String EMAIL_ID = "email_id";
     final String GENDER = "gender";
+    final String SOCIAL_ID = "social_id";
 
     @BindView(R.id.includeToolbar)
     LinearLayout includeToolbar;
@@ -250,7 +251,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "Please add " +
                             "First Name and Last Name");
                 } else {
-                    profileRegistration(firstName, lastName, emailId, null, "",
+                    profileRegistration(firstName, lastName, emailId, null, "", "",
                             getResources().getInteger(R.integer.registration_via_email));
                 }
                 break;
@@ -456,13 +457,15 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                             (fileUtils.getrContactDir().getAbsolutePath()));
                     profileRegistration(facebookData.getString(FIRST_NAME), facebookData
                                     .getString(LAST_NAME), facebookData.getString(EMAIL_ID),
-                            imageToBase64, loginResult.getAccessToken().getToken(), getResources
+                            imageToBase64, facebookData.getString(SOCIAL_ID), loginResult
+                                    .getAccessToken().getToken(), getResources
                                     ().getInteger(R.integer.registration_via_facebook));
                 } else {
                     Log.e("onResourceReady: ", "There is some error in storing Image!");
                     profileRegistration(facebookData.getString(FIRST_NAME), facebookData
                                     .getString(LAST_NAME), facebookData.getString(EMAIL_ID),
-                            null, loginResult.getAccessToken().getToken(), getResources
+                            null, facebookData.getString(SOCIAL_ID), loginResult.getAccessToken()
+                                    .getToken(), getResources
                                     ().getInteger(R.integer.registration_via_facebook));
                 }
             }
@@ -486,10 +489,11 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         final String firstName = givenName;
         final String lastName = StringUtils.defaultString(acct.getFamilyName());
         final String email = StringUtils.defaultString(acct.getEmail());
+        final String personId = StringUtils.defaultString(acct.getId());
         if (acct.getPhotoUrl() != null) {
             personPhotoUrl = StringUtils.defaultString(acct.getPhotoUrl().toString());
         } else {
-            profileRegistration(firstName, lastName, email, null, null,
+            profileRegistration(firstName, lastName, email, null, personId, null,
                     getResources().getInteger(R.integer.registration_via_google));
         }
 
@@ -502,11 +506,11 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     String imageToBase64 = Utils.convertBitmapToBase64(BitmapFactory.decodeFile
                             (fileUtils.getrContactDir().getAbsolutePath()));
 
-                    profileRegistration(firstName, lastName, email, imageToBase64, null,
+                    profileRegistration(firstName, lastName, email, imageToBase64, personId, null,
                             getResources().getInteger(R.integer.registration_via_google));
                 } else {
                     Log.e("onResourceReady: ", "There is some error in storing Image!");
-                    profileRegistration(firstName, lastName, email, null, null,
+                    profileRegistration(firstName, lastName, email, null, personId, null,
                             getResources().getInteger(R.integer.registration_via_google));
                 }
             }
@@ -521,14 +525,16 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     private void getLinkedInBitmapFromUrl(final JSONObject response) {
 
-        String firstName, lastName, emailAddress, pictureUrl;
+        String id, firstName, lastName, emailAddress, pictureUrl;
 
         try {
+            id = response.get("id").toString();
             firstName = response.get("firstName").toString();
             lastName = response.get("lastName").toString();
             emailAddress = response.get("emailAddress").toString();
             pictureUrl = response.get("pictureUrl").toString();
         } catch (JSONException e) {
+            id = "";
             firstName = "";
             lastName = "";
             emailAddress = "";
@@ -539,6 +545,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         final String finalFirstName = firstName;
         final String finalLastName = lastName;
         final String finalEmailAddress = emailAddress;
+        final String finalId = id;
 
         SimpleTarget googleTarget = new SimpleTarget<Bitmap>() {
             @Override
@@ -549,14 +556,18 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     String imageToBase64 = Utils.convertBitmapToBase64(BitmapFactory.decodeFile
                             (fileUtils.getrContactDir().getAbsolutePath()));
 
+                    // TODO: 09/02/17 social id
                     profileRegistration(finalFirstName, finalLastName, finalEmailAddress,
-                            imageToBase64, null, getResources().getInteger(R.integer
+                            imageToBase64, finalId, null, getResources().getInteger(R.integer
                                     .registration_via_lined_in));
 
                 } else {
+
+                    // TODO: 09/02/17 social id
                     Log.e("onResourceReady: ", "There is some error in storing Image!");
                     profileRegistration(finalFirstName, finalLastName, finalEmailAddress, null,
-                            null, getResources().getInteger(R.integer.registration_via_lined_in));
+                            finalId, null, getResources().getInteger(R.integer
+                                    .registration_via_lined_in));
 
                 }
             }
@@ -775,14 +786,17 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     //<editor-fold desc="Web Service Call">
 
     private void profileRegistration(String firstName, String lastName, String emailId, String
-            profileImage, String socialMediaToken, int type) {
+            profileImage, String socialMediaId, String socialMediaToken, int type) {
 
         WsRequestObject profileRegistrationObject = new WsRequestObject();
         profileRegistrationObject.setFirstName(firstName);
         profileRegistrationObject.setLastName(lastName);
         profileRegistrationObject.setEmailId(emailId);
         profileRegistrationObject.setPmId(userProfile.getPmId());
-        profileRegistrationObject.setProfileImage(profileImage);
+        profileRegistrationObject.setPbSocialId(socialMediaId);
+        profileRegistrationObject.setProfileImage(null);
+        // TODO: 09/02/17 uncomment
+//        profileRegistrationObject.setProfileImage(profileImage);
         profileRegistrationObject.setType(String.valueOf(type));
         profileRegistrationObject.setSocialMediaTokenId(socialMediaToken);
         profileRegistrationObject.setDeviceId(getDeviceTokenId());
@@ -831,7 +845,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                                     } else {
                                         profileRegistration(facebookData.getString(FIRST_NAME),
                                                 facebookData.getString(LAST_NAME), facebookData
-                                                        .getString(EMAIL_ID), null, loginResult
+                                                        .getString(EMAIL_ID), null, facebookData
+                                                        .getString(SOCIAL_ID), loginResult
                                                         .getAccessToken().getToken(),
                                                 getResources().getInteger(R.integer
                                                         .registration_via_facebook));
@@ -868,7 +883,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         Bundle bundle = new Bundle();
         try {
             String id = object.getString("id");
-
+            bundle.putString(SOCIAL_ID, id);
             try {
                 URL profile_pic = new URL("https://graph.facebook.com/" + id +
                         "/picture?width=200&height=150");
@@ -879,7 +894,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 return null;
             }
 
-            bundle.putString("idFacebook", id);
+//            bundle.putString("idFacebook", id);
 
             if (object.has("first_name"))
                 bundle.putString(FIRST_NAME, object.getString("first_name"));

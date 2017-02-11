@@ -26,6 +26,7 @@ public class WsRequestObject {
     private String status;
     private String ldOtpDeliveredTimeFromCloudToDevice;
     private String accessToken;
+    private String pbSocialId;
 
     private String firstName;
     private String lastName;
@@ -172,6 +173,15 @@ public class WsRequestObject {
 
     public void setSocialMediaTokenId(String socialMediaTokenId) {
         this.socialMediaTokenId = socialMediaTokenId;
+    }
+
+    @JsonProperty("pb_social_id")
+    public String getPbSocialId() {
+        return pbSocialId;
+    }
+
+    public void setPbSocialId(String pbSocialId) {
+        this.pbSocialId = pbSocialId;
     }
 
     @JsonProperty("profile_image")
