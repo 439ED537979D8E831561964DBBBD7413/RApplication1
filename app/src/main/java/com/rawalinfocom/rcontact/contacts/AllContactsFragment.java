@@ -924,7 +924,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.TYPE))));
                     phoneNumber.setPhonePublic(1);
-                    phoneNumber.setPhonePublic(1);
 
                     arrayListPhoneNumber.add(phoneNumber);
 
@@ -975,7 +974,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="Nick Name">
-            Cursor contactNickNameCursor = phoneBookContacts.getContactNickName(rawId);
+           /* Cursor contactNickNameCursor = phoneBookContacts.getContactNickName(rawId);
 
             if (contactNickNameCursor != null && contactNickNameCursor.getCount() > 0) {
                 while (contactNickNameCursor.moveToNext()) {
@@ -986,11 +985,11 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                 }
                 contactNickNameCursor.close();
-            }
+            }*/
             //</editor-fold>
 
             //<editor-fold desc="Note">
-            Cursor contactNoteCursor = phoneBookContacts.getContactNote(rawId);
+          /*  Cursor contactNoteCursor = phoneBookContacts.getContactNote(rawId);
 
             if (contactNoteCursor != null && contactNoteCursor.getCount() > 0) {
                 while (contactNoteCursor.moveToNext()) {
@@ -1000,7 +999,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                 }
                 contactNoteCursor.close();
-            }
+            }*/
             //</editor-fold>
 
             //<editor-fold desc="Website">
@@ -1237,6 +1236,15 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
             arrayListUserContact.add(profileData);
 
+            String headerLetter = StringUtils.upperCase(StringUtils.substring
+                    (profileData.getOperation().get(0).getPbNameFirst(), 0, 1));
+            headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
+            if (!arrayListPhoneBookContacts.contains(headerLetter)) {
+                arrayListContactHeaders.add(headerLetter);
+                arrayListPhoneBookContacts.add(headerLetter);
+            }
+            arrayListPhoneBookContacts.add(profileData);
+
         }
 
         Utils.setArrayListPreference(getActivity(), AppConstants
@@ -1245,7 +1253,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         if (arrayListUserContact.size() > 0) {
 //            arrayListPhoneBookContacts.addAll(arrayListUserContact);
 
-            for (int i = 0; i < arrayListUserContact.size(); i++) {
+         /*   for (int i = 0; i < arrayListUserContact.size(); i++) {
                 String headerLetter = StringUtils.upperCase(StringUtils.substring
                         (arrayListUserContact.get(i).getOperation().get(0).getPbNameFirst(), 0, 1));
                 headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
@@ -1255,7 +1263,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 }
                 arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
 
-            }
+            }*/
 
             rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
             rContactApplication.setArrayListAllContactHeaders(arrayListContactHeaders);

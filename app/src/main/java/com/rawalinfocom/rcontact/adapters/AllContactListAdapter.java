@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
@@ -70,6 +71,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private TableProfileMobileMapping tableProfileMobileMapping;
     private TableProfileEmailMapping tableProfileEmailMapping;
 
+    ArrayList<Integer> arrayListExpandedPositions;
+
 
     //<editor-fold desc="Constructor">
     public AllContactListAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
@@ -81,6 +84,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.arrayListContactHeader = new ArrayList<>();
         this.arrayListContactHeader.add("#");
         this.arrayListContactHeader.addAll(arrayListContactHeader);
+
+        arrayListExpandedPositions = new ArrayList<>();
 
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
@@ -198,6 +203,11 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         final ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
 
         holder.textContactName.setTag(position);
+        if (arrayListExpandedPositions.contains(position)) {
+            holder.recyclerViewMultipleRc.setVisibility(View.VISIBLE);
+        } else {
+            holder.recyclerViewMultipleRc.setVisibility(View.GONE);
+        }
 
         String contactDisplayName = "";
         String prefix = profileData.getOperation().get(0).getPbNamePrefix();
@@ -217,6 +227,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         } if (StringUtils.length(prefix) > 0) {
             contactDisplayName = contactDisplayName + suffix;
         }
+        contactDisplayName = StringUtils.trimToEmpty(contactDisplayName);
 
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
                 "[Unknown]");
@@ -245,6 +256,11 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             public void onClick(View view) {
 
                 Bundle bundle = new Bundle();
+
+                TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
+                TextView textCloudName = (TextView) view.findViewById(R.id
+                        .text_cloud_contact_name);
+
                 if (StringUtils.equalsIgnoreCase(view.getTag().toString(), "0")) {
                     // Display own profile
                     bundle.putString(AppConstants.EXTRA_PM_ID, ((BaseActivity) context)
@@ -256,7 +272,9 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     if (String.valueOf(view.getTag()).contains(",")) {
                         if (holder.recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
                             holder.recyclerViewMultipleRc.setVisibility(View.GONE);
+                            arrayListExpandedPositions.remove((Object) textName.getTag());
                         } else {
+                            arrayListExpandedPositions.add((int) textName.getTag());
                             holder.recyclerViewMultipleRc.setVisibility(View.VISIBLE);
                         }
                     } else {
@@ -272,17 +290,16 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                             .getLocalPhoneBookId());
                 }
                 if (!String.valueOf(view.getTag()).contains(",")) {
-                    TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
+                  /*  TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
                     TextView textCloudName = (TextView) view.findViewById(R.id
-                            .text_cloud_contact_name);
+                            .text_cloud_contact_name);*/
 
                     bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString
                             ());
                     listClickedPosition = (int) textName.getTag();
                     if (textCloudName.getVisibility() == View.VISIBLE) {
                         bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textCloudName
-                                .getText()
-                                .toString());
+                                .getText().toString());
                     }
                     ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
                             .class, bundle);
@@ -348,8 +365,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 holder.linearRating.setVisibility(View.GONE);
 //                holder.recyclerViewMultipleRc.setVisibility(View.VISIBLE);
-                populateRecyclerView(holder.recyclerViewMultipleRc, arrayListDbMobileNumbers,
-                        contactDisplayName);
+                populateNumberRecyclerView(holder.recyclerViewMultipleRc, arrayListDbMobileNumbers,
+                        contactDisplayName, profileData.getLocalPhoneBookId());
 
                 String[] pmIds = new String[arrayListDbMobileNumbers.size()];
                 for (int i = 0; i < arrayListDbMobileNumbers.size(); i++) {
@@ -428,15 +445,29 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     }
 
-    private void populateRecyclerView(RecyclerView recyclerViewMultipleRc,
-                                      ArrayList<ProfileMobileMapping> arrayListDbMobileNumbers,
-                                      String contactDisplayName) {
+    private void populateNumberRecyclerView(RecyclerView recyclerViewMultipleRc,
+                                            ArrayList<ProfileMobileMapping>
+                                                    arrayListDbMobileNumbers, String
+                                                    contactDisplayName, String phonebookId) {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         recyclerViewMultipleRc.setLayoutManager(linearLayoutManager);
 
         ExpandableContactListAdapter adapter = new ExpandableContactListAdapter(fragment,
-                arrayListDbMobileNumbers, contactDisplayName);
+                arrayListDbMobileNumbers, null, contactDisplayName, phonebookId);
+        recyclerViewMultipleRc.setAdapter(adapter);
+
+    }
+
+    private void populateEmailRecyclerView(RecyclerView recyclerViewMultipleRc,
+                                           ArrayList<ProfileEmailMapping> arrayListDbEmailIds,
+                                           String contactDisplayName, String phonebookId) {
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+        recyclerViewMultipleRc.setLayoutManager(linearLayoutManager);
+
+        ExpandableContactListAdapter adapter = new ExpandableContactListAdapter(fragment, null,
+                arrayListDbEmailIds, contactDisplayName, phonebookId);
         recyclerViewMultipleRc.setAdapter(adapter);
 
     }
@@ -483,6 +514,10 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 } else {
 
+                    holder.linearRating.setVisibility(View.GONE);
+                    populateEmailRecyclerView(holder.recyclerViewMultipleRc, arrayListDbEmailIds,
+                            contactDisplayName, profileData.getLocalPhoneBookId());
+
                     String[] pmIds = new String[arrayListDbEmailIds.size()];
                     for (int i = 0; i < arrayListDbEmailIds.size(); i++) {
                         pmIds[i] = arrayListDbEmailIds.get(i).getEpmCloudPmId();
@@ -490,7 +525,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     holder.relativeRowAllContact.setTag(StringUtils.join(pmIds, ","));
 
                     displayName = " (" + arrayListDbEmailIds.size() + "RC)";
-                    holder.linearRating.setVisibility(View.GONE);
                 }
 
                 if (StringUtils.equals(displayName, (" (" + contactDisplayName + ")"))) {
@@ -617,6 +651,17 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             textCloudContactName.setTextColor(colorPineGreen);
 
             recyclerViewMultipleRc.setVisibility(View.GONE);
+
+            LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
+            // Filled stars
+            Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(context, R
+                    .color.vivid_yellow));
+            // half stars
+            Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(context,
+                    android.R.color.darker_gray));
+            // Empty stars
+            Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(context,
+                    android.R.color.darker_gray));
 
 //            textRatingUserCount.setText("0");
 

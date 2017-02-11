@@ -25,4 +25,9 @@
     <!--swipe call SMS-->
     <color name="darkModerateLimeGreen">#388E3C</color>
     <color name="brightOrange">#EFAE35</color>
+
+    <!--rating star-->
+    <color name="vivid_yellow">#FFD203</color>
+
+
 </resources>
