@@ -253,6 +253,7 @@
                                     android:id="@+id/recycler_view_contact_number"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:overScrollMode="never"
                                     android:layout_margin="@dimen/margin_tiny"/>
 
                             </LinearLayout>
@@ -292,6 +293,7 @@
                                     android:id="@+id/recycler_view_email"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:overScrollMode="never"
                                     android:layout_margin="@dimen/margin_tiny"/>
 
                             </LinearLayout>
@@ -337,6 +339,7 @@
                                         android:id="@+id/recycler_view_website"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:overScrollMode="never"
                                         android:layout_margin="@dimen/margin_tiny"/>
 
                                 </LinearLayout>
@@ -376,6 +379,7 @@
                                         android:id="@+id/recycler_view_address"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:overScrollMode="never"
                                         android:layout_margin="@dimen/margin_tiny"/>
 
                                 </LinearLayout>
@@ -415,6 +419,7 @@
                                         android:id="@+id/recycler_view_social_contact"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:overScrollMode="never"
                                         android:layout_margin="@dimen/margin_tiny"/>
 
                                 </LinearLayout>
@@ -496,6 +501,7 @@
                                     android:id="@+id/recycler_view_event"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:overScrollMode="never"
                                     android:layout_margin="@dimen/margin_tiny"/>
 
                             </LinearLayout>
