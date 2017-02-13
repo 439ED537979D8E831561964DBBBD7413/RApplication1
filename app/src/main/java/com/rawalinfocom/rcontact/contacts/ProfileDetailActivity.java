@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -266,7 +267,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             arrayListFavouriteContacts.addAll(Utils.getArrayListPreference(this, AppConstants
                     .PREF_FAVOURITE_CONTACT_NUMBER_EMAIL));
         }
-        Log.i("onCreate", arrayListFavouriteContacts.toString());
 
         init();
     }
@@ -556,6 +556,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionRightLeft.setOnRippleCompleteListener(this);
 
+        LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
+        // Filled stars
+        Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(this, R.color
+                .vivid_yellow));
+        // half stars
+        Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(this, android.R
+                .color.darker_gray));
+        // Empty stars
+        Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(this, android.R
+                .color.darker_gray));
+
         if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
             // RC Profile
 //            getProfileDetail();
@@ -785,6 +796,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                         (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.Phone.TYPE))));
+                phoneNumber.setPbRcpType(String.valueOf(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book)));
 
                 if (!arrayListCloudNumber.contains(phoneNumber.getPhoneNumber())) {
                     arrayListPhoneBookNumber.add(phoneNumber);
@@ -837,6 +850,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         contactEmailCursor.getInt
                                 (contactEmailCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Email.TYPE))));
+                emailId.setEmRcpType(String.valueOf(getResources().getInteger(R.integer
+                        .rcp_type_local_phone_book)));
 
                 if (!arrayListCloudEmail.contains(emailId.getEmEmailId())) {
                     arrayListPhoneBookEmail.add(emailId);
