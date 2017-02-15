@@ -9,6 +9,8 @@ package com.rawalinfocom.rcontact.constants;
 
 public class AppConstants {
 
+    public static String PLAY_STORE_LINK = "https://play.google.com/store/apps/details?id=";
+
     //<editor-fold desc="Profile Detail Section">
     public static final int PHONE_NUMBER = 0;
     public static final int EMAIL = 1;

@@ -52,4 +52,6 @@
     <string name="action_close">Close</string>
     <string name="action_cancel">Cancel</string>
     <string name="str_comment">Comment</string>
+    <string name="str_choose_from_contacts">Choose from Contacts</string>
+    <string name="str_select_social_media">Select Social Media</string>
 </resources>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/relative_root_rating_dialog"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/llDialogContentArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_around_content_area">
+
+        <TextView
+            android:id="@+id/text_dialog_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/padding_between_title_body"
+            android:textAppearance="?android:textAppearanceLarge"
+            tools:text="Share Profile"/>
+
+        <TextView
+            android:id="@+id/text_from_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_small"
+            android:text="@string/str_choose_from_contacts"/>
+
+        <TextView
+            android:id="@+id/text_from_social_media"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_small"
+            android:text="@string/str_select_social_media"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/llDialogContentArea"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding_around_button">
+
+        <com.rawalinfocom.rcontact.helper.RippleView
+            android:id="@+id/ripple_left"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/height_button"
+            app:rv_alpha="@integer/alpha_ripple"
+            app:rv_centered="true"
+            app:rv_color="@color/colorPrimary"
+            app:rv_rippleDuration="@integer/duration_ripple"
+            app:rv_type="rectangle">
+
+            <Button
+                android:id="@+id/button_left"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_button"
+                android:background="@null"
+                android:minWidth="@dimen/min_width_button"
+                android:textColor="@color/colorAccent"
+                tools:text="Cancel"/>
+
+        </com.rawalinfocom.rcontact.helper.RippleView>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -61,6 +61,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 import com.rawalinfocom.rcontact.model.Rating;
+import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
@@ -286,6 +287,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             case R.id.ripple_action_back:
                 onBackPressed();
+                break;
+
+            case R.id.ripple_action_right_center:
+                if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+                    TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                    UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
+                            .parseInt(pmId));
+                    showChooseShareOption(StringUtils.trimToEmpty(userProfile.getPmFirstName()),
+                            StringUtils.trimToEmpty(userProfile.getPmLastName()));
+                }
+
                 break;
 
             case R.id.ripple_action_right_left:
@@ -555,6 +567,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleViewMore.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionRightLeft.setOnRippleCompleteListener(this);
+        rippleActionRightCenter.setOnRippleCompleteListener(this);
 
         LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
         // Filled stars
@@ -1335,6 +1348,60 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     public int getListClickedPosition() {
         return listClickedPosition;
+    }
+
+    private void showChooseShareOption(final String firstName, final String lastName) {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_choose_share_invite);
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
+        TextView textFromContact = (TextView) dialog.findViewById(R.id.text_from_contact);
+        TextView textFromSocialMedia = (TextView) dialog.findViewById(R.id.text_from_social_media);
+
+        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
+
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
+        textFromContact.setTypeface(Utils.typefaceRegular(this));
+        textFromSocialMedia.setTypeface(Utils.typefaceRegular(this));
+        buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
+
+        textDialogTitle.setText("Share " + contactName + "'s Profile");
+
+        buttonLeft.setText(R.string.action_cancel);
+
+        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                dialog.dismiss();
+            }
+        });
+
+        textFromSocialMedia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+//                String shareBody = "Here is the share content body";
+                String shareBody = WsConstants.WS_ROOT + "display-user-details/" + firstName
+                        + "." + lastName + "." + pmId;
+//                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Share Contact Via");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, "Share Contact Via"));
+            }
+        });
+
+        dialog.show();
     }
 
     //</editor-fold>
