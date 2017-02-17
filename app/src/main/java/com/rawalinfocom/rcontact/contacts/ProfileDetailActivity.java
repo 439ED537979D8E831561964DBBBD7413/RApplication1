@@ -34,6 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.ContactListingActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
@@ -67,6 +68,9 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -196,6 +200,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     RelativeLayout relativeRootRatingDialog;
 
+    ProfileDataOperation profileDataOperationVcard;
+
     String pmId, phoneBookId, contactName = "", cloudContactName = null, checkNumberFavourite =
             null;
     boolean displayOwnProfile = false, isHideFavourite = false;
@@ -296,7 +302,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .parseInt(pmId));
                     showChooseShareOption(StringUtils.trimToEmpty(userProfile.getPmFirstName()),
                             StringUtils.trimToEmpty(userProfile.getPmLastName()));
+                } else {
+                    showChooseShareOption(null, null);
                 }
+
 
                 break;
 
@@ -307,11 +316,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     int favStatus;
                     if (StringUtils.equals(imageRightLeft.getTag().toString(),
                             TAG_IMAGE_FAVOURITE)) {
-                        favStatus = PhoneBookContacts.status_un_favourite;
+                        favStatus = PhoneBookContacts.STATUS_UN_FAVOURITE;
                         imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
                         imageRightLeft.setTag(TAG_IMAGE_UN_FAVOURITE);
                     } else {
-                        favStatus = PhoneBookContacts.status_favourite;
+                        favStatus = PhoneBookContacts.STATUS_FAVOURITE;
                         imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
                         imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);
                     }
@@ -369,6 +378,41 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         (favouriteStatusResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     if (favouriteStatusResponse != null) {
                         Log.e("error response", favouriteStatusResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
+            // <editor-fold desc="REQ_RCP_PROFILE_SHARING">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_RCP_PROFILE_SHARING)) {
+                WsResponseObject profileSharingResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (profileSharingResponse != null && StringUtils.equalsIgnoreCase
+                        (profileSharingResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    File vcfFile = new File(this.getExternalFilesDir(null), contactName + ".vcf");
+                    FileWriter fw;
+                    try {
+                        fw = new FileWriter(vcfFile);
+                        fw.write(profileSharingResponse.getProfileSharingData());
+                        fw.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.setType("text/x-vcard");
+                    sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(vcfFile));
+                    startActivity(sendIntent);
+
+                } else {
+                    if (profileSharingResponse != null) {
+                        Log.e("error response", profileSharingResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -647,6 +691,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void setUpView(final ProfileDataOperation profileDetail) {
 
+        profileDataOperationVcard = new ProfileDataOperation();
+
+        profileDataOperationVcard.setPbNameFirst(contactName);
+
         //<editor-fold desc="Favourite">
 
         if (!displayOwnProfile && !isHideFavourite) {
@@ -701,11 +749,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         Cursor contactOrganizationCursor = phoneBookContacts.getContactOrganization(phoneBookId);
         ArrayList<ProfileDataOperationOrganization> arrayListPhoneBookOrganization = new
                 ArrayList<>();
+        ArrayList<ProfileDataOperationOrganization> arrayListPhoneBookOrganizationOperation = new
+                ArrayList<>();
 
         if (contactOrganizationCursor != null && contactOrganizationCursor.getCount() > 0) {
             while (contactOrganizationCursor.moveToNext()) {
 
                 ProfileDataOperationOrganization organization = new
+                        ProfileDataOperationOrganization();
+                ProfileDataOperationOrganization organizationOperation = new
                         ProfileDataOperationOrganization();
 
                 organization.setOrgName(contactOrganizationCursor.getString
@@ -731,12 +783,35 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 organization.setOrgRcpType(String.valueOf(getResources().getInteger(R.integer
                         .rcp_type_local_phone_book)));
 
+                organizationOperation.setOrgName(contactOrganizationCursor.getString
+                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+                                .CommonDataKinds.Organization.COMPANY)));
+                organizationOperation.setOrgJobTitle(contactOrganizationCursor.getString
+                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+                                .CommonDataKinds.Organization.TITLE)));
+                organizationOperation.setOrgDepartment(contactOrganizationCursor.getString
+                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+                                .CommonDataKinds.Organization.DEPARTMENT)));
+                organizationOperation.setOrgType(phoneBookContacts.getOrganizationType
+                        (contactOrganizationCursor,
+                                contactOrganizationCursor.getInt((contactOrganizationCursor
+                                        .getColumnIndex(ContactsContract.CommonDataKinds
+                                                .Organization.TYPE)))));
+                organizationOperation.setOrgJobDescription(contactOrganizationCursor.getString
+                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+                                .CommonDataKinds.Organization.JOB_DESCRIPTION)));
+                organizationOperation.setOrgOfficeLocation(contactOrganizationCursor.getString
+                        (contactOrganizationCursor.getColumnIndex(ContactsContract
+                                .CommonDataKinds.Organization.OFFICE_LOCATION)));
+
+
                 if (!arrayListOrganization.contains(organization)) {
                     arrayListPhoneBookOrganization.add(organization);
                 }
-
+                arrayListPhoneBookOrganizationOperation.add(organizationOperation);
             }
             contactOrganizationCursor.close();
+            profileDataOperationVcard.setPbOrganization(arrayListPhoneBookOrganizationOperation);
         }
 
         if (!Utils.isArraylistNullOrEmpty(arrayListOrganization) || !Utils.isArraylistNullOrEmpty
@@ -796,11 +871,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         // From PhoneBook
         Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(phoneBookId);
         ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneBookNumber = new ArrayList<>();
+        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneBookNumberOperation = new
+                ArrayList<>();
 
         if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
             while (contactNumberCursor.moveToNext()) {
 
                 ProfileDataOperationPhoneNumber phoneNumber = new
+                        ProfileDataOperationPhoneNumber();
+                ProfileDataOperationPhoneNumber phoneNumberOperation = new
                         ProfileDataOperationPhoneNumber();
 
                 phoneNumber.setPhoneNumber(Utils.getFormattedNumber(this, contactNumberCursor
@@ -809,15 +888,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                         (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.Phone.TYPE))));
+                phoneNumberOperation.setPhoneNumber(Utils.getFormattedNumber(this,
+                        contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.Phone.NUMBER))));
+                phoneNumberOperation.setPhoneType(phoneBookContacts.getPhoneNumberType
+                        (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.Phone.TYPE))));
                 phoneNumber.setPbRcpType(String.valueOf(getResources().getInteger(R.integer
                         .rcp_type_local_phone_book)));
 
                 if (!arrayListCloudNumber.contains(phoneNumber.getPhoneNumber())) {
                     arrayListPhoneBookNumber.add(phoneNumber);
                 }
+                arrayListPhoneBookNumberOperation.add(phoneNumberOperation);
 
             }
             contactNumberCursor.close();
+            profileDataOperationVcard.setPbPhoneNumber(arrayListPhoneBookNumberOperation);
         }
 
         if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber) || !Utils.isArraylistNullOrEmpty
@@ -851,11 +938,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         // From PhoneBook
         Cursor contactEmailCursor = phoneBookContacts.getContactEmail(phoneBookId);
         ArrayList<ProfileDataOperationEmail> arrayListPhoneBookEmail = new ArrayList<>();
+        ArrayList<ProfileDataOperationEmail> arrayListPhoneBookEmailOperation = new ArrayList<>();
 
         if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
             while (contactEmailCursor.moveToNext()) {
 
                 ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
+                ProfileDataOperationEmail emailIdOperation = new ProfileDataOperationEmail();
 
                 emailId.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
                         .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
@@ -866,12 +955,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 emailId.setEmRcpType(String.valueOf(getResources().getInteger(R.integer
                         .rcp_type_local_phone_book)));
 
+                emailIdOperation.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+                emailIdOperation.setEmType(phoneBookContacts.getEmailType(contactEmailCursor,
+                        contactEmailCursor.getInt
+                                (contactEmailCursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.Email.TYPE))));
+
                 if (!arrayListCloudEmail.contains(emailId.getEmEmailId())) {
                     arrayListPhoneBookEmail.add(emailId);
                 }
-
+                arrayListPhoneBookEmailOperation.add(emailIdOperation);
             }
             contactEmailCursor.close();
+            profileDataOperationVcard.setPbEmailId(arrayListPhoneBookEmailOperation);
         }
 
         if (!Utils.isArraylistNullOrEmpty(arrayListEmail) || !Utils.isArraylistNullOrEmpty
@@ -910,23 +1007,33 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         // From PhoneBook
         Cursor contactWebsiteCursor = phoneBookContacts.getContactWebsite(phoneBookId);
         ArrayList<ProfileDataOperationWebAddress> arrayListPhoneBookWebsite = new ArrayList<>();
+        ArrayList<ProfileDataOperationWebAddress> arrayListPhoneBookWebsiteOperation = new
+                ArrayList<>();
 
         if (contactWebsiteCursor != null && contactWebsiteCursor.getCount() > 0) {
             while (contactWebsiteCursor.moveToNext()) {
 
                 ProfileDataOperationWebAddress webAddress = new ProfileDataOperationWebAddress();
+                ProfileDataOperationWebAddress webAddressOperation = new
+                        ProfileDataOperationWebAddress();
 
                 webAddress.setWebAddress(contactWebsiteCursor.getString(contactWebsiteCursor
                         .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
                 webAddress.setWebRcpType(String.valueOf(getResources().getInteger(R.integer
                         .rcp_type_local_phone_book)));
 
+                webAddressOperation.setWebAddress(contactWebsiteCursor.getString
+                        (contactWebsiteCursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
+
+
                 if (!arrayListCloudWebsite.contains(webAddress.getWebAddress())) {
                     arrayListPhoneBookWebsite.add(webAddress);
                 }
-
+                arrayListPhoneBookWebsiteOperation.add(webAddressOperation);
             }
             contactWebsiteCursor.close();
+//            profileDataOperationVcard.setPbWebAddress(arrayListPhoneBookWebsiteOperation);
         }
        /* Cursor contactWebsiteCursor = phoneBookContacts.getContactWebsite(phoneBookId);
         ArrayList<String> arrayListPhoneBookWebsite = new ArrayList<>();
@@ -978,11 +1085,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         // From PhoneBook
         Cursor contactAddressCursor = phoneBookContacts.getContactAddress(phoneBookId);
         ArrayList<ProfileDataOperationAddress> arrayListPhoneBookAddress = new ArrayList<>();
+        ArrayList<ProfileDataOperationAddress> arrayListPhoneBookAddressOperation = new
+                ArrayList<>();
 
         if (contactAddressCursor != null && contactAddressCursor.getCount() > 0) {
             while (contactAddressCursor.moveToNext()) {
 
                 ProfileDataOperationAddress address = new ProfileDataOperationAddress();
+                ProfileDataOperationAddress addressOperation = new ProfileDataOperationAddress();
 
                 address.setFormattedAddress(contactAddressCursor.getString
                         (contactAddressCursor.getColumnIndex(ContactsContract
@@ -1011,12 +1121,39 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 address.setRcpType(String.valueOf(getResources().getInteger(R.integer
                         .rcp_type_local_phone_book)));
 
+                addressOperation.setFormattedAddress(contactAddressCursor.getString
+                        (contactAddressCursor.getColumnIndex(ContactsContract
+                                .CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS)));
+                addressOperation.setCity(contactAddressCursor.getString(contactAddressCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                .CITY)));
+                addressOperation.setCountry(contactAddressCursor.getString(contactAddressCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                .COUNTRY)));
+                addressOperation.setNeighborhood(contactAddressCursor.getString(contactAddressCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                .NEIGHBORHOOD)));
+                addressOperation.setPostCode(contactAddressCursor.getString(contactAddressCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                .POSTCODE)));
+                addressOperation.setPoBox(contactAddressCursor.getString(contactAddressCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                .POBOX)));
+                addressOperation.setStreet(contactAddressCursor.getString(contactAddressCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                .STREET)));
+                addressOperation.setAddressType(phoneBookContacts.getAddressType
+                        (contactAddressCursor,
+                                contactAddressCursor.getInt(contactAddressCursor.getColumnIndex
+                                        (ContactsContract.CommonDataKinds.StructuredPostal.TYPE))));
+
                 if (!arrayListCloudAddress.contains(address.getFormattedAddress())) {
                     arrayListPhoneBookAddress.add(address);
                 }
-
+                arrayListPhoneBookAddressOperation.add(addressOperation);
             }
             contactAddressCursor.close();
+            profileDataOperationVcard.setPbAddress(arrayListPhoneBookAddressOperation);
         }
 
         if (!Utils.isArraylistNullOrEmpty(arrayListAddress) || !Utils.isArraylistNullOrEmpty
@@ -1119,11 +1256,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         // From PhoneBook
         Cursor contactEventCursor = phoneBookContacts.getContactEvent(phoneBookId);
         ArrayList<ProfileDataOperationEvent> arrayListPhoneBookEvent = new ArrayList<>();
+        ArrayList<ProfileDataOperationEvent> arrayListPhoneBookEventOperation = new ArrayList<>();
 
         if (contactEventCursor != null && contactEventCursor.getCount() > 0) {
             while (contactEventCursor.moveToNext()) {
 
                 ProfileDataOperationEvent event = new ProfileDataOperationEvent();
+                ProfileDataOperationEvent eventOperation = new ProfileDataOperationEvent();
 
                 event.setEventType(phoneBookContacts.getEventType(contactEventCursor,
                         contactEventCursor
@@ -1137,12 +1276,22 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 event.setEventRcType(String.valueOf(getResources().getInteger(R.integer
                         .rcp_type_local_phone_book)));
 
+                eventOperation.setEventType(phoneBookContacts.getEventType(contactEventCursor,
+                        contactEventCursor
+                                .getInt(contactEventCursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.Event.TYPE))));
+
+                eventOperation.setEventDate(contactEventCursor.getString(contactEventCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Event
+                                .START_DATE)));
+
                 if (!arrayListEvent.contains(event)) {
                     arrayListPhoneBookEvent.add(event);
                 }
-
+                arrayListPhoneBookEventOperation.add(eventOperation);
             }
             contactEventCursor.close();
+            profileDataOperationVcard.setPbEvent(arrayListPhoneBookEventOperation);
         }
 
         if (!Utils.isArraylistNullOrEmpty(arrayListEvent) || !Utils.isArraylistNullOrEmpty
@@ -1194,6 +1343,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
         RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+
+        rippleLeft.setVisibility(View.GONE);
 
         buttonRight.setTypeface(Utils.typefaceRegular(this));
         buttonRight.setText(R.string.action_close);
@@ -1390,14 +1542,39 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-                sharingIntent.setType("text/plain");
-//                String shareBody = "Here is the share content body";
-                String shareBody = WsConstants.WS_ROOT + "display-user-details/" + firstName
-                        + "." + lastName + "." + pmId;
-//                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Share Contact Via");
-                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                startActivity(Intent.createChooser(sharingIntent, "Share Contact Via"));
+                if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+                    // RCP profile or Own Profile
+                    Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                    sharingIntent.setType("text/plain");
+                    String shareBody = WsConstants.WS_ROOT + "display-user-details/" + firstName
+                            + "." + lastName + "." + pmId;
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                    startActivity(Intent.createChooser(sharingIntent, "Share Contact Via"));
+                } else {
+                    // Non-Rcp profile
+                   /* ArrayList<Object> phoneNumbers = phoneDetailAdapter.getDetailList();
+                    for (int i = 0; i < phoneNumbers.size(); i++) {
+                        Log.i("onClick", phoneNumbers.get(i).toString());
+                    }*/
+                    shareContact();
+
+                }
+            }
+        });
+
+        textFromContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Bundle bundle = new Bundle();
+                if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+                    bundle.putString(AppConstants.EXTRA_PM_ID, pmId);
+                } else {
+                    bundle.putSerializable(AppConstants.EXTRA_OBJECT_CONTACT,
+                            profileDataOperationVcard);
+                }
+                startActivityIntent(ProfileDetailActivity.this, ContactListingActivity.class,
+                        bundle);
             }
         });
 
@@ -1467,6 +1644,27 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     .string.msg_no_network));
         }
     }
+
+    private void shareContact() {
+
+        WsRequestObject uploadContactObject = new WsRequestObject();
+        uploadContactObject.setPmId(getUserPmId());
+        uploadContactObject.setSendProfileType(getResources().getInteger(R.integer
+                .send_profile_non_rcp_social));
+        uploadContactObject.setContactData(profileDataOperationVcard);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    uploadContactObject, null, WsResponseObject.class, WsConstants
+                    .REQ_RCP_PROFILE_SHARING, getResources().getString(R.string.msg_please_wait),
+                    true).execute(WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
+    //</editor-fold>
 
     //</editor-fold>
 }

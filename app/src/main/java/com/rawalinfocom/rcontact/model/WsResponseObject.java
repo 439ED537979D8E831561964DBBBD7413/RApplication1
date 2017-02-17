@@ -29,6 +29,8 @@ public class WsResponseObject {
     private ArrayList<Country> arrayListCountry;
     private ArrayList<ProfileDataOperation> arrayListUserRcProfile;
 
+    private String profileSharingData;
+
     @JsonProperty("profile_rating")
     private Rating profileRating;
 
@@ -102,5 +104,14 @@ public class WsResponseObject {
 
     public void setProfileRating(Rating profileRating) {
         this.profileRating = profileRating;
+    }
+
+    @JsonProperty("profile_sharing_data")
+    public String getProfileSharingData() {
+        return profileSharingData;
+    }
+
+    public void setProfileSharingData(String profileSharingData) {
+        this.profileSharingData = profileSharingData;
     }
 }

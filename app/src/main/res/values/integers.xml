@@ -29,4 +29,9 @@
     <integer name="rating_done">1</integer> <!-- sent -->
     <integer name="rating_received">2</integer> <!-- received -->
 
+    <!-- Send Profile Type -->
+    <integer name="send_profile_non_rcp">0</integer>
+    <integer name="send_profile_rcp">1</integer>
+    <integer name="send_profile_non_rcp_social">2</integer>
+
 </resources>

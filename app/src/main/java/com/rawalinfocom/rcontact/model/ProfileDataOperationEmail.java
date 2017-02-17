@@ -6,9 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProfileDataOperationEmail {
+public class ProfileDataOperationEmail implements Serializable {
 
     private int emId;
     private String emEmailId;

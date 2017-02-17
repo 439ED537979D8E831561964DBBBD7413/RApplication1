@@ -62,6 +62,7 @@ public class AppConstants {
     public static String EXTRA_CONTACT_NAME = "contact_name";
     public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
     public static String EXTRA_CONTACT_POSITION = "contact_position";
+    public static String EXTRA_OBJECT_CONTACT = "extra_object_contact";
 
     //</editor-fold>
 

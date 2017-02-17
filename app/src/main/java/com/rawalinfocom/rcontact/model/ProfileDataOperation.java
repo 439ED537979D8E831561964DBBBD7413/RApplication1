@@ -6,11 +6,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProfileDataOperation {
+public class ProfileDataOperation implements Serializable {
 
     private ArrayList<ProfileDataOperationPhoneNumber> pbPhoneNumber;
     private String flag;

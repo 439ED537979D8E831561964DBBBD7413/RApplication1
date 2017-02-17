@@ -28,14 +28,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/margin_small"
-            android:text="@string/str_choose_from_contacts"/>
+            android:text="@string/str_choose_from_contacts"
+            android:textAppearance="?android:textAppearanceMedium"/>
 
         <TextView
             android:id="@+id/text_from_social_media"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/margin_small"
-            android:text="@string/str_select_social_media"/>
+            android:text="@string/str_select_social_media"
+            android:textAppearance="?android:textAppearanceMedium"/>
 
     </LinearLayout>
 
