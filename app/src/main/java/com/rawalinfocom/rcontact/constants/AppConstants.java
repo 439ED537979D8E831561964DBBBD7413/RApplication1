@@ -103,4 +103,16 @@ public class AppConstants {
 
     //</editor-fold>
 
+    //<editor-fold desc="Phone Sim State">
+    public static boolean isDualSimPhone;
+
+    public static boolean isDualSimPhone() {
+        return isDualSimPhone;
+    }
+
+    public static void setIsDualSimPhone(boolean isDualSimPhone) {
+        AppConstants.isDualSimPhone = isDualSimPhone;
+    }
+    //</editor-fold>
+
 }

@@ -110,9 +110,10 @@ public class MainActivity extends BaseActivity implements NavigationView
 //                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Share Contact Via");
             sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
             startActivity(Intent.createChooser(sharingIntent, "Share App Via"));
-
-        /*}*/
+        } else if (id == R.id.nav_invite) {
+            startActivityIntent(MainActivity.this, ContactListingActivity.class, null);
         }
+        /*}*/
        /* else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {

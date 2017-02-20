@@ -7,12 +7,15 @@ import android.provider.ContactsContract;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -50,6 +53,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
     RippleView rippleActionRightLeft;
     RippleView rippleActionRightCenter;
     ImageView imageRightLeft;
+    EditText inputSearch;
 
     @BindView(R.id.relative_action_back)
     RelativeLayout relativeActionBack;
@@ -149,6 +153,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                         shareContactRcp(receiver);
                     } else if (profileDataOperationVcard != null) {
                         shareContactNonRcp(receiver);
+                    } else {
+                        inviteContact(mobileNumbers, emailIds);
                     }
                 } else {
                     Utils.showErrorSnackBar(this, activityContactListing, "Please select at least" +
@@ -183,6 +189,27 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             }
             //</editor-fold>
 
+            // <editor-fold desc="REQ_SEND_INVITATION">
+            if (serviceType.contains(WsConstants.REQ_SEND_INVITATION)) {
+                WsResponseObject inviteResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (inviteResponse != null && StringUtils.equalsIgnoreCase
+                        (inviteResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                    Utils.showSuccessSnackBar(this, activityContactListing, "Invitation Sent " +
+                            "successfully!");
+                    onBackPressed();
+                } else {
+                    if (inviteResponse != null) {
+                        Log.e("error response", inviteResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "shareResponse null");
+                        Utils.showErrorSnackBar(this, activityContactListing, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
         } else
 
         {
@@ -200,9 +227,11 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
         imageRightLeft = ButterKnife.findById(includeToolbar, R.id.image_right_left);
-        rippleActionRightLeft = ButterKnife.findById(includeToolbar, R.id.ripple_action_right_left);
+//        rippleActionRightLeft = ButterKnife.findById(includeToolbar, R.id
+// .ripple_action_right_left);
         rippleActionRightCenter = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_center);
+        inputSearch = ButterKnife.findById(includeToolbar, R.id.input_search);
 
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionRightCenter.setOnRippleCompleteListener(this);
@@ -318,6 +347,38 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
         recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
 
+        inputSearch.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                try {
+                    phoneBookContactListAdapter.filter(s.toString());
+                    recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
+                    if (phoneBookContactListAdapter.getItemCount() < 1) {
+//                        textEmptyCountry.setVisibility(View.VISIBLE);
+//                        recyclerViewContacts.setVisibility(View.GONE);
+                    } else {
+//                        textEmptyCountry.setVisibility(View.GONE);
+//                        recyclerViewContacts.setVisibility(View.VISIBLE);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    /*Utils.showErrorSnackBar(ContactListingActivity.this,
+                            root, "No Country Found");*/
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
     }
     //</editor-fold>
 
@@ -365,6 +426,23 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         }
     }
 
+    private void inviteContact(ArrayList<String> arrayListContactNumber, ArrayList<String>
+            arrayListEmail) {
+
+        WsRequestObject inviteContactObject = new WsRequestObject();
+        inviteContactObject.setArrayListContactNumber(arrayListContactNumber);
+        inviteContactObject.setArrayListEmailAddress(arrayListEmail);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    inviteContactObject, null, WsResponseObject.class, WsConstants
+                    .REQ_SEND_INVITATION, null, true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+        } else {
+            Utils.showErrorSnackBar(this, activityContactListing, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
 
     //</editor-fold>
 

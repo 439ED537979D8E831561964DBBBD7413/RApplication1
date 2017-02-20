@@ -19,6 +19,7 @@ import com.rawalinfocom.rcontact.model.UserProfile;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -110,21 +111,22 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
         return arrayListUserProfile.size();
     }
 
-   /* public void filter(String charText) {
+    public void filter(String charText) {
 
         charText = charText.toLowerCase(Locale.getDefault());
-        arrayListCountry.clear();
+        arrayListUserProfile.clear();
         if (charText.length() == 0) {
-            arrayListCountry.addAll(arrayListTempCountry);
+            arrayListUserProfile.addAll(arrayListTempUserProfile);
         } else {
-            for (Country country : arrayListTempCountry) {
-                if (country.getCountryName().toLowerCase(Locale.getDefault()).contains(charText)) {
-                    arrayListCountry.add(country);
+            for (UserProfile userProfile : arrayListTempUserProfile) {
+                if (userProfile.getPmFirstName().toLowerCase(Locale.getDefault()).contains
+                        (charText)) {
+                    arrayListUserProfile.add(userProfile);
                 }
             }
         }
         notifyDataSetChanged();
-    }*/
+    }
 
     class contactViewHolder extends RecyclerView.ViewHolder {
 

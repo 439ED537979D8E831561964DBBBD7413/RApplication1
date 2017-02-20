@@ -338,8 +338,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 emailIds.addAll(profileData.getOperation().get(0).getPbEmailId());
 
                 if (phoneNumbers.size() + emailIds.size() > 1) {
-                    selectContactDialog(profileData.getOperation().get(0).getPbNameFirst(),
-                            phoneNumbers, emailIds);
+                    selectContactDialog(profileData.getOperation()
+                            .get(0).getPbNameFirst(), phoneNumbers, emailIds);
                 } else {
                     if (phoneNumbers.size() > 0) {
                         ArrayList<String> numbers = new ArrayList<>();
@@ -673,7 +673,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private void selectContactDialog(String contactName,
-                                     ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers,
+                                     final ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers,
                                      ArrayList<ProfileDataOperationEmail> emailIds) {
 
         final ArrayList<Object> arrayList = new ArrayList<>();
@@ -693,6 +693,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
+        final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
+                .relative_root_dialog_list);
         TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
         textDialogTitle.setText("Invite " + contactName);
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(context));
@@ -726,25 +728,30 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
             public void onComplete(RippleView rippleView) {
-                dialog.dismiss();
-                ArrayList<String> numbers = new ArrayList<>();
-                ArrayList<String> emails = new ArrayList<>();
-                for (int i = 0; i < arrayList.size(); i++) {
-
-                    if (adapter.getArrayListSelectedContacts().contains(i)) {
-                        if (arrayList.get(i) instanceof ProfileDataOperationPhoneNumber) {
-                            ProfileDataOperationPhoneNumber number =
-                                    (ProfileDataOperationPhoneNumber) arrayList.get(i);
-                            numbers.add(number.getPhoneNumber());
-                        }
-                        if (arrayList.get(i) instanceof ProfileDataOperationEmail) {
-                            ProfileDataOperationEmail email = (ProfileDataOperationEmail) arrayList
-                                    .get(i);
-                            emails.add(email.getEmEmailId());
+                if (adapter.getArrayListSelectedContacts().size() > 0) {
+                    dialog.dismiss();
+                    ArrayList<String> numbers = new ArrayList<>();
+                    ArrayList<String> emails = new ArrayList<>();
+                    for (int i = 0; i < arrayList.size(); i++) {
+                        if (adapter.getArrayListSelectedContacts().contains(i)) {
+                            if (arrayList.get(i) instanceof ProfileDataOperationPhoneNumber) {
+                                ProfileDataOperationPhoneNumber number =
+                                        (ProfileDataOperationPhoneNumber) arrayList.get(i);
+                                numbers.add(number.getPhoneNumber());
+                            }
+                            if (arrayList.get(i) instanceof ProfileDataOperationEmail) {
+                                ProfileDataOperationEmail email = (ProfileDataOperationEmail)
+                                        arrayList
+                                                .get(i);
+                                emails.add(email.getEmEmailId());
+                            }
                         }
                     }
+                    inviteContact(numbers, emails);
+                } else {
+                    Utils.showErrorSnackBar(context, relativeRootDialogList, "Please select at" +
+                            " least one!");
                 }
-                inviteContact(numbers, emails);
             }
         });
 

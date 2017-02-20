@@ -25,6 +25,7 @@ public class WsConstants {
 
     // Vishal
 //    public static final String WS_ROOT = "http://10.0.21.121:/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.51.101:/api/v1/";
 
     // Swati
 //    public static final String WS_ROOT = "http://10.0.21.131/api/v1/";
@@ -43,6 +44,5 @@ public class WsConstants {
     public static final String REQ_PROFILE_RATING = "profile-rating";
     public static final String REQ_RCP_PROFILE_SHARING = "rcp-profile-sharing";
     public static final String REQ_SEND_INVITATION = "send-invitation";
-
 
 }

@@ -48,6 +48,7 @@
             android:textColor="@color/colorWhite"
             tools:text="Title"/>
 
+
         <LinearLayout
             android:id="@+id/linear_action_right"
             android:layout_width="wrap_content"
@@ -56,7 +57,7 @@
             android:layout_centerVertical="true"
             android:orientation="horizontal">
 
-            <com.rawalinfocom.rcontact.helper.RippleView
+            <!--<com.rawalinfocom.rcontact.helper.RippleView
                 android:id="@+id/ripple_action_right_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +75,7 @@
                     android:src="@drawable/ic_search_svg"
                     android:tint="@color/colorWhite"/>
 
-            </com.rawalinfocom.rcontact.helper.RippleView>
+            </com.rawalinfocom.rcontact.helper.RippleView>-->
 
             <com.rawalinfocom.rcontact.helper.RippleView
                 android:id="@+id/ripple_action_right_center"
@@ -96,6 +97,16 @@
             </com.rawalinfocom.rcontact.helper.RippleView>
 
         </LinearLayout>
+
+        <EditText
+            android:id="@+id/input_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_toLeftOf="@id/linear_action_right"
+            android:layout_toRightOf="@id/text_toolbar_title"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 
