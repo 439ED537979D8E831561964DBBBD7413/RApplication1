@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_5dp"
+    tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
+
+    <Spinner
+        android:id="@+id/spinner_call_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right">
+    </Spinner>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recycler_call_logs">
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

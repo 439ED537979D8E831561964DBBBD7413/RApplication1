@@ -100,4 +100,19 @@ public class AppConstants {
 
     //</editor-fold>
 
+
+    public static boolean isDualSimPhone ;
+
+    public static boolean isDualSimPhone() {
+        return isDualSimPhone;
+    }
+
+    public static void setIsDualSimPhone(boolean isDualSimPhone) {
+        AppConstants.isDualSimPhone = isDualSimPhone;
+    }
+
+    public static  String PROFILE_ACTIVITY_CALL_INSTANCE = "call_instance";
+    public static String CALL_HISTROY_NAME = "histroy_name";
+    public static String CALL_HISTROY_NUMBER = "histroy_number";
+    public static String PROFILE_SHOW_VIEW = "callLogFrag";
 }

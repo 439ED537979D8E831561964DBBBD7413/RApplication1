@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/relative_row_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_10dp">
+
+        <ImageView
+            android:id="@+id/image_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:contentDescription="@string/str_content_description"
+            android:src="@mipmap/ic_launcher"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_3dots_call_log"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/margin_5dp"
+            android:text="@string/im_3_dots"/>
+
+        <ImageView
+            android:id="@+id/image_social_media"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_toLeftOf="@+id/text_3dots_call_log"
+            android:layout_marginRight="@dimen/margin_10dp"
+            android:contentDescription="@string/str_content_description"
+            android:src="@drawable/ic_arrow_bottom"/>
+
+        <!-- <View
+             android:id="@+id/divider_all_contact"
+             android:layout_width="match_parent"
+             android:layout_height="1dp"
+             android:layout_below="@id/image_profile"
+             android:layout_gravity="center_vertical"
+             android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
+             android:layout_marginRight="@dimen/activity_half_horizontal_margin"
+             android:layout_marginTop="@dimen/activity_half_horizontal_margin"
+             android:background="@color/colorVeryLightGray"/>-->
+
+        <LinearLayout
+            android:id="@+id/linear_content_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/image_profile"
+            android:layout_toEndOf="@+id/image_profile">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_contact_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    tools:text="Aniruddh"/>
+
+                <TextView
+                    android:id="@+id/text_cloud_contact_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    tools:text=" (Aniruddh Pal)"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/margin_5dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/image_call_type"
+                    android:src="@drawable/ic_call_outgoing"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textCount"
+                    android:text=""/>
+
+                <TextView
+                    android:id="@+id/text_contact_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:layout_gravity="bottom"
+                    tools:text="June 10,8:45PM"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/text_sim_type"
+                    android:text=""
+                    android:layout_marginLeft="@dimen/margin_5dp"
+                    android:layout_gravity="center"
+                    android:textColor="@color/vividBlue"/>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/linear_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/text_rating_user_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="2008"
+                    android:layout_gravity="center"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_person"/>
+
+                <RatingBar
+                    android:id="@+id/rating_user"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:isIndicator="true"
+                    android:layout_gravity="center"
+                    tools:rating="5"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

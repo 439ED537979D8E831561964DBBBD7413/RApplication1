@@ -1,5 +1,11 @@
 package com.rawalinfocom.rcontact;
 
+import android.*;
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -9,9 +15,12 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
@@ -44,6 +53,9 @@ public class MainActivity extends BaseActivity implements NavigationView
     ContactsFragment contactsFragment;
     CallLogFragment callLogFragment;
     SmsFragment smsFragment;
+    private String[] requiredPermissions = {android.Manifest.permission.READ_CALL_LOG,
+            android.Manifest.permission.READ_CONTACTS, android.Manifest.permission.ACCESS_COARSE_LOCATION};
+    private static final int READ_LOGS = 725;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -51,6 +63,11 @@ public class MainActivity extends BaseActivity implements NavigationView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts_main);
         ButterKnife.bind(this);
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkPermissionToExecute(requiredPermissions, READ_LOGS);
+        } else {
+        }*/
 
         if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()
                 .getInteger(R.integer.launch_mobile_registration)) == getResources().getInteger(R
@@ -83,6 +100,54 @@ public class MainActivity extends BaseActivity implements NavigationView
         }
 
     }
+
+
+   /* // A method to check if a permission is granted then execute tasks depending on that particular permission
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute(String permissions[], int requestCode) {
+
+        boolean logs = ContextCompat.checkSelfPermission(this, permissions[0]) != PackageManager.PERMISSION_GRANTED;
+        boolean contacts = ContextCompat.checkSelfPermission(this, permissions[1]) != PackageManager.PERMISSION_GRANTED;
+        boolean location = ContextCompat.checkSelfPermission(this, permissions[2]) != PackageManager.PERMISSION_GRANTED;
+        if (logs || contacts || location) {
+            requestPermissions(permissions, requestCode);
+        } else {
+//            runnable.run();
+        }
+    }
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.M)
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == READ_LOGS && permissions[0].equals(android.Manifest.permission.READ_CALL_LOG) && permissions[1].equals(android.Manifest.permission.READ_CONTACTS)
+                && permissions[2].equals(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED && grantResults[1] == PermissionChecker.PERMISSION_GRANTED &&
+                    grantResults[2] == PermissionChecker.PERMISSION_GRANTED) {
+//                logsRunnable.run();
+            } else {
+                new AlertDialog.Builder(this)
+                        .setMessage("The app needs these permissions to work, Exit?")
+                        .setTitle("Permission Denied")
+                        .setCancelable(false)
+                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                checkPermissionToExecute(requiredPermissions, READ_LOGS);
+                            }
+                        })
+                        .setNegativeButton("Exit App", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                finish();
+                            }
+                        }).show();
+            }
+        }
+    }*/
 
     @Override
     public void onBackPressed() {
