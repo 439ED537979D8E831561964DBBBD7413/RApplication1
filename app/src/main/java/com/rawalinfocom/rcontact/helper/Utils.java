@@ -11,9 +11,11 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -409,6 +411,13 @@ public class Utils {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context
                 .INPUT_METHOD_SERVICE);
         imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Check Location Enability">
+    public static boolean isLocationEnabled(Context context) {
+        return Settings.Secure.isLocationProviderEnabled(context.getContentResolver(),
+                LocationManager.GPS_PROVIDER);
     }
     //</editor-fold>
 

@@ -46,6 +46,13 @@ public class WsRequestObject {
     private int pmIdWhose;
     private ContactReceiver receiver;
 
+    private String dmModel;
+    private String dmVersion;
+    private String dmBrand;
+    private String dmDevice;
+    private String dmUniqueid;
+    private String dmLocation;
+
     private ArrayList<ProfileData> profileData;
     private ArrayList<ProfileData> favourites;
     private ProfileDataOperation contactData;
@@ -264,6 +271,7 @@ public class WsRequestObject {
         this.prToPmId = prToPmId;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     @JsonProperty("send_profile_type")
     public int getSendProfileType() {
         return sendProfileType;
@@ -282,6 +290,7 @@ public class WsRequestObject {
         this.contactData = contactData;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     @JsonProperty("pm_id_whose")
     public int getPmIdWhose() {
         return pmIdWhose;
@@ -316,5 +325,59 @@ public class WsRequestObject {
 
     public void setArrayListEmailAddress(ArrayList<String> arrayListEmailAddress) {
         this.arrayListEmailAddress = arrayListEmailAddress;
+    }
+
+    @JsonProperty("dm_model")
+    public String getDmModel() {
+        return dmModel;
+    }
+
+    public void setDmModel(String dmModel) {
+        this.dmModel = dmModel;
+    }
+
+    @JsonProperty("dm_version")
+    public String getDmVersion() {
+        return dmVersion;
+    }
+
+    public void setDmVersion(String dmVersion) {
+        this.dmVersion = dmVersion;
+    }
+
+    @JsonProperty("dm_brand")
+    public String getDmBrand() {
+        return dmBrand;
+    }
+
+    public void setDmBrand(String dmBrand) {
+        this.dmBrand = dmBrand;
+    }
+
+    @JsonProperty("dm_device")
+    public String getDmDevice() {
+        return dmDevice;
+    }
+
+    public void setDmDevice(String dmDevice) {
+        this.dmDevice = dmDevice;
+    }
+
+    @JsonProperty("dm_uniqueid")
+    public String getDmUniqueid() {
+        return dmUniqueid;
+    }
+
+    public void setDmUniqueid(String dmUniqueid) {
+        this.dmUniqueid = dmUniqueid;
+    }
+
+    @JsonProperty("dm_location")
+    public String getDmLocation() {
+        return dmLocation;
+    }
+
+    public void setDmLocation(String dmLocation) {
+        this.dmLocation = dmLocation;
     }
 }
