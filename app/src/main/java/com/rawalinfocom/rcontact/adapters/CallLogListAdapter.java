@@ -1,8 +1,12 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
+import android.provider.CallLog;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +25,7 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.ProfileData;
@@ -49,6 +54,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     /* phone book contacts */
     private ArrayList<Object> arrayListCallLogs;
     private ArrayList<String> arrayListCallLogHeader;
+    private ArrayList<CallLogType> arrayListCallLoghistroy;
     private int previousPosition = 0;
 
 
@@ -56,11 +62,12 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     //<editor-fold desc="Constructor">
     public CallLogListAdapter(Fragment fragment, ArrayList<Object> arrayListCallLogs,
-                                 ArrayList<String> arrayListCallLogHeader) {
+                                 ArrayList<String> arrayListCallLogHeader/*, ArrayList<CallLogType> listCallLogHistroy*/) {
         this.context = fragment.getActivity();
         this.fragment = fragment;
         this.arrayListCallLogs = arrayListCallLogs;
         this.arrayListCallLogHeader = arrayListCallLogHeader;
+//        this.arrayListCallLoghistroy =  listCallLogHistroy;
     }
 
 
@@ -72,11 +79,11 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         switch (viewType) {
             case HEADER:
                 View v1 = inflater.inflate(R.layout.list_item_call_log_header , parent, false);
-                viewHolder = new CallLogHeaderViewHolder(v1);
+                viewHolder = new CallLogListAdapter.CallLogHeaderViewHolder(v1);
                 break;
             case CALL_LOGS:
                 View v2 = inflater.inflate(R.layout.list_item_call_log_list, parent, false);
-                viewHolder = new AllCallLogViewHolder(v2);
+                viewHolder = new CallLogListAdapter.AllCallLogViewHolder(v2);
                 break;
         }
         return viewHolder;
@@ -86,11 +93,11 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (holder.getItemViewType()) {
             case HEADER:
-                CallLogHeaderViewHolder contactHeaderViewHolder = (CallLogHeaderViewHolder) holder;
+                CallLogListAdapter.CallLogHeaderViewHolder contactHeaderViewHolder = (CallLogListAdapter.CallLogHeaderViewHolder) holder;
                 configureHeaderViewHolder(contactHeaderViewHolder, position);
                 break;
             case CALL_LOGS:
-                AllCallLogViewHolder contactViewHolder = (AllCallLogViewHolder) holder;
+                CallLogListAdapter.AllCallLogViewHolder contactViewHolder = (CallLogListAdapter.AllCallLogViewHolder) holder;
                 configureAllContactViewHolder(contactViewHolder, position);
                 break;
         }
@@ -156,9 +163,11 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             position) {
 
         CallLogType callLogType = (CallLogType) arrayListCallLogs.get(position);
-        String name =  callLogType.getContactName();
+        final String name =  callLogType.getContactName();
         if(!TextUtils.isEmpty(name))
         {
+            holder.textContactName.setTypeface(Utils.typefaceBold(context));
+            holder.textContactName.setTextColor(ContextCompat.getColor(context,R.color.colorBlack));
             Pattern numberPat = Pattern.compile("\\d+");
             Matcher matcher1 = numberPat.matcher(name);
             if(matcher1.find()){
@@ -223,16 +232,29 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 holder.textSimType.setVisibility(View.GONE);
             }
 
-        }
-        /*else {
-            holder.textSimType.setTextColor(ContextCompat.getColor(context,R.color.vividBlue));
+        }else {
+          /*  holder.textSimType.setTextColor(ContextCompat.getColor(context,R.color.vividBlue));
             holder.textSimType.setText(context.getString(R.string.im_sim_1));
-            holder.textSimType.setTypeface(Utils.typefaceIcons(context));
-        }*/
+            holder.textSimType.setTypeface(Utils.typefaceIcons(context));*/
+            holder.textSimType.setVisibility(View.GONE);
+
+        }
         holder.text3dotsCallLog.setTypeface(Utils.typefaceIcons(context));
+        final String number =  callLogType.getNumber();
+        holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ProfileDetailActivity.class);
+                intent.putExtra(AppConstants.PROFILE_ACTIVITY_CALL_INSTANCE, AppConstants.PROFILE_SHOW_VIEW);
+                intent.putExtra(AppConstants.CALL_HISTROY_NUMBER, number);
+                intent.putExtra(AppConstants.CALL_HISTROY_NAME, name);
+                context.startActivity(intent);
+            }
+        });
+
     }
 
-    private void configureHeaderViewHolder(CallLogHeaderViewHolder holder, int position) {
+    private void configureHeaderViewHolder(CallLogListAdapter.CallLogHeaderViewHolder holder, int position) {
         String date = (String) arrayListCallLogs.get(position);
         holder.textHeader.setText(date);
     }
@@ -266,7 +288,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         LinearLayout linearContentMain;
         @BindView(R.id.relative_row_main)
         RelativeLayout relativeRowMain;
-        @BindView(R.id.text_count)
+        @BindView(R.id.textCount)
         TextView textCount;
 
 
@@ -291,5 +313,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         }
     }
+
+
 
 }

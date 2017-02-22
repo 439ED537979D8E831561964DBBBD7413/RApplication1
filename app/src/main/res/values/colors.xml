@@ -34,6 +34,7 @@
     <color name="strongCyanLimeGreen">#00C94E</color>
     <color name="vividBlue">#20B6FE</color>
     <color name="vividRed1">#FE2539</color>
-    <color name="darkCyan">#1BAA99</color>
+    <color name="darkCyan">#1baa99 </color>
+    <color name="veryLightGray">#DCDCDC</color>
 
 </resources>

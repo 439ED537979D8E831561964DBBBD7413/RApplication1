@@ -72,11 +72,11 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     /* phone book contacts */
     private ArrayList<Object> arrayListUserContact;
     private ArrayList<String> arrayListContactHeader;
+    private int previousPosition = 0;
 
     private final int HEADER = 0, CONTACT = 1;
 
     private int colorBlack, colorPineGreen;
-    private int previousPosition = 0;
     private int listClickedPosition = -1;
 
     private TableProfileMaster tableProfileMaster;

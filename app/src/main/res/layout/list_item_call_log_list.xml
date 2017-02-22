@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:id="@+id/relative_row_main"
@@ -22,9 +22,9 @@
 
 
         <TextView
-            android:id="@+id/text_3dots_call_log"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/text_3dots_call_log"
             android:layout_alignParentRight="true"
             android:layout_marginTop="@dimen/margin_5dp"
             android:text="@string/im_3_dots"/>
@@ -33,8 +33,8 @@
             android:id="@+id/image_social_media"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginRight="@dimen/margin_10dp"
             android:layout_toLeftOf="@+id/text_3dots_call_log"
+            android:layout_marginRight="@dimen/margin_10dp"
             android:contentDescription="@string/str_content_description"
             android:src="@drawable/ic_arrow_bottom"/>
 
@@ -53,10 +53,10 @@
             android:id="@+id/linear_content_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/image_profile"
             android:layout_toRightOf="@+id/image_profile"
-            android:orientation="vertical">
+            android:layout_toEndOf="@+id/image_profile">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -84,37 +84,37 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_5dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/margin_5dp">
 
                 <ImageView
-                    android:id="@+id/image_call_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/image_call_type"
                     android:src="@drawable/ic_call_outgoing"/>
 
                 <TextView
-                    android:id="@+id/text_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="(1)"/>
+                    android:id="@+id/textCount"
+                    android:text=""/>
 
                 <TextView
                     android:id="@+id/text_contact_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
                     android:singleLine="true"
+                    android:layout_gravity="bottom"
                     tools:text="June 10,8:45PM"/>
 
                 <TextView
-                    android:id="@+id/text_sim_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:id="@+id/text_sim_type"
+                    android:text=""
                     android:layout_marginLeft="@dimen/margin_5dp"
-                    android:textColor="@color/vividBlue"
-                    tools:text="@string/im_sim_1"/>
+                    android:layout_gravity="center"
+                    android:textColor="@color/vividBlue"/>
 
 
             </LinearLayout>
@@ -132,8 +132,8 @@
                     android:id="@+id/text_rating_user_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    tools:text="2008"/>
+                    tools:text="2008"
+                    android:layout_gravity="center"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -145,8 +145,8 @@
                     style="?android:attr/ratingBarStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:isIndicator="true"
+                    android:layout_gravity="center"
                     tools:rating="5"/>
 
             </LinearLayout>

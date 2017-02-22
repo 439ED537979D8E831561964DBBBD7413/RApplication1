@@ -8,6 +8,8 @@ import android.provider.ContactsContract;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Created by user on 08/02/17.
@@ -25,6 +27,7 @@ public class CallLogType implements Serializable {
     private String numberType;
     private int histroyId;
     String profileImage;
+    String logDate;
 
     private String histroyNumber;
     private long histroyDate;
@@ -34,13 +37,29 @@ public class CallLogType implements Serializable {
     private String histroyNumberType;
     private int histroyLogCount;
 
-
+    ArrayList<CallLogType> logArrayList =  new ArrayList<>();
 
     public CallLogType() {
     }
 
     public CallLogType(Context context) {
         this.context = context;
+    }
+
+    public ArrayList<CallLogType> getLogArrayList() {
+        return logArrayList;
+    }
+
+    public void setLogArrayList(ArrayList<CallLogType> logArrayList) {
+        this.logArrayList = logArrayList;
+    }
+
+    public String getLogDate() {
+        return logDate;
+    }
+
+    public void setLogDate(String logDate) {
+        this.logDate = logDate;
     }
 
     public String getNumberType() {
@@ -94,6 +113,11 @@ public class CallLogType implements Serializable {
     public String getCoolDuration() {
         return this.getCoolDuration((float)this.getDuration());
     }
+
+    public String getHistroyCoolDuration() {
+        return this.getCoolDuration((float)this.getHistroydDuration());
+    }
+
 
     public String getContactName() {
         return this.getNumber() != null?this.findNameByNumber(this.getNumber()):null;
@@ -214,7 +238,13 @@ public class CallLogType implements Serializable {
             hours = Integer.parseInt(decimal);
             minutes = Float.parseFloat(point) * 60.0F;
             formatter = new DecimalFormat("#");
-            duration = hours + " min " + formatter.format((double)minutes) + " secs";
+            if(hours<10 || minutes<10)
+            {
+                duration = "0"+hours + ":" + "0"+formatter.format((double)minutes) + "";
+
+            }else {
+                duration = hours + ":" + formatter.format((double)minutes) + "";
+            }
         } else if(sum >= 3600.0F) {
             result = String.valueOf(sum / 3600.0F);
             decimal = result.substring(0, result.lastIndexOf("."));
@@ -222,9 +252,16 @@ public class CallLogType implements Serializable {
             hours = Integer.parseInt(decimal);
             minutes = Float.parseFloat(point) * 60.0F;
             formatter = new DecimalFormat("#");
-            duration = hours + " hrs " + formatter.format((double)minutes) + " min";
+            if(hours<10 || minutes<10){
+                duration = "0"+hours + ":" + "0"+formatter.format((double)minutes) + "";
+
+            }else {
+                duration = hours + ":" + formatter.format((double)minutes) + "";
+            }
         }
 
         return duration;
     }
+
+
 }
