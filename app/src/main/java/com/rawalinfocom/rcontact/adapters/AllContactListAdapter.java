@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
@@ -13,6 +14,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -22,17 +26,25 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.AllContactsFragment;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
+import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileData;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.UserProfile;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -60,18 +72,18 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     /* phone book contacts */
     private ArrayList<Object> arrayListUserContact;
     private ArrayList<String> arrayListContactHeader;
+    private int previousPosition = 0;
 
     private final int HEADER = 0, CONTACT = 1;
 
     private int colorBlack, colorPineGreen;
-    private int previousPosition = 0;
     private int listClickedPosition = -1;
 
     private TableProfileMaster tableProfileMaster;
     private TableProfileMobileMapping tableProfileMobileMapping;
     private TableProfileEmailMapping tableProfileEmailMapping;
 
-    ArrayList<Integer> arrayListExpandedPositions;
+    private ArrayList<Integer> arrayListExpandedPositions;
 
 
     //<editor-fold desc="Constructor">
@@ -224,7 +236,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             contactDisplayName = contactDisplayName + middleName + " ";
         } if (StringUtils.length(lastName) > 0) {
             contactDisplayName = contactDisplayName + lastName + " ";
-        } if (StringUtils.length(prefix) > 0) {
+        } if (StringUtils.length(suffix) > 0) {
             contactDisplayName = contactDisplayName + suffix;
         }
         contactDisplayName = StringUtils.trimToEmpty(contactDisplayName);
@@ -234,6 +246,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         holder.textCloudContactName.setText("");
         holder.textContactNumber.setText("");
         holder.linearRating.setVisibility(View.GONE);
+        holder.buttonInvite.setVisibility(View.VISIBLE);
+        holder.imageSocialMedia.setVisibility(View.GONE);
 
         if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
             displayNumber(holder, profileData, contactDisplayName, position);
@@ -314,6 +328,37 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             }
         });
 
+        holder.buttonInvite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
+                phoneNumbers.addAll(profileData.getOperation().get(0).getPbPhoneNumber());
+                ArrayList<ProfileDataOperationEmail> emailIds = new ArrayList<>();
+                emailIds.addAll(profileData.getOperation().get(0).getPbEmailId());
+
+                if (phoneNumbers.size() + emailIds.size() > 1) {
+                    selectContactDialog(profileData.getOperation()
+                            .get(0).getPbNameFirst(), phoneNumbers, emailIds);
+                } else {
+                    if (phoneNumbers.size() > 0) {
+                        ArrayList<String> numbers = new ArrayList<>();
+                        for (int i = 0; i < phoneNumbers.size(); i++) {
+                            numbers.add(phoneNumbers.get(i).getPhoneNumber());
+                        }
+                        inviteContact(numbers, null);
+                    } else if (emailIds.size() > 0) {
+                        ArrayList<String> emails = new ArrayList<>();
+                        for (int i = 0; i < emailIds.size(); i++) {
+                            emails.add(emailIds.get(i).getEmEmailId());
+                        }
+                        inviteContact(null, emails);
+                    }
+                }
+
+            }
+        });
+
     }
 
     private void configureHeaderViewHolder(ContactHeaderViewHolder holder, int position) {
@@ -354,6 +399,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 totalRatingUser = userProfile.getProfileRating();
 
                 holder.linearRating.setVisibility(View.VISIBLE);
+                holder.buttonInvite.setVisibility(View.GONE);
+                holder.imageSocialMedia.setVisibility(View.VISIBLE);
                 holder.textRatingUserCount.setText(rating);
                 holder.ratingUser.setRating(Float.parseFloat(totalRatingUser));
 
@@ -364,6 +411,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             } else {
 
                 holder.linearRating.setVisibility(View.GONE);
+                holder.buttonInvite.setVisibility(View.VISIBLE);
+                holder.imageSocialMedia.setVisibility(View.GONE);
 //                holder.recyclerViewMultipleRc.setVisibility(View.VISIBLE);
                 populateNumberRecyclerView(holder.recyclerViewMultipleRc, arrayListDbMobileNumbers,
                         contactDisplayName, profileData.getLocalPhoneBookId());
@@ -394,6 +443,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             holder.textContactNumber.setTextColor(colorPineGreen);
             isRcp = true;
             holder.linearRating.setVisibility(View.VISIBLE);
+            holder.buttonInvite.setVisibility(View.GONE);
+            holder.imageSocialMedia.setVisibility(View.VISIBLE);
 
         } else {
 
@@ -410,6 +461,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 holder.textContactName.setTextColor(colorPineGreen);
                 holder.textContactNumber.setTextColor(colorPineGreen);
                 holder.linearRating.setVisibility(View.VISIBLE);
+                holder.buttonInvite.setVisibility(View.GONE);
+                holder.imageSocialMedia.setVisibility(View.VISIBLE);
                 holder.textRatingUserCount.setText(rating);
                 holder.ratingUser.setRating(Float.parseFloat(totalRatingUser));
             } else {
@@ -417,6 +470,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 holder.textContactName.setTextColor(colorBlack);
                 holder.textContactNumber.setTextColor(colorBlack);
                 holder.linearRating.setVisibility(View.GONE);
+                holder.buttonInvite.setVisibility(View.VISIBLE);
+                holder.imageSocialMedia.setVisibility(View.GONE);
             }
 
             isRcp = false;
@@ -504,6 +559,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                             .parseInt(displayNamePmId));
 
                     holder.linearRating.setVisibility(View.VISIBLE);
+                    holder.buttonInvite.setVisibility(View.GONE);
+                    holder.imageSocialMedia.setVisibility(View.VISIBLE);
                     holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
                     holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
 
@@ -515,6 +572,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 } else {
 
                     holder.linearRating.setVisibility(View.GONE);
+                    holder.buttonInvite.setVisibility(View.VISIBLE);
+                    holder.imageSocialMedia.setVisibility(View.GONE);
                     populateEmailRecyclerView(holder.recyclerViewMultipleRc, arrayListDbEmailIds,
                             contactDisplayName, profileData.getLocalPhoneBookId());
 
@@ -543,13 +602,19 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 //                holder.textContactNumber.setTextColor(colorPineGreen);
                 isRcp = true;
                 holder.linearRating.setVisibility(View.VISIBLE);
+                holder.buttonInvite.setVisibility(View.GONE);
+                holder.imageSocialMedia.setVisibility(View.VISIBLE);
             } else {
 
                 if (position == 1 && fragment instanceof AllContactsFragment) {
                     holder.linearRating.setVisibility(View.VISIBLE);
+                    holder.buttonInvite.setVisibility(View.GONE);
+                    holder.imageSocialMedia.setVisibility(View.VISIBLE);
                     holder.relativeRowAllContact.setTag("0");
                 } else {
                     holder.linearRating.setVisibility(View.GONE);
+                    holder.buttonInvite.setVisibility(View.VISIBLE);
+                    holder.imageSocialMedia.setVisibility(View.GONE);
                     holder.relativeRowAllContact.setTag("-1");
                 }
                 displayEmailId = profileData.getOperation().get(0).getPbEmailId().get(0)
@@ -607,6 +672,92 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return listClickedPosition;
     }
 
+    private void selectContactDialog(String contactName,
+                                     final ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers,
+                                     ArrayList<ProfileDataOperationEmail> emailIds) {
+
+        final ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add("All");
+        arrayList.addAll(phoneNumbers);
+        arrayList.addAll(emailIds);
+
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_all_organization);
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
+                .relative_root_dialog_list);
+        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
+        textDialogTitle.setText("Invite " + contactName);
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(context));
+
+        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
+        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
+        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+
+        buttonRight.setTypeface(Utils.typefaceRegular(context));
+        buttonRight.setText(R.string.action_cancel);
+        buttonLeft.setTypeface(Utils.typefaceRegular(context));
+        buttonLeft.setText("Invite");
+
+        rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                dialog.dismiss();
+            }
+        });
+
+
+        RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
+                .recycler_view_dialog_list);
+        recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(context));
+
+        final PhoneBookContactDetailAdapter adapter = new PhoneBookContactDetailAdapter(context,
+                arrayList);
+        recyclerViewDialogList.setAdapter(adapter);
+
+        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                if (adapter.getArrayListSelectedContacts().size() > 0) {
+                    dialog.dismiss();
+                    ArrayList<String> numbers = new ArrayList<>();
+                    ArrayList<String> emails = new ArrayList<>();
+                    for (int i = 0; i < arrayList.size(); i++) {
+                        if (adapter.getArrayListSelectedContacts().contains(i)) {
+                            if (arrayList.get(i) instanceof ProfileDataOperationPhoneNumber) {
+                                ProfileDataOperationPhoneNumber number =
+                                        (ProfileDataOperationPhoneNumber) arrayList.get(i);
+                                numbers.add(number.getPhoneNumber());
+                            }
+                            if (arrayList.get(i) instanceof ProfileDataOperationEmail) {
+                                ProfileDataOperationEmail email = (ProfileDataOperationEmail)
+                                        arrayList
+                                                .get(i);
+                                emails.add(email.getEmEmailId());
+                            }
+                        }
+                    }
+                    inviteContact(numbers, emails);
+                } else {
+                    Utils.showErrorSnackBar(context, relativeRootDialogList, "Please select at" +
+                            " least one!");
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="View Holders">
@@ -635,6 +786,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         LinearLayout linearRating;
         @BindView(R.id.recycler_view_multiple_rc)
         RecyclerView recyclerViewMultipleRc;
+        @BindView(R.id.button_invite)
+        Button buttonInvite;
 
         AllContactViewHolder(View itemView) {
             super(itemView);
@@ -683,6 +836,29 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             textHeader.setTypeface(Utils.typefaceSemiBold(context));
 
         }
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Web Service Call">
+
+    private void inviteContact(ArrayList<String> arrayListContactNumber, ArrayList<String>
+            arrayListEmail) {
+
+        WsRequestObject inviteContactObject = new WsRequestObject();
+        inviteContactObject.setArrayListContactNumber(arrayListContactNumber);
+        inviteContactObject.setArrayListEmailAddress(arrayListEmail);
+
+        if (Utils.isNetworkAvailable(context)) {
+            new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    inviteContactObject, null, WsResponseObject.class, WsConstants
+                    .REQ_SEND_INVITATION, null, true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+        }
+        /*else {
+            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
+                    .getString(R.string.msg_no_network));
+        }*/
     }
 
     //</editor-fold>

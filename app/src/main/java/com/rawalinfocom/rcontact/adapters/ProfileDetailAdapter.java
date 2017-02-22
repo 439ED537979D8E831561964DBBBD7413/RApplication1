@@ -320,6 +320,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textMain.setTextColor(colorBlack);
     }
 
+    public ArrayList<Object> getDetailList() {
+        return arrayList;
+    }
+
     @Override
     public int getItemCount() {
         return arrayList.size();

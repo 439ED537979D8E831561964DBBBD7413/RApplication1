@@ -32,4 +32,12 @@
     <dimen name="height_button">36dp</dimen>
     <dimen name="min_width_button">64dp</dimen>
 
+    <!--call logs-->
+    <dimen name="padding_5dp">5dp</dimen>
+    <dimen name="margin_5dp">5dp</dimen>
+    <dimen name="padding_10dp">10dp</dimen>
+    <dimen name="margin_10dp">10dp</dimen>
+    <dimen name="margin_15dp">15dp</dimen>
+    <dimen name="padding_15dp">15dp</dimen>
+
 </resources>
