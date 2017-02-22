@@ -8,6 +8,8 @@ import android.provider.ContactsContract;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Created by user on 08/02/17.
@@ -25,6 +27,7 @@ public class CallLogType implements Serializable {
     private String numberType;
     private int histroyId;
     String profileImage;
+    String logDate;
 
     private String histroyNumber;
     private long histroyDate;
@@ -34,13 +37,29 @@ public class CallLogType implements Serializable {
     private String histroyNumberType;
     private int histroyLogCount;
 
-
+    ArrayList<CallLogType> logArrayList =  new ArrayList<>();
 
     public CallLogType() {
     }
 
     public CallLogType(Context context) {
         this.context = context;
+    }
+
+    public ArrayList<CallLogType> getLogArrayList() {
+        return logArrayList;
+    }
+
+    public void setLogArrayList(ArrayList<CallLogType> logArrayList) {
+        this.logArrayList = logArrayList;
+    }
+
+    public String getLogDate() {
+        return logDate;
+    }
+
+    public void setLogDate(String logDate) {
+        this.logDate = logDate;
     }
 
     public String getNumberType() {
