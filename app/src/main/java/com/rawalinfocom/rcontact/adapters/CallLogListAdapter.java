@@ -163,18 +163,26 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             position) {
 
         CallLogType callLogType = (CallLogType) arrayListCallLogs.get(position);
-        final String name =  callLogType.getContactName();
+        final String name = callLogType.getName();
+        final String number =  callLogType.getNumber();
         if(!TextUtils.isEmpty(name))
         {
             holder.textContactName.setTypeface(Utils.typefaceBold(context));
             holder.textContactName.setTextColor(ContextCompat.getColor(context,R.color.colorBlack));
-            Pattern numberPat = Pattern.compile("\\d+");
+            holder.textContactName.setText(name);
+            /*Pattern numberPat = Pattern.compile("\\d+");
             Matcher matcher1 = numberPat.matcher(name);
             if(matcher1.find()){
                 String number = Utils.getFormattedNumber(context,name);
                 holder.textContactName.setText(number);
             }else {
                 holder.textContactName.setText(name);
+            }*/
+        }else
+        {
+            if(!TextUtils.isEmpty(number)){
+                String formatedNumber =  Utils.getFormattedNumber(context,number);
+                holder.textContactName.setText(formatedNumber);
             }
         }
         long date = callLogType.getDate();
@@ -182,6 +190,9 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             Date date1 = new Date(date);
             String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(date1);
             holder.textContactDate.setText(logDate);
+        }else{
+            String callReceiverDate = callLogType.getLogDate();
+            holder.textContactDate.setText(callReceiverDate);
         }
         int callType =  callLogType.getType();
         if(callType>0){
@@ -240,7 +251,6 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         }
         holder.text3dotsCallLog.setTypeface(Utils.typefaceIcons(context));
-        final String number =  callLogType.getNumber();
         holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -54,6 +54,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -74,6 +75,8 @@ public class CallLogFragment extends BaseFragment {
     public static final int OUTGOING = 2;
     public static final int MISSED = 3;
 
+    public  static  CallLogType callLogTypeReceiver ;
+
 
     public CallLogFragment() {
         // Required empty public constructor
@@ -87,6 +90,7 @@ public class CallLogFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        callLogTypeReceiver = new CallLogType();
     }
 
     @Override
@@ -223,7 +227,7 @@ public class CallLogFragment extends BaseFragment {
         List<String> listOfDates = new ArrayList<>();
         if (callLogs != null && callLogs.size() > 0)
             for (int i = 0; i < callLogs.size(); i++) {
-                CallLogType callLogType = callLogs.get(i);
+                CallLogType callLogType  = callLogs.get(i);
                 long logDate1 = callLogType.getDate();
                 Date date1 = new Date(logDate1);
                 String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
@@ -275,6 +279,7 @@ public class CallLogFragment extends BaseFragment {
         /*arrayListCallLogHeader.addAll(listOfDates);
         Log.i("Call Logs size", callLogs.size()+"");
         Log.i("Header List size", arrayListCallLogHeader.size()+"");*/
+
         setAdapter();
         initSwipe();
     }
@@ -329,6 +334,7 @@ public class CallLogFragment extends BaseFragment {
 
             Cursor cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, (String[]) null, selection, (String[]) null, order);
             int number = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+            int name =  cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
             int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
             int date = cursor.getColumnIndex(CallLog.Calls.DATE);
             int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
@@ -339,6 +345,7 @@ public class CallLogFragment extends BaseFragment {
             while (cursor.moveToNext()) {
                 CallLogType log = new CallLogType(getActivity());
                 log.setNumber(cursor.getString(number));
+                log.setName(cursor.getString(name));
                 log.setType(cursor.getInt(type));
                 log.setDuration(cursor.getInt(duration));
                 log.setDate(cursor.getLong(date));
@@ -757,11 +764,18 @@ public class CallLogFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 //        getActivity().registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_NEW_OUTGOING_CALL));
-        CallLogType callLogTypeMain =  new CallLogType();
-        arrayListCallLogs = callLogTypeMain.getLogArrayList();
-        for(int i =0 ; i< arrayListCallLogs.size(); i++){
-            CallLogType callTypeRecent =  arrayListCallLogs.get(i);
-            arrayListObjectCallLogs.add(callTypeRecent);
+        try{
+            if(callLogTypeReceiver.getType()>0){
+                ArrayList<CallLogType> arrayListHistroy = callLogHistroy(callLogTypeReceiver.getNumber());
+                int count =  arrayListHistroy.size();
+                callLogTypeReceiver.setHistroyLogCount(count);
+                arrayListObjectCallLogs.set(1,callLogTypeReceiver);
+                callLogListAdapter.notifyItemInserted(1);
+            }
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
         }
 
     }

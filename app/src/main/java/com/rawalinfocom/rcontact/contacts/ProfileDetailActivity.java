@@ -871,14 +871,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         {
             textFullScreenText.setTypeface(Utils.typefaceBold(this));
             textFullScreenText.setTextColor(ContextCompat.getColor(this,R.color.colorBlack));
-            Pattern numberPat = Pattern.compile("\\d+");
-            Matcher matcher1 = numberPat.matcher(histroyName);
-            if(matcher1.find()){
-                String number = Utils.getFormattedNumber(this,histroyName);
-                textFullScreenText.setText(number);
-            }else {
-                textFullScreenText.setText(histroyName);
+            textFullScreenText.setText(histroyName);
+        }
+        else {
+            if(!TextUtils.isEmpty(histroyNumber)){
+                textFullScreenText.setTypeface(Utils.typefaceBold(this));
+                textFullScreenText.setTextColor(ContextCompat.getColor(this,R.color.colorBlack));
+                textFullScreenText.setText(histroyNumber);
             }
+
         }
     }
 

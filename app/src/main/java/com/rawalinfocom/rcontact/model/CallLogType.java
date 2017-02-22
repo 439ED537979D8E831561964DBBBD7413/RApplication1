@@ -28,6 +28,7 @@ public class CallLogType implements Serializable {
     private int histroyId;
     String profileImage;
     String logDate;
+    String name;
 
     private String histroyNumber;
     private long histroyDate;
@@ -37,7 +38,6 @@ public class CallLogType implements Serializable {
     private String histroyNumberType;
     private int histroyLogCount;
 
-    ArrayList<CallLogType> logArrayList =  new ArrayList<>();
 
     public CallLogType() {
     }
@@ -46,12 +46,12 @@ public class CallLogType implements Serializable {
         this.context = context;
     }
 
-    public ArrayList<CallLogType> getLogArrayList() {
-        return logArrayList;
+    public String getName() {
+        return name;
     }
 
-    public void setLogArrayList(ArrayList<CallLogType> logArrayList) {
-        this.logArrayList = logArrayList;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getLogDate() {
