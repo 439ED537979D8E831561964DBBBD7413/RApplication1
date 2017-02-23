@@ -73,10 +73,9 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -232,6 +231,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     String historyNumber = "";
     String historyName = "";
     CallHistoryListAdapter callHistoryListAdapter;
+    @BindView(R.id.ripple_call_log)
+    RippleView rippleCallLog;
+    @BindView(R.id.ripple_sms)
+    RippleView rippleSms;
 
     //<editor-fold desc="Override Methods">
 
@@ -308,9 +311,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         init();
 
-        if (!TextUtils.isEmpty(historyNumber)) {
-            fetchCallLogHistroyByNumber(historyNumber);
+        /*if (!TextUtils.isEmpty(historyNumber)) {
+            fetchCallLogHistroyByNumber(historyName);
+        }*/
+
+        if (!TextUtils.isEmpty(historyName)) {
+            fetchCallLogHistroy(historyName);
+
+        } else {
+            fetchCallLogHistroy(historyNumber);
+
         }
+
     }
 
 
@@ -330,6 +342,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             case R.id.ripple_action_back:
                 onBackPressed();
                 break;
+
+            case R.id.ripple_call_log:
+                    layoutVisibiltyForProfile();
+                    if(!TextUtils.isEmpty(contactName)){
+                        fetchCallLogHistroy(contactName);
+                    }
+                break;
+
 
             case R.id.ripple_action_right_center:
                 if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
@@ -608,6 +628,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     //<editor-fold desc="Private Methods">
 
+
+    private void layoutVisibiltyForProfile(){
+        relativeContactDetails.setVisibility(View.GONE);
+        relativeCallHistory.setVisibility(View.VISIBLE);
+        textIconHistory.setTypeface(Utils.typefaceIcons(this));
+
+    }
+
     private void layoutVisibility() {
         if (profileActivityCallInstance) {
             relativeContactDetails.setVisibility(View.GONE);
@@ -621,19 +649,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (StringUtils.length(cloudContactName) > 0) {
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 textName.setText(cloudContactName);
-            /*textCloudName.setText(cloudContactName);
-            textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));*/
+
             } else {
                 if (StringUtils.equalsIgnoreCase(pmId, "-1")) {
-//                textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                             .colorBlack));
                 } else {
-//                textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                             .colorAccent));
                 }
-//            textCloudName.setVisibility(View.GONE);
                 textName.setVisibility(View.GONE);
             }
 
@@ -684,20 +708,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         recyclerViewSocialContact.setNestedScrollingEnabled(false);
 
         textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
-//        textJoiningDate.setTypeface(Utils.typefaceRegular(this));
         textFullScreenText.setTypeface(Utils.typefaceSemiBold(this));
         textName.setTypeface(Utils.typefaceSemiBold(this));
         textDesignation.setTypeface(Utils.typefaceRegular(this));
         textOrganization.setTypeface(Utils.typefaceRegular(this));
         textViewAllOrganization.setTypeface(Utils.typefaceRegular(this));
         textUserRating.setTypeface(Utils.typefaceRegular(this));
-
         textFullScreenText.setSelected(true);
-
         rippleViewMore.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionRightLeft.setOnRippleCompleteListener(this);
         rippleActionRightCenter.setOnRippleCompleteListener(this);
+        rippleCallLog.setOnRippleCompleteListener(this);
 
         LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
         // Filled stars
@@ -740,21 +762,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void setCallLogHistroyDetails() {
         CallLogType callLogType = new CallLogType();
-        if(!TextUtils.isEmpty(historyName))
-        {
+        if (!TextUtils.isEmpty(historyName)) {
             textFullScreenText.setTypeface(Utils.typefaceBold(this));
-            textFullScreenText.setTextColor(ContextCompat.getColor(this,R.color.colorBlack));
+            textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
             textFullScreenText.setText(historyName);
-        }
-        else {
-            if(!TextUtils.isEmpty(historyNumber)){
+        } else {
+            if (!TextUtils.isEmpty(historyNumber)) {
                 textFullScreenText.setTypeface(Utils.typefaceBold(this));
-                textFullScreenText.setTextColor(ContextCompat.getColor(this,R.color.colorBlack));
+                textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 textFullScreenText.setText(historyNumber);
-                /*String tempName =  callLogType.getContactNameOfNumber(histroyNumber);
-               if(!TextUtils.isEmpty(tempName))
-                   textFullScreenText.setText(tempName);
-               else*/
+
             }
 
         }
@@ -1652,10 +1669,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         dialog.show();*/
     }
 
-    private void fetchCallLogHistroyByNumber(String number) {
-        if (!TextUtils.isEmpty(number))
-            arrayListHistory = callLogHistory(number);
-        Log.i("Histroy size  ", arrayListHistory.size() + "" + " of number " + number);
+    private void fetchCallLogHistroy(String value) {
+        if (!TextUtils.isEmpty(value)) {
+            arrayListHistory = callLogHistory(value);
+            Log.i("Histroy size  ", arrayListHistory.size() + "" + " of  " + value);
+        }
+
         setHistroyAdapter();
     }
 
@@ -1690,27 +1709,46 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private Cursor getCallHistoryData(String number) {
+    private Cursor getCallHistoryDataByNumber(String number) {
         Cursor cursor = null;
         String order = CallLog.Calls.DATE + " DESC";
         try {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             cursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, CallLog
                     .Calls.NUMBER + " =?", new String[]{number}, order);
-//            }else {
-//                cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI,
-// null, "NUMBER=" + number, null, order);
-//            }
+
         } catch (SecurityException e) {
             e.printStackTrace();
         }
         return cursor;
     }
 
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private Cursor getCallHistoryDataByName(String name) {
+        Cursor cursor = null;
+        String order = CallLog.Calls.DATE + " DESC";
+        try {
+            cursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, CallLog
+                    .Calls.CACHED_NAME + " =?", new String[]{name}, order);
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return cursor;
+    }
+
+
     private ArrayList callLogHistory(String number) {
-        String numberToSearch = number;
         ArrayList<CallLogType> callDetails = new ArrayList<>();
-        Cursor cursor = getCallHistoryData(numberToSearch);
+        Cursor cursor = null;
+        Pattern numberPat = Pattern.compile("\\d+");
+        Matcher matcher1 = numberPat.matcher(number);
+        if (matcher1.find()) {
+            cursor = getCallHistoryDataByNumber(number);
+        } else {
+            cursor = getCallHistoryDataByName(number);
+        }
+
         try {
             if (cursor != null && cursor.getCount() > 0) {
                 int number1 = cursor.getColumnIndex(CallLog.Calls.NUMBER);
@@ -1764,7 +1802,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
             cursor.close();
 
-//            simSlotDetection(number);
 
 
         } catch (SecurityException e) {

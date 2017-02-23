@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.CallLogType;
 
 import java.text.SimpleDateFormat;
@@ -28,7 +29,6 @@ import butterknife.ButterKnife;
 public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryListAdapter.MyViewHolder> {
 
     private ArrayList<CallLogType> listCallHistroy;
-
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -116,13 +116,13 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
         int callType =  callLogType.getHistroyType();
         if(callType>0){
             switch (callType) {
-                case CallLogFragment.INCOMING:
+                case AppConstants.INCOMING:
                     holder.imageHistroyCallType.setImageResource(R.drawable.ic_call_incoming);
                     break;
-                case CallLogFragment.OUTGOING:
+                case AppConstants.OUTGOING:
                     holder.imageHistroyCallType.setImageResource(R.drawable.ic_call_outgoing);
                     break;
-                case CallLogFragment.MISSED:
+                case AppConstants.MISSED:
                     holder.imageHistroyCallType.setImageResource(R.drawable.ic_call_missed);
                     break;
                 default:

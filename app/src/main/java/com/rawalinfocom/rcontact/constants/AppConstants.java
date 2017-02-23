@@ -120,4 +120,15 @@ public class AppConstants {
 
     public static boolean isFromReceiver = false;
 
+    //<editor-fold desc="Call-log constants">
+    public static final int READ_LOGS = 725;
+    public static final int INCOMING_CALLS = 672;
+    public static final int OUTGOING_CALLS = 609;
+    public static final int MISSED_CALLS = 874;
+    public static final int ALL_CALLS = 814;
+    public static final int INCOMING = 1;
+    public static final int OUTGOING = 2;
+    public static final int MISSED = 3;
+    //</editor-fold>
+
 }
