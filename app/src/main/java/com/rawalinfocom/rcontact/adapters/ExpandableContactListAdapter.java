@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -176,6 +177,8 @@ class ExpandableContactListAdapter extends RecyclerView
         LinearLayout linearRating;
         @BindView(R.id.recycler_view_multiple_rc)
         RecyclerView recyclerViewMultipleRc;
+        @BindView(R.id.button_invite)
+        Button buttonInvite;
 
         ExpandableContactListViewHolder(View itemView) {
             super(itemView);
@@ -193,6 +196,7 @@ class ExpandableContactListAdapter extends RecyclerView
             textContactNumber.setTextColor(colorPineGreen);
 
             recyclerViewMultipleRc.setVisibility(View.GONE);
+            buttonInvite.setVisibility(View.GONE);
 
             LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
             // Filled stars

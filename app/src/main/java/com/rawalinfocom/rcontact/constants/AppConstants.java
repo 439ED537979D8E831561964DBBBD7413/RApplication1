@@ -9,6 +9,12 @@ package com.rawalinfocom.rcontact.constants;
 
 public class AppConstants {
 
+    public static String PLAY_STORE_LINK = "https://play.google.com/store/apps/details?id=";
+
+    //<editor-fold desc="Permission Request Code">
+    public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 3;
+    //</editor-fold>
+
     //<editor-fold desc="Profile Detail Section">
     public static final int PHONE_NUMBER = 0;
     public static final int EMAIL = 1;
@@ -60,6 +66,10 @@ public class AppConstants {
     public static String EXTRA_CONTACT_NAME = "contact_name";
     public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
     public static String EXTRA_CONTACT_POSITION = "contact_position";
+    public static String EXTRA_OBJECT_CONTACT = "extra_object_contact";
+    public static String EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE = "extra_call_instance";
+    public static String EXTRA_CALL_HISTORY_NAME = "extra_call_history_name";
+    public static String EXTRA_CALL_HISTORY_NUMBER = "extra_call_history_number";
 
     //</editor-fold>
 
@@ -99,5 +109,19 @@ public class AppConstants {
             PREF_FAVOURITE_CONTACT_NUMBER_EMAIL};
 
     //</editor-fold>
+
+    //<editor-fold desc="Phone Sim State">
+    public static boolean isDualSimPhone;
+
+    public static boolean isDualSimPhone() {
+        return isDualSimPhone;
+    }
+
+    public static void setIsDualSimPhone(boolean isDualSimPhone) {
+        AppConstants.isDualSimPhone = isDualSimPhone;
+    }
+    //</editor-fold>
+
+
 
 }

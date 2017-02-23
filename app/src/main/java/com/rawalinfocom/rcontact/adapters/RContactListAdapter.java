@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
@@ -215,6 +216,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         TextView textRatingUserCount;
         @BindView(R.id.rating_user)
         RatingBar ratingUser;
+        @BindView(R.id.button_invite)
+        Button buttonInvite;
 
         RContactViewHolder(View itemView) {
             super(itemView);
@@ -230,6 +233,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             textContactNumber.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
 
             textCloudContactName.setVisibility(View.GONE);
+
+            buttonInvite.setVisibility(View.GONE);
 
         }
     }

@@ -8,7 +8,10 @@ import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +41,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
 import com.linkedin.platform.APIHelper;
 import com.linkedin.platform.LISessionManager;
 import com.linkedin.platform.errors.LIApiError;
@@ -46,6 +50,7 @@ import com.linkedin.platform.listeners.ApiListener;
 import com.linkedin.platform.listeners.ApiResponse;
 import com.linkedin.platform.listeners.AuthListener;
 import com.linkedin.platform.utils.Scope;
+import com.rawalinfocom.rcontact.asynctasks.AsyncReverseGeoCoding;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -59,6 +64,7 @@ import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.FileUtils;
+import com.rawalinfocom.rcontact.helper.GPSTracker;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
@@ -76,6 +82,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
+import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
@@ -148,12 +155,19 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     UserProfile userProfileRegistered;
 
     int setLoginVia = 0;
+    int locationCall = 0;
+    String locationString;
+
+    public static boolean isFromSettings;
+
+    GPSTracker gpsTracker;
 
     // Facebook Callback Manager
     CallbackManager callbackManager;
 
     // Google API Client
     private GoogleApiClient googleApiClient;
+    private double latitude, longitude;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -175,6 +189,42 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 (Auth.GOOGLE_SIGN_IN_API, gso).build();
 
         init();
+
+        gpsTracker = new GPSTracker(this, null);
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+                .ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission
+                    .ACCESS_FINE_LOCATION}, AppConstants
+                    .MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+        } else {
+            if (Utils.isLocationEnabled(this)) {
+               /* latitude = gpsTracker.getLatitude();
+                longitude = gpsTracker.getLongitude();
+                getCityName();*/
+                getLocationDetail();
+            } else {
+                gpsTracker.showSettingsAlert();
+            }
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isFromSettings) {
+            isFromSettings = false;
+            if (Utils.isLocationEnabled(this)) {
+               /* gpsTracker = new GPSTracker(this, null);
+                latitude = gpsTracker.getLatitude();
+                longitude = gpsTracker.getLongitude();
+                getCityName();*/
+                getLocationDetail();
+            }
+        }
     }
 
     @Override
@@ -304,7 +354,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_REGISTRATION)) {
                 WsResponseObject userProfileResponse = (WsResponseObject) data;
-                Utils.hideProgressDialog();
+//                Utils.hideProgressDialog();
                 if (userProfileResponse != null && StringUtils.equalsIgnoreCase(userProfileResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
@@ -313,27 +363,10 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                             AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
                                     .integer.launch_main_activity));
 
-//                    TableProfileMaster tableProfileMaster = new TableProfileMaster
-// (databaseHandler);
                     if (userProfileRegistered != null) {
-//                        tableProfileMaster.addProfile(userProfileRegistered);
                         Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
                                 userProfileRegistered.getPmId());
                     }
-
-                   /* UserProfile responseUserProfile = userProfileResponse.getUserProfile();
-                    userProfileRegistered = new UserProfile();
-                    userProfileRegistered.setPmFirstName(responseUserProfile.getPmFirstName());
-                    userProfileRegistered.setPmLastName(responseUserProfile.getPmLastName());
-                    userProfileRegistered.setMobileNumber(responseUserProfile.getMobileNumber());
-                    userProfileRegistered.setPmProfileImage(responseUserProfile.getPmProfileImage
-                            ());
-                    userProfileRegistered.setProfileRating(responseUserProfile.getProfileRating());
-                    userProfileRegistered.setTotalProfileRateUser(responseUserProfile
-                            .getTotalProfileRateUser());
-
-                    Utils.setObjectPreference(ProfileRegistrationActivity.this, AppConstants
-                            .PREF_REGS_USER_OBJECT, userProfileRegistered);*/
 
                     ProfileDataOperation profileDetail = userProfileResponse.getProfileDetail();
                     Utils.setObjectPreference(ProfileRegistrationActivity.this, AppConstants
@@ -341,47 +374,36 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                     storeProfileDataToDb(profileDetail);
 
-                   /* UserProfile userProfile = new UserProfile();
-                    userProfile.setPmRcpId(userProfileRegistered.getPmId());
-                    userProfile.setPmPrefix(profileDetail.getPbNamePrefix());
-                    userProfile.setPmFirstName(profileDetail.getPbNameFirst());
-                    userProfile.setPmMiddleName(profileDetail.getPbNameMiddle());
-                    userProfile.setPmLastName(profileDetail.getPbNameLast());
-                    userProfile.setPmSuffix(profileDetail.getPbNameSuffix());
-                    userProfile.setPmNickName(profileDetail.getPbNickname());
-                    userProfile.setPmPhoneticFirstName(profileDetail.getPbPhoneticNameFirst());
-                    userProfile.setPmPhoneticMiddleName(profileDetail.getPbPhoneticNameMiddle());
-                    userProfile.setPmPhoneticLastName(profileDetail.getPbPhoneticNameLast());
-                    userProfile.setPmNotes(profileDetail.getPbNote());
-                    userProfile.setProfileRating(profileDetail.getProfileRating());
-                    userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
-                    userProfile.setPmIsFavourite(profileDetail.getIsFavourite());
-                    userProfile.setPmNosqlMasterId(profileDetail.getNoSqlMasterId());
-                    userProfile.setPmJoiningDate(profileDetail.getJoiningDate());
+                    deviceDetail();
 
-                    tableProfileMaster.addProfile(userProfile);
+                    // Redirect to MainActivity
+                  /*  Intent intent = new Intent(this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);*/
 
-                    TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+                } else {
+                    if (userProfileResponse != null) {
+                        Log.e("error response", userProfileResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "userProfileResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
 
-                    ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
-                    ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber =
-                            profileDetail.getPbPhoneNumber();
-                    if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber)) {
-                        for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
-                            MobileNumber mobileNumber = new MobileNumber();
-                            mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i)
-                                    .getPhoneType());
-                            mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(i)
-                                    .getPhoneNumber());
-                            mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
-                                    .get(i).getPhonePublic()));
-                            mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
-                                    .getPbRcpType()));
-                            mobileNumber.setRcProfileMasterPmId(userProfileRegistered.getPmId());
-                            arrayListMobileNumber.add(mobileNumber);
-                        }
-                        tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
-                    }*/
+            // <editor-fold desc="REQ_STORE_DEVICE_DETAILS">
+
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_STORE_DEVICE_DETAILS)) {
+                WsResponseObject deviceDetailResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (deviceDetailResponse != null && StringUtils.equalsIgnoreCase
+                        (deviceDetailResponse
+                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     // Redirect to MainActivity
                     Intent intent = new Intent(this, MainActivity.class);
@@ -392,12 +414,31 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     overridePendingTransition(R.anim.enter, R.anim.exit);
 
                 } else {
-                    if (userProfileResponse != null) {
-                        Log.e("error response", userProfileResponse.getMessage());
+                    if (deviceDetailResponse != null) {
+                        Log.e("error response", deviceDetailResponse.getMessage());
                     } else {
-                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                        Log.e("onDeliveryResponse: ", "deviceDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R
                                 .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="REQ_REVERSE_GEO_CODING_ADDRESS">
+            else if (serviceType.equalsIgnoreCase(WsConstants.REQ_REVERSE_GEO_CODING_ADDRESS)) {
+                ReverseGeocodingAddress objAddress = (ReverseGeocodingAddress) data;
+                if (objAddress == null) {
+                    if (locationCall < 2) {
+                        getLocationDetail();
+                        locationCall++;
+                    }
+                } else {
+                    try {
+                        locationString = objAddress.getCity() + ", " + objAddress.getState() + "," +
+                                " " + objAddress.getCountry();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -407,6 +448,41 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 //            AppUtils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "" + error
                     .getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // Permission Granted
+
+                    if (Utils.isLocationEnabled(this)) {
+                      /*  gpsTracker = new GPSTracker(this, null);
+                        latitude = gpsTracker.getLatitude();
+                        longitude = gpsTracker.getLongitude();
+                        getCityName();
+                        Log.i("onCreate", latitude + ":" + longitude);*/
+                        getLocationDetail();
+                    } else {
+                        gpsTracker.showSettingsAlert();
+                    }
+
+
+                } else {
+
+                    // Permission Denied
+
+
+                }
+            }
+            break;
         }
     }
 
@@ -759,6 +835,17 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         //</editor-fold>
     }
 
+    private void getLocationDetail() {
+        gpsTracker = new GPSTracker(this, null);
+        latitude = gpsTracker.getLatitude();
+        longitude = gpsTracker.getLongitude();
+
+        AsyncReverseGeoCoding asyncReverseGeoCoding = new AsyncReverseGeoCoding(this, WsConstants
+                .REQ_REVERSE_GEO_CODING_ADDRESS, false);
+        asyncReverseGeoCoding.execute(new LatLng(latitude, longitude));
+
+    }
+
     /**
      * To get key hash
      */
@@ -813,6 +900,34 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     profileRegistrationObject, null, WsResponseObject.class, WsConstants
                     .REQ_PROFILE_REGISTRATION, getString(R.string.msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_REGISTRATION);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
+    private void deviceDetail() {
+
+        String model = android.os.Build.MODEL;
+        String androidVersion = android.os.Build.VERSION.RELEASE;
+        String brand = android.os.Build.BRAND;
+        String device = android.os.Build.DEVICE;
+        String secureAndroidId = Settings.Secure.getString(getContentResolver(), Settings.Secure
+                .ANDROID_ID);
+
+        WsRequestObject deviceDetailObject = new WsRequestObject();
+        deviceDetailObject.setDmModel(StringUtils.defaultString(model));
+        deviceDetailObject.setDmVersion(StringUtils.defaultString(androidVersion));
+        deviceDetailObject.setDmBrand(StringUtils.defaultString(brand));
+        deviceDetailObject.setDmDevice(StringUtils.defaultString(device));
+        deviceDetailObject.setDmUniqueid(StringUtils.defaultString(secureAndroidId));
+        deviceDetailObject.setDmLocation(StringUtils.defaultString(locationString));
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    deviceDetailObject, null, WsResponseObject.class, WsConstants
+                    .REQ_STORE_DEVICE_DETAILS, null, true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
                     .getString(R.string.msg_no_network));
@@ -1031,6 +1146,4 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     }
 
     //</editor-fold>
-
-
 }
