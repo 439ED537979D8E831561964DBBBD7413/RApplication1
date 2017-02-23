@@ -1,10 +1,12 @@
-package com.rawalinfocom.rcontact.calllog;
+package com.rawalinfocom.rcontact.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
 
+import com.rawalinfocom.rcontact.calllog.CallLogFragment;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.CallLogType;
 
 import java.text.SimpleDateFormat;
@@ -32,6 +34,7 @@ public class PhoneCallReceiver extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
 
         //We listen to two intents.  The new outgoing call only tells us of an outgoing call.  We use it to get the number.
+        AppConstants.isFromReceiver = true;
         try
         {
             if (intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")) {

@@ -60,7 +60,9 @@ public class AppConstants {
     public static String EXTRA_CONTACT_NAME = "contact_name";
     public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
     public static String EXTRA_CONTACT_POSITION = "contact_position";
-
+    public static String EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE = "extra_call_instance";
+    public static String EXTRA_CALL_HISTORY_NAME = "extra_call_history_name";
+    public static String EXTRA_CALL_HISTORY_NUMBER = "extra_call_history_number";
     //</editor-fold>
 
     //<editor-fold desc="Intent Action">
@@ -111,8 +113,11 @@ public class AppConstants {
         AppConstants.isDualSimPhone = isDualSimPhone;
     }
 
-    public static  String PROFILE_ACTIVITY_CALL_INSTANCE = "call_instance";
+
     public static String CALL_HISTROY_NAME = "histroy_name";
     public static String CALL_HISTROY_NUMBER = "histroy_number";
     public static String PROFILE_SHOW_VIEW = "callLogFrag";
+
+    public static boolean isFromReceiver = false;
+
 }

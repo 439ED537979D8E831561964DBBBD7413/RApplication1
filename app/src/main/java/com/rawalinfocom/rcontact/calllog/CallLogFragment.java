@@ -266,7 +266,6 @@ public class CallLogFragment extends BaseFragment {
 
                 } else {
                     finalDate = new SimpleDateFormat("dd/MM,EEE").format(date1);
-                    ;
                     listOfDates.add(finalDate);
                     if (!arrayListObjectCallLogs.contains(finalDate)) {
                         arrayListCallLogHeader.add(finalDate);
@@ -341,7 +340,7 @@ public class CallLogFragment extends BaseFragment {
             int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
             int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
 
-            cursor.moveToFirst();
+//            cursor.moveToFirst();
             while (cursor.moveToNext()) {
                 CallLogType log = new CallLogType(getActivity());
                 log.setNumber(cursor.getString(number));
@@ -765,14 +764,22 @@ public class CallLogFragment extends BaseFragment {
         super.onResume();
 //        getActivity().registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_NEW_OUTGOING_CALL));
         try{
-            if(callLogTypeReceiver.getType()>0){
+            if(AppConstants.isFromReceiver){
                 ArrayList<CallLogType> arrayListHistroy = callLogHistroy(callLogTypeReceiver.getNumber());
                 int count =  arrayListHistroy.size();
                 callLogTypeReceiver.setHistroyLogCount(count);
-                arrayListObjectCallLogs.set(1,callLogTypeReceiver);
-                callLogListAdapter.notifyItemInserted(1);
-            }
+                String receiverDate =  "Today";
+                if (!arrayListObjectCallLogs.contains(receiverDate)) {
+                    arrayListCallLogHeader.add(0,receiverDate);
+                    arrayListObjectCallLogs.add(0,receiverDate);
+                    callLogListAdapter.notifyItemInserted(0);
+                    recyclerCallLogs.scrollToPosition(0);
+                }
 
+                arrayListObjectCallLogs.add(1,callLogTypeReceiver);
+                callLogListAdapter.notifyItemInserted(1);
+
+            }
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -780,10 +787,13 @@ public class CallLogFragment extends BaseFragment {
 
     }
 
+
+
     @Override
     public void onPause() {
         super.onPause();
 //        getActivity().unregisterReceiver(broadcastReceiver);
+        AppConstants.isFromReceiver = false;
     }
 
     @Override

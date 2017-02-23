@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.model;
 
+import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -123,6 +124,10 @@ public class CallLogType implements Serializable {
         return this.getNumber() != null?this.findNameByNumber(this.getNumber()):null;
     }
 
+    public String getContactNameOfNumber(String number) {
+        return number != null?this.findNameByNumber(number):null;
+    }
+
     public String getUniqueContactId() {
         return uniqueContactId;
     }
@@ -204,7 +209,7 @@ public class CallLogType implements Serializable {
     }
 
     private String findNameByNumber(String phoneNumber) {
-        ContentResolver cr = this.context.getContentResolver();
+        ContentResolver cr = context.getContentResolver();
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
         Cursor cursor = cr.query(uri, new String[]{"display_name"}, (String)null, new String[]{"display_name"}, (String)null);
         if(cursor == null) {

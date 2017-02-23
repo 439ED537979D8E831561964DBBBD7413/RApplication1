@@ -131,7 +131,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getSectionForPosition(int position) {
-        if (position >= arrayListCallLogs.size()) {
+    /*    if (position >= arrayListCallLogs.size()) {
             position = arrayListCallLogs.size() - 1;
         }
 
@@ -140,13 +140,13 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             previousPosition = arrayListCallLogHeader.indexOf(letter);
 
         } else {
-            /*for (int i = position; i < arrayListUserContact.size(); i++) {
+            *//*for (int i = position; i < arrayListUserContact.size(); i++) {
                 if (arrayListUserContact.get(i) instanceof String) {
                     String letter = (String) arrayListUserContact.get(i);
                     previousPosition = arrayListContactHeader.indexOf(letter);
                     break;
                 }
-            }*/
+            }*//*
             for (int i = position; i >= 0; i--) {
                 if (arrayListCallLogs.get(i) instanceof String) {
                     String letter = (String) arrayListCallLogs.get(i);
@@ -154,7 +154,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     break;
                 }
             }
-        }
+        }*/
 
         return previousPosition;
     }
@@ -181,8 +181,29 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }else
         {
             if(!TextUtils.isEmpty(number)){
-                String formatedNumber =  Utils.getFormattedNumber(context,number);
-                holder.textContactName.setText(formatedNumber);
+                holder.textContactName.setTypeface(Utils.typefaceBold(context));
+                holder.textContactName.setTextColor(ContextCompat.getColor(context,R.color.colorBlack));
+                if(!AppConstants.isFromReceiver){
+                   /* String tempName =  callLogType.getContactName();
+                    if(!TextUtils.isEmpty(tempName)){
+                        holder.textContactName.setText(tempName);
+
+                    }else {*/
+                        String formatedNumber =  Utils.getFormattedNumber(context,number);
+                        holder.textContactName.setText(formatedNumber);
+//                    }
+                }
+               else
+                {
+                    String formatedNumber =  Utils.getFormattedNumber(context,number);
+                    holder.textContactName.setText(formatedNumber);
+
+                }
+
+            }
+            else{
+                holder.textContactName.setText(" ");
+
             }
         }
         long date = callLogType.getDate();
@@ -254,10 +275,11 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AppConstants.isFromReceiver = false;
                 Intent intent = new Intent(context, ProfileDetailActivity.class);
-                intent.putExtra(AppConstants.PROFILE_ACTIVITY_CALL_INSTANCE, AppConstants.PROFILE_SHOW_VIEW);
-                intent.putExtra(AppConstants.CALL_HISTROY_NUMBER, number);
-                intent.putExtra(AppConstants.CALL_HISTROY_NAME, name);
+                intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, number);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
                 context.startActivity(intent);
             }
         });
