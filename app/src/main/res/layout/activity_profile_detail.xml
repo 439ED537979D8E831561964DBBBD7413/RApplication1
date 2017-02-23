@@ -16,9 +16,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/include_toolbar"
         android:background="@color/colorVeryLightGray"
-        android:scrollbars="none"
-        android:layout_below="@+id/include_toolbar">
+        android:scrollbars="none">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -40,8 +40,8 @@
                     android:padding="@dimen/margin_small"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:text="Hello World"/>
+                    android:text="Hello World"
+                    android:textAppearance="?android:textAppearanceMedium"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -201,12 +201,12 @@
             </LinearLayout>
 
             <RelativeLayout
+                android:id="@+id/relative_call_histroy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/relative_call_histroy"
                 android:layout_below="@id/linear_call_sms"
-                android:visibility="visible"
-                android:padding="@dimen/activity_half_horizontal_margin">
+                android:padding="@dimen/activity_half_horizontal_margin"
+                tools:visibility="gone">
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/card_histroy_details"
@@ -228,35 +228,35 @@
                             android:id="@+id/linear_histroy_title"
                             android:layout_marginTop="@dimen/margin_10dp">
 -->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/text_icon_histroy"
-                                android:text="@string/im_call_histroy"
-                                android:layout_marginLeft="@dimen/margin_5dp"
-                                android:layout_marginTop="@dimen/margin_10dp"/>
+                        <TextView
+                            android:id="@+id/text_icon_histroy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/margin_5dp"
+                            android:layout_marginTop="@dimen/margin_10dp"
+                            android:text="@string/im_call_histroy"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/text_text_call_histroy"
-                                android:text="Call Histroy"
-                                android:layout_toRightOf="@+id/text_icon_histroy"
-                                android:layout_marginLeft="@dimen/margin_5dp"
-                                android:layout_marginTop="@dimen/margin_10dp"
-                                android:textColor="@color/colorBlack"/>
+                        <TextView
+                            android:id="@+id/text_text_call_histroy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/margin_5dp"
+                            android:layout_marginTop="@dimen/margin_10dp"
+                            android:layout_toRightOf="@+id/text_icon_histroy"
+                            android:text="Call Histroy"
+                            android:textColor="@color/colorBlack"/>
 
-                       <!-- </LinearLayout>-->
+                        <!-- </LinearLayout>-->
 
                         <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recycler_call_histroy"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/recycler_call_histroy"
-                            android:layout_below="@+id/text_text_call_histroy"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentEnd="true"
                             android:layout_alignLeft="@+id/text_text_call_histroy"
-                            android:layout_alignStart="@+id/text_text_call_histroy">
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignStart="@+id/text_text_call_histroy"
+                            android:layout_below="@+id/text_text_call_histroy">
 
                         </android.support.v7.widget.RecyclerView>
 
@@ -267,11 +267,12 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/relative_contact_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/linear_call_sms"
                 android:padding="@dimen/activity_half_horizontal_margin"
-                android:visibility="gone">
+                tools:visibility="visible">
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/card_contact_details"
@@ -320,8 +321,8 @@
                                     android:id="@+id/recycler_view_contact_number"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:overScrollMode="never"
-                                    android:layout_margin="@dimen/margin_tiny"/>
+                                    android:layout_margin="@dimen/margin_tiny"
+                                    android:overScrollMode="never"/>
 
                             </LinearLayout>
 
@@ -360,8 +361,8 @@
                                     android:id="@+id/recycler_view_email"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:overScrollMode="never"
-                                    android:layout_margin="@dimen/margin_tiny"/>
+                                    android:layout_margin="@dimen/margin_tiny"
+                                    android:overScrollMode="never"/>
 
                             </LinearLayout>
 
@@ -406,8 +407,8 @@
                                         android:id="@+id/recycler_view_website"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:overScrollMode="never"
-                                        android:layout_margin="@dimen/margin_tiny"/>
+                                        android:layout_margin="@dimen/margin_tiny"
+                                        android:overScrollMode="never"/>
 
                                 </LinearLayout>
 
@@ -446,8 +447,8 @@
                                         android:id="@+id/recycler_view_address"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:overScrollMode="never"
-                                        android:layout_margin="@dimen/margin_tiny"/>
+                                        android:layout_margin="@dimen/margin_tiny"
+                                        android:overScrollMode="never"/>
 
                                 </LinearLayout>
 
@@ -486,8 +487,8 @@
                                         android:id="@+id/recycler_view_social_contact"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:overScrollMode="never"
-                                        android:layout_margin="@dimen/margin_tiny"/>
+                                        android:layout_margin="@dimen/margin_tiny"
+                                        android:overScrollMode="never"/>
 
                                 </LinearLayout>
 
@@ -568,8 +569,8 @@
                                     android:id="@+id/recycler_view_event"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:overScrollMode="never"
-                                    android:layout_margin="@dimen/margin_tiny"/>
+                                    android:layout_margin="@dimen/margin_tiny"
+                                    android:overScrollMode="never"/>
 
                             </LinearLayout>
 

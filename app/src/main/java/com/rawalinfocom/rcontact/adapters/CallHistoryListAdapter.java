@@ -2,7 +2,6 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,7 @@ import butterknife.ButterKnife;
  */
 
 
-public class CallHistroyListAdapter extends RecyclerView.Adapter<CallHistroyListAdapter.MyViewHolder> {
+public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryListAdapter.MyViewHolder> {
 
     private ArrayList<CallLogType> listCallHistroy;
 
@@ -59,7 +58,7 @@ public class CallHistroyListAdapter extends RecyclerView.Adapter<CallHistroyList
     }
 
 
-    public CallHistroyListAdapter(ArrayList<CallLogType> listCallLogType) {
+    public CallHistoryListAdapter(ArrayList<CallLogType> listCallLogType) {
         this.listCallHistroy = listCallLogType;
     }
 
