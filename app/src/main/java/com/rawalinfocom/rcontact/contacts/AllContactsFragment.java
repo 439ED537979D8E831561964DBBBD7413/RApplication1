@@ -283,6 +283,26 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             }
             //</editor-fold>
 
+            // <editor-fold desc="REQ_SEND_INVITATION">
+
+            else if (serviceType.contains(WsConstants.REQ_SEND_INVITATION)) {
+                WsResponseObject inviteContactResponse = (WsResponseObject) data;
+                if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
+                        (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                    Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts, "Invitation" +
+                            " sent successfully");
+                } else {
+                    if (inviteContactResponse != null) {
+                        Log.e("error response", inviteContactResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "uploadContactResponse null");
+                        Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
         } else {
             progressAllContact.setVisibility(View.GONE);
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, "" + (error != null ?

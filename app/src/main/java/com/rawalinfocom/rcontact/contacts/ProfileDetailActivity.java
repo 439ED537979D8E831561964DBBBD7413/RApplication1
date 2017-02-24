@@ -38,6 +38,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.ContactListingActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.CallHistoryListAdapter;
@@ -73,6 +74,9 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -311,10 +315,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         init();
 
-        /*if (!TextUtils.isEmpty(historyNumber)) {
-            fetchCallLogHistroyByNumber(historyName);
-        }*/
-
         if (!TextUtils.isEmpty(historyName)) {
             fetchCallLogHistroy(historyName);
 
@@ -344,10 +344,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 break;
 
             case R.id.ripple_call_log:
-                    layoutVisibiltyForProfile();
-                    if(!TextUtils.isEmpty(contactName)){
-                        fetchCallLogHistroy(contactName);
-                    }
+                layoutVisibiltyForProfile();
+                if (!TextUtils.isEmpty(contactName)) {
+                    fetchCallLogHistroy(contactName);
+                }
                 break;
 
 
@@ -372,25 +372,25 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     int favStatus;
                     if (StringUtils.equals(imageRightLeft.getTag().toString(),
                             TAG_IMAGE_FAVOURITE)) {
-                        /*favStatus = PhoneBookContacts.STATUS_UN_FAVOURITE;
+                        favStatus = PhoneBookContacts.STATUS_UN_FAVOURITE;
                         imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
-                        imageRightLeft.setTag(TAG_IMAGE_UN_FAVOURITE);*/
+                        imageRightLeft.setTag(TAG_IMAGE_UN_FAVOURITE);
                     } else {
-                        /*favStatus = PhoneBookContacts.STATUS_FAVOURITE;
+                        favStatus = PhoneBookContacts.STATUS_FAVOURITE;
                         imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
-                        imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);*/
+                        imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);
                     }
-//                    int updateStatus = phoneBookContacts.setFavouriteStatus(phoneBookId, favStatus);
-                    /*if (updateStatus != 1) {
+                    int updateStatus = phoneBookContacts.setFavouriteStatus(phoneBookId, favStatus);
+                    if (updateStatus != 1) {
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, "Error while " +
                                 "updating favourite status!");
-                    }*/
-                   /* ArrayList<ProfileData> arrayListFavourites = new ArrayList<>();
+                    }
+                    ArrayList<ProfileData> arrayListFavourites = new ArrayList<>();
                     ProfileData favouriteStatus = new ProfileData();
                     favouriteStatus.setLocalPhoneBookId(phoneBookId);
                     favouriteStatus.setIsFavourite(String.valueOf(favStatus));
                     arrayListFavourites.add(favouriteStatus);
-                    setFavouriteStatus(arrayListFavourites);*/
+                    setFavouriteStatus(arrayListFavourites);
 
                     rContactApplication.setFavouriteModified(true);
 
@@ -444,7 +444,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             //</editor-fold>
 
             // <editor-fold desc="REQ_RCP_PROFILE_SHARING">
-         /*   if (serviceType.equalsIgnoreCase(WsConstants.REQ_RCP_PROFILE_SHARING)) {
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_RCP_PROFILE_SHARING)) {
                 WsResponseObject profileSharingResponse = (WsResponseObject) data;
                 Utils.hideProgressDialog();
                 if (profileSharingResponse != null && StringUtils.equalsIgnoreCase
@@ -475,7 +475,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 .string.msg_try_later));
                     }
                 }
-            }*/
+            }
             //</editor-fold>
 
             // <editor-fold desc="REQ_PROFILE_RATING">
@@ -629,7 +629,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     //<editor-fold desc="Private Methods">
 
 
-    private void layoutVisibiltyForProfile(){
+    private void layoutVisibiltyForProfile() {
         relativeContactDetails.setVisibility(View.GONE);
         relativeCallHistory.setVisibility(View.VISIBLE);
         textIconHistory.setTypeface(Utils.typefaceIcons(this));
@@ -1123,24 +1123,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             contactWebsiteCursor.close();
 //            profileDataOperationVcard.setPbWebAddress(arrayListPhoneBookWebsiteOperation);
         }
-       /* Cursor contactWebsiteCursor = phoneBookContacts.getContactWebsite(phoneBookId);
-        ArrayList<String> arrayListPhoneBookWebsite = new ArrayList<>();
-
-        if (contactWebsiteCursor != null && contactWebsiteCursor.getCount() > 0) {
-            while (contactWebsiteCursor.moveToNext()) {
-
-                String website = contactWebsiteCursor.getString(contactWebsiteCursor
-                        .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));
-                website = website + ";" + getResources().getInteger(R.integer
-                        .rcp_type_local_phone_book);
-
-                if (!arrayListWebsite.contains(website)) {
-                    arrayListPhoneBookWebsite.add(website);
-                }
-
-            }
-            contactWebsiteCursor.close();
-        }*/
 
         if (!Utils.isArraylistNullOrEmpty(arrayListWebsite) || !Utils.isArraylistNullOrEmpty
                 (arrayListPhoneBookWebsite)) {
@@ -1591,7 +1573,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private void showChooseShareOption(final String firstName, final String lastName) {
-       /* final Dialog dialog = new Dialog(this);
+        final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_choose_share_invite);
         dialog.setCancelable(false);
@@ -1640,10 +1622,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     startActivity(Intent.createChooser(sharingIntent, "Share Contact Via"));
                 } else {
                     // Non-Rcp profile
-                   *//* ArrayList<Object> phoneNumbers = phoneDetailAdapter.getDetailList();
+                   /* ArrayList<Object> phoneNumbers = phoneDetailAdapter.getDetailList();
                     for (int i = 0; i < phoneNumbers.size(); i++) {
                         Log.i("onClick", phoneNumbers.get(i).toString());
-                    }*//*
+                    }*/
                     shareContact();
 
                 }
@@ -1666,7 +1648,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
         });
 
-        dialog.show();*/
+        dialog.show();
     }
 
     private void fetchCallLogHistroy(String value) {
@@ -1803,7 +1785,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             cursor.close();
 
 
-
         } catch (SecurityException e) {
             e.printStackTrace();
         }
@@ -1916,14 +1897,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void submitRating(String ratingStar, String comment) {
 
-/*       ArrayList<Rating> ratings = new ArrayList<>();
-        Rating rating = new Rating();
-        rating.setPrToPmId(Integer.valueOf(pmId));
-        rating.setPrRatingStars(ratingStar);
-        rating.setPrComment(comment);
-        rating.setPrStatus(getResources().getInteger(R.integer.rating_done));
-        ratings.add(rating);*/
-
         WsRequestObject ratingObject = new WsRequestObject();
         ratingObject.setPmId(getUserPmId());
         ratingObject.setPrComment(comment);
@@ -1943,7 +1916,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void shareContact() {
 
-       /* WsRequestObject uploadContactObject = new WsRequestObject();
+        WsRequestObject uploadContactObject = new WsRequestObject();
         uploadContactObject.setPmId(getUserPmId());
         uploadContactObject.setSendProfileType(getResources().getInteger(R.integer
                 .send_profile_non_rcp_social));
@@ -1957,7 +1930,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
                     .getString(R.string.msg_no_network));
-        }*/
+        }
     }
 
     //</editor-fold>

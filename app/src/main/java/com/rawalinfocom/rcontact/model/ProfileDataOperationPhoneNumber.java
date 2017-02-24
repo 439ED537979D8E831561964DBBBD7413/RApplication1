@@ -6,9 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.apache.commons.lang3.StringUtils;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+import java.io.Serializable;
+
+//@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProfileDataOperationPhoneNumber {
+public class ProfileDataOperationPhoneNumber implements Serializable {
 
     private String phoneType;
     private String phoneNumber;

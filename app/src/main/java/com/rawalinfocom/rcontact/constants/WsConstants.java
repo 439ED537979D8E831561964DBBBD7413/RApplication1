@@ -9,12 +9,11 @@ package com.rawalinfocom.rcontact.constants;
 public class WsConstants {
 
     // Monal
+    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 //    public static final String WS_ROOT = "http://10.0.21.123/api/v1/";
 
     // Aniruddh
     public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
-
-
 
     // Shailesh
 //    public static final String WS_ROOT = "http://10.0.21.14:8000/api/v1/";
@@ -27,6 +26,7 @@ public class WsConstants {
 
     // Vishal
 //    public static final String WS_ROOT = "http://10.0.21.121:/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.51.101:/api/v1/";
 
     // Swati
 //    public static final String WS_ROOT = "http://10.0.21.131/api/v1/";
@@ -43,6 +43,10 @@ public class WsConstants {
     public static final String REQ_GET_PROFILE_DETAIL = "get-profile-detail";
     public static final String REQ_MARK_AS_FAVOURITE = "mark-as-favourite";
     public static final String REQ_PROFILE_RATING = "profile-rating";
+    public static final String REQ_RCP_PROFILE_SHARING = "rcp-profile-sharing";
+    public static final String REQ_SEND_INVITATION = "send-invitation";
+    public static final String REQ_STORE_DEVICE_DETAILS = "store-device-details";
 
+    public static final String REQ_REVERSE_GEO_CODING_ADDRESS = "req_reverse_geo_coding_address";
 
 }

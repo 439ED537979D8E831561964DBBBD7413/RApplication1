@@ -51,7 +51,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     //<editor-fold desc="Constructor">
     public CallLogListAdapter(Fragment fragment, ArrayList<Object> arrayListCallLogs,
-                                 ArrayList<String> arrayListCallLogHeader) {
+                              ArrayList<String> arrayListCallLogHeader) {
         this.context = fragment.getActivity();
         this.fragment = fragment;
         this.arrayListCallLogs = arrayListCallLogs;

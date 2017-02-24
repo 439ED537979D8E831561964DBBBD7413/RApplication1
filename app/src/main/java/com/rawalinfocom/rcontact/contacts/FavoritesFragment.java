@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -34,14 +36,12 @@ import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
         .ColorGroupSectionTitleIndicator;
 import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical
         .VerticalRecyclerViewFastScroller;
+import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FavoritesFragment extends BaseFragment {
+public class FavoritesFragment extends BaseFragment implements WsResponseListener {
 
     @BindView(R.id.progress_favorite_contact)
     ProgressWheel progressFavoriteContact;
@@ -66,6 +66,8 @@ public class FavoritesFragment extends BaseFragment {
     TextView textEmptyView;
     @BindView(R.id.text_total_contacts)
     TextView textTotalContacts;
+    @BindView(R.id.relative_root_favourite)
+    RelativeLayout relativeRootFavourite;
 
     PhoneBookContacts phoneBookContacts;
 
@@ -128,6 +130,35 @@ public class FavoritesFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         if (!isReload || rContactApplication.isFavouriteModified()) {
             init();
+        }
+    }
+
+    @Override
+    public void onDeliveryResponse(String serviceType, Object data, Exception error) {
+        if (error == null && getActivity() != null) {
+
+            // <editor-fold desc="REQ_SEND_INVITATION">
+            if (serviceType.contains(WsConstants.REQ_SEND_INVITATION)) {
+                WsResponseObject inviteContactResponse = (WsResponseObject) data;
+                if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
+                        (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                    Utils.showSuccessSnackBar(getActivity(), relativeRootFavourite, "Invitation" +
+                            " sent successfully");
+                } else {
+                    if (inviteContactResponse != null) {
+                        Log.e("error response", inviteContactResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "uploadContactResponse null");
+                        Utils.showErrorSnackBar(getActivity(), relativeRootFavourite, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
+        } else {
+            Utils.showErrorSnackBar(getActivity(), relativeRootFavourite, "" + (error != null ?
+                    error.getLocalizedMessage() : null));
         }
     }
 

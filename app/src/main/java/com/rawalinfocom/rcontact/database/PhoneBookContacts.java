@@ -12,8 +12,8 @@ import android.provider.ContactsContract;
 
 public class PhoneBookContacts {
 
-    public static final int status_favourite = 1;
-    public static final int status_un_favourite = 0;
+    public static final int STATUS_FAVOURITE = 1;
+    public static final int STATUS_UN_FAVOURITE = 0;
 
     private Context context;
 
@@ -64,6 +64,22 @@ public class PhoneBookContacts {
                 selectionArgs, sortOrder);
     }
 
+    public Cursor getAllContacts() {
+        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        String[] projection = new String[]{
+                ContactsContract.Contacts._ID,
+                ContactsContract.Contacts.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Email.ADDRESS,
+        };
+
+//        String selection = "starred = ?";
+//        String[] selectionArgs = new String[]{"1"};
+        String sortOrder = "UPPER(" + ContactsContract.Contacts.DISPLAY_NAME + ") ASC";
+
+        return context.getContentResolver().query(uri, projection, null, null, sortOrder);
+    }
+
     public Cursor getStructuredName(String contactId) {
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = new String[]{
@@ -93,6 +109,7 @@ public class PhoneBookContacts {
         Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         String[] projection = new String[]{
                 ContactsContract.CommonDataKinds.Phone._ID,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
                 ContactsContract.CommonDataKinds.Phone.TYPE
         };
@@ -138,6 +155,7 @@ public class PhoneBookContacts {
         Uri uri = ContactsContract.CommonDataKinds.Email.CONTENT_URI;
         String[] projection = new String[]{
                 ContactsContract.CommonDataKinds.Email._ID,
+                ContactsContract.Contacts.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.TYPE,
                 ContactsContract.CommonDataKinds.Email.LABEL,
