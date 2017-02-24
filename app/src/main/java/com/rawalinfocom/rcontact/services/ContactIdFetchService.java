@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.service;
+package com.rawalinfocom.rcontact.services;
 
 import android.app.Service;
 import android.content.Intent;

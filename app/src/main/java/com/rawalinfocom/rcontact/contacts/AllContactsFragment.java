@@ -360,7 +360,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(cursorListReceiver,
                     new IntentFilter(AppConstants.ACTION_CONTACT_FETCH));
             Intent contactIdFetchService = new Intent(getActivity(), com.rawalinfocom.rcontact
-                    .service.ContactIdFetchService.class);
+                    .services.ContactIdFetchService.class);
             getActivity().startService(contactIdFetchService);
         }
 
