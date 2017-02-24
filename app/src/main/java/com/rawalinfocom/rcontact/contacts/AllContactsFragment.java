@@ -79,10 +79,10 @@ import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -246,7 +246,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         storeToEmailMapping(uploadContactResponse.getArrayListUserRcProfile());
 
                         /* Store Profile Details to respective Table */
-                        storeProfileDataToDb(uploadContactResponse.getArrayListUserRcProfile());
+                        storeProfileDataToDb(uploadContactResponse.getArrayListUserRcProfile(),
+                                uploadContactResponse.getArrayListMapping());
 
                     } else {
 
@@ -358,7 +359,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         } else {
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(cursorListReceiver,
                     new IntentFilter(AppConstants.ACTION_CONTACT_FETCH));
-            Intent contactIdFetchService = new Intent(getActivity(), com.rawalinfocom.rcontact.services.ContactIdFetchService.class);
+            Intent contactIdFetchService = new Intent(getActivity(), com.rawalinfocom.rcontact
+                    .services.ContactIdFetchService.class);
             getActivity().startService(contactIdFetchService);
         }
 
@@ -455,7 +457,29 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         }
     }
 
-    private void storeProfileDataToDb(ArrayList<ProfileDataOperation> profileData) {
+    private void storeProfileDataToDb(ArrayList<ProfileDataOperation> profileData,
+                                      ArrayList<ProfileData> mapping) {
+
+        // Hashmap with key as rcpId and value as rawId/s
+        HashMap<String, String> mapLocalRcpId = new HashMap<>();
+
+        for (int i = 0; i < mapping.size(); i++) {
+            if (mapping.get(i).getRcpPmId().size() > 0) {
+                for (int j = 0; j < mapping.get(i).getRcpPmId().size(); j++) {
+                    String phonebookRawId;
+                    if (mapLocalRcpId.containsKey(mapping.get(i).getRcpPmId().get(j))) {
+                        phonebookRawId = mapLocalRcpId.get(mapping.get(i).getRcpPmId().get(j)) +
+                                "," + mapping.get(i).getLocalPhoneBookId();
+                    } else {
+                        phonebookRawId = mapping.get(i).getLocalPhoneBookId();
+                    }
+
+                    mapLocalRcpId.put(mapping.get(i).getRcpPmId().get(j), phonebookRawId);
+                }
+            }
+        }
+
+        Log.i("storeProfileDataToDb", mapLocalRcpId.toString());
 
         // Basic Profile Data
         TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
@@ -480,6 +504,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             userProfile.setPmNosqlMasterId(profileData.get(i).getNoSqlMasterId());
             userProfile.setProfileRating(profileData.get(i).getProfileRating());
             userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
+
+            if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
+                userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
+            }
 
             arrayListUserProfile.add(userProfile);
             tableProfileMaster.addArrayProfile(arrayListUserProfile);
