@@ -16,9 +16,12 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/include_toolbar"
         android:background="@color/colorVeryLightGray"
-        android:scrollbars="none">
+        android:scrollbars="none"
+        android:layout_below="@+id/include_toolbar"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -190,7 +193,7 @@
 
                     <Button
                         android:id="@+id/button_call_log"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/colorAccent"
                         android:text="Call Log"
@@ -211,7 +214,7 @@
 
                     <Button
                         android:id="@+id/button_sms"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/colorAccent"
                         android:text="SMS"
@@ -267,6 +270,16 @@
                             android:text="Call Histroy"
                             android:textColor="@color/colorBlack" />
 
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/text_no_history_to_show"
+                            tools:text="No history to show"
+                            android:layout_below="@+id/text_text_call_histroy"
+                            android:gravity="center"
+                            android:visibility="gone"
+                            android:layout_marginTop="@dimen/margin_15dp"
+                            android:layout_marginBottom="@dimen/margin_15dp"/>
                         <!-- </LinearLayout>-->
 
                         <android.support.v7.widget.RecyclerView
@@ -277,7 +290,8 @@
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentRight="true"
                             android:layout_alignStart="@+id/text_text_call_histroy"
-                            android:layout_below="@+id/text_text_call_histroy">
+                            android:layout_below="@+id/text_text_call_histroy"
+                            android:visibility="visible">
 
                         </android.support.v7.widget.RecyclerView>
 
@@ -665,5 +679,9 @@
         </RelativeLayout>
 
     </ScrollView>
+
+
+
+
 
 </RelativeLayout>

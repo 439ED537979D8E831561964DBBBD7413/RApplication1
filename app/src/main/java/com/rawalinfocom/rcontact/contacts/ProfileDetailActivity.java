@@ -239,6 +239,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RippleView rippleCallLog;
     @BindView(R.id.ripple_sms)
     RippleView rippleSms;
+    @BindView(R.id.text_no_history_to_show)
+    TextView textNoHistoryToShow;
 
     //<editor-fold desc="Override Methods">
 
@@ -345,6 +347,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             case R.id.ripple_call_log:
                 layoutVisibiltyForProfile();
+                buttonCallLog.setClickable(false);
+                buttonCallLog.setEnabled(false);
+                buttonCallLog.setBackgroundColor(getResources().getColor(R.color.colorDarkGray));
+                rippleCallLog.setEnabled(false);
                 if (!TextUtils.isEmpty(contactName)) {
                     fetchCallLogHistroy(contactName);
                 }
@@ -641,6 +647,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             relativeContactDetails.setVisibility(View.GONE);
             relativeCallHistory.setVisibility(View.VISIBLE);
             textIconHistory.setTypeface(Utils.typefaceIcons(this));
+            rippleCallLog.setVisibility(View.GONE);
             setCallLogHistroyDetails();
         } else {
             relativeContactDetails.setVisibility(View.VISIBLE);
@@ -721,6 +728,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleActionRightCenter.setOnRippleCompleteListener(this);
         rippleCallLog.setOnRippleCompleteListener(this);
 
+
+        buttonCallLog.setClickable(true);
+        buttonCallLog.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        rippleCallLog.setEnabled(true);
+
         LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
         // Filled stars
         Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(this, R.color
@@ -762,6 +774,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void setCallLogHistroyDetails() {
         CallLogType callLogType = new CallLogType();
+        textToolbarTitle.setText("Profile Detail");
         if (!TextUtils.isEmpty(historyName)) {
             textFullScreenText.setTypeface(Utils.typefaceBold(this));
             textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
@@ -1663,10 +1676,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void setHistroyAdapter() {
         if (callHistoryListAdapter == null) {
             if (arrayListHistory != null && arrayListHistory.size() > 0) {
+                textNoHistoryToShow.setVisibility(View.GONE);
                 callHistoryListAdapter = new CallHistoryListAdapter(arrayListHistory);
                 recyclerCallHistory.setAdapter(callHistoryListAdapter);
                 recyclerCallHistory.setFocusable(false);
                 setRecyclerViewLayoutManager(recyclerCallHistory);
+            }else {
+                textNoHistoryToShow.setVisibility(View.VISIBLE);
+                textNoHistoryToShow.setText(getResources().getString(R.string.text_no_history));
             }
         } else {
             callHistoryListAdapter.notifyDataSetChanged();

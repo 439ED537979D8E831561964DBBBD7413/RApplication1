@@ -50,6 +50,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.ButterKnife;
 
@@ -285,11 +287,11 @@ public class CallLogFragment extends BaseFragment {
                     break;
                 case AppConstants.ALL_CALLS:
                     selection = null;
-                case AppConstants.MISSED_CALLS:
-                    selection = "type = 3";
                 default:
                     selection = null;
                     break;
+                case AppConstants.MISSED_CALLS:
+                    selection = "type = 3";
             }
 
             Cursor cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, (String[]) null, selection, (String[]) null, order);
@@ -313,9 +315,15 @@ public class CallLogFragment extends BaseFragment {
                 Log.i("Number Type", numberTypeLog + " of number " + cursor.getString(number));
                 Log.i("Number Log Type", getLogType(cursor.getInt(type)) + " of number " + cursor.getString(number));
                 log.setNumberType(numberTypeLog);
+                ArrayList<CallLogType> arrayListHistroy =  new ArrayList<>();
+                String userName =  cursor.getString(name);
+                String userNumber =  cursor.getString(number);
+                if(!TextUtils.isEmpty(userName)){
+                    arrayListHistroy  = callLogHistroy(userName);
+                }else{
+                    arrayListHistroy  = callLogHistroy(userNumber);
+                }
 
-
-                ArrayList<CallLogType> arrayListHistroy = callLogHistroy(cursor.getString(number));
                 int logCount = arrayListHistroy.size();
                 log.setHistroyLogCount(logCount);
                 Log.i("Histroy size ", logCount + "" + " of " + cursor.getString(number));
@@ -629,7 +637,7 @@ public class CallLogFragment extends BaseFragment {
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private Cursor getCallHistroyData(String number) {
+    private Cursor getCallHistoryDataByNumber(String number) {
         Cursor cursor = null;
         String order = CallLog.Calls.DATE + " DESC";
         try {
@@ -642,10 +650,36 @@ public class CallLogFragment extends BaseFragment {
     }
 
 
+    @TargetApi(Build.VERSION_CODES.M)
+    private Cursor getCallHistoryDataByName(String name) {
+        Cursor cursor = null;
+        String order = CallLog.Calls.DATE + " DESC";
+        try {
+            cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null, CallLog
+                    .Calls.CACHED_NAME + " =?", new String[]{name}, order);
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return cursor;
+    }
+
+
+
     private ArrayList callLogHistroy(String number) {
         String numberToSearch = number;
         ArrayList<CallLogType> callDetails = new ArrayList<>();
-        Cursor cursor = getCallHistroyData(numberToSearch);
+        Cursor cursor = null;
+
+        Pattern numberPat = Pattern.compile("\\d+");
+        Matcher matcher1 = numberPat.matcher(number);
+        if (matcher1.find()) {
+            cursor = getCallHistoryDataByNumber(number);
+        } else {
+            cursor = getCallHistoryDataByName(number);
+        }
+
+
         try {
             if (cursor != null && cursor.getCount() > 0) {
                 int number1 = cursor.getColumnIndex(CallLog.Calls.NUMBER);
