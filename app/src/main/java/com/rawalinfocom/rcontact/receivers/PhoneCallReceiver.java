@@ -1,10 +1,12 @@
-package com.rawalinfocom.rcontact.calllog;
+package com.rawalinfocom.rcontact.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
 
+import com.rawalinfocom.rcontact.calllog.CallLogFragment;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.CallLogType;
 
 import java.text.SimpleDateFormat;
@@ -32,6 +34,7 @@ public class PhoneCallReceiver extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
 
         //We listen to two intents.  The new outgoing call only tells us of an outgoing call.  We use it to get the number.
+        AppConstants.isFromReceiver = true;
         try
         {
             if (intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")) {
@@ -93,36 +96,33 @@ public class PhoneCallReceiver extends BroadcastReceiver{
                 }
                 break;
             case TelephonyManager.CALL_STATE_IDLE:
+
                 //Went to idle-  this is the end of a call.  What type depends on previous state(s)
-                CallLogType callLogType = new CallLogType();
-                ArrayList<CallLogType> arrayList = new ArrayList<>();
                 if(lastState == TelephonyManager.CALL_STATE_RINGING){
                     //Ring but no pickup-  a miss
                     onMissedCall(context, savedNumber, callStartTime);
-                    callLogType.setNumber(savedNumber);
-                    callLogType.setType(3);
-                    String logDate = new SimpleDateFormat("yyyy-MM-dd").format(callStartTime);
-                    callLogType.setLogDate(logDate);
-                    arrayList.add(callLogType);
-                    callLogType.setLogArrayList(arrayList);
+                    CallLogFragment.callLogTypeReceiver.setNumber(savedNumber);
+                    CallLogFragment.callLogTypeReceiver.setType(3);
+                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(callStartTime);
+                    CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
+
                 }
                 else if(isIncoming){
                     onIncomingCallEnded(context, savedNumber, callStartTime, new Date());
-                    callLogType.setNumber(savedNumber);
-                    callLogType.setType(1);
-                    String logDate = new SimpleDateFormat("yyyy-MM-dd").format(callStartTime);
-                    callLogType.setLogDate(logDate);
-                    arrayList.add(callLogType);
-                    callLogType.setLogArrayList(arrayList);
+                    CallLogFragment.callLogTypeReceiver.setNumber(savedNumber);
+                    CallLogFragment.callLogTypeReceiver.setType(1);
+                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(callStartTime);
+                    CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
+
                 }
                 else{
+
                     onOutgoingCallEnded(context, savedNumber, callStartTime, new Date());
-                    callLogType.setNumber(savedNumber);
-                    callLogType.setType(2);
-                    String logDate = new SimpleDateFormat("yyyy-MM-dd").format(callStartTime);
-                    callLogType.setLogDate(logDate);
-                    arrayList.add(callLogType);
-                    callLogType.setLogArrayList(arrayList);
+                    CallLogFragment.callLogTypeReceiver.setNumber(savedNumber);
+                    CallLogFragment.callLogTypeReceiver.setType(2);
+                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(callStartTime);
+                    CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
+
                 }
                 break;
         }
