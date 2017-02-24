@@ -28,6 +28,7 @@ public class WsResponseObject {
 
     private ArrayList<Country> arrayListCountry;
     private ArrayList<ProfileDataOperation> arrayListUserRcProfile;
+    private ArrayList<ProfileData> arrayListMapping;
 
     private String profileSharingData;
 
@@ -70,7 +71,7 @@ public class WsResponseObject {
         this.otpLog = otpLog;
     }
 
-        @JsonProperty("profile_data")
+    @JsonProperty("profile_data")
 //    @JsonProperty("profile_details")
     public UserProfile getUserProfile() {
         return userProfile;
@@ -113,5 +114,14 @@ public class WsResponseObject {
 
     public void setProfileSharingData(String profileSharingData) {
         this.profileSharingData = profileSharingData;
+    }
+
+    @JsonProperty("mapping")
+    public ArrayList<ProfileData> getArrayListMapping() {
+        return arrayListMapping;
+    }
+
+    public void setArrayListMapping(ArrayList<ProfileData> arrayListMapping) {
+        this.arrayListMapping = arrayListMapping;
     }
 }
