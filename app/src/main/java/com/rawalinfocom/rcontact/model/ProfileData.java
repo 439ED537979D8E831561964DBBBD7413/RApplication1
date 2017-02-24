@@ -16,6 +16,7 @@ public class ProfileData {
     private String isFavourite;
     //    private String givenName;
     private ArrayList<ProfileDataOperation> operation;
+    private ArrayList<String> rcpPmId;
 
     @JsonProperty("pb_local_phonebook_id")
     public String getLocalPhoneBookId() {
@@ -42,6 +43,15 @@ public class ProfileData {
 
     public void setIsFavourite(String isFavourite) {
         this.isFavourite = isFavourite;
+    }
+
+    @JsonProperty("rcp_pm_id")
+    public ArrayList<String> getRcpPmId() {
+        return rcpPmId;
+    }
+
+    public void setRcpPmId(ArrayList<String> rcpPmId) {
+        this.rcpPmId = rcpPmId;
     }
 
     /* public String getGivenName() {
