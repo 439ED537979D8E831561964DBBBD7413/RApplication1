@@ -45,7 +45,7 @@
             android:name="io.fabric.ApiKey"
             android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7"/>
 
-        <service android:name=".services.OtpTimerService"/>
+        <service android:name=".service.OtpTimerService"/>
 
         <activity android:name=".MobileNumberRegistrationActivity"/>
         <activity
@@ -64,7 +64,7 @@
         </activity>
 
         <service
-            android:name=".services.ContactIdFetchService"
+            android:name=".service.ContactIdFetchService"
             android:enabled="true"
             android:exported="true">
         </service>
