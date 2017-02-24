@@ -16,6 +16,7 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -208,6 +209,14 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         }
         holder.text3dotsCallLog.setTypeface(Utils.typefaceIcons(context));
+
+        holder.text3dotsCallLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context,"item clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
