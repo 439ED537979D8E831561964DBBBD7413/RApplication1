@@ -21,11 +21,13 @@ import android.widget.Toast;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
+import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.CallLogType;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import butterknife.BindView;
@@ -47,6 +49,9 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private ArrayList<CallLogType> arrayListCallLoghistroy;
     private int previousPosition = 0;
 
+    private ArrayList<String> arrayListForKnownContact ;
+    private ArrayList<String> arrayListForUnknownContact ;
+    MaterialListDialog materialListDialog;
 
 
 
@@ -57,6 +62,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.fragment = fragment;
         this.arrayListCallLogs = arrayListCallLogs;
         this.arrayListCallLogHeader = arrayListCallLogHeader;
+
     }
 
 
@@ -123,12 +129,13 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         return previousPosition;
     }
-    String number ="";
+
     private void configureAllContactViewHolder(final AllCallLogViewHolder holder, final int
             position) {
 
         CallLogType callLogType = (CallLogType) arrayListCallLogs.get(position);
         final String name = callLogType.getName();
+        final String number =  callLogType.getNumber();
         if(!TextUtils.isEmpty(name))
         {
             holder.textContactName.setTypeface(Utils.typefaceBold(context));
@@ -136,7 +143,6 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             holder.textContactName.setText(name);
         }else
         {
-            number =  callLogType.getNumber();
             if(!TextUtils.isEmpty(number)){
                 holder.textContactName.setTypeface(Utils.typefaceBold(context));
                 holder.textContactName.setTextColor(ContextCompat.getColor(context,R.color.colorBlack));
@@ -213,7 +219,27 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.text3dotsCallLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context,"item clicked", Toast.LENGTH_SHORT).show();
+
+                if(!TextUtils.isEmpty(name)){
+                    arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name ,context.getString(R.string.show_call_history),context.getString(R.string.send_sms),
+                            context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number),
+                            context.getString(R.string.block),context.getString(R.string.call_reminder)));
+                    materialListDialog = new MaterialListDialog(context,arrayListForKnownContact,number,name);
+                    materialListDialog.setDialogTitle(name);
+                    materialListDialog.showDialog();
+
+                }else{
+                    if(!TextUtils.isEmpty(number)){
+                        String formatedNumber =  Utils.getFormattedNumber(context,number);
+                        arrayListForUnknownContact = new ArrayList<>(Arrays.asList("Call " + formatedNumber,context.getString(R.string.add_to_contact),
+                                context.getString(R.string.add_to_existing_contact),context.getString(R.string.show_call_history)
+                                ,context.getString(R.string.send_sms),context.getString(R.string.remove_from_call_log),
+                                context.getString(R.string.copy_phone_number),context.getString(R.string.block),context.getString(R.string.call_reminder)));
+                        materialListDialog = new MaterialListDialog(context,arrayListForUnknownContact,number,number);
+                        materialListDialog.setDialogTitle(number);
+                        materialListDialog.showDialog();
+                    }
+                }
             }
         });
 

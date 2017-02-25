@@ -2,12 +2,15 @@ package com.rawalinfocom.rcontact.helper;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.adapters.MaterialListAdapter;
 
 import java.util.ArrayList;
 
@@ -24,9 +27,12 @@ public class MaterialListDialog {
     private Dialog dialog;
     private String dialogTag;
     private TextView tvDialogTitle;
+    private ArrayList<String> stringArrayList;
+    String dialogTitle;
+    String numberToCall;
 
 
-    public MaterialListDialog(Context context, ArrayList<String> arrayList) {
+    public MaterialListDialog(Context context, ArrayList<String> arrayList, String number, String name) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -41,6 +47,42 @@ public class MaterialListDialog {
         tvDialogTitle = (TextView) dialog.findViewById(R.id.tvDialogTitle);
         tvDialogTitle.setTypeface(Utils.typefaceBold(context));
         recycleViewDialog = (RecyclerView) dialog.findViewById(R.id.recycle_view_dialog);
+
+        stringArrayList = arrayList;
+        numberToCall =  number;
+        dialogTitle = name;
+        if (!TextUtils.isEmpty(dialogTitle))
+            tvDialogTitle.setText(dialogTitle);
+
+        setAdapter();
+    }
+
+
+
+    private void setAdapter() {
+        if(!TextUtils.isEmpty(numberToCall)){
+            MaterialListAdapter materialListAdapter = new MaterialListAdapter(context, stringArrayList, numberToCall,  dialogTitle);
+            recycleViewDialog.setAdapter(materialListAdapter);
+            setRecyclerViewLayoutManager(recycleViewDialog);
+        }
+
+    }
+
+
+    /**
+     * Set RecyclerView's LayoutManager
+     */
+    public void setRecyclerViewLayoutManager(RecyclerView recyclerView) {
+        int scrollPosition = 0;
+        // If a layout manager has already been set, get current scroll position.
+        if (recyclerView.getLayoutManager() != null) {
+            scrollPosition =
+                    ((LinearLayoutManager) recyclerView.getLayoutManager())
+                            .findFirstCompletelyVisibleItemPosition();
+        }
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.scrollToPosition(scrollPosition);
     }
 
 
@@ -70,5 +112,17 @@ public class MaterialListDialog {
 
     public void setDialogTag(String dialogTag) {
         this.dialogTag = dialogTag;
+    }
+
+    public String getDialogTitle() {
+        return dialogTitle;
+    }
+
+    public String getNumberToCall() {
+        return numberToCall;
+    }
+
+    public void setNumberToCall(String numberToCall) {
+        this.numberToCall = numberToCall;
     }
 }
