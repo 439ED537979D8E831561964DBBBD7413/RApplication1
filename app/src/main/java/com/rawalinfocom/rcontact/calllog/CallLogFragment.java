@@ -318,11 +318,11 @@ public class CallLogFragment extends BaseFragment {
                 ArrayList<CallLogType> arrayListHistroy =  new ArrayList<>();
                 String userName =  cursor.getString(name);
                 String userNumber =  cursor.getString(number);
-                if(!TextUtils.isEmpty(userName)){
+               /* if(!TextUtils.isEmpty(userName)){
                     arrayListHistroy  = callLogHistroy(userName);
-                }else{
+                }else{*/
                     arrayListHistroy  = callLogHistroy(userNumber);
-                }
+//                }
 
                 int logCount = arrayListHistroy.size();
                 log.setHistroyLogCount(logCount);
@@ -741,6 +741,10 @@ public class CallLogFragment extends BaseFragment {
         super.onResume();
         try{
             if(AppConstants.isFromReceiver){
+                CallLogType callLogType = new CallLogType(getActivity());
+                String name  = callLogType.findNameByNumber(callLogTypeReceiver.getNumber());
+                if(!TextUtils.isEmpty(name))
+                    callLogTypeReceiver.setName(name);
                 ArrayList<CallLogType> arrayListHistroy = callLogHistroy(callLogTypeReceiver.getNumber());
                 int count =  arrayListHistroy.size();
                 callLogTypeReceiver.setHistroyLogCount(count);

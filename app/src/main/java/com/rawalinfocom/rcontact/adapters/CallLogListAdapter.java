@@ -221,10 +221,10 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             public void onClick(View v) {
 
                 if(!TextUtils.isEmpty(name)){
-                    arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name ,context.getString(R.string.show_call_history),context.getString(R.string.send_sms),
+                    arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name ,context.getString(R.string.send_sms),
                             context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number),
-                            context.getString(R.string.block),context.getString(R.string.call_reminder)));
-                    materialListDialog = new MaterialListDialog(context,arrayListForKnownContact,number,name);
+                            context.getString(R.string.call_reminder),context.getString(R.string.block)));
+                    materialListDialog = new MaterialListDialog(context,arrayListForKnownContact,number);
                     materialListDialog.setDialogTitle(name);
                     materialListDialog.showDialog();
 
@@ -232,10 +232,10 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     if(!TextUtils.isEmpty(number)){
                         String formatedNumber =  Utils.getFormattedNumber(context,number);
                         arrayListForUnknownContact = new ArrayList<>(Arrays.asList("Call " + formatedNumber,context.getString(R.string.add_to_contact),
-                                context.getString(R.string.add_to_existing_contact),context.getString(R.string.show_call_history)
+                                context.getString(R.string.add_to_existing_contact)
                                 ,context.getString(R.string.send_sms),context.getString(R.string.remove_from_call_log),
-                                context.getString(R.string.copy_phone_number),context.getString(R.string.block),context.getString(R.string.call_reminder)));
-                        materialListDialog = new MaterialListDialog(context,arrayListForUnknownContact,number,number);
+                                context.getString(R.string.copy_phone_number),context.getString(R.string.call_reminder),context.getString(R.string.block)));
+                        materialListDialog = new MaterialListDialog(context,arrayListForUnknownContact,number);
                         materialListDialog.setDialogTitle(number);
                         materialListDialog.showDialog();
                     }

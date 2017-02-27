@@ -3,8 +3,10 @@ package com.rawalinfocom.rcontact.helper;
 import android.app.Dialog;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -32,7 +34,7 @@ public class MaterialListDialog {
     String numberToCall;
 
 
-    public MaterialListDialog(Context context, ArrayList<String> arrayList, String number, String name) {
+    public MaterialListDialog(Context context, ArrayList<String> arrayList, String number) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -50,7 +52,7 @@ public class MaterialListDialog {
 
         stringArrayList = arrayList;
         numberToCall =  number;
-        dialogTitle = name;
+        dialogTitle = getDialogTitle();
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
 
@@ -61,12 +63,13 @@ public class MaterialListDialog {
 
     private void setAdapter() {
         if(!TextUtils.isEmpty(numberToCall)){
-            MaterialListAdapter materialListAdapter = new MaterialListAdapter(context, stringArrayList, numberToCall,  dialogTitle);
+            MaterialListAdapter materialListAdapter = new MaterialListAdapter(context, stringArrayList, numberToCall);
             recycleViewDialog.setAdapter(materialListAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
         }
 
     }
+
 
 
     /**
@@ -125,4 +128,5 @@ public class MaterialListDialog {
     public void setNumberToCall(String numberToCall) {
         this.numberToCall = numberToCall;
     }
+
 }

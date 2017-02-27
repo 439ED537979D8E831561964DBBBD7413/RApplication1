@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.CallLog;
 import android.provider.ContactsContract;
 
 import java.io.Serializable;
@@ -208,24 +209,36 @@ public class CallLogType implements Serializable {
         this.histroyLogCount = histroyLogCount;
     }
 
-    private String findNameByNumber(String phoneNumber) {
-        ContentResolver cr = context.getContentResolver();
-        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-        Cursor cursor = cr.query(uri, new String[]{"display_name"}, (String)null, new String[]{"display_name"}, (String)null);
-        if(cursor == null) {
-            return null;
-        } else {
-            String contactName = null;
-            if(cursor.moveToFirst()) {
-                contactName = cursor.getString(cursor.getColumnIndex("display_name"));
+    public String findNameByNumber(String phoneNumber) {
+        Cursor cursor = null;
+        String contactName = null;
+        try {
+            ContentResolver cr = context.getContentResolver();
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+            cursor = cr.query(uri, new String[]{"display_name"}, (String)null, new String[]{"display_name"}, (String)null);
+//            cursor = cr.query(CallLog.Calls.CONTENT_URI, null, CallLog.Calls.NUMBER + " =?", new String[]{number}, null);
+
+            if(cursor == null) {
+                return null;
+            } else {
+                if(cursor.moveToFirst()) {
+//                    contactName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
+                    contactName = cursor.getString(cursor.getColumnIndex("display_name"));
+
+                }
+
+                if(!cursor.isClosed()) {
+                    cursor.close();
+                }
+
             }
 
-            if(!cursor.isClosed()) {
-                cursor.close();
-            }
-
-            return contactName == null?phoneNumber:contactName;
+        }catch (SecurityException e){
+            e.printStackTrace();
         }
+
+        return contactName == null?phoneNumber:contactName;
+
     }
 
     private String getCoolDuration(float sum) {

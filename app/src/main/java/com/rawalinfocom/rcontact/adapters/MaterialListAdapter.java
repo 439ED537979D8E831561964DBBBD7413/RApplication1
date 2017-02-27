@@ -51,11 +51,11 @@ public class MaterialListAdapter extends RecyclerView.Adapter<MaterialListAdapte
     String numberToCall;
     String dialogName;
 
-    public MaterialListAdapter(Context context, ArrayList<String> arrayList, String number, String dialogTitle) {
+    public MaterialListAdapter(Context context, ArrayList<String> arrayList, String number) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
-        this.dialogName = dialogTitle;
+//        this.dialogName = dialogTitle;
     }
 
 
@@ -86,7 +86,7 @@ public class MaterialListAdapter extends RecyclerView.Adapter<MaterialListAdapte
                 }else if (value.equalsIgnoreCase(context.getString(R.string.add_to_existing_contact))){
                     Utils.addToExistingContact(context,numberToCall);
 
-                }else if(value.equalsIgnoreCase(context.getString(R.string.show_call_history))){
+                }/*else if(value.equalsIgnoreCase(context.getString(R.string.show_call_history))){
                     Pattern numberPat = Pattern.compile("\\d+");
                     Matcher matcher1 = numberPat.matcher(dialogName);
                     if (matcher1.find()) {
@@ -104,7 +104,7 @@ public class MaterialListAdapter extends RecyclerView.Adapter<MaterialListAdapte
                     }
 
 
-                }else if(value.equalsIgnoreCase(context.getString(R.string.send_sms))){
+                }*/else if(value.equalsIgnoreCase(context.getString(R.string.send_sms))){
                     Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
                     smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
                     smsIntent.setType("vnd.android-dir/mms-sms");
