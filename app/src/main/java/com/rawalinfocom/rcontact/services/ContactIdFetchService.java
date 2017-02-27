@@ -34,7 +34,8 @@ public class ContactIdFetchService extends Service {
 
         while (contactNameCursor.moveToNext()) {
             arrayListContactIds.add(contactNameCursor.getString(contactNameCursor
-                    .getColumnIndex(ContactsContract.Contacts._ID)));
+                    .getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
+//                    .getColumnIndex(ContactsContract.Contacts._ID)));
         }
 
         contactNameCursor.close();

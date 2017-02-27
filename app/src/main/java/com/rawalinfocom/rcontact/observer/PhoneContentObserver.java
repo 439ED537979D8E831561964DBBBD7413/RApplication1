@@ -60,75 +60,93 @@ public class PhoneContentObserver extends ContentObserver {
     public void onChange(boolean selfChange, Uri uri) {
         super.onChange(selfChange, uri);
         Log.i("onChange", uri.toString());
+        if (ContactsContract.Contacts.CONTENT_URI.toString().contains(uri.toString())) {
 
-        Cursor cursor = phoneBookContacts.getUpdatedContacts(String.valueOf(System
-                .currentTimeMillis() - 10000));
+            Cursor cursor = phoneBookContacts.getUpdatedContacts(String.valueOf(System
+                    .currentTimeMillis() - 10000));
 
-        ArrayList<String> arrayListContactNames = new ArrayList<>();
-        String rawId = "-1";
+            ArrayList<String> arrayListContactNames = new ArrayList<>();
+            String rawId = "-1";
 
-        while (cursor.moveToNext()) {
-            rawId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-            arrayListContactNames.add(cursor.getString(cursor.getColumnIndex(ContactsContract
-                    .CommonDataKinds.Phone.LOOKUP_KEY)) + " : " + cursor.getString(cursor
-                    .getColumnIndex(ContactsContract.Contacts._ID)) + " : " + cursor
-                    .getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone
-                            .NUMBER)));
-        }
-        cursor.close();
+            while (cursor.moveToNext()) {
+//            rawId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                rawId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts
+                        .LOOKUP_KEY));
+                arrayListContactNames.add(cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.Phone.LOOKUP_KEY)) + " : " + cursor.getString(cursor
+                        .getColumnIndex(ContactsContract.Contacts._ID)) + " : " + cursor
+                        .getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone
+                                .NUMBER)));
+            }
+            cursor.close();
 
-        for (int i = 0; i < arrayListContactNames.size(); i++) {
-            Log.i("onChange", arrayListContactNames.get(i));
-        }
-
-        ArrayList<String> arrayListContactIds = new ArrayList<>();
-        arrayListContactIds.addAll(Utils.getArrayListPreference(context, AppConstants
-                .PREF_CONTACT_ID_SET));
-
-        if (arrayListContactIds.contains(rawId)) {
-            Log.i("onChange", "Update");
-        } else if (rawId.equalsIgnoreCase("-1")) {
-            Log.i("onChange", "Delete");
-
-            Cursor contactNameCursor = phoneBookContacts.getAllContactId();
-
-            ArrayList<String> arrayListNewContactId = new ArrayList<>();
-
-            while (contactNameCursor.moveToNext()) {
-                arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
-                        .getColumnIndex(ContactsContract.Contacts._ID)));
+            for (int i = 0; i < arrayListContactNames.size(); i++) {
+                Log.i("onChange", arrayListContactNames.get(i));
             }
 
-            contactNameCursor.close();
+            ArrayList<String> arrayListContactIds = new ArrayList<>();
+            arrayListContactIds.addAll(Utils.getArrayListPreference(context, AppConstants
+                    .PREF_CONTACT_ID_SET));
 
-            Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
-                    arrayListNewContactId);
+            if (arrayListContactIds.contains(rawId)) {
+                Log.i("onChange", "Update");
+            } else if (rawId.equalsIgnoreCase("-1")) {
+                Log.i("onChange", "Delete");
 
-            Set<String> oldContactIds = new HashSet<>(arrayListContactIds);
-            Set<String> newContactIds = new HashSet<>(arrayListNewContactId);
-            oldContactIds.removeAll(newContactIds);
-            ArrayList<String> arrayListDeletedIds = new ArrayList<>(oldContactIds);
+                Cursor contactNameCursor = phoneBookContacts.getAllContactId();
 
-            if (arrayListDeletedIds.size() > 0) {
-                ProfileData profileData = new ProfileData();
-                profileData.setLocalPhoneBookId(arrayListDeletedIds.get(0));
+                ArrayList<String> arrayListNewContactId = new ArrayList<>();
 
-                ArrayList<ProfileDataOperation> arrayListOperations = new ArrayList<>();
-                ProfileDataOperation profileDataOperation = new ProfileDataOperation();
-                profileDataOperation.setFlag(String.valueOf(context.getResources().getInteger(R
-                        .integer.sync_delete)));
-                arrayListOperations.add(profileDataOperation);
+                while (contactNameCursor.moveToNext()) {
+                    arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
+                            .getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
+//                        .getColumnIndex(ContactsContract.Contacts._ID)));
+                }
 
-                profileData.setOperation(arrayListOperations);
+                contactNameCursor.close();
 
-                arrayListDeletedUserContact.add(profileData);
+                Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
+                        arrayListNewContactId);
 
-                deleteContact();
+                Set<String> oldContactIds = new HashSet<>(arrayListContactIds);
+                Set<String> newContactIds = new HashSet<>(arrayListNewContactId);
+                oldContactIds.removeAll(newContactIds);
+                ArrayList<String> arrayListDeletedIds = new ArrayList<>(oldContactIds);
+
+                if (arrayListDeletedIds.size() > 0) {
+                    ProfileData profileData = new ProfileData();
+                    profileData.setLocalPhoneBookId(arrayListDeletedIds.get(0));
+
+                    ArrayList<ProfileDataOperation> arrayListOperations = new ArrayList<>();
+                    ProfileDataOperation profileDataOperation = new ProfileDataOperation();
+                    profileDataOperation.setFlag(String.valueOf(context.getResources().getInteger(R
+                            .integer.sync_delete)));
+                    arrayListOperations.add(profileDataOperation);
+
+                    profileData.setOperation(arrayListOperations);
+
+                    arrayListDeletedUserContact.add(profileData);
+
+                    deleteContact();
+                }
+
+            } else {
+                Log.i("onChange", "Insert");
+                Cursor contactNameCursor = phoneBookContacts.getAllContactId();
+
+                ArrayList<String> arrayListNewContactId = new ArrayList<>();
+
+                while (contactNameCursor.moveToNext()) {
+                    arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
+                            .getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
+//                        .getColumnIndex(ContactsContract.Contacts._ID)));
+                }
+
+                contactNameCursor.close();
+
+                Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
+                        arrayListNewContactId);
             }
-
-        } else {
-            Log.i("onChange", "Insert");
-            // TODO : Add to rawId list preference
         }
 
     }
