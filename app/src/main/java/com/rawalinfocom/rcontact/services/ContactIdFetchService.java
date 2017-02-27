@@ -3,13 +3,13 @@ package com.rawalinfocom.rcontact.services;
 import android.app.Service;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.IBinder;
 import android.provider.ContactsContract;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.helper.Utils;
 
 import java.util.ArrayList;
@@ -26,7 +26,9 @@ public class ContactIdFetchService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Cursor contactNameCursor = getAllContactId();
+        PhoneBookContacts phoneBookContacts = new PhoneBookContacts(this);
+
+        Cursor contactNameCursor = phoneBookContacts.getAllContactId();
 
         ArrayList<String> arrayListContactIds = new ArrayList<>();
 
@@ -43,7 +45,7 @@ public class ContactIdFetchService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private Cursor getAllContactId() {
+    /*private Cursor getAllContactId() {
         Uri uri = ContactsContract.Contacts.CONTENT_URI;
         String[] projection = new String[]{
                 ContactsContract.Contacts._ID,
@@ -53,12 +55,12 @@ public class ContactIdFetchService extends Service {
 //        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
         String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
 
-       /* return getContentResolver().query(uri, projection, ContactsContract.RawContacts
+       *//* return getContentResolver().query(uri, projection, ContactsContract.RawContacts
                 .ACCOUNT_TYPE + " <> 'com.android.contacts.sim' "
                 + " AND " + ContactsContract.RawContacts.ACCOUNT_TYPE + " <> 'com.google' ",
-                null, sortOrder);*/
+                null, sortOrder);*//*
         return getContentResolver().query(uri, projection, null, null, sortOrder);
-    }
+    }*/
 
     private void sendMessage() {
         Intent intent = new Intent(AppConstants.ACTION_CONTACT_FETCH);

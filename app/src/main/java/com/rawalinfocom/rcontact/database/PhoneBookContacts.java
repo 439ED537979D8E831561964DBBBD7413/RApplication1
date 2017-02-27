@@ -23,6 +23,23 @@ public class PhoneBookContacts {
 
     //<editor-fold desc="Phone book Data Cursor">
 
+    public Cursor getAllContactId() {
+        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        String[] projection = new String[]{
+                ContactsContract.Contacts._ID,
+        };
+        String selection = ContactsContract.Contacts.HAS_PHONE_NUMBER + " = '1'";
+        String[] selectionArgs = null;
+//        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
+        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+
+       /* return getContentResolver().query(uri, projection, ContactsContract.RawContacts
+                .ACCOUNT_TYPE + " <> 'com.android.contacts.sim' "
+                + " AND " + ContactsContract.RawContacts.ACCOUNT_TYPE + " <> 'com.google' ",
+                null, sortOrder);*/
+        return context.getContentResolver().query(uri, projection, null, null, sortOrder);
+    }
+
     public Cursor getStarredStatus(String contactId) {
         Uri uri = ContactsContract.Contacts.CONTENT_URI;
         String[] projection = new String[]{
@@ -278,6 +295,24 @@ public class PhoneBookContacts {
 
         return context.getContentResolver().query(uri, projection, selection,
                 selectionArgs, null);
+    }
+
+    public Cursor getUpdatedContacts(String lastUpdate) {
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+//        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        String[] projection = new String[]{
+                ContactsContract.CommonDataKinds.Phone._ID,
+                ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
+                ContactsContract.CommonDataKinds.Phone.DATA_VERSION,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.Contacts._ID,
+        };
+
+        String selection = ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP + " >= ?";
+        String[] selectionArgs = new String[]{lastUpdate};
+
+        return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
     }
 
     //</editor-fold>
