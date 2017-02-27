@@ -29,6 +29,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -221,9 +223,19 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             public void onClick(View v) {
 
                 if(!TextUtils.isEmpty(name)){
-                    arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name ,context.getString(R.string.send_sms),
-                            context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number),
-                            context.getString(R.string.call_reminder),context.getString(R.string.block)));
+                    Pattern numberPat = Pattern.compile("\\d+");
+                    Matcher matcher1 = numberPat.matcher(name);
+                    if (matcher1.find()) {
+                        arrayListForKnownContact=  new ArrayList<>(Arrays.asList("Call " + name,context.getString(R.string.add_to_contact),
+                                context.getString(R.string.add_to_existing_contact)
+                                ,context.getString(R.string.send_sms),context.getString(R.string.remove_from_call_log),
+                                context.getString(R.string.copy_phone_number),context.getString(R.string.call_reminder),context.getString(R.string.block)));
+                    } else {
+                        arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name ,context.getString(R.string.send_sms),
+                                context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number),
+                                context.getString(R.string.call_reminder),context.getString(R.string.block)));
+                    }
+
                     materialListDialog = new MaterialListDialog(context,arrayListForKnownContact,number);
                     materialListDialog.setDialogTitle(name);
                     materialListDialog.showDialog();
