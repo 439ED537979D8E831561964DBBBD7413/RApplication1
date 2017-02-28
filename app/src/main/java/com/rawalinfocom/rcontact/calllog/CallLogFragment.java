@@ -592,7 +592,6 @@ public class CallLogFragment extends BaseFragment {
 
     }
 
-
     boolean isDualSIM;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
