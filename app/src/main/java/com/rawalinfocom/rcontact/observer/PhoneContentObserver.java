@@ -133,9 +133,20 @@ public class PhoneContentObserver extends ContentObserver {
                 // Insert
 
                 if (!arrayListContactIds.contains(rawId)) {
-                    arrayListContactIds.add(rawId);
+                    Cursor contactNameCursor = phoneBookContacts.getAllContactId();
+
+                    ArrayList<String> arrayListNewContactId = new ArrayList<>();
+
+                    while (contactNameCursor.moveToNext()) {
+                        arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
+                                .getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
+//                        .getColumnIndex(ContactsContract.Contacts._ID)));
+                    }
+
+                    contactNameCursor.close();
+
                     Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
-                            arrayListContactIds);
+                            arrayListNewContactId);
                     phoneBookOperations(rawId, String.valueOf(context
                             .getResources().getInteger(R.integer.sync_insert)));
                 }
