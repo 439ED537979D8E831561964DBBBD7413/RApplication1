@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -9,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.CallLogType;
 
@@ -26,42 +26,14 @@ import butterknife.ButterKnife;
  */
 
 
-public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryListAdapter.MyViewHolder> {
+public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryListAdapter
+        .MyViewHolder> {
 
-    private ArrayList<CallLogType> listCallHistroy;
-
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-
-
-        @BindView(R.id.text_histroy_number)
-        TextView textHistroyNumber;
-        @BindView(R.id.text_histroy_call_type)
-        TextView textHistroyCallType;
-        @BindView(R.id.text_histroy_date)
-        TextView textHistroyDate;
-        @BindView(R.id.image_histroy_call_type)
-        ImageView imageHistroyCallType;
-        @BindView(R.id.text_histroy_sim_type)
-        TextView textHistroySimType;
-        @BindView(R.id.text_duration)
-        TextView textDuration;
-        @BindView(R.id.text_histroy_duration_value)
-        TextView textHistroyDurationValue;
-        @BindView(R.id.text_histroy_call_time)
-        TextView textHistroyCallTime;
-
-        public MyViewHolder(View view) {
-            super(view);
-            ButterKnife.bind(this,itemView);
-
-        }
-    }
-
+    private ArrayList<CallLogType> listCallHistory;
 
     public CallHistoryListAdapter(ArrayList<CallLogType> listCallLogType) {
-        this.listCallHistroy = listCallLogType;
+        this.listCallHistory = listCallLogType;
     }
-
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -71,59 +43,57 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
         return new MyViewHolder(itemView);
     }
 
+    @SuppressLint("SimpleDateFormat")
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        CallLogType callLogType =  listCallHistroy.get(position);
-        String number =  callLogType.getHistroyNumber();
-        if(!TextUtils.isEmpty(number))
-            holder.textHistroyNumber.setText(number);
+        CallLogType callLogType = listCallHistory.get(position);
+        String number = callLogType.getHistoryNumber();
+        if (!TextUtils.isEmpty(number)) {
+            holder.textHistoryNumber.setText(number);
+        }
 
-        String numberType =  callLogType.getHistroyNumberType();
-        if(!TextUtils.isEmpty(numberType)){
-            holder.textHistroyCallType.setText("(" + numberType+ ")" +
+        String numberType = callLogType.getHistoryNumberType();
+        if (!TextUtils.isEmpty(numberType)) {
+            holder.textHistoryCallType.setText("(" + numberType + ")" +
                     "");
         }
 
-        long logDate1 =  callLogType.getHistroyDate();
-        Date date1=  new Date (logDate1);
+        long logDate1 = callLogType.getHistoryDate();
+        Date date1 = new Date(logDate1);
         String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
-        Date yesDate =  new Date();
-        yesDate =  cal.getTime();
+        Date yesDate;
+        yesDate = cal.getTime();
         String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd").format(yesDate);
 
         Calendar c = Calendar.getInstance();
-        Date cDate =  c.getTime();
+        Date cDate = c.getTime();
         String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
 
-        String finalDate = "";
-        if(logDate.equalsIgnoreCase(currentDate)){
+        String finalDate;
+        if (logDate.equalsIgnoreCase(currentDate)) {
             finalDate = "Today";
-
-        }else if(logDate.equalsIgnoreCase(yesterdayDate)){
+        } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
             finalDate = "Yesterday";
-
-        }else
-        {
-            finalDate =  new SimpleDateFormat("EEE,dd/MM").format(date1);;
-
+        } else {
+            finalDate = new SimpleDateFormat("EEE,dd/MM").format(date1);
         }
-        holder.textHistroyDate.setText(finalDate);
+        holder.textHistoryDate.setText(finalDate);
 
 
-        int callType =  callLogType.getHistroyType();
-        if(callType>0){
+        int callType = callLogType.getHistoryType();
+        if (callType > 0) {
             switch (callType) {
                 case AppConstants.INCOMING:
-                    holder.imageHistroyCallType.setImageResource(R.drawable.ic_call_incoming);
+                    holder.imageHistoryCallType.setImageResource(R.drawable.ic_call_incoming);
                     break;
                 case AppConstants.OUTGOING:
-                    holder.imageHistroyCallType.setImageResource(R.drawable.ic_call_outgoing);
+                    holder.imageHistoryCallType.setImageResource(R.drawable.ic_call_outgoing);
                     break;
                 case AppConstants.MISSED:
-                    holder.imageHistroyCallType.setImageResource(R.drawable.ic_call_missed);
+                    holder.imageHistoryCallType.setImageResource(R.drawable.ic_call_missed);
                     break;
                 default:
                     break;
@@ -132,11 +102,11 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
         }
 
         String duration = callLogType.getHistroyCoolDuration();
-        holder.textHistroyDurationValue.setText(duration);
+        holder.textHistoryDurationValue.setText(duration);
 
-        Date histroyDate = new Date(callLogType.getHistroyDate());
-        String callTime = new SimpleDateFormat("hh:mm a").format(histroyDate);
-        holder.textHistroyCallTime.setText(callTime);
+        Date historyDate = new Date(callLogType.getHistoryDate());
+        String callTime = new SimpleDateFormat("hh:mm a").format(historyDate);
+        holder.textHistoryCallTime.setText(callTime);
 
 
     }
@@ -144,8 +114,34 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
     @Override
     public int getItemCount() {
 
-        return listCallHistroy.size();
+        return listCallHistory.size();
     }
 
+    class MyViewHolder extends RecyclerView.ViewHolder {
+
+
+        @BindView(R.id.text_histroy_number)
+        TextView textHistoryNumber;
+        @BindView(R.id.text_histroy_call_type)
+        TextView textHistoryCallType;
+        @BindView(R.id.text_histroy_date)
+        TextView textHistoryDate;
+        @BindView(R.id.image_histroy_call_type)
+        ImageView imageHistoryCallType;
+        @BindView(R.id.text_histroy_sim_type)
+        TextView textHistorySimType;
+        @BindView(R.id.text_duration)
+        TextView textDuration;
+        @BindView(R.id.text_histroy_duration_value)
+        TextView textHistoryDurationValue;
+        @BindView(R.id.text_histroy_call_time)
+        TextView textHistoryCallTime;
+
+        MyViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, itemView);
+
+        }
+    }
 
 }

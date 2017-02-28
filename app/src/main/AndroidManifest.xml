@@ -45,8 +45,6 @@
             android:name="io.fabric.ApiKey"
             android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7"/>
 
-        <service android:name=".services.OtpTimerService"/>
-
         <activity android:name=".MobileNumberRegistrationActivity"/>
         <activity
             android:name=".CountryListActivity"
