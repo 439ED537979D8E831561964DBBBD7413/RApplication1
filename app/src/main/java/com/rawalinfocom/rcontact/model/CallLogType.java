@@ -1,6 +1,5 @@
 package com.rawalinfocom.rcontact.model;
 
-import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,8 +9,6 @@ import android.provider.ContactsContract;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * Created by user on 08/02/17.
@@ -27,18 +24,18 @@ public class CallLogType implements Serializable {
     private String callSimNumber;
     private String uniqueContactId;
     private String numberType;
-    private int histroyId;
-    String profileImage;
-    String logDate;
-    String name;
+    private int historyId;
+    private String profileImage;
+    private String logDate;
+    private String name;
 
-    private String histroyNumber;
-    private long histroyDate;
-    private int histroydDuration;
-    private int histroyType;
-    private String histroyCallSimNumber;
-    private String histroyNumberType;
-    private int histroyLogCount;
+    private String historyNumber;
+    private long historyDate;
+    private int historyDuration;
+    private int historyType;
+    private String historyCallSimNumber;
+    private String historyNumberType;
+    private int historyLogCount;
 
 
     public CallLogType() {
@@ -113,20 +110,20 @@ public class CallLogType implements Serializable {
     }
 
     public String getCoolDuration() {
-        return this.getCoolDuration((float)this.getDuration());
+        return this.getCoolDuration((float) this.getDuration());
     }
 
     public String getHistroyCoolDuration() {
-        return this.getCoolDuration((float)this.getHistroydDuration());
+        return this.getCoolDuration((float) this.getHistoryDuration());
     }
 
 
     public String getContactName() {
-        return this.getNumber() != null?this.findNameByNumber(this.getNumber()):null;
+        return this.getNumber() != null ? this.findNameByNumber(this.getNumber()) : null;
     }
 
     public String getContactNameOfNumber(String number) {
-        return number != null?this.findNameByNumber(number):null;
+        return number != null ? this.findNameByNumber(number) : null;
     }
 
     public String getUniqueContactId() {
@@ -137,12 +134,12 @@ public class CallLogType implements Serializable {
         this.uniqueContactId = uniqueContactId;
     }
 
-    public int getHistroyId() {
-        return histroyId;
+    public int getHistoryId() {
+        return historyId;
     }
 
-    public void setHistroyId(int histroyId) {
-        this.histroyId = histroyId;
+    public void setHistoryId(int historyId) {
+        this.historyId = historyId;
     }
 
     public String getProfileImage() {
@@ -153,60 +150,60 @@ public class CallLogType implements Serializable {
         this.profileImage = profileImage;
     }
 
-    public String getHistroyNumber() {
-        return histroyNumber;
+    public String getHistoryNumber() {
+        return historyNumber;
     }
 
-    public void setHistroyNumber(String histroyNumber) {
-        this.histroyNumber = histroyNumber;
+    public void setHistoryNumber(String historyNumber) {
+        this.historyNumber = historyNumber;
     }
 
-    public long getHistroyDate() {
-        return histroyDate;
+    public long getHistoryDate() {
+        return historyDate;
     }
 
-    public void setHistroyDate(long histroyDate) {
-        this.histroyDate = histroyDate;
+    public void setHistoryDate(long historyDate) {
+        this.historyDate = historyDate;
     }
 
-    public int getHistroydDuration() {
-        return histroydDuration;
+    public int getHistoryDuration() {
+        return historyDuration;
     }
 
-    public void setHistroydDuration(int histroydDuration) {
-        this.histroydDuration = histroydDuration;
+    public void setHistoryDuration(int historyDuration) {
+        this.historyDuration = historyDuration;
     }
 
-    public int getHistroyType() {
-        return histroyType;
+    public int getHistoryType() {
+        return historyType;
     }
 
-    public void setHistroyType(int histroyType) {
-        this.histroyType = histroyType;
+    public void setHistoryType(int historyType) {
+        this.historyType = historyType;
     }
 
-    public String getHistroyCallSimNumber() {
-        return histroyCallSimNumber;
+    public String getHistoryCallSimNumber() {
+        return historyCallSimNumber;
     }
 
-    public void setHistroyCallSimNumber(String histroyCallSimNumber) {
-        this.histroyCallSimNumber = histroyCallSimNumber;
+    public void setHistoryCallSimNumber(String historyCallSimNumber) {
+        this.historyCallSimNumber = historyCallSimNumber;
     }
 
-    public String getHistroyNumberType() {
-        return histroyNumberType;
+    public String getHistoryNumberType() {
+        return historyNumberType;
     }
 
-    public void setHistroyNumberType(String histroyNumberType) {
-        this.histroyNumberType = histroyNumberType;
+    public void setHistoryNumberType(String historyNumberType) {
+        this.historyNumberType = historyNumberType;
     }
 
-    public int getHistroyLogCount() {
-        return histroyLogCount;
+    public int getHistoryLogCount() {
+        return historyLogCount;
     }
 
-    public void setHistroyLogCount(int histroyLogCount) {
-        this.histroyLogCount = histroyLogCount;
+    public void setHistoryLogCount(int historyLogCount) {
+        this.historyLogCount = historyLogCount;
     }
 
     public String findNameByNumber(String phoneNumber) {
@@ -249,32 +246,31 @@ public class CallLogType implements Serializable {
         int hours;
         float minutes;
         DecimalFormat formatter;
-        if(sum >= 0.0F && sum < 3600.0F) {
+        if (sum >= 0.0F && sum < 3600.0F) {
             result = String.valueOf(sum / 60.0F);
             decimal = result.substring(0, result.lastIndexOf("."));
             point = "0" + result.substring(result.lastIndexOf("."));
             hours = Integer.parseInt(decimal);
             minutes = Float.parseFloat(point) * 60.0F;
             formatter = new DecimalFormat("#");
-            if(hours<10 || minutes<10)
-            {
-                duration = "0"+hours + ":" + "0"+formatter.format((double)minutes) + "";
+            if (hours < 10 || minutes < 10) {
+                duration = "0" + hours + ":" + "0" + formatter.format((double) minutes) + "";
 
-            }else {
-                duration = hours + ":" + formatter.format((double)minutes) + "";
+            } else {
+                duration = hours + ":" + formatter.format((double) minutes) + "";
             }
-        } else if(sum >= 3600.0F) {
+        } else if (sum >= 3600.0F) {
             result = String.valueOf(sum / 3600.0F);
             decimal = result.substring(0, result.lastIndexOf("."));
             point = "0" + result.substring(result.lastIndexOf("."));
             hours = Integer.parseInt(decimal);
             minutes = Float.parseFloat(point) * 60.0F;
             formatter = new DecimalFormat("#");
-            if(hours<10 || minutes<10){
-                duration = "0"+hours + ":" + "0"+formatter.format((double)minutes) + "";
+            if (hours < 10 || minutes < 10) {
+                duration = "0" + hours + ":" + "0" + formatter.format((double) minutes) + "";
 
-            }else {
-                duration = hours + ":" + formatter.format((double)minutes) + "";
+            } else {
+                duration = hours + ":" + formatter.format((double) minutes) + "";
             }
         }
 

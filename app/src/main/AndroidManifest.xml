@@ -45,8 +45,6 @@
             android:name="io.fabric.ApiKey"
             android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7"/>
 
-        <service android:name=".services.OtpTimerService"/>
-
         <activity android:name=".MobileNumberRegistrationActivity"/>
         <activity
             android:name=".CountryListActivity"
@@ -83,15 +81,20 @@
 
 
         <receiver android:name=".receivers.PhoneCallReceiver">
+
             <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.intent.action.PHONE_STATE"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
             </intent-filter>
         </receiver>
 
-
+        <service
+            android:name=".services.ContactSyncService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

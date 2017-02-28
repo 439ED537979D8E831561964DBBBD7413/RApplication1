@@ -1,10 +1,5 @@
 package com.rawalinfocom.rcontact;
 
-import android.Manifest;
-import android.annotation.TargetApi;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,8 +10,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -32,6 +25,7 @@ import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.services.ContactSyncService;
 import com.rawalinfocom.rcontact.sms.SmsFragment;
 
 import butterknife.BindView;
@@ -60,6 +54,9 @@ public class MainActivity extends BaseActivity implements NavigationView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts_main);
         ButterKnife.bind(this);
+
+        Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
+        startService(contactIdFetchService);
 
         if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()
                 .getInteger(R.integer.launch_mobile_registration)) == getResources().getInteger(R

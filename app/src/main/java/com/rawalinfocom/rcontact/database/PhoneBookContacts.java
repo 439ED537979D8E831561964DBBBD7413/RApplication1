@@ -23,13 +23,32 @@ public class PhoneBookContacts {
 
     //<editor-fold desc="Phone book Data Cursor">
 
+    public Cursor getAllContactId() {
+        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        String[] projection = new String[]{
+//                ContactsContract.Contacts._ID,
+                ContactsContract.Contacts.LOOKUP_KEY,
+        };
+        String selection = ContactsContract.Contacts.HAS_PHONE_NUMBER + " = '1'";
+        String[] selectionArgs = null;
+//        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
+        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+
+       /* return getContentResolver().query(uri, projection, ContactsContract.RawContacts
+                .ACCOUNT_TYPE + " <> 'com.android.contacts.sim' "
+                + " AND " + ContactsContract.RawContacts.ACCOUNT_TYPE + " <> 'com.google' ",
+                null, sortOrder);*/
+        return context.getContentResolver().query(uri, projection, null, null, sortOrder);
+    }
+
     public Cursor getStarredStatus(String contactId) {
         Uri uri = ContactsContract.Contacts.CONTENT_URI;
         String[] projection = new String[]{
                 ContactsContract.Contacts.STARRED,
         };
 
-        String selection = ContactsContract.Contacts._ID + " = ?";
+//        String selection = ContactsContract.Contacts._ID + " = ?";
+        String selection = ContactsContract.Contacts.LOOKUP_KEY + " = ?";
         String[] selectionArgs = new String[]{contactId};
 
         return context.getContentResolver().query(uri, projection, selection,
@@ -52,7 +71,8 @@ public class PhoneBookContacts {
     public Cursor getStarredContacts() {
         Uri uri = ContactsContract.Contacts.CONTENT_URI;
         String[] projection = new String[]{
-                ContactsContract.Contacts._ID,
+//                ContactsContract.Contacts._ID,
+                ContactsContract.Contacts.LOOKUP_KEY,
 //                ContactsContract.Contacts.STARRED,
         };
 
@@ -67,7 +87,8 @@ public class PhoneBookContacts {
     public Cursor getAllContacts() {
         Uri uri = ContactsContract.Contacts.CONTENT_URI;
         String[] projection = new String[]{
-                ContactsContract.Contacts._ID,
+//                ContactsContract.Contacts._ID,
+                ContactsContract.Contacts.LOOKUP_KEY,
                 ContactsContract.Contacts.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -83,7 +104,8 @@ public class PhoneBookContacts {
     public Cursor getStructuredName(String contactId) {
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.StructuredName._ID,
+//                ContactsContract.CommonDataKinds.StructuredName._ID,
+                ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY,
                 ContactsContract.CommonDataKinds.StructuredName.PREFIX,
                 ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
                 ContactsContract.CommonDataKinds.StructuredName.SUFFIX,
@@ -97,7 +119,8 @@ public class PhoneBookContacts {
 
         String selection = ContactsContract.Data.MIMETYPE + " = '" +
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE + "' AND " +
-                ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID
+//                ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID
+                ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY
                 + " = ?";
         String[] selectionArgs = new String[]{contactId};
 
@@ -108,13 +131,15 @@ public class PhoneBookContacts {
     public Cursor getContactNumbers(String contactId) {
         Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.Phone._ID,
+//                ContactsContract.CommonDataKinds.Phone._ID,
+                ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
                 ContactsContract.CommonDataKinds.Phone.TYPE
         };
 
-        String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
+//        String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
+        String selection = ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ?";
         String[] selectionArgs = new String[]{contactId};
 
         return context.getContentResolver().query(uri, projection, selection,
@@ -127,7 +152,8 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.Nickname.DATA1,
         };
 
-        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
+//        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
+        String selection = ContactsContract.CommonDataKinds.Nickname.LOOKUP_KEY + " = ? AND "
                 + ContactsContract.Data.MIMETYPE + " = ?";
         String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
                 .Nickname.CONTENT_ITEM_TYPE};
@@ -142,7 +168,8 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.Note.DATA1,
         };
 
-        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
+//        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
+        String selection = ContactsContract.CommonDataKinds.Event.LOOKUP_KEY + " = ? AND "
                 + ContactsContract.Data.MIMETYPE + " = ?";
         String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
                 .Note.CONTENT_ITEM_TYPE};
@@ -154,14 +181,16 @@ public class PhoneBookContacts {
     public Cursor getContactEmail(String contactId) {
         Uri uri = ContactsContract.CommonDataKinds.Email.CONTENT_URI;
         String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.Email._ID,
+//                ContactsContract.CommonDataKinds.Email._ID,
+                ContactsContract.CommonDataKinds.Email.LOOKUP_KEY,
                 ContactsContract.Contacts.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.TYPE,
                 ContactsContract.CommonDataKinds.Email.LABEL,
         };
 
-        String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
+//        String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
+        String selection = ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ?";
         String[] selectionArgs = new String[]{contactId};
 
         return context.getContentResolver().query(uri, projection, selection,
@@ -180,7 +209,8 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.Organization.LABEL,
         };
 
-        String selection = ContactsContract.CommonDataKinds.Organization.CONTACT_ID + " = ? AND "
+//        String selection = ContactsContract.CommonDataKinds.Organization.CONTACT_ID + " = ? AND "
+        String selection = ContactsContract.CommonDataKinds.Organization.LOOKUP_KEY + " = ? AND "
                 + ContactsContract.Data.MIMETYPE + " = ?";
         String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
                 .Organization.CONTENT_ITEM_TYPE};
@@ -192,7 +222,8 @@ public class PhoneBookContacts {
     public Cursor getContactAddress(String contactId) {
         Uri uri = ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI;
         String[] projection = new String[]{
-                ContactsContract.CommonDataKinds.StructuredPostal._ID,
+//                ContactsContract.CommonDataKinds.StructuredPostal._ID,
+                ContactsContract.CommonDataKinds.StructuredPostal.LOOKUP_KEY,
                 ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS,
                 ContactsContract.CommonDataKinds.StructuredPostal.CITY,
                 ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY,
@@ -205,7 +236,8 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.StructuredPostal.LABEL,
         };
 
-        String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
+//        String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
+        String selection = ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ?";
         String[] selectionArgs = new String[]{contactId};
 
         return context.getContentResolver().query(uri, projection, selection,
@@ -219,7 +251,8 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.Website.URL,
         };
 
-        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
+//        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
+        String selection = ContactsContract.CommonDataKinds.Event.LOOKUP_KEY + " = ? AND "
                 + ContactsContract.Data.MIMETYPE + " = ?";
         String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
                 .Website.CONTENT_ITEM_TYPE};
@@ -237,7 +270,8 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.Im.PROTOCOL,
         };
 
-        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
+//        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
+        String selection = ContactsContract.CommonDataKinds.Event.LOOKUP_KEY + " = ? AND "
                 + ContactsContract.Data.MIMETYPE + " = ?";
         String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
                 .Im.CONTENT_ITEM_TYPE};
@@ -254,7 +288,8 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.Event.START_DATE,
         };
 
-        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
+//        String selection = ContactsContract.CommonDataKinds.Event.CONTACT_ID + " = ? AND "
+        String selection = ContactsContract.CommonDataKinds.Event.LOOKUP_KEY + " = ? AND "
                 + ContactsContract.Data.MIMETYPE + " = ?";
         String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
                 .Event.CONTENT_ITEM_TYPE};
@@ -271,13 +306,32 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.Relation.LABEL,
         };
 
-        String selection = ContactsContract.CommonDataKinds.Relation.CONTACT_ID + " = ? AND "
+//        String selection = ContactsContract.CommonDataKinds.Relation.CONTACT_ID + " = ? AND "
+        String selection = ContactsContract.CommonDataKinds.Relation.LOOKUP_KEY + " = ? AND "
                 + ContactsContract.Data.MIMETYPE + " = ?";
         String[] selectionArgs = new String[]{contactId, ContactsContract.CommonDataKinds
                 .Relation.CONTENT_ITEM_TYPE};
 
         return context.getContentResolver().query(uri, projection, selection,
                 selectionArgs, null);
+    }
+
+    public Cursor getUpdatedContacts(String lastUpdate) {
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+//        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        String[] projection = new String[]{
+                ContactsContract.CommonDataKinds.Phone._ID,
+                ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
+                ContactsContract.CommonDataKinds.Phone.DATA_VERSION,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.Contacts._ID,
+        };
+
+        String selection = ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP + " >= ?";
+        String[] selectionArgs = new String[]{lastUpdate};
+
+        return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
     }
 
     //</editor-fold>
@@ -571,7 +625,10 @@ public class PhoneBookContacts {
         ContentValues values = new ContentValues();
         values.put(ContactsContract.Contacts.STARRED, status);
         return context.getContentResolver().update(ContactsContract.Contacts.CONTENT_URI, values,
-                ContactsContract.Contacts._ID + "= ?", new String[]{String.valueOf(contactRawId)});
+                ContactsContract.Contacts.LOOKUP_KEY + "= ?", new String[]{String.valueOf
+                        (contactRawId)});
+//                ContactsContract.Contacts._ID + "= ?", new String[]{String.valueOf
+// (contactRawId)});
     }
 
 }

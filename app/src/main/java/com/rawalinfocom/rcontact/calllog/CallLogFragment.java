@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.calllog;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,7 +14,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -61,6 +61,12 @@ import butterknife.ButterKnife;
 
 public class CallLogFragment extends BaseFragment {
 
+
+    private final String ALL_CALLS = "All Calls";
+    private final String INCOMING_CALLS = "Incoming Calls";
+    private final String OUTGOING_CALLS = "Outgoing Calls";
+    private final String MISSED_CALLS = "Missed Calls";
+
     @BindView(R.id.progressBarCallLog)
     ProgressBar progressBarCallLog;
     @BindView(R.id.linearProgressBar)
@@ -73,9 +79,9 @@ public class CallLogFragment extends BaseFragment {
     ArrayList<Object> arrayListObjectCallLogs;
     ArrayList<String> arrayListCallLogHeader;
     ArrayList<CallLogType> arrayListCallLogs;
-    ArrayList<CallLogType> arrayListCallLogsHistroy;
+    ArrayList<CallLogType> arrayListCallLogsHistory;
     MaterialDialog callConfirmationDialog;
-    String selectedcallType = "";
+    String selectedCallType = "";
     View mainView;
     private Runnable logsRunnable;
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG,
@@ -83,14 +89,19 @@ public class CallLogFragment extends BaseFragment {
     public static CallLogType callLogTypeReceiver;
 
 
+    //<editor-fold desc="Constructors">
+
     public CallLogFragment() {
         // Required empty public constructor
     }
 
-
     public static CallLogFragment newInstance() {
         return new CallLogFragment();
     }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Override Methods">
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,7 +136,6 @@ public class CallLogFragment extends BaseFragment {
         return mainView;
     }
 
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -157,13 +167,14 @@ public class CallLogFragment extends BaseFragment {
     }
 
     private void initSpinner() {
-        final List<String> spinnerArray = new ArrayList<String>();
-        spinnerArray.add("All Calls");
-        spinnerArray.add("Incoming Calls");
-        spinnerArray.add("Outgoing Calls");
-        spinnerArray.add("Missed Calls");
+        final List<String> spinnerArray = new ArrayList<>();
+        spinnerArray.add(ALL_CALLS);
+        spinnerArray.add(INCOMING_CALLS);
+        spinnerArray.add(OUTGOING_CALLS);
+        spinnerArray.add(MISSED_CALLS);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout
+                .simple_spinner_item, spinnerArray);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCallFilter.setAdapter(adapter);
@@ -174,7 +185,7 @@ public class CallLogFragment extends BaseFragment {
                 String value = parent.getSelectedItem().toString();
                 if (!TextUtils.isEmpty(value)) {
                     Log.i("callType", value);
-                    selectedcallType = value;
+                    selectedCallType = value;
                     loadLogs(value);
                 }
             }
@@ -188,22 +199,23 @@ public class CallLogFragment extends BaseFragment {
 
 
     // This is to be run only when READ_CONTACTS and READ_CALL_LOG permission are granted
+    @SuppressLint("SimpleDateFormat")
     private void loadLogs(String callType) {
 
-        List<CallLogType> callLogs = null;
+        List<CallLogType> callLogs;
         arrayListCallLogs = new ArrayList<>();
         arrayListCallLogHeader = new ArrayList<>();
         arrayListObjectCallLogs = new ArrayList<>();
-        arrayListCallLogsHistroy = new ArrayList<>();
+        arrayListCallLogsHistory = new ArrayList<>();
 
-        if (callType.equalsIgnoreCase("Missed Calls")) {
-            callLogs = getLogsbyCallType(AppConstants.MISSED_CALLS);
-        } else if (callType.equalsIgnoreCase("Incoming Calls")) {
-            callLogs = getLogsbyCallType(AppConstants.INCOMING_CALLS);
-        } else if (callType.equalsIgnoreCase("Outgoing Calls")) {
-            callLogs = getLogsbyCallType(AppConstants.OUTGOING_CALLS);
+        if (callType.equalsIgnoreCase(MISSED_CALLS)) {
+            callLogs = getLogsByCallType(AppConstants.MISSED_CALLS);
+        } else if (callType.equalsIgnoreCase(INCOMING_CALLS)) {
+            callLogs = getLogsByCallType(AppConstants.INCOMING_CALLS);
+        } else if (callType.equalsIgnoreCase(OUTGOING_CALLS)) {
+            callLogs = getLogsByCallType(AppConstants.OUTGOING_CALLS);
         } else {
-            callLogs = getLogsbyCallType(AppConstants.ALL_CALLS);
+            callLogs = getLogsByCallType(AppConstants.ALL_CALLS);
         }
 
         // To show recent call on top
@@ -219,7 +231,7 @@ public class CallLogFragment extends BaseFragment {
 
                 Calendar cal = Calendar.getInstance();
                 cal.add(Calendar.DATE, -1);
-                Date yesDate = new Date();
+                Date yesDate;
                 yesDate = cal.getTime();
                 String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd").format(yesDate);
                 Log.i("Call yesterday date", yesterdayDate);
@@ -229,7 +241,7 @@ public class CallLogFragment extends BaseFragment {
                 String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
                 Log.i("Call Current date", currentDate);
 
-                String finalDate = "";
+                String finalDate;
                 if (logDate.equalsIgnoreCase(currentDate)) {
                     finalDate = "Today";
                     listOfDates.add(finalDate);
@@ -265,7 +277,8 @@ public class CallLogFragment extends BaseFragment {
     private void setAdapter() {
         if (arrayListCallLogHeader != null && arrayListObjectCallLogs != null
                 && arrayListCallLogHeader.size() > 0 && arrayListObjectCallLogs.size() > 0) {
-            callLogListAdapter = new CallLogListAdapter(CallLogFragment.this, arrayListObjectCallLogs, arrayListCallLogHeader);
+            callLogListAdapter = new CallLogListAdapter(getActivity(), arrayListObjectCallLogs,
+                    arrayListCallLogHeader);
             recyclerCallLogs.setAdapter(callLogListAdapter);
             setRecyclerViewLayoutManager(recyclerCallLogs);
         }
@@ -289,7 +302,7 @@ public class CallLogFragment extends BaseFragment {
     }
 
 
-    private List<CallLogType> getLogsbyCallType(int callType) {
+    private List<CallLogType> getLogsByCallType(int callType) {
         ArrayList logs = new ArrayList();
         String order = CallLog.Calls.DATE + " DESC";
         try {
@@ -303,56 +316,64 @@ public class CallLogFragment extends BaseFragment {
                     break;
                 case AppConstants.ALL_CALLS:
                     selection = null;
-                default:
-                    selection = null;
                     break;
                 case AppConstants.MISSED_CALLS:
                     selection = "type = 3";
+                    break;
+                default:
+                    selection = null;
+                    break;
             }
 
-            Cursor cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, (String[]) null, selection, (String[]) null, order);
-            int number = cursor.getColumnIndex(CallLog.Calls.NUMBER);
-            int name = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
-            int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
-            int date = cursor.getColumnIndex(CallLog.Calls.DATE);
-            int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
-            int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
-            int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
+            Cursor cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI,
+                    null, selection, null, order);
+            if (cursor != null) {
+                int number = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+                int name = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
+                int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
+                int date = cursor.getColumnIndex(CallLog.Calls.DATE);
+                int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
+                int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
+                int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
 
-            while (cursor.moveToNext()) {
-                CallLogType log = new CallLogType(getActivity());
-                log.setNumber(cursor.getString(number));
-                log.setName(cursor.getString(name));
-                log.setType(cursor.getInt(type));
-                log.setDuration(cursor.getInt(duration));
-                log.setDate(cursor.getLong(date));
-                log.setUniqueContactId(cursor.getString(rowId));
-                String numberTypeLog = getPhoneNumberType(cursor.getInt(numberType));
-                Log.i("Number Type", numberTypeLog + " of number " + cursor.getString(number));
-                Log.i("Number Log Type", getLogType(cursor.getInt(type)) + " of number " + cursor.getString(number));
-                log.setNumberType(numberTypeLog);
-                ArrayList<CallLogType> arrayListHistroy = new ArrayList<>();
-                String userName = cursor.getString(name);
-                String userNumber = cursor.getString(number);
-               /* if(!TextUtils.isEmpty(userName)){
-                    arrayListHistroy  = callLogHistroy(userName);
-                }else{*/
-                arrayListHistroy = callLogHistroy(userNumber);
-//                }
+                while (cursor.moveToNext()) {
+                    CallLogType log = new CallLogType(getActivity());
+                    log.setNumber(cursor.getString(number));
+                    log.setName(cursor.getString(name));
+                    log.setType(cursor.getInt(type));
+                    log.setDuration(cursor.getInt(duration));
+                    log.setDate(cursor.getLong(date));
+                    log.setUniqueContactId(cursor.getString(rowId));
+                    String numberTypeLog = getPhoneNumberType(cursor.getInt(numberType));
+                    Log.i("Number Type", numberTypeLog + " of number " + cursor.getString(number));
+                    Log.i("Number Log Type", getLogType(cursor.getInt(type)) + " of number " +
+                            cursor
 
-                int logCount = arrayListHistroy.size();
-                log.setHistroyLogCount(logCount);
-                Log.i("Histroy size ", logCount + "" + " of " + cursor.getString(number));
-                Log.i("Histroy", "----------------------------------");
+                                    .getString(number));
+                    log.setNumberType(numberTypeLog);
+                    ArrayList<CallLogType> arrayListHistory;
+                    String userName = cursor.getString(name);
+                    String userNumber = cursor.getString(number);
+                   /* if (!TextUtils.isEmpty(userName)) {
+                        arrayListHistory = callLogHistory(userName);
+                    } else {*/
+                        arrayListHistory = callLogHistory(userNumber);
+//                    }
 
-                for (int i = 0; i < arrayListHistroy.size(); i++) {
-                    String simNumber = arrayListHistroy.get(i).getHistroyCallSimNumber();
-                    log.setCallSimNumber(simNumber);
+                    int logCount = arrayListHistory.size();
+                    log.setHistoryLogCount(logCount);
+                    Log.i("History size ", logCount + "" + " of " + cursor.getString(number));
+                    Log.i("History", "----------------------------------");
+
+                    for (int i = 0; i < arrayListHistory.size(); i++) {
+                        String simNumber = arrayListHistory.get(i).getHistoryCallSimNumber();
+                        log.setCallSimNumber(simNumber);
+                    }
+
+                    logs.add(log);
                 }
-
-                logs.add(log);
+                cursor.close();
             }
-            cursor.close();
 
         } catch (SecurityException e) {
             e.printStackTrace();
@@ -593,13 +614,18 @@ public class CallLogFragment extends BaseFragment {
     }
 
 
-    // A method to check if a permission is granted then execute tasks depending on that particular permission
+    // A method to check if a permission is granted then execute tasks depending on that
+    // particular permission
     @TargetApi(Build.VERSION_CODES.M)
-    private void checkPermissionToExecute(String permissions[], int requestCode, Runnable runnable) {
+    private void checkPermissionToExecute(String permissions[], int requestCode, Runnable
+            runnable) {
 
-        boolean logs = ContextCompat.checkSelfPermission(getActivity(), permissions[0]) != PackageManager.PERMISSION_GRANTED;
-        boolean contacts = ContextCompat.checkSelfPermission(getActivity(), permissions[1]) != PackageManager.PERMISSION_GRANTED;
-        boolean location = ContextCompat.checkSelfPermission(getActivity(), permissions[2]) != PackageManager.PERMISSION_GRANTED;
+        boolean logs = ContextCompat.checkSelfPermission(getActivity(), permissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;
+        boolean contacts = ContextCompat.checkSelfPermission(getActivity(), permissions[1]) !=
+                PackageManager.PERMISSION_GRANTED;
+        boolean location = ContextCompat.checkSelfPermission(getActivity(), permissions[2]) !=
+                PackageManager.PERMISSION_GRANTED;
         if (logs || contacts || location) {
             requestPermissions(permissions, requestCode);
         } else {
@@ -609,12 +635,15 @@ public class CallLogFragment extends BaseFragment {
 
     @Override
     @TargetApi(Build.VERSION_CODES.M)
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == AppConstants.READ_LOGS && permissions[0].equals(Manifest.permission.READ_CALL_LOG) && permissions[1].equals(Manifest.permission.READ_CONTACTS)
+        if (requestCode == AppConstants.READ_LOGS && permissions[0].equals(Manifest.permission
+                .READ_CALL_LOG) && permissions[1].equals(Manifest.permission.READ_CONTACTS)
                 && permissions[2].equals(Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED && grantResults[1] == PermissionChecker.PERMISSION_GRANTED &&
+            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED && grantResults[1] ==
+                    PermissionChecker.PERMISSION_GRANTED &&
                     grantResults[2] == PermissionChecker.PERMISSION_GRANTED) {
                 logsRunnable.run();
             } else {
@@ -626,7 +655,8 @@ public class CallLogFragment extends BaseFragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS, logsRunnable);
+                                checkPermissionToExecute(requiredPermissions, AppConstants
+                                        .READ_LOGS, logsRunnable);
                             }
                         })
                         .setNegativeButton("Exit App", new DialogInterface.OnClickListener() {
@@ -643,7 +673,8 @@ public class CallLogFragment extends BaseFragment {
 
     private void simSlotDetection(String number) {
         Uri allCalls = Uri.parse("content://call_log/calls");
-        Cursor c = getActivity().getContentResolver().query(allCalls, null, CallLog.Calls.NUMBER + " =?", new String[]{number}, null);
+        Cursor c = getActivity().getContentResolver().query(allCalls, null, CallLog.Calls.NUMBER
+                + " =?", new String[]{number}, null);
         if (c != null && c.getCount() > 0) {
             String id = c.getString(c.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID));
             Log.i("Sim slot id", id + " of number " + number);
@@ -657,7 +688,8 @@ public class CallLogFragment extends BaseFragment {
         Cursor cursor = null;
         String order = CallLog.Calls.DATE + " DESC";
         try {
-            cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null, CallLog.Calls.NUMBER + " =?", new String[]{number}, order);
+            cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
+                    CallLog.Calls.NUMBER + " =?", new String[]{number}, order);
 
         } catch (SecurityException e) {
             e.printStackTrace();
@@ -671,8 +703,9 @@ public class CallLogFragment extends BaseFragment {
         Cursor cursor = null;
         String order = CallLog.Calls.DATE + " DESC";
         try {
-            cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null, CallLog
-                    .Calls.CACHED_NAME + " =?", new String[]{name}, order);
+            cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
+                    CallLog
+                            .Calls.CACHED_NAME + " =?", new String[]{name}, order);
 
         } catch (SecurityException e) {
             e.printStackTrace();
@@ -681,10 +714,10 @@ public class CallLogFragment extends BaseFragment {
     }
 
 
-    private ArrayList callLogHistroy(String number) {
+    private ArrayList callLogHistory(String number) {
         String numberToSearch = number;
         ArrayList<CallLogType> callDetails = new ArrayList<>();
-        Cursor cursor = null;
+        Cursor cursor;
 
         Pattern numberPat = Pattern.compile("\\d+");
         Matcher matcher1 = numberPat.matcher(number);
@@ -706,7 +739,8 @@ public class CallLogFragment extends BaseFragment {
                 int account_id = -1;
                 int profileImage = -1;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    account = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME);//for versions above lollipop
+                    account = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME);
+                    //for versions above lollipop
                     account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
                     profileImage = cursor.getColumnIndex(CallLog.Calls.CACHED_PHOTO_URI);
                 } else {
@@ -732,12 +766,12 @@ public class CallLogFragment extends BaseFragment {
                     }
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
                     CallLogType logObject = new CallLogType();
-                    logObject.setHistroyNumber(phNum);
-                    logObject.setHistroyType(callType);
-                    logObject.setHistroyDate(dateOfCall);
-                    logObject.setHistroydDuration(Integer.parseInt(callDuration));
-                    logObject.setHistroyCallSimNumber(accountId);
-                    logObject.setHistroyId(histroyId);
+                    logObject.setHistoryNumber(phNum);
+                    logObject.setHistoryType(callType);
+                    logObject.setHistoryDate(dateOfCall);
+                    logObject.setHistoryDuration(Integer.parseInt(callDuration));
+                    logObject.setHistoryCallSimNumber(accountId);
+                    logObject.setHistoryId(histroyId);
                     callDetails.add(logObject);
                 }
             }
@@ -760,9 +794,9 @@ public class CallLogFragment extends BaseFragment {
                 String name = callLogType.findNameByNumber(callLogTypeReceiver.getNumber());
                 if (!TextUtils.isEmpty(name))
                     callLogTypeReceiver.setName(name);
-                ArrayList<CallLogType> arrayListHistroy = callLogHistroy(callLogTypeReceiver.getNumber());
+                ArrayList<CallLogType> arrayListHistroy = callLogHistory(callLogTypeReceiver.getNumber());
                 int count = arrayListHistroy.size();
-                callLogTypeReceiver.setHistroyLogCount(count);
+                callLogTypeReceiver.setHistoryLogCount(count);
                 String receiverDate = "Today";
                 if (!arrayListObjectCallLogs.contains(receiverDate)) {
                     arrayListCallLogHeader.add(0, receiverDate);
