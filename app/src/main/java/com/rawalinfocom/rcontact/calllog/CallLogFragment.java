@@ -34,6 +34,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.rawalinfocom.rcontact.BaseFragment;
@@ -54,19 +56,23 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CallLogFragment extends BaseFragment {
+
 
     private final String ALL_CALLS = "All Calls";
     private final String INCOMING_CALLS = "Incoming Calls";
     private final String OUTGOING_CALLS = "Outgoing Calls";
     private final String MISSED_CALLS = "Missed Calls";
 
-    private Runnable logsRunnable;
-    private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG,
-            Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_COARSE_LOCATION};
-
+    @BindView(R.id.progressBarCallLog)
+    ProgressBar progressBarCallLog;
+    @BindView(R.id.linearProgressBar)
+    LinearLayout linearProgressBar;
+    @BindView(R.id.linearMainContent)
+    LinearLayout linearMainContent;
     private Spinner spinnerCallFilter;
     private RecyclerView recyclerCallLogs;
     private CallLogListAdapter callLogListAdapter;
@@ -77,9 +83,11 @@ public class CallLogFragment extends BaseFragment {
     MaterialDialog callConfirmationDialog;
     String selectedCallType = "";
     View mainView;
-
-    @SuppressLint("StaticFieldLeak")
+    private Runnable logsRunnable;
+    private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG,
+            Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_COARSE_LOCATION};
     public static CallLogType callLogTypeReceiver;
+
 
     //<editor-fold desc="Constructors">
 
@@ -106,6 +114,19 @@ public class CallLogFragment extends BaseFragment {
 
     }
 
+    private void showProgressBar(){
+        linearProgressBar.setVisibility(View.VISIBLE);
+        progressBarCallLog.setVisibility(View.VISIBLE);
+        linearMainContent.setVisibility(View.GONE);
+    }
+
+
+    private void hideProgressBar(){
+        linearProgressBar.setVisibility(View.GONE);
+        progressBarCallLog.setVisibility(View.GONE);
+        linearMainContent.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -122,56 +143,14 @@ public class CallLogFragment extends BaseFragment {
         telephonyInit();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        try {
-            if (AppConstants.isFromReceiver) {
-                ArrayList<CallLogType> arrayListHistory = callLogHistory(callLogTypeReceiver
-                        .getNumber());
-                int count = arrayListHistory.size();
-                callLogTypeReceiver.setHistoryLogCount(count);
-                String receiverDate = "Today";
-                if (!arrayListObjectCallLogs.contains(receiverDate)) {
-                    arrayListCallLogHeader.add(0, receiverDate);
-                    arrayListObjectCallLogs.add(0, receiverDate);
-                    callLogListAdapter.notifyItemInserted(0);
-                    recyclerCallLogs.scrollToPosition(0);
-                }
-
-                arrayListObjectCallLogs.add(1, callLogTypeReceiver);
-                callLogListAdapter.notifyItemInserted(1);
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        AppConstants.isFromReceiver = false;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    //</editor-fold>
-
-    //<editor-fold desc="Private Public Methods">
-
     private void init() {
         spinnerCallFilter = (Spinner) mainView.findViewById(R.id.spinner_call_filter);
         recyclerCallLogs = (RecyclerView) mainView.findViewById(R.id.recycler_call_logs);
-        initSpinner();
-
         arrayListCallLogs = new ArrayList<>();
         arrayListCallLogHeader = new ArrayList<>();
         arrayListObjectCallLogs = new ArrayList<>();
 
+        initSpinner();
         logsRunnable = new Runnable() {
             @Override
             public void run() {
@@ -290,9 +269,7 @@ public class CallLogFragment extends BaseFragment {
                     }
                     arrayListObjectCallLogs.add(callLogType);
                 }
-
             }
-
         setAdapter();
         initSwipe();
     }
@@ -377,11 +354,11 @@ public class CallLogFragment extends BaseFragment {
                     ArrayList<CallLogType> arrayListHistory;
                     String userName = cursor.getString(name);
                     String userNumber = cursor.getString(number);
-                    if (!TextUtils.isEmpty(userName)) {
+                   /* if (!TextUtils.isEmpty(userName)) {
                         arrayListHistory = callLogHistory(userName);
-                    } else {
+                    } else {*/
                         arrayListHistory = callLogHistory(userNumber);
-                    }
+//                    }
 
                     int logCount = arrayListHistory.size();
                     log.setHistoryLogCount(logCount);
@@ -615,7 +592,6 @@ public class CallLogFragment extends BaseFragment {
 
     }
 
-
     boolean isDualSIM;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -808,7 +784,46 @@ public class CallLogFragment extends BaseFragment {
         return callDetails;
     }
 
-    //</editor-fold>
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            if (AppConstants.isFromReceiver) {
+                CallLogType callLogType = new CallLogType(getActivity());
+                String name = callLogType.findNameByNumber(callLogTypeReceiver.getNumber());
+                if (!TextUtils.isEmpty(name))
+                    callLogTypeReceiver.setName(name);
+                ArrayList<CallLogType> arrayListHistroy = callLogHistory(callLogTypeReceiver.getNumber());
+                int count = arrayListHistroy.size();
+                callLogTypeReceiver.setHistoryLogCount(count);
+                String receiverDate = "Today";
+                if (!arrayListObjectCallLogs.contains(receiverDate)) {
+                    arrayListCallLogHeader.add(0, receiverDate);
+                    arrayListObjectCallLogs.add(0, receiverDate);
+                    callLogListAdapter.notifyItemInserted(0);
+                    recyclerCallLogs.scrollToPosition(0);
+                }
 
+                arrayListObjectCallLogs.add(1, callLogTypeReceiver);
+                callLogListAdapter.notifyItemInserted(1);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppConstants.isFromReceiver = false;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
 
 }

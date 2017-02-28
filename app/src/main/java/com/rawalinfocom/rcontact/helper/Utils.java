@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -492,5 +494,22 @@ public class Utils {
             drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
         }
     }
+
+    public static void addToContact(Context context, String number){
+        Intent intent = new Intent(Intent.ACTION_INSERT,
+                ContactsContract.Contacts.CONTENT_URI);
+        intent.putExtra(ContactsContract.Intents.Insert.PHONE, number);
+        context.startActivity(intent);
+    }
+
+    public static void addToExistingContact(Context context, String number){
+        Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT,
+                ContactsContract.Contacts.CONTENT_URI);
+        intent.setType(ContactsContract.Contacts.CONTENT_ITEM_TYPE);
+        intent.putExtra(ContactsContract.Intents.Insert.PHONE, number);
+        context.startActivity(intent);
+
+    }
+
 
 }

@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -168,6 +169,28 @@ public class MainActivity extends BaseActivity implements NavigationView
         bindWidgetsWithAnEvent();
         setupTabLayout();
         Utils.changeTabsFont(this, tabMain);
+
+
+
+    }
+
+
+    private void showAddToContact(boolean value){
+        ImageView imageViewAddContact = (ImageView) findViewById(R.id.image_add_contact);
+        if(value){
+            imageViewAddContact.setVisibility(View.GONE);
+            imageViewAddContact.setVisibility(View.VISIBLE);
+            imageViewAddContact.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.addToContact(MainActivity.this, "");
+                }
+            });
+        }else {
+            imageViewAddContact.setVisibility(View.GONE);
+        }
+
+
     }
 
     private void setupTabLayout() {
@@ -201,12 +224,15 @@ public class MainActivity extends BaseActivity implements NavigationView
     private void setCurrentTabFragment(int tabPosition) {
         switch (tabPosition) {
             case 0:
+                showAddToContact(false);
                 replaceFragment(contactsFragment);
                 break;
             case 1:
+                showAddToContact(true);
                 replaceFragment(callLogFragment);
                 break;
             case 2:
+                showAddToContact(false);
                 replaceFragment(smsFragment);
                 break;
         }

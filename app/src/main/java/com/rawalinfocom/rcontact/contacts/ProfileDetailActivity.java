@@ -317,13 +317,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         init();
 
-        if (!TextUtils.isEmpty(historyName)) {
+       /* if (!TextUtils.isEmpty(historyName)) {
             fetchCallLogHistory(historyName);
 
-        } else {
+        } else {*/
             fetchCallLogHistory(historyNumber);
 
-        }
+//        }
 
     }
 
@@ -772,17 +772,24 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
 
     private void setCallLogHistoryDetails() {
-        CallLogType callLogType = new CallLogType();
-        textToolbarTitle.setText("Profile Detail");
         if (!TextUtils.isEmpty(historyName)) {
+            Pattern numberPat = Pattern.compile("\\d+");
+            Matcher matcher1 = numberPat.matcher(historyName);
+            if (matcher1.find()) {
+                textToolbarTitle.setText("Unknown number");
+            } else {
+                textToolbarTitle.setText(historyName);
+            }
             textFullScreenText.setTypeface(Utils.typefaceBold(this));
             textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
             textFullScreenText.setText(historyName);
+
         } else {
             if (!TextUtils.isEmpty(historyNumber)) {
                 textFullScreenText.setTypeface(Utils.typefaceBold(this));
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 textFullScreenText.setText(historyNumber);
+                textToolbarTitle.setText("Unknown number");
 
             }
 
