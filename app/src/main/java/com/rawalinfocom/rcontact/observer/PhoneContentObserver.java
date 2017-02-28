@@ -9,6 +9,7 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -72,26 +73,23 @@ public class PhoneContentObserver extends ContentObserver {
 //            rawId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                 rawId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts
                         .LOOKUP_KEY));
-                arrayListContactNames.add(cursor.getString(cursor.getColumnIndex(ContactsContract
-                        .CommonDataKinds.Phone.LOOKUP_KEY)) + " : " + cursor.getString(cursor
-                        .getColumnIndex(ContactsContract.Contacts._ID)) + " : " + cursor
-                        .getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone
-                                .NUMBER)));
             }
             cursor.close();
-
-            for (int i = 0; i < arrayListContactNames.size(); i++) {
-                Log.i("onChange", arrayListContactNames.get(i));
-            }
 
             ArrayList<String> arrayListContactIds = new ArrayList<>();
             arrayListContactIds.addAll(Utils.getArrayListPreference(context, AppConstants
                     .PREF_CONTACT_ID_SET));
 
             if (arrayListContactIds.contains(rawId)) {
-                Log.i("onChange", "Update");
+
+                // Update
+
+                phoneBookOperations(rawId, String.valueOf(context.getResources().getInteger(R
+                        .integer.sync_update)));
+
             } else if (rawId.equalsIgnoreCase("-1")) {
-                Log.i("onChange", "Delete");
+
+                // Delete
 
                 Cursor contactNameCursor = phoneBookContacts.getAllContactId();
 
@@ -131,27 +129,28 @@ public class PhoneContentObserver extends ContentObserver {
                 }
 
             } else {
-                Log.i("onChange", "Insert");
-                Cursor contactNameCursor = phoneBookContacts.getAllContactId();
 
-                ArrayList<String> arrayListNewContactId = new ArrayList<>();
+                // Insert
 
-                while (contactNameCursor.moveToNext()) {
-                    arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
-                            .getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
-//                        .getColumnIndex(ContactsContract.Contacts._ID)));
+                if (!arrayListContactIds.contains(rawId)) {
+                    arrayListContactIds.add(rawId);
+                    Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
+                            arrayListContactIds);
+                    phoneBookOperations(rawId, String.valueOf(context
+                            .getResources().getInteger(R.integer.sync_insert)));
                 }
-
-                contactNameCursor.close();
-
-                Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
-                        arrayListNewContactId);
             }
+
+            RContactApplication rContactApplication = (RContactApplication) context
+                    .getApplicationContext();
+            rContactApplication.setArrayListAllPhoneBookContacts(new ArrayList<>());
+            rContactApplication.setArrayListFavPhoneBookContacts(new ArrayList<>());
+
         }
 
     }
 
-    private void phoneBookOperations(String rawId) {
+    private void phoneBookOperations(String rawId, String flag) {
         arrayListUserContact = new ArrayList<>();
 
 //        for (int i = forFrom; i < forTo; i++) {
@@ -161,7 +160,7 @@ public class PhoneContentObserver extends ContentObserver {
         profileData.setLocalPhoneBookId(rawId);
 
         ProfileDataOperation operation = new ProfileDataOperation();
-        operation.setFlag("1");
+        operation.setFlag(flag);
 
         //<editor-fold desc="Structured Name">
         Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);
@@ -465,6 +464,8 @@ public class PhoneContentObserver extends ContentObserver {
         profileData.setOperation(arrayListOperation);
 
         arrayListUserContact.add(profileData);
+
+        uploadContacts();
 
     }
 

@@ -40,5 +40,6 @@
     <integer name="sync_update_update">3</integer>
     <integer name="sync_update_delete">4</integer>
     <integer name="sync_delete">5</integer>
+    <integer name="sync_update">6</integer>
 
 </resources>
