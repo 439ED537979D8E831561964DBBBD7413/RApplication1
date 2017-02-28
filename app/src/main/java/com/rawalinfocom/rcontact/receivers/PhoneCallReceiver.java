@@ -1,10 +1,11 @@
-package com.rawalinfocom.rcontact.calllog;
+package com.rawalinfocom.rcontact.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
 
+import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 
 import java.text.SimpleDateFormat;

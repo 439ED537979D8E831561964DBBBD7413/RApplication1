@@ -286,7 +286,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     UserProfile userProfile = new UserProfile();
 
                     userProfile.setPmId(contactNumberCursor.getString(contactNumberCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone._ID)));
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY)));
+//                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone._ID)));
 
                     userProfile.setPmFirstName(contactNumberCursor.getString(contactNumberCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
@@ -313,7 +314,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     UserProfile userProfile = new UserProfile();
 
                     userProfile.setPmId(contactEmailCursor.getString(contactEmailCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Email._ID)));
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Email.LOOKUP_KEY)));
+//                            .getColumnIndex(ContactsContract.CommonDataKinds.Email._ID)));
 
                     userProfile.setPmFirstName(contactEmailCursor.getString(contactEmailCursor
                             .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
