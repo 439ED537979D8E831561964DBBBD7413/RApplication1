@@ -70,7 +70,6 @@
         </service>
 
         <activity android:name=".contacts.ProfileDetailActivity">
-
             <!--
              <intent-filter>
                  <action android:name="android.intent.action.MAIN"/>
