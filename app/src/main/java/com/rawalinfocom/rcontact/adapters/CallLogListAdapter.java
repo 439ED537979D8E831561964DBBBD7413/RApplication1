@@ -1,12 +1,11 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,25 +39,22 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private final int HEADER = 0, CALL_LOGS = 1;
     private Context context;
-    private Fragment fragment;
     private ArrayList<Object> arrayListCallLogs;
     private ArrayList<String> arrayListCallLogHeader;
-    private ArrayList<CallLogType> arrayListCallLoghistroy;
     private int previousPosition = 0;
-
-
+    private String number = "";
 
 
     //<editor-fold desc="Constructor">
-    public CallLogListAdapter(Fragment fragment, ArrayList<Object> arrayListCallLogs,
+    public CallLogListAdapter(Context context, ArrayList<Object> arrayListCallLogs,
                               ArrayList<String> arrayListCallLogHeader) {
-        this.context = fragment.getActivity();
-        this.fragment = fragment;
+        this.context = context;
         this.arrayListCallLogs = arrayListCallLogs;
         this.arrayListCallLogHeader = arrayListCallLogHeader;
     }
+    //</editor-fold>
 
-
+    //<editor-fold desc="Override Methods">
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder = null;
@@ -66,7 +62,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         switch (viewType) {
             case HEADER:
-                View v1 = inflater.inflate(R.layout.list_item_call_log_header , parent, false);
+                View v1 = inflater.inflate(R.layout.list_item_call_log_header, parent, false);
                 viewHolder = new CallLogListAdapter.CallLogHeaderViewHolder(v1);
                 break;
             case CALL_LOGS:
@@ -81,11 +77,13 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (holder.getItemViewType()) {
             case HEADER:
-                CallLogListAdapter.CallLogHeaderViewHolder contactHeaderViewHolder = (CallLogListAdapter.CallLogHeaderViewHolder) holder;
+                CallLogListAdapter.CallLogHeaderViewHolder contactHeaderViewHolder =
+                        (CallLogListAdapter.CallLogHeaderViewHolder) holder;
                 configureHeaderViewHolder(contactHeaderViewHolder, position);
                 break;
             case CALL_LOGS:
-                CallLogListAdapter.AllCallLogViewHolder contactViewHolder = (CallLogListAdapter.AllCallLogViewHolder) holder;
+                CallLogListAdapter.AllCallLogViewHolder contactViewHolder = (CallLogListAdapter
+                        .AllCallLogViewHolder) holder;
                 configureAllContactViewHolder(contactViewHolder, position);
                 break;
         }
@@ -119,45 +117,46 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getSectionForPosition(int position) {
-
         return previousPosition;
     }
-    String number ="";
+    //</editor-fold>
+
+    //<editor-fold desc="Private Public Methods">
+    @SuppressLint("SimpleDateFormat")
     private void configureAllContactViewHolder(final AllCallLogViewHolder holder, final int
             position) {
 
         CallLogType callLogType = (CallLogType) arrayListCallLogs.get(position);
         final String name = callLogType.getName();
-        if(!TextUtils.isEmpty(name))
-        {
+        if (!TextUtils.isEmpty(name)) {
             holder.textContactName.setTypeface(Utils.typefaceBold(context));
-            holder.textContactName.setTextColor(ContextCompat.getColor(context,R.color.colorBlack));
+            holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
+                    .colorBlack));
             holder.textContactName.setText(name);
-        }else
-        {
-            number =  callLogType.getNumber();
-            if(!TextUtils.isEmpty(number)){
+        } else {
+            number = callLogType.getNumber();
+            if (!TextUtils.isEmpty(number)) {
                 holder.textContactName.setTypeface(Utils.typefaceBold(context));
-                holder.textContactName.setTextColor(ContextCompat.getColor(context,R.color.colorBlack));
-                String formatedNumber =  Utils.getFormattedNumber(context,number);
-                holder.textContactName.setText(formatedNumber);
-            }
-            else{
+                holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
+                        .colorBlack));
+                String formattedNumber = Utils.getFormattedNumber(context, number);
+                holder.textContactName.setText(formattedNumber);
+            } else {
                 holder.textContactName.setText(" ");
 
             }
         }
         long date = callLogType.getDate();
-        if(date>0){
+        if (date > 0) {
             Date date1 = new Date(date);
             String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(date1);
             holder.textContactDate.setText(logDate);
-        }else{
+        } else {
             String callReceiverDate = callLogType.getLogDate();
             holder.textContactDate.setText(callReceiverDate);
         }
-        int callType =  callLogType.getType();
-        if(callType>0){
+        int callType = callLogType.getType();
+        if (callType > 0) {
             switch (callType) {
                 case AppConstants.INCOMING:
                     holder.imageCallType.setImageResource(R.drawable.ic_call_incoming);
@@ -174,35 +173,34 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         }
 
-        int logCount =  callLogType.getHistroyLogCount();
-        Log.i("Histroy Adapter count",logCount+"" + " at position "+ position + " of number " + name );
-        if(logCount > 0){
-            holder.textCount.setText("("+logCount+""+")");
-        }else {
+        int logCount = callLogType.getHistoryLogCount();
+        if (logCount > 0) {
+            holder.textCount.setText("(" + logCount + "" + ")");
+        } else {
             holder.textCount.setText(" ");
         }
 
         boolean isDual = AppConstants.isDualSimPhone();
-        String simNumber = "";
-        simNumber =  callLogType.getCallSimNumber();
-        if(isDual)
-        {
-            if(!TextUtils.isEmpty(simNumber)){
-                if(simNumber.equalsIgnoreCase("2")){
-                    holder.textSimType.setTextColor(ContextCompat.getColor(context,R.color.darkCyan));
+        String simNumber;
+        simNumber = callLogType.getCallSimNumber();
+        if (isDual) {
+            if (!TextUtils.isEmpty(simNumber)) {
+                if (simNumber.equalsIgnoreCase("2")) {
+                    holder.textSimType.setTextColor(ContextCompat.getColor(context, R.color
+                            .darkCyan));
                     holder.textSimType.setText(context.getString(R.string.im_sim_2));
                     holder.textSimType.setTypeface(Utils.typefaceIcons(context));
-                }else {
-                    holder.textSimType.setTextColor(ContextCompat.getColor(context,R.color.vividBlue));
+                } else {
+                    holder.textSimType.setTextColor(ContextCompat.getColor(context, R.color
+                            .vividBlue));
                     holder.textSimType.setText(context.getString(R.string.im_sim_1));
                     holder.textSimType.setTypeface(Utils.typefaceIcons(context));
                 }
-            }else
-            {
+            } else {
                 holder.textSimType.setVisibility(View.GONE);
             }
 
-        }else {
+        } else {
 
             holder.textSimType.setVisibility(View.GONE);
 
@@ -222,12 +220,14 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     }
 
-    private void configureHeaderViewHolder(CallLogListAdapter.CallLogHeaderViewHolder holder, int position) {
+    private void configureHeaderViewHolder(CallLogListAdapter.CallLogHeaderViewHolder holder, int
+            position) {
         String date = (String) arrayListCallLogs.get(position);
         holder.textHeader.setText(date);
     }
+    //</editor-fold>
 
-
+    //<editor-fold desc="View Holder">
     public class AllCallLogViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.image_profile)
@@ -259,29 +259,27 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         @BindView(R.id.textCount)
         TextView textCount;
 
-
-        public AllCallLogViewHolder(View itemView) {
+        AllCallLogViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
 
 
         }
     }
-
 
     public class CallLogHeaderViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.text_header)
         TextView textHeader;
 
-        public CallLogHeaderViewHolder(View itemView) {
+        CallLogHeaderViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             textHeader.setTypeface(Utils.typefaceSemiBold(context));
 
         }
     }
-
+    //</editor-fold>
 
 
 }

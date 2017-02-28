@@ -898,7 +898,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));*/
 
             ProfileDataOperation operation = new ProfileDataOperation();
-            operation.setFlag("1");
+            operation.setFlag(String.valueOf(getResources().getInteger(R.integer.sync_insert)));
 
             //<editor-fold desc="Structured Name">
             Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);

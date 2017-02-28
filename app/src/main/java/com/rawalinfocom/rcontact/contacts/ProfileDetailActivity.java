@@ -207,11 +207,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Button buttonCallLog;
     @BindView(R.id.button_sms)
     Button buttonSms;
-    @BindView(R.id.relative_call_histroy)
+    @BindView(R.id.relative_call_history)
     RelativeLayout relativeCallHistory;
-    @BindView(R.id.text_icon_histroy)
+    @BindView(R.id.text_icon_history)
     TextView textIconHistory;
-    @BindView(R.id.recycler_call_histroy)
+    @BindView(R.id.recycler_call_history)
     RecyclerView recyclerCallHistory;
 
     RelativeLayout relativeRootRatingDialog;
@@ -318,10 +318,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         init();
 
         if (!TextUtils.isEmpty(historyName)) {
-            fetchCallLogHistroy(historyName);
+            fetchCallLogHistory(historyName);
 
         } else {
-            fetchCallLogHistroy(historyNumber);
+            fetchCallLogHistory(historyNumber);
 
         }
 
@@ -346,13 +346,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 break;
 
             case R.id.ripple_call_log:
-                layoutVisibiltyForProfile();
+                profileLayoutVisibility();
                 buttonCallLog.setClickable(false);
                 buttonCallLog.setEnabled(false);
                 buttonCallLog.setBackgroundColor(getResources().getColor(R.color.colorDarkGray));
                 rippleCallLog.setEnabled(false);
                 if (!TextUtils.isEmpty(contactName)) {
-                    fetchCallLogHistroy(contactName);
+                    fetchCallLogHistory(contactName);
                 }
                 break;
 
@@ -634,8 +634,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     //<editor-fold desc="Private Methods">
 
-
-    private void layoutVisibiltyForProfile() {
+    private void profileLayoutVisibility() {
         relativeContactDetails.setVisibility(View.GONE);
         relativeCallHistory.setVisibility(View.VISIBLE);
         textIconHistory.setTypeface(Utils.typefaceIcons(this));
@@ -648,7 +647,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             relativeCallHistory.setVisibility(View.VISIBLE);
             textIconHistory.setTypeface(Utils.typefaceIcons(this));
             rippleCallLog.setVisibility(View.GONE);
-            setCallLogHistroyDetails();
+            setCallLogHistoryDetails();
         } else {
             relativeContactDetails.setVisibility(View.VISIBLE);
             relativeCallHistory.setVisibility(View.GONE);
@@ -772,7 +771,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
 
-    private void setCallLogHistroyDetails() {
+    private void setCallLogHistoryDetails() {
         CallLogType callLogType = new CallLogType();
         textToolbarTitle.setText("Profile Detail");
         if (!TextUtils.isEmpty(historyName)) {
@@ -1407,7 +1406,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     //    private void showAllOrganizations(ProfileDataOperation profileDetail) {
     private void showAllOrganizations(ArrayList<ProfileDataOperationOrganization>
-                                              arraylistOrganization) {
+                                              arrayListOrganization) {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_all_organization);
@@ -1446,7 +1445,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         /*OrganizationListAdapter adapter = new OrganizationListAdapter(this, profileDetail
                 .getPbOrganization());*/
-        OrganizationListAdapter adapter = new OrganizationListAdapter(this, arraylistOrganization);
+        OrganizationListAdapter adapter = new OrganizationListAdapter(this, arrayListOrganization);
         recyclerViewDialogList.setAdapter(adapter);
 
         dialog.show();
@@ -1664,16 +1663,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         dialog.show();
     }
 
-    private void fetchCallLogHistroy(String value) {
+    private void fetchCallLogHistory(String value) {
         if (!TextUtils.isEmpty(value)) {
             arrayListHistory = callLogHistory(value);
-            Log.i("Histroy size  ", arrayListHistory.size() + "" + " of  " + value);
+            Log.i("History size  ", arrayListHistory.size() + "" + " of  " + value);
         }
 
-        setHistroyAdapter();
+        setHistoryAdapter();
     }
 
-    private void setHistroyAdapter() {
+    private void setHistoryAdapter() {
         if (callHistoryListAdapter == null) {
             if (arrayListHistory != null && arrayListHistory.size() > 0) {
                 textNoHistoryToShow.setVisibility(View.GONE);
@@ -1681,7 +1680,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 recyclerCallHistory.setAdapter(callHistoryListAdapter);
                 recyclerCallHistory.setFocusable(false);
                 setRecyclerViewLayoutManager(recyclerCallHistory);
-            }else {
+            } else {
                 textNoHistoryToShow.setVisibility(View.VISIBLE);
                 textNoHistoryToShow.setText(getResources().getString(R.string.text_no_history));
             }
@@ -1789,13 +1788,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     }
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
                     CallLogType logObject = new CallLogType();
-                    logObject.setHistroyNumber(phNum);
-                    logObject.setHistroyType(callType);
-                    logObject.setHistroyDate(dateOfCall);
-                    logObject.setHistroydDuration(Integer.parseInt(callDuration));
-                    logObject.setHistroyCallSimNumber(accountId);
-                    logObject.setHistroyId(histroyId);
-                    logObject.setHistroyNumberType(numberTypeLog);
+                    logObject.setHistoryNumber(phNum);
+                    logObject.setHistoryType(callType);
+                    logObject.setHistoryDate(dateOfCall);
+                    logObject.setHistoryDuration(Integer.parseInt(callDuration));
+                    logObject.setHistoryCallSimNumber(accountId);
+                    logObject.setHistoryId(histroyId);
+                    logObject.setHistoryNumberType(numberTypeLog);
                     callDetails.add(logObject);
                 }
             }

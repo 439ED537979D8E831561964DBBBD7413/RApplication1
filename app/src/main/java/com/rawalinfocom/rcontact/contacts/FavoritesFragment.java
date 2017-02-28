@@ -334,7 +334,9 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
             while (favouriteContactCursor.moveToNext()) {
 
                 arrayListFavouriteRawId.add(favouriteContactCursor.getString
-                        (favouriteContactCursor.getColumnIndex(ContactsContract.Contacts._ID)));
+                        (favouriteContactCursor.getColumnIndex(ContactsContract.Contacts
+                                .LOOKUP_KEY)));
+//                        (favouriteContactCursor.getColumnIndex(ContactsContract.Contacts._ID)));
 
             }
 
