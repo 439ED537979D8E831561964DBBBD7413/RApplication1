@@ -82,7 +82,9 @@
         <activity android:name=".ContactListingActivity">
         </activity>
 
-        <receiver android:name=".calllog.PhoneCallReceiver">
+
+        <receiver android:name=".receivers.PhoneCallReceiver">
+
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE"/>
             </intent-filter>

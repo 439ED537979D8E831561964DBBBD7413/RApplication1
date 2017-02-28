@@ -62,4 +62,6 @@
         <item>Share via email</item>
     </string-array>
 
+    <string name="text_no_history">No history to show</string>
+
 </resources>

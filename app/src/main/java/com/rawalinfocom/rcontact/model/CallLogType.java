@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.model;
 
+import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -28,6 +29,7 @@ public class CallLogType implements Serializable {
     private int histroyId;
     String profileImage;
     String logDate;
+    String name;
 
     private String histroyNumber;
     private long histroyDate;
@@ -37,7 +39,6 @@ public class CallLogType implements Serializable {
     private String histroyNumberType;
     private int histroyLogCount;
 
-    ArrayList<CallLogType> logArrayList =  new ArrayList<>();
 
     public CallLogType() {
     }
@@ -46,12 +47,12 @@ public class CallLogType implements Serializable {
         this.context = context;
     }
 
-    public ArrayList<CallLogType> getLogArrayList() {
-        return logArrayList;
+    public String getName() {
+        return name;
     }
 
-    public void setLogArrayList(ArrayList<CallLogType> logArrayList) {
-        this.logArrayList = logArrayList;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getLogDate() {
@@ -121,6 +122,10 @@ public class CallLogType implements Serializable {
 
     public String getContactName() {
         return this.getNumber() != null?this.findNameByNumber(this.getNumber()):null;
+    }
+
+    public String getContactNameOfNumber(String number) {
+        return number != null?this.findNameByNumber(number):null;
     }
 
     public String getUniqueContactId() {
@@ -204,7 +209,7 @@ public class CallLogType implements Serializable {
     }
 
     private String findNameByNumber(String phoneNumber) {
-        ContentResolver cr = this.context.getContentResolver();
+        ContentResolver cr = context.getContentResolver();
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
         Cursor cursor = cr.query(uri, new String[]{"display_name"}, (String)null, new String[]{"display_name"}, (String)null);
         if(cursor == null) {
