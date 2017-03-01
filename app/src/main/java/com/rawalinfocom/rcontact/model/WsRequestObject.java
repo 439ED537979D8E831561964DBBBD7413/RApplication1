@@ -59,6 +59,7 @@ public class WsRequestObject {
 
     private ArrayList<String> arrayListContactNumber;
     private ArrayList<String> arrayListEmailAddress;
+    private ArrayList<CallLogType> arrayListCallLogType;
 
     @JsonProperty("submit_rating")
     private ArrayList<Rating> ratings;
@@ -379,5 +380,14 @@ public class WsRequestObject {
 
     public void setDmLocation(String dmLocation) {
         this.dmLocation = dmLocation;
+    }
+
+    @JsonProperty("call_log")
+    public ArrayList<CallLogType> getArrayListCallLogType() {
+        return arrayListCallLogType;
+    }
+
+    public void setArrayListCallLogType(ArrayList<CallLogType> arrayListCallLogType) {
+        this.arrayListCallLogType = arrayListCallLogType;
     }
 }

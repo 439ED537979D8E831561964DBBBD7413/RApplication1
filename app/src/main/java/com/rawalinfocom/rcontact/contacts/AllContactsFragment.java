@@ -381,7 +381,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         }
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.scrollToPosition(scrollPosition);
     }
