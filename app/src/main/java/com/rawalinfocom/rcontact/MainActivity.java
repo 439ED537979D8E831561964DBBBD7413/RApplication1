@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,16 +25,22 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
 import com.rawalinfocom.rcontact.services.ContactSyncService;
 import com.rawalinfocom.rcontact.sms.SmsFragment;
+
+import org.apache.commons.lang3.StringUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity implements NavigationView
-        .OnNavigationItemSelectedListener {
+        .OnNavigationItemSelectedListener, WsResponseListener {
 
     @BindView(R.id.relative_root_contacts_main)
     RelativeLayout relativeRootContactsMain;
@@ -47,6 +55,10 @@ public class MainActivity extends BaseActivity implements NavigationView
     ContactsFragment contactsFragment;
     CallLogFragment callLogFragment;
     SmsFragment smsFragment;
+
+    OnlineDataSync onlineDataSync;
+
+    NetworkConnectionReceiver networkConnectionReceiver;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -84,7 +96,14 @@ public class MainActivity extends BaseActivity implements NavigationView
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
 
+            networkConnectionReceiver = new NetworkConnectionReceiver();
+
             init();
+            registerBroadcastReceiver();
+
+          /*  if (Utils.isNetworkAvailable(this)) {
+                onlineDataSync = new OnlineDataSync(this);
+            }*/
 
         }
 
@@ -136,6 +155,40 @@ public class MainActivity extends BaseActivity implements NavigationView
         return true;
     }
 
+    @Override
+    public void onDeliveryResponse(String serviceType, Object data, Exception error) {
+        if (error == null) {
+
+            // <editor-fold desc="REQ_ADD_PROFILE_VISIT">
+
+            if (serviceType.contains(WsConstants.REQ_ADD_PROFILE_VISIT)) {
+                WsResponseObject bgProfileVisitResponse = (WsResponseObject) data;
+                if (bgProfileVisitResponse != null && StringUtils.equalsIgnoreCase
+                        (bgProfileVisitResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                    Utils.removePreference(this, AppConstants.PREF_PROFILE_VIEWS);
+                } else {
+                    if (bgProfileVisitResponse != null) {
+                        Log.e("error response", bgProfileVisitResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "bgProfileVisitResponse null");
+                    }
+                }
+            }
+            //</editor-fold>
+
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (networkConnectionReceiver != null) {
+            unregisterBroadcastReceiver();
+        }
+    }
+
+    //</editor-fold>
+
     //<editor-fold desc="Private Methods">
 
     private void init() {
@@ -171,13 +224,11 @@ public class MainActivity extends BaseActivity implements NavigationView
         Utils.changeTabsFont(this, tabMain);
 
 
-
     }
 
-
-    private void showAddToContact(boolean value){
+    private void showAddToContact(boolean value) {
         ImageView imageViewAddContact = (ImageView) findViewById(R.id.image_add_contact);
-        if(value){
+        if (value) {
             imageViewAddContact.setVisibility(View.GONE);
             imageViewAddContact.setVisibility(View.VISIBLE);
             imageViewAddContact.setOnClickListener(new View.OnClickListener() {
@@ -186,7 +237,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                     Utils.addToContact(MainActivity.this, "");
                 }
             });
-        }else {
+        } else {
             imageViewAddContact.setVisibility(View.GONE);
         }
 
@@ -244,6 +295,15 @@ public class MainActivity extends BaseActivity implements NavigationView
         ft.replace(R.id.frame_container_main_tab, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commit();
+    }
+
+    public void registerBroadcastReceiver() {
+        this.registerReceiver(networkConnectionReceiver, new IntentFilter("android.net.conn" +
+                ".CONNECTIVITY_CHANGE"));
+    }
+
+    public void unregisterBroadcastReceiver() {
+        this.unregisterReceiver(networkConnectionReceiver);
     }
 
     //</editor-fold>
