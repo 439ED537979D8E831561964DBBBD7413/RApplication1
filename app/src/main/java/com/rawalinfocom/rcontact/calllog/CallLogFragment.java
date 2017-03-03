@@ -329,20 +329,23 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
     }
 
     private ArrayList<CallLogType> divideCallLogByChunck(ArrayList<CallLogType> list) {
-        int size = list.size();
+        int size= 0 ;
         callLogsListbyChunck = new ArrayList<>();
-        if(size > LIST_PARTITION_COUNT){
-            for (ArrayList<CallLogType> partition : chopped(list, LIST_PARTITION_COUNT)) {
-                // do something with partition
-                Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
-                callLogsListbyChunck.addAll(partition);
-                newList.removeAll(partition);
-                break;
-            }
-        }else{
-            callLogsListbyChunck.addAll(list);
-            newList.removeAll(list);
+        if(list !=null && list.size()>0 ){
+            size  = list.size();
+            if(size > LIST_PARTITION_COUNT){
+                for (ArrayList<CallLogType> partition : chopped(list, LIST_PARTITION_COUNT)) {
+                    // do something with partition
+                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+                    callLogsListbyChunck.addAll(partition);
+                    newList.removeAll(partition);
+                    break;
+                }
+            }else{
+                callLogsListbyChunck.addAll(list);
+                newList.removeAll(list);
 
+            }
         }
 
         return callLogsListbyChunck;
@@ -371,35 +374,42 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         }
         int sizeOfCallLog  =  callLogs.size();
         tempList.addAll(callLogs);
-        if(isFirstTime){
-            ArrayList<CallLogType> callLogTypeArrayList =  divideCallLogByChunck();
-            if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0)
-            {
-                insertServiceCall(callLogTypeArrayList);
+        try{
 
-            }
-        } else if(sizeOfCallLog!= Utils.getIntegerPreference(getActivity(),AppConstants.PREF_CALL_LOG_SIZE,0)) {
-            int diff =  Math.abs(sizeOfCallLog - Utils.getIntegerPreference(getActivity(),AppConstants.PREF_CALL_LOG_SIZE,0));
-            newList = new ArrayList<>(callLogs.subList(0,diff));
-            if(newList != null && newList.size()>0){
-                if (newList != null && newList.size() > 0)
+            if(isFirstTime){
+                ArrayList<CallLogType> callLogTypeArrayList =  divideCallLogByChunck();
+                if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0)
                 {
-                    if(newList.size() >  LIST_PARTITION_COUNT)
-                    {
-                        ArrayList<CallLogType>  temp =  divideCallLogByChunck(newList);
-                        if(temp != null && temp.size()>0)
-                            insertServiceCall(temp);
-                    }
-                    else {
-
-                        insertServiceCall(newList);
-                    }
+                    insertServiceCall(callLogTypeArrayList);
 
                 }
-            }
+            } else if(sizeOfCallLog!= Utils.getIntegerPreference(getActivity(),AppConstants.PREF_CALL_LOG_SIZE,0)) {
+                int diff =  Math.abs(sizeOfCallLog - Utils.getIntegerPreference(getActivity(),AppConstants.PREF_CALL_LOG_SIZE,0));
+                newList = new ArrayList<>(callLogs.subList(0,diff));
+                if(newList != null && newList.size()>0){
+                    if (newList != null && newList.size() > 0)
+                    {
+                        if(newList.size() >  LIST_PARTITION_COUNT)
+                        {
+                            ArrayList<CallLogType>  temp =  divideCallLogByChunck(newList);
+                            if(temp != null && temp.size()>0)
+                                insertServiceCall(temp);
+                        }
+                        else {
 
+                            insertServiceCall(newList);
+                        }
+
+                    }
+                }
+
+            }
+            Utils.setIntegerPreference(getActivity(),AppConstants.PREF_CALL_LOG_SIZE,sizeOfCallLog);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        Utils.setIntegerPreference(getActivity(),AppConstants.PREF_CALL_LOG_SIZE,sizeOfCallLog);
 
         /*boolean isContactSyncComplete =  AppConstants.isExtraCallLogBroadcastValue();
         if(isContactSyncComplete){
