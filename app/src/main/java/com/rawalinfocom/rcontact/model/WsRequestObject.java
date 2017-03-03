@@ -60,6 +60,8 @@ public class WsRequestObject {
     private ArrayList<String> arrayListContactNumber;
     private ArrayList<String> arrayListEmailAddress;
 
+    private ArrayList<ProfileVisit> arrayListProfileVisit;
+
     @JsonProperty("submit_rating")
     private ArrayList<Rating> ratings;
 
@@ -379,5 +381,14 @@ public class WsRequestObject {
 
     public void setDmLocation(String dmLocation) {
         this.dmLocation = dmLocation;
+    }
+
+    @JsonProperty("profile_visit")
+    public ArrayList<ProfileVisit> getArrayListProfileVisit() {
+        return arrayListProfileVisit;
+    }
+
+    public void setArrayListProfileVisit(ArrayList<ProfileVisit> arrayListProfileVisit) {
+        this.arrayListProfileVisit = arrayListProfileVisit;
     }
 }
