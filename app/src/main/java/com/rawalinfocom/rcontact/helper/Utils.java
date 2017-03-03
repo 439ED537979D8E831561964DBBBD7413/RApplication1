@@ -51,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.TimeZone;
 
 /**
@@ -299,6 +300,27 @@ public class Utils {
         }
     }
 
+    public static void setHashMapPreference(Context context, String key, @Nullable HashMap
+            hashMap) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(hashMap);
+        editor.putString(key, json);
+        editor.apply();
+    }
+
+    public static HashMap<String, String> getHashMapPreference(Context context, String key) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedpreferences.getString(key, null);
+        Type type = new TypeToken<HashMap>() {
+        }.getType();
+        return gson.fromJson(json, type);
+    }
+
     public static void removePreference(Context context, String key) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
@@ -495,14 +517,14 @@ public class Utils {
         }
     }
 
-    public static void addToContact(Context context, String number){
+    public static void addToContact(Context context, String number) {
         Intent intent = new Intent(Intent.ACTION_INSERT,
                 ContactsContract.Contacts.CONTENT_URI);
         intent.putExtra(ContactsContract.Intents.Insert.PHONE, number);
         context.startActivity(intent);
     }
 
-    public static void addToExistingContact(Context context, String number){
+    public static void addToExistingContact(Context context, String number) {
         Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT,
                 ContactsContract.Contacts.CONTENT_URI);
         intent.setType(ContactsContract.Contacts.CONTENT_ITEM_TYPE);

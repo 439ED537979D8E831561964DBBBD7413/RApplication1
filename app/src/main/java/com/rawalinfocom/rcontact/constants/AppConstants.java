@@ -107,6 +107,7 @@ public class AppConstants {
     public static String PREF_ACCESS_TOKEN = "pref_access_token";
     public static String PREF_FAVOURITE_CONTACT_NUMBER_EMAIL =
             "pref_favourite_contact_number_email";
+    public static String PREF_PROFILE_VIEWS = "pref_profile_views";
 
     public static String PREF_CALL_LOG_SIZE = "pref_call_log_size";
     public static String PREF_CALL_LOG_STARTS_FIRST_TIME = "pref_call_log_start_first_time";
@@ -114,7 +115,7 @@ public class AppConstants {
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
             PREF_CONTACT_ID_SET, PREF_USER_PM_ID, PREF_ACCESS_TOKEN,
-            PREF_FAVOURITE_CONTACT_NUMBER_EMAIL};
+            PREF_FAVOURITE_CONTACT_NUMBER_EMAIL,PREF_PROFILE_VIEWS};
 
     //</editor-fold>
 

@@ -54,7 +54,6 @@ import butterknife.ButterKnife;
 
 public class FavoritesFragment extends BaseFragment implements WsResponseListener {
 
-
     @BindView(R.id.progress_favorite_contact)
     ProgressWheel progressFavoriteContact;
     @BindView(R.id.relative_scroller)
@@ -240,12 +239,7 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
                     startActivity(smsIntent);
 
                 } else {
-                   /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                            actionNumber));
-                    startActivity(intent);*/
                     showCallConfirmationDialog(actionNumber);
-
-
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -309,38 +303,6 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(recyclerViewContactList);
-    }
-
-    private void showCallConfirmationDialog(final String number) {
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                number));
-                        startActivity(intent);
-                        break;
-                }
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
-
-        callConfirmationDialog.showDialog();
-
     }
 
     /**
@@ -641,6 +603,38 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
         recyclerViewContactList.setAdapter(allContactListAdapter);
 
         setRecyclerViewLayoutManager(recyclerViewContactList);
+
+    }
+
+    private void showCallConfirmationDialog(final String number) {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        callConfirmationDialog.dismissDialog();
+                        break;
+
+                    case R.id.rippleRight:
+                        callConfirmationDialog.dismissDialog();
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                                number));
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+        callConfirmationDialog.setTitleVisibility(View.GONE);
+        callConfirmationDialog.setLeftButtonText("Cancel");
+        callConfirmationDialog.setRightButtonText("Call");
+        callConfirmationDialog.setDialogBody("Call " + number + "?");
+
+        callConfirmationDialog.showDialog();
 
     }
 

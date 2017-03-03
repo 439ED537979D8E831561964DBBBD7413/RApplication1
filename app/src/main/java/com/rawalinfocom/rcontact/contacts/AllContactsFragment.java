@@ -862,10 +862,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     arrayListContactId = new ArrayList<>(arrayListContactIds);
                     phoneBookOperations();
                 } else {
-                    Log.e("Local Broadcast Receiver onReceive: ", "Error while Retriving Ids!");
+                    Log.e("Local onReceive: ", "Error while Retriving Ids!");
                 }
             } else {
-                Log.e("Local Broadcast Receiver onReceive: ", "Error while Retriving Ids!");
+                Log.e("Local onReceive: ", "Error while Retriving Ids!");
             }
         }
     };

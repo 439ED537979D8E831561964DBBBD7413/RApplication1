@@ -68,6 +68,7 @@
         </service>
 
         <activity android:name=".contacts.ProfileDetailActivity">
+
             <!--
              <intent-filter>
                  <action android:name="android.intent.action.MAIN"/>
@@ -79,9 +80,7 @@
         <activity android:name=".ContactListingActivity">
         </activity>
 
-
         <receiver android:name=".receivers.PhoneCallReceiver">
-
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE"/>
             </intent-filter>
@@ -96,6 +95,7 @@
             android:enabled="true"
             android:exported="true">
         </service>
+
     </application>
 
 </manifest>
