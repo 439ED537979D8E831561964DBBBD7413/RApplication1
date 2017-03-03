@@ -56,7 +56,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     CallLogFragment callLogFragment;
     SmsFragment smsFragment;
 
-    OnlineDataSync onlineDataSync;
+//    OnlineDataSync onlineDataSync;
 
     NetworkConnectionReceiver networkConnectionReceiver;
 

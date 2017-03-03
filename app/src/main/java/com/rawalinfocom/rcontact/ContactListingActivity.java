@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -105,7 +106,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 profileDataOperationVcard = (ProfileDataOperation) intent.getSerializableExtra
                         (AppConstants.EXTRA_OBJECT_CONTACT);
             } else {
-                profileDataOperationVcard = new ProfileDataOperation();
+                profileDataOperationVcard = null;
             }
         }
 
@@ -151,10 +152,10 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
                     if (!pmId.equalsIgnoreCase("-1")) {
                         shareContactRcp(receiver);
-                    } else if (profileDataOperationVcard != null) {
-                        shareContactNonRcp(receiver);
-                    } else {
+                    } else if (profileDataOperationVcard == null) {
                         inviteContact(mobileNumbers, emailIds);
+                    } else {
+                        shareContactNonRcp(receiver);
                     }
                 } else {
                     Utils.showErrorSnackBar(this, activityContactListing, "Please select at least" +
@@ -197,7 +198,13 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                         (inviteResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     Utils.showSuccessSnackBar(this, activityContactListing, "Invitation Sent " +
                             "successfully!");
-                    onBackPressed();
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onBackPressed();
+                        }
+                    }, 1500);
                 } else {
                     if (inviteResponse != null) {
                         Log.e("error response", inviteResponse.getMessage());
