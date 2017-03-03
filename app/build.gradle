@@ -65,9 +65,9 @@ final BUTTER_KNIFE_VERSION = '8.4.0'
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+   /* androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    })*/
 
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
@@ -99,6 +99,7 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.17.0'
     testCompile 'junit:junit:4.12'
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
+//    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

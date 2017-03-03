@@ -59,6 +59,7 @@ public class WsRequestObject {
 
     private ArrayList<String> arrayListContactNumber;
     private ArrayList<String> arrayListEmailAddress;
+    private ArrayList<CallLogType> arrayListCallLogType;
 
     private ArrayList<ProfileVisit> arrayListProfileVisit;
 
@@ -390,5 +391,14 @@ public class WsRequestObject {
 
     public void setArrayListProfileVisit(ArrayList<ProfileVisit> arrayListProfileVisit) {
         this.arrayListProfileVisit = arrayListProfileVisit;
+    }
+
+    @JsonProperty("call_log")
+    public ArrayList<CallLogType> getArrayListCallLogType() {
+        return arrayListCallLogType;
+    }
+
+    public void setArrayListCallLogType(ArrayList<CallLogType> arrayListCallLogType) {
+        this.arrayListCallLogType = arrayListCallLogType;
     }
 }

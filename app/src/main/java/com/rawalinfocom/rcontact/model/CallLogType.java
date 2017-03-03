@@ -7,42 +7,133 @@ import android.net.Uri;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 /**
  * Created by user on 08/02/17.
  */
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CallLogType implements Serializable {
 
-    private String number;
-    private long date;
-    private int duration;
-    private int type;
-    private Context context;
-    private String callSimNumber;
-    private String uniqueContactId;
-    private String numberType;
-    private int historyId;
-    private String profileImage;
-    private String logDate;
-    private String name;
 
+    @JsonIgnore
+    private long date;
+    @JsonIgnore
+    private int duration;
+    @JsonIgnore
+    private int type;
+    @JsonIgnore
+    private Context context;
+    @JsonIgnore
+    private String callSimNumber;
+    @JsonIgnore
+    private String numberType;
+    @JsonIgnore
+    private String profileImage;
+    @JsonIgnore
+    private String logDate;
+
+    @JsonIgnore
     private String historyNumber;
+    @JsonIgnore
     private long historyDate;
+    @JsonIgnore
     private int historyDuration;
+    @JsonIgnore
     private int historyType;
-    private String historyCallSimNumber;
+    @JsonIgnore
     private String historyNumberType;
+    @JsonIgnore
     private int historyLogCount;
 
+
+    @JsonProperty("flag")
+    private int flag = 0;
+    @JsonProperty("local_pb_row_id")
+    private String localPbRowId;
+    @JsonProperty("call_log_row_id")
+    private String uniqueContactId;
+    @JsonProperty("mobile_number")
+    private String number;
+    @JsonProperty("name")
+    private String name;
+    @JsonProperty("call_history_id")
+    private int historyId;
+    @JsonProperty("call_date_and_time")
+    private String callDateAndTime;
+    @JsonProperty("call_tye")
+    private String typeOfCall;
+    @JsonProperty("duration")
+    private String durationToPass;
+    @JsonProperty("simtype")
+    private String historyCallSimNumber;
+    @JsonProperty("details")
+    ArrayList<CallLogType> arrayListCallHistory;
 
     public CallLogType() {
     }
 
     public CallLogType(Context context) {
         this.context = context;
+        this.arrayListCallHistory = new ArrayList<>();
+    }
+
+
+    public String getDurationToPass() {
+        return durationToPass;
+    }
+
+    public void setDurationToPass(String durationToPass) {
+        this.durationToPass = durationToPass;
+    }
+
+    public String getTypeOfCall() {
+        return typeOfCall;
+    }
+
+    public void setTypeOfCall(String typeOfCall) {
+        this.typeOfCall = typeOfCall;
+    }
+
+    public String getCallDateAndTime() {
+        return callDateAndTime;
+    }
+
+    public void setCallDateAndTime(String callDateAndTime) {
+        this.callDateAndTime = callDateAndTime;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
+    }
+
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    public String getLocalPbRowId() {
+        return localPbRowId;
+    }
+
+    public void setLocalPbRowId(String localPbRowId) {
+        this.localPbRowId = localPbRowId;
+    }
+
+    public ArrayList<CallLogType> getArrayListCallHistory() {
+        return arrayListCallHistory;
+    }
+
+    public void setArrayListCallHistory(ArrayList<CallLogType> arrayListCallHistory) {
+        this.arrayListCallHistory = arrayListCallHistory;
     }
 
     public String getName() {
@@ -109,15 +200,17 @@ public class CallLogType implements Serializable {
         this.callSimNumber = callSimNumber;
     }
 
+    @JsonIgnore
     public String getCoolDuration() {
         return this.getCoolDuration((float) this.getDuration());
     }
 
+    @JsonIgnore
     public String getHistroyCoolDuration() {
         return this.getCoolDuration((float) this.getHistoryDuration());
     }
 
-
+    @JsonIgnore
     public String getContactName() {
         return this.getNumber() != null ? this.findNameByNumber(this.getNumber()) : null;
     }
@@ -134,6 +227,7 @@ public class CallLogType implements Serializable {
         this.uniqueContactId = uniqueContactId;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public int getHistoryId() {
         return historyId;
     }
@@ -212,33 +306,33 @@ public class CallLogType implements Serializable {
         try {
             ContentResolver cr = context.getContentResolver();
             Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-            cursor = cr.query(uri, new String[]{"display_name"}, (String)null, new String[]{"display_name"}, (String)null);
+            cursor = cr.query(uri, new String[]{"display_name"}, (String) null, new String[]{"display_name"}, (String) null);
 //            cursor = cr.query(CallLog.Calls.CONTENT_URI, null, CallLog.Calls.NUMBER + " =?", new String[]{number}, null);
 
-            if(cursor == null) {
+            if (cursor == null) {
                 return null;
             } else {
-                if(cursor.moveToFirst()) {
+                if (cursor.moveToFirst()) {
 //                    contactName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
                     contactName = cursor.getString(cursor.getColumnIndex("display_name"));
 
                 }
 
-                if(!cursor.isClosed()) {
+                if (!cursor.isClosed()) {
                     cursor.close();
                 }
 
             }
 
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             e.printStackTrace();
         }
 
-        return contactName == null?phoneNumber:contactName;
+        return contactName == null ? phoneNumber : contactName;
 
     }
 
-    private String getCoolDuration(float sum) {
+    public String getCoolDuration(float sum) {
         String duration = "";
         String result;
         String decimal;

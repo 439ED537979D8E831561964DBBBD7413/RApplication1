@@ -29,6 +29,15 @@
             android:padding="@dimen/padding_10dp"
             android:text="@string/im_3_dots"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_temp_number"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/padding_10dp"
+            android:text=""
+            android:visibility="gone"/>
+
         <ImageView
             android:id="@+id/image_social_media"
             android:layout_width="25dp"
