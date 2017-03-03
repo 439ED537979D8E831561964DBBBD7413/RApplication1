@@ -119,6 +119,7 @@ public class CallLogType implements Serializable {
         this.flag = flag;
     }
 
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public String getLocalPbRowId() {
         return localPbRowId;
     }

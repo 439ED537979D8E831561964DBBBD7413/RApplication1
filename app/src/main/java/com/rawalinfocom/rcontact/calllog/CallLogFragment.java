@@ -4,9 +4,12 @@ package com.rawalinfocom.rcontact.calllog;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -23,6 +26,7 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -83,24 +87,30 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
     LinearLayout linearMainContent;
     @BindView(R.id.linearCallLogMain)
     LinearLayout linearCallLogMain;
+
     private Spinner spinnerCallFilter;
     private RecyclerView recyclerCallLogs;
     private CallLogListAdapter callLogListAdapter;
+
     ArrayList<Object> arrayListObjectCallLogs;
     ArrayList<String> arrayListCallLogHeader;
     ArrayList<CallLogType> arrayListCallLogs;
     ArrayList<CallLogType> arrayListCallLogsHistory;
     ArrayList<CallLogType> tempList;
+    ArrayList<CallLogType> callLogsListbyChunck;
+    ArrayList<CallLogType> newList;
+
     MaterialDialog callConfirmationDialog;
     String selectedCallType = "";
     View mainView;
+
     private Runnable logsRunnable;
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG,
             Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_COARSE_LOCATION};
     public static CallLogType callLogTypeReceiver;
     private int LIST_PARTITION_COUNT = 50;
-
-
+    private static boolean startInsertion = false;
+    private boolean isFirstTime;
     //<editor-fold desc="Constructors">
 
     public CallLogFragment() {
@@ -114,29 +124,20 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
     //</editor-fold>
 
     //<editor-fold desc="Override Methods">
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         callLogTypeReceiver = new CallLogType();
+        if(Utils.getBooleanPreference(getActivity(),AppConstants.PREF_CALL_LOG_STARTS_FIRST_TIME,true)){
+            isFirstTime = true;
+            Utils.setBooleanPreference(getActivity(),AppConstants.PREF_CALL_LOG_STARTS_FIRST_TIME,false);
+        }
+
     }
 
     @Override
     public void getFragmentArguments() {
 
-    }
-
-    private void showProgressBar() {
-        linearProgressBar.setVisibility(View.VISIBLE);
-        progressBarCallLog.setVisibility(View.VISIBLE);
-        linearMainContent.setVisibility(View.GONE);
-    }
-
-
-    private void hideProgressBar() {
-        linearProgressBar.setVisibility(View.GONE);
-        progressBarCallLog.setVisibility(View.GONE);
-        linearMainContent.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -156,6 +157,45 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            if (AppConstants.isFromReceiver) {
+                CallLogType callLogType = new CallLogType(getActivity());
+                String name = callLogType.findNameByNumber(callLogTypeReceiver.getNumber());
+                if (!TextUtils.isEmpty(name))
+                    callLogTypeReceiver.setName(name);
+                ArrayList<CallLogType> arrayListHistroy = callLogHistory(callLogTypeReceiver.getNumber());
+                int count = arrayListHistroy.size();
+                callLogTypeReceiver.setHistoryLogCount(count);
+                callLogTypeReceiver.setArrayListCallHistory(arrayListHistroy);
+                String receiverDate = "Today";
+                if (!arrayListObjectCallLogs.contains(receiverDate)) {
+                    arrayListCallLogHeader.add(0, receiverDate);
+                    arrayListObjectCallLogs.add(0, receiverDate);
+                    callLogListAdapter.notifyItemInserted(0);
+                    recyclerCallLogs.scrollToPosition(0);
+                }
+
+                arrayListObjectCallLogs.add(1, callLogTypeReceiver);
+                callLogListAdapter.notifyItemInserted(1);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isFirstTime =  false;
+        AppConstants.isFromReceiver = false;
+    }
+
+    @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
 
         if (error == null) {
@@ -163,6 +203,23 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                 WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
                 if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase(callLogInsertionResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    if(isFirstTime){
+                        ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
+                        if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0)
+                            insertServiceCall(callLogTypeArrayList);
+                        else
+                            Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " + "Call Logs Synced");
+                    }else{
+                            ArrayList<CallLogType> temp = divideCallLogByChunck(newList);
+                            if(temp.size() >= LIST_PARTITION_COUNT){
+                                if(temp != null && temp.size()>0)
+                                    insertServiceCall(newList);
+                            }else {
+                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " + "Call Logs Synced");
+                            }
+                    }
+
 
                 } else {
                     if (callLogInsertionResponse != null) {
@@ -180,6 +237,28 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                         .getLocalizedMessage());
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+//        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
+        super.onDestroy();
+
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Public Private Methods">
+
+    private void showProgressBar() {
+        linearProgressBar.setVisibility(View.VISIBLE);
+        progressBarCallLog.setVisibility(View.VISIBLE);
+        linearMainContent.setVisibility(View.GONE);
+    }
+
+    private void hideProgressBar() {
+        linearProgressBar.setVisibility(View.GONE);
+        progressBarCallLog.setVisibility(View.GONE);
+        linearMainContent.setVisibility(View.VISIBLE);
     }
 
     private void init() {
@@ -236,6 +315,39 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         });
     }
 
+    private ArrayList<CallLogType> divideCallLogByChunck() {
+        int size = tempList.size();
+        callLogsListbyChunck = new ArrayList<>();
+        for (ArrayList<CallLogType> partition : chopped(tempList, LIST_PARTITION_COUNT)) {
+            // do something with partition
+            Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+            callLogsListbyChunck.addAll(partition);
+            tempList.removeAll(partition);
+            break;
+        }
+        return callLogsListbyChunck;
+    }
+
+    private ArrayList<CallLogType> divideCallLogByChunck(ArrayList<CallLogType> list) {
+        int size = list.size();
+        callLogsListbyChunck = new ArrayList<>();
+        if(size > LIST_PARTITION_COUNT){
+            for (ArrayList<CallLogType> partition : chopped(list, LIST_PARTITION_COUNT)) {
+                // do something with partition
+                Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+                callLogsListbyChunck.addAll(partition);
+                newList.removeAll(partition);
+                break;
+            }
+        }else{
+            callLogsListbyChunck.addAll(list);
+            newList.removeAll(list);
+
+        }
+
+        return callLogsListbyChunck;
+    }
+
 
     // This is to be run only when READ_CONTACTS and READ_CALL_LOG permission are granted
     @SuppressLint("SimpleDateFormat")
@@ -257,9 +369,44 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         } else {
             callLogs = getLogsByCallType(AppConstants.ALL_CALLS);
         }
-
+        int sizeOfCallLog  =  callLogs.size();
         tempList.addAll(callLogs);
-        insertDataByChunck();
+        if(isFirstTime){
+            ArrayList<CallLogType> callLogTypeArrayList =  divideCallLogByChunck();
+            if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0)
+            {
+                insertServiceCall(callLogTypeArrayList);
+
+            }
+        } else if(sizeOfCallLog!= Utils.getIntegerPreference(getActivity(),AppConstants.PREF_CALL_LOG_SIZE,0)) {
+            int diff =  Math.abs(sizeOfCallLog - Utils.getIntegerPreference(getActivity(),AppConstants.PREF_CALL_LOG_SIZE,0));
+            newList = new ArrayList<>(callLogs.subList(0,diff));
+            if(newList != null && newList.size()>0){
+                if (newList != null && newList.size() > 0)
+                {
+                    if(newList.size() >  LIST_PARTITION_COUNT)
+                    {
+                        ArrayList<CallLogType>  temp =  divideCallLogByChunck(newList);
+                        if(temp != null && temp.size()>0)
+                            insertServiceCall(temp);
+                    }
+                    else {
+
+                        insertServiceCall(newList);
+                    }
+
+                }
+            }
+
+        }
+        Utils.setIntegerPreference(getActivity(),AppConstants.PREF_CALL_LOG_SIZE,sizeOfCallLog);
+
+        /*boolean isContactSyncComplete =  AppConstants.isExtraCallLogBroadcastValue();
+        if(isContactSyncComplete){
+            if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0)
+                insertServiceCall(callLogTypeArrayList);
+        }*/
+
         // To show recent call on top
 //        Collections.reverse(callLogs);
         List<String> listOfDates = new ArrayList<>();
@@ -316,7 +463,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         initSwipe();
     }
 
-
     private void setAdapter() {
         if (arrayListCallLogHeader != null && arrayListObjectCallLogs != null
                 && arrayListCallLogHeader.size() > 0 && arrayListObjectCallLogs.size() > 0) {
@@ -326,16 +472,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
             setRecyclerViewLayoutManager(recyclerCallLogs);
         }
     }
-
-    private void insertDataByChunck() {
-        int size = tempList.size();
-        for (ArrayList<CallLogType> partition : chopped(tempList, LIST_PARTITION_COUNT)) {
-            // do something with partition
-            Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
-            insertServiceCall(partition);
-        }
-    }
-
 
     private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
 
@@ -499,7 +635,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         return numberId;
     }
 
-
     public String getLogType(int type) {
         switch (type) {
             case CallLog.Calls.INCOMING_TYPE:
@@ -518,7 +653,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         }
         return "OTHERS";
     }
-
 
     public String getPhoneNumberType(int type) {
         switch (type) {
@@ -585,7 +719,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         }
         return "Other";
     }
-
 
     private void initSwipe() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
@@ -913,48 +1046,25 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         return callDetails;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        try {
-            if (AppConstants.isFromReceiver) {
-                CallLogType callLogType = new CallLogType(getActivity());
-                String name = callLogType.findNameByNumber(callLogTypeReceiver.getNumber());
-                if (!TextUtils.isEmpty(name))
-                    callLogTypeReceiver.setName(name);
-                ArrayList<CallLogType> arrayListHistroy = callLogHistory(callLogTypeReceiver.getNumber());
-                int count = arrayListHistroy.size();
-                callLogTypeReceiver.setHistoryLogCount(count);
-                String receiverDate = "Today";
-                if (!arrayListObjectCallLogs.contains(receiverDate)) {
-                    arrayListCallLogHeader.add(0, receiverDate);
-                    arrayListObjectCallLogs.add(0, receiverDate);
-                    callLogListAdapter.notifyItemInserted(0);
-                    recyclerCallLogs.scrollToPosition(0);
+    //</editor-fold>
+
+    /*public static BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            startInsertion = intent.getBooleanExtra(AppConstants.EXTRA_CALL_LOG_BROADCAST_KEY, false);
+            Log.i("Local broad cast received", startInsertion + "");
+            if (startInsertion) {
+                startInsertion = false;
+                List<CallLogType> callLogs = getLogsByCallType(AppConstants.ALL_CALLS);
+                tempList.addAll(callLogs);
+                ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
+                if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
+                    insertServiceCall(callLogTypeArrayList);
                 }
-
-                arrayListObjectCallLogs.add(1, callLogTypeReceiver);
-                callLogListAdapter.notifyItemInserted(1);
-
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
-    }
-
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        AppConstants.isFromReceiver = false;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-    }
+    };*/
 
 
 }

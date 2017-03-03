@@ -90,6 +90,7 @@
             </intent-filter>
         </receiver>
 
+
         <service
             android:name=".services.ContactSyncService"
             android:enabled="true"

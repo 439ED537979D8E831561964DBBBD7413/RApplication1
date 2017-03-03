@@ -34,6 +34,7 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
@@ -143,6 +144,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+         /*LocalBroadcastManager.getInstance(getActivity()).registerReceiver(CallLogFragment.broadcastReceiver,
+                        new IntentFilter(AppConstants.ACTION_START_CALL_LOG_INSERTION));*/
 
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
 
@@ -267,6 +270,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         textTotalContacts.setText(arrayListContactId.size() + " Contacts");
                         Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts, "All " +
                                 "Contact Synced");
+//                        sendBroadCastToStartCallLogInsertion();
+                        AppConstants.setExtraCallLogBroadcastValue(true);
                     }
 
                     /* Populate recycler view */
@@ -310,6 +315,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     error.getLocalizedMessage() : null));
         }
     }
+
+    /*private void sendBroadCastToStartCallLogInsertion(){
+        Intent intent = new Intent(AppConstants.ACTION_START_CALL_LOG_INSERTION);
+        intent.putExtra(AppConstants.EXTRA_CALL_LOG_BROADCAST_KEY, true);
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+    }*/
 
     @Override
     public void onDestroy() {
