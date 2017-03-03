@@ -178,6 +178,13 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 if (shareResponse != null && StringUtils.equalsIgnoreCase
                         (shareResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     Utils.showSuccessSnackBar(this, activityContactListing, "Invitation Shared");
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onBackPressed();
+                        }
+                    }, 1500);
                 } else {
                     if (shareResponse != null) {
                         Log.e("error response", shareResponse.getMessage());
@@ -217,9 +224,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             }
             //</editor-fold>
 
-        } else
-
-        {
+        } else {
 //            AppUtils.hideProgressDialog();
             Utils.showErrorSnackBar(this, activityContactListing, "" + error
                     .getLocalizedMessage());
@@ -230,6 +235,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
+
     private void init() {
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
@@ -247,6 +253,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 arrayListFilteredUserProfile.clear();
+                phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
                 if (position == 0) {
                     arrayListFilteredUserProfile.addAll(arrayListUserProfile);
                 } else if (position == 1) {
@@ -342,8 +349,18 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
     private void setupView() {
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, R.layout
-                .list_item_spinner, getResources().getStringArray(R.array.phonebook_contact_array));
+        ArrayAdapter<String> spinnerAdapter;
+        if (!pmId.equalsIgnoreCase("-1")) {
+            spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, getResources()
+                    .getStringArray(R.array.phonebook_contact_array_share));
+        } else if (profileDataOperationVcard == null) {
+            spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, getResources()
+                    .getStringArray(R.array.phonebook_contact_array_invite));
+        } else {
+            spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, getResources()
+                    .getStringArray(R.array.phonebook_contact_array_share));
+        }
+
         spinnerShareVia.setAdapter(spinnerAdapter);
 
         arrayListFilteredUserProfile = new ArrayList<>();
@@ -389,6 +406,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         });
 
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Web Service Call">

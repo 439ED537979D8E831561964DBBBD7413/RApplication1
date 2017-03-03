@@ -93,11 +93,11 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (!arrayListCheckedPositions.contains(buttonView.getTag())) {
+                    if (!arrayListCheckedPositions.contains((Integer) buttonView.getTag())) {
                         arrayListCheckedPositions.add((Integer) buttonView.getTag());
                     }
                 } else {
-                    if (arrayListCheckedPositions.contains(buttonView.getTag())) {
+                    if (arrayListCheckedPositions.contains((Integer) buttonView.getTag())) {
                         arrayListCheckedPositions.remove((Integer) buttonView.getTag());
                     }
                 }
