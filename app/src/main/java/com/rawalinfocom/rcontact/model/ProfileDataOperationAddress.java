@@ -12,7 +12,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationAddress implements Serializable {
 
-    private int addId;
+    private String addId;
     private String country;
     private String addressType;
     private String city;
@@ -30,11 +30,11 @@ public class ProfileDataOperationAddress implements Serializable {
     private String rcpType;
 
     @JsonProperty("add_id")
-    public int getAddId() {
+    public String getAddId() {
         return addId;
     }
 
-    public void setAddId(int addId) {
+    public void setAddId(String addId) {
         this.addId = addId;
     }
 
