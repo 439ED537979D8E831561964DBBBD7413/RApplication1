@@ -111,6 +111,10 @@ public class AppConstants {
 
     public static String PREF_CALL_LOG_SIZE = "pref_call_log_size";
     public static String PREF_CALL_LOG_STARTS_FIRST_TIME = "pref_call_log_start_first_time";
+    public static String PREF_SYNC_CALL_LOG = "pref_sync_call_log";
+    public static String PREF_CALL_LOG_SIZE_WITH_DIFF = "pref_call_log_size_with_diff";
+    public static String PREF_CALL_LOG_SYNCED = "pref_call_log_synced";
+
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
@@ -131,14 +135,6 @@ public class AppConstants {
     }
     //</editor-fold>
 
-
-    public static boolean isExtraCallLogBroadcastValue() {
-        return EXTRA_CALL_LOG_BROADCAST_VALUE;
-    }
-
-    public static void setExtraCallLogBroadcastValue(boolean extraCallLogBroadcastValue) {
-        EXTRA_CALL_LOG_BROADCAST_VALUE = extraCallLogBroadcastValue;
-    }
 
     public static boolean isFromReceiver = false;
 

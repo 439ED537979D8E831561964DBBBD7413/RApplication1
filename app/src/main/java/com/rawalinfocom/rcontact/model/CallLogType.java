@@ -119,7 +119,6 @@ public class CallLogType implements Serializable {
         this.flag = flag;
     }
 
-    @JsonInclude(JsonInclude.Include.ALWAYS)
     public String getLocalPbRowId() {
         return localPbRowId;
     }
@@ -135,7 +134,6 @@ public class CallLogType implements Serializable {
     public void setArrayListCallHistory(ArrayList<CallLogType> arrayListCallHistory) {
         this.arrayListCallHistory = arrayListCallHistory;
     }
-
     public String getName() {
         return name;
     }
