@@ -74,16 +74,14 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
     PhoneBookContacts phoneBookContacts;
 
     AllContactListAdapter allContactListAdapter;
-
     ArrayList<ProfileData> arrayListUserContact;
     ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> arrayListContactHeaders;
 
-    MaterialDialog callConfirmationDialog;
-
     private View rootView;
     private boolean isReload = false;
     RContactApplication rContactApplication;
+    private  MaterialDialog callConfirmationDialog;
 
     //<editor-fold desc="Constructors">
 

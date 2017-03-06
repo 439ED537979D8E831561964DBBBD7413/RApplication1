@@ -141,6 +141,9 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         CallLogType callLogType = (CallLogType) arrayListCallLogs.get(position);
         final String name = callLogType.getName();
         final String number =  callLogType.getNumber();
+        if(!TextUtils.isEmpty(number)){
+            holder.textTempNumber.setText(number);
+        }
         if(!TextUtils.isEmpty(name))
         {
             holder.textContactName.setTypeface(Utils.typefaceBold(context));
@@ -310,6 +313,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         RelativeLayout relativeRowMain;
         @BindView(R.id.textCount)
         TextView textCount;
+        @BindView(R.id.text_temp_number)
+        public TextView textTempNumber;
 
         AllCallLogViewHolder(View itemView) {
             super(itemView);

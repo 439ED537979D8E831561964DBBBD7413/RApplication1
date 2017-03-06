@@ -1,5 +1,7 @@
 package com.rawalinfocom.rcontact.constants;
 
+import android.view.FrameStats;
+
 /**
  * Created by Monal on 10/10/16.
  * <p>
@@ -71,11 +73,14 @@ public class AppConstants {
     public static String EXTRA_CALL_HISTORY_NAME = "extra_call_history_name";
     public static String EXTRA_CALL_HISTORY_NUMBER = "extra_call_history_number";
     public static String EXTRA_3DOTS_SHOW_HISTORY_INSTANCE = "extra_3dots_show_history_instance";
+    public static String EXTRA_CALL_LOG_BROADCAST_KEY = "message";
+    public static boolean EXTRA_CALL_LOG_BROADCAST_VALUE = false;
     //</editor-fold>
 
     //<editor-fold desc="Intent Action">
 
     public static String ACTION_CONTACT_FETCH = "action_contact_fetch";
+    public static String ACTION_START_CALL_LOG_INSERTION = "action_start_call_log_insertion";
 
     //</editor-fold>
 
@@ -103,6 +108,13 @@ public class AppConstants {
     public static String PREF_FAVOURITE_CONTACT_NUMBER_EMAIL =
             "pref_favourite_contact_number_email";
     public static String PREF_PROFILE_VIEWS = "pref_profile_views";
+
+    public static String PREF_CALL_LOG_SIZE = "pref_call_log_size";
+    public static String PREF_CALL_LOG_STARTS_FIRST_TIME = "pref_call_log_start_first_time";
+    public static String PREF_SYNC_CALL_LOG = "pref_sync_call_log";
+    public static String PREF_CALL_LOG_SIZE_WITH_DIFF = "pref_call_log_size_with_diff";
+    public static String PREF_CALL_LOG_SYNCED = "pref_call_log_synced";
+
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
