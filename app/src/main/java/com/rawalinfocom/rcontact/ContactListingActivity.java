@@ -184,7 +184,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                         public void run() {
                             onBackPressed();
                         }
-                    }, 1500);
+                    }, 500);
                 } else {
                     if (shareResponse != null) {
                         Log.e("error response", shareResponse.getMessage());
@@ -211,7 +211,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                         public void run() {
                             onBackPressed();
                         }
-                    }, 1500);
+                    }, 500);
                 } else {
                     if (inviteResponse != null) {
                         Log.e("error response", inviteResponse.getMessage());
@@ -463,7 +463,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     inviteContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_SEND_INVITATION, null, true).execute
+                    .REQ_SEND_INVITATION, "Sending Invitation...", true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
         } else {
             Utils.showErrorSnackBar(this, activityContactListing, getResources()
