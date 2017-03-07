@@ -12,7 +12,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationImAccount implements Serializable {
 
-    private int IMId;
+    private String IMId;
     private String IMAccountType;
     private String IMAccountDetails;
     private String IMAccountProtocol;
@@ -22,11 +22,11 @@ public class ProfileDataOperationImAccount implements Serializable {
     private String IMRcpType;
 
     @JsonProperty("im_id")
-    public int getIMId() {
+    public String getIMId() {
         return IMId;
     }
 
-    public void setIMId(int IMId) {
+    public void setIMId(String IMId) {
         this.IMId = IMId;
     }
 

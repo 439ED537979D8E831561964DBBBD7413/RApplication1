@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class ProfileDataOperationWebAddress implements Serializable {
 
     private String webAddress;
-    private int webId;
+    private String webId;
     private String webType;
 
     //    private int webRcpType;
@@ -29,11 +29,11 @@ public class ProfileDataOperationWebAddress implements Serializable {
     }
 
     @JsonProperty("web_id")
-    public int getWebId() {
+    public String getWebId() {
         return webId;
     }
 
-    public void setWebId(int webId) {
+    public void setWebId(String webId) {
         this.webId = webId;
     }
 

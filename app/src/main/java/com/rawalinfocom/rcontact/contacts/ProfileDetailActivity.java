@@ -1662,16 +1662,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     // RCP profile or Own Profile
                     Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                     sharingIntent.setType("text/plain");
-                    String shareBody = WsConstants.WS_ROOT + "display-user-details/" + firstName
+                    String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + firstName
                             + "." + lastName + "." + pmId;
                     sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                     startActivity(Intent.createChooser(sharingIntent, "Share Contact Via"));
                 } else {
                     // Non-Rcp profile
-                   /* ArrayList<Object> phoneNumbers = phoneDetailAdapter.getDetailList();
-                    for (int i = 0; i < phoneNumbers.size(); i++) {
-                        Log.i("onClick", phoneNumbers.get(i).toString());
-                    }*/
                     shareContact();
 
                 }

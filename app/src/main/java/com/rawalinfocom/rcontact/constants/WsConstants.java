@@ -9,11 +9,11 @@ package com.rawalinfocom.rcontact.constants;
 public class WsConstants {
 
     // Monal
-//    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
+    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 //    public static final String WS_ROOT = "http://10.0.21.123/api/v1/";
 
     // Aniruddh
-    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
 
     //    Maulik
 //    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
@@ -33,6 +33,8 @@ public class WsConstants {
 
     // Swati
 //    public static final String WS_ROOT = "http://10.0.21.131/api/v1/";
+
+    public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public-view/";
 
     public static final String RESPONSE_STATUS_TRUE = "true";
 
