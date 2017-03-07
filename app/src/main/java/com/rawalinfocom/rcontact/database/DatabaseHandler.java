@@ -3,6 +3,12 @@ package com.rawalinfocom.rcontact.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 /**
  * Created by Monal on 21/10/16.
@@ -17,10 +23,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Database Name
-    private static final String DATABASE_NAME = "RContact";
+    private static final String DATABASE_NAME = "RContact.db";
+
+    private static String databasePath = "";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        databasePath = context.getDatabasePath(DATABASE_NAME).getPath();
     }
 
     @Override
@@ -72,5 +81,30 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         // create new tables
         onCreate(db);
+    }
+
+    public static String exportDB() {
+        String inFileName = databasePath;
+        try {
+            File dbFile = new File(inFileName);
+            FileInputStream fis = new FileInputStream(dbFile);
+
+            String outFileName = Environment.getExternalStorageDirectory() + "/" + DATABASE_NAME;
+
+            OutputStream output = new FileOutputStream(outFileName);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) > 0) {
+                output.write(buffer, 0, length);
+            }
+            //Close the streams
+            output.flush();
+            output.close();
+            fis.close();
+            return DATABASE_NAME;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
