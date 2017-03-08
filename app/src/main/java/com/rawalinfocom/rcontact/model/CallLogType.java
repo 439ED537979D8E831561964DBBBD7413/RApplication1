@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by user on 08/02/17.
@@ -52,6 +53,8 @@ public class CallLogType implements Serializable {
     private String historyNumberType;
     @JsonIgnore
     private int historyLogCount;
+    @JsonIgnore
+    private Date callReceiverDate;
 
 
     @JsonProperty("flag")
@@ -296,6 +299,14 @@ public class CallLogType implements Serializable {
 
     public void setHistoryLogCount(int historyLogCount) {
         this.historyLogCount = historyLogCount;
+    }
+
+    public Date getCallReceiverDate() {
+        return callReceiverDate;
+    }
+
+    public void setCallReceiverDate(Date callReceiverDate) {
+        this.callReceiverDate = callReceiverDate;
     }
 
     public String findNameByNumber(String phoneNumber) {
