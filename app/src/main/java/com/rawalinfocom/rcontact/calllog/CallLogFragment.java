@@ -4,9 +4,12 @@ package com.rawalinfocom.rcontact.calllog;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -23,6 +26,7 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -60,6 +64,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -124,11 +132,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         callLogTypeReceiver = new CallLogType();
-        if (Utils.getBooleanPreference(getActivity(), AppConstants
-                .PREF_CALL_LOG_STARTS_FIRST_TIME, true)) {
+        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_STARTS_FIRST_TIME, true)) {
             isFirstTime = true;
-            Utils.setBooleanPreference(getActivity(), AppConstants
-                    .PREF_CALL_LOG_STARTS_FIRST_TIME, false);
+            Utils.setBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_STARTS_FIRST_TIME, false);
         }
 
     }
@@ -159,7 +165,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         super.onResume();
         try {
             if (AppConstants.isFromReceiver) {
-                CallLogType callLogType = new CallLogType(getActivity());
+                final CallLogType callLogType = new CallLogType(getActivity());
                 String name = callLogType.findNameByNumber(callLogTypeReceiver.getNumber());
                 if (!TextUtils.isEmpty(name))
                     callLogTypeReceiver.setName(name);
@@ -168,6 +174,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                 int count = arrayListHistroy.size();
                 callLogTypeReceiver.setHistoryLogCount(count);
                 callLogTypeReceiver.setArrayListCallHistory(arrayListHistroy);
+                callLogType.setHistoryLogCount(count);
                 String receiverDate = "Today";
                 if (!arrayListObjectCallLogs.contains(receiverDate)) {
                     arrayListCallLogHeader.add(0, receiverDate);
@@ -175,9 +182,54 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     callLogListAdapter.notifyItemInserted(0);
                     recyclerCallLogs.scrollToPosition(0);
                 }
+                /*arrayListObjectCallLogs.add(1, callLogTypeReceiver);
+                callLogListAdapter.notifyItemInserted(1);*/
 
-                arrayListObjectCallLogs.add(1, callLogTypeReceiver);
-                callLogListAdapter.notifyItemInserted(1);
+                Handler handler =  new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        String number = callLogTypeReceiver.getNumber();
+                        Date callReceiverDate =  callLogTypeReceiver.getCallReceiverDate();
+                        String logDate = new SimpleDateFormat("yyyy-MM-dd").format(callReceiverDate);
+                        HashMap<String, Integer> countMapping = new HashMap<String, Integer>();
+                        if (arrayListObjectCallLogs.size() == 1) {
+                            arrayListObjectCallLogs.add(1, callLogTypeReceiver);
+                            countMapping.put(number,1);
+                            callLogListAdapter.notifyItemInserted(1);
+                        } else {
+                            boolean isNumberExists = false;
+                            int count = 1;
+                            for (int j = 0; j < arrayListObjectCallLogs.size(); j++) {
+                                if (arrayListObjectCallLogs.get(j) instanceof CallLogType) {
+                                    long objDate = ((CallLogType)arrayListObjectCallLogs.get(j)).getDate();
+                                    Date objDate1 = new Date(objDate);
+                                    String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format(objDate1);
+                                    if(arrayDate.equalsIgnoreCase(logDate)){
+                                        if (!(((CallLogType) arrayListObjectCallLogs.get(j)).getNumber().equalsIgnoreCase(number))) {
+                                            isNumberExists = false;
+                                            countMapping.put(number, ++count);
+
+                                        } else {
+                                            isNumberExists = true;
+                                            countMapping.put(number,1);
+                                            break;
+                                        }
+                                    }
+
+                                }
+                            }
+                            if (!isNumberExists) {
+                                arrayListObjectCallLogs.add(1, callLogTypeReceiver);
+                                callLogListAdapter.notifyItemInserted(1);
+                            }
+
+                        }
+                    }
+                },1500);
+
+
 
             }
         } catch (Exception e) {
@@ -200,19 +252,16 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         if (error == null) {
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)) {
                 WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
-                if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase
-                        (callLogInsertionResponse
+                if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase(callLogInsertionResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    if (Utils.getBooleanPreference(getActivity(), AppConstants
-                            .PREF_CALL_LOG_SYNCED, false)) {
+                    if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, false)) {
                         ArrayList<CallLogType> temp = divideCallLogByChunck(newList);
                         if (temp.size() >= LIST_PARTITION_COUNT) {
                             if (temp != null && temp.size() > 0)
                                 insertServiceCall(newList);
                         } else {
-                            Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " +
-                                    "Call Logs Synced");
+                            Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " + "Call Logs Synced");
                         }
 
                     } else {
@@ -220,10 +269,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                         if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0)
                             insertServiceCall(callLogTypeArrayList);
                         else {
-                            Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " +
-                                    "Call Logs Synced");
-                            Utils.setBooleanPreference(getActivity(), AppConstants
-                                    .PREF_CALL_LOG_SYNCED, true);
+                            Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " + "Call Logs Synced");
+                            Utils.setBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, true);
                         }
                     }
                 } else {
@@ -453,19 +500,26 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                         arrayListCallLogHeader.add(finalDate);
                         arrayListObjectCallLogs.add(finalDate);
                     }
-                    arrayListObjectCallLogs.add(callLogType);
-                    /*for (int j = 0; j < arrayListObjectCallLogs.size(); j++) {
-                        if (arrayListObjectCallLogs.get(j) instanceof CallLogType  ) {
-                            if (((CallLogType)arrayListObjectCallLogs.get(j)).getNumber()
-                            .equalsIgnoreCase(callLogType.getNumber())
-                                    && ((CallLogType)arrayListObjectCallLogs.get(j)).getDate() ==
-                                     callLogType.getDate()) {
 
-                            } else {
-                                arrayListObjectCallLogs.add(callLogType);
+                    String number = callLogType.getNumber();
+                    if (arrayListObjectCallLogs.size() == 1) {
+                        arrayListObjectCallLogs.add(callLogType);
+                    } else {
+                        boolean isNumberExists = false;
+                        for (int j = 0; j < arrayListObjectCallLogs.size(); j++) {
+                            if (arrayListObjectCallLogs.get(j) instanceof CallLogType) {
+                                if (!(((CallLogType) arrayListObjectCallLogs.get(j)).getNumber().equalsIgnoreCase(number))) {
+                                    isNumberExists = false;
+                                } else {
+                                    isNumberExists = true;
+                                    break;
+                                }
                             }
                         }
-                    }*/
+                        if (!isNumberExists) {
+                            arrayListObjectCallLogs.add(callLogType);
+                        }
+                    }
 
                 } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
                     finalDate = "Yesterday";
@@ -474,71 +528,65 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                         arrayListObjectCallLogs.add(finalDate);
                     }
 
-                    arrayListObjectCallLogs.add(callLogType);
-                    /*arrayListCallLogs.add(callLogType);
-                    HashMap<String, CallLogType> callLogTypeHashMap = new HashMap<>();
-                    int count = 0;
-                    for(int j= 0 ; j< arrayListCallLogs.size() ; j++){
-                        CallLogType callLogType1 =  arrayListCallLogs.get(i);
-                        String number =  callLogType1.getNumber();
-                        if(callLogTypeHashMap.containsKey(number)){
-                            count =  count+ 1;
-                            Log.i("Histroy count of the day", count+"");
-                        }else {
-                            callLogTypeHashMap.put(number,callLogType1);
-                        }
-                    }*/
+                    String number = callLogType.getNumber();
+                    if (arrayListObjectCallLogs.size() == 1) {
+                        arrayListObjectCallLogs.add(callLogType);
+                    } else {
+                        boolean isNumberExists = false;
+                        for (int j = 0; j < arrayListObjectCallLogs.size(); j++) {
+                            if (arrayListObjectCallLogs.get(j) instanceof CallLogType) {
+                                long objDate = ((CallLogType)arrayListObjectCallLogs.get(j)).getDate();
+                                Date objDate1 = new Date(objDate);
+                                String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format(objDate1);
+                                if(arrayDate.equalsIgnoreCase(logDate)){
+                                    if (!(((CallLogType) arrayListObjectCallLogs.get(j)).getNumber().equalsIgnoreCase(number))) {
+                                        isNumberExists = false;
 
+                                    } else {
+                                        isNumberExists = true;
+                                        break;
+                                    }
+                                }
 
-//                    arrayListObjectCallLogs.add(callLogType);
-                   /* for (int j = 0; j < arrayListObjectCallLogs.size(); j++) {
-                        if (arrayListObjectCallLogs.get(j) instanceof CallLogType) {
-                            if (((CallLogType)arrayListObjectCallLogs.get(j)).getNumber()
-                            .equalsIgnoreCase(callLogType.getNumber())
-                                    && ((CallLogType)arrayListObjectCallLogs.get(j)).getDate() ==
-                                     callLogType.getDate()) {
-                                arrayListObjectCallLogs.remove(callLogType);
-
-                            } else {
-                                arrayListObjectCallLogs.add(callLogType);
                             }
                         }
-                    }*/
-
+                        if (!isNumberExists) {
+                            arrayListObjectCallLogs.add(callLogType);
+                        }
+                    }
                 } else {
                     finalDate = new SimpleDateFormat("dd/MM,EEE").format(date1);
+                    String number = callLogType.getNumber();
                     if (!arrayListObjectCallLogs.contains(finalDate)) {
                         arrayListCallLogHeader.add(finalDate);
                         arrayListObjectCallLogs.add(finalDate);
                     }
-                    arrayListObjectCallLogs.add(callLogType);
-                    /*for (int j = 0; j < arrayListObjectCallLogs.size(); j++) {
-                        if (arrayListObjectCallLogs.get(j) instanceof CallLogType) {
-                            if (((CallLogType)arrayListObjectCallLogs.get(j)).getNumber()
-                            .equalsIgnoreCase(callLogType.getNumber())
-                                    && ((CallLogType)arrayListObjectCallLogs.get(j)).getDate() ==
-                                     callLogType.getDate()) {
 
-                            } else {
-                                arrayListObjectCallLogs.add(callLogType);
+                    if (arrayListObjectCallLogs.size() == 1) {
+                        arrayListObjectCallLogs.add(callLogType);
+                    } else {
+                        boolean isNumberExists = false;
+                        for (int j = 0; j < arrayListObjectCallLogs.size(); j++) {
+                            if (arrayListObjectCallLogs.get(j) instanceof CallLogType) {
+                                long objDate = ((CallLogType)arrayListObjectCallLogs.get(j)).getDate();
+                                Date objDate1 = new Date(objDate);
+                                String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format(objDate1);
+                                if(arrayDate.equalsIgnoreCase(logDate)){
+                                    if (!(((CallLogType) arrayListObjectCallLogs.get(j)).getNumber().equalsIgnoreCase(number))) {
+                                        isNumberExists = false;
+
+                                    } else {
+                                        isNumberExists = true;
+                                        break;
+                                    }
+                                }
+
                             }
                         }
-                    }*/
-
-                   /* arrayListCallLogs.add(callLogType);
-                    int count = 0;
-                    for (int j = 0; j < arrayListCallLogs.size(); j++) {
-                        CallLogType callLogType1 = arrayListCallLogs.get(j);
-                        String number = callLogType1.getNumber();
-                        if (!arrayListObjectCallLogs.contains(number)) {
-                            arrayListObjectCallLogs.add(callLogType1);
-                        } else {
-                            count = count + 1;
-                            Log.i("Histroy count of the day", count + "");
+                        if (!isNumberExists) {
+                            arrayListObjectCallLogs.add(callLogType);
                         }
-                    }*/
-
-
+                    }
                 }
             }
         setAdapter();
@@ -698,8 +746,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         String numberId = "";
         ContentResolver contentResolver = getActivity().getContentResolver();
 
-        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
-                .encode(phoneNumber));
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
 
         String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
                 ContactsContract.PhoneLookup.LOOKUP_KEY};

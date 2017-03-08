@@ -108,6 +108,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     CallLogFragment.callLogTypeReceiver.setType(3);
                     String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(callStartTime);
                     CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
+                    CallLogFragment.callLogTypeReceiver.setCallReceiverDate(callStartTime);
 
                 } else if (isIncoming) {
                     onIncomingCallEnded(context, savedNumber, callStartTime, new Date());
@@ -115,6 +116,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     CallLogFragment.callLogTypeReceiver.setType(1);
                     String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(callStartTime);
                     CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
+                    CallLogFragment.callLogTypeReceiver.setCallReceiverDate(callStartTime);
+
 
                 } else {
 
@@ -123,6 +126,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     CallLogFragment.callLogTypeReceiver.setType(2);
                     String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(callStartTime);
                     CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
+                    CallLogFragment.callLogTypeReceiver.setCallReceiverDate(callStartTime);
+
 
                 }
                 break;
