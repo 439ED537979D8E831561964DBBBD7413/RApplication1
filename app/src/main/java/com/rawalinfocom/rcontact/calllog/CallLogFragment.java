@@ -69,7 +69,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -170,7 +169,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                 String name = callLogType.findNameByNumber(callLogTypeReceiver.getNumber());
                 if (!TextUtils.isEmpty(name))
                     callLogTypeReceiver.setName(name);
-                ArrayList<CallLogType> arrayListHistroy = callLogHistory(callLogTypeReceiver.getNumber());
+                ArrayList<CallLogType> arrayListHistroy = callLogHistory(callLogTypeReceiver
+                        .getNumber());
                 int count = arrayListHistroy.size();
                 callLogTypeReceiver.setHistoryLogCount(count);
                 callLogTypeReceiver.setArrayListCallHistory(arrayListHistroy);
@@ -429,7 +429,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         try {
 
             if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_SYNC_CALL_LOG, false)) {
-                if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED,
+                        false)) {
                     if (tempList.size() > LIST_PARTITION_COUNT) {
                         ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
                         if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
@@ -440,8 +441,10 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     }
 
                 } else {
-                    if (sizeOfCallLog != Utils.getIntegerPreference(getActivity(), AppConstants.PREF_CALL_LOG_SIZE, 0)) {
-                        int diff = Math.abs(sizeOfCallLog - Utils.getIntegerPreference(getActivity(), AppConstants.PREF_CALL_LOG_SIZE, 0));
+                    if (sizeOfCallLog != Utils.getIntegerPreference(getActivity(), AppConstants
+                            .PREF_CALL_LOG_SIZE, 0)) {
+                        int diff = Math.abs(sizeOfCallLog - Utils.getIntegerPreference
+                                (getActivity(), AppConstants.PREF_CALL_LOG_SIZE, 0));
                         newList = new ArrayList<>(callLogs.subList(0, diff));
                         if (newList != null && newList.size() > 0) {
                             if (newList != null && newList.size() > 0) {
@@ -460,7 +463,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                 }
 
             }
-            Utils.setIntegerPreference(getActivity(), AppConstants.PREF_CALL_LOG_SIZE, sizeOfCallLog);
+            Utils.setIntegerPreference(getActivity(), AppConstants.PREF_CALL_LOG_SIZE,
+                    sizeOfCallLog);
 
 
         } catch (Exception e) {
@@ -744,7 +748,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
 
-        String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY};
+        String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                ContactsContract.PhoneLookup.LOOKUP_KEY};
         Cursor cursor =
                 contentResolver.query(
                         uri,
@@ -755,8 +760,10 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                String contactName = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup.DISPLAY_NAME));
-                numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup.LOOKUP_KEY));
+                String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                        (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                        .PhoneLookup.LOOKUP_KEY));
                 Log.d("contactMatch id: ", numberId);
             }
             cursor.close();
@@ -1155,13 +1162,15 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     logObject.setHistoryId(histroyId);
 
                     Date date1 = new Date(dateOfCall);
-                    String callDataAndTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a").format(date1);
+                    String callDataAndTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a").format
+                            (date1);
                     logObject.setCallDateAndTime(callDataAndTime);
 
                     String typeOfCall = getLogType(callType);
                     logObject.setTypeOfCall(typeOfCall);
 
-                    String durationtoPass = logObject.getCoolDuration(Float.parseFloat(callDuration));
+                    String durationtoPass = logObject.getCoolDuration(Float.parseFloat
+                            (callDuration));
                     logObject.setDurationToPass(durationtoPass);
 
                     callDetails.add(logObject);
@@ -1183,7 +1192,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            startInsertion = intent.getBooleanExtra(AppConstants.EXTRA_CALL_LOG_BROADCAST_KEY, false);
+            startInsertion = intent.getBooleanExtra(AppConstants.EXTRA_CALL_LOG_BROADCAST_KEY,
+            false);
             Log.i("Local broad cast received", startInsertion + "");
             if (startInsertion) {
                 startInsertion = false;

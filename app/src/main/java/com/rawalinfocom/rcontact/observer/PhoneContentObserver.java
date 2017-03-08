@@ -247,7 +247,7 @@ public class PhoneContentObserver extends ContentObserver {
                 ProfileDataOperationPhoneNumber phoneNumber = new
                         ProfileDataOperationPhoneNumber();
 
-                phoneNumber.setPhoneId(++numberCount);
+                phoneNumber.setPhoneId(String.valueOf(++numberCount));
                 phoneNumber.setPhoneNumber(Utils.getFormattedNumber(context,
                         contactNumberCursor.getString(contactNumberCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.Phone.NUMBER))));
@@ -274,7 +274,7 @@ public class PhoneContentObserver extends ContentObserver {
 
                 ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
 
-                emailId.setEmId(++emailCount);
+                emailId.setEmId(String.valueOf(++emailCount));
                 emailId.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
                         .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
                 emailId.setEmType(phoneBookContacts.getEmailType(contactEmailCursor,
@@ -302,7 +302,7 @@ public class PhoneContentObserver extends ContentObserver {
                 ProfileDataOperationWebAddress webAddress = new
                         ProfileDataOperationWebAddress();
 
-                webAddress.setWebId(++websiteCount);
+                webAddress.setWebId(String.valueOf(++websiteCount));
                 webAddress.setWebAddress(contactWebsiteCursor.getString(contactWebsiteCursor
                         .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
                 webAddress.setWebType(phoneBookContacts.getWebsiteType(contactWebsiteCursor,
@@ -332,7 +332,7 @@ public class PhoneContentObserver extends ContentObserver {
                 ProfileDataOperationOrganization organization = new
                         ProfileDataOperationOrganization();
 
-                organization.setOrgId(++organizationCount);
+                organization.setOrgId(String.valueOf(++organizationCount));
                 organization.setOrgName(contactOrganizationCursor.getString
                         (contactOrganizationCursor.getColumnIndex(ContactsContract
                                 .CommonDataKinds.Organization.COMPANY)));
@@ -373,7 +373,7 @@ public class PhoneContentObserver extends ContentObserver {
 
                 ProfileDataOperationAddress address = new ProfileDataOperationAddress();
 
-                address.setAddId(++addressCount);
+                address.setAddId(String.valueOf(++addressCount));
                 address.setFormattedAddress(contactAddressCursor.getString
                         (contactAddressCursor.getColumnIndex(ContactsContract
                                 .CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS)));
@@ -419,7 +419,7 @@ public class PhoneContentObserver extends ContentObserver {
 
                 ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
 
-                imAccount.setIMId(++imCount);
+                imAccount.setIMId(String.valueOf(++imCount));
                 imAccount.setIMAccountDetails(contactImCursor.getString(contactImCursor
                         .getColumnIndex(ContactsContract.CommonDataKinds.Im.DATA1)));
 
@@ -454,7 +454,7 @@ public class PhoneContentObserver extends ContentObserver {
 
                 ProfileDataOperationEvent event = new ProfileDataOperationEvent();
 
-                event.setEventId(++eventCount);
+                event.setEventId(String.valueOf(++eventCount));
                 event.setEventType(phoneBookContacts.getEventType(contactEventCursor,
                         contactEventCursor
                                 .getInt(contactEventCursor.getColumnIndex(ContactsContract

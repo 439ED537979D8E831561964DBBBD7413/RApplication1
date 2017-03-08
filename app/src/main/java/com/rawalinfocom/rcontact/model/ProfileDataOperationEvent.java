@@ -12,7 +12,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationEvent implements Serializable {
 
-    private int eventId;
+    private String eventId;
     private String eventType;
     private String eventDate;
     private int eventPublic;
@@ -21,11 +21,11 @@ public class ProfileDataOperationEvent implements Serializable {
     private String eventRcType;
 
     @JsonProperty("event_id")
-    public int getEventId() {
+    public String getEventId() {
         return eventId;
     }
 
-    public void setEventId(int eventId) {
+    public void setEventId(String eventId) {
         this.eventId = eventId;
     }
 

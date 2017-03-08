@@ -56,10 +56,16 @@
     <string name="str_select_social_media">Select Social Media</string>
     <string name="str_select_all">Select all</string>
 
-    <string-array name="phonebook_contact_array">
+    <string-array name="phonebook_contact_array_share">
         <item>Share all</item>
         <item>Share via sms</item>
         <item>Share via email</item>
+    </string-array>
+
+    <string-array name="phonebook_contact_array_invite">
+        <item>Invite all</item>
+        <item>Invite via sms</item>
+        <item>Invite via email</item>
     </string-array>
 
     <string name="text_no_history">No history to show</string>

@@ -16,7 +16,7 @@ public class ProfileDataOperationPhoneNumber implements Serializable {
     private String phoneType;
     private String phoneNumber;
     private int phonePublic;
-    private int phoneId;
+    private String phoneId;
     private String pbRcpType;
 //    private int pbRcpType;
 
@@ -48,11 +48,11 @@ public class ProfileDataOperationPhoneNumber implements Serializable {
     }
 
     @JsonProperty("ph_id")
-    public int getPhoneId() {
+    public String getPhoneId() {
         return this.phoneId;
     }
 
-    public void setPhoneId(int phoneId) {
+    public void setPhoneId(String phoneId) {
         this.phoneId = phoneId;
     }
 

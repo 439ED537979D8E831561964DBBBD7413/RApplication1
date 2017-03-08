@@ -2,7 +2,9 @@ package com.rawalinfocom.rcontact;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -17,16 +19,19 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
+import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
@@ -35,6 +40,8 @@ import com.rawalinfocom.rcontact.services.ContactSyncService;
 import com.rawalinfocom.rcontact.sms.SmsFragment;
 
 import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,7 +63,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     CallLogFragment callLogFragment;
     SmsFragment smsFragment;
 
-    OnlineDataSync onlineDataSync;
+//    OnlineDataSync onlineDataSync;
 
     NetworkConnectionReceiver networkConnectionReceiver;
 
@@ -136,6 +143,23 @@ public class MainActivity extends BaseActivity implements NavigationView
             startActivity(Intent.createChooser(sharingIntent, "Share App Via"));
         } else if (id == R.id.nav_invite) {
             startActivityIntent(MainActivity.this, ContactListingActivity.class, null);
+        } else if (id == R.id.nav_db_export) {
+            if (BuildConfig.DEBUG) {
+                String exportedFileName = DatabaseHandler.exportDB();
+                if (exportedFileName != null) {
+                    File filelocation = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), exportedFileName);
+                    Uri path = Uri.fromFile(filelocation);
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("vnd.android.cursor.dir/email");
+                    String to[] = {"development@rawalinfocom.com"};
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, path);
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                    startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                } else {
+                    Toast.makeText(getApplicationContext(), "DB dump failed", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
         /*}*/
        /* else if (id == R.id.nav_gallery) {
@@ -216,6 +240,11 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        if (BuildConfig.DEBUG) {
+            Menu menu = navigationView.getMenu();
+            menu.findItem(R.id.nav_db_export).setVisible(true);
+        }
 
         tabMain = (TabLayout) findViewById(R.id.tab_main);
 

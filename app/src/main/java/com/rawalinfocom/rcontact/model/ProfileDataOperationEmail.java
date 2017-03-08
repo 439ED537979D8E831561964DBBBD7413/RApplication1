@@ -12,7 +12,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationEmail implements Serializable {
 
-    private int emId;
+    private String emId;
     private String emEmailId;
     private String emType;
     private int emPublic;
@@ -20,11 +20,11 @@ public class ProfileDataOperationEmail implements Serializable {
 //    private int emRcpType;
 
     @JsonProperty("em_id")
-    public int getEmId() {
+    public String getEmId() {
         return this.emId;
     }
 
-    public void setEmId(int emId) {
+    public void setEmId(String emId) {
         this.emId = emId;
     }
 
