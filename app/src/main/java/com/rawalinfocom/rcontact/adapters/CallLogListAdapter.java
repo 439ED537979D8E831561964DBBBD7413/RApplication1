@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,17 +55,17 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private ArrayList<String> arrayListForKnownContact ;
     private ArrayList<String> arrayListForUnknownContact ;
     MaterialListDialog materialListDialog;
-
+    HashMap<String,Integer> historyCountMap;
     private String number = "";
 
 
     //<editor-fold desc="Constructor">
     public CallLogListAdapter(Context context, ArrayList<Object> arrayListCallLogs,
-                              ArrayList<String> arrayListCallLogHeader) {
+                              ArrayList<String> arrayListCallLogHeader, HashMap<String,Integer> map) {
         this.context = context;
         this.arrayListCallLogs = arrayListCallLogs;
         this.arrayListCallLogHeader = arrayListCallLogHeader;
-
+        this.historyCountMap =  map;
     }
     //</editor-fold>
 
@@ -163,7 +167,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             }
         }
-        long date = callLogType.getDate();
+        final long date = callLogType.getDate();
         if (date > 0) {
             Date date1 = new Date(date);
             String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(date1);
@@ -189,13 +193,52 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             }
         }
+        int hashMapValue =0;
+        for(String key : historyCountMap.keySet()){
+            hashMapValue = historyCountMap.get(key);
+            Log.d("Key Value",key+" "+hashMapValue);
+            if(key.equalsIgnoreCase(number)){
+                hashMapValue = historyCountMap.get(number);
+                if(hashMapValue >0 ){
+                    holder.textCount.setText("(" + hashMapValue + "" + ")");
+                    break;
+                }else {
+                    holder.textCount.setText(" ");
+                    break;
+                }
+            }
 
-        int logCount = callLogType.getHistoryLogCount();
+        }
+      /*  for(Map.Entry<String, Integer> entry : historyCountMap.entrySet())
+        {
+            int hashMapValue = entry.getValue();
+            if (hashMapValue > 0) {
+                holder.textCount.setText("(" + hashMapValue + "" + ")");
+            } else {
+                holder.textCount.setText(" ");
+            }
+        }
+*/
+        /*Iterator<Map.Entry<String, Integer>> iterator = historyCountMap.entrySet().iterator();
+        Map.Entry< String, Integer> entry;
+        while(iterator.hasNext()){
+            entry = iterator.next();
+            Log.d("Key Value",entry.getKey()+" "+entry.getValue());
+            int hashMapValue = entry.getValue();
+            if (hashMapValue > 0) {
+                holder.textCount.setText("(" + hashMapValue + "" + ")");
+            } else {
+                holder.textCount.setText(" ");
+            }
+        }*/
+
+
+       /* int logCount = hashMapValue;
         if (logCount > 0) {
             holder.textCount.setText("(" + logCount + "" + ")");
         } else {
             holder.textCount.setText(" ");
-        }
+        }*/
 
         boolean isDual = AppConstants.isDualSimPhone();
         String simNumber;
@@ -269,6 +312,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, number);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE,date);
                 context.startActivity(intent);
             }
         });
