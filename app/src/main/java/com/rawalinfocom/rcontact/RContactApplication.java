@@ -33,8 +33,8 @@ public class RContactApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // Fabric Initialization
-//        Fabric.with(this, new Crashlytics());
+//         Fabric Initialization
+        Fabric.with(this, new Crashlytics());
 
         arrayListAllPhoneBookContacts = new ArrayList<>();
         arrayListAllContactHeaders = new ArrayList<>();

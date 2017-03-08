@@ -26,8 +26,17 @@
             android:layout_height="wrap_content"
             android:id="@+id/text_3dots_call_log"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="@dimen/margin_5dp"
+            android:padding="@dimen/padding_10dp"
             android:text="@string/im_3_dots"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_temp_number"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/padding_10dp"
+            android:text=""
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/image_social_media"
@@ -36,6 +45,7 @@
             android:layout_toLeftOf="@+id/text_3dots_call_log"
             android:layout_marginRight="@dimen/margin_10dp"
             android:contentDescription="@string/str_content_description"
+            android:layout_marginTop="@dimen/margin_5dp"
             android:src="@drawable/ic_arrow_bottom"/>
 
         <!-- <View

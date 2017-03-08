@@ -67,6 +67,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
+import com.rawalinfocom.rcontact.model.ProfileVisit;
 import com.rawalinfocom.rcontact.model.Rating;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
@@ -78,6 +79,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -213,6 +215,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     TextView textIconHistory;
     @BindView(R.id.recycler_call_history)
     RecyclerView recyclerCallHistory;
+    @BindView(R.id.ripple_call_log)
+    RippleView rippleCallLog;
+    @BindView(R.id.ripple_sms)
+    RippleView rippleSms;
+    @BindView(R.id.text_no_history_to_show)
+    TextView textNoHistoryToShow;
 
     RelativeLayout relativeRootRatingDialog;
 
@@ -235,12 +243,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     String historyNumber = "";
     String historyName = "";
     CallHistoryListAdapter callHistoryListAdapter;
-    @BindView(R.id.ripple_call_log)
-    RippleView rippleCallLog;
-    @BindView(R.id.ripple_sms)
-    RippleView rippleSms;
-    @BindView(R.id.text_no_history_to_show)
-    TextView textNoHistoryToShow;
+
 
     //<editor-fold desc="Override Methods">
 
@@ -271,6 +274,31 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
+                if (!pmId.equalsIgnoreCase("-1")) {
+                    if (Utils.isNetworkAvailable(this)) {
+                        ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
+                        ProfileVisit profileVisit = new ProfileVisit();
+                        profileVisit.setVisitorPmId(Integer.parseInt(pmId));
+                        profileVisit.setVisitCount(1);
+                        profileVisits.add(profileVisit);
+                        profileVisit(profileVisits);
+                    } else {
+                        HashMap<String, String> mapProfileViews = new HashMap<>();
+                        if (Utils.getHashMapPreference(this, AppConstants
+                                .PREF_PROFILE_VIEWS) != null) {
+                            mapProfileViews.putAll(Utils.getHashMapPreference(this, AppConstants
+                                    .PREF_PROFILE_VIEWS));
+                        }
+                        if (mapProfileViews.containsKey(pmId)) {
+                            int count = Integer.parseInt(mapProfileViews.get(pmId));
+                            mapProfileViews.put(pmId, String.valueOf(++count));
+                        } else {
+                            mapProfileViews.put(pmId, "1");
+                        }
+                        Utils.setHashMapPreference(this, AppConstants.PREF_PROFILE_VIEWS,
+                                mapProfileViews);
+                    }
+                }
             } else {
                 pmId = "-1";
             }
@@ -317,13 +345,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         init();
 
-        if (!TextUtils.isEmpty(historyName)) {
+       /* if (!TextUtils.isEmpty(historyName)) {
             fetchCallLogHistory(historyName);
 
-        } else {
-            fetchCallLogHistory(historyNumber);
+        } else {*/
+        fetchCallLogHistory(historyNumber);
 
-        }
+//        }
 
     }
 
@@ -770,19 +798,25 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     }
 
-
     private void setCallLogHistoryDetails() {
-        CallLogType callLogType = new CallLogType();
-        textToolbarTitle.setText("Profile Detail");
         if (!TextUtils.isEmpty(historyName)) {
+            Pattern numberPat = Pattern.compile("\\d+");
+            Matcher matcher1 = numberPat.matcher(historyName);
+            if (matcher1.find()) {
+                textToolbarTitle.setText("Unknown number");
+            } else {
+                textToolbarTitle.setText(historyName);
+            }
             textFullScreenText.setTypeface(Utils.typefaceBold(this));
             textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
             textFullScreenText.setText(historyName);
+
         } else {
             if (!TextUtils.isEmpty(historyNumber)) {
                 textFullScreenText.setTypeface(Utils.typefaceBold(this));
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 textFullScreenText.setText(historyNumber);
+                textToolbarTitle.setText("Unknown number");
 
             }
 
@@ -1628,16 +1662,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     // RCP profile or Own Profile
                     Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                     sharingIntent.setType("text/plain");
-                    String shareBody = WsConstants.WS_ROOT + "display-user-details/" + firstName
+                    String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + firstName
                             + "." + lastName + "." + pmId;
                     sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                     startActivity(Intent.createChooser(sharingIntent, "Share Contact Via"));
                 } else {
                     // Non-Rcp profile
-                   /* ArrayList<Object> phoneNumbers = phoneDetailAdapter.getDetailList();
-                    for (int i = 0; i < phoneNumbers.size(); i++) {
-                        Log.i("onClick", phoneNumbers.get(i).toString());
-                    }*/
                     shareContact();
 
                 }
@@ -1943,6 +1973,22 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_RCP_PROFILE_SHARING, getResources().getString(R.string.msg_please_wait),
                     true).execute(WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
+    private void profileVisit(ArrayList<ProfileVisit> arrayListProfileVisit) {
+
+        WsRequestObject profileVisitObject = new WsRequestObject();
+        profileVisitObject.setArrayListProfileVisit(arrayListProfileVisit);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    profileVisitObject, null, WsResponseObject.class, WsConstants
+                    .REQ_ADD_PROFILE_VISIT, null, true).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_ADD_PROFILE_VISIT);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
                     .getString(R.string.msg_no_network));
