@@ -110,12 +110,21 @@
                     android:text=""/>
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:id="@+id/text_contact_number"
+                    tools:text="+917788951230"
+                    android:layout_marginLeft="@dimen/margin_5dp"/>
+
+                <TextView
                     android:id="@+id/text_contact_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:layout_gravity="bottom"
-                    tools:text="June 10,8:45PM"/>
+                    tools:text="8:45PM"
+                    android:layout_marginLeft="@dimen/margin_5dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"

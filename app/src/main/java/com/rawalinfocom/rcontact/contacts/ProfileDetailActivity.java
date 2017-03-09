@@ -45,6 +45,7 @@ import com.rawalinfocom.rcontact.adapters.CallHistoryListAdapter;
 import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
 import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
@@ -78,7 +79,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -242,7 +245,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     ArrayList<CallLogType> arrayListHistory;
     String historyNumber = "";
     String historyName = "";
+    long historyDate ;
+    Date callReceiverDate;
     CallHistoryListAdapter callHistoryListAdapter;
+    String profileContactNumber;
 
 
     //<editor-fold desc="Override Methods">
@@ -271,6 +277,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 profileActivityCallInstance = intent.getBooleanExtra(AppConstants
                         .EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, false);
             }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_DATE)) {
+                historyDate = intent.getLongExtra(AppConstants.EXTRA_CALL_HISTORY_DATE,0);
+            }
+
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
@@ -349,7 +360,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             fetchCallLogHistory(historyName);
 
         } else {*/
-        fetchCallLogHistory(historyNumber);
+        fetchCallLogHistoryDateWise(historyNumber);
 
 //        }
 
@@ -379,8 +390,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 buttonCallLog.setEnabled(false);
                 buttonCallLog.setBackgroundColor(getResources().getColor(R.color.colorDarkGray));
                 rippleCallLog.setEnabled(false);
-                if (!TextUtils.isEmpty(contactName)) {
-                    fetchCallLogHistory(contactName);
+                if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+                    fetchAllCallLogHistory(contactName);
+                }else
+                {
+                    if(!TextUtils.isEmpty(profileContactNumber)){
+                        fetchAllCallLogHistory(profileContactNumber);
+                    }
                 }
                 break;
 
@@ -816,7 +832,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 textFullScreenText.setTypeface(Utils.typefaceBold(this));
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 textFullScreenText.setText(historyNumber);
-                textToolbarTitle.setText("Unknown number");
+//                textToolbarTitle.setText("Unknown number");
+                textToolbarTitle.setText(historyNumber);
 
             }
 
@@ -1035,6 +1052,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     arrayListPhoneBookNumber.add(phoneNumber);
                 }
                 arrayListPhoneBookNumberOperation.add(phoneNumberOperation);
+                profileContactNumber =  phoneNumber.getPhoneNumber();
 
             }
             contactNumberCursor.close();
@@ -1693,12 +1711,38 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         dialog.show();
     }
 
-    private void fetchCallLogHistory(String value) {
+    private void  fetchCallLogHistoryDateWise(String value) {
+        ArrayList<CallLogType> tempList =new ArrayList<>();
+        arrayListHistory = new ArrayList<>();
+        if (!TextUtils.isEmpty(value)) {
+            tempList = callLogHistory(value);
+            Log.i("History size  ", tempList.size() + "" + " of  " + value);
+        }
+        for(int i =0; i<tempList.size(); i++){
+            CallLogType callLogTypeHistory = tempList.get(i);
+            long date =  callLogTypeHistory.getHistoryDate();
+            Date objDate1 = new Date(date);
+            String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format(objDate1);
+            String intentDate="";
+            if(historyDate > 0){
+                Date intentDate1 = new Date(historyDate);
+                intentDate = new SimpleDateFormat("yyyy-MM-dd").format(intentDate1);
+            }else{
+                intentDate = new SimpleDateFormat("yyyy-MM-dd").format(CallLogFragment.callLogTypeReceiver.getCallReceiverDate());
+            }
+            if(intentDate.equalsIgnoreCase(arrayDate)){
+                arrayListHistory.add(callLogTypeHistory);
+            }
+
+        }
+        setHistoryAdapter();
+    }
+
+    private void fetchAllCallLogHistory(String value) {
         if (!TextUtils.isEmpty(value)) {
             arrayListHistory = callLogHistory(value);
             Log.i("History size  ", arrayListHistory.size() + "" + " of  " + value);
         }
-
         setHistoryAdapter();
     }
 
