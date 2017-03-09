@@ -35,7 +35,7 @@ public class TableWebsiteMaster {
 
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_EMAIL_MASTER = "CREATE TABLE " + TABLE_RC_WEBSITE_MASTER
+    static final String CREATE_TABLE_RC_WEBSITE_MASTER = "CREATE TABLE " + TABLE_RC_WEBSITE_MASTER
             + " (" +
             " " + COLUMN_WM_ID + " integer NOT NULL CONSTRAINT rc_website_master_pk PRIMARY KEY," +
             " " + COLUMN_WM_WEBSITE_URL + " text NOT NULL," +

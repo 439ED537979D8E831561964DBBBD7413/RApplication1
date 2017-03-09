@@ -3,12 +3,6 @@ package com.rawalinfocom.rcontact.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Environment;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 
 /**
  * Created by Monal on 21/10/16.
@@ -23,13 +17,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Database Name
-    private static final String DATABASE_NAME = "RContact.db";
+    public static final String DATABASE_NAME = "RContact.db";
 
     private static String databasePath = "";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        databasePath = context.getDatabasePath(DATABASE_NAME).getPath();
     }
 
     @Override
@@ -49,8 +42,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableOfflineBackupMaster.CREATE_TABLE_PB_OFFLINE_BACKUP_MASTER);
         db.execSQL(TableOrganizationMaster.CREATE_TABLE_RC_ORGANIZATION_MASTER);
         db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
-        db.execSQL(TableWebsiteMaster.CREATE_TABLE_RC_EMAIL_MASTER);
-        db.execSQL(TableContactRatingMaster.CREATE_TABLE_CONTACT_RATING_MASTER);
+        db.execSQL(TableWebsiteMaster.CREATE_TABLE_RC_WEBSITE_MASTER);
+        db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);
     }
 
     @Override
@@ -75,36 +68,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TableOrganizationMaster
                 .CREATE_TABLE_RC_ORGANIZATION_MASTER);
         db.execSQL("DROP TABLE IF EXISTS " + TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
-        db.execSQL("DROP TABLE IF EXISTS " + TableWebsiteMaster.CREATE_TABLE_RC_EMAIL_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableWebsiteMaster.CREATE_TABLE_RC_WEBSITE_MASTER);
         db.execSQL("DROP TABLE IF EXISTS " + TableContactRatingMaster
-                .CREATE_TABLE_CONTACT_RATING_MASTER);
+                .CREATE_TABLE_RC_CONTACT_RATING_MASTER);
 
         // create new tables
         onCreate(db);
-    }
-
-    public static String exportDB() {
-        String inFileName = databasePath;
-        try {
-            File dbFile = new File(inFileName);
-            FileInputStream fis = new FileInputStream(dbFile);
-
-            String outFileName = Environment.getExternalStorageDirectory() + "/" + DATABASE_NAME;
-
-            OutputStream output = new FileOutputStream(outFileName);
-
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = fis.read(buffer)) > 0) {
-                output.write(buffer, 0, length);
-            }
-            //Close the streams
-            output.flush();
-            output.close();
-            fis.close();
-            return DATABASE_NAME;
-        } catch (Exception e) {
-            return null;
-        }
     }
 }

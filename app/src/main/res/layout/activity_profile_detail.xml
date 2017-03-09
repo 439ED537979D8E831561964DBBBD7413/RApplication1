@@ -349,7 +349,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
-                                    android:text="Phone"
+                                    android:text="@string/str_phone"
                                     android:textColor="@color/colorBlack"/>
 
                                 <android.support.v7.widget.RecyclerView
@@ -389,7 +389,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
-                                    android:text="Email"
+                                    android:text="@string/str_email"
                                     android:textColor="@color/colorBlack"/>
 
                                 <android.support.v7.widget.RecyclerView
@@ -435,7 +435,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/margin_tiny"
-                                        android:text="Website"
+                                        android:text="@string/str_website"
                                         android:textColor="@color/colorBlack"/>
 
                                     <android.support.v7.widget.RecyclerView
@@ -475,7 +475,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/margin_tiny"
-                                        android:text="Address"
+                                        android:text="@string/str_address"
                                         android:textColor="@color/colorBlack"/>
 
                                     <android.support.v7.widget.RecyclerView
@@ -515,7 +515,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/margin_tiny"
-                                        android:text="Social Contact"
+                                        android:text="@string/str_social_contact"
                                         android:textColor="@color/colorBlack"/>
 
                                     <android.support.v7.widget.RecyclerView
@@ -597,7 +597,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
-                                    android:text="Event"
+                                    android:text="@string/str_event"
                                     android:textColor="@color/colorBlack"/>
 
                                 <android.support.v7.widget.RecyclerView
@@ -637,7 +637,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
-                                    android:text="Gender"
+                                    android:text="@string/str_gender"
                                     android:textColor="@color/colorBlack"/>
 
                                 <RelativeLayout
