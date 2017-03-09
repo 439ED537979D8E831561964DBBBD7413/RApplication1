@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -29,9 +27,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,20 +47,18 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private ArrayList<String> arrayListCallLogHeader;
     private int previousPosition = 0;
 
-    private ArrayList<String> arrayListForKnownContact ;
-    private ArrayList<String> arrayListForUnknownContact ;
+    private ArrayList<String> arrayListForKnownContact;
+    private ArrayList<String> arrayListForUnknownContact;
     MaterialListDialog materialListDialog;
-    HashMap<String,Integer> historyCountMap;
     private String number = "";
 
 
     //<editor-fold desc="Constructor">
     public CallLogListAdapter(Context context, ArrayList<Object> arrayListCallLogs,
-                              ArrayList<String> arrayListCallLogHeader, HashMap<String,Integer> map) {
+                              ArrayList<String> arrayListCallLogHeader) {
         this.context = context;
         this.arrayListCallLogs = arrayListCallLogs;
         this.arrayListCallLogHeader = arrayListCallLogHeader;
-        this.historyCountMap =  map;
     }
     //</editor-fold>
 
@@ -78,11 +71,11 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         switch (viewType) {
             case HEADER:
                 View v1 = inflater.inflate(R.layout.list_item_call_log_header, parent, false);
-                viewHolder = new CallLogListAdapter.CallLogHeaderViewHolder(v1);
+                viewHolder = new CallLogHeaderViewHolder(v1);
                 break;
             case CALL_LOGS:
                 View v2 = inflater.inflate(R.layout.list_item_call_log_list, parent, false);
-                viewHolder = new CallLogListAdapter.AllCallLogViewHolder(v2);
+                viewHolder = new AllCallLogViewHolder(v2);
                 break;
         }
         return viewHolder;
@@ -92,13 +85,12 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (holder.getItemViewType()) {
             case HEADER:
-                CallLogListAdapter.CallLogHeaderViewHolder contactHeaderViewHolder =
-                        (CallLogListAdapter.CallLogHeaderViewHolder) holder;
+                CallLogHeaderViewHolder contactHeaderViewHolder =
+                        (CallLogHeaderViewHolder) holder;
                 configureHeaderViewHolder(contactHeaderViewHolder, position);
                 break;
             case CALL_LOGS:
-                CallLogListAdapter.AllCallLogViewHolder contactViewHolder = (CallLogListAdapter
-                        .AllCallLogViewHolder) holder;
+                AllCallLogViewHolder contactViewHolder = (AllCallLogViewHolder) holder;
                 configureAllContactViewHolder(contactViewHolder, position);
                 break;
         }
@@ -144,33 +136,36 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         CallLogType callLogType = (CallLogType) arrayListCallLogs.get(position);
         final String name = callLogType.getName();
-        final String number =  callLogType.getNumber();
-        if(!TextUtils.isEmpty(number)){
+        final String number = callLogType.getNumber();
+        if (!TextUtils.isEmpty(number)) {
             holder.textTempNumber.setText(number);
         }
-        if(!TextUtils.isEmpty(name))
-        {
+        if (!TextUtils.isEmpty(name)) {
             holder.textContactName.setTypeface(Utils.typefaceBold(context));
             holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                     .colorBlack));
             holder.textContactName.setText(name);
-        }else
-        {
+            String formattedNumber = Utils.getFormattedNumber(context, number);
+            holder.textContactNumber.setText(formattedNumber);
+
+        } else {
             if (!TextUtils.isEmpty(number)) {
                 holder.textContactName.setTypeface(Utils.typefaceBold(context));
                 holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                         .colorBlack));
                 String formattedNumber = Utils.getFormattedNumber(context, number);
                 holder.textContactName.setText(formattedNumber);
+                holder.textContactNumber.setText("Unsaved");
             } else {
                 holder.textContactName.setText(" ");
-
             }
         }
+
+
         final long date = callLogType.getDate();
         if (date > 0) {
             Date date1 = new Date(date);
-            String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(date1);
+            String logDate = new SimpleDateFormat("hh:mm a").format(date1);
             holder.textContactDate.setText(logDate);
         } else {
             String callReceiverDate = callLogType.getLogDate();
@@ -193,52 +188,13 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             }
         }
-        int hashMapValue =0;
-        for(String key : historyCountMap.keySet()){
-            hashMapValue = historyCountMap.get(key);
-            Log.d("Key Value",key+" "+hashMapValue);
-            if(key.equalsIgnoreCase(number)){
-                hashMapValue = historyCountMap.get(number);
-                if(hashMapValue >0 ){
-                    holder.textCount.setText("(" + hashMapValue + "" + ")");
-                    break;
-                }else {
-                    holder.textCount.setText(" ");
-                    break;
-                }
-            }
 
-        }
-      /*  for(Map.Entry<String, Integer> entry : historyCountMap.entrySet())
-        {
-            int hashMapValue = entry.getValue();
-            if (hashMapValue > 0) {
-                holder.textCount.setText("(" + hashMapValue + "" + ")");
-            } else {
-                holder.textCount.setText(" ");
-            }
-        }
-*/
-        /*Iterator<Map.Entry<String, Integer>> iterator = historyCountMap.entrySet().iterator();
-        Map.Entry< String, Integer> entry;
-        while(iterator.hasNext()){
-            entry = iterator.next();
-            Log.d("Key Value",entry.getKey()+" "+entry.getValue());
-            int hashMapValue = entry.getValue();
-            if (hashMapValue > 0) {
-                holder.textCount.setText("(" + hashMapValue + "" + ")");
-            } else {
-                holder.textCount.setText(" ");
-            }
-        }*/
-
-
-       /* int logCount = hashMapValue;
+        int logCount = callLogType.getHistoryLogCount();
         if (logCount > 0) {
             holder.textCount.setText("(" + logCount + "" + ")");
         } else {
             holder.textCount.setText(" ");
-        }*/
+        }
 
         boolean isDual = AppConstants.isDualSimPhone();
         String simNumber;
@@ -271,32 +227,32 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             @Override
             public void onClick(View v) {
 
-                if(!TextUtils.isEmpty(name)){
+                if (!TextUtils.isEmpty(name)) {
                     Pattern numberPat = Pattern.compile("\\d+");
                     Matcher matcher1 = numberPat.matcher(name);
                     if (matcher1.find()) {
-                        arrayListForKnownContact=  new ArrayList<>(Arrays.asList("Call " + name,context.getString(R.string.add_to_contact),
+                        arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.add_to_contact),
                                 context.getString(R.string.add_to_existing_contact)
-                                ,context.getString(R.string.send_sms),context.getString(R.string.remove_from_call_log),
-                                context.getString(R.string.copy_phone_number),context.getString(R.string.call_reminder),context.getString(R.string.block)));
+                                , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
+                                context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.block)));
                     } else {
-                        arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name ,context.getString(R.string.send_sms),
+                        arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.send_sms),
                                 context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number),
-                                context.getString(R.string.call_reminder),context.getString(R.string.block)));
+                                context.getString(R.string.call_reminder), context.getString(R.string.block)));
                     }
 
-                    materialListDialog = new MaterialListDialog(context,arrayListForKnownContact,number);
+                    materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number);
                     materialListDialog.setDialogTitle(name);
                     materialListDialog.showDialog();
 
-                }else{
-                    if(!TextUtils.isEmpty(number)){
-                        String formatedNumber =  Utils.getFormattedNumber(context,number);
-                        arrayListForUnknownContact = new ArrayList<>(Arrays.asList("Call " + formatedNumber,context.getString(R.string.add_to_contact),
+                } else {
+                    if (!TextUtils.isEmpty(number)) {
+                        String formatedNumber = Utils.getFormattedNumber(context, number);
+                        arrayListForUnknownContact = new ArrayList<>(Arrays.asList("Call " + formatedNumber, context.getString(R.string.add_to_contact),
                                 context.getString(R.string.add_to_existing_contact)
-                                ,context.getString(R.string.send_sms),context.getString(R.string.remove_from_call_log),
-                                context.getString(R.string.copy_phone_number),context.getString(R.string.call_reminder),context.getString(R.string.block)));
-                        materialListDialog = new MaterialListDialog(context,arrayListForUnknownContact,number);
+                                , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
+                                context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.block)));
+                        materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number);
                         materialListDialog.setDialogTitle(number);
                         materialListDialog.showDialog();
                     }
@@ -312,14 +268,14 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, number);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE,date);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
                 context.startActivity(intent);
             }
         });
 
     }
 
-    private void configureHeaderViewHolder(CallLogListAdapter.CallLogHeaderViewHolder holder, int
+    private void configureHeaderViewHolder(CallLogHeaderViewHolder holder, int
             position) {
         String date = (String) arrayListCallLogs.get(position);
         holder.textHeader.setText(date);
@@ -359,6 +315,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         TextView textCount;
         @BindView(R.id.text_temp_number)
         public TextView textTempNumber;
+        @BindView(R.id.text_contact_number)
+        TextView textContactNumber;
 
         AllCallLogViewHolder(View itemView) {
             super(itemView);

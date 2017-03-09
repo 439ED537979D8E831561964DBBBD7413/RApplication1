@@ -45,6 +45,7 @@ import com.rawalinfocom.rcontact.adapters.CallHistoryListAdapter;
 import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
 import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
@@ -245,6 +246,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     String historyNumber = "";
     String historyName = "";
     long historyDate ;
+    Date callReceiverDate;
     CallHistoryListAdapter callHistoryListAdapter;
     String profileContactNumber;
 
@@ -279,6 +281,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_DATE)) {
                 historyDate = intent.getLongExtra(AppConstants.EXTRA_CALL_HISTORY_DATE,0);
             }
+
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
@@ -387,7 +390,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 buttonCallLog.setEnabled(false);
                 buttonCallLog.setBackgroundColor(getResources().getColor(R.color.colorDarkGray));
                 rippleCallLog.setEnabled(false);
-                if (!TextUtils.isEmpty(contactName)) {
+                if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
                     fetchAllCallLogHistory(contactName);
                 }else
                 {
@@ -829,7 +832,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 textFullScreenText.setTypeface(Utils.typefaceBold(this));
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 textFullScreenText.setText(historyNumber);
-                textToolbarTitle.setText("Unknown number");
+//                textToolbarTitle.setText("Unknown number");
+                textToolbarTitle.setText(historyNumber);
 
             }
 
@@ -1707,7 +1711,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         dialog.show();
     }
 
-    private void fetchCallLogHistoryDateWise(String value) {
+    private void  fetchCallLogHistoryDateWise(String value) {
         ArrayList<CallLogType> tempList =new ArrayList<>();
         arrayListHistory = new ArrayList<>();
         if (!TextUtils.isEmpty(value)) {
@@ -1719,8 +1723,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             long date =  callLogTypeHistory.getHistoryDate();
             Date objDate1 = new Date(date);
             String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format(objDate1);
-            Date intentDate1 = new Date(historyDate);
-            String intentDate = new SimpleDateFormat("yyyy-MM-dd").format(intentDate1);
+            String intentDate="";
+            if(historyDate > 0){
+                Date intentDate1 = new Date(historyDate);
+                intentDate = new SimpleDateFormat("yyyy-MM-dd").format(intentDate1);
+            }else{
+                intentDate = new SimpleDateFormat("yyyy-MM-dd").format(CallLogFragment.callLogTypeReceiver.getCallReceiverDate());
+            }
             if(intentDate.equalsIgnoreCase(arrayDate)){
                 arrayListHistory.add(callLogTypeHistory);
             }
