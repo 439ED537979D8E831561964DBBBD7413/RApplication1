@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.rawalinfocom.rcontact">
+    package="com.rawalinfocom.rcontact">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
-    <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
 
     <!-- Creating Permission to receive Google Maps -->
     <permission
         android:name="com.app.loople.permission.MAPS_RECEIVE"
-        android:protectionLevel="signature"/>
+        android:protectionLevel="signature" />
 
     <!-- Permission to receive Google Maps -->
-    <uses-permission android:name="com.app.loople.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="com.app.loople.permission.MAPS_RECEIVE" />
 
     <permission
         android:name="com.rawalinfocom.rcontact.permission.C2D_MESSAGE"
-        android:protectionLevel="signature"/>
+        android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.rawalinfocom.rcontact.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="com.rawalinfocom.rcontact.permission.C2D_MESSAGE" />
 
     <application
         android:name=".RContactApplication"
@@ -40,32 +40,30 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
+            android:value="@string/facebook_app_id" />
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7"/>
+            android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7" />
 
-        <activity android:name=".MobileNumberRegistrationActivity"/>
+        <activity android:name=".MobileNumberRegistrationActivity" />
         <activity
             android:name=".CountryListActivity"
-            android:windowSoftInputMode="stateHidden">
-        </activity>
-        <activity android:name=".OtpVerificationActivity"/>
-        <activity android:name=".BaseActivity"/>
-        <activity android:name=".ProfileRegistrationActivity"/>
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".OtpVerificationActivity" />
+        <activity android:name=".BaseActivity" />
+        <activity android:name=".ProfileRegistrationActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service
             android:name=".services.ContactIdFetchService"
             android:enabled="true"
-            android:exported="true">
-        </service>
+            android:exported="true" />
 
         <activity android:name=".contacts.ProfileDetailActivity">
 
@@ -77,25 +75,24 @@
              </intent-filter>
             -->
         </activity>
-        <activity android:name=".ContactListingActivity">
-        </activity>
+        <activity android:name=".ContactListingActivity" />
 
         <receiver android:name=".receivers.PhoneCallReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE"/>
+                <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
-
 
         <service
             android:name=".services.ContactSyncService"
             android:enabled="true"
-            android:exported="true">
-        </service>
+            android:exported="true" />
 
+        <activity android:name=".TimelineActivity" />
+        <activity android:name=".EventsActivity"></activity>
     </application>
 
 </manifest>

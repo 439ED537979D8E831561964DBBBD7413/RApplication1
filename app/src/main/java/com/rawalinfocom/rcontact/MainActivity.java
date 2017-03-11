@@ -143,6 +143,10 @@ public class MainActivity extends BaseActivity implements NavigationView
             startActivity(Intent.createChooser(sharingIntent, "Share App Via"));
         } else if (id == R.id.nav_invite) {
             startActivityIntent(MainActivity.this, ContactListingActivity.class, null);
+        } else if (id == R.id.nav_user_timeline) {
+            startActivityIntent(MainActivity.this, TimelineActivity.class, null);
+        } else if (id == R.id.nav_user_events) {
+            startActivityIntent(MainActivity.this, EventsActivity.class, null);
         } else if (id == R.id.nav_db_export) {
             if (BuildConfig.DEBUG) {
                 String exportedFileName = DatabaseHandler.exportDB();
