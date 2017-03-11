@@ -98,6 +98,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private final String TAG_IMAGE_FAVOURITE = "tag_favourite";
     private final String TAG_IMAGE_UN_FAVOURITE = "tag_un_favourite";
     private final String TAG_IMAGE_CALL = "tag_call";
+    private final String TAG_IMAGE_SHARE = "tag_share";
 
     @BindView(R.id.include_toolbar)
     Toolbar includeToolbar;
@@ -727,6 +728,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             imageRightCenter.setImageResource(R.drawable.ic_action_share);
+            imageRightCenter.setTag(TAG_IMAGE_SHARE);
 
             if (displayOwnProfile) {
                 textToolbarTitle.setText(getString(R.string.title_my_profile));

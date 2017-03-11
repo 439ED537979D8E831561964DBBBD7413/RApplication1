@@ -288,6 +288,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         });
 
 
+        
     }
 
     private void configureHeaderViewHolder(CallLogHeaderViewHolder holder, int

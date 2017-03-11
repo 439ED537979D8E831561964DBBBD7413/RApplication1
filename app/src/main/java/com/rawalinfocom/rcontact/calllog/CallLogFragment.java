@@ -661,6 +661,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     arrayListCallLogHeader);
             recyclerCallLogs.setAdapter(callLogListAdapter);
             setRecyclerViewLayoutManager(recyclerCallLogs);
+
+
         }
     }
 
@@ -1293,5 +1295,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
         }
     };
+
+
+
 
 }
