@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.contacts;
 
 import android.annotation.TargetApi;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -96,6 +97,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private final String TAG_IMAGE_EDIT = "tag_edit";
     private final String TAG_IMAGE_FAVOURITE = "tag_favourite";
     private final String TAG_IMAGE_UN_FAVOURITE = "tag_un_favourite";
+    private final String TAG_IMAGE_CALL = "tag_call";
 
     @BindView(R.id.include_toolbar)
     Toolbar includeToolbar;
@@ -105,6 +107,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RippleView rippleActionRightCenter;
     RippleView rippleActionRightRight;
     ImageView imageRightLeft;
+    ImageView imageRightCenter;
 
     /* @BindView(R.id.text_joining_date)
      TextView textJoiningDate;*/
@@ -214,8 +217,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Button buttonSms;
     @BindView(R.id.relative_call_history)
     RelativeLayout relativeCallHistory;
-    @BindView(R.id.text_icon_history)
-    TextView textIconHistory;
+   /* @BindView(R.id.text_icon_history)
+    TextView textIconHistory;*/
     @BindView(R.id.recycler_call_history)
     RecyclerView recyclerCallHistory;
     @BindView(R.id.ripple_call_log)
@@ -366,6 +369,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchCallLogHistoryDateWise(historyNumber);
+    }
 
     @Override
     public void onComplete(RippleView rippleView) {
@@ -402,14 +410,21 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
 
             case R.id.ripple_action_right_center:
-                if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                    TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-                    UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
-                            .parseInt(pmId));
-                    showChooseShareOption(StringUtils.trimToEmpty(userProfile.getPmFirstName()),
-                            StringUtils.trimToEmpty(userProfile.getPmLastName()));
-                } else {
-                    showChooseShareOption(null, null);
+
+
+                if(StringUtils.equals(imageRightCenter.getTag().toString(),TAG_IMAGE_CALL)){
+                    showCallConfirmationDialog(historyNumber);
+
+                }else{
+                    if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+                        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
+                                .parseInt(pmId));
+                        showChooseShareOption(StringUtils.trimToEmpty(userProfile.getPmFirstName()),
+                                StringUtils.trimToEmpty(userProfile.getPmLastName()));
+                    } else {
+                        showChooseShareOption(null, null);
+                    }
                 }
 
 
@@ -681,7 +696,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void profileLayoutVisibility() {
         relativeContactDetails.setVisibility(View.GONE);
         relativeCallHistory.setVisibility(View.VISIBLE);
-        textIconHistory.setTypeface(Utils.typefaceIcons(this));
+//        textIconHistory.setTypeface(Utils.typefaceIcons(this));
 
     }
 
@@ -689,7 +704,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (profileActivityCallInstance) {
             relativeContactDetails.setVisibility(View.GONE);
             relativeCallHistory.setVisibility(View.VISIBLE);
-            textIconHistory.setTypeface(Utils.typefaceIcons(this));
+//            textIconHistory.setTypeface(Utils.typefaceIcons(this));
             rippleCallLog.setVisibility(View.GONE);
             setCallLogHistoryDetails();
         } else {
@@ -710,6 +725,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 }
                 textName.setVisibility(View.GONE);
             }
+
+            imageRightCenter.setImageResource(R.drawable.ic_action_share);
 
             if (displayOwnProfile) {
                 textToolbarTitle.setText(getString(R.string.title_my_profile));
@@ -737,6 +754,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
         imageRightLeft = ButterKnife.findById(includeToolbar, R.id.image_right_left);
+        imageRightCenter = ButterKnife.findById(includeToolbar, R.id.image_right_center);
         rippleActionRightLeft = ButterKnife.findById(includeToolbar, R.id.ripple_action_right_left);
         rippleActionRightCenter = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_center);
@@ -838,6 +856,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
         }
+        imageRightCenter.setImageResource(R.drawable.ic_phone);
+        imageRightCenter.setTag(TAG_IMAGE_CALL);
+
     }
 
     private void setUpView(final ProfileDataOperation profileDetail) {
@@ -1747,7 +1768,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private void setHistoryAdapter() {
-        if (callHistoryListAdapter == null) {
+//        if (callHistoryListAdapter == null) {
             if (arrayListHistory != null && arrayListHistory.size() > 0) {
                 textNoHistoryToShow.setVisibility(View.GONE);
                 callHistoryListAdapter = new CallHistoryListAdapter(arrayListHistory);
@@ -1758,9 +1779,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 textNoHistoryToShow.setVisibility(View.VISIBLE);
                 textNoHistoryToShow.setText(getResources().getString(R.string.text_no_history));
             }
-        } else {
-            callHistoryListAdapter.notifyDataSetChanged();
-        }
+//        } else {
+//            callHistoryListAdapter.notifyDataSetChanged();
+//        }
 
     }
 

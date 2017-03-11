@@ -20,6 +20,7 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.MaterialListDialog;
+import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.CallLogType;
 
@@ -51,7 +52,11 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private ArrayList<String> arrayListForUnknownContact;
     MaterialListDialog materialListDialog;
     private String number = "";
+    private int selectedPosition = 0;
 
+    public int getSelectedPosition() {
+        return selectedPosition;
+    }
 
     //<editor-fold desc="Constructor">
     public CallLogListAdapter(Context context, ArrayList<Object> arrayListCallLogs,
@@ -145,8 +150,14 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                     .colorBlack));
             holder.textContactName.setText(name);
-            String formattedNumber = Utils.getFormattedNumber(context, number);
-            holder.textContactNumber.setText(formattedNumber);
+            Pattern numberPat = Pattern.compile("\\d+");
+            Matcher matcher1 = numberPat.matcher(name);
+            if (matcher1.find()) {
+                holder.textContactNumber.setText("Unsaved,");
+            } else {
+                String formattedNumber = Utils.getFormattedNumber(context, number);
+                holder.textContactNumber.setText(formattedNumber+",");
+            }
 
         } else {
             if (!TextUtils.isEmpty(number)) {
@@ -155,7 +166,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .colorBlack));
                 String formattedNumber = Utils.getFormattedNumber(context, number);
                 holder.textContactName.setText(formattedNumber);
-                holder.textContactNumber.setText("Unsaved");
+                holder.textContactNumber.setText("Unsaved,");
             } else {
                 holder.textContactName.setText(" ");
             }
@@ -168,7 +179,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             String logDate = new SimpleDateFormat("hh:mm a").format(date1);
             holder.textContactDate.setText(logDate);
         } else {
-            String callReceiverDate = callLogType.getLogDate();
+            Date callDate = callLogType.getCallReceiverDate();
+            String callReceiverDate = new SimpleDateFormat("hh:mm a").format(callDate);
             holder.textContactDate.setText(callReceiverDate);
         }
         int callType = callLogType.getType();
@@ -221,11 +233,12 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             holder.textSimType.setVisibility(View.GONE);
 
         }
-        holder.text3dotsCallLog.setTypeface(Utils.typefaceIcons(context));
 
-        holder.text3dotsCallLog.setOnClickListener(new View.OnClickListener() {
+        holder.image3dotsCallLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                selectedPosition =  position;
 
                 if (!TextUtils.isEmpty(name)) {
                     Pattern numberPat = Pattern.compile("\\d+");
@@ -241,7 +254,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 context.getString(R.string.call_reminder), context.getString(R.string.block)));
                     }
 
-                    materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number);
+                    materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number,date);
                     materialListDialog.setDialogTitle(name);
                     materialListDialog.showDialog();
 
@@ -252,8 +265,9 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 context.getString(R.string.add_to_existing_contact)
                                 , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
                                 context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.block)));
-                        materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number);
+                        materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number,date);
                         materialListDialog.setDialogTitle(number);
+                        materialListDialog.setCallingAdapter(CallLogListAdapter.this);
                         materialListDialog.showDialog();
                     }
                 }
@@ -273,6 +287,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         });
 
+
     }
 
     private void configureHeaderViewHolder(CallLogHeaderViewHolder holder, int
@@ -287,8 +302,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
-        @BindView(R.id.text_3dots_call_log)
-        TextView text3dotsCallLog;
+        @BindView(R.id.image_3dots_call_log)
+        ImageView image3dotsCallLog;
         @BindView(R.id.image_social_media)
         ImageView imageSocialMedia;
         @BindView(R.id.text_contact_name)

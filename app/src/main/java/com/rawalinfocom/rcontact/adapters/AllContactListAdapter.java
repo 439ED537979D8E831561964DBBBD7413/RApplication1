@@ -833,7 +833,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textHeader.setTypeface(Utils.typefaceSemiBold(context));
+            textHeader.setTypeface(Utils.typefaceRegular(context));
 
         }
     }

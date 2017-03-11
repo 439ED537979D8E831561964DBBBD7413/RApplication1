@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
 import android.provider.Settings;
@@ -532,6 +533,7 @@ public class Utils {
         context.startActivity(intent);
 
     }
+
 
 
 }

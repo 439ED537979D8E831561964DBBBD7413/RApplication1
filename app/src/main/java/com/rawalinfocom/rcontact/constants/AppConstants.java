@@ -25,7 +25,7 @@ public class AppConstants {
     public static final int IM_ACCOUNT = 4;
     public static final int EVENT = 5;
     public static final int GENDER = 6;
-    //</editor-fold>
+        //</editor-fold>
 
     //<editor-fold desc="App Specific final constants">
 
@@ -76,12 +76,17 @@ public class AppConstants {
     public static String EXTRA_3DOTS_SHOW_HISTORY_INSTANCE = "extra_3dots_show_history_instance";
     public static String EXTRA_CALL_LOG_BROADCAST_KEY = "message";
     public static boolean EXTRA_CALL_LOG_BROADCAST_VALUE = false;
+    public static String EXTRA_CALL_LOG_DELETED_KEY = "message";
+    public static boolean EXTRA_CALL_LOG_DELETED_VALUE = true;
+
+
     //</editor-fold>
 
     //<editor-fold desc="Intent Action">
 
     public static String ACTION_CONTACT_FETCH = "action_contact_fetch";
     public static String ACTION_START_CALL_LOG_INSERTION = "action_start_call_log_insertion";
+    public static String ACTION_LOCAL_BROADCAST = "action_local_broadcast";
 
     //</editor-fold>
 
