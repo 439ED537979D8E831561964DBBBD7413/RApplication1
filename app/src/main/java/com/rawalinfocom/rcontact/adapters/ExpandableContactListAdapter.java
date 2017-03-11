@@ -95,7 +95,8 @@ class ExpandableContactListAdapter extends RecyclerView
 
         }
 
-        holder.relativeRowAllContact.setTag(displayNamePmId);
+//        holder.relativeRowAllContact.setTag(displayNamePmId);
+        holder.relativeRowAllContact.setTag(position);
 
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
                 "[Unknown]");
@@ -132,7 +133,9 @@ class ExpandableContactListAdapter extends RecyclerView
                         .text_cloud_contact_name);
 
                 Bundle bundle = new Bundle();
-                bundle.putString(AppConstants.EXTRA_PM_ID, displayNamePmId);
+//                bundle.putString(AppConstants.EXTRA_PM_ID, displayNamePmId);
+                bundle.putString(AppConstants.EXTRA_PM_ID, arrayListDbMobileNumbers.get((Integer)
+                        view.getTag()).getMpmCloudPmId());
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, phonebookId);
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
                 if (textCloudName.getVisibility() == View.VISIBLE) {
