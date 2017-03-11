@@ -20,12 +20,22 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.database.TableEmailMaster;
+import com.rawalinfocom.rcontact.database.TableImMaster;
+import com.rawalinfocom.rcontact.database.TableMobileMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.Email;
+import com.rawalinfocom.rcontact.model.ImAccount;
+import com.rawalinfocom.rcontact.model.MobileNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
+import com.rawalinfocom.rcontact.model.UserProfile;
+import com.rawalinfocom.rcontact.model.Website;
 
 import java.util.ArrayList;
 
@@ -80,8 +90,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     TextView textLabelAddress;
     @BindView(R.id.relative_address_details)
     RelativeLayout relativeAddressDetails;
-    @BindView(R.id.recycler_view_address)
-    RecyclerView recyclerViewAddress;
+    @BindView(R.id.linear_address_details)
+    LinearLayout linearAddressDetails;
     @BindView(R.id.image_add_social_contact)
     ImageView imageAddSocialContact;
     @BindView(R.id.text_label_social_contact)
@@ -130,31 +140,37 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     //<editor-fold desc="Onclick">
 
     @OnClick({R.id.image_add_phone, R.id.image_add_email, R.id.image_add_website,
-            R.id.image_add_social_contact})
+            R.id.image_add_social_contact, R.id.image_add_address})
     public void onClick(View view) {
         switch (view.getId()) {
 
             //<editor-fold desc="image_add_phone">
             case R.id.image_add_phone:
-                addView(AppConstants.PHONE_NUMBER, linearPhoneDetails, null);
+                addView(AppConstants.PHONE_NUMBER, linearPhoneDetails, null, -1);
                 break;
             //</editor-fold>
 
             //<editor-fold desc="image_add_email">
             case R.id.image_add_email:
-                addView(AppConstants.EMAIL, linearEmailDetails, null);
+                addView(AppConstants.EMAIL, linearEmailDetails, null, -1);
                 break;
             //</editor-fold>
 
             //<editor-fold desc="image_add_website">
             case R.id.image_add_website:
-                addView(AppConstants.WEBSITE, linearWebsiteDetails, null);
+                addView(AppConstants.WEBSITE, linearWebsiteDetails, null, -1);
                 break;
             //</editor-fold>
 
             // <editor-fold desc="image_add_social_contact">
             case R.id.image_add_social_contact:
-                addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails, null);
+                addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails, null, -1);
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="image_add_address">
+            case R.id.image_add_address:
+                addAddressView(null);
                 break;
             //</editor-fold>
         }
@@ -189,69 +205,154 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         rippleActionRightLeft = ButterKnife.findById(includeToolbar, R.id.ripple_action_right_left);
 
+        profileDetails();
         phoneNumberDetails();
         emailDetails();
         websiteDetails();
         socialContactDetails();
+        addressDetails();
 
         rippleActionRightLeft.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
 
     }
 
-    private void phoneNumberDetails() {
-        arrayListPhoneNumberObject = new ArrayList<>();
-        ProfileDataOperationPhoneNumber phoneNumber = new ProfileDataOperationPhoneNumber();
-        phoneNumber.setPhoneNumber("+911234567890");
-        phoneNumber.setPhoneType("Home");
-        arrayListPhoneNumberObject.add(phoneNumber);
+    private void profileDetails() {
 
-        for (int i = 0; i < arrayListPhoneNumberObject.size(); i++) {
-            addView(AppConstants.PHONE_NUMBER, linearPhoneDetails, arrayListPhoneNumberObject.get
-                    (i));
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+
+        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
+                .parseInt(getUserPmId()));
+        if (userProfile != null) {
+            inputFirstName.setText(userProfile.getPmFirstName());
+            inputLastName.setText(userProfile.getPmLastName());
+        }
+    }
+
+    private void phoneNumberDetails() {
+
+        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+
+        ArrayList<MobileNumber> arrayListMobileNumber = tableMobileMaster
+                .getMobileNumbersFromPmId(Integer.parseInt(getUserPmId()));
+        arrayListPhoneNumberObject = new ArrayList<>();
+        for (int i = 0; i < arrayListMobileNumber.size(); i++) {
+            ProfileDataOperationPhoneNumber phoneNumber = new ProfileDataOperationPhoneNumber();
+            phoneNumber.setPhoneNumber(arrayListMobileNumber.get(i).getMnmMobileNumber());
+            phoneNumber.setPhoneType(arrayListMobileNumber.get(i).getMnmNumberType());
+            phoneNumber.setPhoneId(arrayListMobileNumber.get(i).getMnmRecordIndexId());
+            arrayListPhoneNumberObject.add(phoneNumber);
+        }
+        if (arrayListPhoneNumberObject.size() > 0) {
+            for (int i = 0; i < arrayListPhoneNumberObject.size(); i++) {
+                addView(AppConstants.PHONE_NUMBER, linearPhoneDetails, arrayListPhoneNumberObject
+                        .get(i), i);
+            }
+        } else {
+            addView(AppConstants.PHONE_NUMBER, linearPhoneDetails, null, -1);
         }
     }
 
     private void emailDetails() {
-        arrayListEmailObject = new ArrayList<>();
-        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-        email.setEmEmailId("mg@gmail.com");
-        email.setEmType("Work");
-        arrayListEmailObject.add(email);
+        TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
 
-        for (int i = 0; i < arrayListEmailObject.size(); i++) {
-            addView(AppConstants.EMAIL, linearEmailDetails, arrayListEmailObject.get(i));
+        ArrayList<Email> arrayListEmail = tableEmailMaster.getEmailsFromPmId(Integer.parseInt
+                (getUserPmId()));
+        arrayListEmailObject = new ArrayList<>();
+        for (int i = 0; i < arrayListEmail.size(); i++) {
+            ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+            email.setEmEmailId(arrayListEmail.get(i).getEmEmailAddress());
+            email.setEmType(arrayListEmail.get(i).getEmEmailType());
+            email.setEmId(arrayListEmail.get(i).getEmRecordIndexId());
+            arrayListEmailObject.add(email);
+        }
+        if (arrayListEmailObject.size() > 0) {
+            for (int i = 0; i < arrayListEmailObject.size(); i++) {
+                addView(AppConstants.EMAIL, linearEmailDetails, arrayListEmailObject.get(i), i);
+            }
+        } else {
+            addView(AppConstants.EMAIL, linearEmailDetails, null, -1);
         }
 
     }
 
     private void websiteDetails() {
-        arrayListWebsiteObject = new ArrayList<>();
-        ProfileDataOperationWebAddress webAddress = new ProfileDataOperationWebAddress();
-        webAddress.setWebAddress("www.hotmail.com");
-        webAddress.setWebType("Work");
-        arrayListWebsiteObject.add(webAddress);
+        TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
 
-        for (int i = 0; i < arrayListWebsiteObject.size(); i++) {
-            addView(AppConstants.WEBSITE, linearWebsiteDetails, arrayListWebsiteObject.get(i));
+        ArrayList<Website> arrayListWebsite = tableWebsiteMaster.getWebsiteFromPmId(Integer
+                .parseInt(getUserPmId()));
+        arrayListWebsiteObject = new ArrayList<>();
+        for (int i = 0; i < arrayListWebsite.size(); i++) {
+            ProfileDataOperationWebAddress webAddress = new ProfileDataOperationWebAddress();
+            webAddress.setWebAddress(arrayListWebsite.get(i).getWmWebsiteUrl());
+            webAddress.setWebType(arrayListWebsite.get(i).getWmWebsiteType());
+            webAddress.setWebId(arrayListWebsite.get(i).getWmRecordIndexId());
+            arrayListWebsiteObject.add(webAddress);
+        }
+
+        if (arrayListWebsiteObject.size() > 0) {
+            for (int i = 0; i < arrayListWebsiteObject.size(); i++) {
+                addView(AppConstants.WEBSITE, linearWebsiteDetails, arrayListWebsiteObject.get(i)
+                        , i);
+            }
+        } else {
+            addView(AppConstants.WEBSITE, linearWebsiteDetails, null, -1);
         }
 
     }
 
     private void socialContactDetails() {
-        arrayListSocialContactObject = new ArrayList<>();
-        ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
-        imAccount.setIMAccountDetails("hello.world");
-        arrayListSocialContactObject.add(imAccount);
+        TableImMaster tableImMaster = new TableImMaster(databaseHandler);
 
-        for (int i = 0; i < arrayListSocialContactObject.size(); i++) {
-            addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails,
-                    arrayListSocialContactObject.get(i));
+        ArrayList<ImAccount> arrayListImAccount = tableImMaster.getImAccountFromPmId(Integer
+                .parseInt(getUserPmId()));
+        arrayListSocialContactObject = new ArrayList<>();
+        for (int i = 0; i < arrayListImAccount.size(); i++) {
+            ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+            imAccount.setIMAccountProtocol(arrayListImAccount.get(i).getImImProtocol());
+            imAccount.setIMAccountType(arrayListImAccount.get(i).getImImType());
+            imAccount.setIMId(arrayListImAccount.get(i).getImRecordIndexId());
+            arrayListSocialContactObject.add(imAccount);
+        }
+
+        if (arrayListSocialContactObject.size() > 0) {
+            for (int i = 0; i < arrayListSocialContactObject.size(); i++) {
+                addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails,
+                        arrayListSocialContactObject.get(i), i);
+            }
+        } else {
+            addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails, null, -1);
         }
 
     }
 
-    private void addView(int viewType, LinearLayout linearLayout, Object detailObject) {
+    private void addressDetails() {
+   /*     TableImMaster tableImMaster = new TableImMaster(databaseHandler);
+
+        ArrayList<ImAccount> arrayListImAccount = tableImMaster.getImAccountFromPmId(Integer
+                .parseInt(getUserPmId()));
+        arrayListSocialContactObject = new ArrayList<>();
+        for (int i = 0; i < arrayListImAccount.size(); i++) {
+            ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+            imAccount.setIMAccountProtocol(arrayListImAccount.get(i).getImImProtocol());
+            imAccount.setIMAccountType(arrayListImAccount.get(i).getImImType());
+            imAccount.setIMId(arrayListImAccount.get(i).getImRecordIndexId());
+            arrayListSocialContactObject.add(imAccount);
+        }
+
+        if (arrayListSocialContactObject.size() > 0) {
+            for (int i = 0; i < arrayListSocialContactObject.size(); i++) {
+                addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails,
+                        arrayListSocialContactObject.get(i), i);
+            }
+        } else {*/
+        addAddressView(null);
+//        }
+
+    }
+
+    private void addView(int viewType, LinearLayout linearLayout, Object detailObject, int
+            position) {
         View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile, null);
         TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
         Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
@@ -269,6 +370,11 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 spinnerArrayId = getResources().getStringArray(R.array.types_phone_number);
                 inputValue.setInputType(InputType.TYPE_CLASS_PHONE);
                 if (detailObject != null) {
+                    if (position == 0) {
+                        inputValue.setEnabled(false);
+                        spinnerType.setEnabled(false);
+                        textImageCross.setVisibility(View.INVISIBLE);
+                    }
                     ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                             detailObject;
                     inputValue.setText(phoneNumber.getPhoneNumber());
@@ -321,6 +427,45 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         });
 
         linearLayout.addView(view);
+    }
+
+    private void addAddressView(Object detailObject) {
+        View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_address,
+                null);
+        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
+        Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
+        EditText inputCountry = (EditText) view.findViewById(R.id.input_country);
+        EditText inputState = (EditText) view.findViewById(R.id.input_state);
+        EditText inputCity = (EditText) view.findViewById(R.id.input_city);
+        EditText inputStreet = (EditText) view.findViewById(R.id.input_street);
+        EditText inputNeighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
+        EditText inputPinCode = (EditText) view.findViewById(R.id.input_pin_code);
+        EditText inputPoBox = (EditText) view.findViewById(R.id.input_po_box);
+
+        final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
+                .relative_row_edit_profile);
+
+        textImageCross.setTypeface(Utils.typefaceIcons(this));
+        inputCountry.setTypeface(Utils.typefaceRegular(this));
+        inputState.setTypeface(Utils.typefaceRegular(this));
+        inputCity.setTypeface(Utils.typefaceRegular(this));
+        inputStreet.setTypeface(Utils.typefaceRegular(this));
+        inputNeighborhood.setTypeface(Utils.typefaceRegular(this));
+        inputPinCode.setTypeface(Utils.typefaceRegular(this));
+        inputPoBox.setTypeface(Utils.typefaceRegular(this));
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, R.layout
+                .list_item_spinner, getResources().getStringArray(R.array.types_email_address));
+        spinnerType.setAdapter(spinnerAdapter);
+
+        textImageCross.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                relativeRowEditProfile.setVisibility(View.GONE);
+            }
+        });
+
+        linearAddressDetails.addView(view);
     }
 
     //</editor-fold>

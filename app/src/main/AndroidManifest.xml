@@ -95,8 +95,9 @@
             android:exported="true">
         </service>
 
-        <activity android:name=".contacts.EditProfileActivity">
-        </activity>
+        <activity
+            android:name=".contacts.EditProfileActivity"
+            android:windowSoftInputMode="stateHidden"/>
     </application>
 
 </manifest>

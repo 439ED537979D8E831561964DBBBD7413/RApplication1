@@ -27,6 +27,7 @@ public class TableEventMaster {
 
     // Column Names
     private static final String COLUMN_EVM_ID = "evm_id";
+    private static final String COLUMN_EVM_RECORD_INDEX_ID = "evm_record_index_id";
     static final String COLUMN_EVM_START_DATE = "evm_start_date";
     static final String COLUMN_EVM_EVENT_TYPE = "evm_event_type";
     private static final String COLUMN_EVM_CUSTOM_TYPE = "evm_custom_type";
@@ -38,6 +39,7 @@ public class TableEventMaster {
     static final String CREATE_TABLE_RC_EVENT_MASTER = "CREATE TABLE " + TABLE_RC_EVENT_MASTER +
             " (" +
             " " + COLUMN_EVM_ID + " integer NOT NULL CONSTRAINT rc_event_master_pk PRIMARY KEY," +
+            " " + COLUMN_EVM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_EVM_START_DATE + " datetime NOT NULL," +
             " " + COLUMN_EVM_EVENT_TYPE + " text NOT NULL," +
             " " + COLUMN_EVM_CUSTOM_TYPE + " text," +
@@ -51,6 +53,7 @@ public class TableEventMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_EVM_ID, event.getEvmId());
+        values.put(COLUMN_EVM_RECORD_INDEX_ID, event.getEvmRecordIndexId());
         values.put(COLUMN_EVM_START_DATE, event.getEvmStartDate());
         values.put(COLUMN_EVM_EVENT_TYPE, event.getEvmEventType());
         values.put(COLUMN_EVM_CUSTOM_TYPE, event.getEvmCustomType());
@@ -71,6 +74,7 @@ public class TableEventMaster {
         for (int i = 0; i < arrayListEvent.size(); i++) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_EVM_ID, arrayListEvent.get(i).getEvmId());
+            values.put(COLUMN_EVM_RECORD_INDEX_ID, arrayListEvent.get(i).getEvmRecordIndexId());
             values.put(COLUMN_EVM_START_DATE, arrayListEvent.get(i).getEvmStartDate());
             values.put(COLUMN_EVM_EVENT_TYPE, arrayListEvent.get(i).getEvmEventType());
             values.put(COLUMN_EVM_CUSTOM_TYPE, arrayListEvent.get(i).getEvmCustomType());
@@ -89,20 +93,25 @@ public class TableEventMaster {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RC_EVENT_MASTER, new String[]{COLUMN_EVM_ID,
-                        COLUMN_EVM_START_DATE, COLUMN_EVM_EVENT_TYPE, COLUMN_EVM_CUSTOM_TYPE,
-                        COLUMN_EVM_EVENT_PRIVACY, COLUMN_RC_PROFILE_MASTER_PM_ID},
-                COLUMN_EVM_ID + "=?", new String[]{String.valueOf(evmId)}, null, null, null, null);
+                COLUMN_EVM_RECORD_INDEX_ID, COLUMN_EVM_START_DATE, COLUMN_EVM_EVENT_TYPE,
+                COLUMN_EVM_CUSTOM_TYPE, COLUMN_EVM_EVENT_PRIVACY,
+                COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_EVM_ID + "=?", new String[]{String
+                .valueOf(evmId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
         Event event = new Event();
         if (cursor != null) {
-            event.setEvmId(cursor.getString(0));
-            event.setEvmStartDate(cursor.getString(1));
-            event.setEvmEventType(cursor.getString(2));
-            event.setEvmCustomType(cursor.getString(3));
-            event.setEvmEventPrivacy(cursor.getString(4));
-            event.setRcProfileMasterPmId(cursor.getString(5));
+            event.setEvmId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_ID)));
+            event.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_EVM_RECORD_INDEX_ID)));
+            event.setEvmStartDate(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_START_DATE)));
+            event.setEvmEventType(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_EVENT_TYPE)));
+            event.setEvmCustomType(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_CUSTOM_TYPE)));
+            event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_EVM_EVENT_PRIVACY)));
+            event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_RC_PROFILE_MASTER_PM_ID)));
 
             cursor.close();
         }
@@ -126,12 +135,19 @@ public class TableEventMaster {
         if (cursor.moveToFirst()) {
             do {
                 Event event = new Event();
-                event.setEvmId(cursor.getString(0));
-                event.setEvmStartDate(cursor.getString(1));
-                event.setEvmEventType(cursor.getString(2));
-                event.setEvmCustomType(cursor.getString(3));
-                event.setEvmEventPrivacy(cursor.getString(4));
-                event.setRcProfileMasterPmId(cursor.getString(5));
+                event.setEvmId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_ID)));
+                event.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_RECORD_INDEX_ID)));
+                event.setEvmStartDate(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_START_DATE)));
+                event.setEvmEventType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_EVENT_TYPE)));
+                event.setEvmCustomType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_CUSTOM_TYPE)));
+                event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_EVENT_PRIVACY)));
+                event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_RC_PROFILE_MASTER_PM_ID)));
                 // Adding event to list
                 arrayListEvent.add(event);
             } while (cursor.moveToNext());
@@ -166,6 +182,7 @@ public class TableEventMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_EVM_ID, event.getEvmId());
+        values.put(COLUMN_EVM_RECORD_INDEX_ID, event.getEvmRecordIndexId());
         values.put(COLUMN_EVM_START_DATE, event.getEvmStartDate());
         values.put(COLUMN_EVM_EVENT_TYPE, event.getEvmEventType());
         values.put(COLUMN_EVM_CUSTOM_TYPE, event.getEvmCustomType());

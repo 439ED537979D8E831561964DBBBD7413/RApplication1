@@ -27,6 +27,7 @@ public class TableOrganizationMaster {
 
     // Column Names
     private static final String COLUMN_OM_ID = "om_id";
+    private static final String COLUMN_OM_RECORD_INDEX_ID = "om_record_index_id";
     private static final String COLUMN_OM_ORGANIZATION_COMPANY = "om_organization_company";
     private static final String COLUMN_OM_ORGANIZATION_TYPE = "om_organization_type";
     private static final String COLUMN_OM_CUSTOM_TYPE = "om_custom_type";
@@ -43,6 +44,7 @@ public class TableOrganizationMaster {
             TABLE_RC_ORGANIZATION_MASTER + " (" +
             " " + COLUMN_OM_ID + " integer NOT NULL CONSTRAINT rc_organization_master_pk PRIMARY " +
             "KEY," +
+            " " + COLUMN_OM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_OM_ORGANIZATION_COMPANY + " text NOT NULL," +
             " " + COLUMN_OM_ORGANIZATION_TYPE + " text," +
             " " + COLUMN_OM_CUSTOM_TYPE + " text," +
@@ -60,6 +62,7 @@ public class TableOrganizationMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_OM_ID, organization.getOmId());
+        values.put(COLUMN_OM_RECORD_INDEX_ID, organization.getOmRecordIndexId());
         values.put(COLUMN_OM_ORGANIZATION_COMPANY, organization.getOmOrganizationCompany());
         values.put(COLUMN_OM_ORGANIZATION_TYPE, organization.getOmOrganizationType());
         values.put(COLUMN_OM_CUSTOM_TYPE, organization.getOmCustomType());
@@ -84,6 +87,8 @@ public class TableOrganizationMaster {
         for (int i = 0; i < arrayListOrganization.size(); i++) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_OM_ID, arrayListOrganization.get(i).getOmId());
+            values.put(COLUMN_OM_RECORD_INDEX_ID, arrayListOrganization.get(i).getOmRecordIndexId
+                    ());
             values.put(COLUMN_OM_ORGANIZATION_COMPANY, arrayListOrganization.get(i)
                     .getOmOrganizationCompany());
             values.put(COLUMN_OM_ORGANIZATION_TYPE, arrayListOrganization.get(i)
@@ -113,8 +118,8 @@ public class TableOrganizationMaster {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RC_ORGANIZATION_MASTER, new String[]{COLUMN_OM_ID,
-                COLUMN_OM_ORGANIZATION_COMPANY, COLUMN_OM_ORGANIZATION_TYPE,
-                COLUMN_OM_CUSTOM_TYPE, COLUMN_OM_ORGANIZATION_TITLE,
+                COLUMN_OM_RECORD_INDEX_ID, COLUMN_OM_ORGANIZATION_COMPANY,
+                COLUMN_OM_ORGANIZATION_TYPE, COLUMN_OM_CUSTOM_TYPE, COLUMN_OM_ORGANIZATION_TITLE,
                 COLUMN_OM_ORGANIZATION_DEPARTMENT, COLUMN_OM_JOB_DESCRIPTION,
                 COLUMN_OM_OFFICE_LOCATION, COLUMN_OM_ORGANIZATION_PRIVACY,
                 COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_OM_ID + "=?", new String[]{String.valueOf
@@ -124,16 +129,27 @@ public class TableOrganizationMaster {
 
         Organization organization = new Organization();
         if (cursor != null) {
-            organization.setOmId(cursor.getString(0));
-            organization.setOmOrganizationCompany(cursor.getString(1));
-            organization.setOmOrganizationType(cursor.getString(2));
-            organization.setOmCustomType(cursor.getString(3));
-            organization.setOmOrganizationTitle(cursor.getString(4));
-            organization.setOmOrganizationDepartment(cursor.getString(5));
-            organization.setOmJobDescription(cursor.getString(6));
-            organization.setOmOfficeLocation(cursor.getString(7));
-            organization.setOmOrganizationPrivacy(cursor.getString(8));
-            organization.setRcProfileMasterPmId(cursor.getString(9));
+            organization.setOmId(cursor.getString(cursor.getColumnIndex(COLUMN_OM_ID)));
+            organization.setOmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_OM_RECORD_INDEX_ID)));
+            organization.setOmOrganizationCompany(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_OM_ORGANIZATION_COMPANY)));
+            organization.setOmOrganizationType(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_OM_ORGANIZATION_TYPE)));
+            organization.setOmCustomType(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_OM_CUSTOM_TYPE)));
+            organization.setOmOrganizationTitle(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_OM_ORGANIZATION_TITLE)));
+            organization.setOmOrganizationDepartment(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_OM_ORGANIZATION_DEPARTMENT)));
+            organization.setOmJobDescription(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_OM_JOB_DESCRIPTION)));
+            organization.setOmOfficeLocation(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_OM_OFFICE_LOCATION)));
+            organization.setOmOrganizationPrivacy(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_OM_ORGANIZATION_PRIVACY)));
+            organization.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_RC_PROFILE_MASTER_PM_ID)));
 
             cursor.close();
         }
@@ -157,16 +173,27 @@ public class TableOrganizationMaster {
         if (cursor.moveToFirst()) {
             do {
                 Organization organization = new Organization();
-                organization.setOmId(cursor.getString(0));
-                organization.setOmOrganizationCompany(cursor.getString(1));
-                organization.setOmOrganizationType(cursor.getString(2));
-                organization.setOmCustomType(cursor.getString(3));
-                organization.setOmOrganizationTitle(cursor.getString(4));
-                organization.setOmOrganizationDepartment(cursor.getString(5));
-                organization.setOmJobDescription(cursor.getString(6));
-                organization.setOmOfficeLocation(cursor.getString(7));
-                organization.setOmOrganizationPrivacy(cursor.getString(8));
-                organization.setRcProfileMasterPmId(cursor.getString(9));
+                organization.setOmId(cursor.getString(cursor.getColumnIndex(COLUMN_OM_ID)));
+                organization.setOmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_RECORD_INDEX_ID)));
+                organization.setOmOrganizationCompany(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_COMPANY)));
+                organization.setOmOrganizationType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_TYPE)));
+                organization.setOmCustomType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_CUSTOM_TYPE)));
+                organization.setOmOrganizationTitle(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_TITLE)));
+                organization.setOmOrganizationDepartment(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_DEPARTMENT)));
+                organization.setOmJobDescription(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_JOB_DESCRIPTION)));
+                organization.setOmOfficeLocation(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_OFFICE_LOCATION)));
+                organization.setOmOrganizationPrivacy(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_PRIVACY)));
+                organization.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_RC_PROFILE_MASTER_PM_ID)));
                 // Adding organization to list
                 arrayListOrganization.add(organization);
             } while (cursor.moveToNext());
@@ -201,6 +228,7 @@ public class TableOrganizationMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_OM_ID, organization.getOmId());
+        values.put(COLUMN_OM_RECORD_INDEX_ID, organization.getOmRecordIndexId());
         values.put(COLUMN_OM_ORGANIZATION_COMPANY, organization.getOmOrganizationCompany());
         values.put(COLUMN_OM_ORGANIZATION_TYPE, organization.getOmOrganizationType());
         values.put(COLUMN_OM_CUSTOM_TYPE, organization.getOmCustomType());

@@ -152,9 +152,9 @@ public class MainActivity extends BaseActivity implements NavigationView
                     Intent emailIntent = new Intent(Intent.ACTION_SEND);
                     emailIntent.setType("vnd.android.cursor.dir/email");
                     String to[] = {"development@rawalinfocom.com"};
-                    emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
+//                    emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
                     emailIntent.putExtra(Intent.EXTRA_STREAM, path);
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
                     startActivity(Intent.createChooser(emailIntent, "Send email..."));
                 } else {
                     Toast.makeText(getApplicationContext(), "DB dump failed", Toast.LENGTH_SHORT)

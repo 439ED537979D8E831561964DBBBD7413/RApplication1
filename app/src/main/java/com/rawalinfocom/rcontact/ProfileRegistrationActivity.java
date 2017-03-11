@@ -691,6 +691,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber)) {
             for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
                 MobileNumber mobileNumber = new MobileNumber();
+                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i)
+                        .getPhoneId());
                 mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i)
                         .getPhoneType());
                 mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(i)
@@ -711,6 +713,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             ArrayList<Email> arrayListEmail = new ArrayList<>();
             for (int i = 0; i < arrayListEmailId.size(); i++) {
                 Email email = new Email();
+                email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
                 email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
@@ -732,6 +735,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             ArrayList<Organization> organizationList = new ArrayList<>();
             for (int i = 0; i < arrayListOrganization.size(); i++) {
                 Organization organization = new Organization();
+                organization.setOmRecordIndexId(arrayListOrganization.get(i).getOrgId());
                 organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName
                         ());
                 organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgType());
@@ -760,6 +764,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             ArrayList<Website> websiteList = new ArrayList<>();
             for (int j = 0; j < arrayListWebsite.size(); j++) {
                 Website website = new Website();
+                website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
                 website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
                 website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
                 website.setRcProfileMasterPmId(userProfileRegistered.getPmId());
@@ -777,6 +782,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             ArrayList<Address> addressList = new ArrayList<>();
             for (int j = 0; j < arrayListAddress.size(); j++) {
                 Address address = new Address();
+                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                 address.setAmCity(arrayListAddress.get(j).getCity());
                 address.setAmCountry(arrayListAddress.get(j).getCountry());
                 address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
@@ -804,6 +810,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             ArrayList<ImAccount> imAccountsList = new ArrayList<>();
             for (int j = 0; j < arrayListImAccount.size(); j++) {
                 ImAccount imAccount = new ImAccount();
+                imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
                 imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(arrayListImAccount.get(j).getIMAccountPublic());
@@ -822,6 +829,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             ArrayList<Event> eventList = new ArrayList<>();
             for (int j = 0; j < arrayListEvent.size(); j++) {
                 Event event = new Event();
+                event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
                 event.setEvmStartDate(arrayListEvent.get(j).getEventDate());
                 event.setEvmEventType(arrayListEvent.get(j).getEventType());
                 event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));

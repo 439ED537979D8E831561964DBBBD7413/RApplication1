@@ -213,20 +213,20 @@
 
             </RelativeLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view_address"
+            <LinearLayout
+                android:id="@+id/linear_address_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/relative_address_details"
                 android:layout_margin="@dimen/margin_tiny"
-                android:overScrollMode="never"/>
+                android:orientation="vertical"/>
 
 
             <RelativeLayout
                 android:id="@+id/relative_social_contact_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/recycler_view_address"
+                android:layout_below="@id/linear_address_details"
                 android:layout_marginTop="@dimen/margin_small">
 
                 <ImageView
