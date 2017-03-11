@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.helper.RippleView;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.timeline.TimelineItem;
 import com.rawalinfocom.rcontact.timeline.TimelineSectionAdapter;
 
@@ -62,6 +63,12 @@ public class TimelineActivity extends BaseActivity implements RippleView
     ImageView header2Icon;
     @BindView(R.id.header3_icon)
     ImageView header3Icon;
+    @BindView(R.id.text_header1)
+    TextView textHeader1;
+    @BindView(R.id.text_header2)
+    TextView textHeader2;
+    @BindView(R.id.text_header3)
+    TextView textHeader3;
 
     private TimelineSectionAdapter sectionAdapter1;
     private TimelineSectionAdapter sectionAdapter2;
@@ -78,6 +85,9 @@ public class TimelineActivity extends BaseActivity implements RippleView
 
     private void init() {
         //searchViewTimeline.setIconified(false);
+        textHeader1.setTypeface(Utils.typefaceRegular(this));
+        textHeader2.setTypeface(Utils.typefaceRegular(this));
+        textHeader3.setTypeface(Utils.typefaceRegular(this));
         rippleActionBack.setOnRippleCompleteListener(this);
         textToolbarTitle.setText("Timeline");
         header1Icon.setImageResource(R.drawable.ic_collapse);
@@ -128,21 +138,23 @@ public class TimelineActivity extends BaseActivity implements RippleView
     }
 
     private void initData() {
-        TimelineItem item1 = new TimelineItem("A DHAMELIYA", "Birthday", "20 Years Old", "Happy Birthday!", "", 0);
-        TimelineItem item2 = new TimelineItem("B DHAMELIYA", "Anniversary", "1st Anniversary", "Congrats!", "Thanks", 0);
-        TimelineItem item3 = new TimelineItem("C DHAMELIYA", "Rating", "3", "Nice Profile dude", "Thanks", 1);
-        TimelineItem item4 = new TimelineItem("D DHAMELIYA", "Anniversary", "5th Anniversary ", "Congo bro", "", 0);
-        TimelineItem item5 = new TimelineItem("E DHAMELIYA", "Birthday", "37 Years Old", "Happy Birthday dada", "Thank you very much", 0);
-        TimelineItem item6 = new TimelineItem("F DHAMELIYA", "Rating", "5", "", "", 1);
-        TimelineItem item7 = new TimelineItem("G DHAMELIYA", "Birthday", "67 Years Old", "Happy Birthday GD", "", 0);
+        //TimelineItem(String wisherName, String eventName, String notiTime, String eventDetail,
+        // String wisherComment, String wisherCommentTime, String userComment, String userCommentTime, int notiType)
+        TimelineItem item1 = new TimelineItem("A Dhameliya", "Birthday", "12:00 PM", "20 Years Old", "Happy Birthday!", "11:00 PM", "", "", 0);
+        TimelineItem item2 = new TimelineItem("B Dhameliya", "Anniversary", "11:16 PM", "1st Anniversary", "Congrats!", "11:00 PM", "Thanks", "11:18PM", 0);
+        TimelineItem item3 = new TimelineItem("C Dhameliya", "Rating", "11:16 PM", "3", "Nice Profile dude", "11:00 PM", "Thanks", "11:18PM", 1);
+        TimelineItem item4 = new TimelineItem("D Dhameliya", "Anniversary", "11:16 PM", "5th Anniversary ", "Congo bro", "11:00 PM", "", "", 0);
+        TimelineItem item5 = new TimelineItem("E Dhameliya", "Birthday", "11:16 PM", "37 Years Old", "Happy Birthday dada", "11:16 PM", "Thank you very much", "11:16 PM", 0);
+        TimelineItem item6 = new TimelineItem("F Dhameliya", "Rating", "11:16 PM", "5", "", "", "", "", 1);
+        TimelineItem item7 = new TimelineItem("G Dhameliya", "Birthday", "11:16 PM", "67 Years Old", "Happy Birthday GD", "11:16 PM", "", "", 0);
 
 
         final List<TimelineItem> sections1 = Arrays.asList(item1, item2, item3, item4, item5, item6, item7, item1, item2);
         final List<TimelineItem> sections2 = Arrays.asList(item1, item2, item3);
         final List<TimelineItem> sections3 = Arrays.asList(item1, item2);
-        sectionAdapter1 = new TimelineSectionAdapter(sections2);
-        sectionAdapter2 = new TimelineSectionAdapter(sections2);
-        sectionAdapter3 = new TimelineSectionAdapter(sections1);
+        sectionAdapter1 = new TimelineSectionAdapter(getApplicationContext(), sections2);
+        sectionAdapter2 = new TimelineSectionAdapter(getApplicationContext(), sections3);
+        sectionAdapter3 = new TimelineSectionAdapter(getApplicationContext(), sections1);
 
 
         DisplayMetrics displaymetrics = new DisplayMetrics();

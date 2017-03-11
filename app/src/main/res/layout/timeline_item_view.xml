@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relative_row_all_contact"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -55,9 +54,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginStart="2dp"
-                        android:maxLines="1"
                         android:ellipsize="end"
-                        android:text="Birthday"
+                        android:maxLines="1"
                         tools:text=" Birthday" />
                 </LinearLayout>
 
@@ -70,7 +68,8 @@
                     android:ellipsize="end"
                     android:gravity="end"
                     android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:text="11:15 PM" />
+                    android:textAppearance="?android:textAppearanceSmall"
+                    tools:text="11:15 PM" />
 
             </LinearLayout>
 
@@ -78,7 +77,7 @@
                 android:id="@+id/text_event_detail_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="20 Years Old" />
+                tools:text="20 Years Old" />
 
             <LinearLayout
                 android:id="@+id/rating_info"
@@ -91,8 +90,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="6dp"
-                    android:singleLine="true"
-                    android:text="3" />
+                    android:maxLines="1"
+                    tools:text="3" />
 
                 <RatingBar
                     android:id="@+id/given_rating_bar"
@@ -128,8 +127,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:text="Happy Birthday to you!"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/colorBlack"
                         tools:text="Happy Birthday to you!" />
 
                     <TextView
@@ -137,7 +135,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:text="6:45 PM"
+                        android:textAppearance="?android:textAppearanceSmall"
                         tools:text=" 6:45 PM" />
                 </LinearLayout>
             </LinearLayout>
@@ -179,11 +177,10 @@
                         <ImageView
                             android:id="@+id/button_user_comment_submit"
                             android:layout_width="0dp"
-                            android:layout_gravity="center"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
                             android:layout_weight="1"
-                            android:src="@drawable/ic_send"
-                            />
+                            android:src="@drawable/ic_send" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -196,8 +193,7 @@
                             android:id="@+id/text_user_comment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Thanks"
-                            android:textColor="@color/colorPrimary"
+                            android:textColor="@color/colorBlack"
                             tools:text="Thanks" />
 
                         <TextView
@@ -205,7 +201,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
-                            android:text="12:03 PM" />
+                            android:textAppearance="?android:textAppearanceSmall"
+                            tools:text="12:03 PM" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
