@@ -661,8 +661,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     arrayListCallLogHeader);
             recyclerCallLogs.setAdapter(callLogListAdapter);
             setRecyclerViewLayoutManager(recyclerCallLogs);
-
-
         }
     }
 
@@ -834,7 +832,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                         (ContactsContract.PhoneLookup.DISPLAY_NAME));
                 numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
                         .PhoneLookup.LOOKUP_KEY));
-                Log.d("contactMatch id: ", numberId);
+//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
             }
             cursor.close();
         }
