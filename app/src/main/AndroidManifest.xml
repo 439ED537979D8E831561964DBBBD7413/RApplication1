@@ -92,7 +92,9 @@
             android:exported="true" />
 
         <activity android:name=".TimelineActivity" />
-        <activity android:name=".EventsActivity"></activity>
+        <activity android:name=".EventsActivity" />
+        <activity android:name=".NotificationsActivity" />
+        <activity android:name=".NotificationsDetailActivity" />
     </application>
 
 </manifest>

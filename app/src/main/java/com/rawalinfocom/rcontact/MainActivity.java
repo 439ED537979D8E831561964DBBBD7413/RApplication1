@@ -226,6 +226,12 @@ public class MainActivity extends BaseActivity implements NavigationView
 //        textImageNotification.setText(Html.fromHtml("&#xe966;"));
 //        textImageNotification.setText(Html.fromHtml("&#xe900;"));
         textImageNotification.setText(Html.fromHtml(getResources().getString(R.string.im_bell)));
+        textImageNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityIntent(MainActivity.this, NotificationsActivity.class, null);
+            }
+        });
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
