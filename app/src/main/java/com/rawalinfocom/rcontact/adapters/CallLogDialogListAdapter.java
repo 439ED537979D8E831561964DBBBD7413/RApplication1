@@ -1,16 +1,13 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.annotation.TargetApi;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.CallLog;
-import android.provider.ContactsContract;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,20 +20,15 @@ import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
-import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialogClipboard;
-import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.model.CallLogType;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,7 +37,7 @@ import butterknife.ButterKnife;
  * Created by Aniruddh on 24/02/17.
  */
 
-public class MaterialListAdapter extends RecyclerView.Adapter<MaterialListAdapter.MaterialViewHolder> {
+public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialogListAdapter.MaterialViewHolder> {
 
 
     private Context context;
@@ -57,7 +49,7 @@ public class MaterialListAdapter extends RecyclerView.Adapter<MaterialListAdapte
     Class classToReceive;
     long callLogDateToDelete;
 
-    public MaterialListAdapter(Context context, ArrayList<String> arrayList, String number, long date) {
+    public CallLogDialogListAdapter(Context context, ArrayList<String> arrayList, String number, long date) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;

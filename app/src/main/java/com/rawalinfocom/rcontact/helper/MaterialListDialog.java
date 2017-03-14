@@ -5,23 +5,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.adapters.MaterialListAdapter;
+import com.rawalinfocom.rcontact.adapters.CallLogDialogListAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 
 import java.util.ArrayList;
-
-import butterknife.BindView;
 
 /**
  * Created by Aniruddh on 24/12/16.
@@ -71,7 +66,7 @@ public class MaterialListDialog {
 
     private void setAdapter() {
         if(!TextUtils.isEmpty(numberToCall)){
-            MaterialListAdapter materialListAdapter = new MaterialListAdapter(context, stringArrayList, numberToCall,
+            CallLogDialogListAdapter materialListAdapter = new CallLogDialogListAdapter(context, stringArrayList, numberToCall,
                     callLogDateToDelete);
             recycleViewDialog.setAdapter(materialListAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
