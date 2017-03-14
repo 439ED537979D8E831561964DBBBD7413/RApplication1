@@ -1,170 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_timeline"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rawalinfocom.rcontact.TimelineActivity">
+    android:orientation="vertical"
+    tools:context="com.rawalinfocom.rcontact.EventsActivity">
 
-    <include
-        android:id="@+id/include_toolbar"
-        layout="@layout/layout_toolbar_timeline"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
-
-    <android.support.v7.widget.SearchView
-        android:id="@+id/search_view_timeline"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/include_toolbar" />
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/header1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/search_view_timeline">
+        <include
+            android:id="@+id/include_toolbar"
+            layout="@layout/layout_toolbar_timeline"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize" />
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/search_view_events"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <RelativeLayout
-            android:id="@+id/h1"
+            android:id="@+id/header1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/text_header1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingStart="@dimen/activity_horizontal_margin"
-                android:text="Today"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textStyle="bold" />
+            <RelativeLayout
+                android:id="@+id/h1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="center_vertical"
-                android:paddingEnd="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:text="@string/im_noti_plus" />
+                <TextView
+                    android:id="@+id/text_header1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingStart="@dimen/activity_horizontal_margin"
+                    android:text="Today"
+                    android:textAppearance="?android:textAppearanceMedium" />
 
+                <ImageView
+                    android:id="@+id/header1_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="center"
+                    android:paddingEnd="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:src="@drawable/ic_expand" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/h1"
+                android:layout_marginTop="@dimen/activity_half_horizontal_margin"
+                android:background="@color/colorDarkGray" />
         </RelativeLayout>
 
-        <View
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview1"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/h1"
-            android:layout_marginTop="@dimen/activity_half_horizontal_margin"
-            android:background="@color/colorDarkGray" />
-    </RelativeLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/header1" />
-
-    <RelativeLayout
-        android:id="@+id/header2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/recyclerview1">
+            android:layout_height="wrap_content" />
 
         <RelativeLayout
-            android:id="@+id/h2"
+            android:id="@+id/header2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingStart="@dimen/activity_horizontal_margin"
-                android:text="Yesterday"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textStyle="bold" />
+            <RelativeLayout
+                android:id="@+id/h2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="center_vertical"
-                android:paddingEnd="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:text="@string/im_noti_plus" />
+                <TextView
+                    android:id="@+id/text_header2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingStart="@dimen/activity_horizontal_margin"
+                    android:text="Recent Events"
+                    android:textAppearance="?android:textAppearanceMedium" />
 
+                <ImageView
+                    android:id="@+id/header2_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="center"
+                    android:paddingEnd="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:src="@drawable/ic_expand" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/h2"
+                android:layout_marginTop="@dimen/activity_half_horizontal_margin"
+                android:background="@color/colorDarkGray" />
         </RelativeLayout>
 
-        <View
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview2"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/h2"
-            android:layout_marginTop="@dimen/activity_half_horizontal_margin"
-            android:background="@color/colorDarkGray" />
-    </RelativeLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/header2"
-        android:visibility="gone" />
-
-    <RelativeLayout
-        android:id="@+id/header3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/recyclerview2">
+            android:layout_height="wrap_content" />
 
         <RelativeLayout
-            android:id="@+id/h3"
+            android:id="@+id/header3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingStart="@dimen/activity_horizontal_margin"
-                android:text="Past 5 Days"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textStyle="bold" />
+            <RelativeLayout
+                android:id="@+id/h3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="center_vertical"
-                android:paddingEnd="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:text="@string/im_noti_plus" />
+                <TextView
+                    android:id="@+id/text_header3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingStart="@dimen/activity_horizontal_margin"
+                    android:text="Upcoming Events"
+                    android:textAppearance="?android:textAppearanceMedium" />
 
+                <ImageView
+                    android:id="@+id/header3_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="center"
+                    android:paddingEnd="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:src="@drawable/ic_expand" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/h3"
+                android:layout_marginTop="@dimen/activity_half_horizontal_margin"
+                android:background="@color/colorDarkGray" />
         </RelativeLayout>
 
-        <View
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview3"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/h3"
-            android:layout_marginTop="@dimen/activity_half_horizontal_margin"
-            android:background="@color/colorDarkGray" />
-    </RelativeLayout>
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview3"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/header3"
-        android:visibility="gone" />
+        android:layout_gravity="bottom"
+        android:layout_weight="0"
+        android:gravity="bottom">
 
-    <TextView
-        android:id="@+id/viewmore"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:text="If you want to show more notifications" />
-
-</RelativeLayout>
+        <TextView
+            android:id="@+id/viewmore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:text="If you want to show more notifications" />
+    </LinearLayout>
+</LinearLayout>
