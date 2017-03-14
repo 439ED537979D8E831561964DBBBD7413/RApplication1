@@ -2,7 +2,6 @@ package com.rawalinfocom.rcontact;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
@@ -11,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.rawalinfocom.rcontact.events.MyLayoutManager;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.timeline.TimelineItem;
@@ -30,7 +30,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
     @BindView(R.id.ripple_action_back)
     RippleView rippleActionBack;
     @BindView(R.id.recyclerview1)
-    RecyclerView recyclerview1;
+    RecyclerView recyclerViewToday;
     @BindView(R.id.image_action_back)
     ImageView imageActionBack;
     @BindView(R.id.relative_action_back)
@@ -38,19 +38,17 @@ public class TimelineActivity extends BaseActivity implements RippleView
     @BindView(R.id.search_view_timeline)
     SearchView searchViewTimeline;
     @BindView(R.id.recyclerview2)
-    RecyclerView recyclerview2;
+    RecyclerView recyclerViewYesterday;
     @BindView(R.id.recyclerview3)
-    RecyclerView recyclerview3;
+    RecyclerView recyclerViewPast5day;
     @BindView(R.id.viewmore)
     TextView viewmore;
-    @BindView(R.id.activity_timeline)
-    RelativeLayout activityTimeline;
     @BindView(R.id.h1)
-    RelativeLayout h1;
+    RelativeLayout headerTodayLayout;
     @BindView(R.id.h2)
-    RelativeLayout h2;
+    RelativeLayout headerYesterdayLayout;
     @BindView(R.id.h3)
-    RelativeLayout h3;
+    RelativeLayout headerPast5daysLayout;
     @BindView(R.id.header1)
     RelativeLayout header1;
     @BindView(R.id.header2)
@@ -58,21 +56,21 @@ public class TimelineActivity extends BaseActivity implements RippleView
     @BindView(R.id.header3)
     RelativeLayout header3;
     @BindView(R.id.header1_icon)
-    ImageView header1Icon;
+    ImageView headerTodayIcon;
     @BindView(R.id.header2_icon)
-    ImageView header2Icon;
+    ImageView headerYesterdayIcon;
     @BindView(R.id.header3_icon)
-    ImageView header3Icon;
+    ImageView headerPast5DaysIcon;
     @BindView(R.id.text_header1)
-    TextView textHeader1;
+    TextView headerTodayTitle;
     @BindView(R.id.text_header2)
-    TextView textHeader2;
+    TextView headerYesterdayTitle;
     @BindView(R.id.text_header3)
-    TextView textHeader3;
+    TextView headerPast5DaysTitle;
 
-    private TimelineSectionAdapter sectionAdapter1;
-    private TimelineSectionAdapter sectionAdapter2;
-    private TimelineSectionAdapter sectionAdapter3;
+    private TimelineSectionAdapter todayTimelineAdapter;
+    private TimelineSectionAdapter yesterdayTimelineAdapter;
+    private TimelineSectionAdapter past5daysTimelineAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,57 +82,76 @@ public class TimelineActivity extends BaseActivity implements RippleView
     }
 
     private void init() {
-        //searchViewTimeline.setIconified(false);
-        textHeader1.setTypeface(Utils.typefaceRegular(this));
-        textHeader2.setTypeface(Utils.typefaceRegular(this));
-        textHeader3.setTypeface(Utils.typefaceRegular(this));
+        headerTodayTitle.setTypeface(Utils.typefaceRegular(this));
+        headerYesterdayTitle.setTypeface(Utils.typefaceRegular(this));
+        headerPast5DaysTitle.setTypeface(Utils.typefaceRegular(this));
+
         rippleActionBack.setOnRippleCompleteListener(this);
         textToolbarTitle.setText("Timeline");
-        header1Icon.setImageResource(R.drawable.ic_collapse);
-        h3.setOnClickListener(new View.OnClickListener() {
+        textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
+
+        headerTodayIcon.setImageResource(R.drawable.ic_collapse);
+
+        headerTodayLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recyclerview1.setVisibility(View.GONE);
-                recyclerview2.setVisibility(View.GONE);
-                if (recyclerview3.getVisibility() == View.VISIBLE) {
-                    recyclerview3.setVisibility(View.GONE);
-                    header3Icon.setImageResource(R.drawable.ic_expand);
+
+                if (recyclerViewToday.getVisibility() == View.VISIBLE) {
+                    recyclerViewToday.setVisibility(View.GONE);
+                    headerTodayIcon.setImageResource(R.drawable.ic_expand);
                 } else {
-                    recyclerview3.setVisibility(View.VISIBLE);
-                    header3Icon.setImageResource(R.drawable.ic_collapse);
+                    recyclerViewToday.setVisibility(View.VISIBLE);
+                    headerTodayIcon.setImageResource(R.drawable.ic_collapse);
+                }
+
+                recyclerViewYesterday.setVisibility(View.GONE);
+                headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
+
+                recyclerViewPast5day.setVisibility(View.GONE);
+                headerPast5DaysIcon.setImageResource(R.drawable.ic_expand);
+            }
+        });
+
+        headerYesterdayLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewToday.setVisibility(View.GONE);
+                headerTodayIcon.setImageResource(R.drawable.ic_expand);
+
+                if (recyclerViewYesterday.getVisibility() == View.VISIBLE) {
+                    recyclerViewYesterday.setVisibility(View.GONE);
+                    headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
+                } else {
+                    recyclerViewYesterday.setVisibility(View.VISIBLE);
+                    headerYesterdayIcon.setImageResource(R.drawable.ic_collapse);
+                }
+                recyclerViewPast5day.setVisibility(View.GONE);
+                headerPast5DaysIcon.setImageResource(R.drawable.ic_expand);
+
+            }
+        });
+
+        headerPast5daysLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewToday.setVisibility(View.GONE);
+                headerTodayIcon.setImageResource(R.drawable.ic_expand);
+
+                recyclerViewYesterday.setVisibility(View.GONE);
+                headerYesterdayIcon.setImageResource(R.drawable.ic_expand);
+
+                if (recyclerViewPast5day.getVisibility() == View.VISIBLE) {
+                    recyclerViewPast5day.setVisibility(View.GONE);
+                    headerPast5DaysIcon.setImageResource(R.drawable.ic_expand);
+                } else {
+                    recyclerViewPast5day.setVisibility(View.VISIBLE);
+                    headerPast5DaysIcon.setImageResource(R.drawable.ic_collapse);
                 }
 
             }
         });
-        h2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerview1.setVisibility(View.GONE);
-                if (recyclerview2.getVisibility() == View.VISIBLE) {
-                    recyclerview2.setVisibility(View.GONE);
-                    header2Icon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerview2.setVisibility(View.VISIBLE);
-                    header2Icon.setImageResource(R.drawable.ic_collapse);
-                }
-                recyclerview3.setVisibility(View.GONE);
-
-            }
-        });
-        h1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (recyclerview1.getVisibility() == View.VISIBLE) {
-                    recyclerview1.setVisibility(View.GONE);
-                    header1Icon.setImageResource(R.drawable.ic_expand);
-                } else {
-                    recyclerview1.setVisibility(View.VISIBLE);
-                    header1Icon.setImageResource(R.drawable.ic_collapse);
-                }
-                recyclerview2.setVisibility(View.GONE);
-                recyclerview3.setVisibility(View.GONE);
-            }
-        });
+        recyclerViewYesterday.setVisibility(View.GONE);
+        recyclerViewPast5day.setVisibility(View.GONE);
     }
 
     private void initData() {
@@ -149,40 +166,41 @@ public class TimelineActivity extends BaseActivity implements RippleView
         TimelineItem item7 = new TimelineItem("G Dhameliya", "Birthday", "11:16 PM", "67 Years Old", "Happy Birthday GD", "11:16 PM", "", "", 0);
 
 
-        final List<TimelineItem> sections1 = Arrays.asList(item1, item2, item3, item4, item5, item6, item7, item1, item2);
-        final List<TimelineItem> sections2 = Arrays.asList(item1, item2, item3);
-        final List<TimelineItem> sections3 = Arrays.asList(item1, item2);
-        sectionAdapter1 = new TimelineSectionAdapter(getApplicationContext(), sections2);
-        sectionAdapter2 = new TimelineSectionAdapter(getApplicationContext(), sections3);
-        sectionAdapter3 = new TimelineSectionAdapter(getApplicationContext(), sections1);
+        final List<TimelineItem> listTimelineToday = Arrays.asList(item1, item2, item3, item4, item5, item6, item7, item1, item2);
+        final List<TimelineItem> listTimelineYesterday = Arrays.asList(item1, item2, item3);
+        final List<TimelineItem> listTimelinePast5days = Arrays.asList(item1, item2, item3, item4, item5, item6, item7, item1, item2);
+
+        todayTimelineAdapter = new TimelineSectionAdapter(getApplicationContext(), listTimelineToday);
+        yesterdayTimelineAdapter = new TimelineSectionAdapter(getApplicationContext(), listTimelineYesterday);
+        past5daysTimelineAdapter = new TimelineSectionAdapter(getApplicationContext(), listTimelinePast5days);
 
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int a = (displaymetrics.heightPixels * 57) / 100;
+        int height = (displaymetrics.heightPixels * 57) / 100;
 
-        recyclerview1.setAdapter(sectionAdapter1);
-        recyclerview1.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerView.Adapter mAdapter = recyclerview1.getAdapter();
-        int totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > 2) {
-            recyclerview1.getLayoutParams().height = a;
+        recyclerViewToday.setAdapter(todayTimelineAdapter);
+        recyclerViewToday.setLayoutManager(new MyLayoutManager(this, recyclerViewToday, height));
+        RecyclerView.Adapter adapter = recyclerViewToday.getAdapter();
+        int itemCount = adapter.getItemCount();
+        if (itemCount > 2) {
+            recyclerViewToday.getLayoutParams().height = height;
         }
 
-        recyclerview2.setAdapter(sectionAdapter2);
-        recyclerview2.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerView.Adapter mAdapter2 = recyclerview2.getAdapter();
-        int totalItemCount2 = mAdapter2.getItemCount();
-        if (totalItemCount2 > 2) {
-            recyclerview2.getLayoutParams().height = a;
+        recyclerViewYesterday.setAdapter(yesterdayTimelineAdapter);
+        recyclerViewYesterday.setLayoutManager(new MyLayoutManager(this, recyclerViewYesterday, height));
+        adapter = recyclerViewYesterday.getAdapter();
+        itemCount = adapter.getItemCount();
+        if (itemCount > 2) {
+            recyclerViewYesterday.getLayoutParams().height = height;
         }
 
-        recyclerview3.setAdapter(sectionAdapter3);
-        recyclerview3.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerView.Adapter mAdapter3 = recyclerview3.getAdapter();
-        int totalItemCount3 = mAdapter3.getItemCount();
-        if (totalItemCount3 > 2) {
-            recyclerview3.getLayoutParams().height = a;
+        recyclerViewPast5day.setAdapter(past5daysTimelineAdapter);
+        recyclerViewPast5day.setLayoutManager(new MyLayoutManager(this, recyclerViewPast5day, height));
+        adapter = recyclerViewPast5day.getAdapter();
+        itemCount = adapter.getItemCount();
+        if (itemCount > 2) {
+            recyclerViewPast5day.getLayoutParams().height = height;
         }
 
     }
