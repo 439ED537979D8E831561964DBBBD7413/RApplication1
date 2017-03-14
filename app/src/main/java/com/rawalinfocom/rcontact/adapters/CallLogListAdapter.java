@@ -1,25 +1,35 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.MaterialListDialog;
+import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.CallLogType;
 
@@ -27,6 +37,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,7 +63,16 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private ArrayList<String> arrayListForUnknownContact;
     MaterialListDialog materialListDialog;
     private String number = "";
+    private int selectedPosition = 0;
+    public ActionMode mActionMode;
+    Activity mActivity;
+    private HashMap<Integer, Boolean> mSelection = new HashMap<Integer, Boolean>();
+    private int nr = 0;
 
+
+    public int getSelectedPosition() {
+        return selectedPosition;
+    }
 
     //<editor-fold desc="Constructor">
     public CallLogListAdapter(Context context, ArrayList<Object> arrayListCallLogs,
@@ -60,6 +81,40 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.arrayListCallLogs = arrayListCallLogs;
         this.arrayListCallLogHeader = arrayListCallLogHeader;
     }
+
+    public CallLogListAdapter(Activity activity, ArrayList<Object> arrayListCallLogs,
+                              ArrayList<String> arrayListCallLogHeader) {
+        this.mActivity = activity;
+        this.arrayListCallLogs = arrayListCallLogs;
+        this.arrayListCallLogHeader = arrayListCallLogHeader;
+        this.context =  activity;
+    }
+
+
+    public void setNewSelection(int position, boolean value) {
+        mSelection.put(position, value);
+        notifyDataSetChanged();
+    }
+
+    public boolean isPositionChecked(int position) {
+        Boolean result = mSelection.get(position);
+        return result == null ? false : result;
+    }
+
+    public Set<Integer> getCurrentCheckedPosition() {
+        return mSelection.keySet();
+    }
+
+    public void removeSelection(int position) {
+        mSelection.remove(position);
+        notifyDataSetChanged();
+    }
+
+    public void clearSelection() {
+        mSelection = new HashMap<Integer, Boolean>();
+        notifyDataSetChanged();
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Override Methods">
@@ -145,8 +200,14 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                     .colorBlack));
             holder.textContactName.setText(name);
-            String formattedNumber = Utils.getFormattedNumber(context, number);
-            holder.textContactNumber.setText(formattedNumber);
+            Pattern numberPat = Pattern.compile("\\d+");
+            Matcher matcher1 = numberPat.matcher(name);
+            if (matcher1.find()) {
+                holder.textContactNumber.setText("Unsaved,");
+            } else {
+                String formattedNumber = Utils.getFormattedNumber(context, number);
+                holder.textContactNumber.setText(formattedNumber+",");
+            }
 
         } else {
             if (!TextUtils.isEmpty(number)) {
@@ -155,7 +216,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .colorBlack));
                 String formattedNumber = Utils.getFormattedNumber(context, number);
                 holder.textContactName.setText(formattedNumber);
-                holder.textContactNumber.setText("Unsaved");
+                holder.textContactNumber.setText("Unsaved,");
             } else {
                 holder.textContactName.setText(" ");
             }
@@ -168,7 +229,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             String logDate = new SimpleDateFormat("hh:mm a").format(date1);
             holder.textContactDate.setText(logDate);
         } else {
-            String callReceiverDate = callLogType.getLogDate();
+            Date callDate = callLogType.getCallReceiverDate();
+            String callReceiverDate = new SimpleDateFormat("hh:mm a").format(callDate);
             holder.textContactDate.setText(callReceiverDate);
         }
         int callType = callLogType.getType();
@@ -221,11 +283,12 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             holder.textSimType.setVisibility(View.GONE);
 
         }
-        holder.text3dotsCallLog.setTypeface(Utils.typefaceIcons(context));
 
-        holder.text3dotsCallLog.setOnClickListener(new View.OnClickListener() {
+        holder.image3dotsCallLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                selectedPosition =  position;
 
                 if (!TextUtils.isEmpty(name)) {
                     Pattern numberPat = Pattern.compile("\\d+");
@@ -241,7 +304,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 context.getString(R.string.call_reminder), context.getString(R.string.block)));
                     }
 
-                    materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number);
+                    materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number,date);
                     materialListDialog.setDialogTitle(name);
                     materialListDialog.showDialog();
 
@@ -252,27 +315,54 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 context.getString(R.string.add_to_existing_contact)
                                 , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
                                 context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.block)));
-                        materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number);
+                        materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number,date);
                         materialListDialog.setDialogTitle(number);
+                        materialListDialog.setCallingAdapter(CallLogListAdapter.this);
                         materialListDialog.showDialog();
                     }
                 }
             }
         });
 
+        holder.relativeRowMain.setClickable(true);
+        holder.relativeRowMain.setEnabled(true);
         holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppConstants.isFromReceiver = false;
-                Intent intent = new Intent(context, ProfileDetailActivity.class);
-                intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, number);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
-                context.startActivity(intent);
+                    AppConstants.isFromReceiver = false;
+                    Intent intent = new Intent(context, ProfileDetailActivity.class);
+                    intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
+                    intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, number);
+                    intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
+                    intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
+                    context.startActivity(intent);
             }
         });
 
+        /*holder.relativeRowMain.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                holder.relativeRowMain.setClickable(false);
+                holder.relativeRowMain.setEnabled(false);
+                nr++;
+                setNewSelection(position, true);
+                holder.imageProfile.setBackgroundResource(R.drawable.image_background_delete);
+                mActionMode = ((AppCompatActivity) mActivity).startActionMode(new MyActionModeCallback());
+                return false;
+            }
+        });*/
+
+       /* if (mSelection.get(position) != null) {
+            holder.imageProfile.setBackgroundResource(R.drawable.image_background_delete);
+//            holder.imageProfile.setBackgroundResource(R.drawable.rcontacticon);
+
+        }else {
+            holder.imageProfile.setBackgroundResource(R.drawable.rcontacticon);
+//            holder.imageProfile.setBackgroundResource(R.drawable.image_background_delete);
+
+
+        }*/
+        
     }
 
     private void configureHeaderViewHolder(CallLogHeaderViewHolder holder, int
@@ -287,8 +377,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
-        @BindView(R.id.text_3dots_call_log)
-        TextView text3dotsCallLog;
+        @BindView(R.id.image_3dots_call_log)
+        ImageView image3dotsCallLog;
         @BindView(R.id.image_social_media)
         ImageView imageSocialMedia;
         @BindView(R.id.text_contact_name)
@@ -338,7 +428,104 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         }
     }
+
 //</editor-fold>
 
+    class MyActionModeCallback implements ActionMode.Callback{
 
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//            nr = 0;
+            mode.getMenuInflater().inflate(R.menu.menu_delete_call_log, menu);
+            return true;
+        }
+
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            mode.setTitle( nr + " Selected");
+            return false;
+        }
+
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.delete:
+                    Toast.makeText(mActivity, "Delete clicked", Toast.LENGTH_SHORT).show();
+                    nr =0;
+                    clearSelection();
+                    mode.finish();
+                    return true;
+
+                case R.id.selectAll:
+                    Toast.makeText(mActivity, "Select All clicked", Toast.LENGTH_SHORT).show();
+                    mode.finish();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+
+            clearSelection();
+        }
+    }
+
+    class temp implements AbsListView.MultiChoiceModeListener{
+
+        @Override
+        public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+
+            if (checked) {
+                nr++;
+                setNewSelection(position, checked);
+            } else {
+                nr--;
+                removeSelection(position);
+            }
+            mode.setTitle(nr + " selected");
+
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            nr = 0;
+            mode.getMenuInflater().inflate(R.menu.menu_delete_call_log, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.delete:
+                    Toast.makeText(mActivity, "Delete clicked", Toast.LENGTH_SHORT).show();
+                    nr =0;
+                    clearSelection();
+                    mode.finish();
+                    return true;
+
+                case R.id.selectAll:
+                    Toast.makeText(mActivity, "Select All clicked", Toast.LENGTH_SHORT).show();
+                    mode.finish();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            clearSelection();
+        }
+    }
 }

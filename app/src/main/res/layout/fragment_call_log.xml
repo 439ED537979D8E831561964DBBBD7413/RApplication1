@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/padding_5dp"
     android:id="@+id/linearCallLogMain"
+    android:background="@color/colorWhite"
     tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
 
     <LinearLayout
@@ -39,7 +39,8 @@
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/recycler_call_logs">
+            android:id="@+id/recycler_call_logs"
+            >
         </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>

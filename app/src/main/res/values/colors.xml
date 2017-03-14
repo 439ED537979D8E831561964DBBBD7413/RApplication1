@@ -37,5 +37,7 @@
     <color name="darkCyan">#1baa99 </color>
     <color name="veryLightGray">#DCDCDC</color>
     <color name="darkGray">#767676</color>
+    <color name="veryVeryLightGray">#E7E7E7</color>
+    <color name="veryDarkDesaturatedCyanLimeGreen">#2A4C40</color>
 
 </resources>
