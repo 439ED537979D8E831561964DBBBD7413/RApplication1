@@ -10,7 +10,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.helper.RippleView;
+import com.rawalinfocom.rcontact.notifications.NotiCommentsFragment;
 import com.rawalinfocom.rcontact.notifications.NotiRContactsFragment;
+import com.rawalinfocom.rcontact.notifications.NotiRatingFragment;
 import com.rawalinfocom.rcontact.notifications.NotiRequestFragment;
 
 import butterknife.BindView;
@@ -34,6 +36,8 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
 
     private NotiRequestFragment notiRequestFragment;
     private NotiRContactsFragment notiRContactsFragment;
+    private NotiRatingFragment notiRatingFragment;
+    private NotiCommentsFragment notiCommentsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +88,10 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
 
     private void setupTabLayout() {
         notiRequestFragment = NotiRequestFragment.newInstance();
+        notiRatingFragment = NotiRatingFragment.newInstance();
+        notiCommentsFragment = NotiCommentsFragment.newInstance();
         notiRContactsFragment = NotiRContactsFragment.newInstance();
+
         tabNotifications.addTab(tabNotifications.newTab().setText("Request"), true);
         tabNotifications.addTab(tabNotifications.newTab().setText("Rating"));
         tabNotifications.addTab(tabNotifications.newTab().setText("Comments"));
@@ -97,10 +104,10 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
                 replaceFragment(notiRequestFragment);
                 break;
             case 1:
-                replaceFragment(notiRequestFragment);
+                replaceFragment(notiRatingFragment);
                 break;
             case 2:
-                replaceFragment(notiRequestFragment);
+                replaceFragment(notiCommentsFragment);
                 break;
             case 3:
                 replaceFragment(notiRContactsFragment);
