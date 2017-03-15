@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_root_edit_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rawalinfocom.rcontact.contacts.EditProfileActivity">
@@ -16,12 +17,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/include_toolbar"
-        android:padding="@dimen/margin_small"
+
         android:scrollbars="none">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_small">
 
             <LinearLayout
                 android:id="@+id/linear_section_top"
@@ -50,13 +52,23 @@
                         android:id="@+id/input_first_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPersonName"/>
+                        android:hint="@string/str_first"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/colorAccent"
+                        android:textColorHint="@color/darkCyan"
+                        android:textSize="16sp"
+                        tools:text="Monal"/>
 
                     <EditText
                         android:id="@+id/input_last_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPersonName"/>
+                        android:hint="@string/str_last"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/colorAccent"
+                        android:textColorHint="@color/darkCyan"
+                        android:textSize="16sp"
+                        tools:text="Godiwala"/>
 
                 </LinearLayout>
 
@@ -72,12 +84,48 @@
 
             </LinearLayout>
 
+            <RelativeLayout
+                android:id="@+id/relative_organization_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_section_top"
+                android:layout_marginTop="@dimen/margin_small">
+
+                <ImageView
+                    android:id="@+id/image_add_organization"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/str_content_description"
+                    android:src="@drawable/ic_action_add"/>
+
+                <TextView
+                    android:id="@+id/text_label_organization"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/image_add_organization"
+                    android:layout_toStartOf="@id/image_add_organization"
+                    android:text="@string/str_organization"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/colorBlack"/>
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_organization_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relative_organization_details"
+                android:layout_margin="@dimen/margin_tiny"
+                android:orientation="vertical"/>
 
             <RelativeLayout
                 android:id="@+id/relative_contact_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/linear_section_top"
+                android:layout_below="@id/linear_organization_detail"
                 android:layout_marginTop="@dimen/margin_small">
 
                 <ImageView
@@ -258,7 +306,6 @@
                 android:layout_margin="@dimen/margin_tiny"
                 android:orientation="vertical"/>
 
-
             <RelativeLayout
                 android:id="@+id/relative_event_details"
                 android:layout_width="match_parent"
@@ -287,20 +334,19 @@
 
             </RelativeLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view_event"
+            <LinearLayout
+                android:id="@+id/linear_event_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/relative_event_details"
                 android:layout_margin="@dimen/margin_tiny"
-                android:overScrollMode="never"/>
-
+                android:orientation="vertical"/>
 
             <TextView
                 android:id="@+id/text_label_gender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/recycler_view_event"
+                android:layout_below="@id/linear_event_details"
                 android:layout_marginTop="@dimen/margin_small"
                 android:text="@string/str_gender"
                 android:textAppearance="?android:textAppearanceMedium"
@@ -320,7 +366,8 @@
                     android:layout_marginEnd="@dimen/margin_tiny"
                     android:layout_marginRight="@dimen/margin_tiny"
                     android:checked="true"
-                    android:text="@string/str_male"/>
+                    android:text="@string/str_male"
+                    android:textColor="@color/colorAccent"/>
 
                 <RadioButton
                     android:id="@+id/radio_female"
@@ -329,7 +376,8 @@
                     android:layout_marginLeft="@dimen/margin_tiny"
                     android:layout_marginStart="@dimen/margin_tiny"
                     android:checked="false"
-                    android:text="@string/str_female"/>
+                    android:text="@string/str_female"
+                    android:textColor="@color/colorAccent"/>
 
             </RadioGroup>
         </RelativeLayout>

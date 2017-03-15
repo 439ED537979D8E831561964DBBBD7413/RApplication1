@@ -160,6 +160,49 @@ public class TableOrganizationMaster {
         return organization;
     }
 
+    // Getting All Organizations from Profile Master Id
+    public ArrayList<Organization> getOrganizationsFromPmId(int pmId) {
+        ArrayList<Organization> arrayListOrganization = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT DISTINCT " + COLUMN_OM_RECORD_INDEX_ID + ", " +
+                COLUMN_OM_ORGANIZATION_COMPANY + ", " +
+                COLUMN_OM_JOB_DESCRIPTION + ", " +
+                COLUMN_OM_ORGANIZATION_PRIVACY + ", " +
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
+                TABLE_RC_ORGANIZATION_MASTER + " WHERE " +
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Organization organization = new Organization();
+                organization.setOmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_RECORD_INDEX_ID)));
+                organization.setOmOrganizationCompany(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_COMPANY)));
+                organization.setOmJobDescription(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_JOB_DESCRIPTION)));
+                organization.setOmOrganizationPrivacy(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_PRIVACY)));
+                organization.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_RC_PROFILE_MASTER_PM_ID)));
+                // Adding organization to list
+                arrayListOrganization.add(organization);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        // return organization list
+        return arrayListOrganization;
+    }
+
     // Getting All Organizations
     public ArrayList<Organization> getAllOrganizations() {
         ArrayList<Organization> arrayListOrganization = new ArrayList<>();

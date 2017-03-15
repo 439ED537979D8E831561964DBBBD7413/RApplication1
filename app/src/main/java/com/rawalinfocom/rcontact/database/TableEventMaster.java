@@ -122,6 +122,49 @@ public class TableEventMaster {
         return event;
     }
 
+    // Getting All events from Profile Master Id
+    public ArrayList<Event> getEventssFromPmId(int pmId) {
+        ArrayList<Event> arrayListEvent = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT DISTINCT " + COLUMN_EVM_RECORD_INDEX_ID + ", " +
+                COLUMN_EVM_START_DATE + ", " +
+                COLUMN_EVM_EVENT_TYPE + ", " +
+                COLUMN_EVM_EVENT_PRIVACY + ", " +
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
+                TABLE_RC_EVENT_MASTER + " WHERE " +
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Event event = new Event();
+                event.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_RECORD_INDEX_ID)));
+                event.setEvmStartDate(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_START_DATE)));
+                event.setEvmEventType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_EVENT_TYPE)));
+                event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_EVENT_PRIVACY)));
+                event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_RC_PROFILE_MASTER_PM_ID)));
+                // Adding Event to list
+                arrayListEvent.add(event);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        // return Event list
+        return arrayListEvent;
+    }
+
     // Getting All Events
     public ArrayList<Event> getAllEvents() {
         ArrayList<Event> arrayListEvent = new ArrayList<>();

@@ -78,6 +78,11 @@
     <string name="str_edit_my_profile">Edit My Profile</string>
     <string name="str_female">Female</string>
     <string name="str_male">Male</string>
+    <string name="str_first">First</string>
+    <string name="str_last">Last</string>
+    <string name="str_organization">Organization</string>
+    <string name="str_company_name">Company Name</string>
+    <string name="str_designation">Designation</string>
 
     <string-array name="phonebook_contact_array_share">
         <item>Share all</item>

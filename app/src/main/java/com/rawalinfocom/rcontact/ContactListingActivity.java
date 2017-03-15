@@ -254,6 +254,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 arrayListFilteredUserProfile.clear();
                 phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
+                phoneBookContactListAdapter.isSelectAll(false);
+                checkboxSelectAll.setChecked(false);
                 if (position == 0) {
                     arrayListFilteredUserProfile.addAll(arrayListUserProfile);
                 } else if (position == 1) {

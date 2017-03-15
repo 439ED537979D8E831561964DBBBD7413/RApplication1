@@ -55,6 +55,7 @@ public class WsConstants {
     public static final String REQ_SEND_INVITATION = "send-invitation";
     public static final String REQ_STORE_DEVICE_DETAILS = "store-device-details";
     public static final String REQ_ADD_PROFILE_VISIT = "add-profile-visit";
+    public static final String REQ_PROFILE_UPDATE = "profile-update";
 
     public static final String REQ_REVERSE_GEO_CODING_ADDRESS = "req_reverse_geo_coding_address";
 

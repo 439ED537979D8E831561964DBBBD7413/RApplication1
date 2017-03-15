@@ -1,13 +1,16 @@
 package com.rawalinfocom.rcontact.contacts;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,27 +20,52 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flipkart.zjsonpatch.JsonDiff;
+import com.google.gson.Gson;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
+import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableImMaster;
 import com.rawalinfocom.rcontact.database.TableMobileMaster;
+import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
+import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.Email;
+import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.ImAccount;
 import com.rawalinfocom.rcontact.model.MobileNumber;
+import com.rawalinfocom.rcontact.model.Organization;
+import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
 
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -100,14 +128,22 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     RelativeLayout relativeSocialContactDetails;
     @BindView(R.id.linear_social_contact_details)
     LinearLayout linearSocialContactDetails;
+    @BindView(R.id.image_add_organization)
+    ImageView imageAddOrganization;
+    @BindView(R.id.text_label_organization)
+    TextView textLabelOrganization;
+    @BindView(R.id.relative_organization_details)
+    RelativeLayout relativeOrganizationDetails;
+    @BindView(R.id.linear_organization_detail)
+    LinearLayout linearOrganizationDetail;
     @BindView(R.id.image_add_event)
     ImageView imageAddEvent;
     @BindView(R.id.text_label_event)
     TextView textLabelEvent;
     @BindView(R.id.relative_event_details)
     RelativeLayout relativeEventDetails;
-    @BindView(R.id.recycler_view_event)
-    RecyclerView recyclerViewEvent;
+    @BindView(R.id.linear_event_details)
+    LinearLayout linearEventDetails;
     @BindView(R.id.text_label_gender)
     TextView textLabelGender;
     @BindView(R.id.radio_male)
@@ -116,6 +152,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     RadioButton radioFemale;
     @BindView(R.id.radio_group_gender)
     RadioGroup radioGroupGender;
+    @BindView(R.id.relative_root_edit_profile)
+    RelativeLayout relativeRootEditProfile;
 
     RippleView rippleActionBack;
     RippleView rippleActionRightLeft;
@@ -124,6 +162,10 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     ArrayList<Object> arrayListEmailObject;
     ArrayList<Object> arrayListWebsiteObject;
     ArrayList<Object> arrayListSocialContactObject;
+    ArrayList<Object> arrayListEventObject;
+    ArrayList<Object> arrayListOrganizationObject;
+
+//    ProfileDataOperation userOldProfile;
 
     //<editor-fold desc="Override Methods">
 
@@ -132,7 +174,162 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
         ButterKnife.bind(this);
+//        userOldProfile = new ProfileDataOperation();
         init();
+    }
+
+    @Override
+    public void onComplete(RippleView rippleView) {
+        switch (rippleView.getId()) {
+
+            case R.id.ripple_action_back:
+                onBackPressed();
+                break;
+
+            case R.id.ripple_action_right_left:
+
+                ArrayList<ProfileDataOperationEmail> arrayListNewValue = new ArrayList<>();
+                for (int i = 0; i < linearEmailDetails.getChildCount(); i++) {
+                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                    View view = linearEmailDetails.getChildAt(i);
+                    EditText emailId = (EditText) view.findViewById(R.id.input_value);
+                    Spinner emailType = (Spinner) view.findViewById(R.id.spinner_type);
+                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                            .id.relative_row_edit_profile);
+                    email.setEmEmailId(emailId.getText().toString());
+                    email.setEmType((String) emailType.getSelectedItem());
+                    email.setEmId((String) relativeRowEditProfile.getTag());
+
+                    arrayListNewValue.add(email);
+
+                }
+
+                Gson gson = new Gson();
+                String oldObjectJson = gson.toJson(arrayListEmailObject);
+                String newObjectJson = gson.toJson(arrayListNewValue);
+
+                ObjectMapper mapper = new ObjectMapper();
+
+                ArrayList<Integer> arrayListAddedPositions = new ArrayList<>();
+                ArrayList<Integer> arrayListRemovedPositions = new ArrayList<>();
+                ArrayList<Integer> arrayListReplacedPositions = new ArrayList<>();
+
+                try {
+                    JsonNode tree1 = mapper.readTree(oldObjectJson);
+                    JsonNode tree2 = mapper.readTree(newObjectJson);
+
+                    Log.i("onComplete", String.valueOf(tree1.equals(tree2)));
+
+                    if (!tree1.equals(tree2)) {
+                        JsonNode patchNode = JsonDiff.asJson(tree1, tree2);
+                        String diff = patchNode.toString();
+                        Log.i("diff", diff);
+                        JSONArray jsonArray = new JSONArray(diff);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String operation = jsonObject.optString("op");
+                            if (operation.equalsIgnoreCase("add")) {
+                                arrayListAddedPositions.add(Integer.valueOf(StringUtils.substring
+                                        (jsonObject.optString("path"), 1)));
+                            } else if (operation.equalsIgnoreCase("replace")) {
+                                int position;
+                                if (StringUtils.countMatches(jsonObject.optString("path"),
+                                        StringUtils.defaultString("/")) > 1) {
+                                    position = Integer.valueOf(StringUtils.substring(jsonObject
+                                            .optString("path"), 1, StringUtils.indexOf(jsonObject
+                                            .getString("path"), StringUtils.defaultString
+                                            ("/"), 1)));
+                                } else {
+                                    position = Integer.valueOf(StringUtils.substring(jsonObject
+                                            .optString("path"), 1));
+                                }
+                                arrayListReplacedPositions.add(position);
+                            } else if (operation.equalsIgnoreCase("remove")) {
+                                int position;
+                                if (StringUtils.countMatches(jsonObject.optString("path"),
+                                        StringUtils.defaultString("/")) > 1) {
+                                    position = Integer.valueOf(StringUtils.substring(jsonObject
+                                            .optString("path"), 1, StringUtils.indexOf(jsonObject
+                                            .getString("path"), StringUtils.defaultString
+                                            ("/"), 1)));
+                                } else {
+                                    position = Integer.valueOf(StringUtils.substring(jsonObject
+                                            .optString("path"), 1));
+                                }
+                                if (!arrayListReplacedPositions.contains(position)) {
+                                    arrayListRemovedPositions.add(position);
+                                }
+                            }
+                            Log.i("operation", operation);
+                        }
+
+                        ArrayList<ProfileDataOperation> arrayListProfile = new ArrayList<>();
+
+                        if (arrayListAddedPositions.size() > 0) {
+                            ProfileDataOperation profileDataOperation = new ProfileDataOperation();
+                            profileDataOperation.setFlag(String.valueOf(getResources().getInteger
+                                    (R.integer.sync_update_insert)));
+                            ArrayList<ProfileDataOperationEmail> emails = new ArrayList<>();
+                            for (int i = 0; i < arrayListAddedPositions.size(); i++) {
+                                ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                                email.setEmType(arrayListNewValue.get(arrayListAddedPositions.get
+                                        (i)).getEmType());
+                                email.setEmEmailId(arrayListNewValue.get(arrayListAddedPositions
+                                        .get(i)).getEmEmailId());
+                                emails.add(email);
+                            }
+                            profileDataOperation.setPbEmailId(emails);
+                            arrayListProfile.add(profileDataOperation);
+                        }
+                        if (arrayListRemovedPositions.size() > 0) {
+                            ProfileDataOperation profileDataOperation = new ProfileDataOperation();
+                            profileDataOperation.setFlag(String.valueOf(getResources().getInteger
+                                    (R.integer.sync_update_delete)));
+                            ArrayList<ProfileDataOperationEmail> emails = new ArrayList<>();
+                            for (int i = 0; i < arrayListRemovedPositions.size(); i++) {
+                                ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                                email.setEmId(((ProfileDataOperationEmail) arrayListEmailObject
+                                        .get(i)).getEmId());
+                                emails.add(email);
+                            }
+                            profileDataOperation.setPbEmailId(emails);
+                            arrayListProfile.add(profileDataOperation);
+                        }
+                        if (arrayListReplacedPositions.size() > 0) {
+                            ProfileDataOperation profileDataOperation = new ProfileDataOperation();
+                            profileDataOperation.setFlag(String.valueOf(getResources().getInteger
+                                    (R.integer.sync_update_update)));
+                            ArrayList<ProfileDataOperationEmail> emails = new ArrayList<>();
+                            for (int i = 0; i < arrayListReplacedPositions.size(); i++) {
+                                ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                                email.setEmId(((ProfileDataOperationEmail) arrayListEmailObject
+                                        .get(i)).getEmId());
+                                email.setEmType(arrayListNewValue.get(arrayListReplacedPositions.get
+                                        (i)).getEmType());
+                                email.setEmEmailId(arrayListNewValue.get(arrayListReplacedPositions
+                                        .get(i)).getEmEmailId());
+                                emails.add(email);
+                            }
+                            profileDataOperation.setPbEmailId(emails);
+                            arrayListProfile.add(profileDataOperation);
+                        }
+//                        editProfile(arrayListProfile);
+                        Log.i("onComplete", arrayListProfile.toString());
+                    }
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.i("onComplete", "Exception");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+//                Log.i("onComplete", oldObjectJson);
+                break;
+
+
+        }
     }
 
     //</editor-fold>
@@ -140,8 +337,10 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     //<editor-fold desc="Onclick">
 
     @OnClick({R.id.image_add_phone, R.id.image_add_email, R.id.image_add_website,
-            R.id.image_add_social_contact, R.id.image_add_address})
+            R.id.image_add_social_contact, R.id.image_add_address, R.id.image_add_event, R.id
+            .image_add_organization})
     public void onClick(View view) {
+
         switch (view.getId()) {
 
             //<editor-fold desc="image_add_phone">
@@ -173,26 +372,18 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 addAddressView(null);
                 break;
             //</editor-fold>
-        }
-    }
 
-    @Override
-    public void onComplete(RippleView rippleView) {
-        switch (rippleView.getId()) {
-
-            case R.id.ripple_action_back:
-                onBackPressed();
+            // <editor-fold desc="image_add_event">
+            case R.id.image_add_event:
+                addView(AppConstants.EVENT, linearEventDetails, null, -1);
                 break;
+            //</editor-fold>
 
-            case R.id.ripple_action_right_left:
-                for (int i = 0; i < linearPhoneDetails.getChildCount(); i++) {
-                    View view = linearPhoneDetails.getChildAt(i);
-                    EditText number = (EditText) view.findViewById(R.id.input_value);
-                    Log.i("onComplete", number.getText().toString());
-                }
+            // <editor-fold desc="image_add_organization">
+            case R.id.image_add_organization:
+                addOrganizationView(null);
                 break;
-
-
+            //</editor-fold>
         }
     }
 
@@ -211,6 +402,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         websiteDetails();
         socialContactDetails();
         addressDetails();
+        eventDetails();
+        organizationDetails();
 
         rippleActionRightLeft.setOnRippleCompleteListener(this);
         rippleActionBack.setOnRippleCompleteListener(this);
@@ -226,7 +419,12 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         if (userProfile != null) {
             inputFirstName.setText(userProfile.getPmFirstName());
             inputLastName.setText(userProfile.getPmLastName());
+
+//            userOldProfile.setPbNameFirst(userProfile.getPmFirstName());
+//            userOldProfile.setPbNameLast(userProfile.getPmLastName());
         }
+
+
     }
 
     private void phoneNumberDetails() {
@@ -282,12 +480,15 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         ArrayList<Website> arrayListWebsite = tableWebsiteMaster.getWebsiteFromPmId(Integer
                 .parseInt(getUserPmId()));
         arrayListWebsiteObject = new ArrayList<>();
+        ArrayList<ProfileDataOperationWebAddress> arrayListProfileDataWebAddress = new
+                ArrayList<>();
         for (int i = 0; i < arrayListWebsite.size(); i++) {
             ProfileDataOperationWebAddress webAddress = new ProfileDataOperationWebAddress();
             webAddress.setWebAddress(arrayListWebsite.get(i).getWmWebsiteUrl());
             webAddress.setWebType(arrayListWebsite.get(i).getWmWebsiteType());
             webAddress.setWebId(arrayListWebsite.get(i).getWmRecordIndexId());
             arrayListWebsiteObject.add(webAddress);
+            arrayListProfileDataWebAddress.add(webAddress);
         }
 
         if (arrayListWebsiteObject.size() > 0) {
@@ -295,6 +496,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 addView(AppConstants.WEBSITE, linearWebsiteDetails, arrayListWebsiteObject.get(i)
                         , i);
             }
+//            userOldProfile.setPbWebAddress(arrayListProfileDataWebAddress);
         } else {
             addView(AppConstants.WEBSITE, linearWebsiteDetails, null, -1);
         }
@@ -307,12 +509,14 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         ArrayList<ImAccount> arrayListImAccount = tableImMaster.getImAccountFromPmId(Integer
                 .parseInt(getUserPmId()));
         arrayListSocialContactObject = new ArrayList<>();
+        ArrayList<ProfileDataOperationImAccount> arrayListProfileDataImAccount = new ArrayList<>();
         for (int i = 0; i < arrayListImAccount.size(); i++) {
             ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
             imAccount.setIMAccountProtocol(arrayListImAccount.get(i).getImImProtocol());
             imAccount.setIMAccountType(arrayListImAccount.get(i).getImImType());
             imAccount.setIMId(arrayListImAccount.get(i).getImRecordIndexId());
             arrayListSocialContactObject.add(imAccount);
+            arrayListProfileDataImAccount.add(imAccount);
         }
 
         if (arrayListSocialContactObject.size() > 0) {
@@ -320,10 +524,58 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails,
                         arrayListSocialContactObject.get(i), i);
             }
+//            userOldProfile.setPbIMAccounts(arrayListProfileDataImAccount);
         } else {
             addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails, null, -1);
         }
+    }
 
+    private void eventDetails() {
+        TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
+
+        ArrayList<Event> arrayListEvent = tableEventMaster.getEventssFromPmId(Integer.parseInt
+                (getUserPmId()));
+        arrayListEventObject = new ArrayList<>();
+        for (int i = 0; i < arrayListEvent.size(); i++) {
+            ProfileDataOperationEvent event = new ProfileDataOperationEvent();
+            event.setEventDate(arrayListEvent.get(i).getEvmStartDate());
+            event.setEventType(arrayListEvent.get(i).getEvmEventType());
+            event.setEventId(arrayListEvent.get(i).getEvmRecordIndexId());
+            arrayListEventObject.add(event);
+        }
+
+        if (arrayListEventObject.size() > 0) {
+            for (int i = 0; i < arrayListEventObject.size(); i++) {
+                addView(AppConstants.EVENT, linearEventDetails, arrayListEventObject.get(i),
+                        i);
+            }
+        } else {
+            addView(AppConstants.EVENT, linearEventDetails, null, -1);
+        }
+    }
+
+    private void organizationDetails() {
+        TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
+                (databaseHandler);
+
+        ArrayList<Organization> arrayListOrganization = tableOrganizationMaster
+                .getOrganizationsFromPmId(Integer.parseInt(getUserPmId()));
+        arrayListOrganizationObject = new ArrayList<>();
+        for (int i = 0; i < arrayListOrganization.size(); i++) {
+            ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
+            organization.setOrgName(arrayListOrganization.get(i).getOmOrganizationCompany());
+            organization.setOrgJobTitle(arrayListOrganization.get(i).getOmJobDescription());
+            organization.setOrgId(arrayListOrganization.get(i).getOmRecordIndexId());
+            arrayListOrganizationObject.add(organization);
+        }
+
+        if (arrayListOrganizationObject.size() > 0) {
+            for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
+                addOrganizationView(arrayListEventObject.get(i));
+            }
+        } else {
+            addOrganizationView(null);
+        }
     }
 
     private void addressDetails() {
@@ -351,7 +603,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
     }
 
-    private void addView(int viewType, LinearLayout linearLayout, Object detailObject, int
+    private void addView(int viewType, final LinearLayout linearLayout, Object detailObject, int
             position) {
         View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile, null);
         TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
@@ -367,30 +619,35 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
         switch (viewType) {
             case AppConstants.PHONE_NUMBER:
+                inputValue.setHint("Number");
                 spinnerArrayId = getResources().getStringArray(R.array.types_phone_number);
                 inputValue.setInputType(InputType.TYPE_CLASS_PHONE);
                 if (detailObject != null) {
                     if (position == 0) {
                         inputValue.setEnabled(false);
-                        spinnerType.setEnabled(false);
+                        spinnerType.setVisibility(View.GONE);
                         textImageCross.setVisibility(View.INVISIBLE);
                     }
                     ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                             detailObject;
                     inputValue.setText(phoneNumber.getPhoneNumber());
+                    relativeRowEditProfile.setTag(phoneNumber.getPhoneId());
                 }
                 break;
 
             case AppConstants.EMAIL:
+                inputValue.setHint("Email");
                 spinnerArrayId = getResources().getStringArray(R.array.types_email_address);
                 inputValue.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                 if (detailObject != null) {
                     ProfileDataOperationEmail email = (ProfileDataOperationEmail) detailObject;
                     inputValue.setText(email.getEmEmailId());
+                    relativeRowEditProfile.setTag(email.getEmId());
                 }
                 break;
 
             case AppConstants.WEBSITE:
+                inputValue.setHint("Website");
                 spinnerArrayId = getResources().getStringArray(R.array.types_email_address);
                 inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
                 if (detailObject != null) {
@@ -401,6 +658,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 break;
 
             case AppConstants.IM_ACCOUNT:
+                inputValue.setHint("Link");
                 spinnerArrayId = getResources().getStringArray(R.array.types_social_media);
                 inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
                 if (detailObject != null) {
@@ -408,6 +666,23 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                             detailObject;
                     inputValue.setText(imAccount.getIMAccountDetails());
                 }
+                break;
+
+            case AppConstants.EVENT:
+                inputValue.setHint("Event");
+                inputValue.setFocusable(false);
+                spinnerArrayId = getResources().getStringArray(R.array.types_Event);
+                inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
+                if (detailObject != null) {
+                    ProfileDataOperationEvent event = (ProfileDataOperationEvent) detailObject;
+                    inputValue.setText(event.getEventDate());
+                }
+                inputValue.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDatePicker((EditText) v);
+                    }
+                });
                 break;
 
             default:
@@ -422,7 +697,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         textImageCross.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                relativeRowEditProfile.setVisibility(View.GONE);
+//                relativeRowEditProfile.setVisibility(View.GONE);
+                linearLayout.removeView(relativeRowEditProfile);
             }
         });
 
@@ -454,6 +730,14 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         inputPinCode.setTypeface(Utils.typefaceRegular(this));
         inputPoBox.setTypeface(Utils.typefaceRegular(this));
 
+        inputCountry.setHint("Country");
+        inputState.setHint("State");
+        inputCity.setHint("City");
+        inputStreet.setHint("Street");
+        inputNeighborhood.setHint("Neighborhood");
+        inputPinCode.setHint("Pincode");
+        inputPoBox.setHint("Po. Box No.");
+
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, R.layout
                 .list_item_spinner, getResources().getStringArray(R.array.types_email_address));
         spinnerType.setAdapter(spinnerAdapter);
@@ -466,6 +750,96 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         });
 
         linearAddressDetails.addView(view);
+    }
+
+    private void addOrganizationView(Object detailObject) {
+        View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_organization,
+                null);
+        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
+        TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
+        EditText inputCompanyName = (EditText) view.findViewById(R.id.input_company_name);
+        EditText inputDesignationName = (EditText) view.findViewById(R.id.input_designation_name);
+        CheckBox checkboxOrganization = (CheckBox) view.findViewById(R.id.checkbox_organization);
+
+        checkboxOrganization.setTag(linearOrganizationDetail.getChildCount());
+
+        final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
+                .relative_row_edit_profile);
+
+        textImageCross.setTypeface(Utils.typefaceIcons(this));
+        inputCompanyName.setTypeface(Utils.typefaceRegular(this));
+        inputDesignationName.setTypeface(Utils.typefaceRegular(this));
+        textLabelCheckbox.setTypeface(Utils.typefaceLight(this));
+
+        checkboxOrganization.setOnCheckedChangeListener(new CompoundButton
+                .OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    for (int i = 0; i < linearOrganizationDetail.getChildCount(); i++) {
+                        View view = linearOrganizationDetail.getChildAt(i);
+                        CheckBox checkbox = (CheckBox) view.findViewById(R.id
+                                .checkbox_organization);
+                        if (!(checkbox.getTag() == buttonView.getTag())) {
+                            checkbox.setChecked(false);
+                        }
+                    }
+                }
+            }
+        });
+
+
+        textImageCross.setOnClickListener(new View.OnClickListener()
+
+        {
+            @Override
+            public void onClick(View v) {
+                relativeRowEditProfile.setVisibility(View.GONE);
+            }
+        });
+
+        linearOrganizationDetail.addView(view);
+    }
+
+    private void showDatePicker(final EditText editText) {
+        final Calendar calendar = Calendar.getInstance();
+        DatePickerDialog.OnDateSetListener datePickerDialog = new DatePickerDialog
+                .OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                String myFormat = "dd'th' MMM, yyyy";
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                editText.setText(sdf.format(calendar.getTime()));
+            }
+
+        };
+        new DatePickerDialog(this, datePickerDialog, calendar
+                .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Web Service Call">
+
+    private void editProfile(ArrayList<ProfileDataOperation> editProfile) {
+
+        WsRequestObject editProfileObject = new WsRequestObject();
+        editProfileObject.setProfileEdit(editProfile);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    editProfileObject, null, WsResponseObject.class, WsConstants
+                    .REQ_PROFILE_UPDATE, null, true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_UPDATE);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
+                    .getString(R.string.msg_no_network));
+        }
     }
 
     //</editor-fold>

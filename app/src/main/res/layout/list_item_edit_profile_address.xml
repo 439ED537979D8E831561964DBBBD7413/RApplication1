@@ -6,7 +6,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-
     <TextView
         android:id="@+id/text_image_cross"
         android:layout_width="wrap_content"
@@ -37,39 +36,60 @@
         <EditText
             android:id="@+id/input_country"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:textColorHint="@color/darkCyan"
+            android:textSize="16sp"/>
 
         <EditText
             android:id="@+id/input_state"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:textColorHint="@color/darkCyan"
+            android:textSize="16sp"/>
 
         <EditText
             android:id="@+id/input_city"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:textColorHint="@color/darkCyan"
+            android:textSize="16sp"/>
 
         <EditText
             android:id="@+id/input_street"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:textColorHint="@color/darkCyan"
+            android:textSize="16sp"/>
 
         <EditText
             android:id="@+id/input_neighborhood"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:textColorHint="@color/darkCyan"
+            android:textSize="16sp"
             tools:ignore="TextFields"/>
 
         <EditText
             android:id="@+id/input_pin_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:textColorHint="@color/darkCyan"
+            android:textSize="16sp"
             tools:ignore="TextFields"/>
 
         <EditText
             android:id="@+id/input_po_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:textColorHint="@color/darkCyan"
+            android:textSize="16sp"
             tools:ignore="TextFields"/>
 
     </LinearLayout>
