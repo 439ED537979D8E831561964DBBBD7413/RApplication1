@@ -1,13 +1,28 @@
 package com.rawalinfocom.rcontact.contacts;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -19,7 +34,9 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.zjsonpatch.JsonDiff;
@@ -39,6 +56,7 @@ import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.ImAccount;
@@ -61,10 +79,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -73,6 +95,12 @@ import butterknife.OnClick;
 
 public class EditProfileActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener {
+
+    public static final int MEDIA_TYPE_IMAGE = 1;
+    private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
+    private static final int GALLERY_IMAGE_REQUEST_CODE = 500;
+    private static final String IMAGE_DIRECTORY_NAME = "RContactImages";
+    public static String TEMP_PHOTO_FILE_NAME = "";
 
     @BindView(R.id.include_toolbar)
     Toolbar includeToolbar;
@@ -164,6 +192,10 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     ArrayList<Object> arrayListSocialContactObject;
     ArrayList<Object> arrayListEventObject;
     ArrayList<Object> arrayListOrganizationObject;
+
+    Bitmap selectedBitmap = null;
+    private File mFileTemp;
+    private Uri fileUri;
 
 //    ProfileDataOperation userOldProfile;
 
@@ -332,13 +364,87 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
+            Bitmap bitmap = BitmapFactory.decodeFile(fileUri.getPath());
+            selectedBitmap = bitmap;
+//            imageProfile.setImageBitmap(bitmap);
+
+            Glide.with(this)
+                    .load(fileUri)
+                    .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                    .into(imageProfile);
+
+
+        } else if (requestCode == GALLERY_IMAGE_REQUEST_CODE) {
+            if (resultCode != Activity.RESULT_OK)
+                return;
+
+            if (null == data)
+                return;
+            Uri selectedImage = data.getData();
+            String[] filePath = {MediaStore.Images.Media.DATA};
+            Cursor c = getContentResolver().query(selectedImage, filePath, null, null, null);
+            c.moveToFirst();
+            int columnIndex = c.getColumnIndex(filePath[0]);
+            String picturePath = c.getString(columnIndex);
+            c.close();
+
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(data.getData());
+                FileOutputStream fileOutputStream = new FileOutputStream(mFileTemp);
+                copyStream(inputStream, fileOutputStream);
+                fileOutputStream.close();
+                inputStream.close();
+
+                // Bitmap bitmap =
+                // BitmapFactory.decodeFile(mFileTemp.getPath());
+                Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
+                selectedBitmap = bitmap;
+//                imageProfile.setImageBitmap(bitmap);
+
+                Glide.with(this)
+                        .load(mFileTemp)
+                        .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                        .into(imageProfile);
+
+            } catch (Exception e) {
+                Log.e("TAG", "Error while creating temp file", e);
+            }
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[]
+            grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
+
+                    showChooseImageIntent();
+
+                } else {
+                    Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
+                }
+            }
+            break;
+        }
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Onclick">
 
     @OnClick({R.id.image_add_phone, R.id.image_add_email, R.id.image_add_website,
             R.id.image_add_social_contact, R.id.image_add_address, R.id.image_add_event, R.id
-            .image_add_organization})
+            .image_add_organization, R.id.image_profile})
     public void onClick(View view) {
 
         switch (view.getId()) {
@@ -382,6 +488,22 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             // <editor-fold desc="image_add_organization">
             case R.id.image_add_organization:
                 addOrganizationView(null);
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="image_profile">
+            case R.id.image_profile:
+                if (ContextCompat.checkSelfPermission(this,
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(this, new String[]{android.Manifest
+                            .permission.WRITE_EXTERNAL_STORAGE}, AppConstants
+                            .MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
+                } else {
+                    showChooseImageIntent();
+                }
                 break;
             //</editor-fold>
         }
@@ -820,6 +942,125 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         new DatePickerDialog(this, datePickerDialog, calendar
                 .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private void showChooseImageIntent() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_choose_share_invite);
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
+        TextView textFromContact = (TextView) dialog.findViewById(R.id.text_from_contact);
+        TextView textFromSocialMedia = (TextView) dialog.findViewById(R.id.text_from_social_media);
+
+        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
+
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
+        textFromContact.setTypeface(Utils.typefaceRegular(this));
+        textFromSocialMedia.setTypeface(Utils.typefaceRegular(this));
+        buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
+
+        textDialogTitle.setText("Upload Via");
+        textFromContact.setText("Take Photo");
+        textFromSocialMedia.setText("Choose Photo");
+
+        buttonLeft.setText(R.string.action_cancel);
+
+        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                dialog.dismiss();
+            }
+        });
+
+        textFromSocialMedia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                selectImageFromGallery();
+            }
+        });
+
+        textFromContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                selectImageFromCamera();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void selectImageFromGallery() {
+        mFileTemp = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+
+        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(i, GALLERY_IMAGE_REQUEST_CODE);
+    }
+
+    private File getOutputMediaFile(int type) {
+
+        // External sdcard location
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment
+                .DIRECTORY_PICTURES), IMAGE_DIRECTORY_NAME);
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d(IMAGE_DIRECTORY_NAME, "Oops! Failed create " + IMAGE_DIRECTORY_NAME + " " +
+                        "directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format
+                (new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE) {
+
+            TEMP_PHOTO_FILE_NAME = "IMG_" + timeStamp + ".jpg";
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + TEMP_PHOTO_FILE_NAME);
+
+        } else {
+            return null;
+        }
+
+        return mediaFile;
+    }
+
+    private void copyStream(InputStream inputStream, FileOutputStream fileOutputStream) throws
+            IOException {
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            fileOutputStream.write(buffer, 0, bytesRead);
+        }
+    }
+
+    private void selectImageFromCamera() {
+        mFileTemp = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+
+        // start the image capture Intent
+        startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+    }
+
+    private Uri getOutputMediaFileUri(int type) {
+        return Uri.fromFile(getOutputMediaFile(type));
     }
 
     //</editor-fold>
