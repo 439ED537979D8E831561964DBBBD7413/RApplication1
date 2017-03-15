@@ -31,4 +31,10 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_elevation"
         android:layout_below="@id/tab_notifications" />
+
+    <FrameLayout
+        android:id="@+id/frame_container_notification_tab"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/include_elevation" />
 </RelativeLayout>

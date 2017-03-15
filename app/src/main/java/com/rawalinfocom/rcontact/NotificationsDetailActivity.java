@@ -3,10 +3,14 @@ package com.rawalinfocom.rcontact;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.helper.RippleView;
+import com.rawalinfocom.rcontact.notifications.NotiRequestFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,6 +30,8 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
     public static final int TAB_RATING = 1;
     public static final int TAB_COMMENTS = 2;
     public static final int TAB_RCONTACTS = 3;
+
+    private NotiRequestFragment notiRequestFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +54,64 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
 
 
     public void init() {
-        setupTabLayout();
         textToolbarTitle.setText("Notifications");
         rippleActionBack.setOnRippleCompleteListener(this);
+        bindWidgetsWithAnEvent();
+        setupTabLayout();
+
+    }
+
+    private void bindWidgetsWithAnEvent() {
+        tabNotifications.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                setCurrentTabFragment(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     private void setupTabLayout() {
+        notiRequestFragment = NotiRequestFragment.newInstance();
         tabNotifications.addTab(tabNotifications.newTab().setText("Request"), true);
         tabNotifications.addTab(tabNotifications.newTab().setText("Rating"));
         tabNotifications.addTab(tabNotifications.newTab().setText("Comments"));
         tabNotifications.addTab(tabNotifications.newTab().setText("Rcontact"));
+    }
+
+    private void setCurrentTabFragment(int tabPosition) {
+        switch (tabPosition) {
+            case 0:
+                replaceFragment(notiRequestFragment);
+                break;
+            case 1:
+                //replaceFragment(callLogFragment);
+                break;
+            case 2:
+                //replaceFragment(smsFragment);
+                break;
+            case 3:
+                //replaceFragment(smsFragment);
+                break;
+
+        }
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.frame_container_notification_tab, fragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.commit();
     }
 
     @Override
