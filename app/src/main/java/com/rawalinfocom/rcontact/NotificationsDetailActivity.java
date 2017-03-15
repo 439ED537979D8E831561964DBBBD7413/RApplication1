@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.helper.RippleView;
+import com.rawalinfocom.rcontact.notifications.NotiRContactsFragment;
 import com.rawalinfocom.rcontact.notifications.NotiRequestFragment;
 
 import butterknife.BindView;
@@ -32,6 +33,7 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
     public static final int TAB_RCONTACTS = 3;
 
     private NotiRequestFragment notiRequestFragment;
+    private NotiRContactsFragment notiRContactsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,7 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
 
     private void setupTabLayout() {
         notiRequestFragment = NotiRequestFragment.newInstance();
+        notiRContactsFragment = NotiRContactsFragment.newInstance();
         tabNotifications.addTab(tabNotifications.newTab().setText("Request"), true);
         tabNotifications.addTab(tabNotifications.newTab().setText("Rating"));
         tabNotifications.addTab(tabNotifications.newTab().setText("Comments"));
@@ -94,13 +97,13 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
                 replaceFragment(notiRequestFragment);
                 break;
             case 1:
-                //replaceFragment(callLogFragment);
+                replaceFragment(notiRequestFragment);
                 break;
             case 2:
-                //replaceFragment(smsFragment);
+                replaceFragment(notiRequestFragment);
                 break;
             case 3:
-                //replaceFragment(smsFragment);
+                replaceFragment(notiRContactsFragment);
                 break;
 
         }
