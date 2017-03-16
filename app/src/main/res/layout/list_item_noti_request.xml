@@ -10,7 +10,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/image_wisher"
+            android:id="@+id/image_requester"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -23,8 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toEndOf="@id/image_wisher"
-            android:layout_toRightOf="@id/image_wisher"
+            android:layout_toEndOf="@id/image_requester"
+            android:layout_toRightOf="@id/image_requester"
             android:orientation="vertical">
 
             <LinearLayout
@@ -39,26 +39,16 @@
                     android:layout_weight="2">
 
                     <TextView
-                        android:id="@+id/text_wisher_name"
+                        android:id="@+id/text_requester_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:textColor="@color/colorPrimary"
                         tools:text="Aakar Jain" />
-
-                    <TextView
-                        android:id="@+id/text_event_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="2dp"
-                        android:layout_marginStart="2dp"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        tools:text=" Birthday" />
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/text_timeline_noti_time"
+                    android:id="@+id/text_request_noti_time"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
@@ -72,10 +62,10 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/text_event_detail_info"
+                android:id="@+id/text_request_detail_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="20 Years Old" />
+                tools:text="Send you request for Home Request" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -83,56 +73,26 @@
                 android:layout_marginTop="2dp"
                 android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/button_request_confirm"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:orientation="vertical">
+                    android:textColor="@color/colorBlack"
+                    tools:text="CONFIRM" />
 
-                    <LinearLayout
-                        android:id="@+id/layout_user_comment_pending"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:weightSum="4">
-
-                        <LinearLayout
-                            android:layout_width="0px"
-                            android:layout_height="0px"
-                            android:focusable="true"
-                            android:focusableInTouchMode="true" />
-
-                        <EditText
-                            android:id="@+id/edittext_user_comment"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="3"
-                            android:hint="Write a comment"
-                            android:maxLines="1" />
-
-                        <ImageView
-                            android:id="@+id/button_user_comment_submit"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_weight="1"
-                            android:src="@drawable/ic_send" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/text_user_comment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/colorBlack"
-                        tools:text="You wrote message to Angarika Shah" />
-                </LinearLayout>
+                <Button
+                    android:id="@+id/button_request_reject"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    tools:text="REJECT" />
             </LinearLayout>
         </LinearLayout>
 
     </RelativeLayout>
 
     <View
-        android:id="@+id/divider_timeline_item"
+        android:id="@+id/divider_noti_request_item"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/relative_row_main"

@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/description_action_back"
                 android:padding="@dimen/activity_half_horizontal_margin"
-                android:src="@drawable/ic_action_back" />
+                android:src="@drawable/ic_close" />
 
         </com.rawalinfocom.rcontact.helper.RippleView>
 

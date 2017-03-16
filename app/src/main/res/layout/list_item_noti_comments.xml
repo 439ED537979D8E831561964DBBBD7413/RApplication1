@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/relative_row_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+        <ImageView
+            android:id="@+id/image_commenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:contentDescription="@string/str_content_description"
+            android:src="@mipmap/ic_launcher" />
+
+        <LinearLayout
+            android:id="@+id/linear_content_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/button_comment_view_reply"
+            android:layout_toRightOf="@id/image_commenter"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_commenter_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:textColor="@color/colorPrimary"
+                tools:text="Aakar Jain" />
+
+            <TextView
+                android:id="@+id/text_comment_noti_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:textAppearance="?android:textAppearanceSmall"
+                tools:text="11:15 PM" />
+
+            <TextView
+                android:id="@+id/text_comment_detail_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Send you request for Home RequestSend you request for Home Request" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/button_comment_view_reply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:textColor="@color/colorBlack"
+            tools:text="View Reply" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/divider_noti_comment_item"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/relative_row_main"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_half_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_half_horizontal_margin"
+        android:background="@color/colorDarkGray" />
+
+</RelativeLayout>
