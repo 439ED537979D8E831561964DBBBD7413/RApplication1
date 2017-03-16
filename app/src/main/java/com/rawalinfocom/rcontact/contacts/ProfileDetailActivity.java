@@ -2,7 +2,6 @@ package com.rawalinfocom.rcontact.contacts;
 
 import android.annotation.TargetApi;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -218,8 +217,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Button buttonSms;
     @BindView(R.id.relative_call_history)
     RelativeLayout relativeCallHistory;
-   /* @BindView(R.id.text_icon_history)
-    TextView textIconHistory;*/
+    /* @BindView(R.id.text_icon_history)
+     TextView textIconHistory;*/
     @BindView(R.id.recycler_call_history)
     RecyclerView recyclerCallHistory;
     @BindView(R.id.ripple_call_log)
@@ -249,7 +248,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     ArrayList<CallLogType> arrayListHistory;
     String historyNumber = "";
     String historyName = "";
-    long historyDate ;
+    long historyDate;
     Date callReceiverDate;
     CallHistoryListAdapter callHistoryListAdapter;
     String profileContactNumber;
@@ -283,7 +282,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_DATE)) {
-                historyDate = intent.getLongExtra(AppConstants.EXTRA_CALL_HISTORY_DATE,0);
+                historyDate = intent.getLongExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, 0);
             }
 
 
@@ -364,7 +363,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             fetchCallLogHistory(historyName);
 
         } else {*/
-        fetchCallLogHistory(historyNumber);
+        fetchCallLogHistoryDateWise(historyNumber);
 
 //        }
 
@@ -401,9 +400,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 rippleCallLog.setEnabled(false);
                 if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
                     fetchAllCallLogHistory(contactName);
-                }else
-                {
-                    if(!TextUtils.isEmpty(profileContactNumber)){
+                } else {
+                    if (!TextUtils.isEmpty(profileContactNumber)) {
                         fetchAllCallLogHistory(profileContactNumber);
                     }
                 }
@@ -413,12 +411,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             case R.id.ripple_action_right_center:
 
 
-                if(StringUtils.equals(imageRightCenter.getTag().toString(),TAG_IMAGE_CALL)){
+                if (StringUtils.equals(imageRightCenter.getTag().toString(), TAG_IMAGE_CALL)) {
                     showCallConfirmationDialog(historyNumber);
 
-                }else{
+                } else {
                     if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                        TableProfileMaster tableProfileMaster = new TableProfileMaster
+                                (databaseHandler);
                         UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                                 .parseInt(pmId));
                         showChooseShareOption(StringUtils.trimToEmpty(userProfile.getPmFirstName()),
@@ -1076,7 +1075,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     arrayListPhoneBookNumber.add(phoneNumber);
                 }
                 arrayListPhoneBookNumberOperation.add(phoneNumberOperation);
-                profileContactNumber =  phoneNumber.getPhoneNumber();
+                profileContactNumber = phoneNumber.getPhoneNumber();
 
             }
             contactNumberCursor.close();
@@ -1735,26 +1734,27 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         dialog.show();
     }
 
-    private void  fetchCallLogHistoryDateWise(String value) {
-        ArrayList<CallLogType> tempList =new ArrayList<>();
+    private void fetchCallLogHistoryDateWise(String value) {
+        ArrayList<CallLogType> tempList = new ArrayList<>();
         arrayListHistory = new ArrayList<>();
         if (!TextUtils.isEmpty(value)) {
             tempList = callLogHistory(value);
             Log.i("History size  ", tempList.size() + "" + " of  " + value);
         }
-        for(int i =0; i<tempList.size(); i++){
+        for (int i = 0; i < tempList.size(); i++) {
             CallLogType callLogTypeHistory = tempList.get(i);
-            long date =  callLogTypeHistory.getHistoryDate();
+            long date = callLogTypeHistory.getHistoryDate();
             Date objDate1 = new Date(date);
             String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format(objDate1);
-            String intentDate="";
-            if(historyDate > 0){
+            String intentDate = "";
+            if (historyDate > 0) {
                 Date intentDate1 = new Date(historyDate);
                 intentDate = new SimpleDateFormat("yyyy-MM-dd").format(intentDate1);
-            }else{
-                intentDate = new SimpleDateFormat("yyyy-MM-dd").format(CallLogFragment.callLogTypeReceiver.getCallReceiverDate());
+            } else {
+                intentDate = new SimpleDateFormat("yyyy-MM-dd").format(CallLogFragment
+                        .callLogTypeReceiver.getCallReceiverDate());
             }
-            if(intentDate.equalsIgnoreCase(arrayDate)){
+            if (intentDate.equalsIgnoreCase(arrayDate)) {
                 arrayListHistory.add(callLogTypeHistory);
             }
 
@@ -1772,16 +1772,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void setHistoryAdapter() {
 //        if (callHistoryListAdapter == null) {
-            if (arrayListHistory != null && arrayListHistory.size() > 0) {
-                textNoHistoryToShow.setVisibility(View.GONE);
-                callHistoryListAdapter = new CallHistoryListAdapter(arrayListHistory);
-                recyclerCallHistory.setAdapter(callHistoryListAdapter);
-                recyclerCallHistory.setFocusable(false);
-                setRecyclerViewLayoutManager(recyclerCallHistory);
-            } else {
-                textNoHistoryToShow.setVisibility(View.VISIBLE);
-                textNoHistoryToShow.setText(getResources().getString(R.string.text_no_history));
-            }
+        if (arrayListHistory != null && arrayListHistory.size() > 0) {
+            textNoHistoryToShow.setVisibility(View.GONE);
+            callHistoryListAdapter = new CallHistoryListAdapter(arrayListHistory);
+            recyclerCallHistory.setAdapter(callHistoryListAdapter);
+            recyclerCallHistory.setFocusable(false);
+            setRecyclerViewLayoutManager(recyclerCallHistory);
+        } else {
+            textNoHistoryToShow.setVisibility(View.VISIBLE);
+            textNoHistoryToShow.setText(getResources().getString(R.string.text_no_history));
+        }
 //        } else {
 //            callHistoryListAdapter.notifyDataSetChanged();
 //        }
