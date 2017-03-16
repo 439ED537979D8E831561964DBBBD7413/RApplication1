@@ -55,6 +55,35 @@
     <string name="str_choose_from_contacts">Choose from Contacts</string>
     <string name="str_select_social_media">Select Social Media</string>
     <string name="str_select_all">Select all</string>
+    <string name="action_delete">Delete</string>
+
+    <string name="text_no_history">No history to show</string>
+
+    <string name="show_call_history">Show Call history</string>
+    <string name="send_sms">Send SMS</string>
+    <string name="remove_from_call_log">Remove from Call Log</string>
+    <string name="copy_phone_number">Copy Phone Number</string>
+    <string name="block">Block</string>
+    <string name="call_reminder">Call Reminder</string>
+    <string name="add_to_contact">Add to Contact</string>
+    <string name="add_to_existing_contact">Add to Existing Contact</string>
+    <string name="copy_to_clipboard">Copy to clip board</string>
+    <string name="str_name">Name</string>
+    <string name="str_phone">Phone</string>
+    <string name="str_email">Email</string>
+    <string name="str_website">Website</string>
+    <string name="str_address">Address</string>
+    <string name="str_social_contact">Social Contact</string>
+    <string name="str_event">Event</string>
+    <string name="str_gender">Gender</string>
+    <string name="str_edit_my_profile">Edit My Profile</string>
+    <string name="str_female">Female</string>
+    <string name="str_male">Male</string>
+    <string name="str_first">First</string>
+    <string name="str_last">Last</string>
+    <string name="str_organization">Organization</string>
+    <string name="str_company_name">Company Name</string>
+    <string name="str_designation">Designation</string>
 
     <string-array name="phonebook_contact_array_share">
         <item>Share all</item>
@@ -68,7 +97,38 @@
         <item>Invite via email</item>
     </string-array>
 
-    <string name="text_no_history">No history to show</string>
+    <string-array name="types_phone_number">
+        <item>Mobile</item>
+        <item>Home</item>
+        <item>Work</item>
+        <item>Main</item>
+        <item>Other</item>
+        <item>Custom</item>
+    </string-array>
+
+    <string-array name="types_email_address">
+        <item>Home</item>
+        <item>Work</item>
+        <item>Other</item>
+        <item>Custom</item>
+    </string-array>
+
+    <string-array name="types_social_media">
+        <item>WhatsApp</item>
+        <item>Facebook</item>
+        <item>Twitter</item>
+        <item>LinkedIn</item>
+        <item>Skype</item>
+        <item>Other</item>
+        <item>Custom</item>
+    </string-array>
+
+    <string-array name="types_Event">
+        <item>Birthday</item>
+        <item>Anniversary</item>
+        <item>Other</item>
+        <item>Custom</item>
+    </string-array>
 
     <string name="show_call_history">Show Call history</string>
     <string name="send_sms">Send SMS</string>

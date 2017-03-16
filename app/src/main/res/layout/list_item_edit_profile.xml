@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/relative_row_edit_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/text_image_cross"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:padding="@dimen/margin_small"
+        android:text="@string/im_cross"/>
+
+    <Spinner
+        android:id="@+id/spinner_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_toLeftOf="@id/text_image_cross"
+        android:layout_toStartOf="@id/text_image_cross"
+        android:padding="0dp"/>
+
+    <EditText
+        android:id="@+id/input_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/spinner_type"
+        android:layout_toStartOf="@id/spinner_type"
+        android:textColor="@color/colorAccent"
+        android:textColorHint="@color/darkCyan"
+        android:textSize="16sp"
+        tools:ignore="TextFields"
+        tools:text="1234567890"/>
+
+</RelativeLayout>

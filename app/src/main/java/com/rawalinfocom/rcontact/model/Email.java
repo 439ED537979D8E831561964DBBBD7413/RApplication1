@@ -10,6 +10,7 @@ public class Email {
     private String emCloudId;
     private String emEmailAddress;
     private String emEmailType;
+    private String emRecordIndexId;
     private String emCustomType;
     private String emIsPrimary;
     private String emEmailPrivacy;
@@ -95,5 +96,13 @@ public class Email {
 
     public void setRcProfileMasterPmId(String rcProfileMasterPmId) {
         this.rcProfileMasterPmId = rcProfileMasterPmId;
+    }
+
+    public String getEmRecordIndexId() {
+        return emRecordIndexId;
+    }
+
+    public void setEmRecordIndexId(String emRecordIndexId) {
+        this.emRecordIndexId = emRecordIndexId;
     }
 }

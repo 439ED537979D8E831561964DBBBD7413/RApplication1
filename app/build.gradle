@@ -28,6 +28,7 @@ android {
         versionCode 4
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -65,7 +66,7 @@ final BUTTER_KNIFE_VERSION = '8.4.0'
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-   /* androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    /* androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })*/
 
@@ -93,13 +94,16 @@ dependencies {
 
 
     compile project(path: ':linkedin-sdk')
+    //    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'com.facebook.android:facebook-android-sdk:4.17.0'
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
     testCompile 'junit:junit:4.12'
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
-//    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    compile 'com.flipkart.zjsonpatch:zjsonpatch:0.3.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

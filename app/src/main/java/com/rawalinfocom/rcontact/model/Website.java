@@ -7,6 +7,7 @@ package com.rawalinfocom.rcontact.model;
 public class Website {
 
     private String wmId;
+    private String wmRecordIndexId;
     private String wmWebsiteUrl;
     private String wmWebsiteType;
     private String wmCustomType;
@@ -59,5 +60,13 @@ public class Website {
 
     public void setRcProfileMasterPmId(String rcProfileMasterPmId) {
         this.rcProfileMasterPmId = rcProfileMasterPmId;
+    }
+
+    public String getWmRecordIndexId() {
+        return wmRecordIndexId;
+    }
+
+    public void setWmRecordIndexId(String wmRecordIndexId) {
+        this.wmRecordIndexId = wmRecordIndexId;
     }
 }

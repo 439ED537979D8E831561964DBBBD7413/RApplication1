@@ -271,7 +271,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts, "All " +
                                 "Contact Synced");
 //                        sendBroadCastToStartCallLogInsertion();
-                        Utils.setBooleanPreference(getActivity(),AppConstants.PREF_SYNC_CALL_LOG,true);
+                        Utils.setBooleanPreference(getActivity(), AppConstants
+                                .PREF_SYNC_CALL_LOG, true);
                     }
 
                     /* Populate recycler view */
@@ -489,8 +490,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             }
         }
 
-        Log.i("storeProfileDataToDb", mapLocalRcpId.toString());
-
         // Basic Profile Data
         TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
 
@@ -530,6 +529,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
 
                 MobileNumber mobileNumber = new MobileNumber();
+                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
                 mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(j).getPhoneNumber());
                 mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
@@ -559,6 +559,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 for (int j = 0; j < arrayListEmailId.size(); j++) {
                     Email email = new Email();
                     email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+                    email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
                     email.setEmEmailType(arrayListEmailId.get(j).getEmType());
                     email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j).getEmPublic()));
                     email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -593,6 +594,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 ArrayList<Organization> organizationList = new ArrayList<>();
                 for (int j = 0; j < arrayListOrganization.size(); j++) {
                     Organization organization = new Organization();
+                    organization.setOmRecordIndexId(arrayListOrganization.get(j).getOrgId());
                     organization.setOmOrganizationCompany(arrayListOrganization.get(j).getOrgName
                             ());
                     organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgType());
@@ -621,6 +623,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 ArrayList<Website> websiteList = new ArrayList<>();
                 for (int j = 0; j < arrayListWebsite.size(); j++) {
                     Website website = new Website();
+                    website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
                     website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
                     website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
                     website.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -640,6 +643,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 ArrayList<Address> addressList = new ArrayList<>();
                 for (int j = 0; j < arrayListAddress.size(); j++) {
                     Address address = new Address();
+                    address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                     address.setAmCity(arrayListAddress.get(j).getCity());
                     address.setAmCountry(arrayListAddress.get(j).getCountry());
                     address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
@@ -668,6 +672,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 ArrayList<ImAccount> imAccountsList = new ArrayList<>();
                 for (int j = 0; j < arrayListImAccount.size(); j++) {
                     ImAccount imAccount = new ImAccount();
+                    imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
                     imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                     imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                     imAccount.setImImPrivacy(arrayListImAccount.get(j).getIMAccountPublic());
@@ -687,6 +692,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 ArrayList<Event> eventList = new ArrayList<>();
                 for (int j = 0; j < arrayListEvent.size(); j++) {
                     Event event = new Event();
+                    event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
                     event.setEvmStartDate(arrayListEvent.get(j).getEventDate());
                     event.setEvmEventType(arrayListEvent.get(j).getEventType());
                     event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic

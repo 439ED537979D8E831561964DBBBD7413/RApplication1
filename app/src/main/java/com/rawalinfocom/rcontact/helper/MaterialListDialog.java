@@ -1,22 +1,22 @@
 package com.rawalinfocom.rcontact.helper;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.View;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.adapters.MaterialListAdapter;
+import com.rawalinfocom.rcontact.adapters.CallLogDialogListAdapter;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 
 import java.util.ArrayList;
-
-import butterknife.BindView;
 
 /**
  * Created by Aniruddh on 24/12/16.
@@ -32,9 +32,10 @@ public class MaterialListDialog {
     private ArrayList<String> stringArrayList;
     String dialogTitle;
     String numberToCall;
+    RecyclerView.Adapter callingAdapter;
+    long callLogDateToDelete;
 
-
-    public MaterialListDialog(Context context, ArrayList<String> arrayList, String number) {
+    public MaterialListDialog(Context context, ArrayList<String> arrayList, String number,long date) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -50,8 +51,10 @@ public class MaterialListDialog {
         tvDialogTitle.setTypeface(Utils.typefaceBold(context));
         recycleViewDialog = (RecyclerView) dialog.findViewById(R.id.recycle_view_dialog);
 
+
         stringArrayList = arrayList;
         numberToCall =  number;
+        callLogDateToDelete =  date;
         dialogTitle = getDialogTitle();
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
@@ -63,7 +66,8 @@ public class MaterialListDialog {
 
     private void setAdapter() {
         if(!TextUtils.isEmpty(numberToCall)){
-            MaterialListAdapter materialListAdapter = new MaterialListAdapter(context, stringArrayList, numberToCall);
+            CallLogDialogListAdapter materialListAdapter = new CallLogDialogListAdapter(context, stringArrayList, numberToCall,
+                    callLogDateToDelete);
             recycleViewDialog.setAdapter(materialListAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
         }
@@ -129,4 +133,26 @@ public class MaterialListDialog {
         this.numberToCall = numberToCall;
     }
 
+    public RecyclerView.Adapter getCallingAdapter() {
+        return callingAdapter;
+    }
+
+    public void setCallingAdapter(RecyclerView.Adapter callingAdapter) {
+        this.callingAdapter = callingAdapter;
+    }
+
+    private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("CallLogFragment","onReceive() of LocalBroadcast");
+
+            if(AppConstants.EXTRA_CALL_LOG_DELETED_VALUE){
+                Log.i("CallLogFragment deleted", AppConstants.EXTRA_CALL_LOG_DELETED_VALUE+"");
+
+            }else {
+                Log.i("CallLogFragment deleted", AppConstants.EXTRA_CALL_LOG_DELETED_VALUE+"");
+            }
+
+        }
+    };
 }

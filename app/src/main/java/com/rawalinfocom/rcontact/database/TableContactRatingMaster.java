@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.rawalinfocom.rcontact.model.Country;
 import com.rawalinfocom.rcontact.model.DbRating;
 
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ public class TableContactRatingMaster {
             COLUMN_CRM_REPLIED_AT, COLUMN_RC_PROFILE_MASTER_PM_ID};
 
     // Table Create Statements
-    static final String CREATE_TABLE_CONTACT_RATING_MASTER = "CREATE TABLE " +
+    static final String CREATE_TABLE_RC_CONTACT_RATING_MASTER = "CREATE TABLE " +
             TABLE_RC_CONTACT_RATING_MASTER + " " +
             "(" +
             " " + COLUMN_CRM_ID + " integer NOT NULL CONSTRAINT rc_contact_rating_master_pk " +
