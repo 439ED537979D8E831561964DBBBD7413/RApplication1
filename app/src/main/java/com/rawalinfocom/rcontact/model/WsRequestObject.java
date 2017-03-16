@@ -63,6 +63,8 @@ public class WsRequestObject {
 
     private ArrayList<ProfileVisit> arrayListProfileVisit;
 
+    private ArrayList<ProfileDataOperation> profileEdit;
+
     @JsonProperty("submit_rating")
     private ArrayList<Rating> ratings;
 
@@ -400,5 +402,14 @@ public class WsRequestObject {
 
     public void setArrayListCallLogType(ArrayList<CallLogType> arrayListCallLogType) {
         this.arrayListCallLogType = arrayListCallLogType;
+    }
+
+    @JsonProperty("profile_edit")
+    public ArrayList<ProfileDataOperation> getProfileEdit() {
+        return profileEdit;
+    }
+
+    public void setProfileEdit(ArrayList<ProfileDataOperation> profileEdit) {
+        this.profileEdit = profileEdit;
     }
 }

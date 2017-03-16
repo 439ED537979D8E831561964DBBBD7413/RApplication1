@@ -23,6 +23,8 @@
     <dimen name="margin_medium">16dp</dimen>
     <dimen name="margin_large">32dp</dimen>
     <dimen name="margin_huge">64dp</dimen>
+    <dimen name="margin_extra_small">6dp</dimen>
+
 
     <dimen name="list_item_height">72dp</dimen>
 
@@ -39,5 +41,7 @@
     <dimen name="margin_10dp">10dp</dimen>
     <dimen name="margin_15dp">15dp</dimen>
     <dimen name="padding_15dp">15dp</dimen>
+    <dimen name="text_size_12sp">12sp</dimen>
+    <dimen name="text_size_10sp">10sp</dimen>
 
 </resources>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/relative_row_edit_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/text_image_cross"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:padding="@dimen/margin_small"
+        android:text="@string/im_cross"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_toLeftOf="@id/text_image_cross"
+        android:layout_toStartOf="@id/text_image_cross"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/input_company_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/str_company_name"
+            android:textColor="@color/colorAccent"
+            android:textColorHint="@color/darkCyan"
+            android:textSize="16sp"/>
+
+        <!--  <TextView
+              android:id="@+id/text_label_designation"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/input_company_name"
+              android:text="@string/str_designation"
+              android:textAppearance="?android:textAppearanceMedium"
+              android:textColor="@color/colorBlack"/>-->
+
+        <EditText
+            android:id="@+id/input_designation_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/str_designation"
+            android:textColor="@color/colorAccent"
+            android:textColorHint="@color/darkCyan"
+            android:textSize="16sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <CheckBox
+                android:id="@+id/checkbox_organization"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/text_label_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_tiny"
+                android:layout_marginStart="@dimen/margin_tiny"
+                android:text="I Currently Work Here"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -27,6 +27,7 @@ public class TableImMaster {
 
     // Column Names
     private static final String COLUMN_IM_ID = "im_id";
+    private static final String COLUMN_IM_RECORD_INDEX_ID = "im_record_index_id";
     static final String COLUMN_IM_IM_TYPE = "im_im_type";
     private static final String COLUMN_IM_CUSTOM_TYPE = "im_custom_type";
     static final String COLUMN_IM_IM_PROTOCOL = "im_im_protocol";
@@ -37,6 +38,7 @@ public class TableImMaster {
     // Table Create Statements
     static final String CREATE_TABLE_RC_IM_MASTER = "CREATE TABLE " + TABLE_RC_IM_MASTER + " (" +
             " " + COLUMN_IM_ID + " integer NOT NULL CONSTRAINT rc_im_master_pk PRIMARY KEY," +
+            " " + COLUMN_IM_RECORD_INDEX_ID + " text, " +
             " " + COLUMN_IM_IM_TYPE + " text NOT NULL," +
             " " + COLUMN_IM_CUSTOM_TYPE + " text," +
             " " + COLUMN_IM_IM_PROTOCOL + " text NOT NULL," +
@@ -50,6 +52,7 @@ public class TableImMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_IM_ID, imAccount.getImId());
+        values.put(COLUMN_IM_RECORD_INDEX_ID, imAccount.getImRecordIndexId());
         values.put(COLUMN_IM_IM_TYPE, imAccount.getImImType());
         values.put(COLUMN_IM_CUSTOM_TYPE, imAccount.getImCustomType());
         values.put(COLUMN_IM_IM_PROTOCOL, imAccount.getImImProtocol());
@@ -70,11 +73,13 @@ public class TableImMaster {
         for (int i = 0; i < arrayListImAccount.size(); i++) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_IM_ID, arrayListImAccount.get(i).getImId());
+            values.put(COLUMN_IM_RECORD_INDEX_ID, arrayListImAccount.get(i).getImRecordIndexId());
             values.put(COLUMN_IM_IM_TYPE, arrayListImAccount.get(i).getImImType());
             values.put(COLUMN_IM_CUSTOM_TYPE, arrayListImAccount.get(i).getImCustomType());
             values.put(COLUMN_IM_IM_PROTOCOL, arrayListImAccount.get(i).getImImProtocol());
             values.put(COLUMN_IM_IM_PRIVACY, arrayListImAccount.get(i).getImImPrivacy());
-            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListImAccount.get(i).getRcProfileMasterPmId());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListImAccount.get(i)
+                    .getRcProfileMasterPmId());
 
             // Inserting Row
             db.insert(TABLE_RC_IM_MASTER, null, values);
@@ -82,25 +87,73 @@ public class TableImMaster {
         db.close(); // Closing database connection
     }
 
+    // Getting All Im Accounts from Profile Master Id
+    public ArrayList<ImAccount> getImAccountFromPmId(int pmId) {
+        ArrayList<ImAccount> arrayListImAccount = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT DISTINCT " + COLUMN_IM_RECORD_INDEX_ID + ", " +
+                COLUMN_IM_IM_TYPE + ", " +
+                COLUMN_IM_IM_PROTOCOL + ", " +
+                COLUMN_IM_IM_PRIVACY + ", " +
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
+                TABLE_RC_IM_MASTER + " WHERE " +
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                ImAccount imAccount = new ImAccount();
+                imAccount.setImRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_IM_RECORD_INDEX_ID)));
+                imAccount.setImImType(cursor.getString(cursor.getColumnIndex(COLUMN_IM_IM_TYPE)));
+                imAccount.setImImProtocol(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_IM_IM_PROTOCOL)));
+                imAccount.setImImPrivacy(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_IM_IM_PRIVACY)));
+                imAccount.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_RC_PROFILE_MASTER_PM_ID)));
+                // Adding Im Account to list
+                arrayListImAccount.add(imAccount);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        // return Im Account list
+        return arrayListImAccount;
+    }
+
     // Getting single Im Account
     public ImAccount getImAccount(int imId) {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RC_IM_MASTER, new String[]{COLUMN_IM_ID,
-                        COLUMN_IM_IM_TYPE, COLUMN_IM_CUSTOM_TYPE, COLUMN_IM_IM_PROTOCOL,
-                        COLUMN_IM_IM_PRIVACY, COLUMN_RC_PROFILE_MASTER_PM_ID},
+                        COLUMN_IM_RECORD_INDEX_ID, COLUMN_IM_IM_TYPE, COLUMN_IM_CUSTOM_TYPE,
+                        COLUMN_IM_IM_PROTOCOL, COLUMN_IM_IM_PRIVACY,
+                        COLUMN_RC_PROFILE_MASTER_PM_ID},
                 COLUMN_IM_ID + "=?", new String[]{String.valueOf(imId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
         ImAccount imAccount = new ImAccount();
         if (cursor != null) {
-            imAccount.setImId(cursor.getString(0));
-            imAccount.setImImType(cursor.getString(1));
-            imAccount.setImCustomType(cursor.getString(2));
-            imAccount.setImImProtocol(cursor.getString(3));
-            imAccount.setImImPrivacy(cursor.getString(4));
-            imAccount.setRcProfileMasterPmId(cursor.getString(5));
+            imAccount.setImId(cursor.getString(cursor.getColumnIndex(COLUMN_IM_ID)));
+            imAccount.setImRecordIndexId(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_IM_RECORD_INDEX_ID)));
+            imAccount.setImImType(cursor.getString(cursor.getColumnIndex(COLUMN_IM_IM_TYPE)));
+            imAccount.setImCustomType(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_IM_CUSTOM_TYPE)));
+            imAccount.setImImProtocol(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_IM_IM_PROTOCOL)));
+            imAccount.setImImPrivacy(cursor.getString(cursor.getColumnIndex(COLUMN_IM_IM_PRIVACY)));
+            imAccount.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_RC_PROFILE_MASTER_PM_ID)));
 
             cursor.close();
         }
@@ -124,12 +177,18 @@ public class TableImMaster {
         if (cursor.moveToFirst()) {
             do {
                 ImAccount imAccount = new ImAccount();
-                imAccount.setImId(cursor.getString(0));
-                imAccount.setImImType(cursor.getString(1));
-                imAccount.setImCustomType(cursor.getString(2));
-                imAccount.setImImProtocol(cursor.getString(3));
-                imAccount.setImImPrivacy(cursor.getString(4));
-                imAccount.setRcProfileMasterPmId(cursor.getString(5));
+                imAccount.setImId(cursor.getString(cursor.getColumnIndex(COLUMN_IM_ID)));
+                imAccount.setImRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_IM_RECORD_INDEX_ID)));
+                imAccount.setImImType(cursor.getString(cursor.getColumnIndex(COLUMN_IM_IM_TYPE)));
+                imAccount.setImCustomType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_IM_CUSTOM_TYPE)));
+                imAccount.setImImProtocol(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_IM_IM_PROTOCOL)));
+                imAccount.setImImPrivacy(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_IM_IM_PRIVACY)));
+                imAccount.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_RC_PROFILE_MASTER_PM_ID)));
                 // Adding Im Account to list
                 arrayListImAccount.add(imAccount);
             } while (cursor.moveToNext());
@@ -164,6 +223,7 @@ public class TableImMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_IM_ID, imAccount.getImId());
+        values.put(COLUMN_IM_RECORD_INDEX_ID, imAccount.getImRecordIndexId());
         values.put(COLUMN_IM_IM_TYPE, imAccount.getImImType());
         values.put(COLUMN_IM_CUSTOM_TYPE, imAccount.getImCustomType());
         values.put(COLUMN_IM_IM_PROTOCOL, imAccount.getImImProtocol());
