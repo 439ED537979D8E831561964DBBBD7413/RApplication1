@@ -105,7 +105,6 @@
         <activity android:name=".TimelineActivity" />
         <activity android:name=".EventsActivity"></activity>
             android:exported="true">
-        </service>
 
         <activity
             android:name=".contacts.EditProfileActivity"
