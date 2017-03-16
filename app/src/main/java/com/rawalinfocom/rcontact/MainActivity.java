@@ -31,6 +31,7 @@ import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
+import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
@@ -159,6 +160,27 @@ public class MainActivity extends BaseActivity implements NavigationView
                 } else {
                     Toast.makeText(getApplicationContext(), "DB dump failed", Toast.LENGTH_SHORT)
                             .show();
+                }
+            }
+        } else if (id == R.id.nav_user_timeline) {
+            startActivityIntent(MainActivity.this, TimelineActivity.class, null);
+        } else if (id == R.id.nav_user_events) {
+            startActivityIntent(MainActivity.this, EventsActivity.class, null);
+        } else if (id == R.id.nav_db_export) {
+            if (BuildConfig.DEBUG) {
+                String exportedFileName = DatabaseHandler.exportDB();
+                if (exportedFileName != null) {
+                    File filelocation = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), exportedFileName);
+                    Uri path = Uri.fromFile(filelocation);
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("vnd.android.cursor.dir/email");
+                    String to[] = {"development@rawalinfocom.com"};
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, path);
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                    startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                } else {
+                    Toast.makeText(getApplicationContext(), "DB dump failed", Toast.LENGTH_SHORT).show();
                 }
             }
         }

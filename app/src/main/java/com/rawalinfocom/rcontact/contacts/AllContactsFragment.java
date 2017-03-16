@@ -34,6 +34,7 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
@@ -143,8 +144,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-         /*LocalBroadcastManager.getInstance(getActivity()).registerReceiver(CallLogFragment
-         .broadcastReceiver,
+         /*LocalBroadcastManager.getInstance(getActivity()).registerReceiver(CallLogFragment.broadcastReceiver,
                         new IntentFilter(AppConstants.ACTION_START_CALL_LOG_INSERTION));*/
 
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
