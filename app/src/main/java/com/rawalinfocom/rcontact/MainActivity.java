@@ -143,6 +143,25 @@ public class MainActivity extends BaseActivity implements NavigationView
             startActivity(Intent.createChooser(sharingIntent, "Share App Via"));
         } else if (id == R.id.nav_invite) {
             startActivityIntent(MainActivity.this, ContactListingActivity.class, null);
+        } else if (id == R.id.nav_db_export) {
+            if (BuildConfig.DEBUG) {
+                String exportedFileName = Utils.exportDB(this);
+                if (exportedFileName != null) {
+                    File fileLocation = new File(Environment.getExternalStorageDirectory()
+                            .getAbsolutePath(), exportedFileName);
+                    Uri path = Uri.fromFile(fileLocation);
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("vnd.android.cursor.dir/email");
+                    String to[] = {"development@rawalinfocom.com"};
+//                    emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, path);
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
+                    startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                } else {
+                    Toast.makeText(getApplicationContext(), "DB dump failed", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
         } else if (id == R.id.nav_user_timeline) {
             startActivityIntent(MainActivity.this, TimelineActivity.class, null);
         } else if (id == R.id.nav_user_events) {

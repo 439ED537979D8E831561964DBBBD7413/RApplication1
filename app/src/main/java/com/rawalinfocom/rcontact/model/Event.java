@@ -7,6 +7,7 @@ package com.rawalinfocom.rcontact.model;
 public class Event {
 
     private String evmId;
+    private String evmRecordIndexId;
     private String evmStartDate;
     private String evmEventType;
     private String evmCustomType;
@@ -59,5 +60,13 @@ public class Event {
 
     public void setRcProfileMasterPmId(String rcProfileMasterPmId) {
         this.rcProfileMasterPmId = rcProfileMasterPmId;
+    }
+
+    public String getEvmRecordIndexId() {
+        return evmRecordIndexId;
+    }
+
+    public void setEvmRecordIndexId(String evmRecordIndexId) {
+        this.evmRecordIndexId = evmRecordIndexId;
     }
 }

@@ -17,6 +17,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.ColorInt;
@@ -41,11 +42,16 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.model.Country;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -446,6 +452,32 @@ public class Utils {
     }
     //</editor-fold>
 
+    public static String exportDB(Context context) {
+        String inFileName = context.getDatabasePath(DatabaseHandler.DATABASE_NAME).getPath();
+        try {
+            File dbFile = new File(inFileName);
+            FileInputStream fis = new FileInputStream(dbFile);
+
+            String outFileName = Environment.getExternalStorageDirectory() + "/" +
+                    DatabaseHandler.DATABASE_NAME;
+
+            OutputStream output = new FileOutputStream(outFileName);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) > 0) {
+                output.write(buffer, 0, length);
+            }
+            //Close the streams
+            output.flush();
+            output.close();
+            fis.close();
+            return DatabaseHandler.DATABASE_NAME;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static void copyToClipboard(Context context, String label, String text) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context
                 .CLIPBOARD_SERVICE);
@@ -533,7 +565,6 @@ public class Utils {
         context.startActivity(intent);
 
     }
-
 
 
 }

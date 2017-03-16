@@ -15,6 +15,7 @@ public class AppConstants {
 
     //<editor-fold desc="Permission Request Code">
     public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 3;
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 4;
     //</editor-fold>
 
     //<editor-fold desc="Profile Detail Section">
@@ -25,7 +26,7 @@ public class AppConstants {
     public static final int IM_ACCOUNT = 4;
     public static final int EVENT = 5;
     public static final int GENDER = 6;
-        //</editor-fold>
+    //</editor-fold>
 
     //<editor-fold desc="App Specific final constants">
 

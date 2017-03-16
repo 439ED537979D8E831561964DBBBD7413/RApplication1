@@ -289,7 +289,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
-                if (!pmId.equalsIgnoreCase("-1")) {
+                if (!pmId.equalsIgnoreCase("-1") && !pmId.equalsIgnoreCase(getUserPmId())) {
                     if (Utils.isNetworkAvailable(this)) {
                         ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
                         ProfileVisit profileVisit = new ProfileVisit();
@@ -364,7 +364,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             fetchCallLogHistory(historyName);
 
         } else {*/
-        fetchCallLogHistoryDateWise(historyNumber);
+        fetchCallLogHistory(historyNumber);
 
 //        }
 
@@ -427,8 +427,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         showChooseShareOption(null, null);
                     }
                 }
-
-
                 break;
 
             case R.id.ripple_action_right_left:
@@ -460,6 +458,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                     rContactApplication.setFavouriteModified(true);
 
+                } else if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_EDIT)) {
+                    startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
+                            null);
                 }
                 break;
         }
