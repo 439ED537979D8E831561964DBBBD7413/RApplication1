@@ -7,6 +7,7 @@ package com.rawalinfocom.rcontact.model;
 public class ImAccount {
 
     private String imId;
+    private String imRecordIndexId;
     private String imImType;
     private String imCustomType;
     private String imImProtocol;
@@ -59,5 +60,13 @@ public class ImAccount {
 
     public void setRcProfileMasterPmId(String rcProfileMasterPmId) {
         this.rcProfileMasterPmId = rcProfileMasterPmId;
+    }
+
+    public String getImRecordIndexId() {
+        return imRecordIndexId;
+    }
+
+    public void setImRecordIndexId(String imRecordIndexId) {
+        this.imRecordIndexId = imRecordIndexId;
     }
 }

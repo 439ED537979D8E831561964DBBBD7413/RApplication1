@@ -239,7 +239,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    class ContactHeaderViewHolder extends RecyclerView.ViewHolder {
+    public class ContactHeaderViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.text_header)
         TextView textHeader;

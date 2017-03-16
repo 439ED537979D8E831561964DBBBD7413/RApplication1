@@ -27,6 +27,7 @@ public class TableAddressMaster {
 
     // Column Names
     private static final String COLUMN_AM_ID = "am_id";
+    private static final String COLUMN_AM_RECORD_INDEX_ID = "am_record_index_id";
     private static final String COLUMN_AM_CITY = "am_city";
     private static final String COLUMN_AM_COUNTRY = "am_country";
     static final String COLUMN_AM_FORMATTED_ADDRESS = "am_formatted_address";
@@ -47,6 +48,7 @@ public class TableAddressMaster {
     // Table Create Statements
     static final String CREATE_TABLE_RC_ADDRESS_MASTER = "CREATE TABLE rc_address_master (" +
             " " + COLUMN_AM_ID + " integer NOT NULL CONSTRAINT rc_address_master_pk PRIMARY KEY," +
+            " " + COLUMN_AM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_AM_CITY + " text," +
             " " + COLUMN_AM_COUNTRY + " text," +
             " " + COLUMN_AM_FORMATTED_ADDRESS + " text NOT NULL," +
@@ -70,6 +72,7 @@ public class TableAddressMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_AM_ID, address.getAmId());
+        values.put(COLUMN_AM_RECORD_INDEX_ID, address.getAmRecordIndexId());
         values.put(COLUMN_AM_CITY, address.getAmCity());
         values.put(COLUMN_AM_COUNTRY, address.getAmCountry());
         values.put(COLUMN_AM_FORMATTED_ADDRESS, address.getAmFormattedAddress());
@@ -86,7 +89,6 @@ public class TableAddressMaster {
         values.put(COLUMN_AM_ADDRESS_PRIVACY, address.getAmAddressPrivacy());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, address.getRcProfileMasterPmId());
 
-
         // Inserting Row
         db.insert(TABLE_RC_ADDRESS_MASTER, null, values);
         // insertWithOnConflict
@@ -101,9 +103,11 @@ public class TableAddressMaster {
         for (int i = 0; i < arrayListAddress.size(); i++) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_AM_ID, arrayListAddress.get(i).getAmId());
+            values.put(COLUMN_AM_RECORD_INDEX_ID, arrayListAddress.get(i).getAmRecordIndexId());
             values.put(COLUMN_AM_CITY, arrayListAddress.get(i).getAmCity());
             values.put(COLUMN_AM_COUNTRY, arrayListAddress.get(i).getAmCountry());
-            values.put(COLUMN_AM_FORMATTED_ADDRESS, arrayListAddress.get(i).getAmFormattedAddress());
+            values.put(COLUMN_AM_FORMATTED_ADDRESS, arrayListAddress.get(i).getAmFormattedAddress
+                    ());
             values.put(COLUMN_AM_NEIGHBORHOOD, arrayListAddress.get(i).getAmNeighborhood());
             values.put(COLUMN_AM_POST_CODE, arrayListAddress.get(i).getAmPostCode());
             values.put(COLUMN_AM_PO_BOX, arrayListAddress.get(i).getAmPoBox());
@@ -115,7 +119,8 @@ public class TableAddressMaster {
             values.put(COLUMN_AM_GOOGLE_LONGITUDE, arrayListAddress.get(i).getAmGoogleLongitude());
             values.put(COLUMN_AM_GOOGLE_ADDRESS, arrayListAddress.get(i).getAmGoogleAddress());
             values.put(COLUMN_AM_ADDRESS_PRIVACY, arrayListAddress.get(i).getAmAddressPrivacy());
-            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListAddress.get(i).getRcProfileMasterPmId());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListAddress.get(i)
+                    .getRcProfileMasterPmId());
 
             // Inserting Row
             db.insert(TABLE_RC_ADDRESS_MASTER, null, values);
@@ -128,37 +133,45 @@ public class TableAddressMaster {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RC_ADDRESS_MASTER, new String[]{COLUMN_AM_ID,
-                        COLUMN_AM_CITY, COLUMN_AM_COUNTRY, COLUMN_AM_FORMATTED_ADDRESS,
-                        COLUMN_AM_NEIGHBORHOOD, COLUMN_AM_POST_CODE, COLUMN_AM_PO_BOX,
-                COLUMN_AM_REGION,
-                        COLUMN_AM_STREET, COLUMN_AM_ADDRESS_TYPE, COLUMN_AM_CUSTOM_TYPE,
-                        COLUMN_AM_GOOGLE_LATITUDE, COLUMN_AM_GOOGLE_LONGITUDE,
-                COLUMN_AM_GOOGLE_ADDRESS,
-                        COLUMN_AM_ADDRESS_PRIVACY, COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_AM_ID
-                + "=?",
-                new String[]{String.valueOf(amId)}, null, null, null, null);
+                COLUMN_AM_RECORD_INDEX_ID, COLUMN_AM_CITY, COLUMN_AM_COUNTRY,
+                COLUMN_AM_FORMATTED_ADDRESS, COLUMN_AM_NEIGHBORHOOD, COLUMN_AM_POST_CODE,
+                COLUMN_AM_PO_BOX, COLUMN_AM_REGION, COLUMN_AM_STREET, COLUMN_AM_ADDRESS_TYPE,
+                COLUMN_AM_CUSTOM_TYPE, COLUMN_AM_GOOGLE_LATITUDE, COLUMN_AM_GOOGLE_LONGITUDE,
+                COLUMN_AM_GOOGLE_ADDRESS, COLUMN_AM_ADDRESS_PRIVACY,
+                COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_AM_ID + "=?", new String[]{String.valueOf
+                (amId)}, null, null, null, null);
 
         if (cursor != null)
             cursor.moveToFirst();
 
         Address address = new Address();
         if (cursor != null) {
-            address.setAmId(cursor.getString(0));
-            address.setAmCity(cursor.getString(1));
-            address.setAmCountry(cursor.getString(2));
-            address.setAmFormattedAddress(cursor.getString(3));
-            address.setAmNeighborhood(cursor.getString(4));
-            address.setAmPostCode(cursor.getString(5));
-            address.setAmPoBox(cursor.getString(6));
-            address.setAmRegion(cursor.getString(7));
-            address.setAmStreet(cursor.getString(8));
-            address.setAmAddressType(cursor.getString(9));
-            address.setAmCustomType(cursor.getString(10));
-            address.setAmGoogleLatitude(cursor.getString(11));
-            address.setAmGoogleLongitude(cursor.getString(12));
-            address.setAmGoogleAddress(cursor.getString(13));
-            address.setAmAddressPrivacy(cursor.getString(14));
-            address.setRcProfileMasterPmId(cursor.getString(15));
+            address.setAmId(cursor.getString(cursor.getColumnIndex(COLUMN_AM_ID)));
+            address.setAmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_AM_RECORD_INDEX_ID)));
+            address.setAmCity(cursor.getString(cursor.getColumnIndex(COLUMN_AM_CITY)));
+            address.setAmCountry(cursor.getString(cursor.getColumnIndex(COLUMN_AM_COUNTRY)));
+            address.setAmFormattedAddress(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_AM_FORMATTED_ADDRESS)));
+            address.setAmNeighborhood(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_AM_NEIGHBORHOOD)));
+            address.setAmPostCode(cursor.getString(cursor.getColumnIndex(COLUMN_AM_POST_CODE)));
+            address.setAmPoBox(cursor.getString(cursor.getColumnIndex(COLUMN_AM_PO_BOX)));
+            address.setAmRegion(cursor.getString(cursor.getColumnIndex(COLUMN_AM_REGION)));
+            address.setAmStreet(cursor.getString(cursor.getColumnIndex(COLUMN_AM_STREET)));
+            address.setAmAddressType(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_AM_ADDRESS_TYPE)));
+            address.setAmCustomType(cursor.getString(cursor.getColumnIndex(COLUMN_AM_CUSTOM_TYPE)));
+            address.setAmGoogleLatitude(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_AM_GOOGLE_LATITUDE)));
+            address.setAmGoogleLongitude(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_AM_GOOGLE_LONGITUDE)));
+            address.setAmGoogleAddress(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_AM_GOOGLE_ADDRESS)));
+            address.setAmAddressPrivacy(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_AM_ADDRESS_PRIVACY)));
+            address.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_RC_PROFILE_MASTER_PM_ID)));
 
             cursor.close();
         }
@@ -182,22 +195,33 @@ public class TableAddressMaster {
         if (cursor.moveToFirst()) {
             do {
                 Address address = new Address();
-                address.setAmId(cursor.getString(0));
-                address.setAmCity(cursor.getString(1));
-                address.setAmCountry(cursor.getString(2));
-                address.setAmFormattedAddress(cursor.getString(3));
-                address.setAmNeighborhood(cursor.getString(4));
-                address.setAmPostCode(cursor.getString(5));
-                address.setAmPoBox(cursor.getString(6));
-                address.setAmRegion(cursor.getString(7));
-                address.setAmStreet(cursor.getString(8));
-                address.setAmAddressType(cursor.getString(9));
-                address.setAmCustomType(cursor.getString(10));
-                address.setAmGoogleLatitude(cursor.getString(11));
-                address.setAmGoogleLongitude(cursor.getString(12));
-                address.setAmGoogleAddress(cursor.getString(13));
-                address.setAmAddressPrivacy(cursor.getString(14));
-                address.setRcProfileMasterPmId(cursor.getString(15));
+                address.setAmId(cursor.getString(cursor.getColumnIndex(COLUMN_AM_ID)));
+                address.setAmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_RECORD_INDEX_ID)));
+                address.setAmCity(cursor.getString(cursor.getColumnIndex(COLUMN_AM_CITY)));
+                address.setAmCountry(cursor.getString(cursor.getColumnIndex(COLUMN_AM_COUNTRY)));
+                address.setAmFormattedAddress(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_FORMATTED_ADDRESS)));
+                address.setAmNeighborhood(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_NEIGHBORHOOD)));
+                address.setAmPostCode(cursor.getString(cursor.getColumnIndex(COLUMN_AM_POST_CODE)));
+                address.setAmPoBox(cursor.getString(cursor.getColumnIndex(COLUMN_AM_PO_BOX)));
+                address.setAmRegion(cursor.getString(cursor.getColumnIndex(COLUMN_AM_REGION)));
+                address.setAmStreet(cursor.getString(cursor.getColumnIndex(COLUMN_AM_STREET)));
+                address.setAmAddressType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_ADDRESS_TYPE)));
+                address.setAmCustomType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_CUSTOM_TYPE)));
+                address.setAmGoogleLatitude(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_GOOGLE_LATITUDE)));
+                address.setAmGoogleLongitude(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_GOOGLE_LONGITUDE)));
+                address.setAmGoogleAddress(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_GOOGLE_ADDRESS)));
+                address.setAmAddressPrivacy(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_ADDRESS_PRIVACY)));
+                address.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_RC_PROFILE_MASTER_PM_ID)));
                 // Adding Address to list
                 arrayListAddress.add(address);
             } while (cursor.moveToNext());
@@ -230,6 +254,7 @@ public class TableAddressMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_AM_ID, address.getAmId());
+        values.put(COLUMN_AM_RECORD_INDEX_ID, address.getAmRecordIndexId());
         values.put(COLUMN_AM_CITY, address.getAmCity());
         values.put(COLUMN_AM_COUNTRY, address.getAmCountry());
         values.put(COLUMN_AM_FORMATTED_ADDRESS, address.getAmFormattedAddress());

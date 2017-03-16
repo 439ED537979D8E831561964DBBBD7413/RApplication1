@@ -59,6 +59,11 @@ public class WsRequestObject {
 
     private ArrayList<String> arrayListContactNumber;
     private ArrayList<String> arrayListEmailAddress;
+    private ArrayList<CallLogType> arrayListCallLogType;
+
+    private ArrayList<ProfileVisit> arrayListProfileVisit;
+
+    private ArrayList<ProfileDataOperation> profileEdit;
 
     @JsonProperty("submit_rating")
     private ArrayList<Rating> ratings;
@@ -379,5 +384,32 @@ public class WsRequestObject {
 
     public void setDmLocation(String dmLocation) {
         this.dmLocation = dmLocation;
+    }
+
+    @JsonProperty("profile_visit")
+    public ArrayList<ProfileVisit> getArrayListProfileVisit() {
+        return arrayListProfileVisit;
+    }
+
+    public void setArrayListProfileVisit(ArrayList<ProfileVisit> arrayListProfileVisit) {
+        this.arrayListProfileVisit = arrayListProfileVisit;
+    }
+
+    @JsonProperty("call_log")
+    public ArrayList<CallLogType> getArrayListCallLogType() {
+        return arrayListCallLogType;
+    }
+
+    public void setArrayListCallLogType(ArrayList<CallLogType> arrayListCallLogType) {
+        this.arrayListCallLogType = arrayListCallLogType;
+    }
+
+    @JsonProperty("profile_edit")
+    public ArrayList<ProfileDataOperation> getProfileEdit() {
+        return profileEdit;
+    }
+
+    public void setProfileEdit(ArrayList<ProfileDataOperation> profileEdit) {
+        this.profileEdit = profileEdit;
     }
 }

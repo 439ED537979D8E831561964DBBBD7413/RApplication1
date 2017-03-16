@@ -3,6 +3,12 @@ package com.rawalinfocom.rcontact.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 /**
  * Created by Monal on 21/10/16.
@@ -17,7 +23,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Database Name
-    private static final String DATABASE_NAME = "RContact";
+    public static final String DATABASE_NAME = "RContact.db";
+
+    private static String databasePath = "";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -40,8 +48,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableOfflineBackupMaster.CREATE_TABLE_PB_OFFLINE_BACKUP_MASTER);
         db.execSQL(TableOrganizationMaster.CREATE_TABLE_RC_ORGANIZATION_MASTER);
         db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
-        db.execSQL(TableWebsiteMaster.CREATE_TABLE_RC_EMAIL_MASTER);
-        db.execSQL(TableContactRatingMaster.CREATE_TABLE_CONTACT_RATING_MASTER);
+        db.execSQL(TableWebsiteMaster.CREATE_TABLE_RC_WEBSITE_MASTER);
+        db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);
     }
 
     @Override
@@ -66,9 +74,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TableOrganizationMaster
                 .CREATE_TABLE_RC_ORGANIZATION_MASTER);
         db.execSQL("DROP TABLE IF EXISTS " + TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
-        db.execSQL("DROP TABLE IF EXISTS " + TableWebsiteMaster.CREATE_TABLE_RC_EMAIL_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableWebsiteMaster.CREATE_TABLE_RC_WEBSITE_MASTER);
         db.execSQL("DROP TABLE IF EXISTS " + TableContactRatingMaster
-                .CREATE_TABLE_CONTACT_RATING_MASTER);
+                .CREATE_TABLE_RC_CONTACT_RATING_MASTER);
 
         // create new tables
         onCreate(db);

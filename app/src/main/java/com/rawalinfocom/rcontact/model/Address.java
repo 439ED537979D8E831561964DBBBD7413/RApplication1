@@ -7,6 +7,7 @@ package com.rawalinfocom.rcontact.model;
 public class Address {
 
     private String amId;
+    private String amRecordIndexId;
     private String amCity;
     private String amCountry;
     private String amFormattedAddress;
@@ -149,5 +150,13 @@ public class Address {
 
     public void setRcProfileMasterPmId(String rcProfileMasterPmId) {
         this.rcProfileMasterPmId = rcProfileMasterPmId;
+    }
+
+    public String getAmRecordIndexId() {
+        return amRecordIndexId;
+    }
+
+    public void setAmRecordIndexId(String amRecordIndexId) {
+        this.amRecordIndexId = amRecordIndexId;
     }
 }

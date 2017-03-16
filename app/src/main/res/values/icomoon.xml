@@ -68,7 +68,7 @@
     <string name="im_gender">&#xe93f;</string>
     <string name="im_square_angle_up">&#xe940;</string>
     <string name="im_times">&#xe941;</string>
-    <string name="im_check">&#xe942;</string>
+    <string name="im_cross">&#xe942;</string>
     <string name="im_plus">&#xe943;</string>
     <!--<string name="im_caret_down">&#xe944;</string>
     <string name="im_caret_down">&#xe945;</string>-->
@@ -121,6 +121,7 @@
     <string name="im_users_connected">&#xe974;</string>
     <string name="im_3_dots">&#xe99a;</string>
     <string name="im_call_histroy">&#xe926;</string>
+    <string name="im_noti_plus">&#xe948;</string>
 
 
 </resources>

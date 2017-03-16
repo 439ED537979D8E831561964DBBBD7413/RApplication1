@@ -53,7 +53,10 @@ public class ContactSyncService extends Service implements WsResponseListener {
             //</editor-fold>
 
         } else {
-            Log.e("Sync Service: ", error.getLocalizedMessage());
+            if(error.getLocalizedMessage() != null)
+            {
+                Log.e("Sync Service: ", error.getLocalizedMessage());
+            }
         }
     }
 }

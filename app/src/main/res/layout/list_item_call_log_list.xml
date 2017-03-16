@@ -13,30 +13,61 @@
 
         <ImageView
             android:id="@+id/image_profile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:contentDescription="@string/str_content_description"
-            android:src="@mipmap/ic_launcher"/>
+            android:background="@drawable/rcontacticon">
+        </ImageView>
 
-
-        <TextView
+        <ImageView
+            android:id="@+id/image_3dots_call_log"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/text_3dots_call_log"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="@dimen/margin_5dp"
-            android:text="@string/im_3_dots"/>
+            android:paddingBottom="@dimen/padding_5dp"
+            android:paddingTop="@dimen/padding_5dp"
+            android:paddingLeft="@dimen/padding_5dp"
+            android:src="@drawable/ic_action_more_vertical"
+            android:tint="@color/colorDarkGray"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/text_temp_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/padding_10dp"
+            android:text=""
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/image_social_media"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_toLeftOf="@+id/text_3dots_call_log"
             android:layout_marginRight="@dimen/margin_10dp"
+            android:layout_marginTop="@dimen/margin_5dp"
+            android:layout_toLeftOf="@+id/image_3dots_call_log"
             android:contentDescription="@string/str_content_description"
-            android:src="@drawable/ic_arrow_bottom"/>
+            android:src="@drawable/ic_arrow_bottom"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/button_invite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/image_3dots_call_log"
+            android:background="@color/colorAccent"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:padding="@dimen/margin_extra_small"
+            android:text="INVITE"
+            android:textSize="@dimen/text_size_12sp"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:layout_centerVertical="true"
+            android:visibility="invisible"/>
 
         <!-- <View
              android:id="@+id/divider_all_contact"
@@ -53,10 +84,10 @@
             android:id="@+id/linear_content_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/image_profile"
             android:layout_toRightOf="@+id/image_profile"
-            android:layout_toEndOf="@+id/image_profile">
+            android:orientation="vertical"
+            android:layout_centerVertical="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -69,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    tools:text="Aniruddh"/>
+                    tools:text="Aniruddh" />
 
                 <TextView
                     android:id="@+id/text_cloud_contact_name"
@@ -77,44 +108,53 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    tools:text=" (Aniruddh Pal)"/>
+                    tools:text=" (Aniruddh Pal)" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/margin_5dp">
+                android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/image_call_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/image_call_type"
-                    android:src="@drawable/ic_call_outgoing"/>
+                    android:src="@drawable/ic_call_outgoing" />
 
                 <TextView
+                    android:id="@+id/textCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textCount"
-                    android:text=""/>
+                    android:text=""
+                    android:textSize="@dimen/text_size_12sp"/>
+
+                <TextView
+                    android:id="@+id/text_contact_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_5dp"
+                    tools:text="+917788951230"
+                    android:textSize="@dimen/text_size_12sp" />
 
                 <TextView
                     android:id="@+id/text_contact_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_5dp"
                     android:singleLine="true"
-                    android:layout_gravity="bottom"
-                    tools:text="June 10,8:45PM"/>
+                    tools:text="8:45PM"
+                    android:textSize="@dimen/text_size_12sp" />
 
                 <TextView
+                    android:id="@+id/text_sim_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/text_sim_type"
-                    android:text=""
-                    android:layout_marginLeft="@dimen/margin_5dp"
                     android:layout_gravity="center"
-                    android:textColor="@color/vividBlue"/>
+                    android:layout_marginLeft="@dimen/margin_5dp"
+                    android:text=""
+                    android:textColor="@color/vividBlue" />
 
 
             </LinearLayout>
@@ -132,22 +172,22 @@
                     android:id="@+id/text_rating_user_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="2008"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"
+                    tools:text="2008" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_person"/>
+                    android:src="@drawable/ic_person" />
 
                 <RatingBar
                     android:id="@+id/rating_user"
                     style="?android:attr/ratingBarStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:isIndicator="true"
                     android:layout_gravity="center"
-                    tools:rating="5"/>
+                    android:isIndicator="true"
+                    tools:rating="5" />
 
             </LinearLayout>
 

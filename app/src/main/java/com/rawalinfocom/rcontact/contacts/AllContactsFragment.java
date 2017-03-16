@@ -34,6 +34,7 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
@@ -143,6 +144,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+         /*LocalBroadcastManager.getInstance(getActivity()).registerReceiver(CallLogFragment.broadcastReceiver,
+                        new IntentFilter(AppConstants.ACTION_START_CALL_LOG_INSERTION));*/
 
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
 
@@ -267,6 +270,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         textTotalContacts.setText(arrayListContactId.size() + " Contacts");
                         Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts, "All " +
                                 "Contact Synced");
+//                        sendBroadCastToStartCallLogInsertion();
+                        Utils.setBooleanPreference(getActivity(), AppConstants
+                                .PREF_SYNC_CALL_LOG, true);
                     }
 
                     /* Populate recycler view */
@@ -310,6 +316,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     error.getLocalizedMessage() : null));
         }
     }
+
+    /*private void sendBroadCastToStartCallLogInsertion(){
+        Intent intent = new Intent(AppConstants.ACTION_START_CALL_LOG_INSERTION);
+        intent.putExtra(AppConstants.EXTRA_CALL_LOG_BROADCAST_KEY, true);
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+    }*/
 
     @Override
     public void onDestroy() {
@@ -381,7 +393,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         }
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.scrollToPosition(scrollPosition);
     }
@@ -479,8 +490,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             }
         }
 
-        Log.i("storeProfileDataToDb", mapLocalRcpId.toString());
-
         // Basic Profile Data
         TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
 
@@ -520,6 +529,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
 
                 MobileNumber mobileNumber = new MobileNumber();
+                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
                 mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(j).getPhoneNumber());
                 mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
@@ -549,6 +559,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 for (int j = 0; j < arrayListEmailId.size(); j++) {
                     Email email = new Email();
                     email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+                    email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
                     email.setEmEmailType(arrayListEmailId.get(j).getEmType());
                     email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j).getEmPublic()));
                     email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -583,6 +594,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 ArrayList<Organization> organizationList = new ArrayList<>();
                 for (int j = 0; j < arrayListOrganization.size(); j++) {
                     Organization organization = new Organization();
+                    organization.setOmRecordIndexId(arrayListOrganization.get(j).getOrgId());
                     organization.setOmOrganizationCompany(arrayListOrganization.get(j).getOrgName
                             ());
                     organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgType());
@@ -611,6 +623,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 ArrayList<Website> websiteList = new ArrayList<>();
                 for (int j = 0; j < arrayListWebsite.size(); j++) {
                     Website website = new Website();
+                    website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
                     website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
                     website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
                     website.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -630,6 +643,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 ArrayList<Address> addressList = new ArrayList<>();
                 for (int j = 0; j < arrayListAddress.size(); j++) {
                     Address address = new Address();
+                    address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                     address.setAmCity(arrayListAddress.get(j).getCity());
                     address.setAmCountry(arrayListAddress.get(j).getCountry());
                     address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
@@ -658,6 +672,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 ArrayList<ImAccount> imAccountsList = new ArrayList<>();
                 for (int j = 0; j < arrayListImAccount.size(); j++) {
                     ImAccount imAccount = new ImAccount();
+                    imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
                     imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                     imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                     imAccount.setImImPrivacy(arrayListImAccount.get(j).getIMAccountPublic());
@@ -677,6 +692,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 ArrayList<Event> eventList = new ArrayList<>();
                 for (int j = 0; j < arrayListEvent.size(); j++) {
                     Event event = new Event();
+                    event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
                     event.setEvmStartDate(arrayListEvent.get(j).getEventDate());
                     event.setEvmEventType(arrayListEvent.get(j).getEventType());
                     event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic
@@ -852,10 +868,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     arrayListContactId = new ArrayList<>(arrayListContactIds);
                     phoneBookOperations();
                 } else {
-                    Log.e("Local Broadcast Receiver onReceive: ", "Error while Retriving Ids!");
+                    Log.e("Local onReceive: ", "Error while Retriving Ids!");
                 }
             } else {
-                Log.e("Local Broadcast Receiver onReceive: ", "Error while Retriving Ids!");
+                Log.e("Local onReceive: ", "Error while Retriving Ids!");
             }
         }
     };
@@ -966,7 +982,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     ProfileDataOperationPhoneNumber phoneNumber = new
                             ProfileDataOperationPhoneNumber();
 
-                    phoneNumber.setPhoneId(++numberCount);
+                    phoneNumber.setPhoneId(String.valueOf(++numberCount));
                     phoneNumber.setPhoneNumber(Utils.getFormattedNumber(getActivity(),
                             contactNumberCursor.getString(contactNumberCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.NUMBER))));
@@ -1003,7 +1019,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
 
-                    emailId.setEmId(++emailCount);
+                    emailId.setEmId(String.valueOf(++emailCount));
                     emailId.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
                     emailId.setEmType(phoneBookContacts.getEmailType(contactEmailCursor,
@@ -1064,7 +1080,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     ProfileDataOperationWebAddress webAddress = new
                             ProfileDataOperationWebAddress();
 
-                    webAddress.setWebId(++websiteCount);
+                    webAddress.setWebId(String.valueOf(++websiteCount));
                     webAddress.setWebAddress(contactWebsiteCursor.getString(contactWebsiteCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
                     webAddress.setWebType(phoneBookContacts.getWebsiteType(contactWebsiteCursor,
@@ -1098,7 +1114,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     ProfileDataOperationOrganization organization = new
                             ProfileDataOperationOrganization();
 
-                    organization.setOrgId(++organizationCount);
+                    organization.setOrgId(String.valueOf(++organizationCount));
                     organization.setOrgName(contactOrganizationCursor.getString
                             (contactOrganizationCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.Organization.COMPANY)));
@@ -1139,7 +1155,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     ProfileDataOperationAddress address = new ProfileDataOperationAddress();
 
-                    address.setAddId(++addressCount);
+                    address.setAddId(String.valueOf(++addressCount));
                     address.setFormattedAddress(contactAddressCursor.getString
                             (contactAddressCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS)));
@@ -1185,7 +1201,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
 
-                    imAccount.setIMId(++imCount);
+                    imAccount.setIMId(String.valueOf(++imCount));
                     imAccount.setIMAccountDetails(contactImCursor.getString(contactImCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Im.DATA1)));
 
@@ -1220,7 +1236,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     ProfileDataOperationEvent event = new ProfileDataOperationEvent();
 
-                    event.setEventId(++eventCount);
+                    event.setEventId(String.valueOf(++eventCount));
                     event.setEventType(phoneBookContacts.getEventType(contactEventCursor,
                             contactEventCursor
                                     .getInt(contactEventCursor.getColumnIndex(ContactsContract

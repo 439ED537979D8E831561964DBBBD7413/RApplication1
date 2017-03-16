@@ -2,8 +2,10 @@ package com.rawalinfocom.rcontact;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
@@ -33,8 +35,8 @@ public class RContactApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // Fabric Initialization
-//        Fabric.with(this, new Crashlytics());
+//         Fabric Initialization
+        Fabric.with(this, new Crashlytics());
 
         arrayListAllPhoneBookContacts = new ArrayList<>();
         arrayListAllContactHeaders = new ArrayList<>();
@@ -82,6 +84,12 @@ public class RContactApplication extends Application {
 
             }
         });
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     public ArrayList<Object> getArrayListAllPhoneBookContacts() {

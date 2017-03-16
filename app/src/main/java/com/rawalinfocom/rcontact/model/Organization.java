@@ -7,6 +7,7 @@ package com.rawalinfocom.rcontact.model;
 public class Organization {
 
     private String omId;
+    private String omRecordIndexId;
     private String omOrganizationCompany;
     private String omOrganizationType;
     private String omCustomType;
@@ -95,5 +96,13 @@ public class Organization {
 
     public void setRcProfileMasterPmId(String rcProfileMasterPmId) {
         this.rcProfileMasterPmId = rcProfileMasterPmId;
+    }
+
+    public String getOmRecordIndexId() {
+        return omRecordIndexId;
+    }
+
+    public void setOmRecordIndexId(String omRecordIndexId) {
+        this.omRecordIndexId = omRecordIndexId;
     }
 }

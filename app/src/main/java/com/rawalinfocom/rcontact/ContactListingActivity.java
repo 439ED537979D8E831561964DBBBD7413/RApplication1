@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -105,7 +106,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 profileDataOperationVcard = (ProfileDataOperation) intent.getSerializableExtra
                         (AppConstants.EXTRA_OBJECT_CONTACT);
             } else {
-                profileDataOperationVcard = new ProfileDataOperation();
+                profileDataOperationVcard = null;
             }
         }
 
@@ -151,10 +152,10 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
                     if (!pmId.equalsIgnoreCase("-1")) {
                         shareContactRcp(receiver);
-                    } else if (profileDataOperationVcard != null) {
-                        shareContactNonRcp(receiver);
-                    } else {
+                    } else if (profileDataOperationVcard == null) {
                         inviteContact(mobileNumbers, emailIds);
+                    } else {
+                        shareContactNonRcp(receiver);
                     }
                 } else {
                     Utils.showErrorSnackBar(this, activityContactListing, "Please select at least" +
@@ -177,6 +178,13 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 if (shareResponse != null && StringUtils.equalsIgnoreCase
                         (shareResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     Utils.showSuccessSnackBar(this, activityContactListing, "Invitation Shared");
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onBackPressed();
+                        }
+                    }, 500);
                 } else {
                     if (shareResponse != null) {
                         Log.e("error response", shareResponse.getMessage());
@@ -197,7 +205,13 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                         (inviteResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     Utils.showSuccessSnackBar(this, activityContactListing, "Invitation Sent " +
                             "successfully!");
-                    onBackPressed();
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onBackPressed();
+                        }
+                    }, 500);
                 } else {
                     if (inviteResponse != null) {
                         Log.e("error response", inviteResponse.getMessage());
@@ -210,9 +224,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             }
             //</editor-fold>
 
-        } else
-
-        {
+        } else {
 //            AppUtils.hideProgressDialog();
             Utils.showErrorSnackBar(this, activityContactListing, "" + error
                     .getLocalizedMessage());
@@ -223,6 +235,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
+
     private void init() {
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
@@ -240,6 +253,9 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 arrayListFilteredUserProfile.clear();
+                phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
+                phoneBookContactListAdapter.isSelectAll(false);
+                checkboxSelectAll.setChecked(false);
                 if (position == 0) {
                     arrayListFilteredUserProfile.addAll(arrayListUserProfile);
                 } else if (position == 1) {
@@ -335,8 +351,18 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
     private void setupView() {
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, R.layout
-                .list_item_spinner, getResources().getStringArray(R.array.phonebook_contact_array));
+        ArrayAdapter<String> spinnerAdapter;
+        if (!pmId.equalsIgnoreCase("-1")) {
+            spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, getResources()
+                    .getStringArray(R.array.phonebook_contact_array_share));
+        } else if (profileDataOperationVcard == null) {
+            spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, getResources()
+                    .getStringArray(R.array.phonebook_contact_array_invite));
+        } else {
+            spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, getResources()
+                    .getStringArray(R.array.phonebook_contact_array_share));
+        }
+
         spinnerShareVia.setAdapter(spinnerAdapter);
 
         arrayListFilteredUserProfile = new ArrayList<>();
@@ -382,6 +408,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         });
 
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Web Service Call">
@@ -438,7 +465,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     inviteContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_SEND_INVITATION, null, true).execute
+                    .REQ_SEND_INVITATION, "Sending Invitation...", true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
         } else {
             Utils.showErrorSnackBar(this, activityContactListing, getResources()

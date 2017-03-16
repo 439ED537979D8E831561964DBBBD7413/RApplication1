@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/padding_between_title_body"
             android:textAppearance="?android:textAppearanceLarge"
-            tools:text="Title"/>
+            tools:text="Title" />
 
         <TextView
             android:id="@+id/tvDialogBody"

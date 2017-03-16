@@ -8,6 +8,7 @@ public class MobileNumber {
 
     private String mnmId;
     private String mnmCloudId;
+    private String mnmRecordIndexId;
     private String mnmMobileNumber;
     private String mnmNumberType;
     private String mnmCustomType;
@@ -122,5 +123,13 @@ public class MobileNumber {
 
     public void setRcProfileMasterPmId(String rcProfileMasterPmId) {
         this.rcProfileMasterPmId = rcProfileMasterPmId;
+    }
+
+    public String getMnmRecordIndexId() {
+        return mnmRecordIndexId;
+    }
+
+    public void setMnmRecordIndexId(String mnmRecordIndexId) {
+        this.mnmRecordIndexId = mnmRecordIndexId;
     }
 }

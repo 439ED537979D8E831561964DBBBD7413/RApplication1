@@ -12,7 +12,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDataOperationOrganization implements Serializable {
 
-    private int orgId;
+    private String orgId;
     private String orgJobTitle;
     private String orgDepartment;
     private String orgName;
@@ -24,11 +24,11 @@ public class ProfileDataOperationOrganization implements Serializable {
     private String orgRcpType;
 
     @JsonProperty("org_id")
-    public int getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(int orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 

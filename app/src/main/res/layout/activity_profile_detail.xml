@@ -4,8 +4,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/relative_root_profile_detail"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/colorWhite">
+                android:layout_height="match_parent">
 
     <include
         android:id="@+id/include_toolbar"
@@ -44,7 +43,10 @@
                     android:scrollHorizontally="true"
                     android:singleLine="true"
                     android:textAppearance="?android:textAppearanceMedium"
-                    tools:text="Hello World"/>
+                    tools:text="Hello World"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -229,9 +231,45 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/linear_call_sms"
-                android:padding="@dimen/activity_half_horizontal_margin"
-                tools:visibility="gone">
+                android:background="@color/colorWhite"
+                tools:visibility="visible">
 
+                <TextView
+                    android:id="@+id/text_text_call_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="@dimen/margin_10dp"
+                    android:paddingLeft="@dimen/padding_10dp"
+                    android:text="Call History"
+                    android:textColor="@color/colorDarkGray"
+                    android:background="@color/colorVeryLightGray"/>
+
+                <TextView
+                    android:id="@+id/text_no_history_to_show"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/text_text_call_history"
+                    android:layout_marginBottom="@dimen/margin_15dp"
+                    android:layout_marginTop="@dimen/margin_15dp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    tools:text="No history to show"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_call_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/text_text_call_history"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignStart="@+id/text_text_call_history"
+                    android:layout_below="@+id/text_text_call_history"
+                    android:visibility="visible">
+                </android.support.v7.widget.RecyclerView>
+
+
+<!--
                 <android.support.v7.widget.CardView
                     android:id="@+id/card_history_details"
                     android:layout_width="match_parent"
@@ -239,29 +277,31 @@
                     android:layout_marginBottom="@dimen/margin_tiny"
                     app:cardCornerRadius="3dp"
                     card_view:cardElevation="0dp"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/activity_half_horizontal_margin">
-                        <!--<LinearLayout
+                        android:padding="@dimen/activity_half_horizontal_margin"
+                        android:visibility="gone">
+                        &lt;!&ndash;<LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:id="@+id/linear_histroy_title"
                             android:layout_marginTop="@dimen/margin_10dp">
--->
+&ndash;&gt;
                         <TextView
                             android:id="@+id/text_icon_history"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/margin_5dp"
                             android:layout_marginTop="@dimen/margin_10dp"
-                            android:text="@string/im_call_histroy"/>
+                            android:text="@string/im_call_histroy"
+                            android:visibility="gone"/>
 
                         <TextView
-                            android:id="@+id/text_text_call_history"
+                            android:id="@+id/text_text_call_history1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/margin_5dp"
@@ -271,26 +311,26 @@
                             android:textColor="@color/colorBlack"/>
 
                         <TextView
-                            android:id="@+id/text_no_history_to_show"
+                            android:id="@+id/text_no_history_to_show1"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_below="@+id/text_text_call_history"
+                            android:layout_below="@+id/text_text_call_history1"
                             android:layout_marginBottom="@dimen/margin_15dp"
                             android:layout_marginTop="@dimen/margin_15dp"
                             android:gravity="center"
                             android:visibility="gone"
                             tools:text="No history to show"/>
-                        <!-- </LinearLayout>-->
+                        &lt;!&ndash; </LinearLayout>&ndash;&gt;
 
                         <android.support.v7.widget.RecyclerView
-                            android:id="@+id/recycler_call_history"
+                            android:id="@+id/recycler_call_history1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_alignLeft="@+id/text_text_call_history"
+                            android:layout_alignLeft="@+id/text_text_call_history1"
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentRight="true"
-                            android:layout_alignStart="@+id/text_text_call_history"
-                            android:layout_below="@+id/text_text_call_history"
+                            android:layout_alignStart="@+id/text_text_call_history1"
+                            android:layout_below="@+id/text_text_call_history1"
                             android:visibility="visible">
 
                         </android.support.v7.widget.RecyclerView>
@@ -298,6 +338,7 @@
                     </RelativeLayout>
 
                 </android.support.v7.widget.CardView>
+-->
 
             </RelativeLayout>
 
@@ -307,7 +348,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/linear_call_sms"
                 android:padding="@dimen/activity_half_horizontal_margin"
-                tools:visibility="visible">
+                tools:visibility="gone">
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/card_contact_details"
@@ -349,7 +390,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
-                                    android:text="Phone"
+                                    android:text="@string/str_phone"
                                     android:textColor="@color/colorBlack"/>
 
                                 <android.support.v7.widget.RecyclerView
@@ -389,7 +430,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
-                                    android:text="Email"
+                                    android:text="@string/str_email"
                                     android:textColor="@color/colorBlack"/>
 
                                 <android.support.v7.widget.RecyclerView
@@ -435,7 +476,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/margin_tiny"
-                                        android:text="Website"
+                                        android:text="@string/str_website"
                                         android:textColor="@color/colorBlack"/>
 
                                     <android.support.v7.widget.RecyclerView
@@ -475,7 +516,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/margin_tiny"
-                                        android:text="Address"
+                                        android:text="@string/str_address"
                                         android:textColor="@color/colorBlack"/>
 
                                     <android.support.v7.widget.RecyclerView
@@ -515,7 +556,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/margin_tiny"
-                                        android:text="Social Contact"
+                                        android:text="@string/str_social_contact"
                                         android:textColor="@color/colorBlack"/>
 
                                     <android.support.v7.widget.RecyclerView
@@ -597,7 +638,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
-                                    android:text="Event"
+                                    android:text="@string/str_event"
                                     android:textColor="@color/colorBlack"/>
 
                                 <android.support.v7.widget.RecyclerView
@@ -637,7 +678,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
-                                    android:text="Gender"
+                                    android:text="@string/str_gender"
                                     android:textColor="@color/colorBlack"/>
 
                                 <RelativeLayout

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -14,7 +15,10 @@ import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -38,17 +42,23 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.model.Country;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.TimeZone;
 
 /**
@@ -297,6 +307,27 @@ public class Utils {
         }
     }
 
+    public static void setHashMapPreference(Context context, String key, @Nullable HashMap
+            hashMap) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(hashMap);
+        editor.putString(key, json);
+        editor.apply();
+    }
+
+    public static HashMap<String, String> getHashMapPreference(Context context, String key) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedpreferences.getString(key, null);
+        Type type = new TypeToken<HashMap>() {
+        }.getType();
+        return gson.fromJson(json, type);
+    }
+
     public static void removePreference(Context context, String key) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
@@ -421,6 +452,32 @@ public class Utils {
     }
     //</editor-fold>
 
+    public static String exportDB(Context context) {
+        String inFileName = context.getDatabasePath(DatabaseHandler.DATABASE_NAME).getPath();
+        try {
+            File dbFile = new File(inFileName);
+            FileInputStream fis = new FileInputStream(dbFile);
+
+            String outFileName = Environment.getExternalStorageDirectory() + "/" +
+                    DatabaseHandler.DATABASE_NAME;
+
+            OutputStream output = new FileOutputStream(outFileName);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) > 0) {
+                output.write(buffer, 0, length);
+            }
+            //Close the streams
+            output.flush();
+            output.close();
+            fis.close();
+            return DatabaseHandler.DATABASE_NAME;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static void copyToClipboard(Context context, String label, String text) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context
                 .CLIPBOARD_SERVICE);
@@ -492,5 +549,22 @@ public class Utils {
             drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
         }
     }
+
+    public static void addToContact(Context context, String number) {
+        Intent intent = new Intent(Intent.ACTION_INSERT,
+                ContactsContract.Contacts.CONTENT_URI);
+        intent.putExtra(ContactsContract.Intents.Insert.PHONE, number);
+        context.startActivity(intent);
+    }
+
+    public static void addToExistingContact(Context context, String number) {
+        Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT,
+                ContactsContract.Contacts.CONTENT_URI);
+        intent.setType(ContactsContract.Contacts.CONTENT_ITEM_TYPE);
+        intent.putExtra(ContactsContract.Intents.Insert.PHONE, number);
+        context.startActivity(intent);
+
+    }
+
 
 }
