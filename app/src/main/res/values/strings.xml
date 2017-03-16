@@ -59,7 +59,7 @@
 
     <string name="text_no_history">No history to show</string>
 
-    <string name="show_call_history">Show Call history</string>
+    <!--<string name="show_call_history">Show Call history</string>
     <string name="send_sms">Send SMS</string>
     <string name="remove_from_call_log">Remove from Call Log</string>
     <string name="copy_phone_number">Copy Phone Number</string>
@@ -67,7 +67,7 @@
     <string name="call_reminder">Call Reminder</string>
     <string name="add_to_contact">Add to Contact</string>
     <string name="add_to_existing_contact">Add to Existing Contact</string>
-    <string name="copy_to_clipboard">Copy to clip board</string>
+    <string name="copy_to_clipboard">Copy to clip board</string>-->
     <string name="str_name">Name</string>
     <string name="str_phone">Phone</string>
     <string name="str_email">Email</string>

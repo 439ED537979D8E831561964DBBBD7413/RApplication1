@@ -15,8 +15,7 @@
         android:paddingRight="@dimen/activity_half_horizontal_margin"
         android:paddingTop="@dimen/margin_tiny"
         android:textAppearance="?android:textAppearanceMedium"
-        tools:text="A"
-        android:textSize="@dimen/text_size_10sp"/>
+        tools:text="A"/>
 
     <!--<View
         android:layout_width="match_parent"
