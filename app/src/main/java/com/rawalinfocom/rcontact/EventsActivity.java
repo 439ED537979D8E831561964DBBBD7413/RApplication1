@@ -4,18 +4,27 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.rawalinfocom.rcontact.database.TableEventMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.events.EventAdapter;
 import com.rawalinfocom.rcontact.events.EventItem;
 import com.rawalinfocom.rcontact.events.MyLayoutManager;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.Event;
+import com.rawalinfocom.rcontact.model.UserProfile;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -38,30 +47,24 @@ public class EventsActivity extends BaseActivity implements RippleView
     TextView textTodayTitle;
     @BindView(R.id.header1_icon)
     ImageView headerTodayIcon;
-    @BindView(R.id.h1)
-    RelativeLayout headerTodayLayout;
     @BindView(R.id.header1)
-    RelativeLayout header1;
+    RelativeLayout headerTodayLayout;
     @BindView(R.id.recyclerview1)
     RecyclerView recyclerViewToday;
     @BindView(R.id.text_header2)
     TextView textRecentTitle;
     @BindView(R.id.header2_icon)
     ImageView headerRecentIcon;
-    @BindView(R.id.h2)
-    RelativeLayout headerRecentLayout;
     @BindView(R.id.header2)
-    RelativeLayout header2;
+    RelativeLayout headerRecentLayout;
     @BindView(R.id.recyclerview2)
     RecyclerView recyclerViewRecent;
     @BindView(R.id.text_header3)
     TextView textUpcomingTitle;
     @BindView(R.id.header3_icon)
     ImageView headerUpcomingIcon;
-    @BindView(R.id.h3)
-    RelativeLayout headerUpcomingLayout;
     @BindView(R.id.header3)
-    RelativeLayout header3;
+    RelativeLayout headerUpcomingLayout;
     @BindView(R.id.recyclerview3)
     RecyclerView recyclerViewUpcoming;
     @BindView(R.id.viewmore)
@@ -143,17 +146,20 @@ public class EventsActivity extends BaseActivity implements RippleView
     }
 
     private void initData() {
-        //EventItem(String wisherName, String eventName, String notiTime, String eventDetail, String userComment, int notiType)
-        EventItem item1 = new EventItem("A Dhameliya", "Birthday", "12:00 PM", "20 Years Old", "Happy Birthday!", 0);
-        EventItem item2 = new EventItem("B Dhameliya", "Anniversary", "11:16 PM", "1st Anniversary", "Congrats!", 0);
-        EventItem item3 = new EventItem("C Dhameliya", "Birthday", "12:00 PM", "20 Years Old", "Happy Birthday!", 0);
-        EventItem item4 = new EventItem("D Dhameliya", "Anniversary", "11:16 PM", "5th Anniversary ", "Congo bro", 0);
-        EventItem item5 = new EventItem("E Dhameliya", "Birthday", "11:16 PM", "37 Years Old", "Happy Birthday dada", 0);
-        EventItem item6 = new EventItem("F Dhameliya", "Anniversary", "11:16 PM", "5th Anniversary ", "Congo bro", 0);
-        EventItem item7 = new EventItem("G Dhameliya", "Birthday", "11:16 PM", "67 Years Old", "", 0);
-        List<EventItem> listTodayEvent = Arrays.asList(item7, item2, item7, item3, item7, item6, item5, item4);
-        List<EventItem> listRecentEvent = Arrays.asList(item7, item5, item7, item7);
-        List<EventItem> listUpcomingEvent = Arrays.asList(item7, item2, item7, item3, item7, item6, item5, item4);
+        TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
+
+        String today = getEventDate(0);
+        String yesterDay = getEventDate(-1);
+        String tomorrow = getEventDate(1);
+        String day7th = getEventDate(7);
+
+        ArrayList<Event> eventsToday = tableEventMaster.getAllEventsBetWeen(today, today);
+        ArrayList<Event> eventsRecent = tableEventMaster.getAllEventsBetWeen(yesterDay, yesterDay);
+        ArrayList<Event> eventsUpcoming7 = tableEventMaster.getAllEventsBetWeen(tomorrow, day7th);
+
+        List<EventItem> listTodayEvent = createTodayList(eventsToday);
+        List<EventItem> listRecentEvent = createTodayList(eventsRecent);
+        List<EventItem> listUpcomingEvent = createTodayList(eventsUpcoming7);
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -189,6 +195,55 @@ public class EventsActivity extends BaseActivity implements RippleView
         recyclerViewUpcoming.setVisibility(View.GONE);
     }
 
+    private List<EventItem> createTodayList(ArrayList<Event> eventsToday) {
+        EventItem item;
+        int currentYear;
+        int eventYear;
+        Date date = new Date();
+        currentYear = date.getYear();
+        List<EventItem> list = new ArrayList<>();
+        for (Event e : eventsToday) {
+            item = new EventItem();
+            String eventName = e.getEvmEventType();
+            int eventType = -1;
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
+                    .parseInt(e.getRcProfileMasterPmId()));
+
+            if ("Birthday".equals(eventName)) eventType = 1;
+            if ("Aniversary".equals(eventName)) eventType = 2;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            try {
+                date = sdf.parse(e.getEvmStartDate());
+                eventYear = date.getYear();
+            } catch (ParseException e1) {
+                eventYear = 0;
+                e1.printStackTrace();
+                Log.i("MAULIK", "year can not be parsed");
+            }
+            item.setEventName(eventName);
+            item.setEventDetail(setEventDetailText(currentYear - eventYear, eventType));
+            item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+            list.add(item);
+        }
+        return list;
+    }
+
+    private String getEventDate(int dayToAddorSub) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+        Date date = new Date();
+        date.setTime(date.getTime() + dayToAddorSub * 24 * 60 * 60 * 1000);
+        return sdf.format(date);
+    }
+
+    private String setEventDetailText(int eventYears, int eventType) {
+        String s = "";
+        if (eventYears <= 0) return s;
+        if (eventType == 1) s = eventYears + " Years Old";
+        if (eventType == 2) s = eventYears + " Aniversary Years";
+        return s;
+    }
+
     @Override
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
@@ -197,4 +252,6 @@ public class EventsActivity extends BaseActivity implements RippleView
                 break;
         }
     }
+
+
 }

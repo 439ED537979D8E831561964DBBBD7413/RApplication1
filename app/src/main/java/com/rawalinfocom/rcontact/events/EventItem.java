@@ -28,6 +28,9 @@ public class EventItem {
         this.notiType = notiType;
     }
 
+    public EventItem() {
+    }
+
     public String getWisherName() {
         return wisherName;
     }
