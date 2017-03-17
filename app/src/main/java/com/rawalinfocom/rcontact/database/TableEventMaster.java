@@ -40,7 +40,8 @@ public class TableEventMaster {
             " (" +
             " " + COLUMN_EVM_ID + " integer NOT NULL CONSTRAINT rc_event_master_pk PRIMARY KEY," +
             " " + COLUMN_EVM_RECORD_INDEX_ID + " text," +
-            " " + COLUMN_EVM_START_DATE + " datetime NOT NULL," +
+//            " " + COLUMN_EVM_START_DATE + " datetime NOT NULL," +
+            " " + COLUMN_EVM_START_DATE + " text NOT NULL," +
             " " + COLUMN_EVM_EVENT_TYPE + " text NOT NULL," +
             " " + COLUMN_EVM_CUSTOM_TYPE + " text," +
             " " + COLUMN_EVM_EVENT_PRIVACY + " integer DEFAULT 1," +
