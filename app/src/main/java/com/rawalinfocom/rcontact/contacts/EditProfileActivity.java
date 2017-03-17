@@ -469,7 +469,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
             // <editor-fold desc="image_add_social_contact">
             case R.id.image_add_social_contact:
-                checkBeforeViewAdd(AppConstants.IM_ACCOUNT, linearWebsiteDetails);
+                checkBeforeViewAdd(AppConstants.IM_ACCOUNT, linearSocialContactDetails);
                 break;
             //</editor-fold>
 
@@ -730,17 +730,22 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile, null);
         TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
         Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
-        EditText inputValue = (EditText) view.findViewById(R.id.input_value);
+        final EditText inputValue = (EditText) view.findViewById(R.id.input_value);
+        LinearLayout linerCheckbox = (LinearLayout) view.findViewById(R.id.liner_checkbox);
+        final CheckBox checkboxHideYear = (CheckBox) view.findViewById(R.id.checkbox_hide_year);
+        TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
         final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
                 .relative_row_edit_profile);
 
         textImageCross.setTypeface(Utils.typefaceIcons(this));
         inputValue.setTypeface(Utils.typefaceRegular(this));
+        textLabelCheckbox.setTypeface(Utils.typefaceLight(this));
 
         String[] spinnerArrayId = new String[0];
 
         switch (viewType) {
             case AppConstants.PHONE_NUMBER:
+                linerCheckbox.setVisibility(View.GONE);
                 textImageCross.setTag(AppConstants.PHONE_NUMBER);
                 inputValue.setHint("Number");
                 spinnerArrayId = getResources().getStringArray(R.array.types_phone_number);
@@ -759,6 +764,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 break;
 
             case AppConstants.EMAIL:
+                linerCheckbox.setVisibility(View.GONE);
                 textImageCross.setTag(AppConstants.EMAIL);
                 inputValue.setHint("Email");
                 spinnerArrayId = getResources().getStringArray(R.array.types_email_address);
@@ -771,6 +777,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 break;
 
             case AppConstants.WEBSITE:
+                linerCheckbox.setVisibility(View.GONE);
                 textImageCross.setTag(AppConstants.WEBSITE);
                 inputValue.setHint("Website");
                 spinnerArrayId = getResources().getStringArray(R.array.types_email_address);
@@ -783,6 +790,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 break;
 
             case AppConstants.IM_ACCOUNT:
+                linerCheckbox.setVisibility(View.GONE);
                 textImageCross.setTag(AppConstants.IM_ACCOUNT);
                 inputValue.setHint("Link");
                 spinnerArrayId = getResources().getStringArray(R.array.types_social_media);
@@ -795,6 +803,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 break;
 
             case AppConstants.EVENT:
+                linerCheckbox.setVisibility(View.VISIBLE);
                 textImageCross.setTag(AppConstants.EVENT);
                 inputValue.setHint("Event");
                 inputValue.setFocusable(false);
@@ -829,30 +838,40 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     case AppConstants.PHONE_NUMBER:
                         if (linearPhoneDetails.getChildCount() > 1) {
                             linearLayout.removeView(relativeRowEditProfile);
+                        } else if (linearPhoneDetails.getChildCount() == 1) {
+                            inputValue.setText("");
                         }
                         break;
 
                     case AppConstants.EMAIL:
                         if (linearEmailDetails.getChildCount() > 1) {
                             linearLayout.removeView(relativeRowEditProfile);
+                        } else if (linearEmailDetails.getChildCount() == 1) {
+                            inputValue.setText("");
                         }
                         break;
 
                     case AppConstants.WEBSITE:
                         if (linearWebsiteDetails.getChildCount() > 1) {
                             linearLayout.removeView(relativeRowEditProfile);
+                        } else if (linearWebsiteDetails.getChildCount() == 1) {
+                            inputValue.setText("");
                         }
                         break;
 
                     case AppConstants.EVENT:
                         if (linearEventDetails.getChildCount() > 1) {
                             linearLayout.removeView(relativeRowEditProfile);
+                        } else if (linearEventDetails.getChildCount() == 1) {
+                            inputValue.setText("");
                         }
                         break;
 
                     case AppConstants.IM_ACCOUNT:
                         if (linearSocialContactDetails.getChildCount() > 1) {
                             linearLayout.removeView(relativeRowEditProfile);
+                        } else if (linearSocialContactDetails.getChildCount() == 1) {
+                            inputValue.setText("");
                         }
                         break;
                 }
@@ -867,13 +886,13 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 null);
         TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
         Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
-        EditText inputCountry = (EditText) view.findViewById(R.id.input_country);
-        EditText inputState = (EditText) view.findViewById(R.id.input_state);
-        EditText inputCity = (EditText) view.findViewById(R.id.input_city);
-        EditText inputStreet = (EditText) view.findViewById(R.id.input_street);
-        EditText inputNeighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
-        EditText inputPinCode = (EditText) view.findViewById(R.id.input_pin_code);
-        EditText inputPoBox = (EditText) view.findViewById(R.id.input_po_box);
+        final EditText inputCountry = (EditText) view.findViewById(R.id.input_country);
+        final EditText inputState = (EditText) view.findViewById(R.id.input_state);
+        final EditText inputCity = (EditText) view.findViewById(R.id.input_city);
+        final EditText inputStreet = (EditText) view.findViewById(R.id.input_street);
+        final EditText inputNeighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
+        final EditText inputPinCode = (EditText) view.findViewById(R.id.input_pin_code);
+        final EditText inputPoBox = (EditText) view.findViewById(R.id.input_po_box);
 
         final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
                 .relative_row_edit_profile);
@@ -904,6 +923,14 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             public void onClick(View v) {
                 if (linearAddressDetails.getChildCount() > 1) {
                     linearAddressDetails.removeView(relativeRowEditProfile);
+                } else if (linearAddressDetails.getChildCount() == 1) {
+                    inputCountry.setText("");
+                    inputState.setText("");
+                    inputCity.setText("");
+                    inputStreet.setText("");
+                    inputNeighborhood.setText("");
+                    inputPinCode.setText("");
+                    inputPoBox.setText("");
                 }
             }
         });
@@ -916,8 +943,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 null);
         TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
         TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
-        EditText inputCompanyName = (EditText) view.findViewById(R.id.input_company_name);
-        EditText inputDesignationName = (EditText) view.findViewById(R.id.input_designation_name);
+        final EditText inputCompanyName = (EditText) view.findViewById(R.id.input_company_name);
+        final EditText inputDesignationName = (EditText) view.findViewById(R.id
+                .input_designation_name);
         CheckBox checkboxOrganization = (CheckBox) view.findViewById(R.id.checkbox_organization);
 
         checkboxOrganization.setTag(linearOrganizationDetail.getChildCount());
@@ -954,6 +982,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             public void onClick(View v) {
                 if (linearOrganizationDetail.getChildCount() > 1) {
                     linearOrganizationDetail.removeView(relativeRowEditProfile);
+                } else if (linearOrganizationDetail.getChildCount() == 1) {
+                    inputCompanyName.setText("");
+                    inputDesignationName.setText("");
                 }
             }
         });
@@ -1106,7 +1137,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         for (int i = 0; i < linearLayout.getChildCount(); i++) {
             View linearView = linearLayout.getChildAt(i);
             EditText editText = (EditText) linearView.findViewById(R.id.input_value);
-            if (editText.getText().length() < 1) {
+            if (StringUtils.length(StringUtils.trimToEmpty(editText.getText().toString())) < 1) {
+//            if (editText.getText().length() < 1) {
                 toAdd = false;
                 break;
             } else {
@@ -1126,8 +1158,16 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             EditText inputState = (EditText) linearView.findViewById(R.id.input_state);
             EditText inputCity = (EditText) linearView.findViewById(R.id.input_city);
             EditText inputStreet = (EditText) linearView.findViewById(R.id.input_street);
-            if (inputCountry.getText().length() < 1 || inputState.getText().length() < 1 ||
-                    inputCity.getText().length() < 1 || inputStreet.getText().length() < 1) {
+            if (StringUtils.length(StringUtils.trimToEmpty(inputCountry.getText().toString())) <
+                    1 ||
+                    StringUtils.length(StringUtils.trimToEmpty(inputState.getText().toString()))
+                            < 1 ||
+                    StringUtils.length(StringUtils.trimToEmpty(inputCity.getText().toString())) <
+                            1 ||
+                    StringUtils.length(StringUtils.trimToEmpty(inputStreet.getText().toString()))
+                            < 1) {
+            /*if (inputCountry.getText().length() < 1 || inputState.getText().length() < 1 ||
+                    inputCity.getText().length() < 1 || inputStreet.getText().length() < 1) {*/
                 toAdd = false;
                 break;
             } else {
@@ -1146,22 +1186,25 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             EditText inputCompanyName = (EditText) linearView.findViewById(R.id.input_company_name);
             EditText inputDesignationName = (EditText) linearView.findViewById(R.id
                     .input_designation_name);
-            if (inputCompanyName.getText().length() < 1 || inputDesignationName.getText().length
-                    () < 1) {
-                toAdd = false;
-                break;
-            } else {
-                toAdd = true;
+            if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText().toString())
+            ) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputDesignationName.getText()
+                    .toString())) < 1) {
+               /* if (inputCompanyName.getText().length() < 1 || inputDesignationName.getText().length
+                        () < 1) {*/
+                    toAdd = false;
+                    break;
+                } else {
+                    toAdd = true;
+                }
+            }
+            if (toAdd) {
+                addOrganizationView(null);
             }
         }
-        if (toAdd) {
-            addOrganizationView(null);
-        }
-    }
 
-    //</editor-fold>
+        //</editor-fold>
 
-    //<editor-fold desc="Web Service Call">
+        //<editor-fold desc="Web Service Call">
 
     private void editProfile(ArrayList<ProfileDataOperation> editProfile) {
 
