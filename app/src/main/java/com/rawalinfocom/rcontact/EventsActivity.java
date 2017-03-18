@@ -239,8 +239,16 @@ public class EventsActivity extends BaseActivity implements RippleView
     private String setEventDetailText(int eventYears, int eventType) {
         String s = "";
         if (eventYears <= 0) return s;
-        if (eventType == 1) s = eventYears + " Years Old";
-        if (eventType == 2) s = eventYears + " Aniversary Years";
+        if (eventType == 1) {
+            if (eventYears == 1) {
+                s = eventYears + " Year Old";
+            } else {
+                s = eventYears + " Years Old";
+            }
+        }
+        if (eventType == 2) {
+            s = Utils.addDateSufixes(eventYears) + " Aniversary";
+        }
         return s;
     }
 
@@ -252,6 +260,4 @@ public class EventsActivity extends BaseActivity implements RippleView
                 break;
         }
     }
-
-
 }
