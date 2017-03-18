@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -194,6 +195,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     ArrayList<Object> arrayListSocialContactObject;
     ArrayList<Object> arrayListEventObject;
     ArrayList<Object> arrayListOrganizationObject;
+
+    ArrayAdapter<String> spinnerPhoneAdapter, spinnerEmailAdapter, spinnerWebsiteAdapter,
+            spinnerImAccountAdapter, spinnerEventAdapter;
 
     Bitmap selectedBitmap = null;
     private File mFileTemp;
@@ -731,7 +735,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             position) {
         View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile, null);
         TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
-        Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
+        final Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
         final EditText inputValue = (EditText) view.findViewById(R.id.input_value);
         LinearLayout linerCheckbox = (LinearLayout) view.findViewById(R.id.liner_checkbox);
         final CheckBox checkboxHideYear = (CheckBox) view.findViewById(R.id.checkbox_hide_year);
@@ -743,20 +747,21 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         inputValue.setTypeface(Utils.typefaceRegular(this));
         textLabelCheckbox.setTypeface(Utils.typefaceLight(this));
 
-        ArrayAdapter<String> spinnerAdapter;
         List<String> typeList;
 
         switch (viewType) {
             case AppConstants.PHONE_NUMBER:
                 linerCheckbox.setVisibility(View.GONE);
                 textImageCross.setTag(AppConstants.PHONE_NUMBER);
+                spinnerType.setTag(AppConstants.PHONE_NUMBER);
                 inputValue.setHint("Number");
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_phone_number)));
-                spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, typeList);
-                spinnerAdapter.setDropDownViewResource(android.R.layout
+                spinnerPhoneAdapter = new ArrayAdapter<>(this, R.layout
+                        .list_item_spinner, typeList);
+                spinnerPhoneAdapter.setDropDownViewResource(android.R.layout
                         .simple_spinner_dropdown_item);
-                spinnerType.setAdapter(spinnerAdapter);
+                spinnerType.setAdapter(spinnerPhoneAdapter);
                 inputValue.setInputType(InputType.TYPE_CLASS_PHONE);
                 if (detailObject != null) {
                     if (position == 0) {
@@ -769,12 +774,13 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     inputValue.setText(phoneNumber.getPhoneNumber());
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(phoneNumber.getPhoneType()))) {
-                        spinnerPosition = spinnerAdapter.getPosition(phoneNumber.getPhoneType
+                        spinnerPosition = spinnerPhoneAdapter.getPosition(phoneNumber.getPhoneType
                                 ());
                     } else {
-                        spinnerAdapter.add(phoneNumber.getPhoneType());
-                        spinnerAdapter.notifyDataSetChanged();
-                        spinnerPosition = spinnerAdapter.getPosition(phoneNumber.getPhoneType());
+                        spinnerPhoneAdapter.add(phoneNumber.getPhoneType());
+                        spinnerPhoneAdapter.notifyDataSetChanged();
+                        spinnerPosition = spinnerPhoneAdapter.getPosition(phoneNumber
+                                .getPhoneType());
                     }
                     spinnerType.setSelection(spinnerPosition);
                     relativeRowEditProfile.setTag(phoneNumber.getPhoneId());
@@ -784,23 +790,25 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             case AppConstants.EMAIL:
                 linerCheckbox.setVisibility(View.GONE);
                 textImageCross.setTag(AppConstants.EMAIL);
+                spinnerType.setTag(AppConstants.EMAIL);
                 inputValue.setHint("Email");
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_email_address)));
-                spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, typeList);
-                spinnerType.setAdapter(spinnerAdapter);
+                spinnerEmailAdapter = new ArrayAdapter<>(this, R.layout
+                        .list_item_spinner, typeList);
+                spinnerType.setAdapter(spinnerEmailAdapter);
                 inputValue.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                 if (detailObject != null) {
                     ProfileDataOperationEmail email = (ProfileDataOperationEmail) detailObject;
                     inputValue.setText(email.getEmEmailId());
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(email.getEmType()))) {
-                        spinnerPosition = spinnerAdapter.getPosition(email.getEmType());
+                        spinnerPosition = spinnerEmailAdapter.getPosition(email.getEmType());
                     } else {
-//                        spinnerPosition = spinnerAdapter.getPosition("Other");
-                        spinnerAdapter.add(email.getEmType());
-                        spinnerAdapter.notifyDataSetChanged();
-                        spinnerPosition = spinnerAdapter.getPosition(email.getEmType());
+//                        spinnerPosition = spinnerEmailAdapter.getPosition("Other");
+                        spinnerEmailAdapter.add(email.getEmType());
+                        spinnerEmailAdapter.notifyDataSetChanged();
+                        spinnerPosition = spinnerEmailAdapter.getPosition(email.getEmType());
                     }
                     spinnerType.setSelection(spinnerPosition);
                     relativeRowEditProfile.setTag(email.getEmId());
@@ -810,13 +818,15 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             case AppConstants.WEBSITE:
                 linerCheckbox.setVisibility(View.GONE);
                 textImageCross.setTag(AppConstants.WEBSITE);
+                spinnerType.setTag(AppConstants.WEBSITE);
                 inputValue.setHint("Website");
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_email_address)));
-                spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, typeList);
-                spinnerAdapter.setDropDownViewResource(android.R.layout
+                spinnerWebsiteAdapter = new ArrayAdapter<>(this, R.layout
+                        .list_item_spinner, typeList);
+                spinnerWebsiteAdapter.setDropDownViewResource(android.R.layout
                         .simple_spinner_dropdown_item);
-                spinnerType.setAdapter(spinnerAdapter);
+                spinnerType.setAdapter(spinnerWebsiteAdapter);
                 inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
                 if (detailObject != null) {
                     ProfileDataOperationWebAddress webAddress = (ProfileDataOperationWebAddress)
@@ -824,12 +834,14 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     inputValue.setText(webAddress.getWebAddress());
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(webAddress.getWebType()))) {
-                        spinnerPosition = spinnerAdapter.getPosition(webAddress.getWebType());
+                        spinnerPosition = spinnerWebsiteAdapter.getPosition(webAddress.getWebType
+                                ());
                     } else {
-//                        spinnerPosition = spinnerAdapter.getPosition("Other");
-                        spinnerAdapter.add(webAddress.getWebType());
-                        spinnerAdapter.notifyDataSetChanged();
-                        spinnerPosition = spinnerAdapter.getPosition(webAddress.getWebType());
+//                        spinnerPosition = spinnerWebsiteAdapter.getPosition("Other");
+                        spinnerWebsiteAdapter.add(webAddress.getWebType());
+                        spinnerWebsiteAdapter.notifyDataSetChanged();
+                        spinnerPosition = spinnerWebsiteAdapter.getPosition(webAddress.getWebType
+                                ());
                     }
                     spinnerType.setSelection(spinnerPosition);
                     relativeRowEditProfile.setTag(webAddress.getWebId());
@@ -839,13 +851,15 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             case AppConstants.IM_ACCOUNT:
                 linerCheckbox.setVisibility(View.GONE);
                 textImageCross.setTag(AppConstants.IM_ACCOUNT);
+                spinnerType.setTag(AppConstants.IM_ACCOUNT);
                 inputValue.setHint("Link");
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_social_media)));
-                spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, typeList);
-                spinnerAdapter.setDropDownViewResource(android.R.layout
+                spinnerImAccountAdapter = new ArrayAdapter<>(this, R.layout
+                        .list_item_spinner, typeList);
+                spinnerImAccountAdapter.setDropDownViewResource(android.R.layout
                         .simple_spinner_dropdown_item);
-                spinnerType.setAdapter(spinnerAdapter);
+                spinnerType.setAdapter(spinnerImAccountAdapter);
                 inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
                 if (detailObject != null) {
                     ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount)
@@ -854,13 +868,13 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(imAccount
                             .getIMAccountProtocol()))) {
-                        spinnerPosition = spinnerAdapter.getPosition(imAccount
+                        spinnerPosition = spinnerImAccountAdapter.getPosition(imAccount
                                 .getIMAccountProtocol());
                     } else {
-//                        spinnerPosition = spinnerAdapter.getPosition("Other");
-                        spinnerAdapter.add(imAccount.getIMAccountProtocol());
-                        spinnerAdapter.notifyDataSetChanged();
-                        spinnerPosition = spinnerAdapter.getPosition(imAccount
+//                        spinnerPosition = spinnerImAccountAdapter.getPosition("Other");
+                        spinnerImAccountAdapter.add(imAccount.getIMAccountProtocol());
+                        spinnerImAccountAdapter.notifyDataSetChanged();
+                        spinnerPosition = spinnerImAccountAdapter.getPosition(imAccount
                                 .getIMAccountProtocol());
                     }
                     spinnerType.setSelection(spinnerPosition);
@@ -871,26 +885,28 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             case AppConstants.EVENT:
                 linerCheckbox.setVisibility(View.VISIBLE);
                 textImageCross.setTag(AppConstants.EVENT);
+                spinnerType.setTag(AppConstants.EVENT);
                 inputValue.setHint("Event");
                 inputValue.setFocusable(false);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_Event)));
-                spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, typeList);
-                spinnerAdapter.setDropDownViewResource(android.R.layout
+                spinnerEventAdapter = new ArrayAdapter<>(this, R.layout
+                        .list_item_spinner, typeList);
+                spinnerEventAdapter.setDropDownViewResource(android.R.layout
                         .simple_spinner_dropdown_item);
-                spinnerType.setAdapter(spinnerAdapter);
+                spinnerType.setAdapter(spinnerEventAdapter);
                 inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
                 if (detailObject != null) {
                     ProfileDataOperationEvent event = (ProfileDataOperationEvent) detailObject;
                     inputValue.setText(event.getEventDate());
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(event.getEventType()))) {
-                        spinnerPosition = spinnerAdapter.getPosition(event.getEventType());
+                        spinnerPosition = spinnerEventAdapter.getPosition(event.getEventType());
                     } else {
-//                        spinnerPosition = spinnerAdapter.getPosition("Other");
-                        spinnerAdapter.add(event.getEventType());
-                        spinnerAdapter.notifyDataSetChanged();
-                        spinnerPosition = spinnerAdapter.getPosition(event.getEventType());
+//                        spinnerPosition = spinnerEventAdapter.getPosition("Other");
+                        spinnerEventAdapter.add(event.getEventType());
+                        spinnerEventAdapter.notifyDataSetChanged();
+                        spinnerPosition = spinnerEventAdapter.getPosition(event.getEventType());
                     }
                     spinnerType.setSelection(spinnerPosition);
                     relativeRowEditProfile.setTag(event.getEventId());
@@ -953,6 +969,21 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                         }
                         break;
                 }
+            }
+        });
+
+        spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String items = spinnerType.getSelectedItem().toString();
+                if (items.equalsIgnoreCase("Custom")) {
+                    showCustomTypeDialog(spinnerType);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -1287,9 +1318,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText().toString())
             ) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputDesignationName.getText()
                     .toString())) < 1) {
-               /* if (inputCompanyName.getText().length() < 1 || inputDesignationName.getText()
-               .length
-                        () < 1) {*/
                 toAdd = false;
                 break;
             } else {
@@ -1299,6 +1327,92 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         if (toAdd) {
             addOrganizationView(null);
         }
+    }
+
+    private void showCustomTypeDialog(final Spinner spinnerType) {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_custom_type);
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
+        final EditText inputCustomName = (EditText) dialog.findViewById(R.id.input_custom_name);
+
+        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
+        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
+        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
+
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
+        inputCustomName.setTypeface(Utils.typefaceRegular(this));
+        buttonRight.setTypeface(Utils.typefaceSemiBold(this));
+        buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
+
+        textDialogTitle.setText("Custom Label Name");
+
+        buttonLeft.setText(R.string.action_cancel);
+        buttonRight.setText("OK");
+
+        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                dialog.dismiss();
+            }
+        });
+
+        rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                Utils.hideSoftKeyboard(EditProfileActivity.this, inputCustomName);
+                dialog.dismiss();
+                switch ((Integer) spinnerType.getTag()) {
+                    case AppConstants.PHONE_NUMBER:
+                        spinnerPhoneAdapter.add(inputCustomName.getText().toString());
+                        spinnerPhoneAdapter.notifyDataSetChanged();
+                        spinnerType.setSelection(spinnerPhoneAdapter.getPosition(inputCustomName
+                                .getText().toString()));
+                        break;
+
+                    case AppConstants.EMAIL:
+                        spinnerEmailAdapter.add(inputCustomName.getText().toString());
+                        spinnerEmailAdapter.notifyDataSetChanged();
+                        spinnerType.setSelection(spinnerEmailAdapter.getPosition(inputCustomName
+                                .getText().toString()));
+                        break;
+
+                    case AppConstants.WEBSITE:
+                        spinnerWebsiteAdapter.add(inputCustomName.getText().toString());
+                        spinnerWebsiteAdapter.notifyDataSetChanged();
+                        spinnerType.setSelection(spinnerWebsiteAdapter.getPosition(inputCustomName
+                                .getText().toString()));
+                        break;
+
+                    case AppConstants.EVENT:
+                        spinnerEventAdapter.add(inputCustomName.getText().toString());
+                        spinnerEventAdapter.notifyDataSetChanged();
+                        spinnerType.setSelection(spinnerEventAdapter.getPosition(inputCustomName
+                                .getText().toString()));
+                        break;
+
+                    case AppConstants.IM_ACCOUNT:
+                        spinnerImAccountAdapter.add(inputCustomName.getText().toString());
+                        spinnerImAccountAdapter.notifyDataSetChanged();
+                        spinnerType.setSelection(spinnerImAccountAdapter.getPosition(inputCustomName
+                                .getText().toString()));
+                        break;
+                }
+            }
+        });
+
+
+        dialog.show();
     }
 
     //</editor-fold>
