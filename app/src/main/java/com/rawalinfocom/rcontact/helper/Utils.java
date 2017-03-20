@@ -579,5 +579,19 @@ public class Utils {
         }
     }
 
+    public static String getLocalTimeFromUTCTime(String timeStamp) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date value = formatter.parse(timeStamp);
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            dateFormatter.setTimeZone(TimeZone.getDefault());
+            timeStamp = dateFormatter.format(value);
+        } catch (Exception e) {
+            timeStamp = "00-00-0000 00:00";
+        }
+        return timeStamp;
+    }
 
 }

@@ -10,7 +10,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/image_wisher"
+            android:id="@+id/image_person"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -23,8 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toEndOf="@id/image_wisher"
-            android:layout_toRightOf="@id/image_wisher"
+            android:layout_toEndOf="@id/image_person"
+            android:layout_toRightOf="@id/image_person"
             android:orientation="vertical">
 
             <LinearLayout
@@ -39,7 +39,7 @@
                     android:layout_weight="2">
 
                     <TextView
-                        android:id="@+id/text_wisher_name"
+                        android:id="@+id/text_person_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
@@ -50,15 +50,15 @@
                         android:id="@+id/text_event_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="2dp"
-                        android:layout_marginStart="2dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginStart="4dp"
                         android:ellipsize="end"
                         android:maxLines="1"
                         tools:text=" Birthday" />
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/text_timeline_noti_time"
+                    android:id="@+id/text_event_comment_time"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
@@ -132,7 +132,7 @@
     </RelativeLayout>
 
     <View
-        android:id="@+id/divider_timeline_item"
+        android:id="@+id/divider_event_item"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/relative_row_main"

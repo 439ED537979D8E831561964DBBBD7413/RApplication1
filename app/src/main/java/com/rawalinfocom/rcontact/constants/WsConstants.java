@@ -61,5 +61,7 @@ public class WsConstants {
 
     public static final String REQ_UPLOAD_CALL_LOGS = "call-log";
 
+    public static final String REQ_ADD_EVENT_COMMENT = "event-comment";
+
 
 }
