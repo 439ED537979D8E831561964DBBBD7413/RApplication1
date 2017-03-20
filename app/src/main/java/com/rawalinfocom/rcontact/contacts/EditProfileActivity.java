@@ -42,6 +42,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.zjsonpatch.JsonDiff;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -203,6 +204,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     private File mFileTemp;
     private Uri fileUri;
 
+    ArrayList<ProfileDataOperation> arrayListProfile;
+//    ArrayList<ProfileDataOperation> arrayListMergedProfile;
+
 //    ProfileDataOperation userOldProfile;
 
     //<editor-fold desc="Override Methods">
@@ -213,6 +217,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         setContentView(R.layout.activity_edit_profile);
         ButterKnife.bind(this);
 //        userOldProfile = new ProfileDataOperation();
+        arrayListProfile = new ArrayList<>();
         init();
     }
 
@@ -226,7 +231,11 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
             case R.id.ripple_action_right_left:
 
-                ArrayList<ProfileDataOperationEmail> arrayListNewValue = new ArrayList<>();
+                Gson gson = new Gson();
+                String oldObjectJson, newObjectJson;
+
+                //<editor-fold desc="Email">
+                ArrayList<ProfileDataOperationEmail> arrayListNewEmail = new ArrayList<>();
                 for (int i = 0; i < linearEmailDetails.getChildCount(); i++) {
                     ProfileDataOperationEmail email = new ProfileDataOperationEmail();
                     View view = linearEmailDetails.getChildAt(i);
@@ -238,132 +247,89 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     email.setEmType((String) emailType.getSelectedItem());
                     email.setEmId((String) relativeRowEditProfile.getTag());
 
-                    arrayListNewValue.add(email);
+                    arrayListNewEmail.add(email);
 
                 }
 
-                Gson gson = new Gson();
-                String oldObjectJson = gson.toJson(arrayListEmailObject);
-                String newObjectJson = gson.toJson(arrayListNewValue);
+                oldObjectJson = gson.toJson(arrayListEmailObject);
+                newObjectJson = gson.toJson(arrayListNewEmail);
 
-                ObjectMapper mapper = new ObjectMapper();
+                ArrayList<ProfileDataOperation> updatedEmails = new ArrayList<>();
+                updatedEmails.addAll(compareJsonStructure(AppConstants.EMAIL, oldObjectJson,
+                        newObjectJson));
+                //</editor-fold>
 
-                ArrayList<Integer> arrayListAddedPositions = new ArrayList<>();
-                ArrayList<Integer> arrayListRemovedPositions = new ArrayList<>();
-                ArrayList<Integer> arrayListReplacedPositions = new ArrayList<>();
+                //<editor-fold desc="Phone Number">
+                ArrayList<ProfileDataOperationPhoneNumber> arrayListNewPhone = new ArrayList<>();
+                for (int i = 0; i < linearPhoneDetails.getChildCount(); i++) {
+                    ProfileDataOperationPhoneNumber phoneNumber = new
+                            ProfileDataOperationPhoneNumber();
+                    View view = linearPhoneDetails.getChildAt(i);
+                    EditText emailId = (EditText) view.findViewById(R.id.input_value);
+                    Spinner emailType = (Spinner) view.findViewById(R.id.spinner_type);
+                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                            .id.relative_row_edit_profile);
+                    phoneNumber.setPhoneNumber(emailId.getText().toString());
+                    phoneNumber.setPhoneType((String) emailType.getSelectedItem());
+                    phoneNumber.setPhoneId((String) relativeRowEditProfile.getTag());
 
-                try {
-                    JsonNode tree1 = mapper.readTree(oldObjectJson);
-                    JsonNode tree2 = mapper.readTree(newObjectJson);
+                    arrayListNewPhone.add(phoneNumber);
 
-                    Log.i("onComplete", String.valueOf(tree1.equals(tree2)));
+                }
 
-                    if (!tree1.equals(tree2)) {
-                        JsonNode patchNode = JsonDiff.asJson(tree1, tree2);
-                        String diff = patchNode.toString();
-                        Log.i("diff", diff);
-                        JSONArray jsonArray = new JSONArray(diff);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            String operation = jsonObject.optString("op");
-                            if (operation.equalsIgnoreCase("add")) {
-                                arrayListAddedPositions.add(Integer.valueOf(StringUtils.substring
-                                        (jsonObject.optString("path"), 1)));
-                            } else if (operation.equalsIgnoreCase("replace")) {
-                                int position;
-                                if (StringUtils.countMatches(jsonObject.optString("path"),
-                                        StringUtils.defaultString("/")) > 1) {
-                                    position = Integer.valueOf(StringUtils.substring(jsonObject
-                                            .optString("path"), 1, StringUtils.indexOf(jsonObject
-                                            .getString("path"), StringUtils.defaultString
-                                            ("/"), 1)));
-                                } else {
-                                    position = Integer.valueOf(StringUtils.substring(jsonObject
-                                            .optString("path"), 1));
-                                }
-                                arrayListReplacedPositions.add(position);
-                            } else if (operation.equalsIgnoreCase("remove")) {
-                                int position;
-                                if (StringUtils.countMatches(jsonObject.optString("path"),
-                                        StringUtils.defaultString("/")) > 1) {
-                                    position = Integer.valueOf(StringUtils.substring(jsonObject
-                                            .optString("path"), 1, StringUtils.indexOf(jsonObject
-                                            .getString("path"), StringUtils.defaultString
-                                            ("/"), 1)));
-                                } else {
-                                    position = Integer.valueOf(StringUtils.substring(jsonObject
-                                            .optString("path"), 1));
-                                }
-                                if (!arrayListReplacedPositions.contains(position)) {
-                                    arrayListRemovedPositions.add(position);
-                                }
-                            }
-                            Log.i("operation", operation);
-                        }
+                oldObjectJson = gson.toJson(arrayListPhoneNumberObject);
+                newObjectJson = gson.toJson(arrayListNewPhone);
 
-                        ArrayList<ProfileDataOperation> arrayListProfile = new ArrayList<>();
+                ArrayList<ProfileDataOperation> updatedNumbers = new ArrayList<>();
+                updatedNumbers.addAll(compareJsonStructure(AppConstants.PHONE_NUMBER,
+                        oldObjectJson, newObjectJson));
+                //</editor-fold>
 
-                        if (arrayListAddedPositions.size() > 0) {
-                            ProfileDataOperation profileDataOperation = new ProfileDataOperation();
-                            profileDataOperation.setFlag(String.valueOf(getResources().getInteger
-                                    (R.integer.sync_update_insert)));
-                            ArrayList<ProfileDataOperationEmail> emails = new ArrayList<>();
-                            for (int i = 0; i < arrayListAddedPositions.size(); i++) {
-                                ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                                email.setEmType(arrayListNewValue.get(arrayListAddedPositions.get
-                                        (i)).getEmType());
-                                email.setEmEmailId(arrayListNewValue.get(arrayListAddedPositions
-                                        .get(i)).getEmEmailId());
-                                emails.add(email);
-                            }
-                            profileDataOperation.setPbEmailId(emails);
-                            arrayListProfile.add(profileDataOperation);
-                        }
-                        if (arrayListRemovedPositions.size() > 0) {
-                            ProfileDataOperation profileDataOperation = new ProfileDataOperation();
-                            profileDataOperation.setFlag(String.valueOf(getResources().getInteger
-                                    (R.integer.sync_update_delete)));
-                            ArrayList<ProfileDataOperationEmail> emails = new ArrayList<>();
-                            for (int i = 0; i < arrayListRemovedPositions.size(); i++) {
-                                ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                                email.setEmId(((ProfileDataOperationEmail) arrayListEmailObject
-                                        .get(i)).getEmId());
-                                emails.add(email);
-                            }
-                            profileDataOperation.setPbEmailId(emails);
-                            arrayListProfile.add(profileDataOperation);
-                        }
-                        if (arrayListReplacedPositions.size() > 0) {
-                            ProfileDataOperation profileDataOperation = new ProfileDataOperation();
-                            profileDataOperation.setFlag(String.valueOf(getResources().getInteger
-                                    (R.integer.sync_update_update)));
-                            ArrayList<ProfileDataOperationEmail> emails = new ArrayList<>();
-                            for (int i = 0; i < arrayListReplacedPositions.size(); i++) {
-                                ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                                email.setEmId(((ProfileDataOperationEmail) arrayListEmailObject
-                                        .get(i)).getEmId());
-                                email.setEmType(arrayListNewValue.get(arrayListReplacedPositions.get
-                                        (i)).getEmType());
-                                email.setEmEmailId(arrayListNewValue.get(arrayListReplacedPositions
-                                        .get(i)).getEmEmailId());
-                                emails.add(email);
-                            }
-                            profileDataOperation.setPbEmailId(emails);
-                            arrayListProfile.add(profileDataOperation);
-                        }
-//                        editProfile(arrayListProfile);
-                        Log.i("onComplete", arrayListProfile.toString());
+               /* ProfileDataOperation profileDataInsert = new ProfileDataOperation();
+                profileDataInsert.setFlag(String.valueOf(getResources().getInteger(R.integer
+                        .sync_update_insert)));
+                for (int i = 0; i < updatedNumbers.size(); i++) {
+                    if (Integer.parseInt(updatedNumbers.get(i).getFlag()) == getResources()
+                            .getInteger(R.integer.sync_update_insert)) {
+                        profileDataInsert.setPbPhoneNumber(updatedNumbers.get(i).getPbPhoneNumber
+                                ());
                     }
-
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.i("onComplete", "Exception");
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+                for (int i = 0; i < updatedEmails.size(); i++) {
+                    if (Integer.parseInt(updatedEmails.get(i).getFlag()) == getResources()
+                            .getInteger(R.integer.sync_update_insert)) {
+                        profileDataInsert.setPbEmailId(updatedEmails.get(i).getPbEmailId());
+                    }
+                }
+                arrayListProfile.add(profileDataInsert);
 
-//                Log.i("onComplete", oldObjectJson);
+                ProfileDataOperation profileDataUpdate = new ProfileDataOperation();
+                profileDataUpdate.setFlag(String.valueOf(getResources().getInteger(R.integer
+                        .sync_update_update)));
+                for (int i = 0; i < updatedNumbers.size(); i++) {
+                    if (Integer.parseInt(updatedNumbers.get(i).getFlag()) == getResources()
+                            .getInteger(R.integer.sync_update_update)) {
+                        profileDataUpdate.setPbPhoneNumber(updatedNumbers.get(i).getPbPhoneNumber
+                                ());
+                    }
+                }
+                for (int i = 0; i < updatedEmails.size(); i++) {
+                    if (Integer.parseInt(updatedEmails.get(i).getFlag()) == getResources()
+                            .getInteger(R.integer.sync_update_update)) {
+                        profileDataUpdate.setPbEmailId(updatedEmails.get(i).getPbEmailId());
+                    }
+                }
+                arrayListProfile.add(profileDataUpdate);*/
+
+
+                ArrayList<ArrayList<ProfileDataOperation>> arrayList = new ArrayList<>();
+                arrayList.add(updatedNumbers);
+                arrayList.add(updatedEmails);
+
+//                Log.i("onComplete", arrayListProfile.toString());
+//                Log.i("onComplete", new Gson().toJson(arrayListProfile));
+                Log.i("onComplete", new Gson().toJson(combineResult(arrayList)));
+
                 break;
 
 
@@ -375,8 +341,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
 
-            Bitmap bitmap = BitmapFactory.decodeFile(fileUri.getPath());
-            selectedBitmap = bitmap;
+            selectedBitmap = BitmapFactory.decodeFile(fileUri.getPath());
 //            imageProfile.setImageBitmap(bitmap);
 
             Glide.with(this)
@@ -394,22 +359,24 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             Uri selectedImage = data.getData();
             String[] filePath = {MediaStore.Images.Media.DATA};
             Cursor c = getContentResolver().query(selectedImage, filePath, null, null, null);
-            c.moveToFirst();
-            int columnIndex = c.getColumnIndex(filePath[0]);
-            String picturePath = c.getString(columnIndex);
-            c.close();
+            String picturePath = "";
+            if (c != null) {
+                c.moveToFirst();
+                int columnIndex = c.getColumnIndex(filePath[0]);
+                picturePath = c.getString(columnIndex);
+                c.close();
+            }
 
             try {
                 InputStream inputStream = getContentResolver().openInputStream(data.getData());
                 FileOutputStream fileOutputStream = new FileOutputStream(mFileTemp);
-                copyStream(inputStream, fileOutputStream);
+                if (inputStream != null) {
+                    copyStream(inputStream, fileOutputStream);
+                    inputStream.close();
+                }
                 fileOutputStream.close();
-                inputStream.close();
 
-                // Bitmap bitmap =
-                // BitmapFactory.decodeFile(mFileTemp.getPath());
-                Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-                selectedBitmap = bitmap;
+                selectedBitmap = BitmapFactory.decodeFile(picturePath);
 //                imageProfile.setImageBitmap(bitmap);
 
                 Glide.with(this)
@@ -1413,6 +1380,253 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
 
         dialog.show();
+    }
+
+    private ArrayList<ProfileDataOperation> compareJsonStructure(int objectType, String
+            oldObjectJson, String newObjectJson) {
+
+        ArrayList<Integer> arrayListAddedPositions = new ArrayList<>();
+        ArrayList<Integer> arrayListRemovedPositions = new ArrayList<>();
+        ArrayList<Integer> arrayListReplacedPositions = new ArrayList<>();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            JsonNode tree1 = mapper.readTree(oldObjectJson);
+            JsonNode tree2 = mapper.readTree(newObjectJson);
+
+            Log.i("onComplete", String.valueOf(tree1.equals(tree2)));
+
+            if (!tree1.equals(tree2)) {
+                JsonNode patchNode = JsonDiff.asJson(tree1, tree2);
+                String diff = patchNode.toString();
+                Log.i("diff", diff);
+                JSONArray jsonArray = new JSONArray(diff);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    String operation = jsonObject.optString("op");
+                    if (operation.equalsIgnoreCase("add")) {
+                        arrayListAddedPositions.add(Integer.valueOf(StringUtils.substring
+                                (jsonObject.optString("path"), 1)));
+                    } else if (operation.equalsIgnoreCase("replace")) {
+                        int position;
+                        if (StringUtils.countMatches(jsonObject.optString("path"),
+                                StringUtils.defaultString("/")) > 1) {
+                            position = Integer.valueOf(StringUtils.substring(jsonObject
+                                    .optString("path"), 1, StringUtils.indexOf(jsonObject
+                                    .getString("path"), StringUtils.defaultString
+                                    ("/"), 1)));
+                        } else {
+                            position = Integer.valueOf(StringUtils.substring(jsonObject
+                                    .optString("path"), 1));
+                        }
+                        arrayListReplacedPositions.add(position);
+                    } else if (operation.equalsIgnoreCase("remove")) {
+                        int position;
+                        if (StringUtils.countMatches(jsonObject.optString("path"),
+                                StringUtils.defaultString("/")) > 1) {
+                            position = Integer.valueOf(StringUtils.substring(jsonObject
+                                    .optString("path"), 1, StringUtils.indexOf(jsonObject
+                                    .getString("path"), StringUtils.defaultString
+                                    ("/"), 1)));
+                        } else {
+                            position = Integer.valueOf(StringUtils.substring(jsonObject
+                                    .optString("path"), 1));
+                        }
+                        if (!arrayListReplacedPositions.contains(position)) {
+                            arrayListRemovedPositions.add(position);
+                        }
+                    }
+                    Log.i("operation", operation);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.i("onComplete", "Exception");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        ArrayList<ProfileDataOperation> arrayListTempProfile = new ArrayList<>();
+        Gson gson = new Gson();
+
+        if (arrayListAddedPositions.size() > 0) {
+            ProfileDataOperation profileDataOperation = new ProfileDataOperation();
+            profileDataOperation.setFlag(String.valueOf(getResources().getInteger
+                    (R.integer.sync_update_insert)));
+            switch (objectType) {
+                case AppConstants.EMAIL:
+                    ArrayList<ProfileDataOperationEmail> arrayListNewEmail = gson.fromJson
+                            (newObjectJson, new TypeToken<ArrayList<ProfileDataOperationEmail>>() {
+                            }.getType());
+                    ArrayList<ProfileDataOperationEmail> emails = new ArrayList<>();
+                    for (int i = 0; i < arrayListAddedPositions.size(); i++) {
+                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                        email.setEmType(arrayListNewEmail.get(arrayListAddedPositions.get
+                                (i)).getEmType());
+                        email.setEmEmailId(arrayListNewEmail.get(arrayListAddedPositions
+                                .get(i)).getEmEmailId());
+                        emails.add(email);
+                    }
+                    profileDataOperation.setPbEmailId(emails);
+                    break;
+                case AppConstants.PHONE_NUMBER:
+                    ArrayList<ProfileDataOperationPhoneNumber> arrayListNewPhone = gson.fromJson
+                            (newObjectJson, new
+                                    TypeToken<ArrayList<ProfileDataOperationPhoneNumber>>() {
+                                    }.getType());
+                    ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
+                    for (int i = 0; i < arrayListAddedPositions.size(); i++) {
+                        ProfileDataOperationPhoneNumber phoneNumber = new
+                                ProfileDataOperationPhoneNumber();
+                        phoneNumber.setPhoneType(arrayListNewPhone.get(arrayListAddedPositions.get
+                                (i)).getPhoneType());
+                        phoneNumber.setPhoneNumber(arrayListNewPhone.get(arrayListAddedPositions
+                                .get(i)).getPhoneNumber());
+                        phoneNumbers.add(phoneNumber);
+                    }
+                    profileDataOperation.setPbPhoneNumber(phoneNumbers);
+                    break;
+            }
+            arrayListTempProfile.add(profileDataOperation);
+        }
+
+        if (arrayListRemovedPositions.size() > 0) {
+            ProfileDataOperation profileDataOperation = new ProfileDataOperation();
+            profileDataOperation.setFlag(String.valueOf(getResources().getInteger
+                    (R.integer.sync_update_delete)));
+            switch (objectType) {
+                case AppConstants.EMAIL:
+                    ArrayList<ProfileDataOperationEmail> emails = new ArrayList<>();
+                    for (int i = 0; i < arrayListRemovedPositions.size(); i++) {
+                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                        email.setEmId(((ProfileDataOperationEmail) arrayListEmailObject
+                                .get(i)).getEmId());
+                        emails.add(email);
+                    }
+                    profileDataOperation.setPbEmailId(emails);
+                    break;
+
+                case AppConstants.PHONE_NUMBER:
+                    ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
+                    for (int i = 0; i < arrayListRemovedPositions.size(); i++) {
+                        ProfileDataOperationPhoneNumber phoneNumber = new
+                                ProfileDataOperationPhoneNumber();
+                        phoneNumber.setPhoneId(((ProfileDataOperationPhoneNumber)
+                                arrayListPhoneNumberObject
+                                        .get(i)).getPhoneId());
+                        phoneNumbers.add(phoneNumber);
+                    }
+                    profileDataOperation.setPbPhoneNumber(phoneNumbers);
+                    break;
+            }
+            arrayListTempProfile.add(profileDataOperation);
+        }
+
+        if (arrayListReplacedPositions.size() > 0) {
+            ProfileDataOperation profileDataOperation = new ProfileDataOperation();
+            profileDataOperation.setFlag(String.valueOf(getResources().getInteger
+                    (R.integer.sync_update_update)));
+            switch (objectType) {
+                case AppConstants.EMAIL:
+                    ArrayList<ProfileDataOperationEmail> arrayListNewEmail = gson.fromJson
+                            (newObjectJson, new TypeToken<ArrayList<ProfileDataOperationEmail>>() {
+                            }.getType());
+                    ArrayList<ProfileDataOperationEmail> emails = new ArrayList<>();
+                    for (int i = 0; i < arrayListReplacedPositions.size(); i++) {
+                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                        email.setEmId(((ProfileDataOperationEmail) arrayListEmailObject
+                                .get(i)).getEmId());
+                        email.setEmType(arrayListNewEmail.get(arrayListReplacedPositions.get
+                                (i)).getEmType());
+                        email.setEmEmailId(arrayListNewEmail.get(arrayListReplacedPositions
+                                .get(i)).getEmEmailId());
+                        emails.add(email);
+                    }
+                    profileDataOperation.setPbEmailId(emails);
+                    break;
+                case AppConstants.PHONE_NUMBER:
+                    ArrayList<ProfileDataOperationPhoneNumber> arrayListNewPhoneNumber = gson
+                            .fromJson
+                                    (newObjectJson, new
+                                            TypeToken<ArrayList<ProfileDataOperationPhoneNumber>>
+                                                    () {
+                                            }.getType());
+                    ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
+                    for (int i = 0; i < arrayListReplacedPositions.size(); i++) {
+                        ProfileDataOperationPhoneNumber phoneNumber = new
+                                ProfileDataOperationPhoneNumber();
+                        phoneNumber.setPhoneId(((ProfileDataOperationPhoneNumber)
+                                arrayListPhoneNumberObject
+                                        .get(i)).getPhoneId());
+                        phoneNumber.setPhoneType(arrayListNewPhoneNumber.get
+                                (arrayListReplacedPositions.get
+                                        (i)).getPhoneType());
+                        phoneNumber.setPhoneNumber(arrayListNewPhoneNumber.get
+                                (arrayListReplacedPositions
+                                        .get(i)).getPhoneNumber());
+                        phoneNumbers.add(phoneNumber);
+                    }
+                    profileDataOperation.setPbPhoneNumber(phoneNumbers);
+                    break;
+            }
+            arrayListTempProfile.add(profileDataOperation);
+        }
+//                        editProfile(arrayListProfile);
+        /*Log.i("onComplete", arrayListProfile.toString());*/
+
+        return arrayListTempProfile;
+
+    }
+
+    private ArrayList<ProfileDataOperation> combineResult(ArrayList<ArrayList<ProfileDataOperation>>
+                                                                  arrayList) {
+        ArrayList<ProfileDataOperation> arrayListMergedProfile = new ArrayList<>();
+        ProfileDataOperation profileDataInsert = new ProfileDataOperation();
+        profileDataInsert.setFlag(String.valueOf(getResources().getInteger(R.integer
+                .sync_update_insert)));
+        for (int i = 0; i < arrayList.size(); i++) {
+            for (int j = 0; j < arrayList.get(i).size(); j++) {
+                if (Integer.parseInt(arrayList.get(i).get(j).getFlag()) == getResources()
+                        .getInteger(R.integer.sync_update_insert)) {
+                    switch (i) {
+                        case 0:
+                            profileDataInsert.setPbPhoneNumber(arrayList.get(i).get(j)
+                                    .getPbPhoneNumber());
+                            break;
+                        case 1:
+                            profileDataInsert.setPbEmailId(arrayList.get(i).get(j).getPbEmailId());
+                            break;
+                    }
+                }
+            }
+        }
+        arrayListMergedProfile.add(profileDataInsert);
+
+        ProfileDataOperation profileDataUpdate = new ProfileDataOperation();
+        profileDataUpdate.setFlag(String.valueOf(getResources().getInteger(R.integer
+                .sync_update_update)));
+        for (int i = 0; i < arrayList.size(); i++) {
+            for (int j = 0; j < arrayList.get(i).size(); j++) {
+                if (Integer.parseInt(arrayList.get(i).get(j).getFlag()) == getResources()
+                        .getInteger(R.integer.sync_update_update)) {
+                    switch (i) {
+                        case 0:
+                            profileDataUpdate.setPbPhoneNumber(arrayList.get(i).get(j)
+                                    .getPbPhoneNumber());
+                            break;
+                        case 1:
+                            profileDataUpdate.setPbEmailId(arrayList.get(i).get(j).getPbEmailId());
+                            break;
+                    }
+                }
+            }
+        }
+        arrayListMergedProfile.add(profileDataUpdate);
+
+        return arrayListMergedProfile;
+
     }
 
     //</editor-fold>
