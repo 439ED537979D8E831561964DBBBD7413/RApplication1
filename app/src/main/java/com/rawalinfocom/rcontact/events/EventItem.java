@@ -8,6 +8,8 @@ public class EventItem {
 
 
     private String personName;
+    private String personFirstName;
+    private String personLastName;
     private String eventName;
     private String commentTime;
     private String eventDetail;
@@ -20,6 +22,22 @@ public class EventItem {
 
     public String getPersonName() {
         return personName;
+    }
+
+    public String getPersonFirstName() {
+        return personFirstName;
+    }
+
+    public void setPersonFirstName(String personFirstName) {
+        this.personFirstName = personFirstName;
+    }
+
+    public String getPersonLastName() {
+        return personLastName;
+    }
+
+    public void setPersonLastName(String personLastName) {
+        this.personLastName = personLastName;
     }
 
     public void setPersonName(String personName) {

@@ -594,4 +594,17 @@ public class Utils {
         return timeStamp;
     }
 
+    public static String formatDateTime(String timeStamp, String format) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date value = formatter.parse(timeStamp);
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
+            timeStamp = dateFormatter.format(value);
+        } catch (Exception e) {
+            timeStamp = "";
+        }
+        return timeStamp;
+    }
+
 }

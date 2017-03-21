@@ -1,15 +1,15 @@
 package com.rawalinfocom.rcontact;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -95,6 +95,7 @@ public class EventsActivity extends BaseActivity implements RippleView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
         ButterKnife.bind(this);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         init();
         initData();
     }
@@ -162,9 +163,8 @@ public class EventsActivity extends BaseActivity implements RippleView
     }
 
     private void initData() {
+
         tableCommentMaster = new TableCommentMaster(databaseHandler);
-        String s = Utils.getLocalTimeFromUTCTime("2017-03-18 10:15:50");
-        Log.i("Maulik", "Localtime" + s);
         TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
 
         String today = getEventDate(0);
@@ -176,20 +176,40 @@ public class EventsActivity extends BaseActivity implements RippleView
         ArrayList<Event> eventsRecent = tableEventMaster.getAllEventsBetWeen(yesterDay, yesterDay);
         ArrayList<Event> eventsUpcoming7 = tableEventMaster.getAllEventsBetWeen(tomorrow, day7th);
 
-        listTodayEvent = createEventList(eventsToday);
-        listRecentEvent = createEventList(eventsRecent);
-        listUpcomingEvent = createEventList(eventsUpcoming7);
+        listTodayEvent = createEventList(eventsToday, 0);
+        listRecentEvent = createEventList(eventsRecent, 1);
+        listUpcomingEvent = createEventList(eventsUpcoming7, 2);
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
+        int density = getResources().getDisplayMetrics().densityDpi;
+        int heightPercent = 50;
+        int maxItemCount = 2;
+        switch (density) {
+            case DisplayMetrics.DENSITY_LOW: /*120*/
+                heightPercent = 30;
+                break;
+            case DisplayMetrics.DENSITY_MEDIUM: /*160*/
+                heightPercent = 35;
+                break;
+            case DisplayMetrics.DENSITY_HIGH: /*320*/
+                heightPercent = 40;
+                maxItemCount = 2;
+                break;
+            case DisplayMetrics.DENSITY_XXHIGH: /*480*/
+            case DisplayMetrics.DENSITY_XXXHIGH: /*680*/
+                heightPercent = 50;
+                maxItemCount = 3;
+                break;
+        }
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = (displaymetrics.heightPixels * 57) / 100;
+        int height = (displaymetrics.heightPixels * heightPercent) / 100;
 
         todayEventAdapter = new EventAdapter(this, listTodayEvent, 0);
         recyclerViewToday.setAdapter(todayEventAdapter);
         recyclerViewToday.setLayoutManager(new MyLayoutManager(getApplicationContext(), recyclerViewToday, height));
         RecyclerView.Adapter mAdapter = recyclerViewToday.getAdapter();
         int totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > 3) {
+        if (totalItemCount > maxItemCount) {
             recyclerViewToday.getLayoutParams().height = height;
         }
 
@@ -198,7 +218,7 @@ public class EventsActivity extends BaseActivity implements RippleView
         recyclerViewRecent.setLayoutManager(new MyLayoutManager(getApplicationContext(), recyclerViewRecent, height));
         mAdapter = recyclerViewRecent.getAdapter();
         totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > 3) {
+        if (totalItemCount > maxItemCount) {
             recyclerViewRecent.getLayoutParams().height = height;
         }
 
@@ -207,21 +227,21 @@ public class EventsActivity extends BaseActivity implements RippleView
         recyclerViewUpcoming.setLayoutManager(new MyLayoutManager(getApplicationContext(), recyclerViewUpcoming, height));
         mAdapter = recyclerViewUpcoming.getAdapter();
         totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > 3) {
+        if (totalItemCount > maxItemCount + 1) {
             recyclerViewUpcoming.getLayoutParams().height = height;
         }
         recyclerViewRecent.setVisibility(View.GONE);
         recyclerViewUpcoming.setVisibility(View.GONE);
     }
 
-    private List<EventItem> createEventList(ArrayList<Event> eventsToday) {
+    private List<EventItem> createEventList(ArrayList<Event> events, int listPosition) {
         EventItem item;
         int currentYear;
         int eventYear;
         Date date = new Date();
         currentYear = date.getYear();
         List<EventItem> list = new ArrayList<>();
-        for (Event e : eventsToday) {
+        for (Event e : events) {
             item = new EventItem();
             String eventName = e.getEvmEventType();
             int eventType = -1;
@@ -238,10 +258,11 @@ public class EventsActivity extends BaseActivity implements RippleView
             } catch (ParseException e1) {
                 eventYear = 0;
                 e1.printStackTrace();
-                Log.i("MAULIK", "year can not be parsed");
             }
 
             item.setPersonName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+            item.setPersonFirstName(userProfile.getPmFirstName());
+            item.setPersonLastName(userProfile.getPmLastName());
             item.setEventName(eventName);
             item.setEventType(getEventType(eventName));
             item.setEventDetail(setEventDetailText(currentYear - eventYear, eventType));
@@ -253,11 +274,14 @@ public class EventsActivity extends BaseActivity implements RippleView
                 item.setUserComment(comment.getCrmComment());
                 item.setCommentTime(comment.getCrmUpdatedAt());
                 item.setEventCommentPending(false);
+                if (listPosition != 1) {
+                    list.add(item);
+                }
             } else {
                 item.setEventCommentPending(true);
+                list.add(item);
             }
 
-            list.add(item);
         }
         return list;
     }
@@ -309,44 +333,7 @@ public class EventsActivity extends BaseActivity implements RippleView
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_ADD_EVENT_COMMENT)) {
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
                 EventComment eventComment = wsResponseObject.getEventComment();
-                Log.i("MAULIK no err", wsResponseObject.getMessage());
-                Log.i("MAULIK no err", wsResponseObject.getStatus());
-//                "id": "14899823733238",
-//                        "from_pm_id": 28,
-//                        "comment": "hello",
-//                        "reply": "",
-//                        "date": "2017-03-15",
-//                        "status": 1,
-//                        "created_at": "2017-03-20 03:59:33",
-//                        "updated_at": "2017-03-20 03:59:33",
-//                        "reply_at": "",
-//                        "to_pm_id": 1,
-//                        "type": "birthday"
-//    static final String CREATE_TABLE_RC_COMMENT_MASTER = "CREATE TABLE " + TABLE_RC_COMMENT_MASTER +
-//            " (" +
-//            " " + COLUMN_CRM_ID + " integer NOT NULL CONSTRAINT rc_comment_master_pk PRIMARY KEY AUTOINCREMENT," +
-//            " " + COLUMN_CRM_STATUS + " integer NOT NULL," +
-//            " " + COLUMN_CRM_RATING + " text," +
-//            " " + COLUMN_CRM_TYPE + " int NOT NULL," +
-//            " " + COLUMN_CRM_CLOUD_PR_ID + " text NOT NULL," +
-//            " " + COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " integer NOT NULL," +
-//            " " + COLUMN_CRM_COMMENT + " text NOT NULL," +
-//            " " + COLUMN_CRM_REPLY + " text," +
-//            " " + COLUMN_CRM_CREATED_AT + " datetime NOT NULL," +
-//            " " + COLUMN_CRM_REPLIED_AT + " datetime," +
-//            " " + COLUMN_CRM_UPDATED_AT + " datetime NOT NULL" +
-//            ");";
-                Log.i("MAULIK no err", "eventComment.getId()" + eventComment.getId());
-                Log.i("MAULIK no err", "eventComment.getFromPmId()" + eventComment.getFromPmId());
-                Log.i("MAULIK no err", "eventComment.getComment()" + eventComment.getComment());
-                Log.i("MAULIK no err", "eventComment.getReply() " + eventComment.getReply());
-                Log.i("MAULIK no err", "eventComment.getDate() " + eventComment.getDate());
-                Log.i("MAULIK no err", "eventComment.getStatus() " + eventComment.getStatus());
-                Log.i("MAULIK no err", "eventComment.getCreatedAt() " + eventComment.getCreatedAt());
-                Log.i("MAULIK no err", "eventComment.getUpdatedAt() " + eventComment.getUpdatedAt());
-                Log.i("MAULIK no err", "eventComment.getReplyAt() " + eventComment.getReplyAt());
-                Log.i("MAULIK no err", "eventComment.getToPmId() " + eventComment.getToPmId());
-                Log.i("MAULIK no err", "eventComment.getType() " + eventComment.getType());
+
                 Comment comment = new Comment();
                 comment.setCrmStatus(Integer.parseInt(eventComment.getStatus()));
                 comment.setCrmRating("");
@@ -355,9 +342,10 @@ public class EventsActivity extends BaseActivity implements RippleView
                 comment.setRcProfileMasterPmId(eventComment.getToPmId());
                 comment.setCrmComment(eventComment.getComment());
                 comment.setCrmReply(eventComment.getReply());
-                comment.setCrmCreatedAt(eventComment.getCreatedAt());
-                comment.setCrmRepliedAt(eventComment.getReplyAt());
-                comment.setCrmUpdatedAt(eventComment.getUpdatedAt());
+
+                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getCreatedAt()));
+                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()));
+                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedAt()));
                 comment.setEvmRecordIndexId(evmRecordId);
                 if (evmRecordId != null) {
                     tableCommentMaster.addComment(comment);
@@ -365,19 +353,19 @@ public class EventsActivity extends BaseActivity implements RippleView
                     switch (selectedRecycler) {
                         case 0:
                             listTodayEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
-                            listTodayEvent.get(selectedRecyclerItem).setCommentTime(eventComment.getUpdatedAt());
+                            listTodayEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedAt()));
                             listTodayEvent.get(selectedRecyclerItem).setEventCommentPending(false);
                             todayEventAdapter.notifyDataSetChanged();
                             break;
                         case 1:
                             listRecentEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
-                            listRecentEvent.get(selectedRecyclerItem).setCommentTime(eventComment.getUpdatedAt());
+                            listRecentEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedAt()));
                             listRecentEvent.get(selectedRecyclerItem).setEventCommentPending(false);
                             recentEventAdapter.notifyDataSetChanged();
                             break;
                         case 2:
                             listUpcomingEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
-                            listUpcomingEvent.get(selectedRecyclerItem).setCommentTime(eventComment.getUpdatedAt());
+                            listUpcomingEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedAt()));
                             listUpcomingEvent.get(selectedRecyclerItem).setEventCommentPending(false);
                             upcomingEventAdapter.notifyDataSetChanged();
                             break;
@@ -387,7 +375,7 @@ public class EventsActivity extends BaseActivity implements RippleView
             }
         } else {
             // toast error
-            Log.i("MAULIK err is there", error.toString());
+            Toast.makeText(EventsActivity.this, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
 
     }

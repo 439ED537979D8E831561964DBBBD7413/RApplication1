@@ -52,23 +52,30 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         final EventItem item = list.get(position);
         holder.textPersonName.setText(item.getPersonName());
         holder.textEventName.setText(item.getEventName());
-        holder.textEventCommentTime.setText(item.getCommentTime());
-        String userComment = item.getUserComment();
+        holder.textEventCommentTime.setText(Utils.formatDateTime(item.getCommentTime(), "dd-MM hh:mm a"));
         int notiType = item.getEventType();
-        if (!item.isEventCommentPending()) {
-            holder.textUserComment.setVisibility(View.VISIBLE);
-            holder.textUserComment.setText("You wrote a message to " + item.getPersonName());
+        if (notiType == AppConstants.COMMENT_TYPE_BIRTHDAY) {
+            holder.textEventDetailInfo.setText(item.getEventDetail() + ", " + item.getEventName() + " on " + Utils.formatDateTime(item.getEventDate(), "EEE, dd MMM"));
+        } else if (notiType == AppConstants.COMMENT_TYPE_ANNIVERSARY) {
+            holder.textEventDetailInfo.setText(item.getEventDetail() + " on " + Utils.formatDateTime(item.getEventDate(), "EEE, dd MMM"));
+        } else {
+            holder.textEventDetailInfo.setText(item.getEventName() + " on " + Utils.formatDateTime(item.getEventDate(), "dd-MM-yyyy"));
+        }
+        if (recyclerPosition != 2) {
+            if (!item.isEventCommentPending()) {
+                holder.textUserComment.setVisibility(View.VISIBLE);
+                holder.textUserComment.setText("You wrote to " + item.getPersonFirstName() + "'s Timeline");
+                holder.layoutUserCommentPending.setVisibility(View.GONE);
+            } else {
+                holder.textUserComment.setVisibility(View.GONE);
+                holder.layoutUserCommentPending.setVisibility(View.VISIBLE);
+            }
+        } else {
+            // upcoming events
             holder.layoutUserCommentPending.setVisibility(View.GONE);
-        } else {
             holder.textUserComment.setVisibility(View.GONE);
-            holder.layoutUserCommentPending.setVisibility(View.VISIBLE);
+            holder.textEventCommentTime.setVisibility(View.GONE);
         }
-        if (notiType == AppConstants.COMMENT_TYPE_BIRTHDAY || notiType == AppConstants.COMMENT_TYPE_ANNIVERSARY) {
-            holder.textEventDetailInfo.setText(item.getEventDetail());
-        } else {
-            holder.textEventDetailInfo.setVisibility(View.GONE);
-        }
-
         holder.buttonUserCommentSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
