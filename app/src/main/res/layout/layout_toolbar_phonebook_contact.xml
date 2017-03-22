@@ -72,7 +72,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/activity_half_horizontal_margin"
-                    android:src="@drawable/ic_search_svg"
+                    android:src="@drawable/ic_action_search"
                     android:tint="@color/colorWhite"/>
 
             </com.rawalinfocom.rcontact.helper.RippleView>-->

@@ -71,6 +71,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
+import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
@@ -186,6 +187,13 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     RadioGroup radioGroupGender;
     @BindView(R.id.relative_root_edit_profile)
     RelativeLayout relativeRootEditProfile;
+
+    EditText inputCountry;
+    EditText inputState;
+    EditText inputCity;
+    EditText inputStreet;
+    EditText inputNeighborhood;
+    EditText inputPinCode;
 
     RippleView rippleActionBack;
     RippleView rippleActionRightLeft;
@@ -388,6 +396,16 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 Log.e("TAG", "Error while creating temp file", e);
             }
 
+        } else if (requestCode == AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION) {
+            String locationString = data.getStringExtra(AppConstants.EXTRA_OBJECT_LOCATION);
+            ReverseGeocodingAddress objAddress = (ReverseGeocodingAddress) data
+                    .getSerializableExtra(AppConstants.EXTRA_OBJECT_ADDRESS);
+            inputCountry.setText(objAddress.getCountry());
+            inputState.setText(objAddress.getState());
+            inputCity.setText(objAddress.getCity());
+            inputStreet.setText(objAddress.getAddressLine());
+            inputPinCode.setText(objAddress.getPostalCode());
+            Log.i("onActivityResult", locationString);
         }
     }
 
@@ -963,12 +981,12 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
         TextView textImageMapMarker = (TextView) view.findViewById(R.id.text_image_map_marker);
         Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
-        final EditText inputCountry = (EditText) view.findViewById(R.id.input_country);
-        final EditText inputState = (EditText) view.findViewById(R.id.input_state);
-        final EditText inputCity = (EditText) view.findViewById(R.id.input_city);
-        final EditText inputStreet = (EditText) view.findViewById(R.id.input_street);
-        final EditText inputNeighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
-        final EditText inputPinCode = (EditText) view.findViewById(R.id.input_pin_code);
+        inputCountry = (EditText) view.findViewById(R.id.input_country);
+        inputState = (EditText) view.findViewById(R.id.input_state);
+        inputCity = (EditText) view.findViewById(R.id.input_city);
+        inputStreet = (EditText) view.findViewById(R.id.input_street);
+        inputNeighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
+        inputPinCode = (EditText) view.findViewById(R.id.input_pin_code);
         final EditText inputPoBox = (EditText) view.findViewById(R.id.input_po_box);
 
         final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
@@ -991,6 +1009,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         inputNeighborhood.setHint("Neighborhood");
         inputPinCode.setHint("Pincode");
         inputPoBox.setHint("Po. Box No.");
+
+        inputPoBox.setVisibility(View.GONE);
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, R.layout
                 .list_item_spinner, getResources().getStringArray(R.array.types_email_address));
@@ -1026,7 +1046,10 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         textImageMapMarker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityIntent(EditProfileActivity.this, MapsActivity.class, null);
+//                startActivityIntent(EditProfileActivity.this, MapsActivity.class, null);
+                Intent intent = new Intent(EditProfileActivity.this, MapsActivity.class);
+                startActivityForResult(intent, AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
             }
         });
 

@@ -10,6 +10,8 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -32,9 +34,7 @@ public class AsyncGeoCoding extends AsyncTask<String, Void, Object> {
 
     boolean showProgress;
 
-    public AsyncGeoCoding(Context context, boolean showProgress,
-                          String serviceType) {
-
+    public AsyncGeoCoding(Context context, boolean showProgress, String serviceType) {
         this.context = context;
         this.serviceType = serviceType;
         objAddress = new ReverseGeocodingAddress();
@@ -60,7 +60,12 @@ public class AsyncGeoCoding extends AsyncTask<String, Void, Object> {
             String addressText = "";
 
             try {
-                addresses = geocoder.getFromLocationName(params[0], 1);
+                if (params[0] != null) {
+                    addresses = geocoder.getFromLocationName(params[0], 1);
+                } else {
+                    addresses = geocoder.getFromLocation(Double.parseDouble(params[1]), Double
+                            .parseDouble(params[2]), 1);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -105,12 +110,16 @@ public class AsyncGeoCoding extends AsyncTask<String, Void, Object> {
                     }
                 }
 
-                objAddress.setLatitude(Double.toString(address.getLatitude()));
-                objAddress.setLongitude(Double.toString(address.getLongitude()));
-                objAddress.setAddress(addressText);
+                objAddress.setLatitude(StringUtils.defaultString(Double.toString(address
+                        .getLatitude()), "0"));
+                objAddress.setLongitude(StringUtils.defaultString(Double.toString(address
+                        .getLongitude()), "0"));
+                objAddress.setAddress(StringUtils.defaultString(addressText));
+                objAddress.setPostalCode(StringUtils.defaultString(address.getPostalCode()));
+                objAddress.setAddressLine(StringUtils.defaultString(address.getAddressLine(0)));
                 objAddress.setCity(address.getLocality() != null ? address.getLocality() : "");
                 objAddress.setState(address.getAdminArea() != null ? address.getAdminArea() : "");
-                objAddress.setCountry(address.getCountryCode() != null ? address.getCountryCode()
+                objAddress.setCountry(address.getCountryName() != null ? address.getCountryName()
                         : "");
 
             }

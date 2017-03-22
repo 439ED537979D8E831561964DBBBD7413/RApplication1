@@ -5,13 +5,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
+
 /**
  * Created by user on 21/02/17.
  */
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReverseGeocodingAddress {
+public class ReverseGeocodingAddress implements Serializable {
 
     private String latitude;
     private String longitude;
@@ -19,6 +21,8 @@ public class ReverseGeocodingAddress {
     private String city;
     private String state;
     private String address;
+    private String postalCode;
+    private String addressLine;
 
     public String getLatitude() {
         return StringUtils.defaultString(latitude);
@@ -68,4 +72,19 @@ public class ReverseGeocodingAddress {
         this.address = address;
     }
 
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getAddressLine() {
+        return addressLine;
+    }
+
+    public void setAddressLine(String addressLine) {
+        this.addressLine = addressLine;
+    }
 }

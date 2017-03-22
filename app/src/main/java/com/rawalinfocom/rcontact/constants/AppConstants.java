@@ -1,7 +1,5 @@
 package com.rawalinfocom.rcontact.constants;
 
-import android.view.FrameStats;
-
 /**
  * Created by Monal on 10/10/16.
  * <p>
@@ -51,6 +49,7 @@ public class AppConstants {
     //<editor-fold desc="Request Codes">
 
     public static int REQUEST_CODE_COUNTRY_REGISTRATION = 2;
+    public static int REQUEST_CODE_MAP_LOCATION_SELECTION = 3;
 
     //</editor-fold>
 
@@ -79,6 +78,8 @@ public class AppConstants {
     public static boolean EXTRA_CALL_LOG_BROADCAST_VALUE = false;
     public static String EXTRA_CALL_LOG_DELETED_KEY = "message";
     public static boolean EXTRA_CALL_LOG_DELETED_VALUE = true;
+    public static String EXTRA_OBJECT_LOCATION = "extra_object_location";
+    public static String EXTRA_OBJECT_ADDRESS = "extra_object_address";
 
 
     //</editor-fold>
@@ -126,7 +127,7 @@ public class AppConstants {
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
             PREF_CONTACT_ID_SET, PREF_USER_PM_ID, PREF_ACCESS_TOKEN,
-            PREF_FAVOURITE_CONTACT_NUMBER_EMAIL,PREF_PROFILE_VIEWS};
+            PREF_FAVOURITE_CONTACT_NUMBER_EMAIL, PREF_PROFILE_VIEWS};
 
     //</editor-fold>
 
