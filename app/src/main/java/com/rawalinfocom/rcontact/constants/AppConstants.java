@@ -126,7 +126,7 @@ public class AppConstants {
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
             PREF_CONTACT_ID_SET, PREF_USER_PM_ID, PREF_ACCESS_TOKEN,
-            PREF_FAVOURITE_CONTACT_NUMBER_EMAIL,PREF_PROFILE_VIEWS};
+            PREF_FAVOURITE_CONTACT_NUMBER_EMAIL, PREF_PROFILE_VIEWS};
 
     //</editor-fold>
 
@@ -155,4 +155,16 @@ public class AppConstants {
     public static final int OUTGOING = 2;
     public static final int MISSED = 3;
     //</editor-fold>
+
+    //<editor-fold desc="Event constants">
+    public static final int COMMENT_STATUS_SENT = 1;
+    public static final int COMMENT_STATUS_RECEIVED = 2;
+
+    public static final int COMMENT_TYPE_BIRTHDAY = 1;
+    public static final int COMMENT_TYPE_RATING = 2;
+    public static final int COMMENT_TYPE_ANNIVERSARY = 3;
+    public static final int COMMENT_TYPE_REQUESTS = 4;
+    public static final int COMMENT_TYPE_RUPDATES = 5;
+    //</editor-fold>
+
 }
