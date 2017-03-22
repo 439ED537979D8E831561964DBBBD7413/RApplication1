@@ -58,6 +58,7 @@ public class WsConstants {
     public static final String REQ_PROFILE_UPDATE = "profile-update";
 
     public static final String REQ_REVERSE_GEO_CODING_ADDRESS = "req_reverse_geo_coding_address";
+    public static final String REQ_GEO_CODING_ADDRESS = "req_geo_coding_address";
 
     public static final String REQ_UPLOAD_CALL_LOGS = "call-log";
 

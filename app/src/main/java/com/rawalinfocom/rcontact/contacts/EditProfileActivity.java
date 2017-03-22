@@ -961,6 +961,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_address,
                 null);
         TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
+        TextView textImageMapMarker = (TextView) view.findViewById(R.id.text_image_map_marker);
         Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
         final EditText inputCountry = (EditText) view.findViewById(R.id.input_country);
         final EditText inputState = (EditText) view.findViewById(R.id.input_state);
@@ -974,6 +975,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 .relative_row_edit_profile);
 
         textImageCross.setTypeface(Utils.typefaceIcons(this));
+        textImageMapMarker.setTypeface(Utils.typefaceIcons(this));
         inputCountry.setTypeface(Utils.typefaceRegular(this));
         inputState.setTypeface(Utils.typefaceRegular(this));
         inputCity.setTypeface(Utils.typefaceRegular(this));
@@ -1018,6 +1020,13 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     inputPinCode.setText("");
                     inputPoBox.setText("");
                 }
+            }
+        });
+
+        textImageMapMarker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityIntent(EditProfileActivity.this, MapsActivity.class, null);
             }
         });
 
