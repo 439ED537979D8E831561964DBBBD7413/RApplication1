@@ -10,21 +10,27 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.CallLogDialogListAdapter;
+import com.rawalinfocom.rcontact.adapters.Profile3DotDialogAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Created by Aniruddh on 24/12/16.
+ * Created by Aniruddh on 20/03/17.
  */
 
-public class MaterialListDialog {
+public class ProfileMenuOptionDialog {
+
 
     RecyclerView recycleViewDialog;
     private Context context;
@@ -37,7 +43,7 @@ public class MaterialListDialog {
     RecyclerView.Adapter callingAdapter;
     long callLogDateToDelete;
 
-    public MaterialListDialog(Context context, ArrayList<String> arrayList, String number,long date) {
+    public ProfileMenuOptionDialog(Context context, ArrayList<String> arrayList, String number,long date) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -45,14 +51,22 @@ public class MaterialListDialog {
 
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         layoutParams.copyFrom(dialog.getWindow().getAttributes());
-        layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
-        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
+        Pattern numberPat = Pattern.compile("\\d+");
+        Matcher matcher1 = numberPat.matcher(number);
+        if (matcher1.find()) {
+            layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.80);
+        } else {
+            layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.60);
+        }
+
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setGravity(Gravity.TOP | Gravity.RIGHT);
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
         tvDialogTitle = (TextView) dialog.findViewById(R.id.tvDialogTitle);
         tvDialogTitle.setTypeface(Utils.typefaceBold(context));
+        tvDialogTitle.setVisibility(View.GONE);
         recycleViewDialog = (RecyclerView) dialog.findViewById(R.id.recycle_view_dialog);
-
 
         stringArrayList = arrayList;
         numberToCall =  number;
@@ -72,9 +86,9 @@ public class MaterialListDialog {
 
     private void setAdapter() {
         if(!TextUtils.isEmpty(numberToCall)){
-            CallLogDialogListAdapter materialListAdapter = new CallLogDialogListAdapter(context, stringArrayList, numberToCall,
+            Profile3DotDialogAdapter profile3DotDialogAdapter = new Profile3DotDialogAdapter(context, stringArrayList, numberToCall,
                     callLogDateToDelete);
-            recycleViewDialog.setAdapter(materialListAdapter);
+            recycleViewDialog.setAdapter(profile3DotDialogAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
         }
 
@@ -152,7 +166,6 @@ public class MaterialListDialog {
         public void onReceive(Context context, Intent intent) {
             Log.i("CallLogFragment","onReceive() of LocalBroadcast");
             dismissDialog();
-
         }
     };
 }

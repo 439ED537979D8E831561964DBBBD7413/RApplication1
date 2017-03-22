@@ -2,7 +2,10 @@ package com.rawalinfocom.rcontact.contacts;
 
 import android.annotation.TargetApi;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +20,7 @@ import android.os.Handler;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,6 +58,8 @@ import com.rawalinfocom.rcontact.database.TableContactRatingMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.MaterialListDialog;
+import com.rawalinfocom.rcontact.helper.ProfileMenuOptionDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
@@ -81,6 +87,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -372,7 +379,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Override
     protected void onResume() {
         super.onResume();
+        LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST);
+        localBroadcastManager.registerReceiver(localBroadcastReceiver,intentFilter);
         fetchCallLogHistoryDateWise(historyNumber);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(this);
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
     }
 
     @Override
@@ -462,8 +479,60 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             null);
                 }
                 break;
+
+            case R.id.ripple_action_right_right:
+                ProfileMenuOptionDialog profileMenuOptionDialog;
+                if(profileActivityCallInstance){
+                    if(!TextUtils.isEmpty(historyName)){
+                        ArrayList<String> arrayListName =  new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
+                                this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
+                                this.getString(R.string.clear_call_log), this.getString(R.string.call_reminder),
+                                this.getString(R.string.block), this.getString(R.string.delete)));
+                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, historyNumber,historyDate);
+                        profileMenuOptionDialog.showDialog();
+
+                    } else {
+                        if(!TextUtils.isEmpty(historyNumber)){
+                            ArrayList<String> arrayListNumber =  new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
+                                    this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
+                                    this.getString(R.string.clear_call_log), this.getString(R.string.copy_phone_number),
+                                    this.getString(R.string.call_reminder), this.getString(R.string.block),this.getString(R.string.delete)));
+                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, historyNumber,historyDate);
+                            profileMenuOptionDialog.showDialog();
+                        }
+                    }
+                }else{
+                    if(!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")){
+                        ArrayList<String> arrayListName =  new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
+                                this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
+                                this.getString(R.string.clear_call_log), this.getString(R.string.call_reminder),
+                                this.getString(R.string.block), this.getString(R.string.delete)));
+                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, contactName,historyDate);
+                        profileMenuOptionDialog.showDialog();
+
+                    }
+                }
+                break;
         }
     }
+
+
+    private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("Profile Activity ","onReceive() of LocalBroadcast");
+
+            if(AppConstants.EXTRA_CALL_LOG_DELETED_VALUE){
+                Log.i("Profile Activity deleted", AppConstants.EXTRA_CALL_LOG_DELETED_VALUE+"");
+                arrayListHistory.clear();
+                recyclerCallHistory.setVisibility(View.GONE);
+                setHistoryAdapter();
+            }else{
+                Log.i("Profile Activity deleted", AppConstants.EXTRA_CALL_LOG_DELETED_VALUE+"");
+            }
+
+        }
+    };
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
@@ -789,6 +858,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionRightLeft.setOnRippleCompleteListener(this);
         rippleActionRightCenter.setOnRippleCompleteListener(this);
+        rippleActionRightRight.setOnRippleCompleteListener(this);
         rippleCallLog.setOnRippleCompleteListener(this);
 
 
@@ -1774,11 +1844,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //        if (callHistoryListAdapter == null) {
         if (arrayListHistory != null && arrayListHistory.size() > 0) {
             textNoHistoryToShow.setVisibility(View.GONE);
+            recyclerCallHistory.setVisibility(View.VISIBLE);
             callHistoryListAdapter = new CallHistoryListAdapter(arrayListHistory);
             recyclerCallHistory.setAdapter(callHistoryListAdapter);
             recyclerCallHistory.setFocusable(false);
             setRecyclerViewLayoutManager(recyclerCallHistory);
         } else {
+            recyclerCallHistory.setVisibility(View.GONE);
             textNoHistoryToShow.setVisibility(View.VISIBLE);
             textNoHistoryToShow.setText(getResources().getString(R.string.text_no_history));
         }
@@ -1880,9 +1952,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         String accountName = cursor.getString(account);
                         if (!TextUtils.isEmpty(accountName))
                             Log.e("Sim Name", accountName);
-                        String userImage = cursor.getString(profileImage);
-                        if (userImage != null)
-                            Log.e("User Image", userImage);
+//                        String userImage = cursor.getString(profileImage);
+//                        if (userImage != null)
+//                            Log.e("User Image", userImage);
                     }
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
                     CallLogType logObject = new CallLogType();

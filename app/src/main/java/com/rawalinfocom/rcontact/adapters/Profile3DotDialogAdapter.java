@@ -34,12 +34,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by Aniruddh on 24/02/17.
+ * Created by Aniruddh on 20/03/17.
  */
 
-public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialogListAdapter.MaterialViewHolder> {
-
-
+public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDialogAdapter.MaterialViewHolder>  {
     private Context context;
     private ArrayList<String> arrayListString;
     private String dialogTitle;
@@ -49,7 +47,7 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
     Class classToReceive;
     long callLogDateToDelete;
 
-    public CallLogDialogListAdapter(Context context, ArrayList<String> arrayList, String number, long date) {
+    public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number, long date) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
@@ -58,24 +56,20 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
     }
 
     @Override
-    public MaterialViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public Profile3DotDialogAdapter.MaterialViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_dialog_call_log,
                 parent, false);
-        return new MaterialViewHolder(v);
+        return new Profile3DotDialogAdapter.MaterialViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(MaterialViewHolder holder, final int position) {
+    public void onBindViewHolder(Profile3DotDialogAdapter.MaterialViewHolder holder, final int position) {
         final String value = arrayListString.get(position);
         holder.textItemValue.setText(value);
 
         holder.rippleRow.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
             public void onComplete(RippleView rippleView) {
-                if (position == 0) {
-                    if (!TextUtils.isEmpty(numberToCall))
-                        showCallConfirmationDialog(numberToCall);
-                }
 
                 if (value.equalsIgnoreCase(context.getString(R.string.add_to_contact))) {
 
@@ -84,33 +78,7 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                 } else if (value.equalsIgnoreCase(context.getString(R.string.add_to_existing_contact))) {
                     Utils.addToExistingContact(context, numberToCall);
 
-                }/*else if(value.equalsIgnoreCase(context.getString(R.string.show_call_history))){
-                    Pattern numberPat = Pattern.compile("\\d+");
-                    Matcher matcher1 = numberPat.matcher(dialogName);
-                    if (matcher1.find()) {
-                        // number
-                        Intent intent = new Intent(context, ProfileDetailActivity.class);
-                        intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
-                        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, dialogName);
-                        context.startActivity(intent);
-                    } else {
-                        // name
-                        Intent intent = new Intent(context, ProfileDetailActivity.class);
-                        intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
-                        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, dialogName);
-                        context.startActivity(intent);
-                    }
-
-
-                }*/ else if (value.equalsIgnoreCase(context.getString(R.string.send_sms))) {
-                    Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
-                    smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                    smsIntent.setType("vnd.android-dir/mms-sms");
-                    smsIntent.setData(Uri.parse("sms:" + numberToCall));
-                    context.startActivity(smsIntent);
-
-                } else if (value.equalsIgnoreCase(context.getString(R.string.remove_from_call_log))) {
-                    deleteCallLogByNumber(numberToCall);
+                } else if (value.equalsIgnoreCase(context.getString(R.string.view_profile))) {
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.copy_phone_number))) {
                     MaterialDialogClipboard materialDialogClipboard = new MaterialDialogClipboard(context, numberToCall);
@@ -119,6 +87,17 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                 } else if (value.equalsIgnoreCase(context.getString(R.string.block))) {
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.clear_call_log))) {
+                    deleteCallLogByNumber(numberToCall);
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.delete))) {
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.edit))) {
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.view_in_ac))) {
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.view_in_rc))) {
 
                 } else {
 
@@ -144,11 +123,16 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
             Date objDate1 = new Date(callLogDateToDelete);
             String dateToDelete = new SimpleDateFormat("dd/MM/yyyy").format(objDate1);
 
-            Calendar cal = Calendar.getInstance();
+            /*Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DATE, 1);
             Date TomoDate;
             TomoDate = cal.getTime();
-            String tomorrowDate = new SimpleDateFormat("dd/MM/yyyy").format(TomoDate);
+            String tomorrowDate = new SimpleDateFormat("dd/MM/yyyy").format(TomoDate);*/
+
+            Date date1=new Date(callLogDateToDelete + (1000 * 60 * 60 * 24));
+            SimpleDateFormat sdf1=new SimpleDateFormat("dd/MM/yyyy");
+            String tomorrowDate = sdf1.format(date1);
+
 
             long callLogDate = callLogHistory(number);
             Date date = new Date(callLogDate);
@@ -289,6 +273,4 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
 
         return callDateToDelete;
     }
-
-
 }

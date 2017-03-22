@@ -330,7 +330,9 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    AppConstants.isFromReceiver = false;
+
+                selectedPosition =  position;
+                AppConstants.isFromReceiver = false;
                     Intent intent = new Intent(context, ProfileDetailActivity.class);
                     intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, number);
