@@ -93,6 +93,7 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST = "action_local_broadcast";
     public static String ACTION_LOCAL_BROADCAST_DIALOG = "action_local_broadcast_dialog";
     public static String ACTION_LOCAL_BROADCAST_TABCHANGE = "action_local_broadcast_tab_change";
+    public static String ACTION_LOCAL_BROADCAST_PROFILE = "action_local_broadcast_profile";
 
 
     //</editor-fold>

@@ -88,7 +88,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.mActivity = activity;
         this.arrayListCallLogs = arrayListCallLogs;
         this.arrayListCallLogHeader = arrayListCallLogHeader;
-        this.context =  activity;
+        this.context = activity;
     }
 
 
@@ -207,7 +207,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 holder.textContactNumber.setText("Unsaved,");
             } else {
                 String formattedNumber = Utils.getFormattedNumber(context, number);
-                holder.textContactNumber.setText(formattedNumber+",");
+                holder.textContactNumber.setText(formattedNumber + ",");
             }
 
         } else {
@@ -289,7 +289,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             @Override
             public void onClick(View v) {
 
-                selectedPosition =  position;
+                selectedPosition = position;
 
                 if (!TextUtils.isEmpty(name)) {
                     Pattern numberPat = Pattern.compile("\\d+");
@@ -305,7 +305,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 context.getString(R.string.call_reminder), context.getString(R.string.block)));
                     }
 
-                    materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number,date);
+                    materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date);
                     materialListDialog.setDialogTitle(name);
                     materialListDialog.showDialog();
 
@@ -316,7 +316,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 context.getString(R.string.add_to_existing_contact)
                                 , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
                                 context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.block)));
-                        materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number,date);
+                        materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number, date);
                         materialListDialog.setDialogTitle(number);
                         materialListDialog.setCallingAdapter(CallLogListAdapter.this);
                         materialListDialog.showDialog();
@@ -331,14 +331,15 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             @Override
             public void onClick(View v) {
 
-                selectedPosition =  position;
+                selectedPosition = position;
                 AppConstants.isFromReceiver = false;
-                    Intent intent = new Intent(context, ProfileDetailActivity.class);
-                    intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
-                    intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, number);
-                    intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
-                    intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
-                    context.startActivity(intent);
+                Intent intent = new Intent(context, ProfileDetailActivity.class);
+                intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, number);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
+                context.startActivity(intent);
+                ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
             }
         });
 
@@ -434,7 +435,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 //</editor-fold>
 
-    class MyActionModeCallback implements ActionMode.Callback{
+    class MyActionModeCallback implements ActionMode.Callback {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -446,7 +447,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            mode.setTitle( nr + " Selected");
+            mode.setTitle(nr + " Selected");
             return false;
         }
 
@@ -456,7 +457,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             switch (item.getItemId()) {
                 case R.id.delete:
                     Toast.makeText(mActivity, "Delete clicked", Toast.LENGTH_SHORT).show();
-                    nr =0;
+                    nr = 0;
                     clearSelection();
                     mode.finish();
                     return true;
@@ -478,7 +479,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    class temp implements AbsListView.MultiChoiceModeListener{
+    class temp implements AbsListView.MultiChoiceModeListener {
 
         @Override
         public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
@@ -511,7 +512,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             switch (item.getItemId()) {
                 case R.id.delete:
                     Toast.makeText(mActivity, "Delete clicked", Toast.LENGTH_SHORT).show();
-                    nr =0;
+                    nr = 0;
                     clearSelection();
                     mode.finish();
                     return true;

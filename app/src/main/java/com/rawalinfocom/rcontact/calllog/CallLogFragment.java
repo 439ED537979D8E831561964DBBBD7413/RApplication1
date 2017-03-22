@@ -44,6 +44,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.MainActivity;
@@ -272,8 +273,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         super.onPause();
         isFirstTime = false;
         AppConstants.isFromReceiver = false;
-        LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(getActivity());
-        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
 
         LocalBroadcastManager localBroadcastManagerTabChange =  LocalBroadcastManager.getInstance(getActivity());
         localBroadcastManagerTabChange.unregisterReceiver(localBroadcastReceiverTabChange);
@@ -326,8 +325,10 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
     @Override
     public void onDestroy() {
-//        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
         super.onDestroy();
+        LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(getActivity());
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
+
 
     }
     //</editor-fold>
@@ -1313,16 +1314,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         public void onReceive(Context context, Intent intent) {
             Log.i("CallLogFragment","onReceive() of LocalBroadcast");
 
-            if(AppConstants.EXTRA_CALL_LOG_DELETED_VALUE){
-                Log.i("CallLogFragment deleted", AppConstants.EXTRA_CALL_LOG_DELETED_VALUE+"");
                 if(callLogListAdapter!=null){
                     int itemIndexToRemove =  callLogListAdapter.getSelectedPosition();
                     arrayListObjectCallLogs.remove(itemIndexToRemove);
                     callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
                 }
-            }else{
-                Log.i("CallLogFragment deleted", AppConstants.EXTRA_CALL_LOG_DELETED_VALUE+"");
-            }
 
         }
     };
@@ -1342,6 +1338,26 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         }
     };
 
+    /*public class CallLogReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            try{
+
+                Toast.makeText(context, "Action: " + intent.getAction(), Toast.LENGTH_SHORT).show();
+                if(callLogListAdapter!=null) {
+                    int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
+                    Log.i("Index to remove", itemIndexToRemove+"");
+
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+    }*/
 
 
 

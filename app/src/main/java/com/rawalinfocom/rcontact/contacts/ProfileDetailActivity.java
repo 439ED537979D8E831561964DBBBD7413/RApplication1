@@ -380,7 +380,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     protected void onResume() {
         super.onResume();
         LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(this);
-        IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST);
+        IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
         localBroadcastManager.registerReceiver(localBroadcastReceiver,intentFilter);
         fetchCallLogHistoryDateWise(historyNumber);
     }
@@ -522,14 +522,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         public void onReceive(Context context, Intent intent) {
             Log.i("Profile Activity ","onReceive() of LocalBroadcast");
 
-            if(AppConstants.EXTRA_CALL_LOG_DELETED_VALUE){
-                Log.i("Profile Activity deleted", AppConstants.EXTRA_CALL_LOG_DELETED_VALUE+"");
                 arrayListHistory.clear();
                 recyclerCallHistory.setVisibility(View.GONE);
                 setHistoryAdapter();
-            }else{
-                Log.i("Profile Activity deleted", AppConstants.EXTRA_CALL_LOG_DELETED_VALUE+"");
-            }
 
         }
     };

@@ -97,6 +97,12 @@
             </intent-filter>
         </receiver>
 
+       <!-- <receiver android:name=".calllog.CallLogFragment$CallLogReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.CallLogBroadcastReceiver" />
+            </intent-filter>
+        </receiver>-->
+
         <service
             android:name=".services.ContactSyncService"
             android:enabled="true"

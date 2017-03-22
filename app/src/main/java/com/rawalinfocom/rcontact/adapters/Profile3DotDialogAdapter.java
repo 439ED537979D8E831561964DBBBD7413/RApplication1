@@ -163,11 +163,15 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 Log.i("Delete Query value", value + "");
                 Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
 
-                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
+                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
                 localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
                         AppConstants.EXTRA_CALL_LOG_DELETED_VALUE);
                 LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+                Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
+                LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 
             }else{
 
