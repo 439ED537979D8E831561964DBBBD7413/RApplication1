@@ -29,6 +29,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,12 +48,14 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     String dialogName;
     Class classToReceive;
     long callLogDateToDelete;
+    boolean isFromCallLogFragment = false;
 
-    public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number, long date) {
+    public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number, long date, boolean isFromCallLogs) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
         this.callLogDateToDelete = date;
+        this.isFromCallLogFragment =  isFromCallLogs;
 //        this.dialogName = dialogTitle;
     }
 
@@ -89,7 +93,22 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 } else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.clear_call_log))) {
-                    deleteCallLogByNumber(numberToCall);
+
+                    if(isFromCallLogFragment){
+
+                        deleteCallLogByNumber(numberToCall);
+
+                    }else{
+
+                        Pattern numberPat = Pattern.compile("\\d+");
+                        Matcher matcher1 = numberPat.matcher(numberToCall);
+                        if (matcher1.find()) {
+                            deleteCallHistoryByNumber(numberToCall);
+                        } else {
+                            deleteCallHistoryByName(numberToCall);
+                        }
+
+                    }
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.delete))) {
 
@@ -181,6 +200,59 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
             e.printStackTrace();
         }
 
+    }
+
+    private void deleteCallHistoryByName(String name){
+        try{
+            String  where =   CallLog.Calls.CACHED_NAME + " =?";
+            String[] selectionArguments = new String[]{name};
+            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI,where, selectionArguments);
+            if(value > 0){
+                Log.i("Delete Query value", value + "");
+                Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
+
+                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
+                localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
+                        AppConstants.EXTRA_CALL_LOG_DELETED_VALUE);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+                Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
+                LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
+
+            }
+
+        }catch (SecurityException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private void deleteCallHistoryByNumber(String number){
+        try{
+            String  where =   CallLog.Calls.NUMBER + " =?";
+            String[] selectionArguments = new String[]{number};
+            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI,where, selectionArguments);
+            if(value > 0){
+                Log.i("Delete Query value", value + "");
+                Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
+
+                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
+                localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
+                        AppConstants.EXTRA_CALL_LOG_DELETED_VALUE);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+                Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
+                LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
+
+            }
+
+        }catch (SecurityException e){
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -42,6 +42,7 @@ public class ProfileMenuOptionDialog {
     String numberToCall;
     RecyclerView.Adapter callingAdapter;
     long callLogDateToDelete;
+    boolean isFromCallLogFragment = false;
 
     public ProfileMenuOptionDialog(Context context, ArrayList<String> arrayList, String number,long date) {
         this.context = context;
@@ -75,6 +76,7 @@ public class ProfileMenuOptionDialog {
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
 
+        isFromCallLogFragment =  isFromCallLogFragment();
         setAdapter();
 
         LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(context);
@@ -87,7 +89,7 @@ public class ProfileMenuOptionDialog {
     private void setAdapter() {
         if(!TextUtils.isEmpty(numberToCall)){
             Profile3DotDialogAdapter profile3DotDialogAdapter = new Profile3DotDialogAdapter(context, stringArrayList, numberToCall,
-                    callLogDateToDelete);
+                    callLogDateToDelete,isFromCallLogFragment);
             recycleViewDialog.setAdapter(profile3DotDialogAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
         }
@@ -159,6 +161,14 @@ public class ProfileMenuOptionDialog {
 
     public void setCallingAdapter(RecyclerView.Adapter callingAdapter) {
         this.callingAdapter = callingAdapter;
+    }
+
+    public boolean isFromCallLogFragment() {
+        return isFromCallLogFragment;
+    }
+
+    public void setFromCallLogFragment(boolean fromCallLogFragment) {
+        isFromCallLogFragment = fromCallLogFragment;
     }
 
     private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {

@@ -489,6 +489,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 this.getString(R.string.clear_call_log), this.getString(R.string.call_reminder),
                                 this.getString(R.string.block), this.getString(R.string.delete)));
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, historyNumber,historyDate);
+                        profileMenuOptionDialog.setFromCallLogFragment(true);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -497,7 +498,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
                                     this.getString(R.string.clear_call_log), this.getString(R.string.copy_phone_number),
                                     this.getString(R.string.call_reminder), this.getString(R.string.block),this.getString(R.string.delete)));
-                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, historyNumber,historyDate);
+                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, historyNumber,
+                                    historyDate);
+                            profileMenuOptionDialog.setFromCallLogFragment(true);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -508,7 +511,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 this.getString(R.string.clear_call_log), this.getString(R.string.call_reminder),
                                 this.getString(R.string.block), this.getString(R.string.delete)));
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, contactName,historyDate);
+                        profileMenuOptionDialog.setFromCallLogFragment(false);
                         profileMenuOptionDialog.showDialog();
+
+                    }else{
+                        if(!TextUtils.isEmpty(profileContactNumber)){
+                            ArrayList<String> arrayListNumber =  new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
+                                    this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
+                                    this.getString(R.string.clear_call_log), this.getString(R.string.copy_phone_number),
+                                    this.getString(R.string.call_reminder), this.getString(R.string.block),this.getString(R.string.delete)));
+                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, profileContactNumber
+                                    ,historyDate);
+                            profileMenuOptionDialog.setFromCallLogFragment(false);
+                            profileMenuOptionDialog.showDialog();
+                        }
 
                     }
                 }
