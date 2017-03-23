@@ -379,16 +379,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(this);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
-        localBroadcastManager.registerReceiver(localBroadcastReceiver,intentFilter);
+        localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
         fetchCallLogHistoryDateWise(historyNumber);
+        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+            fetchAllCallLogHistory(contactName);
+        } else {
+            if (!TextUtils.isEmpty(profileContactNumber)) {
+                fetchAllCallLogHistory(profileContactNumber);
+            }
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(this);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
     }
 
@@ -482,47 +489,51 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             case R.id.ripple_action_right_right:
                 ProfileMenuOptionDialog profileMenuOptionDialog;
-                if(profileActivityCallInstance){
-                    if(!TextUtils.isEmpty(historyName)){
-                        ArrayList<String> arrayListName =  new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
+                boolean isFromCallLogTab = false;
+                if (profileActivityCallInstance) {
+                    isFromCallLogTab = true;
+                    if (!TextUtils.isEmpty(historyName)) {
+                        ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
                                 this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
-                                this.getString(R.string.clear_call_log), this.getString(R.string.call_reminder),
-                                this.getString(R.string.block), this.getString(R.string.delete)));
-                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, historyNumber,historyDate);
-                        profileMenuOptionDialog.setFromCallLogFragment(true);
+                                this.getString(R.string.call_reminder),
+                                this.getString(R.string.block), this.getString(R.string.delete),
+                                this.getString(R.string.clear_call_log)));
+                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, historyNumber,
+                                historyDate, isFromCallLogTab, arrayListHistory);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
-                        if(!TextUtils.isEmpty(historyNumber)){
-                            ArrayList<String> arrayListNumber =  new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
+                        if (!TextUtils.isEmpty(historyNumber)) {
+                            ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
                                     this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
-                                    this.getString(R.string.clear_call_log), this.getString(R.string.copy_phone_number),
-                                    this.getString(R.string.call_reminder), this.getString(R.string.block),this.getString(R.string.delete)));
+                                    this.getString(R.string.copy_phone_number),
+                                    this.getString(R.string.call_reminder), this.getString(R.string.block),
+                                    this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, historyNumber,
-                                    historyDate);
-                            profileMenuOptionDialog.setFromCallLogFragment(true);
+                                    historyDate, isFromCallLogTab, arrayListHistory);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
-                }else{
-                    if(!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")){
-                        ArrayList<String> arrayListName =  new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
+                } else {
+                    isFromCallLogTab = false;
+                    if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+                        ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
                                 this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
-                                this.getString(R.string.clear_call_log), this.getString(R.string.call_reminder),
-                                this.getString(R.string.block), this.getString(R.string.delete)));
-                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, contactName,historyDate);
-                        profileMenuOptionDialog.setFromCallLogFragment(false);
+                                this.getString(R.string.call_reminder),
+                                this.getString(R.string.block), this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
+                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, contactName,
+                                historyDate, isFromCallLogTab, arrayListHistory);
                         profileMenuOptionDialog.showDialog();
 
-                    }else{
-                        if(!TextUtils.isEmpty(profileContactNumber)){
-                            ArrayList<String> arrayListNumber =  new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
+                    } else {
+                        if (!TextUtils.isEmpty(profileContactNumber)) {
+                            ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
                                     this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
-                                    this.getString(R.string.clear_call_log), this.getString(R.string.copy_phone_number),
-                                    this.getString(R.string.call_reminder), this.getString(R.string.block),this.getString(R.string.delete)));
+                                    this.getString(R.string.copy_phone_number),
+                                    this.getString(R.string.call_reminder), this.getString(R.string.block), this.getString(R.string.delete),
+                                    this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, profileContactNumber
-                                    ,historyDate);
-                            profileMenuOptionDialog.setFromCallLogFragment(false);
+                                    , historyDate, isFromCallLogTab, arrayListHistory);
                             profileMenuOptionDialog.showDialog();
                         }
 
@@ -536,11 +547,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("Profile Activity ","onReceive() of LocalBroadcast");
+            Log.i("Profile Activity ", "onReceive() of LocalBroadcast");
 
-                arrayListHistory.clear();
-                recyclerCallHistory.setVisibility(View.GONE);
-                setHistoryAdapter();
+            arrayListHistory.clear();
+            recyclerCallHistory.setVisibility(View.GONE);
+            setHistoryAdapter();
 
         }
     };
@@ -1868,6 +1879,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //        } else {
 //            callHistoryListAdapter.notifyDataSetChanged();
 //        }
+
 
     }
 

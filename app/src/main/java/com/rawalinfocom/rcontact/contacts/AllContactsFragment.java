@@ -222,99 +222,107 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
-        if (error == null && getActivity() != null) {
 
-            //<editor-fold desc="REQ_UPLOAD_CONTACTS">
 
-            if (serviceType.contains(WsConstants.REQ_UPLOAD_CONTACTS)) {
-                WsResponseObject uploadContactResponse = (WsResponseObject) data;
-                progressAllContact.setVisibility(View.GONE);
-                if (uploadContactResponse != null && StringUtils.equalsIgnoreCase
-                        (uploadContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+        try{
+            if (error == null && getActivity() != null) {
+                //<editor-fold desc="REQ_UPLOAD_CONTACTS">
+
+                if (serviceType.contains(WsConstants.REQ_UPLOAD_CONTACTS)) {
+                    WsResponseObject uploadContactResponse = (WsResponseObject) data;
+                    progressAllContact.setVisibility(View.GONE);
+                    if (uploadContactResponse != null && StringUtils.equalsIgnoreCase
+                            (uploadContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     /* Save synced data details in Preference */
-                    String previouslySyncedData = (StringUtils.split(serviceType, "_"))[1];
-                    int nextNumber = Integer.parseInt(StringUtils.defaultString
-                            (previouslySyncedData, "0")) + CONTACT_CHUNK;
-                    Utils.setIntegerPreference(getActivity(), AppConstants.PREF_SYNCED_CONTACTS,
-                            nextNumber);
+                        String previouslySyncedData = (StringUtils.split(serviceType, "_"))[1];
+                        int nextNumber = Integer.parseInt(StringUtils.defaultString
+                                (previouslySyncedData, "0")) + CONTACT_CHUNK;
+                        Utils.setIntegerPreference(getActivity(), AppConstants.PREF_SYNCED_CONTACTS,
+                                nextNumber);
 
-                    if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
-                            .getArrayListUserRcProfile())) {
+                        if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+                                .getArrayListUserRcProfile())) {
 
                         /* Store Unique Contacts to ProfileMobileMapping */
-                        storeToMobileMapping(uploadContactResponse.getArrayListUserRcProfile());
+                            storeToMobileMapping(uploadContactResponse.getArrayListUserRcProfile());
 
                         /* Store Unique Emails to ProfileEmailMapping */
-                        storeToEmailMapping(uploadContactResponse.getArrayListUserRcProfile());
+                            storeToEmailMapping(uploadContactResponse.getArrayListUserRcProfile());
 
                         /* Store Profile Details to respective Table */
-                        storeProfileDataToDb(uploadContactResponse.getArrayListUserRcProfile(),
-                                uploadContactResponse.getArrayListMapping());
+                            storeProfileDataToDb(uploadContactResponse.getArrayListUserRcProfile(),
+                                    uploadContactResponse.getArrayListMapping());
 
-                    } else {
-
-                        /* Store Unique Contacts to ProfileMobileMapping */
-                        storeToMobileMapping(null);
+                        } else {
 
                         /* Store Unique Contacts to ProfileMobileMapping */
-                        storeToEmailMapping(null);
+                            storeToMobileMapping(null);
 
-                    }
+                        /* Store Unique Contacts to ProfileMobileMapping */
+                            storeToEmailMapping(null);
+
+                        }
 
                  /* Call uploadContact api if there is more data to sync */
-                    if (nextNumber < arrayListContactId.size()) {
-                        phoneBookOperations();
-                        textTotalContacts.setText(previouslySyncedData + " Contacts");
-                    } else {
-                        textTotalContacts.setText(arrayListContactId.size() + " Contacts");
-                        Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts, "All " +
-                                "Contact Synced");
+                        if (nextNumber < arrayListContactId.size()) {
+                            phoneBookOperations();
+                            textTotalContacts.setText(previouslySyncedData + " Contacts");
+                        } else {
+                            textTotalContacts.setText(arrayListContactId.size() + " Contacts");
+                            Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts, "All " +
+                                    "Contact Synced");
 //                        sendBroadCastToStartCallLogInsertion();
-                        Utils.setBooleanPreference(getActivity(), AppConstants
-                                .PREF_SYNC_CALL_LOG, true);
-                    }
+                            Utils.setBooleanPreference(getActivity(), AppConstants
+                                    .PREF_SYNC_CALL_LOG, true);
+                        }
 
                     /* Populate recycler view */
-                    populateRecyclerView();
+                        populateRecyclerView();
 
-                } else {
-                    if (uploadContactResponse != null) {
-                        Log.e("error response", uploadContactResponse.getMessage());
                     } else {
-                        Log.e("onDeliveryResponse: ", "uploadContactResponse null");
-                        Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getString(R
-                                .string.msg_try_later));
+                        if (uploadContactResponse != null) {
+                            Log.e("error response", uploadContactResponse.getMessage());
+                        } else {
+                            Log.e("onDeliveryResponse: ", "uploadContactResponse null");
+                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getString(R
+                                    .string.msg_try_later));
+                        }
                     }
                 }
-            }
-            //</editor-fold>
+                //</editor-fold>
 
-            // <editor-fold desc="REQ_SEND_INVITATION">
+                // <editor-fold desc="REQ_SEND_INVITATION">
 
-            else if (serviceType.contains(WsConstants.REQ_SEND_INVITATION)) {
-                WsResponseObject inviteContactResponse = (WsResponseObject) data;
-                if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
-                        (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                    Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts, "Invitation" +
-                            " sent successfully");
-                } else {
-                    if (inviteContactResponse != null) {
-                        Log.e("error response", inviteContactResponse.getMessage());
+                else if (serviceType.contains(WsConstants.REQ_SEND_INVITATION)) {
+                    WsResponseObject inviteContactResponse = (WsResponseObject) data;
+                    if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
+                            (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                        Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts, "Invitation" +
+                                " sent successfully");
                     } else {
-                        Log.e("onDeliveryResponse: ", "uploadContactResponse null");
-                        Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getString(R
-                                .string.msg_try_later));
+                        if (inviteContactResponse != null) {
+                            Log.e("error response", inviteContactResponse.getMessage());
+                        } else {
+                            Log.e("onDeliveryResponse: ", "uploadContactResponse null");
+                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getString(R
+                                    .string.msg_try_later));
+                        }
                     }
                 }
-            }
-            //</editor-fold>
+                //</editor-fold>
 
-        } else {
-            progressAllContact.setVisibility(View.GONE);
-            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, "" + (error != null ?
-                    error.getLocalizedMessage() : null));
+            } else {
+                progressAllContact.setVisibility(View.GONE);
+                Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, "" + (error != null ?
+                        error.getLocalizedMessage() : null));
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
+
     }
 
     /*private void sendBroadCastToStartCallLogInsertion(){

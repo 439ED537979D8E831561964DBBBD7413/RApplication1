@@ -333,9 +333,10 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                 selectedPosition = position;
                 AppConstants.isFromReceiver = false;
+                String formatedNumber = Utils.getFormattedNumber(context, number);
                 Intent intent = new Intent(context, ProfileDetailActivity.class);
                 intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, number);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, formatedNumber);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
                 context.startActivity(intent);

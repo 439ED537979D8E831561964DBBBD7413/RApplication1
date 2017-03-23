@@ -20,6 +20,7 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.CallLogDialogListAdapter;
 import com.rawalinfocom.rcontact.adapters.Profile3DotDialogAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.model.CallLogType;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -43,8 +44,10 @@ public class ProfileMenuOptionDialog {
     RecyclerView.Adapter callingAdapter;
     long callLogDateToDelete;
     boolean isFromCallLogFragment = false;
+    ArrayList<CallLogType> arrayListCallLogType;
 
-    public ProfileMenuOptionDialog(Context context, ArrayList<String> arrayList, String number,long date) {
+    public ProfileMenuOptionDialog(Context context, ArrayList<String> arrayList, String number, long date,
+                                   boolean isFromCallTab , ArrayList<CallLogType> list) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -76,7 +79,8 @@ public class ProfileMenuOptionDialog {
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
 
-        isFromCallLogFragment =  isFromCallLogFragment();
+        isFromCallLogFragment =  isFromCallTab;
+        arrayListCallLogType =  list;
         setAdapter();
 
         LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(context);
@@ -89,7 +93,7 @@ public class ProfileMenuOptionDialog {
     private void setAdapter() {
         if(!TextUtils.isEmpty(numberToCall)){
             Profile3DotDialogAdapter profile3DotDialogAdapter = new Profile3DotDialogAdapter(context, stringArrayList, numberToCall,
-                    callLogDateToDelete,isFromCallLogFragment);
+                    callLogDateToDelete,isFromCallLogFragment,arrayListCallLogType);
             recycleViewDialog.setAdapter(profile3DotDialogAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
         }
@@ -161,14 +165,6 @@ public class ProfileMenuOptionDialog {
 
     public void setCallingAdapter(RecyclerView.Adapter callingAdapter) {
         this.callingAdapter = callingAdapter;
-    }
-
-    public boolean isFromCallLogFragment() {
-        return isFromCallLogFragment;
-    }
-
-    public void setFromCallLogFragment(boolean fromCallLogFragment) {
-        isFromCallLogFragment = fromCallLogFragment;
     }
 
     private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {

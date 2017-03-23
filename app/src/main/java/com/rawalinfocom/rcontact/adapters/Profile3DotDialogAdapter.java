@@ -1,11 +1,13 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.CallLog;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,11 +21,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.calllog.CallLogDeleteActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialogClipboard;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.CallLogType;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,13 +53,16 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     Class classToReceive;
     long callLogDateToDelete;
     boolean isFromCallLogFragment = false;
+    ArrayList<CallLogType> arrayListCallLogType;
 
-    public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number, long date, boolean isFromCallLogs) {
+    public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number, long date,
+                                    boolean isFromCallLogs, ArrayList<CallLogType> list) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
         this.callLogDateToDelete = date;
         this.isFromCallLogFragment =  isFromCallLogs;
+        this.arrayListCallLogType =  list;
 //        this.dialogName = dialogTitle;
     }
 
@@ -111,6 +118,13 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     }
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.delete))) {
+
+                    Intent intent = new Intent(context, CallLogDeleteActivity.class);
+                    Bundle b =  new Bundle();
+                    b.putSerializable(AppConstants.EXTRA_CALL_ARRAY_LIST,arrayListCallLogType);
+                    intent.putExtras(b);
+                    context.startActivity(intent);
+                    ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.edit))) {
 

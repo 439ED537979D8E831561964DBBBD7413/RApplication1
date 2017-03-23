@@ -281,46 +281,51 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
+        try{
+            if (error == null) {
+                if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)) {
+                    WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
+                    if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase(callLogInsertionResponse
+                            .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-        if (error == null) {
-            if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)) {
-                WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
-                if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase(callLogInsertionResponse
-                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                            ArrayList<CallLogType> temp = divideCallLogByChunck(newList);
+                            if (temp.size() >= LIST_PARTITION_COUNT) {
+                                if (temp != null && temp.size() > 0)
+                                    insertServiceCall(newList);
+                            } else {
+                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " + "Call Logs Synced");
+                            }
 
-                    if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, false)) {
-                        ArrayList<CallLogType> temp = divideCallLogByChunck(newList);
-                        if (temp.size() >= LIST_PARTITION_COUNT) {
-                            if (temp != null && temp.size() > 0)
-                                insertServiceCall(newList);
                         } else {
-                            Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " + "Call Logs Synced");
+                            ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
+                            if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0)
+                                insertServiceCall(callLogTypeArrayList);
+                            else {
+                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " + "Call Logs Synced");
+                                Utils.setBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, true);
+                            }
                         }
-
                     } else {
-                        ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
-                        if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0)
-                            insertServiceCall(callLogTypeArrayList);
-                        else {
-                            Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " + "Call Logs Synced");
-                            Utils.setBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, true);
+                        if (callLogInsertionResponse != null) {
+                            Log.e("error response", callLogInsertionResponse.getMessage());
+                        } else {
+                            Log.e("onDeliveryResponse: ", "userProfileResponse null");
+                            Utils.showErrorSnackBar(getActivity(), linearMainContent, getString(R
+                                    .string.msg_try_later));
                         }
                     }
+
                 } else {
-                    if (callLogInsertionResponse != null) {
-                        Log.e("error response", callLogInsertionResponse.getMessage());
-                    } else {
-                        Log.e("onDeliveryResponse: ", "userProfileResponse null");
-                        Utils.showErrorSnackBar(getActivity(), linearMainContent, getString(R
-                                .string.msg_try_later));
-                    }
+                    Utils.showErrorSnackBar(getActivity(), linearMainContent, "" + error
+                            .getLocalizedMessage());
                 }
-
-            } else {
-                Utils.showErrorSnackBar(getActivity(), linearMainContent, "" + error
-                        .getLocalizedMessage());
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
+
     }
 
     @Override
@@ -1043,8 +1048,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
     }
 
 
-    private void showCallConfirmationDialog(final String number) {
-
+    private void showCallConfirmationDialog(String number) {
+        final String formattedNumber = Utils.getFormattedNumber(getActivity(), number);
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
 
@@ -1058,7 +1063,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
                         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                number));
+                                formattedNumber));
                         startActivity(intent);
                         break;
                 }
@@ -1069,7 +1074,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText("Cancel");
         callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
+        callConfirmationDialog.setDialogBody("Call " + formattedNumber + "?");
         callConfirmationDialog.showDialog();
 
     }

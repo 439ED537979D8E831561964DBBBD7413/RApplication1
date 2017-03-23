@@ -83,6 +83,7 @@ public class AppConstants {
     public static boolean EXTRA_CALL_LOG_DELETED_VALUE = true;
     public static String EXTRA_CALL_LOG_SWITCH_TAB = "message";
     public static boolean EXTRA_CALL_LOG_SWITCH_TAB_VALUE = true;
+    public static String EXTRA_CALL_ARRAY_LIST = "extra_call_array_list";
 
     //</editor-fold>
 
