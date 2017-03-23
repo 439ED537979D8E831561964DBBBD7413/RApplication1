@@ -833,7 +833,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 event.setEvmStartDate(arrayListEvent.get(j).getEventDate());
                 event.setEvmEventType(arrayListEvent.get(j).getEventType());
                 event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
-                event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+//                event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+                event.setRcProfileMasterPmId(userProfileRegistered.getPmId());
                 eventList.add(event);
             }
 

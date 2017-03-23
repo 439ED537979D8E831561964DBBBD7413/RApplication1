@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Monal on 20/10/16.
@@ -17,6 +18,17 @@ import java.util.ArrayList;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WsResponseObject {
+
+    @JsonProperty("event_data")
+    private ArrayList<EventCommentData> eventData;
+
+    public ArrayList<EventCommentData> getEventCommentData() {
+        return eventData;
+    }
+
+    public void setEventCommentData(ArrayList<EventCommentData> eventData) {
+        this.eventData = eventData;
+    }
 
     private String status;
     private String message;

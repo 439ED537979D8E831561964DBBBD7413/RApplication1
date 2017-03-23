@@ -145,4 +145,10 @@ public class TableCommentMaster {
         db.close();
         return arrayListCommentReceived;
     }
+
+    public void deleteAllReceivedComments() {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        //delete from rc_comment_master where crm_status=2;
+        db.execSQL("delete from " + TABLE_RC_COMMENT_MASTER + " WHERE crm_status=2");
+    }
 }

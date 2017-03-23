@@ -172,10 +172,17 @@ public class EventsActivity extends BaseActivity implements RippleView
         String yesterDay = getEventDate(-1);
         String tomorrow = getEventDate(1);
         String day7th = getEventDate(7);
+        String currentUserPmId = Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0");
+        int currentPmID = Integer.parseInt(currentUserPmId);
+        Log.i("MAULIK", "currentPM" + currentPmID);
 
-        ArrayList<Event> eventsToday = tableEventMaster.getAllEventsBetWeen(today, today);
-        ArrayList<Event> eventsRecent = tableEventMaster.getAllEventsBetWeen(yesterDay, yesterDay);
-        ArrayList<Event> eventsUpcoming7 = tableEventMaster.getAllEventsBetWeen(tomorrow, day7th);
+        ArrayList<Event> eventsToday = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(today, today, currentPmID);
+        ArrayList<Event> eventsRecent = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(yesterDay, yesterDay, currentPmID);
+        ArrayList<Event> eventsUpcoming7 = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(tomorrow, day7th, currentPmID);
+
+        Log.i("MAULIK", "eventsToday" + eventsToday.size());
+        Log.i("MAULIK", "eventsRecent" + eventsRecent.size());
+        Log.i("MAULIK", "eventsUpcoming7" + eventsUpcoming7.size());
 
         listTodayEvent = createEventList(eventsToday, 0);
         listRecentEvent = createEventList(eventsRecent, 1);
@@ -247,41 +254,46 @@ public class EventsActivity extends BaseActivity implements RippleView
             String eventName = e.getEvmEventType();
             int eventType = -1;
             TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-            int pmId = Integer
-                    .parseInt(e.getRcProfileMasterPmId());
-            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
+            if (e.getRcProfileMasterPmId() != null && e.getRcProfileMasterPmId().length() > 0) {
+                int pmId = Integer
+                        .parseInt(e.getRcProfileMasterPmId());
 
-            eventType = getEventType(eventName);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            try {
-                date = sdf.parse(e.getEvmStartDate());
-                eventYear = date.getYear();
-            } catch (ParseException e1) {
-                eventYear = 0;
-                e1.printStackTrace();
-            }
+                Log.i("MAULIK", "e.getRcProfileMasterPmId(" + pmId);
+                UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
 
-            item.setPersonName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
-            item.setPersonFirstName(userProfile.getPmFirstName());
-            item.setPersonLastName(userProfile.getPmLastName());
-            item.setEventName(eventName);
-            item.setEventType(getEventType(eventName));
-            item.setEventDetail(setEventDetailText(currentYear - eventYear, eventType));
-            item.setEventDate(e.getEvmStartDate());
-            item.setEventRecordIndexId(e.getEvmRecordIndexId());
-            item.setPersonRcpPmId(pmId);
-            Comment comment = tableCommentMaster.getComment(e.getEvmRecordIndexId());
-            if (comment != null) {
-                item.setUserComment(comment.getCrmComment());
-                item.setCommentTime(comment.getCrmUpdatedAt());
-                item.setEventCommentPending(false);
-                if (listPosition != 1) {
+                eventType = getEventType(eventName);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                try {
+                    date = sdf.parse(e.getEvmStartDate());
+                    eventYear = date.getYear();
+                } catch (ParseException e1) {
+                    eventYear = 0;
+                    e1.printStackTrace();
+                }
+
+                item.setPersonName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+                item.setPersonFirstName(userProfile.getPmFirstName());
+                item.setPersonLastName(userProfile.getPmLastName());
+                item.setEventName(eventName);
+                item.setEventType(getEventType(eventName));
+                item.setEventDetail(setEventDetailText(currentYear - eventYear, eventType));
+                item.setEventDate(e.getEvmStartDate());
+                item.setEventRecordIndexId(e.getEvmRecordIndexId());
+                item.setPersonRcpPmId(pmId);
+                Comment comment = tableCommentMaster.getComment(e.getEvmRecordIndexId());
+                if (comment != null) {
+                    item.setUserComment(comment.getCrmComment());
+                    item.setCommentTime(comment.getCrmUpdatedAt());
+                    item.setEventCommentPending(false);
+                    if (listPosition != 1) {
+                        list.add(item);
+                    }
+                } else {
+                    item.setEventCommentPending(true);
                     list.add(item);
                 }
-            } else {
-                item.setEventCommentPending(true);
-                list.add(item);
             }
+
 
         }
         return list;
@@ -343,34 +355,34 @@ public class EventsActivity extends BaseActivity implements RippleView
                 comment.setRcProfileMasterPmId(eventComment.getToPmId());
                 comment.setCrmComment(eventComment.getComment());
                 comment.setCrmReply(eventComment.getReply());
-                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getCreatedAt()));
+                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getCreatedDate()));
                 comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()));
-                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedAt()));
+                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
                 comment.setEvmRecordIndexId(evmRecordId);
-                Comment dummyReceived = addDummyTimelineItem(eventComment);
+                //  Comment dummyReceived = addDummyTimelineItem(eventComment);
                 if (evmRecordId != null) {
                     tableCommentMaster.addComment(comment);
                       /*dummy entry start*/
                     /*this is dummy received entry*/
-                    tableCommentMaster.addComment(dummyReceived);
+                    //     tableCommentMaster.addComment(dummyReceived);
                     /*dummy entry end*/
                     evmRecordId = "";
                     switch (selectedRecycler) {
                         case 0:
                             listTodayEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
-                            listTodayEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedAt()));
+                            listTodayEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
                             listTodayEvent.get(selectedRecyclerItem).setEventCommentPending(false);
                             todayEventAdapter.notifyDataSetChanged();
                             break;
                         case 1:
                             listRecentEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
-                            listRecentEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedAt()));
+                            listRecentEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
                             listRecentEvent.get(selectedRecyclerItem).setEventCommentPending(false);
                             recentEventAdapter.notifyDataSetChanged();
                             break;
                         case 2:
                             listUpcomingEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
-                            listUpcomingEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedAt()));
+                            listUpcomingEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
                             listUpcomingEvent.get(selectedRecyclerItem).setEventCommentPending(false);
                             upcomingEventAdapter.notifyDataSetChanged();
                             break;
@@ -385,23 +397,5 @@ public class EventsActivity extends BaseActivity implements RippleView
 
     }
 
-
-    private Comment addDummyTimelineItem(EventComment eventComment) {
-        Comment comment = new Comment();
-        //comment.setCrmStatus(Integer.parseInt(eventComment.getStatus()));
-        comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
-        comment.setCrmRating("");
-        comment.setCrmType(eventComment.getType());
-        comment.setCrmCloudPrId(eventComment.getId());
-        comment.setRcProfileMasterPmId(eventComment.getFromPmId());
-        comment.setCrmComment(eventComment.getComment());
-        comment.setCrmReply(eventComment.getReply());
-        comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getCreatedAt()));
-        comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()));
-        comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedAt()));
-        comment.setEvmRecordIndexId(eventComment.getEvmRecordIndexId() + "");
-        return comment;
-
-    }
 
 }

@@ -164,7 +164,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
                     (WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
         } else {
             //show no toast
-            Log.i("MAULIK", "no internet");
+            Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
     }
 

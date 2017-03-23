@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -11,16 +12,26 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.events.MyLayoutManager;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Comment;
 import com.rawalinfocom.rcontact.model.Event;
+import com.rawalinfocom.rcontact.model.EventComment;
+import com.rawalinfocom.rcontact.model.EventCommentData;
 import com.rawalinfocom.rcontact.model.UserProfile;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.timeline.TimelineAdapter;
 import com.rawalinfocom.rcontact.timeline.TimelineItem;
 
@@ -33,7 +44,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class TimelineActivity extends BaseActivity implements RippleView
-        .OnRippleCompleteListener {
+        .OnRippleCompleteListener, WsResponseListener {
 
     @BindView(R.id.text_toolbar_title)
     TextView textToolbarTitle;
@@ -90,10 +101,18 @@ public class TimelineActivity extends BaseActivity implements RippleView
         ButterKnife.bind(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         init();
-        initData();
+        tableCommentMaster = new TableCommentMaster(databaseHandler);
+
+        // temporory code
+        tableCommentMaster.deleteAllReceivedComments();
+        getAllEventComment(TimelineActivity.this);
+        // temporory code delete
+
+        //initData();
     }
 
     private void init() {
+
         headerTodayTitle.setTypeface(Utils.typefaceRegular(this));
         headerYesterdayTitle.setTypeface(Utils.typefaceRegular(this));
         headerPast5DaysTitle.setTypeface(Utils.typefaceRegular(this));
@@ -167,7 +186,6 @@ public class TimelineActivity extends BaseActivity implements RippleView
     }
 
     private void initData() {
-        tableCommentMaster = new TableCommentMaster(databaseHandler);
         //today 22
         String today = getDate(0); // 22
         String yesterDay = getDate(-1); // 21
@@ -176,9 +194,6 @@ public class TimelineActivity extends BaseActivity implements RippleView
         ArrayList<Comment> commentsToday = tableCommentMaster.getAllCommentReceivedBetween(today, today);
         ArrayList<Comment> commentsYesterday = tableCommentMaster.getAllCommentReceivedBetween(yesterDay, yesterDay);
         ArrayList<Comment> commentsPastday = tableCommentMaster.getAllCommentReceivedBetween(pastday5thDay, dayBeforeYesterday);
-        Log.i("MAULIK", "comments.size())" + commentsToday.size());
-        Log.i("MAULIK", "comments.size())" + commentsYesterday.size());
-        Log.i("MAULIK", "comments.size())" + commentsPastday.size());
         DisplayMetrics displaymetrics = new DisplayMetrics();
         int density = getResources().getDisplayMetrics().densityDpi;
         int heightPercent = 50;
@@ -208,11 +223,13 @@ public class TimelineActivity extends BaseActivity implements RippleView
             TimelineItem item = new TimelineItem();
             TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
             TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
-            Event event = tableEventMaster.getEvent(Integer.parseInt(comment.getEvmRecordIndexId()));
+            Event event = tableEventMaster.getEventByEvmRecordIndexId(Integer.parseInt(comment.getEvmRecordIndexId()));
             int pmId = comment.getRcProfileMasterPmId();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
             item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
             // item.setEventName(event.getEvmEventType());
+            // Log.i("MAULIK", "comment.getEvmRecordIndexId()::" + comment.getEvmRecordIndexId());
+            // Log.i("MAULIK", "event.getEvmEventType()::" + event.getEvmEventType());
             item.setEventDetail("wishes you on your " + event.getEvmEventType());
             item.setWisherComment(comment.getCrmComment());
             item.setWisherCommentTime(comment.getCrmCreatedAt());
@@ -221,22 +238,6 @@ public class TimelineActivity extends BaseActivity implements RippleView
             listTimelineToday.add(item);
 
         }
-
-
-        //TimelineItem(String wisherName, String eventName, String notiTime, String eventDetail,
-//        // String wisherComment, String wisherCommentTime, String userComment, String userCommentTime, int notiType)
-//        TimelineItem item1 = new TimelineItem("A Dhameliya", "Birthday", "12:00 PM", "20 Years Old", "Happy Birthday!", "11:00 PM", "", "", 0);
-//        TimelineItem item2 = new TimelineItem("B Dhameliya", "Anniversary", "11:16 PM", "1st Anniversary", "Congrats!", "11:00 PM", "Thanks", "11:18PM", 0);
-//        TimelineItem item3 = new TimelineItem("C Dhameliya", "Rating", "11:16 PM", "3", "Nice Profile dude", "11:00 PM", "Thanks", "11:18PM", 1);
-//        TimelineItem item4 = new TimelineItem("D Dhameliya", "Anniversary", "11:16 PM", "5th Anniversary ", "Congo bro", "11:00 PM", "", "", 0);
-//        TimelineItem item5 = new TimelineItem("E Dhameliya", "Birthday", "11:16 PM", "37 Years Old", "Happy Birthday dada", "11:16 PM", "Thank you very much", "11:16 PM", 0);
-//        TimelineItem item6 = new TimelineItem("F Dhameliya", "Rating", "11:16 PM", "5", "", "", "", "", 1);
-//        TimelineItem item7 = new TimelineItem("G Dhameliya", "Birthday", "11:16 PM", "67 Years Old", "Happy Birthday GD", "11:16 PM", "", "", 0);
-
-
-        //  final List<TimelineItem> listTimelineToday = Arrays.asList(item1, item2, item3, item4, item5, item6, item7, item1, item2);
-        //  final List<TimelineItem> listTimelineYesterday = Arrays.asList(item1, item2, item3);
-        //  final List<TimelineItem> listTimelinePast5days = Arrays.asList(item1, item2, item3, item4, item5, item6, item7, item1, item2);
 
         todayTimelineAdapter = new TimelineAdapter(getApplicationContext(), listTimelineToday, 0);
         yesterdayTimelineAdapter = new TimelineAdapter(getApplicationContext(), listTimelineToday, 1);
@@ -288,61 +289,87 @@ public class TimelineActivity extends BaseActivity implements RippleView
         super.onRestoreInstanceState(savedInstanceState);
     }
 
+    private void getAllEventComment(Context context) {
+
+        WsRequestObject addCommentObject = new WsRequestObject();
+
+        if (Utils.isNetworkAvailable(context)) {
+            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    addCommentObject, null, WsResponseObject.class, WsConstants
+                    .REQ_GET_EVENT_COMMENT, "Getting comments..", true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
+        } else {
+            //show no toast
+            Toast.makeText(TimelineActivity.this, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private String getDate(int dayToAddorSub) {
         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
         Date date = new Date();
         date.setTime(date.getTime() + dayToAddorSub * 24 * 60 * 60 * 1000);
         return sdf.format(date);
     }
-//    private List<TimelineItem> createTimelineList(ArrayList<Comment> comments, int listPosition) {
-//        TimelineItem item;
-//        int currentYear;
-//        int eventYear;
-//        Date date = new Date();
-//        currentYear = date.getYear();
-//        List<TimelineItem> list = new ArrayList<>();
-//        for (Comment e : comments) {
-//            item = new TimelineItem();
-//            String eventName = e.getEvmEventType();
-//            int eventType = -1;
-//            TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-//            int pmId = Integer
-//                    .parseInt(e.getRcProfileMasterPmId());
-//            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
-//
-//            eventType = getEventType(eventName);
-//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//            try {
-//                date = sdf.parse(e.getEvmStartDate());
-//                eventYear = date.getYear();
-//            } catch (ParseException e1) {
-//                eventYear = 0;
-//                e1.printStackTrace();
-//            }
-//
-//            item.setPersonName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
-//            item.setPersonFirstName(userProfile.getPmFirstName());
-//            item.setPersonLastName(userProfile.getPmLastName());
-//            item.setEventName(eventName);
-//            item.setEventType(getEventType(eventName));
-//            item.setEventDetail(setEventDetailText(currentYear - eventYear, eventType));
-//            item.setEventDate(e.getEvmStartDate());
-//            item.setEventRecordIndexId(e.getEvmRecordIndexId());
-//            item.setPersonRcpPmId(pmId);
-//            Comment comment = tableCommentMaster.getComment(e.getEvmRecordIndexId());
-//            if (comment != null) {
-//                item.setUserComment(comment.getCrmComment());
-//                item.setCommentTime(comment.getCrmUpdatedAt());
-//                item.setEventCommentPending(false);
-//                if (listPosition != 1) {
-//                    list.add(item);
-//                }
-//            } else {
-//                item.setEventCommentPending(true);
-//                list.add(item);
-//            }
-//
-//        }
-//        return list;
-//    }
+
+    @Override
+    public void onDeliveryResponse(String serviceType, Object data, Exception error) {
+        if (error == null) {
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_EVENT_COMMENT)) {
+
+                WsResponseObject wsResponseObject = (WsResponseObject) data;
+                Log.i("MAULIK", wsResponseObject.getMessage());
+                ArrayList<EventCommentData> eventCommentDataList = wsResponseObject.getEventCommentData();
+                for (EventCommentData eventCommentData : eventCommentDataList) {
+                    int forRpcUser = eventCommentData.getRcpPmId();
+                    ArrayList<EventComment> allBirthdayComments = eventCommentData.getBirthday();
+                    ArrayList<EventComment> allAnniversaryComments = eventCommentData.getAnniversary();
+                    ArrayList<EventComment> allCustomEventsComments = eventCommentData.getCustom();
+                    if (allBirthdayComments != null) {
+                        for (EventComment eventComment : allBirthdayComments) {
+                            Comment comment = createComment(eventComment, "Birthday");
+                            tableCommentMaster.addComment(comment);
+                            Log.i("MAULIK", "done successfully");
+                        }
+                    }
+                    if (allAnniversaryComments != null) {
+                        for (EventComment eventComment : allAnniversaryComments) {
+                            Comment comment = createComment(eventComment, "Anniversary");
+                            tableCommentMaster.addComment(comment);
+                            Log.i("MAULIK", "done successfully");
+                        }
+                    }
+                    if (allCustomEventsComments != null) {
+                        for (EventComment eventComment : allCustomEventsComments) {
+                            Comment comment = createComment(eventComment, "Custom");
+                            tableCommentMaster.addComment(comment);
+                            Log.i("MAULIK", "done successfully");
+                        }
+                    }
+                }
+                Utils.hideProgressDialog();
+                initData();
+            }
+        } else {
+            Toast.makeText(TimelineActivity.this, "There is some error, please try again.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private Comment createComment(EventComment eventComment, String commentType) {
+        Comment comment = new Comment();
+        // get-comment-event gives u all recived events by other user id
+        comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
+        comment.setCrmRating("");
+        comment.setCrmType(commentType);
+        comment.setCrmCloudPrId(eventComment.getId());
+        comment.setRcProfileMasterPmId(eventComment.getFromPmId());
+        comment.setCrmComment(eventComment.getComment());
+        comment.setCrmReply(eventComment.getReply());
+        comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getCreatedDate()));
+        comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()));
+        comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+        comment.setEvmRecordIndexId(eventComment.getEventRecordIndexId() + "");
+        return comment;
+    }
+
+
 }
