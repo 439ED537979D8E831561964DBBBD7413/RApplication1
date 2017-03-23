@@ -5,19 +5,28 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.rawalinfocom.rcontact.database.TableCommentMaster;
+import com.rawalinfocom.rcontact.database.TableEventMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.events.MyLayoutManager;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.Comment;
+import com.rawalinfocom.rcontact.model.Event;
+import com.rawalinfocom.rcontact.model.UserProfile;
+import com.rawalinfocom.rcontact.timeline.TimelineAdapter;
 import com.rawalinfocom.rcontact.timeline.TimelineItem;
-import com.rawalinfocom.rcontact.timeline.TimelineSectionAdapter;
 
-import java.util.Arrays;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -42,8 +51,8 @@ public class TimelineActivity extends BaseActivity implements RippleView
     RecyclerView recyclerViewYesterday;
     @BindView(R.id.recyclerview3)
     RecyclerView recyclerViewPast5day;
-    @BindView(R.id.viewmore)
-    TextView viewmore;
+    @BindView(R.id.view_more)
+    TextView viewMore;
     @BindView(R.id.h1)
     RelativeLayout headerTodayLayout;
     @BindView(R.id.h2)
@@ -69,9 +78,10 @@ public class TimelineActivity extends BaseActivity implements RippleView
     @BindView(R.id.text_header3)
     TextView headerPast5DaysTitle;
 
-    private TimelineSectionAdapter todayTimelineAdapter;
-    private TimelineSectionAdapter yesterdayTimelineAdapter;
-    private TimelineSectionAdapter past5daysTimelineAdapter;
+    private TimelineAdapter todayTimelineAdapter;
+    private TimelineAdapter yesterdayTimelineAdapter;
+    private TimelineAdapter past5daysTimelineAdapter;
+    TableCommentMaster tableCommentMaster;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,35 +167,87 @@ public class TimelineActivity extends BaseActivity implements RippleView
     }
 
     private void initData() {
-        //TimelineItem(String wisherName, String eventName, String notiTime, String eventDetail,
-        // String wisherComment, String wisherCommentTime, String userComment, String userCommentTime, int notiType)
-        TimelineItem item1 = new TimelineItem("A Dhameliya", "Birthday", "12:00 PM", "20 Years Old", "Happy Birthday!", "11:00 PM", "", "", 0);
-        TimelineItem item2 = new TimelineItem("B Dhameliya", "Anniversary", "11:16 PM", "1st Anniversary", "Congrats!", "11:00 PM", "Thanks", "11:18PM", 0);
-        TimelineItem item3 = new TimelineItem("C Dhameliya", "Rating", "11:16 PM", "3", "Nice Profile dude", "11:00 PM", "Thanks", "11:18PM", 1);
-        TimelineItem item4 = new TimelineItem("D Dhameliya", "Anniversary", "11:16 PM", "5th Anniversary ", "Congo bro", "11:00 PM", "", "", 0);
-        TimelineItem item5 = new TimelineItem("E Dhameliya", "Birthday", "11:16 PM", "37 Years Old", "Happy Birthday dada", "11:16 PM", "Thank you very much", "11:16 PM", 0);
-        TimelineItem item6 = new TimelineItem("F Dhameliya", "Rating", "11:16 PM", "5", "", "", "", "", 1);
-        TimelineItem item7 = new TimelineItem("G Dhameliya", "Birthday", "11:16 PM", "67 Years Old", "Happy Birthday GD", "11:16 PM", "", "", 0);
-
-
-        final List<TimelineItem> listTimelineToday = Arrays.asList(item1, item2, item3, item4, item5, item6, item7, item1, item2);
-        final List<TimelineItem> listTimelineYesterday = Arrays.asList(item1, item2, item3);
-        final List<TimelineItem> listTimelinePast5days = Arrays.asList(item1, item2, item3, item4, item5, item6, item7, item1, item2);
-
-        todayTimelineAdapter = new TimelineSectionAdapter(getApplicationContext(), listTimelineToday);
-        yesterdayTimelineAdapter = new TimelineSectionAdapter(getApplicationContext(), listTimelineYesterday);
-        past5daysTimelineAdapter = new TimelineSectionAdapter(getApplicationContext(), listTimelinePast5days);
-
-
+        tableCommentMaster = new TableCommentMaster(databaseHandler);
+        //today 22
+        String today = getDate(0); // 22
+        String yesterDay = getDate(-1); // 21
+        String dayBeforeYesterday = getDate(-2); //20
+        String pastday5thDay = getDate(-6); //16
+        ArrayList<Comment> commentsToday = tableCommentMaster.getAllCommentReceivedBetween(today, today);
+        ArrayList<Comment> commentsYesterday = tableCommentMaster.getAllCommentReceivedBetween(yesterDay, yesterDay);
+        ArrayList<Comment> commentsPastday = tableCommentMaster.getAllCommentReceivedBetween(pastday5thDay, dayBeforeYesterday);
+        Log.i("MAULIK", "comments.size())" + commentsToday.size());
+        Log.i("MAULIK", "comments.size())" + commentsYesterday.size());
+        Log.i("MAULIK", "comments.size())" + commentsPastday.size());
         DisplayMetrics displaymetrics = new DisplayMetrics();
+        int density = getResources().getDisplayMetrics().densityDpi;
+        int heightPercent = 50;
+        int maxItemCount = 1;
+        switch (density) {
+            case DisplayMetrics.DENSITY_LOW: /*120*/
+                heightPercent = 30;
+                break;
+            case DisplayMetrics.DENSITY_MEDIUM: /*160*/
+                heightPercent = 35;
+                break;
+            case DisplayMetrics.DENSITY_HIGH: /*320*/
+                heightPercent = 42;
+                maxItemCount = 1;
+                break;
+            case DisplayMetrics.DENSITY_XXHIGH: /*480*/
+            case DisplayMetrics.DENSITY_XXXHIGH: /*680*/
+                heightPercent = 50;
+                maxItemCount = 2;
+                break;
+        }
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = (displaymetrics.heightPixels * 57) / 100;
+        int height = (displaymetrics.heightPixels * heightPercent) / 100;
+
+        final List<TimelineItem> listTimelineToday = new ArrayList<>();
+        for (Comment comment : commentsToday) {
+            TimelineItem item = new TimelineItem();
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+            TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
+            Event event = tableEventMaster.getEvent(Integer.parseInt(comment.getEvmRecordIndexId()));
+            int pmId = comment.getRcProfileMasterPmId();
+            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
+            item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+            // item.setEventName(event.getEvmEventType());
+            item.setEventDetail("wishes you on your " + event.getEvmEventType());
+            item.setWisherComment(comment.getCrmComment());
+            item.setWisherCommentTime(comment.getCrmCreatedAt());
+            item.setUserComment(comment.getCrmReply());
+            item.setUserCommentTime(comment.getCrmRepliedAt());
+            listTimelineToday.add(item);
+
+        }
+
+
+        //TimelineItem(String wisherName, String eventName, String notiTime, String eventDetail,
+//        // String wisherComment, String wisherCommentTime, String userComment, String userCommentTime, int notiType)
+//        TimelineItem item1 = new TimelineItem("A Dhameliya", "Birthday", "12:00 PM", "20 Years Old", "Happy Birthday!", "11:00 PM", "", "", 0);
+//        TimelineItem item2 = new TimelineItem("B Dhameliya", "Anniversary", "11:16 PM", "1st Anniversary", "Congrats!", "11:00 PM", "Thanks", "11:18PM", 0);
+//        TimelineItem item3 = new TimelineItem("C Dhameliya", "Rating", "11:16 PM", "3", "Nice Profile dude", "11:00 PM", "Thanks", "11:18PM", 1);
+//        TimelineItem item4 = new TimelineItem("D Dhameliya", "Anniversary", "11:16 PM", "5th Anniversary ", "Congo bro", "11:00 PM", "", "", 0);
+//        TimelineItem item5 = new TimelineItem("E Dhameliya", "Birthday", "11:16 PM", "37 Years Old", "Happy Birthday dada", "11:16 PM", "Thank you very much", "11:16 PM", 0);
+//        TimelineItem item6 = new TimelineItem("F Dhameliya", "Rating", "11:16 PM", "5", "", "", "", "", 1);
+//        TimelineItem item7 = new TimelineItem("G Dhameliya", "Birthday", "11:16 PM", "67 Years Old", "Happy Birthday GD", "11:16 PM", "", "", 0);
+
+
+        //  final List<TimelineItem> listTimelineToday = Arrays.asList(item1, item2, item3, item4, item5, item6, item7, item1, item2);
+        //  final List<TimelineItem> listTimelineYesterday = Arrays.asList(item1, item2, item3);
+        //  final List<TimelineItem> listTimelinePast5days = Arrays.asList(item1, item2, item3, item4, item5, item6, item7, item1, item2);
+
+        todayTimelineAdapter = new TimelineAdapter(getApplicationContext(), listTimelineToday, 0);
+        yesterdayTimelineAdapter = new TimelineAdapter(getApplicationContext(), listTimelineToday, 1);
+        past5daysTimelineAdapter = new TimelineAdapter(getApplicationContext(), listTimelineToday, 2);
+
 
         recyclerViewToday.setAdapter(todayTimelineAdapter);
         recyclerViewToday.setLayoutManager(new MyLayoutManager(this, recyclerViewToday, height));
         RecyclerView.Adapter adapter = recyclerViewToday.getAdapter();
         int itemCount = adapter.getItemCount();
-        if (itemCount > 2) {
+        if (itemCount > maxItemCount) {
             recyclerViewToday.getLayoutParams().height = height;
         }
 
@@ -193,7 +255,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
         recyclerViewYesterday.setLayoutManager(new MyLayoutManager(this, recyclerViewYesterday, height));
         adapter = recyclerViewYesterday.getAdapter();
         itemCount = adapter.getItemCount();
-        if (itemCount > 2) {
+        if (itemCount > maxItemCount) {
             recyclerViewYesterday.getLayoutParams().height = height;
         }
 
@@ -201,7 +263,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
         recyclerViewPast5day.setLayoutManager(new MyLayoutManager(this, recyclerViewPast5day, height));
         adapter = recyclerViewPast5day.getAdapter();
         itemCount = adapter.getItemCount();
-        if (itemCount > 2) {
+        if (itemCount > maxItemCount) {
             recyclerViewPast5day.getLayoutParams().height = height;
         }
 
@@ -226,4 +288,61 @@ public class TimelineActivity extends BaseActivity implements RippleView
         super.onRestoreInstanceState(savedInstanceState);
     }
 
+    private String getDate(int dayToAddorSub) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+        Date date = new Date();
+        date.setTime(date.getTime() + dayToAddorSub * 24 * 60 * 60 * 1000);
+        return sdf.format(date);
+    }
+//    private List<TimelineItem> createTimelineList(ArrayList<Comment> comments, int listPosition) {
+//        TimelineItem item;
+//        int currentYear;
+//        int eventYear;
+//        Date date = new Date();
+//        currentYear = date.getYear();
+//        List<TimelineItem> list = new ArrayList<>();
+//        for (Comment e : comments) {
+//            item = new TimelineItem();
+//            String eventName = e.getEvmEventType();
+//            int eventType = -1;
+//            TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+//            int pmId = Integer
+//                    .parseInt(e.getRcProfileMasterPmId());
+//            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
+//
+//            eventType = getEventType(eventName);
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            try {
+//                date = sdf.parse(e.getEvmStartDate());
+//                eventYear = date.getYear();
+//            } catch (ParseException e1) {
+//                eventYear = 0;
+//                e1.printStackTrace();
+//            }
+//
+//            item.setPersonName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+//            item.setPersonFirstName(userProfile.getPmFirstName());
+//            item.setPersonLastName(userProfile.getPmLastName());
+//            item.setEventName(eventName);
+//            item.setEventType(getEventType(eventName));
+//            item.setEventDetail(setEventDetailText(currentYear - eventYear, eventType));
+//            item.setEventDate(e.getEvmStartDate());
+//            item.setEventRecordIndexId(e.getEvmRecordIndexId());
+//            item.setPersonRcpPmId(pmId);
+//            Comment comment = tableCommentMaster.getComment(e.getEvmRecordIndexId());
+//            if (comment != null) {
+//                item.setUserComment(comment.getCrmComment());
+//                item.setCommentTime(comment.getCrmUpdatedAt());
+//                item.setEventCommentPending(false);
+//                if (listPosition != 1) {
+//                    list.add(item);
+//                }
+//            } else {
+//                item.setEventCommentPending(true);
+//                list.add(item);
+//            }
+//
+//        }
+//        return list;
+//    }
 }

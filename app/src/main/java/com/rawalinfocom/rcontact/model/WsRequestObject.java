@@ -23,7 +23,19 @@ public class WsRequestObject {
     private String comment;
 
     @JsonProperty("to_pm_id")
-    private Integer toPmId;
+    private int toPmId;
+
+    @JsonProperty("evm_record_index_id")
+    private int evmRecordIndexId;
+
+    public int getEvmRecordIndexId() {
+        return evmRecordIndexId;
+    }
+
+    public void setEvmRecordIndexId(int evmRecordIndexId) {
+        this.evmRecordIndexId = evmRecordIndexId;
+    }
+
 
     public String getDate() {
         return date;

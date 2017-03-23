@@ -34,6 +34,18 @@ public class EventComment {
     @JsonProperty("status")
     private String status;
 
+    @JsonProperty("evm_record_index_id")
+    private int evmRecordIndexId;
+
+    public int getEvmRecordIndexId() {
+        return evmRecordIndexId;
+    }
+
+    public void setEvmRecordIndexId(int evmRecordIndexId) {
+        this.evmRecordIndexId = evmRecordIndexId;
+    }
+
+
     public String getDate() {
         return date;
     }

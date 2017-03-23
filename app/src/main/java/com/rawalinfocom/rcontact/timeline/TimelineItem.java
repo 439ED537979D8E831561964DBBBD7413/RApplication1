@@ -19,7 +19,9 @@ public class TimelineItem {
 
     //0 for event
     //1 for ratings
+    public TimelineItem() {
 
+    }
 
     public TimelineItem(String wisherName, String eventName, String notiTime, String eventDetail, String wisherComment,
                         String wisherCommentTime, String userComment, String userCommentTime, int notiType) {

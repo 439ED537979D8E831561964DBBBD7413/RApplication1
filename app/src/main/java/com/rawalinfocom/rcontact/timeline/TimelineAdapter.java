@@ -19,14 +19,16 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TimelineSectionAdapter extends RecyclerView.Adapter<TimelineSectionAdapter.MyViewHolder> {
+public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyViewHolder> {
 
     private List<TimelineItem> list;
     private Context context;
+    private int recyclerPosition;
 
-    public TimelineSectionAdapter(Context context, List<TimelineItem> list) {
+    public TimelineAdapter(Context context, List<TimelineItem> list, int recyclerPosition) {
         this.list = list;
         this.context = context;
+        this.recyclerPosition = recyclerPosition;
     }
 
     @Override
@@ -47,7 +49,10 @@ public class TimelineSectionAdapter extends RecyclerView.Adapter<TimelineSection
         int notiType = item.getNotiType();
         if (wisherComment != null && wisherComment.length() != 0) {
             holder.textWisherComment.setText(wisherComment);
-            holder.textWisherCommentTime.setText(item.getWisherCommentTime());
+            if (recyclerPosition == 0)
+                holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
+            else
+                holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "dd MMM, hh:mm a"));
         } else {
             holder.textWisherComment.setVisibility(View.GONE);
             if (notiType == 1) {

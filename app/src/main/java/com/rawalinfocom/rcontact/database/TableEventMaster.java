@@ -97,11 +97,9 @@ public class TableEventMaster {
                 COLUMN_EVM_CUSTOM_TYPE, COLUMN_EVM_EVENT_PRIVACY,
                 COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_EVM_ID + "=?", new String[]{String
                 .valueOf(evmId)}, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
 
         Event event = new Event();
-        if (cursor != null) {
+        if (cursor.moveToFirst()) {
             event.setEvmId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_ID)));
             event.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex
                     (COLUMN_EVM_RECORD_INDEX_ID)));
@@ -209,8 +207,10 @@ public class TableEventMaster {
     public ArrayList<Event> getAllEventsBetWeen(String fromDate, String toDate) {
         ArrayList<Event> arrayListEvent = new ArrayList<>();
         // Select All Query
+        //SELECT  * FROM rc_event_master WHERE strftime('%m-%d',evm_start_date) between '03-23' and '03-27' order by strftime('%m-%d',evm_start_date) asc
         String selectQuery = "SELECT  * FROM " + TABLE_RC_EVENT_MASTER +
-                " WHERE strftime('%m-%d'," + COLUMN_EVM_START_DATE + ") between '" + fromDate + "' and '" + toDate + "' order by " + COLUMN_EVM_START_DATE + " asc";
+                " WHERE strftime('%m-%d'," + COLUMN_EVM_START_DATE + ") between '" + fromDate + "' and '" +
+                toDate + "' order by strftime('%m-%d', " + COLUMN_EVM_START_DATE + ") asc";
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 

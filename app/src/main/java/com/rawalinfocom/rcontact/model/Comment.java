@@ -9,7 +9,7 @@ public class Comment {
     private int crmId;
     private int crmStatus; //1. Sent, 2. Received
     private String crmRating;
-    private int crmType; // 1:birthday, 2:rate,3:anniversary,4:request,5:RUpdate
+    private String crmType; // "eventName" "birthday" ,"anniversary" , "become father"
     private String crmCloudPrId;
     private int rcProfileMasterPmId;
     private String crmComment;
@@ -43,11 +43,11 @@ public class Comment {
         this.crmRating = crmRating;
     }
 
-    public int getCrmType() {
+    public String getCrmType() {
         return crmType;
     }
 
-    public void setCrmType(int crmType) {
+    public void setCrmType(String crmType) {
         this.crmType = crmType;
     }
 

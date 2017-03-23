@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -74,7 +75,7 @@ public class EventsActivity extends BaseActivity implements RippleView
     RelativeLayout headerUpcomingLayout;
     @BindView(R.id.recyclerview3)
     RecyclerView recyclerViewUpcoming;
-    @BindView(R.id.viewmore)
+    @BindView(R.id.view_more)
     TextView viewmore;
 
 
@@ -337,18 +338,22 @@ public class EventsActivity extends BaseActivity implements RippleView
                 Comment comment = new Comment();
                 comment.setCrmStatus(Integer.parseInt(eventComment.getStatus()));
                 comment.setCrmRating("");
-                comment.setCrmType(getEventType(eventComment.getType()));
+                comment.setCrmType(eventComment.getType());
                 comment.setCrmCloudPrId(eventComment.getId());
                 comment.setRcProfileMasterPmId(eventComment.getToPmId());
                 comment.setCrmComment(eventComment.getComment());
                 comment.setCrmReply(eventComment.getReply());
-
                 comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getCreatedAt()));
                 comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedAt()));
                 comment.setEvmRecordIndexId(evmRecordId);
+                Comment dummyReceived = addDummyTimelineItem(eventComment);
                 if (evmRecordId != null) {
                     tableCommentMaster.addComment(comment);
+                      /*dummy entry start*/
+                    /*this is dummy received entry*/
+                    tableCommentMaster.addComment(dummyReceived);
+                    /*dummy entry end*/
                     evmRecordId = "";
                     switch (selectedRecycler) {
                         case 0:
@@ -379,4 +384,24 @@ public class EventsActivity extends BaseActivity implements RippleView
         }
 
     }
+
+
+    private Comment addDummyTimelineItem(EventComment eventComment) {
+        Comment comment = new Comment();
+        //comment.setCrmStatus(Integer.parseInt(eventComment.getStatus()));
+        comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
+        comment.setCrmRating("");
+        comment.setCrmType(eventComment.getType());
+        comment.setCrmCloudPrId(eventComment.getId());
+        comment.setRcProfileMasterPmId(eventComment.getFromPmId());
+        comment.setCrmComment(eventComment.getComment());
+        comment.setCrmReply(eventComment.getReply());
+        comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getCreatedAt()));
+        comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()));
+        comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedAt()));
+        comment.setEvmRecordIndexId(eventComment.getEvmRecordIndexId() + "");
+        return comment;
+
+    }
+
 }
