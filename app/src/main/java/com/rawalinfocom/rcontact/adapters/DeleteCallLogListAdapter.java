@@ -36,6 +36,15 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
     private Context context;
     private ArrayList<CallLogType> arrayListCallType;
     private ArrayList<CallLogType> arrayListTempCallType;
+    private ArrayList<CallLogType> arrayListToDelete;
+
+    public ArrayList<CallLogType> getArrayListToDelete() {
+        return arrayListToDelete;
+    }
+
+    public void setArrayListToDelete(ArrayList<CallLogType> arrayListToDelete) {
+        this.arrayListToDelete = arrayListToDelete;
+    }
 
     public boolean isSelectedAll;
     private ArrayList<Integer> arrayListCheckedPositions;
@@ -47,6 +56,7 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
         this.arrayListTempCallType = new ArrayList<>();
         arrayListCheckedPositions = new ArrayList<>();
         arrayListTempCallType.addAll(arrayList);
+        arrayListToDelete = new ArrayList<>();
     }
 
 
@@ -60,7 +70,7 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
     @Override
     public void onBindViewHolder(callLogViewHolder holder, int position) {
 
-        CallLogType callLogType = arrayListCallType.get(position);
+        final CallLogType callLogType = arrayListCallType.get(position);
         String number = callLogType.getHistoryNumber();
         if (!TextUtils.isEmpty(number)) {
             holder.textHistroyNumber.setText(number);
@@ -143,10 +153,15 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
                 if (isChecked) {
                     if (!arrayListCheckedPositions.contains((Integer) buttonView.getTag())) {
                         arrayListCheckedPositions.add((Integer) buttonView.getTag());
+                        arrayListToDelete.add(callLogType);
+                        setArrayListToDelete(arrayListToDelete);
                     }
                 } else {
                     if (arrayListCheckedPositions.contains((Integer) buttonView.getTag())) {
                         arrayListCheckedPositions.remove((Integer) buttonView.getTag());
+                        arrayListToDelete.remove(callLogType);
+                        setArrayListToDelete(arrayListToDelete);
+
                     }
                 }
             }
@@ -199,12 +214,16 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
     public void isSelectAll(boolean checked) {
         isSelectedAll = checked;
         arrayListCheckedPositions.clear();
+        arrayListToDelete.removeAll(arrayListTempCallType);
+        setArrayListToDelete(arrayListToDelete);
         if (checked) {
             for (int i = 0; i < getItemCount(); i++) {
                 if (!arrayListCheckedPositions.contains(i)) {
                     arrayListCheckedPositions.add(i);
                 }
             }
+            arrayListToDelete.addAll(arrayListTempCallType);
+            setArrayListToDelete(arrayListToDelete);
         }
         notifyDataSetChanged();
     }

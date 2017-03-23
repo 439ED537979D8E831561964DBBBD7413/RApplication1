@@ -69,10 +69,20 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     Activity mActivity;
     private HashMap<Integer, Boolean> mSelection = new HashMap<Integer, Boolean>();
     private int nr = 0;
-
+    CallLogType selectedCallLogData;
+    long selectedLogDate = 0;
+    long dateFromReceiver;
 
     public int getSelectedPosition() {
         return selectedPosition;
+    }
+
+    public CallLogType getSelectedCallLogData() {
+        return selectedCallLogData;
+    }
+
+    public long getSelectedLogDate() {
+        return selectedLogDate;
     }
 
     //<editor-fold desc="Constructor">
@@ -190,7 +200,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private void configureAllContactViewHolder(final AllCallLogViewHolder holder, final int
             position) {
 
-        CallLogType callLogType = (CallLogType) arrayListCallLogs.get(position);
+        final CallLogType callLogType = (CallLogType) arrayListCallLogs.get(position);
         final String name = callLogType.getName();
         final String number = callLogType.getNumber();
         if (!TextUtils.isEmpty(number)) {
@@ -225,6 +235,10 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
         final long date = callLogType.getDate();
+        Date dateFromReceiver1 =  callLogType.getCallReceiverDate();
+        if(dateFromReceiver1 != null){
+            dateFromReceiver =  dateFromReceiver1.getTime();
+        }
         if (date > 0) {
             Date date1 = new Date(date);
             String logDate = new SimpleDateFormat("hh:mm a").format(date1);
@@ -332,13 +346,23 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             public void onClick(View v) {
 
                 selectedPosition = position;
+                selectedCallLogData =  callLogType;
+                if(date == 0){
+                    selectedLogDate =  dateFromReceiver;
+                }else{
+                    selectedLogDate = date;
+                }
                 AppConstants.isFromReceiver = false;
                 String formatedNumber = Utils.getFormattedNumber(context, number);
                 Intent intent = new Intent(context, ProfileDetailActivity.class);
                 intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, formatedNumber);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
+                if(date == 0 ){
+                    intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, dateFromReceiver);
+                }else{
+                    intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
+                }
                 context.startActivity(intent);
                 ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
             }

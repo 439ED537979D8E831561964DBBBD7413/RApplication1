@@ -203,6 +203,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                 Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
+//                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS,true);
                 LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 
@@ -232,6 +233,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                 Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
+//                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS,true);
                 LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 
@@ -259,6 +261,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                 Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
+//                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS,true);
                 LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 

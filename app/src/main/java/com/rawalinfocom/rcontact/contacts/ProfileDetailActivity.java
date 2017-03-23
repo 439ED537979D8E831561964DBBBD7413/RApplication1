@@ -382,14 +382,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
-        fetchCallLogHistoryDateWise(historyNumber);
-        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
-            fetchAllCallLogHistory(contactName);
-        } else {
-            if (!TextUtils.isEmpty(profileContactNumber)) {
-                fetchAllCallLogHistory(profileContactNumber);
+        if(profileActivityCallInstance){
+            fetchCallLogHistoryDateWise(historyNumber);
+
+        }else{
+            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+                fetchAllCallLogHistory(contactName);
+            } else {
+                if (!TextUtils.isEmpty(profileContactNumber)) {
+                    fetchAllCallLogHistory(profileContactNumber);
+                }
             }
         }
+
     }
 
     @Override
@@ -931,7 +936,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             Pattern numberPat = Pattern.compile("\\d+");
             Matcher matcher1 = numberPat.matcher(historyName);
             if (matcher1.find()) {
-                textToolbarTitle.setText("Unknown number");
+//                textToolbarTitle.setText("Unknown number");
+                textToolbarTitle.setText(historyName);
             } else {
                 textToolbarTitle.setText(historyName);
             }

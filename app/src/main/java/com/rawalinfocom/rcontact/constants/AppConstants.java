@@ -84,6 +84,11 @@ public class AppConstants {
     public static String EXTRA_CALL_LOG_SWITCH_TAB = "message";
     public static boolean EXTRA_CALL_LOG_SWITCH_TAB_VALUE = true;
     public static String EXTRA_CALL_ARRAY_LIST = "extra_call_array_list";
+    public static String EXTRA_DELETE_ALL_CALL_LOGS = "extra_delete_all_call_logs";
+    public static String EXTRA_REMOVE_CALL_LOGS = "extra_remove_call_logs";
+    public static String EXTRA_CLEAR_CALL_LOGS = "extra_clear_call_logs";
+
+
 
     //</editor-fold>
 
@@ -95,6 +100,8 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_DIALOG = "action_local_broadcast_dialog";
     public static String ACTION_LOCAL_BROADCAST_TABCHANGE = "action_local_broadcast_tab_change";
     public static String ACTION_LOCAL_BROADCAST_PROFILE = "action_local_broadcast_profile";
+    public static String ACTION_LOCAL_BROADCAST_DELETE_LOGS = "action_local_broadcast_delete_logs";
+    public static String ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS = "action_local_broadcast_remove_call_logs";
 
 
     //</editor-fold>
