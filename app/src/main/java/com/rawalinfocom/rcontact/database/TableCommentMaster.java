@@ -3,11 +3,9 @@ package com.rawalinfocom.rcontact.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.Comment;
-import com.rawalinfocom.rcontact.model.Event;
 
 import java.util.ArrayList;
 
@@ -71,6 +69,7 @@ public class TableCommentMaster {
         values.put(COLUMN_CRM_CLOUD_PR_ID, comment.getCrmCloudPrId());
         values.put(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID, comment.getRcProfileMasterPmId());
         values.put(COLUMN_CRM_COMMENT, comment.getCrmComment());
+        values.put(COLUMN_CRM_REPLY, comment.getCrmReply());
         values.put(COLUMN_CRM_CREATED_AT, comment.getCrmCreatedAt());
         values.put(COLUMN_CRM_REPLIED_AT, comment.getCrmRepliedAt());
         values.put(COLUMN_CRM_UPDATED_AT, comment.getCrmUpdatedAt());
@@ -148,7 +147,25 @@ public class TableCommentMaster {
 
     public void deleteAllReceivedComments() {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        //delete from rc_comment_master where crm_status=2;
         db.execSQL("delete from " + TABLE_RC_COMMENT_MASTER + " WHERE crm_status=2");
     }
+
+    public int addReply(String id, String reply, String replyAt, String updatedDate) {
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_CRM_REPLY, reply);
+        values.put(COLUMN_CRM_REPLIED_AT, replyAt);
+        values.put(COLUMN_CRM_UPDATED_AT, updatedDate);
+
+        int isUpdated = db.update(TABLE_RC_COMMENT_MASTER, values, COLUMN_CRM_CLOUD_PR_ID + " = ?",
+                new String[]{id});
+
+        db.close();
+
+        return isUpdated;
+    }
+
+
 }

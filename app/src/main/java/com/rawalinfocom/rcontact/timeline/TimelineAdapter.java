@@ -10,9 +10,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.TimelineActivity;
+import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import java.util.List;
 
@@ -39,8 +47,8 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        TimelineItem item = list.get(position);
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
+        final TimelineItem item = list.get(position);
         holder.textWisherName.setText(item.getWisherName());
         holder.textEventName.setText(item.getEventName());
         holder.textTimelineNotiTime.setText(item.getNotiTime());
@@ -48,6 +56,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         String userComment = item.getUserComment();
         int notiType = item.getNotiType();
         if (wisherComment != null && wisherComment.length() != 0) {
+            holder.textWisherComment.setVisibility(View.VISIBLE);
             holder.textWisherComment.setText(wisherComment);
             if (recyclerPosition == 0)
                 holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
@@ -61,8 +70,15 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             }
         }
         if (userComment != null && userComment.length() != 0) {
+            holder.layoutUserCommentDone.setVisibility(View.VISIBLE);
+
             holder.textUserComment.setText(userComment);
-            holder.textUserCommentTime.setText(item.getUserCommentTime());
+
+            if (recyclerPosition == 0)
+                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(), "hh:mm a"));
+            else
+                holder.textUserCommentTime.setText(Utils.formatDateTime(item.getUserCommentTime(), "dd MMM, hh:mm a"));
+
             holder.layoutUserCommentPending.setVisibility(View.GONE);
         } else {
             holder.layoutUserCommentDone.setVisibility(View.GONE);
@@ -74,6 +90,39 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         } else if (notiType == 0) {
             holder.textEventDetailInfo.setText(item.getEventDetail());
             holder.ratingInfo.setVisibility(View.GONE);
+        }
+        holder.buttonUserCommentSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userComment = holder.edittextUserComment.getText().toString();
+                if (userComment != null && userComment.length() > 0) {
+                    TimelineActivity.selectedRecycler = recyclerPosition;
+                    TimelineActivity.selectedRecyclerItem = position;
+                    addReplyonComment(item.getCrmType(), item.getCrmCloudPrId(), userComment, AppConstants.COMMENT_STATUS_RECEIVED, item.getEvmRecordIndexId());
+                } else {
+                    Toast.makeText(context, "Please enter some comment first!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int commentStatusReceived, int evmRecordIndexId) {
+        WsRequestObject addCommentObject = new WsRequestObject();
+
+        addCommentObject.setType(crmType);
+        addCommentObject.setCommentId(crmCloudPrId);
+        addCommentObject.setReply(userComment);
+        addCommentObject.setEvmRecordIndexId(evmRecordIndexId);
+        addCommentObject.setStatus(commentStatusReceived + "");
+
+        if (Utils.isNetworkAvailable(context)) {
+            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    addCommentObject, null, WsResponseObject.class, WsConstants
+                    .REQ_ADD_EVENT_COMMENT, "Sending comments..", true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
+        } else {
+            //show no toast
+            Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -19,7 +19,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WsResponseObject {
 
-    @JsonProperty("event_data")
+    @JsonProperty("receive_comment")
     private ArrayList<EventCommentData> eventData;
 
     public ArrayList<EventCommentData> getEventCommentData() {
