@@ -1315,50 +1315,65 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
     }
 
     //</editor-fold>
-
+    boolean clearLogs;
+    boolean clearLogsFromContacts;
     private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
-            boolean clearLogs = intent.getBooleanExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS, false);
-            boolean clearLogsFromContacts = intent.getBooleanExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS, false);
-            if (clearLogs) {
-                if (callLogListAdapter != null) {
-                    int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
-                    arrayListObjectCallLogs.remove(itemIndexToRemove);
-                    callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
-                    clearLogs = false;
-                }
-            } else {
-                if (clearLogsFromContacts) {
-                    if (callLogListAdapter != null) {
-                        int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
-                        arrayListObjectCallLogs.remove(itemIndexToRemove);
-                        callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
-                        clearLogsFromContacts = false;
+            clearLogs = intent.getBooleanExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS, false);
+            clearLogsFromContacts = intent.getBooleanExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS, false);
+
+            Handler handler =  new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (clearLogs) {
+                        if (callLogListAdapter != null) {
+                            int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
+                            arrayListObjectCallLogs.remove(itemIndexToRemove);
+                            callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
+                            clearLogs = false;
+                        }
+                    } else {
+                        if (clearLogsFromContacts) {
+                            if (callLogListAdapter != null) {
+                                int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
+                                arrayListObjectCallLogs.remove(itemIndexToRemove);
+                                callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
+                                clearLogsFromContacts = false;
+                            }
+                        }
                     }
+
                 }
-            }
-
-
+            },1000);
         }
     };
 
+    boolean removeLogs;
     private BroadcastReceiver localBroadcastReceiverRemoveFromCallLogs = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
 
-            boolean removeLogs = intent.getBooleanExtra(AppConstants.EXTRA_REMOVE_CALL_LOGS, false);
-            if (removeLogs) {
-                if (callLogListAdapter != null) {
-                    int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
-                    arrayListObjectCallLogs.remove(itemIndexToRemove);
-                    callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
-                    removeLogs = false;
+            removeLogs = intent.getBooleanExtra(AppConstants.EXTRA_REMOVE_CALL_LOGS, false);
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (removeLogs) {
+                        if (callLogListAdapter != null) {
+                            int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
+                            arrayListObjectCallLogs.remove(itemIndexToRemove);
+                            callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
+                            removeLogs = false;
+                        }
+                    }
                 }
-            }
+            }, 1000);
 
 
         }
