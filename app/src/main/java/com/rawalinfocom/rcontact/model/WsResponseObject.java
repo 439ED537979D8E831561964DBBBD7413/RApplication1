@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Monal on 20/10/16.
@@ -20,14 +19,25 @@ import java.util.List;
 public class WsResponseObject {
 
     @JsonProperty("receive_comment")
-    private ArrayList<EventCommentData> eventData;
+    private ArrayList<EventCommentData> eventReceiveCommentData;
 
-    public ArrayList<EventCommentData> getEventCommentData() {
-        return eventData;
+    @JsonProperty("send_comment")
+    private ArrayList<EventCommentData> eventSendCommentData;
+
+    public ArrayList<EventCommentData> getEventReceiveCommentData() {
+        return eventReceiveCommentData;
     }
 
-    public void setEventCommentData(ArrayList<EventCommentData> eventData) {
-        this.eventData = eventData;
+    public void setEventReceiveCommentData(ArrayList<EventCommentData> eventReceiveCommentData) {
+        this.eventReceiveCommentData = eventReceiveCommentData;
+    }
+
+    public ArrayList<EventCommentData> getEventSendCommentData() {
+        return eventSendCommentData;
+    }
+
+    public void setEventSendCommentData(ArrayList<EventCommentData> eventSendCommentData) {
+        this.eventSendCommentData = eventSendCommentData;
     }
 
     private String status;

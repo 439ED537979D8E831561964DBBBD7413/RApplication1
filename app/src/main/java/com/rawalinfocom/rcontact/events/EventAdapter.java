@@ -83,11 +83,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         holder.buttonUserCommentSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                "type" : "birthday",
-//                        "to_pm_id" : 1,
-//                        "comment" : "hello",
-//                        "date" : "2017-03-15",
-//                        "status" : 1
                 String userComment = holder.edittextUserComment.getText().toString();
                 if (userComment != null && userComment.length() > 0) {
                     EventsActivity.evmRecordId = item.getEventRecordIndexId();
@@ -97,8 +92,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
                 } else {
                     Toast.makeText(context, "Please enter some comment first!", Toast.LENGTH_SHORT).show();
                 }
-                //addEventComment("birthday", 1, "hello", "2017-03-15", 1);
-                //Toast.makeText(context, "Button clicked" + position + " :" + item.getPersonName(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -166,10 +159,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             //show no toast
             Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    public void updateAdapter() {
-
     }
 
 }

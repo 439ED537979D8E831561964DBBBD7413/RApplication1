@@ -174,15 +174,10 @@ public class EventsActivity extends BaseActivity implements RippleView
         String day7th = getEventDate(7);
         String currentUserPmId = Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0");
         int currentPmID = Integer.parseInt(currentUserPmId);
-        Log.i("MAULIK", "currentPM" + currentPmID);
 
         ArrayList<Event> eventsToday = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(today, today, currentPmID);
         ArrayList<Event> eventsRecent = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(yesterDay, yesterDay, currentPmID);
         ArrayList<Event> eventsUpcoming7 = tableEventMaster.getAllEventsBetWeenExceptCurrentUser(tomorrow, day7th, currentPmID);
-
-        Log.i("MAULIK", "eventsToday" + eventsToday.size());
-        Log.i("MAULIK", "eventsRecent" + eventsRecent.size());
-        Log.i("MAULIK", "eventsUpcoming7" + eventsUpcoming7.size());
 
         listTodayEvent = createEventList(eventsToday, 0);
         listRecentEvent = createEventList(eventsRecent, 1);
@@ -258,7 +253,6 @@ public class EventsActivity extends BaseActivity implements RippleView
                 int pmId = Integer
                         .parseInt(e.getRcProfileMasterPmId());
 
-                Log.i("MAULIK", "e.getRcProfileMasterPmId(" + pmId);
                 UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
 
                 eventType = getEventType(eventName);
@@ -391,7 +385,6 @@ public class EventsActivity extends BaseActivity implements RippleView
                 }
             }
         } else {
-            // toast error
             Toast.makeText(EventsActivity.this, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
 
