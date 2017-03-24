@@ -46,11 +46,8 @@ import butterknife.ButterKnife;
 public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDialogAdapter.MaterialViewHolder>  {
     private Context context;
     private ArrayList<String> arrayListString;
-    private String dialogTitle;
     MaterialDialog callConfirmationDialog;
     String numberToCall;
-    String dialogName;
-    Class classToReceive;
     long callLogDateToDelete;
     boolean isFromCallLogFragment = false;
     ArrayList<CallLogType> arrayListCallLogType;
@@ -63,7 +60,6 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
         this.callLogDateToDelete = date;
         this.isFromCallLogFragment =  isFromCallLogs;
         this.arrayListCallLogType =  list;
-//        this.dialogName = dialogTitle;
     }
 
     @Override
@@ -203,7 +199,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                 Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
-//                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS,true);
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS,true);
                 LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 
@@ -233,7 +229,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                 Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
-//                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS,true);
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS,true);
                 LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 
@@ -261,7 +257,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                 Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
-//                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS,true);
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS,true);
                 LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 

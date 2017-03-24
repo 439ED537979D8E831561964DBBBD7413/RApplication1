@@ -180,7 +180,7 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                 Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
 
                 Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS);
-//                localBroadcastIntent.putExtra(AppConstants.EXTRA_REMOVE_CALL_LOGS,true);
+                localBroadcastIntent.putExtra(AppConstants.EXTRA_REMOVE_CALL_LOGS,true);
                 LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 

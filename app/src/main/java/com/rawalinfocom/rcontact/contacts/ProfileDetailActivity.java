@@ -382,6 +382,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
+
         if(profileActivityCallInstance){
             fetchCallLogHistoryDateWise(historyNumber);
 

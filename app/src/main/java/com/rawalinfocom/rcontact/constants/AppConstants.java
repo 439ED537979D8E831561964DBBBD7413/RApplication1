@@ -87,8 +87,7 @@ public class AppConstants {
     public static String EXTRA_DELETE_ALL_CALL_LOGS = "extra_delete_all_call_logs";
     public static String EXTRA_REMOVE_CALL_LOGS = "extra_remove_call_logs";
     public static String EXTRA_CLEAR_CALL_LOGS = "extra_clear_call_logs";
-
-
+    public static String EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS = "extra_clear_call_logs_from_contacts";
 
     //</editor-fold>
 

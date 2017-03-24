@@ -11,7 +11,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -43,11 +42,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
-import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.CallLogListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -85,15 +84,19 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
     @BindView(R.id.progressBarCallLog)
     ProgressBar progressBarCallLog;
-    @BindView(R.id.linearProgressBar)
-    LinearLayout linearProgressBar;
+    @BindView(R.id.relativeProgressBar)
+    RelativeLayout relativeProgressBar;
     @BindView(R.id.linearMainContent)
     LinearLayout linearMainContent;
     @BindView(R.id.linearCallLogMain)
     LinearLayout linearCallLogMain;
+    @BindView(R.id.text_loading)
+    TextView textLoading;
+    @BindView(R.id.spinner_call_filter)
+    Spinner spinnerCallFilter;
+    @BindView(R.id.recycler_call_logs)
+    RecyclerView recyclerCallLogs;
 
-    private Spinner spinnerCallFilter;
-    private RecyclerView recyclerCallLogs;
     private CallLogListAdapter callLogListAdapter;
 
     ArrayList<Object> arrayListObjectCallLogs;
@@ -364,18 +367,20 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         if (linearMainContent.getVisibility() == View.VISIBLE)
             linearMainContent.setVisibility(View.GONE);
 
-        if (linearProgressBar.getVisibility() == View.GONE)
-            linearProgressBar.setVisibility(View.VISIBLE);
+        if (relativeProgressBar.getVisibility() == View.GONE)
+            relativeProgressBar.setVisibility(View.VISIBLE);
 
         if (progressBarCallLog.getVisibility() == View.GONE)
             progressBarCallLog.setVisibility(View.VISIBLE);
+
+        textLoading.setVisibility(View.GONE);
 
     }
 
     private void hideProgressBar() {
 
-        if (linearProgressBar.getVisibility() == View.VISIBLE)
-            linearProgressBar.setVisibility(View.GONE);
+        if (relativeProgressBar.getVisibility() == View.VISIBLE)
+            relativeProgressBar.setVisibility(View.GONE);
 
         if (progressBarCallLog.getVisibility() == View.VISIBLE)
             progressBarCallLog.setVisibility(View.GONE);
@@ -383,12 +388,10 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         if (linearMainContent.getVisibility() == View.GONE)
             linearMainContent.setVisibility(View.VISIBLE);
 
-
+        textLoading.setVisibility(View.GONE);
     }
 
     private void init() {
-        spinnerCallFilter = (Spinner) mainView.findViewById(R.id.spinner_call_filter);
-        recyclerCallLogs = (RecyclerView) mainView.findViewById(R.id.recycler_call_logs);
         arrayListCallLogs = new ArrayList<>();
         arrayListCallLogHeader = new ArrayList<>();
         arrayListObjectCallLogs = new ArrayList<>();
@@ -1313,36 +1316,31 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
     //</editor-fold>
 
-    /*public static BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            startInsertion = intent.getBooleanExtra(AppConstants.EXTRA_CALL_LOG_BROADCAST_KEY,
-            false);
-            Log.i("Local broad cast received", startInsertion + "");
-            if (startInsertion) {
-                startInsertion = false;
-                List<CallLogType> callLogs = getLogsByCallType(AppConstants.ALL_CALLS);
-                tempList.addAll(callLogs);
-                ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
-                if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
-                    insertServiceCall(callLogTypeArrayList);
-                }
-            }
-        }
-    };*/
-
-
     private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
-
-            if (callLogListAdapter != null) {
-                int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
-                arrayListObjectCallLogs.remove(itemIndexToRemove);
-                callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
+            boolean clearLogs = intent.getBooleanExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS, false);
+            boolean clearLogsFromContacts = intent.getBooleanExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS, false);
+            if (clearLogs) {
+                if (callLogListAdapter != null) {
+                    int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
+                    arrayListObjectCallLogs.remove(itemIndexToRemove);
+                    callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
+                    clearLogs = false;
+                }
+            } else {
+                if (clearLogsFromContacts) {
+                    if (callLogListAdapter != null) {
+                        int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
+                        arrayListObjectCallLogs.remove(itemIndexToRemove);
+                        callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
+                        clearLogsFromContacts = false;
+                    }
+                }
             }
+
+
         }
     };
 
@@ -1352,11 +1350,16 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         public void onReceive(Context context, Intent intent) {
             Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
 
-            if (callLogListAdapter != null) {
-                int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
-                arrayListObjectCallLogs.remove(itemIndexToRemove);
-                callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
+            boolean removeLogs = intent.getBooleanExtra(AppConstants.EXTRA_REMOVE_CALL_LOGS, false);
+            if (removeLogs) {
+                if (callLogListAdapter != null) {
+                    int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
+                    arrayListObjectCallLogs.remove(itemIndexToRemove);
+                    callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
+                    removeLogs = false;
+                }
             }
+
 
         }
     };
@@ -1372,8 +1375,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
                     arrayListObjectCallLogs.remove(itemIndexToRemove);
                     callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
+                    deleteAll = false;
                 }
-
             } else {
                 //update history count
                 int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
@@ -1400,6 +1403,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     callLogListAdapter.notifyDataSetChanged();
                 }
 
+                LocalBroadcastManager localBroadcastManagerDeleteLogs = LocalBroadcastManager.getInstance(getActivity());
+                localBroadcastManagerDeleteLogs.unregisterReceiver(localBroadcastReceiverDeleteLogs);
+
             }
 
         }
@@ -1420,27 +1426,5 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
         }
     };
-
-    /*public class CallLogReceiver extends BroadcastReceiver{
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            try{
-
-                Toast.makeText(context, "Action: " + intent.getAction(), Toast.LENGTH_SHORT).show();
-                if(callLogListAdapter!=null) {
-                    int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
-                    Log.i("Index to remove", itemIndexToRemove+"");
-
-                }
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-        }
-    }*/
-
 
 }
