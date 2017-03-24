@@ -205,6 +205,46 @@ public class TableEventMaster {
         return arrayListEvent;
     }
 
+    // Getting All Events
+    public ArrayList<Event> getAllEventsBetWeen(String fromDate, String toDate) {
+        ArrayList<Event> arrayListEvent = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_RC_EVENT_MASTER +
+                " WHERE strftime('%m-%d'," + COLUMN_EVM_START_DATE + ") between '" + fromDate + "' and '" + toDate + "' order by " + COLUMN_EVM_START_DATE + " asc";
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Event event = new Event();
+                event.setEvmId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_ID)));
+                event.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_RECORD_INDEX_ID)));
+                event.setEvmStartDate(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_START_DATE)));
+                event.setEvmEventType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_EVENT_TYPE)));
+                event.setEvmCustomType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_CUSTOM_TYPE)));
+                event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_EVENT_PRIVACY)));
+                event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_RC_PROFILE_MASTER_PM_ID)));
+                // Adding event to list
+                arrayListEvent.add(event);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        // return Event list
+        return arrayListEvent;
+    }
+
     // Getting Event Count
     public int getEventCount() {
         String countQuery = "SELECT  * FROM " + TABLE_RC_EVENT_MASTER;

@@ -146,4 +146,5 @@
     <string name="clear_call_log">Clear Call Log</string>
     <string name="view_profile">View Profile</string>
 
+    <string name="footer_events_text">If you want to see Upcoming Events switch Website</string>
 </resources>

@@ -35,6 +35,17 @@ public class WsResponseObject {
     @JsonProperty("profile_rating")
     private Rating profileRating;
 
+    @JsonProperty("event_comment")
+    private EventComment eventComment;
+
+    public EventComment getEventComment() {
+        return eventComment;
+    }
+
+    public void setEventComment(EventComment eventComment) {
+        this.eventComment = eventComment;
+    }
+
     @JsonProperty("status")
     public String getStatus() {
         return StringUtils.defaultString(status);
