@@ -24,8 +24,6 @@ public class MyLayoutManager extends LinearLayoutManager {
     @Override
     public void onLayoutCompleted(RecyclerView.State state) {
         int x = recyclerView.computeVerticalScrollRange();
-        Log.i("MyLayoutManager", "computeVerticalScrollRange: " + x);
-        Log.i("MyLayoutManager", "height: " + height);
         if (x > height) {
             recyclerView.getLayoutParams().height = height;
         } else {

@@ -393,4 +393,12 @@ public class TableMobileMaster {
                 new String[]{String.valueOf(mobileNumber.getMnmId())});
         db.close();
     }
+
+    // Deleting single Mobile Number From RcpId
+    public void deleteMobileNumber(String rcpId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        db.delete(TABLE_RC_MOBILE_NUMBER_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
+                new String[]{String.valueOf(rcpId)});
+        db.close();
+    }
 }

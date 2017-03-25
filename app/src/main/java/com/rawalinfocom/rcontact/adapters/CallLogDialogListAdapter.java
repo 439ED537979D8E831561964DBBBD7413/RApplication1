@@ -125,7 +125,11 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                     Toast.makeText(context, "Please select any one option", Toast.LENGTH_SHORT).show();
                 }
 
-
+                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);
+                localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
+                        AppConstants.EXTRA_CALL_LOG_DELETED_VALUE);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
             }
         });
@@ -175,9 +179,8 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                 Log.i("Delete Query value", value + "");
                 Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
 
-                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
-                localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
-                        AppConstants.EXTRA_CALL_LOG_DELETED_VALUE);
+                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS);
+                localBroadcastIntent.putExtra(AppConstants.EXTRA_REMOVE_CALL_LOGS,true);
                 LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 

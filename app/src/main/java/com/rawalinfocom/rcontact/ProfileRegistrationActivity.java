@@ -678,6 +678,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         userProfile.setPmIsFavourite(profileDetail.getIsFavourite());
         userProfile.setPmNosqlMasterId(profileDetail.getNoSqlMasterId());
         userProfile.setPmJoiningDate(profileDetail.getJoiningDate());
+        userProfile.setPmGender(profileDetail.getPbGender());
 
         tableProfileMaster.addProfile(userProfile);
         //</editor-fold>
@@ -814,7 +815,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(arrayListImAccount.get(j).getIMAccountPublic());
-                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+//                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+                imAccount.setRcProfileMasterPmId(userProfileRegistered.getPmId());
                 imAccountsList.add(imAccount);
             }
 
@@ -833,7 +835,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 event.setEvmStartDate(arrayListEvent.get(j).getEventDate());
                 event.setEvmEventType(arrayListEvent.get(j).getEventType());
                 event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
-                event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+//                event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+                event.setRcProfileMasterPmId(userProfileRegistered.getPmId());
                 eventList.add(event);
             }
 

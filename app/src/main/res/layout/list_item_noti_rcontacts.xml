@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/relative_row_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/image_rcontacts_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:contentDescription="@string/str_content_description"
+            android:src="@mipmap/ic_launcher" />
+
+        <LinearLayout
+            android:id="@+id/linear_content_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@id/image_rcontacts_icon"
+            android:layout_toRightOf="@id/image_rcontacts_icon"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2">
+
+                    <TextView
+                        android:id="@+id/text_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:textColor="@color/colorPrimary"
+                        tools:text="RContacts app update" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/text_noti_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    tools:text="11:15 PM" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_detail_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                tools:text="New app update is available for RContact app in Play Store.Kindly download latest update." />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/divider_noti_request_item"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/relative_row_main"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_half_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_half_horizontal_margin"
+        android:background="@color/colorDarkGray" />
+
+</RelativeLayout>

@@ -55,8 +55,8 @@
     <string name="im_add_users">&#xe932;</string>
     <string name="im_call_3">&#xe933;</string>
     <!--<string name="im_caret_down">&#xe934;</string>-->
-    <string name="im_website">&#xe935;</string>
-    <string name="im_map_marker">&#xe936;</string>
+    <string name="im_map_marker">&#xe935;</string>
+    <!--<string name="im_map_marker">&#xe936;</string>-->
     <string name="im_linkedin">&#xe937;</string>
     <string name="im_twitter">&#xe938;</string>
     <string name="im_skype">&#xe939;</string>

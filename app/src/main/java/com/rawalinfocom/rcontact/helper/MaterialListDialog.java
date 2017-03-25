@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -60,6 +62,10 @@ public class MaterialListDialog {
             tvDialogTitle.setText(dialogTitle);
 
         setAdapter();
+
+        LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(context);
+        IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);
+        localBroadcastManager.registerReceiver(localBroadcastReceiverDialog,intentFilter);
     }
 
 
@@ -141,17 +147,11 @@ public class MaterialListDialog {
         this.callingAdapter = callingAdapter;
     }
 
-    private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("CallLogFragment","onReceive() of LocalBroadcast");
-
-            if(AppConstants.EXTRA_CALL_LOG_DELETED_VALUE){
-                Log.i("CallLogFragment deleted", AppConstants.EXTRA_CALL_LOG_DELETED_VALUE+"");
-
-            }else {
-                Log.i("CallLogFragment deleted", AppConstants.EXTRA_CALL_LOG_DELETED_VALUE+"");
-            }
+            dismissDialog();
 
         }
     };

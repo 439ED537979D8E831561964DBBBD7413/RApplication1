@@ -109,7 +109,7 @@ public class AsyncReverseGeoCoding extends AsyncTask<LatLng, Void, Object> {
                 objAddress.setAddress(addressText);
                 objAddress.setCity(address.getLocality());
                 objAddress.setState(address.getAdminArea());
-                objAddress.setCountry(address.getCountryCode());
+                objAddress.setCountry(address.getCountryName());
 
             }
             return objAddress;
