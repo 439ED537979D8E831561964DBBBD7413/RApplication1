@@ -95,6 +95,7 @@
                     android:id="@+id/given_rating_bar"
                     style="?android:attr/ratingBarStyleSmall"
                     android:layout_width="wrap_content"
+                    android:stepSize="1"
                     android:layout_height="wrap_content"
                     android:isIndicator="true"
                     tools:rating="3" />

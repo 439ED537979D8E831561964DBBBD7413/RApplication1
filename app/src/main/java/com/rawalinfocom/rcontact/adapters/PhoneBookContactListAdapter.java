@@ -44,7 +44,8 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
         this.arrayListUserProfile = arrayListUserProfile;
         arrayListTempUserProfile = new ArrayList<>();
         arrayListCheckedPositions = new ArrayList<>();
-        arrayListTempUserProfile.addAll(arrayListUserProfile);
+
+//        arrayListTempUserProfile.addAll(arrayListUserProfile);
     }
 
     @Override
@@ -57,6 +58,9 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
     @Override
     public void onBindViewHolder(contactViewHolder holder, int position) {
 
+        if (arrayListTempUserProfile.size() <= 0) {
+            arrayListTempUserProfile.addAll(arrayListUserProfile);
+        }
         UserProfile userProfile = arrayListUserProfile.get(position);
 
         holder.textContactName.setText(userProfile.getPmFirstName());

@@ -114,8 +114,12 @@
         <activity android:name=".EventsActivity" />
         <activity android:name=".NotificationsActivity" />
         <activity android:name=".NotificationsDetailActivity" />
+
         <activity
             android:name=".contacts.EditProfileActivity"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".contacts.MapsActivity">
+        </activity>
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".calllog.CallLogDeleteActivity" />
         <activity android:name=".calllog.CallHistoryDetailsActivity"></activity>

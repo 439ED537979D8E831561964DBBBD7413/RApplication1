@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -51,6 +52,8 @@ public class ProfileDataOperation implements Serializable {
     private String pbRcpVerify;
     private String profileRating;
     private String totalProfileRateUser;
+    private String pbGender;
+    private String pbProfilePhoto;
 
 
     @JsonProperty("pb_phone_number")
@@ -89,6 +92,7 @@ public class ProfileDataOperation implements Serializable {
         this.pbEvent = pbEvent;
     }
 
+    @JsonIgnore
     @JsonProperty("pb_name_suffix")
     public String getPbNameSuffix() {
         return StringUtils.defaultString(this.pbNameSuffix);
@@ -366,5 +370,23 @@ public class ProfileDataOperation implements Serializable {
 
     public void setPbWebAddress(ArrayList<ProfileDataOperationWebAddress> pbWebAddress) {
         this.pbWebAddress = pbWebAddress;
+    }
+
+    @JsonProperty("pb_gender")
+    public String getPbGender() {
+        return pbGender;
+    }
+
+    public void setPbGender(String pbGender) {
+        this.pbGender = pbGender;
+    }
+
+    @JsonProperty("pb_profile_photo")
+    public String getPbProfilePhoto() {
+        return pbProfilePhoto;
+    }
+
+    public void setPbProfilePhoto(String pbProfilePhoto) {
+        this.pbProfilePhoto = pbProfilePhoto;
     }
 }
