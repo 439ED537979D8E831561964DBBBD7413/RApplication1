@@ -14,10 +14,18 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.database.TableCommentMaster;
+import com.rawalinfocom.rcontact.database.TableEventMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.events.MyLayoutManager;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.Comment;
+import com.rawalinfocom.rcontact.model.Event;
+import com.rawalinfocom.rcontact.model.UserProfile;
 
-import java.util.Arrays;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -62,6 +70,9 @@ public class NotiCommentsFragment extends BaseFragment {
 
     @BindView(R.id.text_view_more)
     TextView textViewMore;
+    List<NotiCommentsItem> listTodayComments;
+    List<NotiCommentsItem> listYesterdayComments;
+    List<NotiCommentsItem> listPastComments;
 
     @Override
     public void getFragmentArguments() {
@@ -89,20 +100,30 @@ public class NotiCommentsFragment extends BaseFragment {
     }
 
     private void initData() {
-        NotiCommentsItem item1 = new NotiCommentsItem("Aakar Jain", "Aakar Jain reply you on your message.", "11:15 PM");
-        NotiCommentsItem item2 = new NotiCommentsItem("Angarika Shah", "Angarika Shah reply you on your message.", "11:15 PM");
-        NotiCommentsItem item3 = new NotiCommentsItem("Angarika Shah 1", "Angarika Shah 1 reply you on your message.", "11:15 PM");
-        NotiCommentsItem item4 = new NotiCommentsItem("Keval Pandit", "Keval Pandit reply you on your message.", "11:15 PM");
-        NotiCommentsItem item5 = new NotiCommentsItem("Keyur Kambli", "Keyur Kambli reply you on your message.", "11:15 PM");
-        NotiCommentsItem item6 = new NotiCommentsItem("Virat Gujarati", "Virat Gujarati reply you on message.", "11:15 PM");
+        TableCommentMaster tableCommentMaster = new TableCommentMaster(getDatabaseHandler());
+        String today = getDate(0); // 22
+        String yesterDay = getDate(-1); // 21
+        String dayBeforeYesterday = getDate(-2); //20
+        String pastday5thDay = getDate(-6); //16
+        ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllReplyReceived(today, today);
+        ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllReplyReceived(yesterDay, yesterDay);
+        ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllReplyReceived(pastday5thDay, dayBeforeYesterday);
 
-        List<NotiCommentsItem> listTodayComments = Arrays.asList(item1, item2, item3, item4, item5, item6);
-        List<NotiCommentsItem> listYesterdayComments = Arrays.asList(item1, item2, item3);
-        List<NotiCommentsItem> listPastComments = Arrays.asList(item1, item2, item3, item4);
+//        NotiCommentsItem item1 = new NotiCommentsItem("Aakar Jain", "Aakar Jain reply you on your message.", "11:15 PM");
+//        NotiCommentsItem item2 = new NotiCommentsItem("Angarika Shah", "Angarika Shah reply you on your message.", "11:15 PM");
+//        NotiCommentsItem item3 = new NotiCommentsItem("Angarika Shah 1", "Angarika Shah 1 reply you on your message.", "11:15 PM");
+//        NotiCommentsItem item4 = new NotiCommentsItem("Keval Pandit", "Keval Pandit reply you on your message.", "11:15 PM");
+//        NotiCommentsItem item5 = new NotiCommentsItem("Keyur Kambli", "Keyur Kambli reply you on your message.", "11:15 PM");
+//        NotiCommentsItem item6 = new NotiCommentsItem("Virat Gujarati", "Virat Gujarati reply you on message.", "11:15 PM");
 
-        NotiCommentsAdapter todayRatingAdapter = new NotiCommentsAdapter(getActivity(), listTodayComments);
-        NotiCommentsAdapter yesterdayRatingAdapter = new NotiCommentsAdapter(getActivity(), listYesterdayComments);
-        NotiCommentsAdapter pastRatingAdapter = new NotiCommentsAdapter(getActivity(), listPastComments);
+
+        listTodayComments = createListToday(replyReceivedToday);
+        listYesterdayComments = createListToday(replyReceivedYesterDay);
+        listPastComments = createListToday(replyReceivedPastDays);
+
+        NotiCommentsAdapter todayRatingAdapter = new NotiCommentsAdapter(getActivity(), listTodayComments, 0);
+        NotiCommentsAdapter yesterdayRatingAdapter = new NotiCommentsAdapter(getActivity(), listYesterdayComments, 1);
+        NotiCommentsAdapter pastRatingAdapter = new NotiCommentsAdapter(getActivity(), listPastComments, 2);
 
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -133,6 +154,29 @@ public class NotiCommentsFragment extends BaseFragment {
         }
         recyclerYesterDayComments.setVisibility(View.GONE);
         recyclerPastDayComments.setVisibility(View.GONE);
+    }
+
+    private List<NotiCommentsItem> createListToday(ArrayList<Comment> replyList) {
+        List<NotiCommentsItem> list = new ArrayList<>();
+        for (Comment comment : replyList) {
+            NotiCommentsItem item = new NotiCommentsItem();
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+            TableEventMaster tableEventMaster = new TableEventMaster(getDatabaseHandler());
+            Event event = tableEventMaster.getEventByEvmRecordIndexId(Integer.parseInt(comment.getEvmRecordIndexId()));
+            int pmId = comment.getRcProfileMasterPmId();
+            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
+            item.setCommenterName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+            item.setCommenterInfo(userProfile.getPmFirstName() + " reply you on your message");
+            item.setNotiCommentTime(Utils.getLocalTimeFromUTCTime(comment.getCrmRepliedAt()));
+            item.setComment(comment.getCrmComment());
+            item.setReply(comment.getCrmReply());
+            item.setCommentTime(Utils.getLocalTimeFromUTCTime(comment.getCrmCreatedAt()));
+            item.setReplyTime(Utils.getLocalTimeFromUTCTime(comment.getCrmRepliedAt()));
+            item.setEventName(event.getEvmEventType());
+            list.add(item);
+
+        }
+        return list;
     }
 
     private void init() {
@@ -196,5 +240,12 @@ public class NotiCommentsFragment extends BaseFragment {
                 }
             }
         });
+    }
+
+    private String getDate(int dayToAddorSub) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+        Date date = new Date();
+        date.setTime(date.getTime() + dayToAddorSub * 24 * 60 * 60 * 1000);
+        return sdf.format(date);
     }
 }
