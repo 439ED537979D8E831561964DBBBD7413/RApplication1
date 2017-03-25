@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_root_profile_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_toolbar_call_history_detail"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/include_toolbar"
+        android:background="@color/colorVeryLightGray"
+        android:scrollbars="none">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/relative_basic_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorLightGrayishCyan1"
+                android:padding="@dimen/margin_small">
+
+                <TextView
+                    android:id="@+id/text_full_screen_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:padding="@dimen/margin_small"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    tools:text="Hello World"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/text_full_screen_text">
+
+                    <ImageView
+                        android:id="@+id/image_profile"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="@string/str_content_description"
+                        android:src="@mipmap/ic_launcher"/>
+
+                    <LinearLayout
+                        android:id="@+id/linear_basic_detail_rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text_user_rating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_tiny"
+                            tools:text="12345"/>
+
+                        <RatingBar
+                            android:id="@+id/rating_user"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:isIndicator="true"
+                            tools:rating="4"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_basic_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/linear_basic_detail_rating"
+                        android:layout_toRightOf="@id/image_profile"
+                        android:orientation="vertical">
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scrollbars="none">
+
+                            <TextView
+                                android:id="@+id/text_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="2dp"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/colorAccent"
+                                tools:text="Monal Godiwala"/>
+
+                        </HorizontalScrollView>
+
+                        <!-- <HorizontalScrollView
+                             android:layout_width="match_parent"
+                             android:layout_height="match_parent"
+                             android:scrollbars="none">
+
+                             <TextView
+                                 android:id="@+id/text_cloud_name"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:padding="2dp"
+                                 android:singleLine="true"
+                                 android:textAppearance="?android:textAppearanceMedium"
+                                 android:textColor="@color/colorAccent"
+                                 tools:text="Monel"/>
+
+                         </HorizontalScrollView>-->
+
+                        <LinearLayout
+                            android:id="@+id/linear_organization_detail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_designation"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="2dp"
+                                android:singleLine="true"
+                                android:textColor="@color/colorAccent"
+                                tools:text="Managing Director"/>
+
+                            <TextView
+                                android:id="@+id/text_organization"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="2dp"
+                                android:singleLine="true"
+                                android:textColor="@color/colorAccent"
+                                tools:text="Blazze Apps"/>
+
+                            <TextView
+                                android:id="@+id/text_view_all_organization"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="2dp"
+                                android:text="View All Organizations"
+                                android:visibility="gone"
+                                tools:visibility="visible"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_call_sms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relative_basic_detail"
+                android:background="@color/colorLightGrayishCyan2"
+                android:orientation="horizontal"
+                android:padding="@dimen/activity_half_horizontal_margin">
+
+
+                <com.rawalinfocom.rcontact.helper.RippleView
+                    android:id="@+id/ripple_call_log"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/height_button"
+                    android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_half_horizontal_margin"
+                    android:layout_weight="1"
+                    app:rv_alpha="@integer/alpha_ripple"
+                    app:rv_color="@color/colorWhite"
+                    app:rv_rippleDuration="@integer/duration_ripple"
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/button_call_log"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorAccent"
+                        android:text="Call Log"
+                        android:textColor="@color/colorWhite"/>
+                </com.rawalinfocom.rcontact.helper.RippleView>
+
+                <com.rawalinfocom.rcontact.helper.RippleView
+                    android:id="@+id/ripple_sms"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/height_button"
+                    android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_half_horizontal_margin"
+                    android:layout_weight="1"
+                    app:rv_alpha="@integer/alpha_ripple"
+                    app:rv_color="@color/colorWhite"
+                    app:rv_rippleDuration="@integer/duration_ripple">
+
+
+                    <Button
+                        android:id="@+id/button_sms"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorAccent"
+                        android:text="SMS"
+                        android:textColor="@color/colorWhite"/>
+                </com.rawalinfocom.rcontact.helper.RippleView>
+
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/relative_call_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_call_sms"
+                android:background="@color/colorWhite"
+                tools:visibility="visible">
+
+                <TextView
+                    android:id="@+id/text_text_call_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="@dimen/margin_10dp"
+                    android:paddingLeft="@dimen/padding_10dp"
+                    android:text="Call History"
+                    android:textColor="@color/colorDarkGray"
+                    android:background="@color/colorVeryLightGray"/>
+
+                <TextView
+                    android:id="@+id/text_no_history_to_show"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/text_text_call_history"
+                    android:layout_marginBottom="@dimen/margin_15dp"
+                    android:layout_marginTop="@dimen/margin_15dp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    tools:text="No history to show"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_call_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/text_text_call_history"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignStart="@+id/text_text_call_history"
+                    android:layout_below="@+id/text_text_call_history"
+                    android:visibility="visible">
+                </android.support.v7.widget.RecyclerView>
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>
+
