@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.events;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -55,11 +56,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         holder.textEventCommentTime.setText(Utils.formatDateTime(item.getCommentTime(), "dd-MM hh:mm a"));
         int notiType = item.getEventType();
         if (notiType == AppConstants.COMMENT_TYPE_BIRTHDAY) {
-            holder.textEventDetailInfo.setText(item.getEventDetail() + ", " + item.getEventName() + " on " + Utils.formatDateTime(item.getEventDate(), "EEE, dd MMM"));
+            if (recyclerPosition == 0)
+                holder.textEventDetailInfo.setText(item.getEventDetail() + ", " + item.getEventName());
+            else
+                holder.textEventDetailInfo.setText(item.getEventDetail() + ", " + item.getEventName() + " on " + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
         } else if (notiType == AppConstants.COMMENT_TYPE_ANNIVERSARY) {
-            holder.textEventDetailInfo.setText(item.getEventDetail() + " on " + Utils.formatDateTime(item.getEventDate(), "EEE, dd MMM"));
+            holder.textEventDetailInfo.setText(item.getEventDetail() + " on " + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
         } else {
-            holder.textEventDetailInfo.setText(item.getEventName() + " on " + Utils.formatDateTime(item.getEventDate(), "dd-MM-yyyy"));
+            holder.textEventDetailInfo.setText(item.getEventName() + " on " + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
         }
         if (recyclerPosition != 2) {
             if (!item.isEventCommentPending()) {
@@ -79,22 +83,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         holder.buttonUserCommentSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                "type" : "birthday",
-//                        "to_pm_id" : 1,
-//                        "comment" : "hello",
-//                        "date" : "2017-03-15",
-//                        "status" : 1
                 String userComment = holder.edittextUserComment.getText().toString();
                 if (userComment != null && userComment.length() > 0) {
                     EventsActivity.evmRecordId = item.getEventRecordIndexId();
                     EventsActivity.selectedRecycler = recyclerPosition;
                     EventsActivity.selectedRecyclerItem = position;
-                    addEventComment(item.getEventName(), item.getPersonRcpPmId(), userComment, item.getEventDate(), AppConstants.COMMENT_STATUS_SENT);
+                    addEventComment(item.getEventName(), item.getPersonRcpPmId(), userComment, item.getEventDate(), AppConstants.COMMENT_STATUS_SENT, item.getEventRecordIndexId());
                 } else {
                     Toast.makeText(context, "Please enter some comment first!", Toast.LENGTH_SHORT).show();
                 }
-                //addEventComment("birthday", 1, "hello", "2017-03-15", 1);
-                //Toast.makeText(context, "Button clicked" + position + " :" + item.getPersonName(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -142,7 +139,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 
     }
 
-    private void addEventComment(String eventType, int toPmId, String comment, String date, int status) {
+    private void addEventComment(String eventType, int toPmId, String comment, String date, int status, String eventRecordIndexId) {
 
         WsRequestObject addCommentObject = new WsRequestObject();
 
@@ -150,6 +147,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         addCommentObject.setToPmId(toPmId);
         addCommentObject.setComment(comment);
         addCommentObject.setDate(date);
+        addCommentObject.setEvmRecordIndexId(Integer.parseInt(eventRecordIndexId));
         addCommentObject.setStatus(status + "");
 
         if (Utils.isNetworkAvailable(context)) {
@@ -159,12 +157,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
                     (WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
         } else {
             //show no toast
-            Log.i("MAULIK", "no internet");
+            Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    public void updateAdapter() {
-
     }
 
 }

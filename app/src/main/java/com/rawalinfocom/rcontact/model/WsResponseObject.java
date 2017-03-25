@@ -18,6 +18,28 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WsResponseObject {
 
+    @JsonProperty("receive_comment")
+    private ArrayList<EventCommentData> eventReceiveCommentData;
+
+    @JsonProperty("send_comment")
+    private ArrayList<EventCommentData> eventSendCommentData;
+
+    public ArrayList<EventCommentData> getEventReceiveCommentData() {
+        return eventReceiveCommentData;
+    }
+
+    public void setEventReceiveCommentData(ArrayList<EventCommentData> eventReceiveCommentData) {
+        this.eventReceiveCommentData = eventReceiveCommentData;
+    }
+
+    public ArrayList<EventCommentData> getEventSendCommentData() {
+        return eventSendCommentData;
+    }
+
+    public void setEventSendCommentData(ArrayList<EventCommentData> eventSendCommentData) {
+        this.eventSendCommentData = eventSendCommentData;
+    }
+
     private String status;
     private String message;
 

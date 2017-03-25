@@ -23,7 +23,45 @@ public class WsRequestObject {
     private String comment;
 
     @JsonProperty("to_pm_id")
-    private Integer toPmId;
+    private int toPmId;
+
+    @JsonProperty("evm_record_index_id")
+    private int evmRecordIndexId;
+
+    @JsonProperty("id")
+    private String commentId;
+
+    @JsonProperty("reply")
+    private String reply;
+
+    public void setToPmId(int toPmId) {
+        this.toPmId = toPmId;
+    }
+
+    public String getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
+    }
+
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
+
+    public int getEvmRecordIndexId() {
+        return evmRecordIndexId;
+    }
+
+    public void setEvmRecordIndexId(int evmRecordIndexId) {
+        this.evmRecordIndexId = evmRecordIndexId;
+    }
+
 
     public String getDate() {
         return date;
