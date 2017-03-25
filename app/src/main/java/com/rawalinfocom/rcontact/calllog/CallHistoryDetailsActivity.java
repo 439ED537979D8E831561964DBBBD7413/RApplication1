@@ -301,6 +301,19 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+            fetchAllCallLogHistory(contactName);
+        } else {
+            if (!TextUtils.isEmpty(profileContactNumber)) {
+                fetchAllCallLogHistory(profileContactNumber);
+            }
+        }
+    }
+
+    @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
 
         if (error == null) {

@@ -56,6 +56,12 @@
             android:name="io.fabric.ApiKey"
             android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7" />
 
+        <!--              The API key for  Google Maps-based APIs. -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key"/>
+
+
         <activity android:name=".MobileNumberRegistrationActivity" />
         <activity
             android:name=".CountryListActivity"
@@ -117,10 +123,9 @@
 
         <activity
             android:name=".contacts.EditProfileActivity"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".contacts.MapsActivity">
         </activity>
-            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".calllog.CallLogDeleteActivity" />
         <activity android:name=".calllog.CallHistoryDetailsActivity"></activity>
     </application>
