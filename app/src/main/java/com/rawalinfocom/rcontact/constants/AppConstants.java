@@ -45,6 +45,8 @@ public class AppConstants {
 
     public static final int OTP_VALIDITY_DURATION = 20;
     public static final int OTP_LENGTH = 6;
+    public static boolean isProgressShowing =  false;
+    public static boolean isBackgroundProcessStopped = false;
 
     //</editor-fold>
 
@@ -79,7 +81,13 @@ public class AppConstants {
     public static boolean EXTRA_CALL_LOG_BROADCAST_VALUE = false;
     public static String EXTRA_CALL_LOG_DELETED_KEY = "message";
     public static boolean EXTRA_CALL_LOG_DELETED_VALUE = true;
-
+    public static String EXTRA_CALL_LOG_SWITCH_TAB = "message";
+    public static boolean EXTRA_CALL_LOG_SWITCH_TAB_VALUE = true;
+    public static String EXTRA_CALL_ARRAY_LIST = "extra_call_array_list";
+    public static String EXTRA_DELETE_ALL_CALL_LOGS = "extra_delete_all_call_logs";
+    public static String EXTRA_REMOVE_CALL_LOGS = "extra_remove_call_logs";
+    public static String EXTRA_CLEAR_CALL_LOGS = "extra_clear_call_logs";
+    public static String EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS = "extra_clear_call_logs_from_contacts";
 
     //</editor-fold>
 
@@ -88,6 +96,12 @@ public class AppConstants {
     public static String ACTION_CONTACT_FETCH = "action_contact_fetch";
     public static String ACTION_START_CALL_LOG_INSERTION = "action_start_call_log_insertion";
     public static String ACTION_LOCAL_BROADCAST = "action_local_broadcast";
+    public static String ACTION_LOCAL_BROADCAST_DIALOG = "action_local_broadcast_dialog";
+    public static String ACTION_LOCAL_BROADCAST_TABCHANGE = "action_local_broadcast_tab_change";
+    public static String ACTION_LOCAL_BROADCAST_PROFILE = "action_local_broadcast_profile";
+    public static String ACTION_LOCAL_BROADCAST_DELETE_LOGS = "action_local_broadcast_delete_logs";
+    public static String ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS = "action_local_broadcast_remove_call_logs";
+
 
     //</editor-fold>
 
@@ -139,6 +153,16 @@ public class AppConstants {
 
     public static void setIsDualSimPhone(boolean isDualSimPhone) {
         AppConstants.isDualSimPhone = isDualSimPhone;
+    }
+
+    public static boolean isCallLogFragment =  false;
+
+    public static boolean isCallLogFragment() {
+        return isCallLogFragment;
+    }
+
+    public static void setIsCallLogFragment(boolean isCallLogFragment) {
+        AppConstants.isCallLogFragment = isCallLogFragment;
     }
     //</editor-fold>
 

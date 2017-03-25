@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/colorPrimary"
+    android:elevation="4dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:contentInsetLeft="0dp"
+    app:contentInsetStart="0dp"
+    tools:ignore="UnusedAttribute">
+
+    <RelativeLayout
+        android:id="@+id/relative_action_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true">
+
+        <com.rawalinfocom.rcontact.helper.RippleView
+            android:id="@+id/ripple_action_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            app:rv_alpha="@integer/alpha_ripple"
+            app:rv_centered="true"
+            app:rv_color="@color/colorWhite"
+            app:rv_rippleDuration="@integer/duration_ripple">
+
+            <ImageView
+                android:id="@+id/image_action_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/description_action_back"
+                android:padding="@dimen/activity_half_horizontal_margin"
+                android:src="@drawable/ic_action_back"/>
+
+        </com.rawalinfocom.rcontact.helper.RippleView>
+
+        <TextView
+            android:id="@+id/text_toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/ripple_action_back"
+            android:layout_toRightOf="@id/ripple_action_back"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@color/colorWhite"
+            tools:text="Title"/>
+
+        <LinearLayout
+            android:id="@+id/linear_action_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal">
+
+
+            <com.rawalinfocom.rcontact.helper.RippleView
+                android:id="@+id/ripple_action_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:rv_alpha="@integer/alpha_ripple"
+                app:rv_centered="true"
+                app:rv_color="@color/colorWhite"
+                app:rv_rippleDuration="@integer/duration_ripple">
+
+                <ImageView
+                    android:id="@+id/image_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/str_content_description"
+                    android:padding="@dimen/activity_half_horizontal_margin"
+                    android:src="@drawable/ic_action_delete"/>
+
+            </com.rawalinfocom.rcontact.helper.RippleView>
+
+           <!-- <com.rawalinfocom.rcontact.helper.RippleView
+                android:id="@+id/ripple_action_select_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:rv_alpha="@integer/alpha_ripple"
+                app:rv_centered="true"
+                app:rv_color="@color/colorWhite"
+                app:rv_rippleDuration="@integer/duration_ripple">-->
+
+                <ImageView
+                    android:id="@+id/image_select_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/str_content_description"
+                    android:padding="@dimen/activity_half_horizontal_margin"
+                    android:src="@drawable/ic_action_select_all_check_box"
+                    android:visibility="gone"/>
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkbox_select_all"
+                    android:layout_marginTop="3dp"
+                    android:padding="@dimen/activity_half_horizontal_margin" />
+
+            <!--</com.rawalinfocom.rcontact.helper.RippleView>-->
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</android.support.v7.widget.Toolbar>
