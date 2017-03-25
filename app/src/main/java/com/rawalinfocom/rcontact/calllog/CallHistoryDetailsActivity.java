@@ -163,7 +163,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     @BindView(R.id.ripple_action_right_right)
     RippleView rippleActionRightRight;*/
 
-
     private final String TAG_IMAGE_FAVOURITE = "tag_favourite";
     private final String TAG_IMAGE_UN_FAVOURITE = "tag_un_favourite";
     private final String TAG_IMAGE_CALL = "tag_call";
@@ -262,12 +261,14 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
                 cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
-                cloudContactName = StringUtils.substring(cloudContactName, 2, cloudContactName
-                        .length() - 1);
+                if(!TextUtils.isEmpty(cloudContactName)){
+                    cloudContactName = StringUtils.substring(cloudContactName, 2, cloudContactName
+                            .length() - 1);
+                }
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE)) {
-                isHideFavourite = true;
+//                isHideFavourite = true;
                 checkNumberFavourite = intent.getStringExtra(AppConstants
                         .EXTRA_CHECK_NUMBER_FAVOURITE);
             }
@@ -668,7 +669,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
        setCallLogHistoryDetails();
 
         if (isHideFavourite) {
-            rippleActionRightLeft.setEnabled(false);
+//            rippleActionRightLeft.setEnabled(false);
             if (checkNumberFavourite != null && arrayListFavouriteContacts.contains
                     (checkNumberFavourite)) {
                 imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
