@@ -185,17 +185,26 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 if (objAddress == null) {
                     Utils.showErrorSnackBar(this, relativeRootMap, "No Location Found");
                 } else {
-                    latitude = Double.parseDouble(StringUtils.defaultString(objAddress
-                            .getLatitude(), "0"));
-                    longitude = Double.parseDouble(StringUtils.defaultString(objAddress
-                            .getLongitude(), "0"));
-                    if (latitude != 0 && longitude != 0) {
-                        if (serviceType.contains("_TRUE")) {
-                            addMapMarker();
+                    try {
+                        latitude = Double.parseDouble(StringUtils.defaultString(objAddress
+                                .getLatitude(), "0"));
+                        longitude = Double.parseDouble(StringUtils.defaultString(objAddress
+                                .getLongitude(), "0"));
+                        if (latitude != 0 && longitude != 0) {
+                            if (serviceType.contains("_TRUE")) {
+                                addMapMarker();
+                            }
+                            textAddress.setText(objAddress.getAddress());
+                        } else {
+                            Utils.showErrorSnackBar(this, relativeRootMap, "Unable to find " +
+                                    "Location");
+
                         }
-                        textAddress.setText(objAddress.getAddress());
-                    } else {
-                        Utils.showErrorSnackBar(this, relativeRootMap, "Unable to find Location");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Utils.showErrorSnackBar(this, relativeRootMap, "Session Time Out! Please " +
+                                "try again.");
+
                     }
 //                    Log.i("onDeliveryResponse", objAddress.getAddress());
                 }

@@ -444,7 +444,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             isRcp = true;
             holder.linearRating.setVisibility(View.VISIBLE);
             holder.buttonInvite.setVisibility(View.GONE);
-            holder.imageSocialMedia.setVisibility(View.VISIBLE);
+//            holder.imageSocialMedia.setVisibility(View.VISIBLE);
 
         } else {
 

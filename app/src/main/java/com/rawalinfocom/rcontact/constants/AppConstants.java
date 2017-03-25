@@ -24,6 +24,7 @@ public class AppConstants {
     public static final int IM_ACCOUNT = 4;
     public static final int EVENT = 5;
     public static final int GENDER = 6;
+    public static final int ORGANIZATION = 7;
     //</editor-fold>
 
     //<editor-fold desc="App Specific final constants">

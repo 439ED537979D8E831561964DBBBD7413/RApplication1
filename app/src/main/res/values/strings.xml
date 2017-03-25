@@ -142,5 +142,6 @@
     <string name="copy_to_clipboard">Copy to clip board</string>
     <string name="str_hide_year">Hide Year</string>
     <string name="str_i_currently_work_here">I Currently Work Here</string>
+    <string name="str_invite">Invite</string>
 
 </resources>

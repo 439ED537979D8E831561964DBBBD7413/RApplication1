@@ -384,10 +384,10 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
                     if (phoneBookContactListAdapter.getItemCount() < 1) {
 //                        textEmptyCountry.setVisibility(View.VISIBLE);
-//                        recyclerViewContacts.setVisibility(View.GONE);
+                        recyclerViewContacts.setVisibility(View.GONE);
                     } else {
 //                        textEmptyCountry.setVisibility(View.GONE);
-//                        recyclerViewContacts.setVisibility(View.VISIBLE);
+                        recyclerViewContacts.setVisibility(View.VISIBLE);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

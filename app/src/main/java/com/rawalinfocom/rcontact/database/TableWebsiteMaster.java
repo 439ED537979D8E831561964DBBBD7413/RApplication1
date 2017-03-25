@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.Website;
 
 import java.util.ArrayList;
@@ -248,6 +247,14 @@ public class TableWebsiteMaster {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         db.delete(TABLE_RC_WEBSITE_MASTER, COLUMN_WM_ID + " = ?",
                 new String[]{String.valueOf(website.getWmId())});
+        db.close();
+    }
+
+    // Deleting single Website From RcpId
+    public void deleteWebsite(String rcpId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        db.delete(TABLE_RC_WEBSITE_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
+                new String[]{String.valueOf(rcpId)});
         db.close();
     }
 }

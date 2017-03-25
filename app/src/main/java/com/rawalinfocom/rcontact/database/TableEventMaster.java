@@ -243,10 +243,19 @@ public class TableEventMaster {
     }
 
     // Deleting single event
-    public void deleteEmail(Event event) {
+    public void deleteEvent(Event event) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         db.delete(TABLE_RC_EVENT_MASTER, COLUMN_EVM_ID + " = ?",
                 new String[]{String.valueOf(event.getEvmId())});
         db.close();
     }
+
+    // Deleting single ImAccount From RcpId
+    public void deleteEvent(String rcpId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        db.delete(TABLE_RC_EVENT_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
+                new String[]{String.valueOf(rcpId)});
+        db.close();
+    }
+
 }
