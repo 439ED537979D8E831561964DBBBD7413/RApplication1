@@ -246,4 +246,12 @@ public class TableImMaster {
                 new String[]{String.valueOf(imAccount.getImId())});
         db.close();
     }
+
+    // Deleting single ImAccount From RcpId
+    public void deleteImAccount(String rcpId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        db.delete(TABLE_RC_IM_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
+                new String[]{String.valueOf(rcpId)});
+        db.close();
+    }
 }

@@ -16,6 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:contentDescription="@string/str_content_description"
             android:src="@mipmap/ic_launcher"/>
@@ -23,31 +24,33 @@
         <FrameLayout
             android:id="@+id/frame_container_right"
             android:layout_width="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/image_social_media"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:contentDescription="@string/str_content_description"
-            android:src="@drawable/ic_arrow_bottom"/>
-
-        <Button
-            android:id="@+id/button_invite"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:background="@color/colorAccent"
-            android:minHeight="0dp"
-            android:minWidth="0dp"
-            android:padding="@dimen/margin_small"
-            android:text="Invite"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"/>
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true">
+
+            <ImageView
+                android:id="@+id/image_social_media"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:contentDescription="@string/str_content_description"
+                android:src="@drawable/ic_arrow_bottom"/>
+
+            <Button
+                android:id="@+id/button_invite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:background="@color/colorAccent"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="@dimen/margin_small"
+                android:text="@string/str_invite"
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"/>
 
         </FrameLayout>
 
@@ -124,6 +127,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:isIndicator="true"
+                    android:stepSize="1"
                     tools:rating="4"/>
 
             </LinearLayout>

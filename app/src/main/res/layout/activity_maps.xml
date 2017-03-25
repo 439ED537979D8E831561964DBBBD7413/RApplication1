@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_root_map"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rawalinfocom.rcontact.contacts.MapsActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_map"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        tools:ignore="UnusedAttribute">
+
+        <RelativeLayout
+            android:id="@+id/relative_action_back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true">
+
+            <com.rawalinfocom.rcontact.helper.RippleView
+                android:id="@+id/ripple_action_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                app:rv_alpha="@integer/alpha_ripple"
+                app:rv_centered="true"
+                app:rv_color="@color/colorWhite"
+                app:rv_rippleDuration="@integer/duration_ripple">
+
+                <ImageView
+                    android:id="@+id/image_action_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/description_action_back"
+                    android:padding="@dimen/activity_half_horizontal_margin"
+                    android:src="@drawable/ic_action_back"/>
+
+            </com.rawalinfocom.rcontact.helper.RippleView>
+
+
+            <LinearLayout
+                android:id="@+id/linear_action_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal">
+
+                <com.rawalinfocom.rcontact.helper.RippleView
+                    android:id="@+id/ripple_action_right_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:rv_alpha="@integer/alpha_ripple"
+                    app:rv_centered="true"
+                    app:rv_color="@color/colorWhite"
+                    app:rv_rippleDuration="@integer/duration_ripple">
+
+                    <ImageView
+                        android:id="@+id/image_right_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/str_content_description"
+                        android:padding="@dimen/activity_half_horizontal_margin"
+                        android:src="@drawable/ic_action_search"/>
+
+                </com.rawalinfocom.rcontact.helper.RippleView>
+
+                <com.rawalinfocom.rcontact.helper.RippleView
+                    android:id="@+id/ripple_action_right_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:rv_alpha="@integer/alpha_ripple"
+                    app:rv_centered="true"
+                    app:rv_color="@color/colorWhite"
+                    app:rv_rippleDuration="@integer/duration_ripple">
+
+                    <ImageView
+                        android:id="@+id/image_right_right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/str_content_description"
+                        android:padding="@dimen/activity_half_horizontal_margin"
+                        android:src="@drawable/ic_action_check"/>
+
+                </com.rawalinfocom.rcontact.helper.RippleView>
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/input_search_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/ripple_action_back"
+                android:layout_toLeftOf="@id/linear_action_right"
+                android:layout_toRightOf="@id/ripple_action_back"
+                android:layout_toStartOf="@id/linear_action_right"
+                android:backgroundTint="@color/colorWhite"
+                android:hint="Search Location..."
+                android:singleLine="true"/>
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.Toolbar>
+
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar_map"/>
+
+    <RelativeLayout
+        android:id="@+id/relative_last_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorWhite"
+        android:padding="@dimen/margin_small"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/text_label_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/str_address"/>
+
+        <TextView
+            android:id="@+id/text_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_label_address"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            tools:text="Nayaran Marg, Kamela Darwaia\nSurat - 395002, Gujarat"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_address"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/action_cancel"/>
+
+            <Button
+                android:id="@+id/button_done"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Done"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

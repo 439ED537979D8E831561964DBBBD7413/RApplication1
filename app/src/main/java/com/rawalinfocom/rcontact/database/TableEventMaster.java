@@ -41,7 +41,8 @@ public class TableEventMaster {
             " (" +
             " " + COLUMN_EVM_ID + " integer NOT NULL CONSTRAINT rc_event_master_pk PRIMARY KEY," +
             " " + COLUMN_EVM_RECORD_INDEX_ID + " text," +
-            " " + COLUMN_EVM_START_DATE + " datetime NOT NULL," +
+//            " " + COLUMN_EVM_START_DATE + " datetime NOT NULL," +
+            " " + COLUMN_EVM_START_DATE + " text NOT NULL," +
             " " + COLUMN_EVM_EVENT_TYPE + " text NOT NULL," +
             " " + COLUMN_EVM_CUSTOM_TYPE + " text," +
             " " + COLUMN_EVM_EVENT_PRIVACY + " integer DEFAULT 1," +
@@ -317,10 +318,19 @@ public class TableEventMaster {
     }
 
     // Deleting single event
-    public void deleteEmail(Event event) {
+    public void deleteEvent(Event event) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         db.delete(TABLE_RC_EVENT_MASTER, COLUMN_EVM_ID + " = ?",
                 new String[]{String.valueOf(event.getEvmId())});
         db.close();
     }
+
+    // Deleting single ImAccount From RcpId
+    public void deleteEvent(String rcpId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        db.delete(TABLE_RC_EVENT_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
+                new String[]{String.valueOf(rcpId)});
+        db.close();
+    }
+
 }

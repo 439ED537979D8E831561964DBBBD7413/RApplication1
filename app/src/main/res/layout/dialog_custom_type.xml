@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/relative_root_rating_dialog"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
+
     <LinearLayout
-        android:id="@+id/llDialogContentArea"
+        android:id="@+id/linear_dialog_content_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -18,46 +18,22 @@
             android:id="@+id/text_dialog_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/padding_between_title_body"
             android:textAppearance="?android:textAppearanceLarge"
-            tools:text="Rate Monal"/>
-
-        <RatingBar
-            android:id="@+id/rating_user"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:numStars="5"
-            android:stepSize="1"/>
-
-        <TextView
-            android:id="@+id/text_comment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
-            android:text="@string/str_comment"/>
+            tools:text="Title"/>
 
         <EditText
-            android:id="@+id/input_comment"
+            android:id="@+id/input_custom_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/str_comment"
-            android:maxLength="@integer/max_comment_length"/>
-
-        <TextView
-            android:id="@+id/text_remaining_characters"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            tools:text="200 Characters Remaining"/>
+            android:inputType="text"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/llDialogContentArea"
+        android:layout_below="@id/linear_dialog_content_area"
         android:orientation="horizontal"
         android:padding="@dimen/padding_around_button">
 
@@ -100,7 +76,7 @@
                 android:background="@null"
                 android:minWidth="@dimen/min_width_button"
                 android:textColor="@color/colorAccent"
-                tools:text="@string/action_submit"/>
+                tools:text="OK"/>
 
         </com.rawalinfocom.rcontact.helper.RippleView>
 

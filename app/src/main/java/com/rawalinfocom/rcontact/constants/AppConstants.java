@@ -1,7 +1,5 @@
 package com.rawalinfocom.rcontact.constants;
 
-import android.view.FrameStats;
-
 /**
  * Created by Monal on 10/10/16.
  * <p>
@@ -26,6 +24,7 @@ public class AppConstants {
     public static final int IM_ACCOUNT = 4;
     public static final int EVENT = 5;
     public static final int GENDER = 6;
+    public static final int ORGANIZATION = 7;
     //</editor-fold>
 
     //<editor-fold desc="App Specific final constants">
@@ -53,6 +52,7 @@ public class AppConstants {
     //<editor-fold desc="Request Codes">
 
     public static int REQUEST_CODE_COUNTRY_REGISTRATION = 2;
+    public static int REQUEST_CODE_MAP_LOCATION_SELECTION = 3;
 
     //</editor-fold>
 
@@ -88,6 +88,9 @@ public class AppConstants {
     public static String EXTRA_REMOVE_CALL_LOGS = "extra_remove_call_logs";
     public static String EXTRA_CLEAR_CALL_LOGS = "extra_clear_call_logs";
     public static String EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS = "extra_clear_call_logs_from_contacts";
+    public static String EXTRA_OBJECT_LOCATION = "extra_object_location";
+    public static String EXTRA_OBJECT_ADDRESS = "extra_object_address";
+
 
     //</editor-fold>
 
