@@ -16,10 +16,15 @@ public class TimelineItem {
     private String userComment;
     private String userCommentTime;
     private int notiType;
+    private String crmCloudPrId;
+    private String crmType;
+    private int evmRecordIndexId;
 
     //0 for event
     //1 for ratings
+    public TimelineItem() {
 
+    }
 
     public TimelineItem(String wisherName, String eventName, String notiTime, String eventDetail, String wisherComment,
                         String wisherCommentTime, String userComment, String userCommentTime, int notiType) {
@@ -32,6 +37,30 @@ public class TimelineItem {
         this.userComment = userComment;
         this.userCommentTime = userCommentTime;
         this.notiType = notiType;
+    }
+
+    public String getCrmCloudPrId() {
+        return crmCloudPrId;
+    }
+
+    public int getEvmRecordIndexId() {
+        return evmRecordIndexId;
+    }
+
+    public void setEvmRecordIndexId(int evmRecordIndexId) {
+        this.evmRecordIndexId = evmRecordIndexId;
+    }
+
+    public void setCrmCloudPrId(String crmCloudPrId) {
+        this.crmCloudPrId = crmCloudPrId;
+    }
+
+    public String getCrmType() {
+        return crmType;
+    }
+
+    public void setCrmType(String crmType) {
+        this.crmType = crmType;
     }
 
     public String getWisherName() {

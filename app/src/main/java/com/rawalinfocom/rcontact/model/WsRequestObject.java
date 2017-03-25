@@ -16,6 +16,93 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WsRequestObject {
 
+    @JsonProperty("date")
+    private String date;
+
+    @JsonProperty("comment")
+    private String comment;
+
+    @JsonProperty("to_pm_id")
+    private int toPmId;
+
+    @JsonProperty("evm_record_index_id")
+    private int evmRecordIndexId;
+
+    @JsonProperty("id")
+    private String commentId;
+
+    @JsonProperty("reply")
+    private String reply;
+
+    public void setToPmId(int toPmId) {
+        this.toPmId = toPmId;
+    }
+
+    public String getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
+    }
+
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
+
+    public int getEvmRecordIndexId() {
+        return evmRecordIndexId;
+    }
+
+    public void setEvmRecordIndexId(int evmRecordIndexId) {
+        this.evmRecordIndexId = evmRecordIndexId;
+    }
+
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getToPmId() {
+        return toPmId;
+    }
+
+    public void setToPmId(Integer toPmId) {
+        this.toPmId = toPmId;
+    }
+
+    public ArrayList<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(ArrayList<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
     private String countryCode;
     private String mobileNumber;
     private String pmId;
@@ -168,14 +255,14 @@ public class WsRequestObject {
         this.emailId = emailId;
     }
 
-    @JsonProperty("type")
-    public String getType() {
-        return type;
-    }
+//    @JsonProperty("type")
+//    public String getType() {
+//        return type;
+//    }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+    //public void setType(String type) {
+    //    this.type = type;
+    //}
 
     @JsonProperty("device_id")
     public String getDeviceId() {

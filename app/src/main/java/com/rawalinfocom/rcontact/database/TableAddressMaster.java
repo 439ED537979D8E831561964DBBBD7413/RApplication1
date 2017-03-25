@@ -182,6 +182,60 @@ public class TableAddressMaster {
         return address;
     }
 
+    // Getting All Addresses from Profile Master Id
+    public ArrayList<Address> getAddressesFromPmId(int pmId) {
+        ArrayList<Address> arrayListAddress = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT DISTINCT " + COLUMN_AM_RECORD_INDEX_ID + ", " +
+                COLUMN_AM_COUNTRY + ", " +
+                COLUMN_AM_REGION + ", " +
+                COLUMN_AM_STREET + ", " +
+                COLUMN_AM_CITY + ", " +
+                COLUMN_AM_STREET + ", " +
+                COLUMN_AM_NEIGHBORHOOD + ", " +
+                COLUMN_AM_POST_CODE + ", " +
+                COLUMN_AM_ADDRESS_TYPE + ", " +
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
+                TABLE_RC_ADDRESS_MASTER + " WHERE " +
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Address address = new Address();
+                address.setAmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_RECORD_INDEX_ID)));
+                address.setAmCountry(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_COUNTRY)));
+                address.setAmRegion(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_REGION)));
+                address.setAmStreet(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_STREET)));
+                address.setAmNeighborhood(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_NEIGHBORHOOD)));
+                address.setAmPostCode(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_POST_CODE)));
+                address.setAmAddressType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_ADDRESS_TYPE)));
+                address.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_RC_PROFILE_MASTER_PM_ID)));
+                // Adding address to list
+                arrayListAddress.add(address);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        // return organization list
+        return arrayListAddress;
+    }
+
     // Getting All Addresses
     public ArrayList<Address> getAllAddress() {
         ArrayList<Address> arrayListAddress = new ArrayList<>();
@@ -285,6 +339,14 @@ public class TableAddressMaster {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         db.delete(TABLE_RC_ADDRESS_MASTER, COLUMN_AM_ID + " = ?",
                 new String[]{String.valueOf(address.getAmId())});
+        db.close();
+    }
+
+    // Deleting single Address From RcpId
+    public void deleteAddress(String rcpId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        db.delete(TABLE_RC_ADDRESS_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
+                new String[]{String.valueOf(rcpId)});
         db.close();
     }
 }

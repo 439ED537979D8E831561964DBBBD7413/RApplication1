@@ -34,8 +34,8 @@ public class CallLogType implements Serializable {
     private Context context;
     @JsonIgnore
     private String callSimNumber;
-    @JsonIgnore
-    private String numberType;
+    /*@JsonIgnore
+    private String numberType;*/
     @JsonIgnore
     private String profileImage;
     @JsonIgnore
@@ -65,13 +65,15 @@ public class CallLogType implements Serializable {
     private String uniqueContactId;
     @JsonProperty("mobile_number")
     private String number;
+    @JsonProperty("number_type")
+    private String numberType;
     @JsonProperty("name")
     private String name;
     @JsonProperty("call_history_id")
     private int historyId;
     @JsonProperty("call_date_and_time")
     private String callDateAndTime;
-    @JsonProperty("call_tye")
+    @JsonProperty("call_type")
     private String typeOfCall;
     @JsonProperty("duration")
     private String durationToPass;

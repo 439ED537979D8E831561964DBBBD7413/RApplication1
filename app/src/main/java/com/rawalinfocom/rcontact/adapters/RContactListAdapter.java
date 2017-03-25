@@ -179,8 +179,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 bundle.putString(AppConstants.EXTRA_PM_ID, userProfile.getPmId());
                 bundle.putString(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, holder
                         .textContactNumber.getText().toString());
-//                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
-                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, userProfile.getPmRawId());
+                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
+//                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, userProfile.getPmRawId());
                 TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
                 ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity

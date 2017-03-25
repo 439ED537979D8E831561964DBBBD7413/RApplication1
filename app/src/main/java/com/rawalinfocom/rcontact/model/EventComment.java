@@ -1,0 +1,163 @@
+package com.rawalinfocom.rcontact.model;
+
+/**
+ * Created by maulik on 23/3/17.
+ */
+
+/*{
+
+  "event_comment": {
+    "id": "14902650648153",
+    "from_pm_id": 17,
+    "comment": "Happy Birthday",
+    "reply": "",
+    "date": "1988-03-22 00:00:00",
+    "status": "1",
+    "event_record_index_id": 5,
+    "reply_at": "",
+    "to_pm_id": 1,
+    "type": "Birthday",
+    "created_date": "2017-03-23 10:31:04",
+    "updated_date": "2017-03-23 10:31:04"
+  }
+}*/
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class EventComment {
+    @JsonProperty("date")
+    private String date;
+
+    @JsonProperty("event_record_index_id")
+    private int eventRecordIndexId;
+
+    @JsonProperty("reply_date")
+    private String replyAt;
+
+    @JsonProperty("to_pm_id")
+    private int toPmId;
+
+    @JsonProperty("type")
+    private String type;
+
+    @JsonProperty("from_pm_id")
+    private int fromPmId;
+
+    @JsonProperty("comment")
+    private String comment;
+
+    @JsonProperty("id")
+    private String id;
+
+    @JsonProperty("created_date")
+    private String createdDate;
+
+    @JsonProperty("updated_date")
+    private String updatedDate;
+
+    @JsonProperty("reply")
+    private String reply;
+
+    @JsonProperty("status")
+    private String status;
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public int getEventRecordIndexId() {
+        return eventRecordIndexId;
+    }
+
+    public void setEventRecordIndexId(int eventRecordIndexId) {
+        this.eventRecordIndexId = eventRecordIndexId;
+    }
+
+    public String getReplyAt() {
+        return replyAt;
+    }
+
+    public void setReplyAt(String replyAt) {
+        this.replyAt = replyAt;
+    }
+
+    public int getToPmId() {
+        return toPmId;
+    }
+
+    public void setToPmId(int toPmId) {
+        this.toPmId = toPmId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getFromPmId() {
+        return fromPmId;
+    }
+
+    public void setFromPmId(int fromPmId) {
+        this.fromPmId = fromPmId;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(String updatedDate) {
+        this.updatedDate = updatedDate;
+    }
+
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+}

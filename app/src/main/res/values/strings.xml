@@ -4,6 +4,7 @@
     <!-- facebook -->
     <string name="facebook_app_id">1410546345629965</string>
     <string name="fb_login_protocol_scheme">fb1410546345629965</string>
+    <string name="google_maps_key">AIzaSyBJSXzIhhMakvEuZ8JCLfbs5m1nKXf0zHA</string>
 
     <!-- Google -->
     <!--<string name="server_client_id">842331483294-os1beu18aonoukiskj67li7l0e4orn61.apps.googleusercontent.com</string>-->
@@ -139,5 +140,16 @@
     <string name="add_to_contact">Add to Contact</string>
     <string name="add_to_existing_contact">Add to Existing Contact</string>
     <string name="copy_to_clipboard">Copy to clip board</string>
+    <string name="str_hide_year">Hide Year</string>
+    <string name="str_i_currently_work_here">I Currently Work Here</string>
+    <string name="str_invite">Invite</string>
+    <string name="edit">Edit</string>
+    <string name="view_in_ac">View in AC</string>
+    <string name="view_in_rc">View in RC</string>
+    <string name="delete">Delete</string>
+    <string name="clear_call_log">Clear Call Log</string>
+    <string name="view_profile">View Profile</string>
 
+    <string name="footer_events_text">If you want to see Upcoming Events switch to Website</string>
+    <string name="footer_timeline_text">If you want to see Previous Timeline Events switch to Website</string>
 </resources>

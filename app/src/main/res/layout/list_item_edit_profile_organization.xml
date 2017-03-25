@@ -65,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_tiny"
                 android:layout_marginStart="@dimen/margin_tiny"
-                android:text="I Currently Work Here"/>
+                android:text="@string/str_i_currently_work_here"/>
 
         </LinearLayout>
 

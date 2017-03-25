@@ -286,4 +286,12 @@ public class TableEmailMaster {
                 new String[]{String.valueOf(email.getEmId())});
         db.close();
     }
+
+    // Deleting single email From RcpId
+    public void deleteEmail(String rcpId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        db.delete(TABLE_RC_EMAIL_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
+                new String[]{String.valueOf(rcpId)});
+        db.close();
+    }
 }

@@ -7,6 +7,7 @@ import android.telephony.TelephonyManager;
 
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.helper.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -104,7 +105,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 if (lastState == TelephonyManager.CALL_STATE_RINGING) {
                     //Ring but no pickup-  a miss
                     onMissedCall(context, savedNumber, callStartTime);
-                    CallLogFragment.callLogTypeReceiver.setNumber(savedNumber);
+                    String formattedNumber = Utils.getFormattedNumber(context, savedNumber);
+                    CallLogFragment.callLogTypeReceiver.setNumber(formattedNumber);
                     CallLogFragment.callLogTypeReceiver.setType(3);
                     String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(callStartTime);
                     CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
@@ -112,7 +114,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
                 } else if (isIncoming) {
                     onIncomingCallEnded(context, savedNumber, callStartTime, new Date());
-                    CallLogFragment.callLogTypeReceiver.setNumber(savedNumber);
+                    String formattedNumber = Utils.getFormattedNumber(context, savedNumber);
+                    CallLogFragment.callLogTypeReceiver.setNumber(formattedNumber);
                     CallLogFragment.callLogTypeReceiver.setType(1);
                     String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(callStartTime);
                     CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
@@ -122,7 +125,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 } else {
 
                     onOutgoingCallEnded(context, savedNumber, callStartTime, new Date());
-                    CallLogFragment.callLogTypeReceiver.setNumber(savedNumber);
+                    String formattedNumber = Utils.getFormattedNumber(context, savedNumber);
+                    CallLogFragment.callLogTypeReceiver.setNumber(formattedNumber);
                     CallLogFragment.callLogTypeReceiver.setType(2);
                     String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(callStartTime);
                     CallLogFragment.callLogTypeReceiver.setLogDate(logDate);

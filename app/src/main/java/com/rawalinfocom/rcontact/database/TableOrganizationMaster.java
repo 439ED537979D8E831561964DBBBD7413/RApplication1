@@ -298,4 +298,12 @@ public class TableOrganizationMaster {
                 new String[]{String.valueOf(organization.getOmId())});
         db.close();
     }
+
+    // Deleting single Organization From RcpId
+    public void deleteOrganization(String rcpId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        db.delete(TABLE_RC_ORGANIZATION_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
+                new String[]{String.valueOf(rcpId)});
+        db.close();
+    }
 }

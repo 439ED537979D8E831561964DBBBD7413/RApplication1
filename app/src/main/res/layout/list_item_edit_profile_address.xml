@@ -27,6 +27,7 @@
         android:layout_toStartOf="@id/text_image_cross"/>
 
     <LinearLayout
+        android:id="@+id/linear_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/spinner_type"
@@ -93,5 +94,16 @@
             tools:ignore="TextFields"/>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/text_image_map_marker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/linear_address"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:padding="@dimen/margin_small"
+        android:text="@string/im_map_marker"
+        android:textSize="25sp"/>
 
 </RelativeLayout>

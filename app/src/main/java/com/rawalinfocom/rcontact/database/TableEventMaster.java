@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.rawalinfocom.rcontact.model.Event;
 
@@ -40,7 +41,8 @@ public class TableEventMaster {
             " (" +
             " " + COLUMN_EVM_ID + " integer NOT NULL CONSTRAINT rc_event_master_pk PRIMARY KEY," +
             " " + COLUMN_EVM_RECORD_INDEX_ID + " text," +
-            " " + COLUMN_EVM_START_DATE + " datetime NOT NULL," +
+//            " " + COLUMN_EVM_START_DATE + " datetime NOT NULL," +
+            " " + COLUMN_EVM_START_DATE + " text NOT NULL," +
             " " + COLUMN_EVM_EVENT_TYPE + " text NOT NULL," +
             " " + COLUMN_EVM_CUSTOM_TYPE + " text," +
             " " + COLUMN_EVM_EVENT_PRIVACY + " integer DEFAULT 1," +
@@ -97,11 +99,40 @@ public class TableEventMaster {
                 COLUMN_EVM_CUSTOM_TYPE, COLUMN_EVM_EVENT_PRIVACY,
                 COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_EVM_ID + "=?", new String[]{String
                 .valueOf(evmId)}, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
 
         Event event = new Event();
-        if (cursor != null) {
+        if (cursor.moveToFirst()) {
+            event.setEvmId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_ID)));
+            event.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_EVM_RECORD_INDEX_ID)));
+            event.setEvmStartDate(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_START_DATE)));
+            event.setEvmEventType(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_EVENT_TYPE)));
+            event.setEvmCustomType(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_CUSTOM_TYPE)));
+            event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_EVM_EVENT_PRIVACY)));
+            event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                    (COLUMN_RC_PROFILE_MASTER_PM_ID)));
+
+            cursor.close();
+        }
+
+        db.close();
+
+        // return event
+        return event;
+    }
+
+    public Event getEventByEvmRecordIndexId(int evmRecordIndexId) {
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_RC_EVENT_MASTER, new String[]{COLUMN_EVM_ID,
+                COLUMN_EVM_RECORD_INDEX_ID, COLUMN_EVM_START_DATE, COLUMN_EVM_EVENT_TYPE,
+                COLUMN_EVM_CUSTOM_TYPE, COLUMN_EVM_EVENT_PRIVACY,
+                COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_EVM_RECORD_INDEX_ID + "=?", new String[]{String
+                .valueOf(evmRecordIndexId)}, null, null, null, null);
+
+        Event event = new Event();
+        if (cursor.moveToFirst()) {
             event.setEvmId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_ID)));
             event.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex
                     (COLUMN_EVM_RECORD_INDEX_ID)));
@@ -205,6 +236,51 @@ public class TableEventMaster {
         return arrayListEvent;
     }
 
+    // Getting All Events
+    public ArrayList<Event> getAllEventsBetWeenExceptCurrentUser(String fromDate, String toDate, int loggedInUserPMID) {
+        ArrayList<Event> arrayListEvent = new ArrayList<>();
+        //SELECT  distinct evm_record_index_id, evm_start_date, evm_event_type, rc_profile_master_pm_id FROM rc_event_master
+        // WHERE rc_profile_master_pm_id !=2 and strftime('%m-%d',evm_start_date) between '03-23' and '03-27' order by strftime('%m-%d',evm_start_date) asc
+
+
+        String selectQuery = "SELECT DISTINCT " + COLUMN_EVM_RECORD_INDEX_ID + ", " + COLUMN_EVM_START_DATE + ", " + COLUMN_EVM_EVENT_TYPE + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " + TABLE_RC_EVENT_MASTER +
+                " WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " !=" + loggedInUserPMID + " and strftime('%m-%d'," + COLUMN_EVM_START_DATE + ") between '" + fromDate + "' and '" +
+                toDate + "' order by strftime('%m-%d', " + COLUMN_EVM_START_DATE + ") asc";
+        Log.i("MAULIK", "selectQuery " + selectQuery);
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Event event = new Event();
+                //  event.setEvmId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_ID)));
+                event.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_RECORD_INDEX_ID)));
+                event.setEvmStartDate(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_START_DATE)));
+                event.setEvmEventType(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_EVENT_TYPE)));
+//                event.setEvmCustomType(cursor.getString(cursor.getColumnIndex
+//                        (COLUMN_EVM_CUSTOM_TYPE)));
+//                event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
+//                        (COLUMN_EVM_EVENT_PRIVACY)));
+                event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_RC_PROFILE_MASTER_PM_ID)));
+                // Adding event to list
+                arrayListEvent.add(event);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        // return Event list
+        return arrayListEvent;
+    }
+
     // Getting Event Count
     public int getEventCount() {
         String countQuery = "SELECT  * FROM " + TABLE_RC_EVENT_MASTER;
@@ -242,10 +318,19 @@ public class TableEventMaster {
     }
 
     // Deleting single event
-    public void deleteEmail(Event event) {
+    public void deleteEvent(Event event) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         db.delete(TABLE_RC_EVENT_MASTER, COLUMN_EVM_ID + " = ?",
                 new String[]{String.valueOf(event.getEvmId())});
         db.close();
     }
+
+    // Deleting single ImAccount From RcpId
+    public void deleteEvent(String rcpId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        db.delete(TABLE_RC_EVENT_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
+                new String[]{String.valueOf(rcpId)});
+        db.close();
+    }
+
 }
