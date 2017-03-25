@@ -655,6 +655,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 .string.msg_try_later));
                     }
                 }
+
             }
             //</editor-fold>
 
