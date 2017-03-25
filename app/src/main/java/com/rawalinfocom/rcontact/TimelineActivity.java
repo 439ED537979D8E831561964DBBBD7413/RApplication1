@@ -373,6 +373,9 @@ public class TimelineActivity extends BaseActivity implements RippleView
     }
 
     private void saveReplyDataToDb(ArrayList<EventCommentData> eventSendCommentData) {
+        if (eventSendCommentData == null) {
+            return;
+        }
         for (EventCommentData eventCommentData : eventSendCommentData) {
             ArrayList<EventComment> allBirthdayComments = eventCommentData.getBirthday();
             ArrayList<EventComment> allAnniversaryComments = eventCommentData.getAnniversary();
@@ -399,6 +402,9 @@ public class TimelineActivity extends BaseActivity implements RippleView
     }
 
     private void saveCommentDataToDb(ArrayList<EventCommentData> eventReceiveCommentData) {
+        if (eventReceiveCommentData == null) {
+            return;
+        }
         for (EventCommentData eventCommentData : eventReceiveCommentData) {
             ArrayList<EventComment> allBirthdayComments = eventCommentData.getBirthday();
             ArrayList<EventComment> allAnniversaryComments = eventCommentData.getAnniversary();
