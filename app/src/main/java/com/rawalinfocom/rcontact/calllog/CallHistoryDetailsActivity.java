@@ -480,7 +480,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
         imageRightLeft = ButterKnife.findById(includeToolbar, R.id.image_right_left);
         imageRightCenter = ButterKnife.findById(includeToolbar, R.id.image_right_center);
-        rippleActionRightLeft = ButterKnife.findById(includeToolbar, R.id.ripple_action_right_left);
+        rippleActionRightLeft = ButterKnife.findById(includeToolbar,
+                R.id.ripple_action_right_left);
         rippleActionRightCenter = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_center);
         rippleActionRightRight = ButterKnife.findById(includeToolbar, R.id
