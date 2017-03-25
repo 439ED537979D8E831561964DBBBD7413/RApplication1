@@ -154,7 +154,8 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/margin_5dp"
                     android:text=""
-                    android:textColor="@color/vividBlue" />
+                    android:textColor="@color/vividBlue"
+                    android:visibility="gone"/>
 
 
             </LinearLayout>

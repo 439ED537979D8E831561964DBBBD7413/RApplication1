@@ -139,6 +139,14 @@
     <string name="add_to_contact">Add to Contact</string>
     <string name="add_to_existing_contact">Add to Existing Contact</string>
     <string name="copy_to_clipboard">Copy to clip board</string>
+    <string name="edit">Edit</string>
+    <string name="view_in_ac">View in AC</string>
+    <string name="view_in_rc">View in RC</string>
+    <string name="delete">Delete</string>
+    <string name="clear_call_log">Clear Call Log</string>
+    <string name="view_profile">View Profile</string>
+
+    <string name="footer_events_text">If you want to see Upcoming Events switch Website</string>
     <string name="footer_events_text">If you want to see Upcoming Events switch to Website</string>
     <string name="footer_timeline_text">If you want to see Previous Timeline Events switch to Website</string>
 </resources>

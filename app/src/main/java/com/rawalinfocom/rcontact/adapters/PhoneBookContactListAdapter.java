@@ -44,7 +44,6 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
         this.arrayListUserProfile = arrayListUserProfile;
         arrayListTempUserProfile = new ArrayList<>();
         arrayListCheckedPositions = new ArrayList<>();
-
         arrayListTempUserProfile.addAll(arrayListUserProfile);
     }
 
