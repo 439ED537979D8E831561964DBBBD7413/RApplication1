@@ -3,6 +3,10 @@
 /local.properties
 .DS_Store
 /build
+/.idea
 /captures
 .externalNativeBuild
 linkedin-sdk
+/.idea/
+/.idea/misc.xml
+/.idea/modules.xml
