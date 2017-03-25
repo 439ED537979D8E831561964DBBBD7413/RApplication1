@@ -56,11 +56,13 @@ public class WsConstants {
     public static final String REQ_STORE_DEVICE_DETAILS = "store-device-details";
     public static final String REQ_ADD_PROFILE_VISIT = "add-profile-visit";
     public static final String REQ_PROFILE_UPDATE = "profile-update";
-
     public static final String REQ_REVERSE_GEO_CODING_ADDRESS = "req_reverse_geo_coding_address";
     public static final String REQ_GEO_CODING_ADDRESS = "req_geo_coding_address";
 
     public static final String REQ_UPLOAD_CALL_LOGS = "call-log";
+
+    public static final String REQ_ADD_EVENT_COMMENT = "event-comment";
+    public static final String REQ_GET_EVENT_COMMENT = "get-event-comment";
 
 
 }

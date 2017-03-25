@@ -1,11 +1,13 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.CallLog;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,63 +21,62 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.calllog.CallLogDeleteActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialogClipboard;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.CallLogType;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by Aniruddh on 24/02/17.
+ * Created by Aniruddh on 20/03/17.
  */
 
-public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialogListAdapter.MaterialViewHolder> {
-
-
+public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDialogAdapter.MaterialViewHolder>  {
     private Context context;
     private ArrayList<String> arrayListString;
-    private String dialogTitle;
     MaterialDialog callConfirmationDialog;
     String numberToCall;
-    String dialogName;
-    Class classToReceive;
     long callLogDateToDelete;
+    boolean isFromCallLogFragment = false;
+    ArrayList<CallLogType> arrayListCallLogType;
 
-    public CallLogDialogListAdapter(Context context, ArrayList<String> arrayList, String number, long date) {
+    public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number, long date,
+                                    boolean isFromCallLogs, ArrayList<CallLogType> list) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
         this.callLogDateToDelete = date;
-//        this.dialogName = dialogTitle;
+        this.isFromCallLogFragment =  isFromCallLogs;
+        this.arrayListCallLogType =  list;
     }
 
     @Override
-    public MaterialViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public Profile3DotDialogAdapter.MaterialViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_dialog_call_log,
                 parent, false);
-        return new MaterialViewHolder(v);
+        return new Profile3DotDialogAdapter.MaterialViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(MaterialViewHolder holder, final int position) {
+    public void onBindViewHolder(Profile3DotDialogAdapter.MaterialViewHolder holder, final int position) {
         final String value = arrayListString.get(position);
         holder.textItemValue.setText(value);
 
         holder.rippleRow.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
             public void onComplete(RippleView rippleView) {
-                if (position == 0) {
-                    if (!TextUtils.isEmpty(numberToCall))
-                        showCallConfirmationDialog(numberToCall);
-                }
 
                 if (value.equalsIgnoreCase(context.getString(R.string.add_to_contact))) {
 
@@ -84,33 +85,7 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                 } else if (value.equalsIgnoreCase(context.getString(R.string.add_to_existing_contact))) {
                     Utils.addToExistingContact(context, numberToCall);
 
-                }/*else if(value.equalsIgnoreCase(context.getString(R.string.show_call_history))){
-                    Pattern numberPat = Pattern.compile("\\d+");
-                    Matcher matcher1 = numberPat.matcher(dialogName);
-                    if (matcher1.find()) {
-                        // number
-                        Intent intent = new Intent(context, ProfileDetailActivity.class);
-                        intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
-                        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, dialogName);
-                        context.startActivity(intent);
-                    } else {
-                        // name
-                        Intent intent = new Intent(context, ProfileDetailActivity.class);
-                        intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
-                        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, dialogName);
-                        context.startActivity(intent);
-                    }
-
-
-                }*/ else if (value.equalsIgnoreCase(context.getString(R.string.send_sms))) {
-                    Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
-                    smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                    smsIntent.setType("vnd.android-dir/mms-sms");
-                    smsIntent.setData(Uri.parse("sms:" + numberToCall));
-                    context.startActivity(smsIntent);
-
-                } else if (value.equalsIgnoreCase(context.getString(R.string.remove_from_call_log))) {
-                    deleteCallLogByNumber(numberToCall);
+                } else if (value.equalsIgnoreCase(context.getString(R.string.view_profile))) {
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.copy_phone_number))) {
                     MaterialDialogClipboard materialDialogClipboard = new MaterialDialogClipboard(context, numberToCall);
@@ -119,6 +94,39 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                 } else if (value.equalsIgnoreCase(context.getString(R.string.block))) {
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.clear_call_log))) {
+
+                    if(isFromCallLogFragment){
+
+                        deleteCallLogByNumber(numberToCall);
+
+                    }else{
+
+                        Pattern numberPat = Pattern.compile("\\d+");
+                        Matcher matcher1 = numberPat.matcher(numberToCall);
+                        if (matcher1.find()) {
+                            deleteCallHistoryByNumber(numberToCall);
+                        } else {
+                            deleteCallHistoryByName(numberToCall);
+                        }
+
+                    }
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.delete))) {
+
+                    Intent intent = new Intent(context, CallLogDeleteActivity.class);
+                    Bundle b =  new Bundle();
+                    b.putSerializable(AppConstants.EXTRA_CALL_ARRAY_LIST,arrayListCallLogType);
+                    intent.putExtras(b);
+                    context.startActivity(intent);
+                    ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.edit))) {
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.view_in_ac))) {
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.view_in_rc))) {
 
                 } else {
 
@@ -144,11 +152,16 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
             Date objDate1 = new Date(callLogDateToDelete);
             String dateToDelete = new SimpleDateFormat("dd/MM/yyyy").format(objDate1);
 
-            Calendar cal = Calendar.getInstance();
+            /*Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DATE, 1);
             Date TomoDate;
             TomoDate = cal.getTime();
-            String tomorrowDate = new SimpleDateFormat("dd/MM/yyyy").format(TomoDate);
+            String tomorrowDate = new SimpleDateFormat("dd/MM/yyyy").format(TomoDate);*/
+
+            Date date1=new Date(callLogDateToDelete + (1000 * 60 * 60 * 24));
+            SimpleDateFormat sdf1=new SimpleDateFormat("dd/MM/yyyy");
+            String tomorrowDate = sdf1.format(date1);
+
 
             long callLogDate = callLogHistory(number);
             Date date = new Date(callLogDate);
@@ -179,10 +192,16 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                 Log.i("Delete Query value", value + "");
                 Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
 
-                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS);
-                localBroadcastIntent.putExtra(AppConstants.EXTRA_REMOVE_CALL_LOGS,true);
+                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
+                localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
+                        AppConstants.EXTRA_CALL_LOG_DELETED_VALUE);
                 LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+                Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS,true);
+                LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 
             }else{
 
@@ -192,6 +211,61 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
             e.printStackTrace();
         }
 
+    }
+
+    private void deleteCallHistoryByName(String name){
+        try{
+            String  where =   CallLog.Calls.CACHED_NAME + " =?";
+            String[] selectionArguments = new String[]{name};
+            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI,where, selectionArguments);
+            if(value > 0){
+                Log.i("Delete Query value", value + "");
+                Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
+
+                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
+                localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
+                        AppConstants.EXTRA_CALL_LOG_DELETED_VALUE);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+                Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS,true);
+                LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
+
+            }
+
+        }catch (SecurityException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private void deleteCallHistoryByNumber(String number){
+        try{
+            String  where =   CallLog.Calls.NUMBER + " =?";
+            String[] selectionArguments = new String[]{number};
+            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI,where, selectionArguments);
+            if(value > 0){
+                Log.i("Delete Query value", value + "");
+                Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
+
+                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
+                localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
+                        AppConstants.EXTRA_CALL_LOG_DELETED_VALUE);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+                Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS,true);
+                LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
+
+            }
+
+        }catch (SecurityException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -288,6 +362,4 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
 
         return callDateToDelete;
     }
-
-
 }

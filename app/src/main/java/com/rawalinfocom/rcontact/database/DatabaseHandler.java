@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,6 +51,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
         db.execSQL(TableWebsiteMaster.CREATE_TABLE_RC_WEBSITE_MASTER);
         db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);
+        Log.i("MAULIK", TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);
+        db.execSQL(TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);
     }
 
     @Override
@@ -77,6 +80,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TableWebsiteMaster.CREATE_TABLE_RC_WEBSITE_MASTER);
         db.execSQL("DROP TABLE IF EXISTS " + TableContactRatingMaster
                 .CREATE_TABLE_RC_CONTACT_RATING_MASTER);
+        db.execSQL("DROP TABLE IF EXISTS " + TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);
 
         // create new tables
         onCreate(db);

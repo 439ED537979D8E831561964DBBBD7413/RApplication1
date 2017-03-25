@@ -13,6 +13,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -31,6 +32,8 @@ import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
+import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
@@ -72,7 +75,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts_main);
         ButterKnife.bind(this);
-
         Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
         startService(contactIdFetchService);
 
@@ -112,6 +114,12 @@ public class MainActivity extends BaseActivity implements NavigationView
             }*/
 
         }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
 
     }
 
@@ -312,11 +320,18 @@ public class MainActivity extends BaseActivity implements NavigationView
         tabMain.addTab(tabMain.newTab().setText("SMS"));
     }
 
+    int tabPosition = -1;
+
     private void bindWidgetsWithAnEvent() {
         tabMain.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                setCurrentTabFragment(tab.getPosition());
+                tabPosition = tab.getPosition();
+                if (AppConstants.isProgressShowing) {
+                    showFragmentSwitchAlertDialog();
+                } else {
+                    setCurrentTabFragment(tabPosition);
+                }
             }
 
             @Override
@@ -329,6 +344,43 @@ public class MainActivity extends BaseActivity implements NavigationView
 
             }
         });
+    }
+
+    MaterialDialog callConfirmationDialog;
+    private void showFragmentSwitchAlertDialog() {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        callConfirmationDialog.dismissDialog();
+                        setCurrentTabFragment(1);
+                        tabMain.getTabAt(1).select();
+                        break;
+
+                    case R.id.rippleRight:
+                        callConfirmationDialog.dismissDialog();
+                        Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_TABCHANGE);
+                        localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_SWITCH_TAB,
+                                AppConstants.EXTRA_CALL_LOG_SWITCH_TAB_VALUE);
+                        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+                        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+                        setCurrentTabFragment(tabPosition);
+                        break;
+                }
+            }
+        };
+
+        callConfirmationDialog = new MaterialDialog(this, cancelListener);
+        callConfirmationDialog.setTitleVisibility(View.GONE);
+        callConfirmationDialog.setLeftButtonText("Cancel");
+        callConfirmationDialog.setRightButtonText("Ok");
+        callConfirmationDialog.setDialogBody("If you switch, your current data will be lost. \n Would you like to continue?");
+        callConfirmationDialog.showDialog();
+
     }
 
     private void setCurrentTabFragment(int tabPosition) {
@@ -366,5 +418,6 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
     //</editor-fold>
+
 
 }
