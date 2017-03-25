@@ -79,6 +79,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
     PhoneBookContactListAdapter phoneBookContactListAdapter;
 
+//    public ArrayList<UserProfile> arrayListTempUserProfile;
+
     String pmId = "-1";
     ProfileDataOperation profileDataOperationVcard;
 
@@ -256,6 +258,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
                 phoneBookContactListAdapter.isSelectAll(false);
                 checkboxSelectAll.setChecked(false);
+                inputSearch.getText().clear();
+                Utils.hideSoftKeyboard(ContactListingActivity.this, inputSearch);
                 if (position == 0) {
                     arrayListFilteredUserProfile.addAll(arrayListUserProfile);
                 } else if (position == 1) {
@@ -370,6 +374,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
         recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
 
+        /*arrayListTempUserProfile = new ArrayList<>();
+        arrayListTempUserProfile.addAll(arrayListFilteredUserProfile);*/
         phoneBookContactListAdapter = new PhoneBookContactListAdapter(this,
                 arrayListFilteredUserProfile);
 

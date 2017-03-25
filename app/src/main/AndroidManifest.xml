@@ -94,7 +94,9 @@
              </intent-filter>
             -->
         </activity>
-        <activity android:name=".ContactListingActivity"/>
+        <activity
+            android:name=".ContactListingActivity"
+            android:windowSoftInputMode="stateHidden"/>
 
         <receiver android:name=".receivers.PhoneCallReceiver">
             <intent-filter>
