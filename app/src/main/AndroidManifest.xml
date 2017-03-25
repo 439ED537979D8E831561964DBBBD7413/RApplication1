@@ -117,7 +117,8 @@
         <activity
             android:name=".contacts.EditProfileActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".calllog.CallLogDeleteActivity"></activity>
+        <activity android:name=".calllog.CallLogDeleteActivity" />
+        <activity android:name=".calllog.CallHistoryDetailsActivity"></activity>
     </application>
 
 </manifest>

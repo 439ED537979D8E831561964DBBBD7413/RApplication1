@@ -148,4 +148,5 @@
 
     <string name="footer_events_text">If you want to see Upcoming Events switch to Website</string>
     <string name="footer_timeline_text">If you want to see Previous Timeline Events switch to Website</string>
+    <string name="title_activity_call_histroy_detail">CallHistroyDetailActivity</string>
 </resources>
