@@ -49,7 +49,7 @@ import com.rawalinfocom.rcontact.adapters.CallHistoryListAdapter;
 import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
 import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
-import com.rawalinfocom.rcontact.calllog.CallHistoryDetailsActivity;
+//import com.rawalinfocom.rcontact.calllog.CallHistoryDetailsActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -431,7 +431,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 buttonCallLog.setEnabled(false);
                 buttonCallLog.setBackgroundColor(getResources().getColor(R.color.colorDarkGray));
                 rippleCallLog.setEnabled(false);*/
-                Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
+               /* Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER,historyNumber);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME,historyName);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE,historyDate);
@@ -442,7 +442,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE,checkNumberFavourite);
                 intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION,listClickedPosition);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter, R.anim.exit);
+                overridePendingTransition(R.anim.enter, R.anim.exit);*/
 
                 /*profileLayoutVisibility();
                 if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
