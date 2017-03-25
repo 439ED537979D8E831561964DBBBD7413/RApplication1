@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -108,12 +107,11 @@ public class TimelineActivity extends BaseActivity implements RippleView
         init();
         tableCommentMaster = new TableCommentMaster(databaseHandler);
 
-        // temporory code
+        // temporory code start
         tableCommentMaster.deleteAllReceivedComments();
         getAllEventComment(TimelineActivity.this);
-        // temporory code delete
-
         //initData();
+        // temporory code end
     }
 
     private void init() {
@@ -311,7 +309,6 @@ public class TimelineActivity extends BaseActivity implements RippleView
                     .REQ_GET_EVENT_COMMENT, "Getting comments..", true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
         } else {
-            //show no toast
             Toast.makeText(TimelineActivity.this, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -330,9 +327,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
 
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
                 ArrayList<EventCommentData> eventReceiveCommentData = wsResponseObject.getEventReceiveCommentData();
-                ArrayList<EventCommentData> eventSendCommentData = wsResponseObject.getEventSendCommentData();
                 saveCommentDataToDb(eventReceiveCommentData);
-                saveReplyDataToDb(eventSendCommentData);
                 Utils.hideProgressDialog();
                 initData();
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_ADD_EVENT_COMMENT)) {
@@ -372,35 +367,6 @@ public class TimelineActivity extends BaseActivity implements RippleView
         }
     }
 
-    private void saveReplyDataToDb(ArrayList<EventCommentData> eventSendCommentData) {
-        if (eventSendCommentData == null) {
-            return;
-        }
-        for (EventCommentData eventCommentData : eventSendCommentData) {
-            ArrayList<EventComment> allBirthdayComments = eventCommentData.getBirthday();
-            ArrayList<EventComment> allAnniversaryComments = eventCommentData.getAnniversary();
-            ArrayList<EventComment> allCustomEventsComments = eventCommentData.getCustom();
-            if (allBirthdayComments != null) {
-                for (EventComment eventComment : allBirthdayComments) {
-                    // Comment comment = createComment(eventComment, "Birthday");
-                    int updated = tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(), eventComment.getReplyAt(), eventComment.getUpdatedDate());
-                }
-            }
-            if (allAnniversaryComments != null) {
-                for (EventComment eventComment : allAnniversaryComments) {
-                    //Comment comment = createComment(eventComment, "Anniversary");
-                    int updated = tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(), eventComment.getReplyAt(), eventComment.getUpdatedDate());
-                }
-            }
-            if (allCustomEventsComments != null) {
-                for (EventComment eventComment : allCustomEventsComments) {
-                    //Comment comment = createComment(eventComment, "Custom");
-                    int updated = tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(), eventComment.getReplyAt(), eventComment.getUpdatedDate());
-                }
-            }
-        }
-    }
-
     private void saveCommentDataToDb(ArrayList<EventCommentData> eventReceiveCommentData) {
         if (eventReceiveCommentData == null) {
             return;
@@ -432,7 +398,6 @@ public class TimelineActivity extends BaseActivity implements RippleView
 
     private Comment createComment(EventComment eventComment, String commentType) {
         Comment comment = new Comment();
-        // get-comment-event gives u all recived events by other user id
         comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
         comment.setCrmRating("");
         comment.setCrmType(commentType);
