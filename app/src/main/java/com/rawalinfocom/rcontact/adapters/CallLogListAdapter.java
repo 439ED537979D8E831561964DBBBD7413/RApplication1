@@ -319,7 +319,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 context.getString(R.string.call_reminder), context.getString(R.string.block)));
                     }
 
-                    materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date);
+                    materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date,name);
                     materialListDialog.setDialogTitle(name);
                     materialListDialog.showDialog();
 
@@ -330,7 +330,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 context.getString(R.string.add_to_existing_contact)
                                 , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
                                 context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.block)));
-                        materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number, date);
+
+                        materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number, date,"");
                         materialListDialog.setDialogTitle(number);
                         materialListDialog.setCallingAdapter(CallLogListAdapter.this);
                         materialListDialog.showDialog();

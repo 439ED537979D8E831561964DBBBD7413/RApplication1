@@ -49,12 +49,12 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
     Class classToReceive;
     long callLogDateToDelete;
 
-    public CallLogDialogListAdapter(Context context, ArrayList<String> arrayList, String number, long date) {
+    public CallLogDialogListAdapter(Context context, ArrayList<String> arrayList, String number, long date,String name) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
         this.callLogDateToDelete = date;
-//        this.dialogName = dialogTitle;
+        this.dialogName = name;
     }
 
     @Override
@@ -117,6 +117,10 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                     materialDialogClipboard.showDialog();
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.block))) {
+                    if(!TextUtils.isEmpty(dialogName))
+                        getNumbersFromName(dialogName);
+                    else
+                        Log.i("Number to block",numberToCall);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
 
@@ -265,6 +269,30 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
             e.printStackTrace();
         }
         return cursor;
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private ArrayList<String> getNumbersFromName(String number) {
+        Cursor cursor = null;
+        ArrayList<String> listNumber =  new ArrayList<>();
+        String order = CallLog.Calls.DATE + " DESC";
+        try {
+            cursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
+                    CallLog.Calls.CACHED_NAME + " =?", new String[]{number}, order);
+            if (cursor != null && cursor.getCount() > 0) {
+                int number1 = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+                while (cursor.moveToNext()) {
+                    String profileNumber = cursor.getString(number1);
+                    listNumber.add(profileNumber);
+                }
+            }
+            cursor.close();
+
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return listNumber;
     }
 
     private long callLogHistory(String number) {

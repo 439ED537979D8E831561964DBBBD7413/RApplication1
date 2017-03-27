@@ -328,6 +328,7 @@ public class Utils {
         return gson.fromJson(json, type);
     }
 
+
     public static void removePreference(Context context, String key) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
