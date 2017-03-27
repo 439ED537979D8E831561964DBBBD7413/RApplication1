@@ -45,7 +45,9 @@ import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableContactRatingMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.CallConfirmationListDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.ProfileMenuOptionDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -189,7 +191,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     String historyName = "";
     long historyDate;
     CallHistoryListAdapter callHistoryListAdapter;
-
+    ArrayList<Object> tempPhoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -261,10 +263,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
                 cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
-                if(!TextUtils.isEmpty(cloudContactName)){
+               /* if(!TextUtils.isEmpty(cloudContactName)){
                     cloudContactName = StringUtils.substring(cloudContactName, 2, cloudContactName
                             .length() - 1);
-                }
+                }*/
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE)) {
@@ -422,7 +424,25 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             case R.id.ripple_action_right_center:
 
                 if (StringUtils.equals(imageRightCenter.getTag().toString(), TAG_IMAGE_CALL)) {
-                    showCallConfirmationDialog(profileContactNumber);
+                    if(tempPhoneNumber!=null && tempPhoneNumber.size()>0){
+                        int count = tempPhoneNumber.size();
+                        ArrayList<String> listPhoneNumber = new ArrayList<>();
+                        if(count>1){
+                            for(int i = 0; i<tempPhoneNumber.size(); i++){
+                                ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(i);
+                                String number =  phoneNumber.getPhoneNumber();
+                                listPhoneNumber.add(number);
+                            }
+
+                            CallConfirmationListDialog callConfirmationListDialog = new
+                                    CallConfirmationListDialog(this,listPhoneNumber);
+                            callConfirmationListDialog.setDialogTitle("Please select a number to call");
+                            callConfirmationListDialog.showDialog();
+
+                        }else{
+                            showCallConfirmationDialog(profileContactNumber);
+                        }
+                    }
                 }
                 break;
 
@@ -442,11 +462,13 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
                         imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);
                     }
+
                     int updateStatus = phoneBookContacts.setFavouriteStatus(phoneBookId, favStatus);
                     if (updateStatus != 1) {
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, "Error while " +
                                 "updating favourite status!");
                     }
+
                     ArrayList<ProfileData> arrayListFavourites = new ArrayList<>();
                     ProfileData favouriteStatus = new ProfileData();
                     favouriteStatus.setLocalPhoneBookId(phoneBookId);
@@ -916,7 +938,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
         if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber) || !Utils.isArraylistNullOrEmpty
                 (arrayListPhoneBookNumber)) {
-            ArrayList<Object> tempPhoneNumber = new ArrayList<>();
+            tempPhoneNumber = new ArrayList<>();
             tempPhoneNumber.addAll(arrayListPhoneNumber);
             tempPhoneNumber.addAll(arrayListPhoneBookNumber);
 
