@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/text_item_value"
             tools:text="Name"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textSize="16sp"
             android:padding="@dimen/padding_10dp"
             android:textColor="@color/darkGray"/>
 
