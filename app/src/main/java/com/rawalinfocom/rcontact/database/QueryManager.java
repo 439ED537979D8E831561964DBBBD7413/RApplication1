@@ -234,8 +234,8 @@ public class QueryManager {
 
         // <editor-fold desc="Im Account">
         String imAccountQuery = "SELECT im." + TableImMaster.COLUMN_IM_IM_TYPE + ", im." +
-                TableImMaster.COLUMN_IM_IM_PROTOCOL + ", im." + TableImMaster
-                .COLUMN_IM_IM_PRIVACY + " FROM " + TableImMaster.TABLE_RC_IM_MASTER + " im WHERE " +
+                TableImMaster.COLUMN_IM_PROTOCOL + ", im." + TableImMaster
+                .COLUMN_IM_PRIVACY + " FROM " + TableImMaster.TABLE_RC_IM_MASTER + " im WHERE " +
                 "im." + TableImMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
 
         Cursor imAccountCursor = db.rawQuery(imAccountQuery, null);
@@ -250,9 +250,9 @@ public class QueryManager {
                         (imAccountCursor.getColumnIndex(TableImMaster.COLUMN_IM_IM_TYPE))));
                 imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
                         .getString(imAccountCursor.getColumnIndex(TableImMaster
-                                .COLUMN_IM_IM_PROTOCOL))));
+                                .COLUMN_IM_PROTOCOL))));
                 imAccount.setIMAccountPublic(StringUtils.defaultString(imAccountCursor.getString
-                        (imAccountCursor.getColumnIndex(TableImMaster.COLUMN_IM_IM_PRIVACY)), "0"));
+                        (imAccountCursor.getColumnIndex(TableImMaster.COLUMN_IM_PRIVACY)), "0"));
                 imAccount.setIMRcpType(String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_cloud_phone_book)));
                 arrayListImAccount.add(imAccount);

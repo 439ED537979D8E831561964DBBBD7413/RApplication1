@@ -26,7 +26,8 @@ public class TableProfileMaster {
     static final String TABLE_RC_PROFILE_MASTER = "rc_profile_master";
 
     // Column Names
-    private static final String COLUMN_PM_ID = "pm_id";
+//    private static final String COLUMN_PM_ID = "pm_id";
+    static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
     static final String COLUMN_PM_RAW_ID = "pm_raw_id";
     static final String COLUMN_PM_PREFIX = "pm_prefix";
     static final String COLUMN_PM_FIRST_NAME = "pm_first_name";
@@ -38,7 +39,6 @@ public class TableProfileMaster {
     static final String COLUMN_PM_PHONETIC_MIDDLE_NAME = "pm_phonetic_middle_name";
     static final String COLUMN_PM_PHONETIC_LAST_NAME = "pm_phonetic_last_name";
     static final String COLUMN_PM_PROFILE_IMAGE = "pm_profile_image";
-    static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
     static final String COLUMN_PM_NICK_NAME_PRIVACY = "pm_nick_name_privacy";
     static final String COLUMN_PM_NOTES = "pm_notes";
     static final String COLUMN_PM_NOTES_PRIVACY = "pm_notes_privacy";
@@ -55,8 +55,6 @@ public class TableProfileMaster {
     // Table Create Statements
     static final String CREATE_TABLE_RC_PROFILE_MASTER = "CREATE TABLE " +
             TABLE_RC_PROFILE_MASTER + " (" +
-            " " + COLUMN_PM_ID + " integer NOT NULL CONSTRAINT rc_profile_master_pk PRIMARY KEY " +
-            "AUTOINCREMENT," +
             " " + COLUMN_PM_RAW_ID + " text," +
             " " + COLUMN_PM_RCP_ID + " integer UNIQUE," +
             " " + COLUMN_PM_PREFIX + " text," +
@@ -164,110 +162,39 @@ public class TableProfileMaster {
         db.close(); // Closing database connection
     }
 
-    // Getting single Profile
-    public UserProfile getProfile(int profileId) {
-        SQLiteDatabase db = databaseHandler.getReadableDatabase();
-
-        Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_ID,
-                COLUMN_PM_RAW_ID, COLUMN_PM_PREFIX, COLUMN_PM_FIRST_NAME, COLUMN_PM_MIDDLE_NAME,
-                COLUMN_PM_LAST_NAME, COLUMN_PM_SUFFIX, COLUMN_PM_NICK_NAME,
-                COLUMN_PM_PHONETIC_FIRST_NAME, COLUMN_PM_PHONETIC_MIDDLE_NAME,
-                COLUMN_PM_PHONETIC_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_RCP_ID,
-                COLUMN_PM_NICK_NAME_PRIVACY, COLUMN_PM_NOTES, COLUMN_PM_NOTES_PRIVACY,
-                COLUMN_PM_GENDER, COLUMN_PM_GENDER_PRIVACY, COLUMN_PM_PROFILE_RATING,
-                COLUMN_PM_PROFILE_RATE_USER, COLUMN_PM_IS_FAVOURITE, COLUMN_PM_ACCESS_TOKEN,
-                COLUMN_PM_NOSQL_MASTER_ID, COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE,
-                COLUMN_PM_JOINING_DATE}, COLUMN_PM_ID + "=?", new String[]{String.valueOf
-                (profileId)}, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        UserProfile userProfile = new UserProfile();
-        if (cursor != null) {
-            userProfile.setPmId(cursor.getString(cursor.getColumnIndex(COLUMN_PM_ID)));
-            userProfile.setPmRawId(cursor.getString(cursor.getColumnIndex(COLUMN_PM_RAW_ID)));
-            userProfile.setPmPrefix(cursor.getString(cursor.getColumnIndex(COLUMN_PM_PREFIX)));
-            userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_FIRST_NAME)));
-            userProfile.setPmMiddleName(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_MIDDLE_NAME)));
-            userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex(COLUMN_PM_LAST_NAME)));
-            userProfile.setPmSuffix(cursor.getString(cursor.getColumnIndex(COLUMN_PM_SUFFIX)));
-            userProfile.setPmNickName(cursor.getString(cursor.getColumnIndex(COLUMN_PM_NICK_NAME)));
-            userProfile.setPmPhoneticFirstName(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_PHONETIC_FIRST_NAME)));
-            userProfile.setPmPhoneticMiddleName(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_PHONETIC_MIDDLE_NAME)));
-            userProfile.setPmPhoneticLastName(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_PHONETIC_LAST_NAME)));
-            userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_PROFILE_IMAGE)));
-            userProfile.setPmRcpId(cursor.getString(cursor.getColumnIndex(COLUMN_PM_RCP_ID)));
-            userProfile.setPmNickNamePrivacy(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_NICK_NAME_PRIVACY)));
-            userProfile.setPmNotes(cursor.getString(cursor.getColumnIndex(COLUMN_PM_NOTES)));
-            userProfile.setPmNotesPrivacy(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_NOTES_PRIVACY)));
-            userProfile.setPmGender(cursor.getString(cursor.getColumnIndex(COLUMN_PM_GENDER)));
-            userProfile.setPmGenderPrivacy(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_GENDER_PRIVACY)));
-            userProfile.setProfileRating(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_PROFILE_RATING)));
-            userProfile.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_PROFILE_RATE_USER)));
-            userProfile.setPmIsFavourite(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_IS_FAVOURITE)));
-            userProfile.setPmAccessToken(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_ACCESS_TOKEN)));
-            userProfile.setPmNosqlMasterId(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_NOSQL_MASTER_ID)));
-            userProfile.setPmSignupSocialMediaType(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE)));
-            userProfile.setPmJoiningDate(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_PM_JOINING_DATE)));
-
-            cursor.close();
-        }
-
-        db.close();
-
-        // return Profile
-        return userProfile;
-    }
-
     // Getting single Profile from Cloud Pm id
     public UserProfile getProfileFromCloudPmId(int cloudPmd) {
         UserProfile userProfile = new UserProfile();
 
-        try{
+        try {
             SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
-            Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_ID,
-                    COLUMN_PM_RAW_ID, COLUMN_PM_PREFIX, COLUMN_PM_FIRST_NAME, COLUMN_PM_MIDDLE_NAME,
+            Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_RAW_ID,
+                    COLUMN_PM_PREFIX, COLUMN_PM_FIRST_NAME, COLUMN_PM_MIDDLE_NAME,
                     COLUMN_PM_LAST_NAME, COLUMN_PM_SUFFIX, COLUMN_PM_NICK_NAME,
                     COLUMN_PM_PHONETIC_FIRST_NAME, COLUMN_PM_PHONETIC_MIDDLE_NAME,
                     COLUMN_PM_PHONETIC_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_RCP_ID,
                     COLUMN_PM_NICK_NAME_PRIVACY, COLUMN_PM_NOTES, COLUMN_PM_NOTES_PRIVACY,
                     COLUMN_PM_GENDER, COLUMN_PM_GENDER_PRIVACY, COLUMN_PM_PROFILE_RATING,
-                    COLUMN_PM_PROFILE_RATE_USER, COLUMN_PM_IS_FAVOURITE,
-                    COLUMN_PM_ACCESS_TOKEN, COLUMN_PM_NOSQL_MASTER_ID,
-                    COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE, COLUMN_PM_JOINING_DATE}, COLUMN_PM_RCP_ID +
-                    "=?", new String[]{String
-                    .valueOf(cloudPmd)}, null, null, null, null);
+                    COLUMN_PM_PROFILE_RATE_USER, COLUMN_PM_IS_FAVOURITE, COLUMN_PM_ACCESS_TOKEN,
+                    COLUMN_PM_NOSQL_MASTER_ID, COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE,
+                    COLUMN_PM_JOINING_DATE}, COLUMN_PM_RCP_ID + "=?", new String[]{String.valueOf
+                    (cloudPmd)}, null, null, null, null);
             if (cursor != null)
                 cursor.moveToFirst();
 
             if (cursor != null) {
-                userProfile.setPmId(cursor.getString(cursor.getColumnIndex(COLUMN_PM_ID)));
                 userProfile.setPmRawId(cursor.getString(cursor.getColumnIndex(COLUMN_PM_RAW_ID)));
                 userProfile.setPmPrefix(cursor.getString(cursor.getColumnIndex(COLUMN_PM_PREFIX)));
                 userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_FIRST_NAME)));
                 userProfile.setPmMiddleName(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_MIDDLE_NAME)));
-                userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex(COLUMN_PM_LAST_NAME)));
+                userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_LAST_NAME)));
                 userProfile.setPmSuffix(cursor.getString(cursor.getColumnIndex(COLUMN_PM_SUFFIX)));
-                userProfile.setPmNickName(cursor.getString(cursor.getColumnIndex(COLUMN_PM_NICK_NAME)));
+                userProfile.setPmNickName(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_NICK_NAME)));
                 userProfile.setPmPhoneticFirstName(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_PHONETIC_FIRST_NAME)));
                 userProfile.setPmPhoneticMiddleName(cursor.getString(cursor.getColumnIndex
@@ -306,7 +233,7 @@ public class TableProfileMaster {
             db.close();
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -328,7 +255,6 @@ public class TableProfileMaster {
         if (cursor.moveToFirst()) {
             do {
                 UserProfile userProfile = new UserProfile();
-                userProfile.setPmId(cursor.getString(cursor.getColumnIndex(COLUMN_PM_ID)));
                 userProfile.setPmRawId(cursor.getString(cursor.getColumnIndex(COLUMN_PM_RAW_ID)));
                 userProfile.setPmPrefix(cursor.getString(cursor.getColumnIndex(COLUMN_PM_PREFIX)));
                 userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
@@ -453,12 +379,12 @@ public class TableProfileMaster {
     }
 
     // Deleting single profile
-    public void deleteUserProfile(UserProfile userProfile) {
+  /*  public void deleteUserProfile(UserProfile userProfile) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         db.delete(TABLE_RC_PROFILE_MASTER, COLUMN_PM_ID + " = ?",
                 new String[]{String.valueOf(userProfile.getPmId())});
         db.close();
-    }
+    }*/
 
     /*public ProfileDataOperation getRcProfileDetail(Context context, String rcpId) {
 

@@ -784,7 +784,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     private void eventDetails() {
         TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
 
-        ArrayList<Event> arrayListEvent = tableEventMaster.getEventssFromPmId(Integer.parseInt
+        ArrayList<Event> arrayListEvent = tableEventMaster.getEventsFromPmId(Integer.parseInt
                 (getUserPmId()));
 
         arrayListEventObject = new ArrayList<>();

@@ -7,16 +7,17 @@ package com.rawalinfocom.rcontact.model;
 public class Email {
 
     private String emId;
-    private String emCloudId;
     private String emEmailAddress;
     private String emEmailType;
     private String emRecordIndexId;
-    private String emCustomType;
-    private String emIsPrimary;
     private String emEmailPrivacy;
-    private String emIsDefault;
     private String emIsVerified;
     private String rcProfileMasterPmId;
+
+    //    private String emCloudId;
+    //    private String emCustomType;
+    //    private String emIsPrimary;
+    //    private String emIsDefault;
 
     public String getEmId() {
         return emId;
@@ -24,14 +25,6 @@ public class Email {
 
     public void setEmId(String emId) {
         this.emId = emId;
-    }
-
-    public String getEmCloudId() {
-        return emCloudId;
-    }
-
-    public void setEmCloudId(String emCloudId) {
-        this.emCloudId = emCloudId;
     }
 
     public String getEmEmailAddress() {
@@ -50,36 +43,12 @@ public class Email {
         this.emEmailType = emEmailType;
     }
 
-    public String getEmCustomType() {
-        return emCustomType;
-    }
-
-    public void setEmCustomType(String emCustomType) {
-        this.emCustomType = emCustomType;
-    }
-
-    public String getEmIsPrimary() {
-        return emIsPrimary;
-    }
-
-    public void setEmIsPrimary(String emIsPrimary) {
-        this.emIsPrimary = emIsPrimary;
-    }
-
     public String getEmEmailPrivacy() {
         return emEmailPrivacy;
     }
 
     public void setEmEmailPrivacy(String emEmailPrivacy) {
         this.emEmailPrivacy = emEmailPrivacy;
-    }
-
-    public String getEmIsDefault() {
-        return emIsDefault;
-    }
-
-    public void setEmIsDefault(String emIsDefault) {
-        this.emIsDefault = emIsDefault;
     }
 
     public String getEmIsVerified() {
