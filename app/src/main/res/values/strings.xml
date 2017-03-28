@@ -136,6 +136,7 @@
     <string name="remove_from_call_log">Remove from Call Log</string>
     <string name="copy_phone_number">Copy Phone Number</string>
     <string name="block">Block</string>
+    <string name="unblock">unblock</string>
     <string name="call_reminder">Call Reminder</string>
     <string name="add_to_contact">Add to Contact</string>
     <string name="add_to_existing_contact">Add to Existing Contact</string>
