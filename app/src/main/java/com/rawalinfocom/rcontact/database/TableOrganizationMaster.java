@@ -28,8 +28,8 @@ public class TableOrganizationMaster {
     // Column Names
     private static final String COLUMN_OM_ID = "om_id";
     private static final String COLUMN_OM_RECORD_INDEX_ID = "om_record_index_id";
-    private static final String COLUMN_OM_ORGANIZATION_COMPANY = "om_organization_company";
-    private static final String COLUMN_OM_ORGANIZATION_DESIGNATION = "om_organization_designation";
+    static final String COLUMN_OM_ORGANIZATION_COMPANY = "om_organization_company";
+    static final String COLUMN_OM_ORGANIZATION_DESIGNATION = "om_organization_designation";
     private static final String COLUMN_OM_ORGANIZATION_PRIVACY = "om_organization_privacy";
     private static final String COLUMN_OM_ORGANIZATION_IS_CURRENT = "om_organization_is_current";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";

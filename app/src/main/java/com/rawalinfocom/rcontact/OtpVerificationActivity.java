@@ -362,7 +362,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
     private void otpConfirmed(OtpLog otpLog) {
 
         WsRequestObject otpObject = new WsRequestObject();
-        otpObject.setPmId(otpLog.getRcProfileMasterPmId());
+        otpObject.setPmId(Integer.parseInt(otpLog.getRcProfileMasterPmId()));
         otpObject.setStatus(AppConstants.OTP_CONFIRMED_STATUS);
         otpObject.setLdOtpDeliveredTimeFromCloudToDevice(otpLog.getOldMspDeliveryTime());
         otpObject.setOtp(otpLog.getOldOtp());

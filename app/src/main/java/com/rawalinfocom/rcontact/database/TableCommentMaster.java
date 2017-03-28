@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class TableCommentMaster {
 
+    public static String COMMENT_TYPE_RATING = "Rating";
     private DatabaseHandler databaseHandler;
 
     public TableCommentMaster(DatabaseHandler databaseHandler) {
@@ -173,7 +174,8 @@ public class TableCommentMaster {
         values.put(COLUMN_CRM_REPLIED_AT, replyAt);
         values.put(COLUMN_CRM_UPDATED_AT, updatedDate);
 
-        int isUpdated = db.update(TABLE_RC_COMMENT_MASTER, values, COLUMN_CRM_CLOUD_COMMENT_ID + " = ?",
+        int isUpdated = db.update(TABLE_RC_COMMENT_MASTER, values, COLUMN_CRM_CLOUD_COMMENT_ID +
+                        " = ?",
                 new String[]{id});
 
         db.close();

@@ -34,7 +34,6 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
-import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
@@ -144,7 +143,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-         /*LocalBroadcastManager.getInstance(getActivity()).registerReceiver(CallLogFragment.broadcastReceiver,
+         /*LocalBroadcastManager.getInstance(getActivity()).registerReceiver(CallLogFragment
+         .broadcastReceiver,
                         new IntentFilter(AppConstants.ACTION_START_CALL_LOG_INSERTION));*/
 
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
@@ -224,7 +224,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
 
 
-        try{
+        try {
             if (error == null && getActivity() != null) {
                 //<editor-fold desc="REQ_UPLOAD_CONTACTS">
 
@@ -270,8 +270,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             textTotalContacts.setText(previouslySyncedData + " Contacts");
                         } else {
                             textTotalContacts.setText(arrayListContactId.size() + " Contacts");
-                            Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts, "All " +
-                                    "Contact Synced");
+                            Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
+                                    "All " +
+                                            "Contact Synced");
 //                        sendBroadCastToStartCallLogInsertion();
                             Utils.setBooleanPreference(getActivity(), AppConstants
                                     .PREF_SYNC_CALL_LOG, true);
@@ -285,8 +286,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             Log.e("error response", uploadContactResponse.getMessage());
                         } else {
                             Log.e("onDeliveryResponse: ", "uploadContactResponse null");
-                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getString(R
-                                    .string.msg_try_later));
+                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                                    getString(R
+                                            .string.msg_try_later));
                         }
                     }
                 }
@@ -298,15 +300,17 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     WsResponseObject inviteContactResponse = (WsResponseObject) data;
                     if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
                             (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                        Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts, "Invitation" +
-                                " sent successfully");
+                        Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
+                                "Invitation" +
+                                        " sent successfully");
                     } else {
                         if (inviteContactResponse != null) {
                             Log.e("error response", inviteContactResponse.getMessage());
                         } else {
                             Log.e("onDeliveryResponse: ", "uploadContactResponse null");
-                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getString(R
-                                    .string.msg_try_later));
+                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                                    getString(R
+                                            .string.msg_try_later));
                         }
                     }
                 }
@@ -314,11 +318,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
             } else {
                 progressAllContact.setVisibility(View.GONE);
-                Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, "" + (error != null ?
+                Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, "" + (error !=
+                        null ?
                         error.getLocalizedMessage() : null));
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -577,12 +582,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             if (StringUtils.equalsIgnoreCase(profileData.get(i)
                                     .getVerifiedEmailIds().get(k).getEmEmailId(), email
                                     .getEmEmailAddress())) {
-                                email.setEmIsPrimary(String.valueOf(getActivity().getResources()
-                                        .getInteger(R.integer.rcp_type_primary)));
+//                                email.setEmIsPrimary(String.valueOf(getActivity().getResources()
+//                                        .getInteger(R.integer.rcp_type_primary)));
                                 email.setEmIsVerified("1");
                             } else {
-                                email.setEmIsPrimary(String.valueOf(getActivity().getResources()
-                                        .getInteger(R.integer.rcp_type_secondary)));
+//                                email.setEmIsPrimary(String.valueOf(getActivity().getResources()
+//                                        .getInteger(R.integer.rcp_type_secondary)));
                                 email.setEmIsVerified("0");
                             }
                         }
@@ -605,14 +610,19 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     organization.setOmRecordIndexId(arrayListOrganization.get(j).getOrgId());
                     organization.setOmOrganizationCompany(arrayListOrganization.get(j).getOrgName
                             ());
-                    organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgType());
-                    organization.setOmOrganizationTitle(arrayListOrganization.get(j).getOrgName());
-                    organization.setOmOrganizationDepartment(arrayListOrganization.get(j)
-                            .getOrgDepartment());
-                    organization.setOmJobDescription(arrayListOrganization.get(j)
+//                    organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgType());
+//                    organization.setOmOrganizationTitle(arrayListOrganization.get(j).getOrgName
+// ());
+//                    organization.setOmOrganizationDepartment(arrayListOrganization.get(j)
+//                            .getOrgDepartment());
+//                    organization.setOmJobDescription(arrayListOrganization.get(j)
+//                            .getOrgJobTitle());
+//                    organization.setOmOfficeLocation(arrayListOrganization.get(j)
+//                            .getOrgOfficeLocation());
+                    organization.setOmOrganizationDesignation(arrayListOrganization.get(j)
                             .getOrgJobTitle());
-                    organization.setOmOfficeLocation(arrayListOrganization.get(j)
-                            .getOrgOfficeLocation());
+                    organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(j)
+                            .getIsCurrent()));
                     organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                     organizationList.add(organization);
                 }
@@ -662,7 +672,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     address.setAmAddressType(arrayListAddress.get(j).getAddressType());
                     address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
                     address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
-                    address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
+//                    address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                     address.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                     addressList.add(address);
                 }
@@ -681,7 +691,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 for (int j = 0; j < arrayListImAccount.size(); j++) {
                     ImAccount imAccount = new ImAccount();
                     imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
-                    imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
+//                    imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                     imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                     imAccount.setImImPrivacy(arrayListImAccount.get(j).getIMAccountPublic());
                     imAccount.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -1363,7 +1373,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private void uploadContacts(int previouslySyncedData) {
 
         WsRequestObject uploadContactObject = new WsRequestObject();
-        uploadContactObject.setPmId(((BaseActivity) getActivity()).getUserPmId());
+        uploadContactObject.setPmId(Integer.parseInt(((BaseActivity) getActivity()).getUserPmId()));
         uploadContactObject.setProfileData(arrayListUserContact);
 
         if (Utils.isNetworkAvailable(getActivity())) {
