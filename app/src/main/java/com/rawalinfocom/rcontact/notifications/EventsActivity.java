@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.events;
+package com.rawalinfocom.rcontact.notifications;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +26,8 @@ import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.EventComment;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.notifications.adapters.EventAdapter;
+import com.rawalinfocom.rcontact.notifications.model.EventItem;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -207,7 +209,7 @@ public class EventsActivity extends BaseActivity implements RippleView
 
         todayEventAdapter = new EventAdapter(this, listTodayEvent, 0);
         recyclerViewToday.setAdapter(todayEventAdapter);
-        recyclerViewToday.setLayoutManager(new MyLayoutManager(getApplicationContext(), recyclerViewToday, height));
+        recyclerViewToday.setLayoutManager(new CustomLayoutManager(getApplicationContext(), recyclerViewToday, height));
         RecyclerView.Adapter mAdapter = recyclerViewToday.getAdapter();
         int totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > maxItemCount) {
@@ -216,7 +218,7 @@ public class EventsActivity extends BaseActivity implements RippleView
 
         recentEventAdapter = new EventAdapter(this, listRecentEvent, 1);
         recyclerViewRecent.setAdapter(recentEventAdapter);
-        recyclerViewRecent.setLayoutManager(new MyLayoutManager(getApplicationContext(), recyclerViewRecent, height));
+        recyclerViewRecent.setLayoutManager(new CustomLayoutManager(getApplicationContext(), recyclerViewRecent, height));
         mAdapter = recyclerViewRecent.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > maxItemCount) {
@@ -225,7 +227,7 @@ public class EventsActivity extends BaseActivity implements RippleView
 
         upcomingEventAdapter = new EventAdapter(this, listUpcomingEvent, 2);
         recyclerViewUpcoming.setAdapter(upcomingEventAdapter);
-        recyclerViewUpcoming.setLayoutManager(new MyLayoutManager(getApplicationContext(), recyclerViewUpcoming, height));
+        recyclerViewUpcoming.setLayoutManager(new CustomLayoutManager(getApplicationContext(), recyclerViewUpcoming, height));
         mAdapter = recyclerViewUpcoming.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > maxItemCount + 1) {

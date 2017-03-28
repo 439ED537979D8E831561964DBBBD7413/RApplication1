@@ -116,8 +116,8 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".timeline.TimelineActivity" />
-        <activity android:name=".events.EventsActivity" />
+        <activity android:name=".notifications.TimelineActivity" />
+        <activity android:name=".notifications.EventsActivity" />
         <activity android:name=".notifications.NotificationsActivity" />
         <activity android:name=".notifications.NotificationsDetailActivity" />
 

@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.notifications;
+package com.rawalinfocom.rcontact.notifications.model;
 
 /**
  * Created by maulik on 14/03/17.

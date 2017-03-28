@@ -22,7 +22,6 @@ import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
-import com.rawalinfocom.rcontact.events.MyLayoutManager;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Comment;
@@ -32,6 +31,8 @@ import com.rawalinfocom.rcontact.model.EventCommentData;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.notifications.adapters.NotiCommentsAdapter;
+import com.rawalinfocom.rcontact.notifications.model.NotiCommentsItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -159,7 +160,7 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
         int height = (displaymetrics.heightPixels * heightPercent) / 100;
 
         recyclerTodayComments.setAdapter(todayRatingAdapter);
-        recyclerTodayComments.setLayoutManager(new MyLayoutManager(getActivity(), recyclerTodayComments, height));
+        recyclerTodayComments.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerTodayComments, height));
         RecyclerView.Adapter mAdapter = recyclerTodayComments.getAdapter();
         int totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > maxItemCount) {
@@ -167,14 +168,14 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
         }
 
         recyclerYesterDayComments.setAdapter(yesterdayRatingAdapter);
-        recyclerYesterDayComments.setLayoutManager(new MyLayoutManager(getActivity(), recyclerYesterDayComments, height));
+        recyclerYesterDayComments.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerYesterDayComments, height));
         mAdapter = recyclerYesterDayComments.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > maxItemCount) {
             recyclerYesterDayComments.getLayoutParams().height = height;
         }
         recyclerPastDayComments.setAdapter(pastRatingAdapter);
-        recyclerPastDayComments.setLayoutManager(new MyLayoutManager(getActivity(), recyclerPastDayComments, height));
+        recyclerPastDayComments.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerPastDayComments, height));
         mAdapter = recyclerPastDayComments.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > maxItemCount) {

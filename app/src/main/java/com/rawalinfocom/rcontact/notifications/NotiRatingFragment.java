@@ -14,8 +14,9 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.events.MyLayoutManager;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.notifications.adapters.NotiRatingAdapter;
+import com.rawalinfocom.rcontact.notifications.model.NotiRatingItem;
 
 import java.util.Arrays;
 import java.util.List;
@@ -110,7 +111,7 @@ public class NotiRatingFragment extends BaseFragment {
         int height = (displaymetrics.heightPixels * 49) / 100;
 
         recyclerTodayRating.setAdapter(todayRatingAdapter);
-        recyclerTodayRating.setLayoutManager(new MyLayoutManager(getActivity(), recyclerTodayRating, height));
+        recyclerTodayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerTodayRating, height));
         RecyclerView.Adapter mAdapter = recyclerTodayRating.getAdapter();
         int totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > 3) {
@@ -118,14 +119,14 @@ public class NotiRatingFragment extends BaseFragment {
         }
 
         recyclerYesterDayRating.setAdapter(yesterdayRatingAdapter);
-        recyclerYesterDayRating.setLayoutManager(new MyLayoutManager(getActivity(), recyclerPastDayRating, height));
+        recyclerYesterDayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerPastDayRating, height));
         mAdapter = recyclerYesterDayRating.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > 3) {
             recyclerYesterDayRating.getLayoutParams().height = height;
         }
         recyclerPastDayRating.setAdapter(pastRatingAdapter);
-        recyclerPastDayRating.setLayoutManager(new MyLayoutManager(getActivity(), recyclerPastDayRating, height));
+        recyclerPastDayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerPastDayRating, height));
         mAdapter = recyclerPastDayRating.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > 3) {

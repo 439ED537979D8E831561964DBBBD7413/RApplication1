@@ -14,8 +14,9 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.events.MyLayoutManager;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.notifications.adapters.NotiRequestAdapter;
+import com.rawalinfocom.rcontact.notifications.model.NotiRequestItem;
 
 import java.util.Arrays;
 import java.util.List;
@@ -102,7 +103,7 @@ public class NotiRequestFragment extends BaseFragment {
         int height = (displaymetrics.heightPixels * 54) / 100;
 
         recyclerTodayRequests.setAdapter(todayRequestAdapter);
-        recyclerTodayRequests.setLayoutManager(new MyLayoutManager(getActivity(), recyclerTodayRequests, height));
+        recyclerTodayRequests.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerTodayRequests, height));
         RecyclerView.Adapter mAdapter = recyclerTodayRequests.getAdapter();
         int totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > 3) {
@@ -111,7 +112,7 @@ public class NotiRequestFragment extends BaseFragment {
 
 
         recyclerPastRequests.setAdapter(pastRequestAdapter);
-        recyclerPastRequests.setLayoutManager(new MyLayoutManager(getActivity(), recyclerPastRequests, height));
+        recyclerPastRequests.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerPastRequests, height));
         mAdapter = recyclerPastRequests.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > 3) {

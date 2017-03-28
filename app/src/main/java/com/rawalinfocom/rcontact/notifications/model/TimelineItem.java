@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.timeline;
+package com.rawalinfocom.rcontact.notifications.model;
 
 /**
  * Created by maulik on 08/03/17.

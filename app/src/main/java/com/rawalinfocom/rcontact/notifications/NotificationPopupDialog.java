@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.notifications.adapters.NotificationPopupListAdapter;
 
 import java.util.ArrayList;
 

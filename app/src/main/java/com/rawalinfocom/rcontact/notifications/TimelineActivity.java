@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.timeline;
+package com.rawalinfocom.rcontact.notifications;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -22,7 +22,6 @@ import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
-import com.rawalinfocom.rcontact.events.MyLayoutManager;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
@@ -33,6 +32,8 @@ import com.rawalinfocom.rcontact.model.EventCommentData;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.notifications.adapters.TimelineAdapter;
+import com.rawalinfocom.rcontact.notifications.model.TimelineItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -231,7 +232,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
 
 
         recyclerViewToday.setAdapter(todayTimelineAdapter);
-        recyclerViewToday.setLayoutManager(new MyLayoutManager(this, recyclerViewToday, height));
+        recyclerViewToday.setLayoutManager(new CustomLayoutManager(this, recyclerViewToday, height));
         RecyclerView.Adapter adapter = recyclerViewToday.getAdapter();
         int itemCount = adapter.getItemCount();
         if (itemCount > maxItemCount) {
@@ -239,7 +240,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
         }
 
         recyclerViewYesterday.setAdapter(yesterdayTimelineAdapter);
-        recyclerViewYesterday.setLayoutManager(new MyLayoutManager(this, recyclerViewYesterday, height));
+        recyclerViewYesterday.setLayoutManager(new CustomLayoutManager(this, recyclerViewYesterday, height));
         adapter = recyclerViewYesterday.getAdapter();
         itemCount = adapter.getItemCount();
         if (itemCount > maxItemCount) {
@@ -247,7 +248,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
         }
 
         recyclerViewPast5day.setAdapter(past5daysTimelineAdapter);
-        recyclerViewPast5day.setLayoutManager(new MyLayoutManager(this, recyclerViewPast5day, height));
+        recyclerViewPast5day.setLayoutManager(new CustomLayoutManager(this, recyclerViewPast5day, height));
         adapter = recyclerViewPast5day.getAdapter();
         itemCount = adapter.getItemCount();
         if (itemCount > maxItemCount) {
