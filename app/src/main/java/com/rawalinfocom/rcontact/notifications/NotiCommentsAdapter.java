@@ -10,7 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.helper.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -25,10 +27,13 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
 
     private Context context;
     private List<NotiCommentsItem> list;
+    private int recyclerPosition;
+    NotificationPopupDialog notificationPopupDialog;
 
-    public NotiCommentsAdapter(Context context, List<NotiCommentsItem> list) {
+    public NotiCommentsAdapter(Context context, List<NotiCommentsItem> list, int recyclerPosition) {
         this.context = context;
         this.list = list;
+        this.recyclerPosition = recyclerPosition;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -59,11 +64,34 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        NotiCommentsItem item = list.get(position);
+        final NotiCommentsItem item = list.get(position);
         holder.textCommenterName.setText(item.getCommenterName());
         holder.textCommentDetailInfo.setText(item.getCommenterInfo());
-        holder.textCommentNotiTime.setText(item.getNotiCommentTime());
+        if (recyclerPosition == 2) {
+            holder.textCommentNotiTime.setText(Utils.formatDateTime(item.getNotiCommentTime(), "dd MMM, hh:mm a"));
+        } else {
+            holder.textCommentNotiTime.setText(Utils.formatDateTime(item.getNotiCommentTime(), "hh:mm a"));
+        }
         holder.buttonCommentViewReply.setText("VIEW REPLY");
+        holder.buttonCommentViewReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ArrayList<String> arrayListComments = new ArrayList<>();
+
+                arrayListComments.add(item.getCommenterName());
+                arrayListComments.add(item.getEventName());
+                arrayListComments.add(item.getComment());
+                arrayListComments.add(Utils.formatDateTime(item.getCommentTime(), "dd MMM, hh:mm a"));
+                arrayListComments.add(item.getReply());
+                arrayListComments.add(Utils.formatDateTime(item.getReplyTime(), "dd MMM, hh:mm a"));
+
+                notificationPopupDialog = new NotificationPopupDialog(context, arrayListComments);
+                notificationPopupDialog.setDialogTitle(item.getCommenterName() + " Reply You");
+                notificationPopupDialog.showDialog();
+            }
+        });
+
     }
 
     @Override

@@ -40,12 +40,14 @@ public class NotificationPopupListAdapter extends RecyclerView.Adapter<Notificat
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        holder.textWisherComment.setText(stringArrayList.get(0));
-        holder.textUserComment.setText(stringArrayList.get(1));
-        holder.textWisherCommentTime.setText("11:09PM");
-        holder.textUserCommentTime.setText("11:09PM");
-        holder.textWisherName.setText("Angarika Shah");
-        holder.textTimelineNotiTime.setText("12:45 PM");
+        holder.textWisherName.setText(stringArrayList.get(0));
+        holder.textTimelineNotiTime.setText(stringArrayList.get(1));
+
+        holder.textWisherComment.setText(stringArrayList.get(2));
+        holder.textWisherCommentTime.setText(stringArrayList.get(3));
+
+        holder.textUserComment.setText(stringArrayList.get(4));
+        holder.textUserCommentTime.setText(stringArrayList.get(5));
     }
 
     @Override

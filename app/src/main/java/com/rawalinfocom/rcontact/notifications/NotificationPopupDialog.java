@@ -43,8 +43,7 @@ public class NotificationPopupDialog {
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
         tvDialogTitle = (TextView) dialog.findViewById(R.id.tvDialogTitle);
-        tvDialogTitle.setTypeface(Utils.typefaceRegular(context));
-        // tvDialogTitle.setTypeface(Utils.typefaceBold(context));
+        tvDialogTitle.setTypeface(Utils.typefaceSemiBold(context));
         recycleViewDialog = (RecyclerView) dialog.findViewById(R.id.recycle_view_dialog);
 
         stringArrayList = arrayList;

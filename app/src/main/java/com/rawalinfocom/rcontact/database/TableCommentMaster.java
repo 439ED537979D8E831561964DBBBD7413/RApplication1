@@ -168,4 +168,37 @@ public class TableCommentMaster {
     }
 
 
+    public ArrayList<Comment> getAllReplyReceived(String fromDate, String toDate) {
+        ArrayList<Comment> arrayListReplyReceived = new ArrayList<>();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
+                " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and " + COLUMN_CRM_REPLY + "!=''" + " and strftime('%m-%d'," +
+                COLUMN_CRM_REPLIED_AT + ") between '" + fromDate + "' and '" + toDate + "' order by " + COLUMN_CRM_REPLIED_AT + " desc";
+
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Comment comment = new Comment();
+                comment.setCrmId(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_ID)));
+                comment.setCrmStatus(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_STATUS)));
+                comment.setCrmRating(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_RATING)));
+                comment.setCrmType(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_TYPE)));
+                comment.setCrmCloudPrId(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CLOUD_PR_ID)));
+                comment.setRcProfileMasterPmId(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
+                comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
+                comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));
+                comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CREATED_AT)));
+                comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLIED_AT)));
+                comment.setCrmUpdatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_UPDATED_AT)));
+                comment.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_RECORD_INDEX_ID)));
+                arrayListReplyReceived.add(comment);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        db.close();
+
+        return arrayListReplyReceived;
+    }
 }
