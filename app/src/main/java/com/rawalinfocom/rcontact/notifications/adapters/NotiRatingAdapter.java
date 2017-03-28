@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.notifications.model.NotiRatingItem;
 import com.rawalinfocom.rcontact.notifications.NotificationPopupDialog;
+import com.rawalinfocom.rcontact.notifications.model.NotiRatingItem;
 
 import java.util.ArrayList;
 import java.util.List;

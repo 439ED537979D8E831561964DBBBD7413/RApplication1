@@ -12,10 +12,6 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.RippleView;
-import com.rawalinfocom.rcontact.notifications.NotiCommentsFragment;
-import com.rawalinfocom.rcontact.notifications.NotiRContactsFragment;
-import com.rawalinfocom.rcontact.notifications.NotiRatingFragment;
-import com.rawalinfocom.rcontact.notifications.NotiRequestFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
