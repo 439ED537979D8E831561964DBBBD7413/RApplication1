@@ -210,6 +210,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         final String name = callLogType.getName();
         final String number = callLogType.getNumber();
         final String uniqueRowID = callLogType.getUniqueContactId();
+
         if (!TextUtils.isEmpty(number)) {
             holder.textTempNumber.setText(number);
         }
@@ -246,6 +247,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (dateFromReceiver1 != null) {
             dateFromReceiver = dateFromReceiver1.getTime();
         }
+
         if (date > 0) {
             Date date1 = new Date(date);
             String logDate = new SimpleDateFormat("hh:mm a").format(date1);
@@ -255,21 +257,30 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             String callReceiverDate = new SimpleDateFormat("hh:mm a").format(callDate);
             holder.textContactDate.setText(callReceiverDate);
         }
-        int callType = callLogType.getType();
-        if (callType > 0) {
-            switch (callType) {
-                case AppConstants.INCOMING:
-                    holder.imageCallType.setImageResource(R.drawable.ic_call_incoming);
-                    break;
-                case AppConstants.OUTGOING:
-                    holder.imageCallType.setImageResource(R.drawable.ic_call_outgoing);
-                    break;
-                case AppConstants.MISSED:
-                    holder.imageCallType.setImageResource(R.drawable.ic_call_missed);
-                    break;
-                default:
-                    break;
 
+
+        int blockedType = callLogType.getBlockedType();
+
+        if(blockedType>0){
+            holder.imageCallType.setImageResource(R.drawable.ic_block);
+        }else{
+
+            int callType = callLogType.getType();
+            if (callType > 0) {
+                switch (callType) {
+                    case AppConstants.INCOMING:
+                        holder.imageCallType.setImageResource(R.drawable.ic_call_incoming);
+                        break;
+                    case AppConstants.OUTGOING:
+                        holder.imageCallType.setImageResource(R.drawable.ic_call_outgoing);
+                        break;
+                    case AppConstants.MISSED:
+                        holder.imageCallType.setImageResource(R.drawable.ic_call_missed);
+                        break;
+                    default:
+                        break;
+
+                }
             }
         }
 
@@ -311,22 +322,23 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             public void onClick(View v) {
 
                 selectedPosition = position;
+                selectedCallLogData = callLogType;
+                String blockedNumber = "";
                 String key = "";
                 key = callLogType.getLocalPbRowId();
                 if (key.equalsIgnoreCase(" ")) {
                     key = callLogType.getUniqueContactId();
                 }
-                String blockedNumber = "";
+
                 ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
                 HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
                         Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
 
-                if(blockProfileHashMapList != null && blockProfileHashMapList.size()>0){
-                    if(blockProfileHashMapList.containsKey(key))
+                if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+                    if (blockProfileHashMapList.containsKey(key))
                         callLogTypeList.addAll(blockProfileHashMapList.get(key));
 
                 }
-
                 if (callLogTypeList != null) {
                     for (int j = 0; j < callLogTypeList.size(); j++) {
                         Log.i("value", callLogTypeList.get(j) + "");
@@ -345,14 +357,15 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.add_to_contact),
                                     context.getString(R.string.add_to_existing_contact)
                                     , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
-                                    context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.block)));
+                                    context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.unblock)));
                         } else {
                             arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.send_sms),
                                     context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number),
                                     context.getString(R.string.call_reminder), context.getString(R.string.unblock)));
                         }
 
-                        materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date, name, "");
+                        materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date, name, "",
+                                key);
                         materialListDialog.setDialogTitle(name);
                         materialListDialog.showDialog();
 
@@ -365,7 +378,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                     context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder),
                                     context.getString(R.string.unblock)));
 
-                            materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number, date, "", uniqueRowID);
+                            materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number, date, "", uniqueRowID,
+                                    key);
                             materialListDialog.setDialogTitle(number);
                             materialListDialog.setCallingAdapter(CallLogListAdapter.this);
                             materialListDialog.showDialog();
@@ -386,7 +400,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                     context.getString(R.string.call_reminder), context.getString(R.string.block)));
                         }
 
-                        materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date, name, "");
+                        materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date, name, "","");
                         materialListDialog.setDialogTitle(name);
                         materialListDialog.showDialog();
 
@@ -398,7 +412,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                     , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
                                     context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.block)));
 
-                            materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number, date, "", uniqueRowID);
+                            materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number, date, "", uniqueRowID,
+                                    "");
                             materialListDialog.setDialogTitle(number);
                             materialListDialog.setCallingAdapter(CallLogListAdapter.this);
                             materialListDialog.showDialog();
@@ -417,6 +432,12 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                 selectedPosition = position;
                 selectedCallLogData = callLogType;
+                String key = "";
+                key = callLogType.getLocalPbRowId();
+                if (key.equalsIgnoreCase(" ")) {
+                    key = callLogType.getUniqueContactId();
+                }
+
                 if (date == 0) {
                     selectedLogDate = dateFromReceiver;
                 } else {
@@ -433,6 +454,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 } else {
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
                 }
+                intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, key);
+                intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID,uniqueRowID);
                 context.startActivity(intent);
                 ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
             }

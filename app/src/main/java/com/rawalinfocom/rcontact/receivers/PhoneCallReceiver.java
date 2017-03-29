@@ -3,14 +3,22 @@ package com.rawalinfocom.rcontact.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.Telephony;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.CallLogType;
 
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+
+import static android.R.attr.key;
 
 /**
  * Created by Aniruddh on 22/02/17.
@@ -54,6 +62,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
 
                 onCallStateChanged(context, state, number);
+
+
             }
 
         } catch (Exception e) {
@@ -88,6 +98,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 isIncoming = true;
                 callStartTime = new Date();
                 savedNumber = number;
+                blockCall(context,savedNumber);
                 onIncomingCallStarted(context, number, callStartTime);
                 break;
             case TelephonyManager.CALL_STATE_OFFHOOK:
@@ -137,6 +148,55 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 break;
         }
         lastState = state;
+    }
+
+    private void blockCall(Context context, String numberToBlock){
+        if (Utils.getHashMapPreferenceForBlock(context, AppConstants
+                .PREF_BLOCK_CONTACT_LIST) != null) {
+            HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
+                    Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
+            ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+            String blockedNumber = "";
+            String hashKey = "";
+            if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+                for (String key : blockProfileHashMapList.keySet() ) {
+                    System.out.println( key );
+                    hashKey =  key;
+                    if(blockProfileHashMapList.containsKey(hashKey)){
+                        callLogTypeList.addAll(blockProfileHashMapList.get(hashKey));
+                        if (callLogTypeList != null) {
+                            for (int j = 0; j < callLogTypeList.size(); j++) {
+                                String tempNumber = callLogTypeList.get(j).getNumber();
+                                if (tempNumber.equalsIgnoreCase(numberToBlock)) {
+                                    blockedNumber = tempNumber;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(!TextUtils.isEmpty(blockedNumber)){
+                Telephony telephonyService;
+                try{
+                    TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+                    Method m1 = tm.getClass().getDeclaredMethod("getITelephony");
+                    m1.setAccessible(true);
+                    Object iTelephony = m1.invoke(tm);
+
+                    Method m2 = iTelephony.getClass().getDeclaredMethod("silenceRinger");
+                    Method m3 = iTelephony.getClass().getDeclaredMethod("endCall");
+
+                    m2.invoke(iTelephony);
+                    m3.invoke(iTelephony);
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+
+        }
     }
 
 }

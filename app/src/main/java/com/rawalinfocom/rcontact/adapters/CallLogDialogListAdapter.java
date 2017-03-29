@@ -54,15 +54,17 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
     long callLogDateToDelete;
     String uniqueRowId;
     boolean isblocked= false;
+    String key;
 
     public CallLogDialogListAdapter(Context context, ArrayList<String> arrayList, String number, long date, String name,
-                                    String uniqueRowId) {
+                                    String uniqueRowId,String key) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
         this.callLogDateToDelete = date;
         this.dialogName = name;
         this.uniqueRowId = uniqueRowId;
+        this.key = key;
     }
 
     @Override
@@ -135,8 +137,6 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                             CallLogType callLogType =  listToBlock.get(i);
                             uniqueContactId = callLogType.getUniqueContactId();
                         }
-                        /*listHashMap.put(uniqueContactId,listToBlock);
-                        Utils.setHashMapPreference(context,AppConstants.PREF_BLOCK_CONTACT_LIST,listHashMap);*/
 
                     } else {
 
@@ -147,12 +147,8 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                         callLogType.setNumber(numberToCall);
                         listToBlock.add(callLogType);
                         Log.i("block list size =", listToBlock.size() + "");
-                        /*listHashMap.put(uniqueContactId,listToBlock);
-                        Utils.setHashMapPreference(context,AppConstants.PREF_BLOCK_CONTACT_LIST,listHashMap);*/
-                        /*HashMap<String,ArrayList<CallLogType>> tempHashMapList =
-                                Utils.getGenericHashMap(context,AppConstants.PREF_BLOCK_CONTACT_LIST);
-                        Log.i("Hash map block list", tempHashMapList.size()+"");*/
                     }
+
                     if (Utils.getHashMapPreferenceForBlock(context, AppConstants
                             .PREF_BLOCK_CONTACT_LIST) != null) {
                         listHashMap.putAll(Utils.getHashMapPreferenceForBlock(context, AppConstants
@@ -166,9 +162,47 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                     Utils.setHashMapPreference(context, AppConstants.PREF_BLOCK_CONTACT_LIST,
                             listHashMap);
 
+                    Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE_BLOCK);
+                    localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_BLOCK,
+                           true);
+                    LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                    myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
+                } else if(value.equalsIgnoreCase(context.getString(R.string.unblock))){
+                    if (Utils.getHashMapPreferenceForBlock(context, AppConstants
+                            .PREF_BLOCK_CONTACT_LIST) != null) {
+                        HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
+                                Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
+                        ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+                        String blockedNumber = "";
+                        if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+                            if (blockProfileHashMapList.containsKey(key))
+                                callLogTypeList.addAll(blockProfileHashMapList.get(key));
 
-                } else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
+                        }
+                        if (callLogTypeList != null) {
+                            for (int j = 0; j < callLogTypeList.size(); j++) {
+                                String tempNumber = callLogTypeList.get(j).getNumber();
+                                if (tempNumber.equalsIgnoreCase(numberToCall)) {
+                                    blockedNumber = tempNumber;
+                                }
+                            }
+                        }
+
+                        if(!TextUtils.isEmpty(blockedNumber)){
+                            blockProfileHashMapList.remove(key);
+                            Utils.setHashMapPreference(context, AppConstants.PREF_BLOCK_CONTACT_LIST,
+                                    blockProfileHashMapList);
+                        }
+                    }
+
+                    Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE_BLOCK);
+                    localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_BLOCK,
+                            false);
+                    LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                    myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+                }else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
 
                 } else {
 

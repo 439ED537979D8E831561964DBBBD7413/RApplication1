@@ -55,6 +55,8 @@ public class CallLogType implements Serializable {
     private int historyLogCount;
     @JsonIgnore
     private Date callReceiverDate;
+    @JsonIgnore
+    int blockedType = 0;
 
 
     @JsonProperty("flag")
@@ -382,5 +384,11 @@ public class CallLogType implements Serializable {
         return duration;
     }
 
+    public int getBlockedType() {
+        return blockedType;
+    }
 
+    public void setBlockedType(int blockedType) {
+        this.blockedType = blockedType;
+    }
 }
