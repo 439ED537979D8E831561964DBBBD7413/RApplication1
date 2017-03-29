@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.notifications.NotificationPopupDialog;
 import com.rawalinfocom.rcontact.notifications.model.NotiRatingItem;
 
@@ -28,9 +29,10 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
 
     private Context context;
     private List<NotiRatingItem> list;
+    private int recyclerPosition;
     NotificationPopupDialog notificationPopupDialog;
 
-    public NotiRatingAdapter(Context context, List<NotiRatingItem> list) {
+    public NotiRatingAdapter(Context context, List<NotiRatingItem> list, int recyclerPosition) {
         this.context = context;
         this.list = list;
     }
@@ -65,17 +67,26 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final NotiRatingItem item = list.get(position);
         holder.textRaterName.setText(item.getRaterName());
-        holder.textRatingNotiTime.setText(item.getNotiRatingTime());
-        holder.textRatingDetailInfo.setText(item.getRaterInfo());
+        if (recyclerPosition == 2) {
+            holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "dd MMM, hh:mm a"));
+        } else {
+            holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "hh:mm a"));
+        }
+        holder.textRatingDetailInfo.setText(item.getRaterName() + " reply you on your rating and comment.");
         holder.buttonRatingViewReply.setText("VIEW REPLY");
         holder.buttonRatingViewReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArrayList<String> arrayListComments = new ArrayList<>();
-                arrayListComments.add("Hello");
-                arrayListComments.add("Thanks");
-                notificationPopupDialog = new NotificationPopupDialog(context, arrayListComments);
-                notificationPopupDialog.setDialogTitle(item.getRaterName());
+                arrayListComments.add(item.getRaterName());
+                arrayListComments.add("Rating");
+                arrayListComments.add(item.getComment());
+                arrayListComments.add(Utils.formatDateTime(item.getCommentTime(), "dd MMM, hh:mm a"));
+                arrayListComments.add(item.getReply());
+                arrayListComments.add(Utils.formatDateTime(item.getReplyTime(), "dd MMM, hh:mm a"));
+                notificationPopupDialog = new NotificationPopupDialog(context, arrayListComments, true);
+                notificationPopupDialog.setDialogTitle(item.getRaterName() + " Rate You");
+                notificationPopupDialog.setRatingInfo(item.getRating());
                 notificationPopupDialog.showDialog();
             }
         });

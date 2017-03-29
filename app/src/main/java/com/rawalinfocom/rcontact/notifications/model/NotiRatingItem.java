@@ -7,24 +7,66 @@ package com.rawalinfocom.rcontact.notifications.model;
 public class NotiRatingItem {
 
     private String raterName;
-    private String raterInfo;
-    private String notiRatingTime;
-
-    public NotiRatingItem(String raterName, String raterInfo, String notiRatingTime) {
-        this.raterName = raterName;
-        this.raterInfo = raterInfo;
-        this.notiRatingTime = notiRatingTime;
-    }
+    private String rating;
+    private String notiTime;
+    private String comment;
+    private String commentTime;
+    private String reply;
+    private String replyTime;
 
     public String getRaterName() {
         return raterName;
     }
 
-    public String getRaterInfo() {
-        return raterInfo;
+    public void setRaterName(String raterName) {
+        this.raterName = raterName;
     }
 
-    public String getNotiRatingTime() {
-        return notiRatingTime;
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getNotiTime() {
+        return notiTime;
+    }
+
+    public void setNotiTime(String notiTime) {
+        this.notiTime = notiTime;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getCommentTime() {
+        return commentTime;
+    }
+
+    public void setCommentTime(String commentTime) {
+        this.commentTime = commentTime;
+    }
+
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
+
+    public String getReplyTime() {
+        return replyTime;
+    }
+
+    public void setReplyTime(String replyTime) {
+        this.replyTime = replyTime;
     }
 }

@@ -81,9 +81,11 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
 
     @BindView(R.id.text_view_more)
     TextView textViewMore;
+
     List<NotiCommentsItem> listTodayComments;
     List<NotiCommentsItem> listYesterdayComments;
     List<NotiCommentsItem> listPastComments;
+
     TableCommentMaster tableCommentMaster;
 
     @Override
@@ -125,9 +127,9 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
         ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllReplyReceived(yesterDay, yesterDay);
         ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllReplyReceived(pastday5thDay, dayBeforeYesterday);
 
-        listTodayComments = createListToday(replyReceivedToday);
-        listYesterdayComments = createListToday(replyReceivedYesterDay);
-        listPastComments = createListToday(replyReceivedPastDays);
+        listTodayComments = createReplyList(replyReceivedToday);
+        listYesterdayComments = createReplyList(replyReceivedYesterDay);
+        listPastComments = createReplyList(replyReceivedPastDays);
 
         NotiCommentsAdapter todayRatingAdapter = new NotiCommentsAdapter(getActivity(), listTodayComments, 0);
         NotiCommentsAdapter yesterdayRatingAdapter = new NotiCommentsAdapter(getActivity(), listYesterdayComments, 1);
@@ -185,23 +187,29 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
         recyclerPastDayComments.setVisibility(View.GONE);
     }
 
-    private List<NotiCommentsItem> createListToday(ArrayList<Comment> replyList) {
+    private List<NotiCommentsItem> createReplyList(ArrayList<Comment> replyList) {
         List<NotiCommentsItem> list = new ArrayList<>();
         for (Comment comment : replyList) {
             NotiCommentsItem item = new NotiCommentsItem();
             TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
             TableEventMaster tableEventMaster = new TableEventMaster(getDatabaseHandler());
-            Event event = tableEventMaster.getEventByEvmRecordIndexId(Integer.parseInt(comment.getEvmRecordIndexId()));
+            if ("Rating".equalsIgnoreCase(comment.getCrmType())) {
+
+            } else {
+                Event event = tableEventMaster.getEventByEvmRecordIndexId(Integer.parseInt(comment.getEvmRecordIndexId()));
+                item.setEventName(event.getEvmEventType());
+            }
+
             int pmId = comment.getRcProfileMasterPmId();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
             item.setCommenterName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
             item.setCommenterInfo(userProfile.getPmFirstName() + " reply you on your message");
-            item.setNotiCommentTime(Utils.getLocalTimeFromUTCTime(comment.getCrmRepliedAt()));
+            item.setNotiCommentTime(comment.getCrmRepliedAt());
             item.setComment(comment.getCrmComment());
             item.setReply(comment.getCrmReply());
-            item.setCommentTime(Utils.getLocalTimeFromUTCTime(comment.getCrmCreatedAt()));
-            item.setReplyTime(Utils.getLocalTimeFromUTCTime(comment.getCrmRepliedAt()));
-            item.setEventName(event.getEvmEventType());
+            item.setCommentTime(comment.getCrmCreatedAt());
+            item.setReplyTime(comment.getCrmRepliedAt());
+
             list.add(item);
 
         }
@@ -314,22 +322,32 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
             ArrayList<EventComment> allBirthdayComments = eventCommentData.getBirthday();
             ArrayList<EventComment> allAnniversaryComments = eventCommentData.getAnniversary();
             ArrayList<EventComment> allCustomEventsComments = eventCommentData.getCustom();
+            // ArrayList<EventComment> allRatingComments = eventCommentData.getRating();
             if (allBirthdayComments != null) {
                 for (EventComment eventComment : allBirthdayComments) {
-                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(), eventComment.getReplyAt(), eventComment.getUpdatedDate());
+                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
+                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
 
                 }
             }
             if (allAnniversaryComments != null) {
                 for (EventComment eventComment : allAnniversaryComments) {
-                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(), eventComment.getReplyAt(), eventComment.getUpdatedDate());
+                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
+                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
                 }
             }
             if (allCustomEventsComments != null) {
                 for (EventComment eventComment : allCustomEventsComments) {
-                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(), eventComment.getReplyAt(), eventComment.getUpdatedDate());
+                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
+                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
                 }
             }
+//            if (allRatingComments != null) {
+//                for (EventComment eventComment : allRatingComments) {
+//                    tableCommentMaster.addReply(eventComment.getPrId(), eventComment.getReply(),
+//                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+//                }
+//            }
         }
     }
 }

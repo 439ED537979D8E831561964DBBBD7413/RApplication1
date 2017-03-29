@@ -430,15 +430,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 rippleCallLog.setEnabled(false);*/
 
                 Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER,historyNumber);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME,historyName);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE,historyDate);
-                intent.putExtra(AppConstants.EXTRA_PM_ID,pmId);
-                intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID,phoneBookId);
-                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME,contactName);
-                intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME,cloudContactName);
-                intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE,checkNumberFavourite);
-                intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION,listClickedPosition);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, historyName);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, historyDate);
+                intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
+                intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, phoneBookId);
+                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
+                intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, cloudContactName);
+                intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, checkNumberFavourite);
+                intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
 
@@ -705,8 +705,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         comment.setCrmType(TableCommentMaster.COMMENT_TYPE_RATING);
                         comment.setCrmCloudPrId(String.valueOf(responseRating.getPrId()));
                         comment.setCrmComment(responseRating.getPrComment());
-                        comment.setCrmCreatedAt(responseRating.getCreatedAt());
-                        comment.setCrmUpdatedAt(responseRating.getCreatedAt());
+                        comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(responseRating.getCreatedAt()));
+                        comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(responseRating.getCreatedAt()));
 
                         TableCommentMaster tableCommentMaster = new TableCommentMaster
                                 (databaseHandler);
@@ -2171,7 +2171,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         ratingObject.setPrComment(comment);
         ratingObject.setPrRatingStars(ratingStar);
         ratingObject.setPrStatus(String.valueOf(getResources().getInteger(R.integer.rating_done)));
-        ratingObject.setPrToPmId(pmId);
+        ratingObject.setPrToPmId(Integer.parseInt(pmId));
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),

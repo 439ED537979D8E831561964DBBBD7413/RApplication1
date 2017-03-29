@@ -42,10 +42,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableOrganizationMaster.CREATE_TABLE_RC_ORGANIZATION_MASTER);
         db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
         db.execSQL(TableWebsiteMaster.CREATE_TABLE_RC_WEBSITE_MASTER);
-//        db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);
-        Log.i("MAULIK", TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);
+        /*db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);*/
         db.execSQL(TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);
-        db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);
         db.execSQL(TableRCNotificationUpdates.CREATE_TABLE_RC_NOTIFICATION_UPDATES);
         db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);
         db.execSQL(TableRCNotificationUpdates.CREATE_TABLE_RC_NOTIFICATION_UPDATES);
@@ -73,7 +71,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TableOrganizationMaster
                 .CREATE_TABLE_RC_ORGANIZATION_MASTER);
         db.execSQL("DROP TABLE IF EXISTS " + TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
-        db.execSQL("DROP TABLE IF EXISTS " + TableWebsiteMaster.CREATE_TABLE_RC_WEBSITE_MASTER);
         /*db.execSQL("DROP TABLE IF EXISTS " + TableContactRatingMaster
                 .CREATE_TABLE_RC_CONTACT_RATING_MASTER);*/
         db.execSQL("DROP TABLE IF EXISTS " + TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);

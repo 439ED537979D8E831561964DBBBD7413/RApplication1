@@ -12,6 +12,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Rating {
 
+    @JsonProperty("pr_reply")
+    private String prReply;
+    @JsonProperty("reply_at")
+    private String replyAt;
     @JsonProperty("pr_comment")
     private String prComment;
     @JsonProperty("pr_rating_stars")
@@ -31,6 +35,21 @@ public class Rating {
     @JsonProperty("total_profile_rate_user")
     private String totalProfileRateUser;
 
+    public String getPrReply() {
+        return prReply;
+    }
+
+    public void setPrReply(String prReply) {
+        this.prReply = prReply;
+    }
+
+    public String getReplyAt() {
+        return replyAt;
+    }
+
+    public void setReplyAt(String replyAt) {
+        this.replyAt = replyAt;
+    }
 
     public String getPrComment() {
         return prComment;

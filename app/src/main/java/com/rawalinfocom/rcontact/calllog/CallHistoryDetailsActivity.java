@@ -42,7 +42,7 @@ import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
-import com.rawalinfocom.rcontact.database.TableContactRatingMaster;
+//import com.rawalinfocom.rcontact.database.TableContactRatingMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.CallConfirmationListDialog;
@@ -381,9 +381,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         dbRating.setCrmComment(responseRating.getPrComment());
                         dbRating.setCrmCreatedAt(responseRating.getCreatedAt());
 
-                        TableContactRatingMaster tableContactRatingMaster = new
-                                TableContactRatingMaster(databaseHandler);
-                        tableContactRatingMaster.addRating(dbRating);
+//                        TableContactRatingMaster tableContactRatingMaster = new
+//                                TableContactRatingMaster(databaseHandler);
+//                        tableContactRatingMaster.addRating(dbRating);
 
                         TableProfileMaster tableProfileMaster = new TableProfileMaster
                                 (databaseHandler);
@@ -424,22 +424,22 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             case R.id.ripple_action_right_center:
 
                 if (StringUtils.equals(imageRightCenter.getTag().toString(), TAG_IMAGE_CALL)) {
-                    if(tempPhoneNumber!=null && tempPhoneNumber.size()>0){
+                    if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
                         int count = tempPhoneNumber.size();
                         ArrayList<String> listPhoneNumber = new ArrayList<>();
-                        if(count>1){
-                            for(int i = 0; i<tempPhoneNumber.size(); i++){
+                        if (count > 1) {
+                            for (int i = 0; i < tempPhoneNumber.size(); i++) {
                                 ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(i);
-                                String number =  phoneNumber.getPhoneNumber();
+                                String number = phoneNumber.getPhoneNumber();
                                 listPhoneNumber.add(number);
                             }
 
                             CallConfirmationListDialog callConfirmationListDialog = new
-                                    CallConfirmationListDialog(this,listPhoneNumber);
+                                    CallConfirmationListDialog(this, listPhoneNumber);
                             callConfirmationListDialog.setDialogTitle("Please select a number to call");
                             callConfirmationListDialog.showDialog();
 
-                        }else{
+                        } else {
                             showCallConfirmationDialog(profileContactNumber);
                         }
                     }
@@ -688,7 +688,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             linearCallSms.setVisibility(View.VISIBLE);
         }*/
 
-       setCallLogHistoryDetails();
+        setCallLogHistoryDetails();
 
         if (isHideFavourite) {
 //            rippleActionRightLeft.setEnabled(false);
@@ -1384,11 +1384,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     private void submitRating(String ratingStar, String comment) {
 
         WsRequestObject ratingObject = new WsRequestObject();
-        ratingObject.setPmId(getUserPmId());
+        ratingObject.setPmId(Integer.parseInt(getUserPmId()));
         ratingObject.setPrComment(comment);
         ratingObject.setPrRatingStars(ratingStar);
         ratingObject.setPrStatus(String.valueOf(getResources().getInteger(R.integer.rating_done)));
-        ratingObject.setPrToPmId(pmId);
+        ratingObject.setPrToPmId(Integer.parseInt(pmId));
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
@@ -1419,7 +1419,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     private void setFavouriteStatus(ArrayList<ProfileData> favourites) {
 
         WsRequestObject favouriteStatusObject = new WsRequestObject();
-        favouriteStatusObject.setPmId(getUserPmId());
+        favouriteStatusObject.setPmId(Integer.parseInt(getUserPmId()));
         favouriteStatusObject.setFavourites(favourites);
 
         if (Utils.isNetworkAvailable(this)) {
