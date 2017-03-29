@@ -9,7 +9,6 @@
         android:id="@+id/image_wisher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:contentDescription="@string/str_content_description"
         android:src="@mipmap/ic_launcher" />
@@ -39,6 +38,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
+                    android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/colorPrimary"
                     tools:text="Aakar Jain" />
 

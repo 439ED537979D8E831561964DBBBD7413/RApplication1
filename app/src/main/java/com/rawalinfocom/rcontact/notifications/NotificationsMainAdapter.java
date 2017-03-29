@@ -10,9 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.rawalinfocom.rcontact.NotificationsDetailActivity;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.TimelineActivity;
+import com.rawalinfocom.rcontact.timeline.TimelineActivity;
 
 import java.util.List;
 

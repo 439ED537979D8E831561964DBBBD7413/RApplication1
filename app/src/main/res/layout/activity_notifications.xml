@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.rawalinfocom.rcontact.NotificationsActivity">
+    tools:context="com.rawalinfocom.rcontact.notifications.NotificationsActivity">
 
     <include
         android:id="@+id/include_toolbar"

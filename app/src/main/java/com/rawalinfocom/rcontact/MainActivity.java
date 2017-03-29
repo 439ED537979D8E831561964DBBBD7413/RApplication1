@@ -32,14 +32,17 @@ import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
+import com.rawalinfocom.rcontact.events.EventsActivity;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
 import com.rawalinfocom.rcontact.services.ContactSyncService;
 import com.rawalinfocom.rcontact.sms.SmsFragment;
+import com.rawalinfocom.rcontact.timeline.TimelineActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
