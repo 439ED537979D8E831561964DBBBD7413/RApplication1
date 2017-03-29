@@ -764,7 +764,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         for (int i = 0; i < arrayListImAccount.size(); i++) {
             ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
             imAccount.setIMAccountProtocol(arrayListImAccount.get(i).getImImProtocol());
-            imAccount.setIMAccountType(arrayListImAccount.get(i).getImImType());
+//            imAccount.setIMAccountType(arrayListImAccount.get(i).getImImType());
+            imAccount.setIMAccountDetails(arrayListImAccount.get(i).getImImDetail());
             imAccount.setIMId(arrayListImAccount.get(i).getImRecordIndexId());
             arrayListSocialContactObject.add(imAccount);
             arrayListProfileDataImAccount.add(imAccount);
@@ -784,7 +785,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     private void eventDetails() {
         TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
 
-        ArrayList<Event> arrayListEvent = tableEventMaster.getEventssFromPmId(Integer.parseInt
+        ArrayList<Event> arrayListEvent = tableEventMaster.getEventsFromPmId(Integer.parseInt
                 (getUserPmId()));
 
         arrayListEventObject = new ArrayList<>();
@@ -819,7 +820,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         for (int i = 0; i < arrayListOrganization.size(); i++) {
             ProfileDataOperationOrganization organization = new ProfileDataOperationOrganization();
             organization.setOrgName(arrayListOrganization.get(i).getOmOrganizationCompany());
-            organization.setOrgJobTitle(arrayListOrganization.get(i).getOmJobDescription());
+            organization.setOrgJobTitle(arrayListOrganization.get(i).getOmOrganizationDesignation
+                    ());
             organization.setOrgId(arrayListOrganization.get(i).getOmRecordIndexId());
             arrayListOrganizationObject.add(organization);
         }
@@ -2247,7 +2249,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
-                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
+//                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
                 email.setRcProfileMasterPmId(getUserPmId());
                 arrayListEmail.add(email);
             }
@@ -2272,16 +2274,19 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             for (int i = 0; i < arrayListOrganization.size(); i++) {
                 Organization organization = new Organization();
                 organization.setOmRecordIndexId(arrayListOrganization.get(i).getOrgId());
-                organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName
-                        ());
-                organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgType());
+                organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName());
+                organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
+                        .getOrgJobTitle());
+                organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
+                        .getIsCurrent()));
+               /* organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgType());
                 organization.setOmOrganizationTitle(arrayListOrganization.get(i).getOrgName());
                 organization.setOmOrganizationDepartment(arrayListOrganization.get(i)
                         .getOrgDepartment());
                 organization.setOmJobDescription(arrayListOrganization.get(i)
                         .getOrgJobTitle());
                 organization.setOmOfficeLocation(arrayListOrganization.get(i)
-                        .getOrgOfficeLocation());
+                        .getOrgOfficeLocation());*/
                 organization.setRcProfileMasterPmId(getUserPmId());
                 organizationList.add(organization);
             }
@@ -2328,7 +2333,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             for (int j = 0; j < arrayListAddress.size(); j++) {
                 Address address = new Address();
                 address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
-                address.setAmRegion(arrayListAddress.get(j).getState());
+                address.setAmState(arrayListAddress.get(j).getState());
                 address.setAmCity(arrayListAddress.get(j).getCity());
                 address.setAmCountry(arrayListAddress.get(j).getCountry());
                 address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
@@ -2339,7 +2344,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 address.setAmAddressType(arrayListAddress.get(j).getAddressType());
                 address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
                 address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
-                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                 address.setRcProfileMasterPmId(getUserPmId());
                 addressList.add(address);
             }
@@ -2361,7 +2365,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             for (int j = 0; j < arrayListImAccount.size(); j++) {
                 ImAccount imAccount = new ImAccount();
                 imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
-                imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
+//                imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(arrayListImAccount.get(j).getIMAccountPublic());
                 imAccount.setRcProfileMasterPmId(getUserPmId());

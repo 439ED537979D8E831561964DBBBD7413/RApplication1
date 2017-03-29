@@ -105,7 +105,7 @@ public class WsRequestObject {
 
     private String countryCode;
     private String mobileNumber;
-    private String pmId;
+    private int pmId;
     private String cmId;
     private String otp;
     private String otpGenerationTime;
@@ -175,11 +175,11 @@ public class WsRequestObject {
     }
 
     @JsonProperty("pm_id")
-    public String getPmId() {
+    public int getPmId() {
         return pmId;
     }
 
-    public void setPmId(String pmId) {
+    public void setPmId(int pmId) {
         this.pmId = pmId;
     }
 
