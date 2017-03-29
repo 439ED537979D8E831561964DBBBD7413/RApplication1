@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact;
+package com.rawalinfocom.rcontact.notifications;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +7,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.notifications.NotificationItem;
 import com.rawalinfocom.rcontact.notifications.NotificationsMainAdapter;
