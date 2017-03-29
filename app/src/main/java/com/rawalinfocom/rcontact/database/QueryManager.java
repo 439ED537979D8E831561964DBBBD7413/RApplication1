@@ -138,7 +138,7 @@ public class QueryManager {
         //<editor-fold desc="EmailId">
         String emailIdQuery = "SELECT email." + TableEmailMaster.COLUMN_EM_EMAIL_ADDRESS + "," +
                 "email." + TableEmailMaster.COLUMN_EM_EMAIL_TYPE + ",email." + TableEmailMaster
-                .COLUMN_EM_EMAIL_PRIVACY + ",email." + TableEmailMaster.COLUMN_EM_IS_PRIMARY + " " +
+                .COLUMN_EM_EMAIL_PRIVACY +
                 ",email." + TableEmailMaster.COLUMN_EM_IS_VERIFIED + " FROM " + TableEmailMaster
                 .TABLE_RC_EMAIL_MASTER + " email where email." + TableEmailMaster
                 .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
@@ -158,11 +158,11 @@ public class QueryManager {
                 email.setEmPublic(Integer.parseInt(StringUtils.defaultString(emailIdCursor
                         .getString(emailIdCursor.getColumnIndex(TableEmailMaster
                                 .COLUMN_EM_EMAIL_PRIVACY)), "0")));
-                email.setEmRcpType(StringUtils.defaultString(emailIdCursor.getString
+              /*  email.setEmRcpType(StringUtils.defaultString(emailIdCursor.getString
                                 (emailIdCursor.getColumnIndex(TableEmailMaster
                                         .COLUMN_EM_IS_PRIMARY)),
                         String.valueOf(context.getResources().getInteger(R.integer
-                                .rcp_type_primary))));
+                                .rcp_type_primary))));*/
                 arrayListEmail.add(email);
             } while (emailIdCursor.moveToNext());
             emailIdCursor.close();
@@ -172,8 +172,8 @@ public class QueryManager {
 
         // <editor-fold desc="Organization">
         String organizationQuery = "SELECT org." + TableOrganizationMaster
-                .COLUMN_OM_ORGANIZATION_TITLE + ", org." + TableOrganizationMaster
-                .COLUMN_OM_JOB_DESCRIPTION + " from " + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_COMPANY + ", org." + TableOrganizationMaster
+                .COLUMN_OM_ORGANIZATION_DESIGNATION + " from " + TableOrganizationMaster
                 .TABLE_RC_ORGANIZATION_MASTER + " org WHERE org." + TableOrganizationMaster
                 .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
 
@@ -188,10 +188,10 @@ public class QueryManager {
                         ProfileDataOperationOrganization();
                 organization.setOrgName(StringUtils.defaultString(organizationCursor.getString
                         (organizationCursor.getColumnIndex(TableOrganizationMaster
-                                .COLUMN_OM_ORGANIZATION_TITLE))));
+                                .COLUMN_OM_ORGANIZATION_COMPANY))));
                 organization.setOrgJobTitle(StringUtils.defaultString(organizationCursor
                         .getString(organizationCursor.getColumnIndex(TableOrganizationMaster
-                                .COLUMN_OM_JOB_DESCRIPTION))));
+                                .COLUMN_OM_ORGANIZATION_DESIGNATION))));
                 organization.setOrgRcpType(String.valueOf(context.getResources().getInteger(R
                         .integer.rcp_type_cloud_phone_book)));
                 arrayListOrganization.add(organization);
@@ -233,9 +233,9 @@ public class QueryManager {
         //</editor-fold>
 
         // <editor-fold desc="Im Account">
-        String imAccountQuery = "SELECT im." + TableImMaster.COLUMN_IM_IM_TYPE + ", im." +
-                TableImMaster.COLUMN_IM_IM_PROTOCOL + ", im." + TableImMaster
-                .COLUMN_IM_IM_PRIVACY + " FROM " + TableImMaster.TABLE_RC_IM_MASTER + " im WHERE " +
+        String imAccountQuery = "SELECT im." +
+                TableImMaster.COLUMN_IM_PROTOCOL + ", im." + TableImMaster
+                .COLUMN_IM_PRIVACY + " FROM " + TableImMaster.TABLE_RC_IM_MASTER + " im WHERE " +
                 "im." + TableImMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
 
         Cursor imAccountCursor = db.rawQuery(imAccountQuery, null);
@@ -246,13 +246,13 @@ public class QueryManager {
         if (imAccountCursor.moveToFirst()) {
             do {
                 ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
-                imAccount.setIMAccountType(StringUtils.defaultString(imAccountCursor.getString
-                        (imAccountCursor.getColumnIndex(TableImMaster.COLUMN_IM_IM_TYPE))));
+               /* imAccount.setIMAccountType(StringUtils.defaultString(imAccountCursor.getString
+                        (imAccountCursor.getColumnIndex(TableImMaster.COLUMN_IM_IM_TYPE))));*/
                 imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
                         .getString(imAccountCursor.getColumnIndex(TableImMaster
-                                .COLUMN_IM_IM_PROTOCOL))));
+                                .COLUMN_IM_PROTOCOL))));
                 imAccount.setIMAccountPublic(StringUtils.defaultString(imAccountCursor.getString
-                        (imAccountCursor.getColumnIndex(TableImMaster.COLUMN_IM_IM_PRIVACY)), "0"));
+                        (imAccountCursor.getColumnIndex(TableImMaster.COLUMN_IM_PRIVACY)), "0"));
                 imAccount.setIMRcpType(String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_cloud_phone_book)));
                 arrayListImAccount.add(imAccount);

@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Table operations rc_contact_rating_master
  */
 
-public class TableContactRatingMaster {
+class TableContactRatingMaster {
 
     private DatabaseHandler databaseHandler;
 
