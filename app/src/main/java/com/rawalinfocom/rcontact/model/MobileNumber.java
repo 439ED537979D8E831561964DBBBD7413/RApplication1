@@ -7,19 +7,20 @@ package com.rawalinfocom.rcontact.model;
 public class MobileNumber {
 
     private String mnmId;
-    private String mnmCloudId;
     private String mnmRecordIndexId;
     private String mnmMobileNumber;
     private String mnmNumberType;
-    private String mnmCustomType;
     private String mnmIsPrimary;
     private String mnmNumberPrivacy;
-    private String mnmIsDefault;
-    private String mnmIsVerified;
     private String mnmMobileServiceProvider;
     private String mnmCircleOfService;
     private String mnmSpamCount;
     private String rcProfileMasterPmId;
+
+    /*private String mnmCloudId;
+    private String mnmCustomType;
+    private String mnmIsDefault;
+    private String mnmIsVerified;*/
 
     public String getMnmId() {
         return mnmId;
@@ -27,14 +28,6 @@ public class MobileNumber {
 
     public void setMnmId(String mnmId) {
         this.mnmId = mnmId;
-    }
-
-    public String getMnmCloudId() {
-        return mnmCloudId;
-    }
-
-    public void setMnmCloudId(String mnmCloudId) {
-        this.mnmCloudId = mnmCloudId;
     }
 
     public String getMnmMobileNumber() {
@@ -53,14 +46,6 @@ public class MobileNumber {
         this.mnmNumberType = mnmNumberType;
     }
 
-    public String getMnmCustomType() {
-        return mnmCustomType;
-    }
-
-    public void setMnmCustomType(String mnmCustomType) {
-        this.mnmCustomType = mnmCustomType;
-    }
-
     public String getMnmIsPrimary() {
         return mnmIsPrimary;
     }
@@ -75,22 +60,6 @@ public class MobileNumber {
 
     public void setMnmNumberPrivacy(String mnmNumberPrivacy) {
         this.mnmNumberPrivacy = mnmNumberPrivacy;
-    }
-
-    public String getMnmIsDefault() {
-        return mnmIsDefault;
-    }
-
-    public void setMnmIsDefault(String mnmIsDefault) {
-        this.mnmIsDefault = mnmIsDefault;
-    }
-
-    public String getMnmIsVerified() {
-        return mnmIsVerified;
-    }
-
-    public void setMnmIsVerified(String mnmIsVerified) {
-        this.mnmIsVerified = mnmIsVerified;
     }
 
     public String getMnmMobileServiceProvider() {

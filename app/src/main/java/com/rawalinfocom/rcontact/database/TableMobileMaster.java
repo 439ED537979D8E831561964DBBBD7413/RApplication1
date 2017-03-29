@@ -31,35 +31,31 @@ public class TableMobileMaster {
 
     // Column Names
     private static final String COLUMN_MNM_ID = "mnm_id";
-    private static final String COLUMN_MNM_CLOUD_ID = "mnm_cloud_id";
     private static final String COLUMN_MNM_RECORD_INDEX_ID = "mnm_record_index_id";
     static final String COLUMN_MNM_MOBILE_NUMBER = "mnm_mobile_number";
     static final String COLUMN_MNM_NUMBER_TYPE = "mnm_number_type";
-    private static final String COLUMN_MNM_CUSTOM_TYPE = "mnm_custom_type";
     static final String COLUMN_MNM_IS_PRIMARY = "mnm_is_primary";
     static final String COLUMN_MNM_NUMBER_PRIVACY = "mnm_number_privacy";
-    private static final String COLUMN_MNM_IS_DEFAULT = "mnm_is_default";
-    private static final String COLUMN_MNM_IS_VERIFIED = "mnm_is_verified";
     private static final String COLUMN_MNM_MOBILE_SERVICE_PROVIDER = "mnm_mobile_service_provider";
     private static final String COLUMN_MNM_CIRCLE_OF_SERVICE = "mnm_circle_of_service";
     private static final String COLUMN_MNM_SPAM_COUNT = "mnm_spam_count";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
+    //    private static final String COLUMN_MNM_CLOUD_ID = "mnm_cloud_id";
+    //    private static final String COLUMN_MNM_CUSTOM_TYPE = "mnm_custom_type";
+    //    private static final String COLUMN_MNM_IS_DEFAULT = "mnm_is_default";
+    //    private static final String COLUMN_MNM_IS_VERIFIED = "mnm_is_verified";
 
     // Table Create Statements
     static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE " +
             TABLE_RC_MOBILE_NUMBER_MASTER + " (" +
             " " + COLUMN_MNM_ID + " integer NOT NULL CONSTRAINT rc_mobile_number_master_pk " +
             "PRIMARY KEY AUTOINCREMENT," +
-            " " + COLUMN_MNM_CLOUD_ID + " integer," +
             " " + COLUMN_MNM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_MNM_MOBILE_NUMBER + " text NOT NULL," +
             " " + COLUMN_MNM_NUMBER_TYPE + " text," +
-            " " + COLUMN_MNM_CUSTOM_TYPE + " text," +
             " " + COLUMN_MNM_IS_PRIMARY + " integer," +
             " " + COLUMN_MNM_NUMBER_PRIVACY + " integer DEFAULT 1," +
-            " " + COLUMN_MNM_IS_DEFAULT + " integer," +
-            " " + COLUMN_MNM_IS_VERIFIED + " integer," +
             " " + COLUMN_MNM_MOBILE_SERVICE_PROVIDER + " text," +
             " " + COLUMN_MNM_CIRCLE_OF_SERVICE + " text," +
             " " + COLUMN_MNM_SPAM_COUNT + " integer," +
@@ -72,20 +68,15 @@ public class TableMobileMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_MNM_ID, mobileNumber.getMnmId());
-        values.put(COLUMN_MNM_CLOUD_ID, mobileNumber.getMnmCloudId());
         values.put(COLUMN_MNM_RECORD_INDEX_ID, mobileNumber.getMnmRecordIndexId());
         values.put(COLUMN_MNM_MOBILE_NUMBER, mobileNumber.getMnmMobileNumber());
         values.put(COLUMN_MNM_NUMBER_TYPE, mobileNumber.getMnmNumberType());
-        values.put(COLUMN_MNM_CUSTOM_TYPE, mobileNumber.getMnmCustomType());
         values.put(COLUMN_MNM_IS_PRIMARY, mobileNumber.getMnmIsPrimary());
         values.put(COLUMN_MNM_NUMBER_PRIVACY, mobileNumber.getMnmNumberPrivacy());
-        values.put(COLUMN_MNM_IS_DEFAULT, mobileNumber.getMnmIsDefault());
-        values.put(COLUMN_MNM_IS_VERIFIED, mobileNumber.getMnmIsVerified());
         values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, mobileNumber.getMnmMobileServiceProvider());
         values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, mobileNumber.getMnmCircleOfService());
         values.put(COLUMN_MNM_SPAM_COUNT, mobileNumber.getMnmSpamCount());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, mobileNumber.getRcProfileMasterPmId());
-
 
         // Inserting Row
         db.insert(TABLE_RC_MOBILE_NUMBER_MASTER, null, values);
@@ -101,17 +92,13 @@ public class TableMobileMaster {
         for (int i = 0; i < arrayListMobileNumber.size(); i++) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_MNM_ID, arrayListMobileNumber.get(i).getMnmId());
-            values.put(COLUMN_MNM_CLOUD_ID, arrayListMobileNumber.get(i).getMnmCloudId());
             values.put(COLUMN_MNM_RECORD_INDEX_ID, arrayListMobileNumber.get(i)
                     .getMnmRecordIndexId());
             values.put(COLUMN_MNM_MOBILE_NUMBER, arrayListMobileNumber.get(i).getMnmMobileNumber());
             values.put(COLUMN_MNM_NUMBER_TYPE, arrayListMobileNumber.get(i).getMnmNumberType());
-            values.put(COLUMN_MNM_CUSTOM_TYPE, arrayListMobileNumber.get(i).getMnmCustomType());
             values.put(COLUMN_MNM_IS_PRIMARY, arrayListMobileNumber.get(i).getMnmIsPrimary());
             values.put(COLUMN_MNM_NUMBER_PRIVACY, arrayListMobileNumber.get(i)
                     .getMnmNumberPrivacy());
-            values.put(COLUMN_MNM_IS_DEFAULT, arrayListMobileNumber.get(i).getMnmIsDefault());
-            values.put(COLUMN_MNM_IS_VERIFIED, arrayListMobileNumber.get(i).getMnmIsVerified());
             values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, arrayListMobileNumber.get(i)
                     .getMnmMobileServiceProvider());
             values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, arrayListMobileNumber.get(i)
@@ -131,9 +118,8 @@ public class TableMobileMaster {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RC_MOBILE_NUMBER_MASTER, new String[]{COLUMN_MNM_ID,
-                COLUMN_MNM_RECORD_INDEX_ID, COLUMN_MNM_CLOUD_ID, COLUMN_MNM_MOBILE_NUMBER,
-                COLUMN_MNM_NUMBER_TYPE, COLUMN_MNM_CUSTOM_TYPE, COLUMN_MNM_IS_PRIMARY,
-                COLUMN_MNM_NUMBER_PRIVACY, COLUMN_MNM_IS_DEFAULT, COLUMN_MNM_IS_VERIFIED,
+                COLUMN_MNM_RECORD_INDEX_ID, COLUMN_MNM_MOBILE_NUMBER, COLUMN_MNM_NUMBER_TYPE,
+                COLUMN_MNM_IS_PRIMARY, COLUMN_MNM_NUMBER_PRIVACY,
                 COLUMN_MNM_MOBILE_SERVICE_PROVIDER, COLUMN_MNM_CIRCLE_OF_SERVICE,
                 COLUMN_MNM_SPAM_COUNT, COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_MNM_ID + "=?", new
                 String[]{String.valueOf(mnmId)}, null, null, null, null);
@@ -143,24 +129,16 @@ public class TableMobileMaster {
         MobileNumber mobileNumber = new MobileNumber();
         if (cursor != null) {
             mobileNumber.setMnmId(cursor.getString(cursor.getColumnIndex(COLUMN_MNM_ID)));
-            mobileNumber.setMnmCloudId(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_MNM_CLOUD_ID)));
             mobileNumber.setMnmRecordIndexId(cursor.getString(cursor.getColumnIndex
                     (COLUMN_MNM_RECORD_INDEX_ID)));
             mobileNumber.setMnmMobileNumber(cursor.getString(cursor.getColumnIndex
                     (COLUMN_MNM_MOBILE_NUMBER)));
             mobileNumber.setMnmNumberType(cursor.getString(cursor.getColumnIndex
                     (COLUMN_MNM_NUMBER_TYPE)));
-            mobileNumber.setMnmCustomType(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_MNM_CUSTOM_TYPE)));
             mobileNumber.setMnmIsPrimary(cursor.getString(cursor.getColumnIndex
                     (COLUMN_MNM_IS_PRIMARY)));
             mobileNumber.setMnmNumberPrivacy(cursor.getString(cursor.getColumnIndex
                     (COLUMN_MNM_NUMBER_PRIVACY)));
-            mobileNumber.setMnmIsDefault(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_MNM_IS_DEFAULT)));
-            mobileNumber.setMnmIsVerified(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_MNM_IS_VERIFIED)));
             mobileNumber.setMnmCircleOfService(cursor.getString(cursor.getColumnIndex
                     (COLUMN_MNM_CIRCLE_OF_SERVICE)));
             mobileNumber.setMnmSpamCount(cursor.getString(cursor.getColumnIndex
@@ -191,24 +169,16 @@ public class TableMobileMaster {
             do {
                 MobileNumber mobileNumber = new MobileNumber();
                 mobileNumber.setMnmId(cursor.getString(cursor.getColumnIndex(COLUMN_MNM_ID)));
-                mobileNumber.setMnmCloudId(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_MNM_CLOUD_ID)));
                 mobileNumber.setMnmRecordIndexId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_RECORD_INDEX_ID)));
                 mobileNumber.setMnmMobileNumber(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_MOBILE_NUMBER)));
                 mobileNumber.setMnmNumberType(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_NUMBER_TYPE)));
-                mobileNumber.setMnmCustomType(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_MNM_CUSTOM_TYPE)));
                 mobileNumber.setMnmIsPrimary(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_IS_PRIMARY)));
                 mobileNumber.setMnmNumberPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_NUMBER_PRIVACY)));
-                mobileNumber.setMnmIsDefault(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_MNM_IS_DEFAULT)));
-                mobileNumber.setMnmIsVerified(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_MNM_IS_VERIFIED)));
                 mobileNumber.setMnmCircleOfService(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_CIRCLE_OF_SERVICE)));
                 mobileNumber.setMnmSpamCount(cursor.getString(cursor.getColumnIndex
@@ -233,14 +203,12 @@ public class TableMobileMaster {
     public ArrayList<MobileNumber> getMobileNumbersFromPmId(int pmId) {
         ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT DISTINCT " + COLUMN_MNM_CLOUD_ID + ", " +
+        String selectQuery = "SELECT DISTINCT " +
                 COLUMN_MNM_RECORD_INDEX_ID + ", " +
                 COLUMN_MNM_MOBILE_NUMBER + ", " +
                 COLUMN_MNM_NUMBER_TYPE + ", " +
                 COLUMN_MNM_IS_PRIMARY + ", " +
                 COLUMN_MNM_NUMBER_PRIVACY + ", " +
-                COLUMN_MNM_IS_DEFAULT + ", " +
-                COLUMN_MNM_IS_VERIFIED + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
                 TABLE_RC_MOBILE_NUMBER_MASTER + " WHERE " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
@@ -252,8 +220,6 @@ public class TableMobileMaster {
         if (cursor.moveToFirst()) {
             do {
                 MobileNumber mobileNumber = new MobileNumber();
-                mobileNumber.setMnmCloudId(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_MNM_CLOUD_ID)));
                 mobileNumber.setMnmRecordIndexId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_RECORD_INDEX_ID)));
                 mobileNumber.setMnmMobileNumber(cursor.getString(cursor.getColumnIndex
@@ -264,10 +230,6 @@ public class TableMobileMaster {
                         (COLUMN_MNM_IS_PRIMARY)));
                 mobileNumber.setMnmNumberPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_NUMBER_PRIVACY)));
-                mobileNumber.setMnmIsDefault(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_MNM_IS_DEFAULT)));
-                mobileNumber.setMnmIsVerified(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_MNM_IS_VERIFIED)));
                 mobileNumber.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_RC_PROFILE_MASTER_PM_ID)));
                 // Adding Mobile Number to list
@@ -306,24 +268,16 @@ public class TableMobileMaster {
             if (cursor.moveToFirst()) {
 
                 mobileNumber.setMnmId(cursor.getString(cursor.getColumnIndex(COLUMN_MNM_ID)));
-                mobileNumber.setMnmCloudId(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_MNM_CLOUD_ID)));
                 mobileNumber.setMnmRecordIndexId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_RECORD_INDEX_ID)));
                 mobileNumber.setMnmMobileNumber(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_MOBILE_NUMBER)));
                 mobileNumber.setMnmNumberType(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_NUMBER_TYPE)));
-                mobileNumber.setMnmCustomType(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_MNM_CUSTOM_TYPE)));
                 mobileNumber.setMnmIsPrimary(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_IS_PRIMARY)));
                 mobileNumber.setMnmNumberPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_NUMBER_PRIVACY)));
-                mobileNumber.setMnmIsDefault(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_MNM_IS_DEFAULT)));
-                mobileNumber.setMnmIsVerified(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_MNM_IS_VERIFIED)));
                 mobileNumber.setMnmCircleOfService(cursor.getString(cursor.getColumnIndex
                         (COLUMN_MNM_CIRCLE_OF_SERVICE)));
                 mobileNumber.setMnmSpamCount(cursor.getString(cursor.getColumnIndex
@@ -364,14 +318,10 @@ public class TableMobileMaster {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_MNM_ID, mobileNumber.getMnmId());
-        values.put(COLUMN_MNM_CLOUD_ID, mobileNumber.getMnmCloudId());
         values.put(COLUMN_MNM_MOBILE_NUMBER, mobileNumber.getMnmMobileNumber());
         values.put(COLUMN_MNM_NUMBER_TYPE, mobileNumber.getMnmNumberType());
-        values.put(COLUMN_MNM_CUSTOM_TYPE, mobileNumber.getMnmCustomType());
         values.put(COLUMN_MNM_IS_PRIMARY, mobileNumber.getMnmIsPrimary());
         values.put(COLUMN_MNM_NUMBER_PRIVACY, mobileNumber.getMnmNumberPrivacy());
-        values.put(COLUMN_MNM_IS_DEFAULT, mobileNumber.getMnmIsDefault());
-        values.put(COLUMN_MNM_IS_VERIFIED, mobileNumber.getMnmIsVerified());
         values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, mobileNumber.getMnmMobileServiceProvider());
         values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, mobileNumber.getMnmCircleOfService());
         values.put(COLUMN_MNM_SPAM_COUNT, mobileNumber.getMnmSpamCount());

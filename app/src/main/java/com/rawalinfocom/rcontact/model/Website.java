@@ -10,9 +10,10 @@ public class Website {
     private String wmRecordIndexId;
     private String wmWebsiteUrl;
     private String wmWebsiteType;
-    private String wmCustomType;
     private String wmWebsitePrivacy;
     private String rcProfileMasterPmId;
+
+//    private String wmCustomType;
 
     public String getWmId() {
         return wmId;
@@ -36,14 +37,6 @@ public class Website {
 
     public void setWmWebsiteType(String wmWebsiteType) {
         this.wmWebsiteType = wmWebsiteType;
-    }
-
-    public String getWmCustomType() {
-        return wmCustomType;
-    }
-
-    public void setWmCustomType(String wmCustomType) {
-        this.wmCustomType = wmCustomType;
     }
 
     public String getWmWebsitePrivacy() {
