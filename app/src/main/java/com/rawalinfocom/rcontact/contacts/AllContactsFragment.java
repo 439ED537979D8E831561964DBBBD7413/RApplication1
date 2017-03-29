@@ -531,85 +531,93 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
             }
 
-            arrayListUserProfile.add(userProfile);
-            tableProfileMaster.addArrayProfile(arrayListUserProfile);
-            //</editor-fold>
+            if (tableProfileMaster.getRcpIdCount(Integer.parseInt(userProfile.getPmRcpId())) <= 0) {
 
-            //<editor-fold desc="Mobile Master">
-            ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = profileData.get(i)
-                    .getPbPhoneNumber();
-            ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
-            for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
 
-                MobileNumber mobileNumber = new MobileNumber();
-                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
-                mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(j).getPhoneNumber());
-                mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
-                mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
-                        .getPhonePublic()));
-                mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber(),
-                        mobileNumber.getMnmMobileNumber())) {
-                    mobileNumber.setMnmIsPrimary(String.valueOf(getActivity().getResources()
-                            .getInteger(R.integer.rcp_type_primary)));
-                } else {
-                    mobileNumber.setMnmIsPrimary(String.valueOf(getActivity().getResources()
-                            .getInteger(R.integer.rcp_type_secondary)));
-                }
+                arrayListUserProfile.add(userProfile);
+                tableProfileMaster.addArrayProfile(arrayListUserProfile);
+                //</editor-fold>
+
+                //<editor-fold desc="Mobile Master">
+                ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = profileData.get(i)
+                        .getPbPhoneNumber();
+                ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
+                for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
+
+                    MobileNumber mobileNumber = new MobileNumber();
+                    mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
+                    mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(j).getPhoneNumber());
+                    mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
+                    mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
+                            .getPhonePublic()));
+                    mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                    if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber(),
+                            mobileNumber.getMnmMobileNumber())) {
+                        mobileNumber.setMnmIsPrimary(String.valueOf(getActivity().getResources()
+                                .getInteger(R.integer.rcp_type_primary)));
+                    } else {
+                        mobileNumber.setMnmIsPrimary(String.valueOf(getActivity().getResources()
+                                .getInteger(R.integer.rcp_type_secondary)));
+                    }
 //                arrayListPhoneNumber.get(j).
-                arrayListMobileNumber.add(mobileNumber);
-            }
+                    arrayListMobileNumber.add(mobileNumber);
+                }
 
-            TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
-            tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
-            //</editor-fold>
+                TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
+                tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
+                //</editor-fold>
 
-            //<editor-fold desc="Email Master">
-            if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbEmailId())) {
-                ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileData.get(i)
-                        .getPbEmailId();
-                ArrayList<Email> arrayListEmail = new ArrayList<>();
-                for (int j = 0; j < arrayListEmailId.size(); j++) {
-                    Email email = new Email();
-                    email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
-                    email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
-                    email.setEmEmailType(arrayListEmailId.get(j).getEmType());
-                    email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j).getEmPublic()));
-                    email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                //<editor-fold desc="Email Master">
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbEmailId())) {
+                    ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileData.get(i)
+                            .getPbEmailId();
+                    ArrayList<Email> arrayListEmail = new ArrayList<>();
+                    for (int j = 0; j < arrayListEmailId.size(); j++) {
+                        Email email = new Email();
+                        email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+                        email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
+                        email.setEmEmailType(arrayListEmailId.get(j).getEmType());
+                        email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j)
+                                .getEmPublic()));
 
-                    if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getVerifiedEmailIds())) {
-                        for (int k = 0; k < profileData.get(i).getVerifiedEmailIds().size(); k++) {
-                            if (StringUtils.equalsIgnoreCase(profileData.get(i)
-                                    .getVerifiedEmailIds().get(k).getEmEmailId(), email
-                                    .getEmEmailAddress())) {
+                        email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+
+                        if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getVerifiedEmailIds
+                                ())) {
+                            for (int k = 0; k < profileData.get(i).getVerifiedEmailIds().size();
+                                 k++) {
+                                if (StringUtils.equalsIgnoreCase(profileData.get(i)
+                                        .getVerifiedEmailIds().get(k).getEmEmailId(), email
+                                        .getEmEmailAddress())) {
 //                                email.setEmIsPrimary(String.valueOf(getActivity().getResources()
 //                                        .getInteger(R.integer.rcp_type_primary)));
-                                email.setEmIsVerified("1");
-                            } else {
+                                    email.setEmIsVerified("1");
+                                } else {
 //                                email.setEmIsPrimary(String.valueOf(getActivity().getResources()
 //                                        .getInteger(R.integer.rcp_type_secondary)));
-                                email.setEmIsVerified("0");
+                                    email.setEmIsVerified("0");
+                                }
                             }
                         }
+                        arrayListEmail.add(email);
                     }
-                    arrayListEmail.add(email);
+
+                    TableEmailMaster tableEmailMaster = new TableEmailMaster(getDatabaseHandler());
+                    tableEmailMaster.addArrayEmail(arrayListEmail);
                 }
+                //</editor-fold>
 
-                TableEmailMaster tableEmailMaster = new TableEmailMaster(getDatabaseHandler());
-                tableEmailMaster.addArrayEmail(arrayListEmail);
-            }
-            //</editor-fold>
-
-            //<editor-fold desc="Organization Master">
-            if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbOrganization())) {
-                ArrayList<ProfileDataOperationOrganization> arrayListOrganization = profileData
-                        .get(i).getPbOrganization();
-                ArrayList<Organization> organizationList = new ArrayList<>();
-                for (int j = 0; j < arrayListOrganization.size(); j++) {
-                    Organization organization = new Organization();
-                    organization.setOmRecordIndexId(arrayListOrganization.get(j).getOrgId());
-                    organization.setOmOrganizationCompany(arrayListOrganization.get(j).getOrgName
-                            ());
+                //<editor-fold desc="Organization Master">
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbOrganization())) {
+                    ArrayList<ProfileDataOperationOrganization> arrayListOrganization = profileData
+                            .get(i).getPbOrganization();
+                    ArrayList<Organization> organizationList = new ArrayList<>();
+                    for (int j = 0; j < arrayListOrganization.size(); j++) {
+                        Organization organization = new Organization();
+                        organization.setOmRecordIndexId(arrayListOrganization.get(j).getOrgId());
+                        organization.setOmOrganizationCompany(arrayListOrganization.get(j)
+                                .getOrgName
+                                ());
 //                    organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgType());
 //                    organization.setOmOrganizationTitle(arrayListOrganization.get(j).getOrgName
 // ());
@@ -619,111 +627,114 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 //                            .getOrgJobTitle());
 //                    organization.setOmOfficeLocation(arrayListOrganization.get(j)
 //                            .getOrgOfficeLocation());
-                    organization.setOmOrganizationDesignation(arrayListOrganization.get(j)
-                            .getOrgJobTitle());
-                    organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(j)
-                            .getIsCurrent()));
-                    organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                    organizationList.add(organization);
+                        organization.setOmOrganizationDesignation(arrayListOrganization.get(j)
+                                .getOrgJobTitle());
+                        organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(j)
+                                .getIsCurrent()));
+                        organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                        organizationList.add(organization);
+                    }
+
+                    TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
+                            (getDatabaseHandler());
+                    tableOrganizationMaster.addArrayOrganization(organizationList);
                 }
+                //</editor-fold>
 
-                TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
-                        (getDatabaseHandler());
-                tableOrganizationMaster.addArrayOrganization(organizationList);
-            }
-            //</editor-fold>
-
-            // <editor-fold desc="Website Master">
-            if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbWebAddress())) {
+                // <editor-fold desc="Website Master">
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbWebAddress())) {
 //                ArrayList<String> arrayListWebsite = profileData.get(i).getPbWebAddress();
-                ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileData.get(i)
-                        .getPbWebAddress();
-                ArrayList<Website> websiteList = new ArrayList<>();
-                for (int j = 0; j < arrayListWebsite.size(); j++) {
-                    Website website = new Website();
-                    website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
-                    website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
-                    website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
-                    website.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                    websiteList.add(website);
+                    ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileData.get(i)
+                            .getPbWebAddress();
+                    ArrayList<Website> websiteList = new ArrayList<>();
+                    for (int j = 0; j < arrayListWebsite.size(); j++) {
+                        Website website = new Website();
+                        website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
+                        website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
+                        website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
+                        website.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                        websiteList.add(website);
+                    }
+
+                    TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster
+                            (getDatabaseHandler
+                            ());
+                    tableWebsiteMaster.addArrayWebsite(websiteList);
                 }
+                //</editor-fold>
 
-                TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(getDatabaseHandler
-                        ());
-                tableWebsiteMaster.addArrayWebsite(websiteList);
-            }
-            //</editor-fold>
-
-            //<editor-fold desc="Address Master">
-            if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbAddress())) {
-                ArrayList<ProfileDataOperationAddress> arrayListAddress = profileData.get(i)
-                        .getPbAddress();
-                ArrayList<Address> addressList = new ArrayList<>();
-                for (int j = 0; j < arrayListAddress.size(); j++) {
-                    Address address = new Address();
-                    address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
-                    address.setAmCity(arrayListAddress.get(j).getCity());
-                    address.setAmCountry(arrayListAddress.get(j).getCountry());
-                    address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
-                    address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
-                    address.setAmPostCode(arrayListAddress.get(j).getPostCode());
-                    address.setAmPoBox(arrayListAddress.get(j).getPoBox());
-                    address.setAmStreet(arrayListAddress.get(j).getStreet());
-                    address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-                    address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
-                    address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
+                //<editor-fold desc="Address Master">
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbAddress())) {
+                    ArrayList<ProfileDataOperationAddress> arrayListAddress = profileData.get(i)
+                            .getPbAddress();
+                    ArrayList<Address> addressList = new ArrayList<>();
+                    for (int j = 0; j < arrayListAddress.size(); j++) {
+                        Address address = new Address();
+                        address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
+                        address.setAmCity(arrayListAddress.get(j).getCity());
+                        address.setAmCountry(arrayListAddress.get(j).getCountry());
+                        address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress
+                                ());
+                        address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
+                        address.setAmPostCode(arrayListAddress.get(j).getPostCode());
+                        address.setAmPoBox(arrayListAddress.get(j).getPoBox());
+                        address.setAmStreet(arrayListAddress.get(j).getStreet());
+                        address.setAmAddressType(arrayListAddress.get(j).getAddressType());
+                        address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
+                        address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
 //                    address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
-                    address.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                    addressList.add(address);
+                        address.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                        addressList.add(address);
+                    }
+
+                    TableAddressMaster tableAddressMaster = new TableAddressMaster
+                            (getDatabaseHandler
+                            ());
+                    tableAddressMaster.addArrayAddress(addressList);
                 }
+                //</editor-fold>
 
-                TableAddressMaster tableAddressMaster = new TableAddressMaster(getDatabaseHandler
-                        ());
-                tableAddressMaster.addArrayAddress(addressList);
-            }
-            //</editor-fold>
-
-            // <editor-fold desc="Im Account Master">
-            if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbIMAccounts())) {
-                ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileData.get(i)
-                        .getPbIMAccounts();
-                ArrayList<ImAccount> imAccountsList = new ArrayList<>();
-                for (int j = 0; j < arrayListImAccount.size(); j++) {
-                    ImAccount imAccount = new ImAccount();
-                    imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
+                // <editor-fold desc="Im Account Master">
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbIMAccounts())) {
+                    ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileData.get(i)
+                            .getPbIMAccounts();
+                    ArrayList<ImAccount> imAccountsList = new ArrayList<>();
+                    for (int j = 0; j < arrayListImAccount.size(); j++) {
+                        ImAccount imAccount = new ImAccount();
+                        imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
 //                    imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
-                    imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
-                    imAccount.setImImPrivacy(arrayListImAccount.get(j).getIMAccountPublic());
-                    imAccount.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                    imAccountsList.add(imAccount);
+                        imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
+                        imAccount.setImImPrivacy(arrayListImAccount.get(j).getIMAccountPublic());
+                        imAccount.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                        imAccountsList.add(imAccount);
+                    }
+
+                    TableImMaster tableImMaster = new TableImMaster(getDatabaseHandler());
+                    tableImMaster.addArrayImAccount(imAccountsList);
                 }
+                //</editor-fold>
 
-                TableImMaster tableImMaster = new TableImMaster(getDatabaseHandler());
-                tableImMaster.addArrayImAccount(imAccountsList);
-            }
-            //</editor-fold>
+                // <editor-fold desc="Event Master">
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbEvent())) {
+                    ArrayList<ProfileDataOperationEvent> arrayListEvent = profileData.get(i)
+                            .getPbEvent();
+                    ArrayList<Event> eventList = new ArrayList<>();
+                    for (int j = 0; j < arrayListEvent.size(); j++) {
+                        Event event = new Event();
+                        event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
+                        event.setEvmStartDate(arrayListEvent.get(j).getEventDate());
+                        event.setEvmEventType(arrayListEvent.get(j).getEventType());
+                        event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic
+                                ()));
+                        event.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                        eventList.add(event);
+                    }
 
-            // <editor-fold desc="Event Master">
-            if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbEvent())) {
-                ArrayList<ProfileDataOperationEvent> arrayListEvent = profileData.get(i)
-                        .getPbEvent();
-                ArrayList<Event> eventList = new ArrayList<>();
-                for (int j = 0; j < arrayListEvent.size(); j++) {
-                    Event event = new Event();
-                    event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
-                    event.setEvmStartDate(arrayListEvent.get(j).getEventDate());
-                    event.setEvmEventType(arrayListEvent.get(j).getEventType());
-                    event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic
-                            ()));
-                    event.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                    eventList.add(event);
+                    TableEventMaster tableEventMaster = new TableEventMaster(getDatabaseHandler());
+                    tableEventMaster.addArrayEvent(eventList);
                 }
-
-                TableEventMaster tableEventMaster = new TableEventMaster(getDatabaseHandler());
-                tableEventMaster.addArrayEvent(eventList);
+                //</editor-fold>
             }
-            //</editor-fold>
-
         }
     }
 

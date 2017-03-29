@@ -138,7 +138,7 @@ public class QueryManager {
         //<editor-fold desc="EmailId">
         String emailIdQuery = "SELECT email." + TableEmailMaster.COLUMN_EM_EMAIL_ADDRESS + "," +
                 "email." + TableEmailMaster.COLUMN_EM_EMAIL_TYPE + ",email." + TableEmailMaster
-                .COLUMN_EM_EMAIL_PRIVACY + ",email." +
+                .COLUMN_EM_EMAIL_PRIVACY +
                 ",email." + TableEmailMaster.COLUMN_EM_IS_VERIFIED + " FROM " + TableEmailMaster
                 .TABLE_RC_EMAIL_MASTER + " email where email." + TableEmailMaster
                 .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";

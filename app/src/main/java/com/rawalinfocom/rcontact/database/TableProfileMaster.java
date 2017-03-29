@@ -378,6 +378,20 @@ public class TableProfileMaster {
         return isUpdated;
     }
 
+    public int getRcpIdCount(int rcpId) {
+        int count = 0;
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+        Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_PROFILE_MASTER + " WHERE " +
+                COLUMN_PM_RCP_ID + " = " + rcpId, null);
+        if (mCount != null) {
+            mCount.moveToFirst();
+            count = mCount.getInt(0);
+            mCount.close();
+        }
+        db.close();
+        return count;
+    }
+
     // Deleting single profile
   /*  public void deleteUserProfile(UserProfile userProfile) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();

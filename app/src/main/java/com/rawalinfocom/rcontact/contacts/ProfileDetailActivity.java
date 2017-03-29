@@ -1595,11 +1595,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
         //</editor-fold>
 
-        linearGender.setVisibility(View.GONE);
+        if (StringUtils.length(StringUtils.defaultString(profileDetail != null ?
+                profileDetail.getPbGender() : null)) > 0) {
+            textGender.setText(profileDetail.getPbGender());
+        } else {
+            linearGender.setVisibility(View.GONE);
+        }
 
         if (Utils.isArraylistNullOrEmpty(arrayListEvent) && Utils.isArraylistNullOrEmpty
                 (arrayListPhoneBookEvent)
-//                && Utils.isArraylistNullOrEmpty(arrayListAddress)
+                && StringUtils.length(StringUtils.defaultString(profileDetail != null ?
+                profileDetail.getPbGender() : null)) <= 0
                 ) {
             cardOtherDetails.setVisibility(View.GONE);
         } else {
