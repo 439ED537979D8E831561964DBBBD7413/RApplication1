@@ -31,20 +31,18 @@ public class TableEventMaster {
     private static final String COLUMN_EVM_RECORD_INDEX_ID = "evm_record_index_id";
     static final String COLUMN_EVM_START_DATE = "evm_start_date";
     static final String COLUMN_EVM_EVENT_TYPE = "evm_event_type";
-    private static final String COLUMN_EVM_CUSTOM_TYPE = "evm_custom_type";
     static final String COLUMN_EVM_EVENT_PRIVACY = "evm_event_privacy";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
+    //    private static final String COLUMN_EVM_CUSTOM_TYPE = "evm_custom_type";
 
     // Table Create Statements
     static final String CREATE_TABLE_RC_EVENT_MASTER = "CREATE TABLE " + TABLE_RC_EVENT_MASTER +
             " (" +
             " " + COLUMN_EVM_ID + " integer NOT NULL CONSTRAINT rc_event_master_pk PRIMARY KEY," +
             " " + COLUMN_EVM_RECORD_INDEX_ID + " text," +
-//            " " + COLUMN_EVM_START_DATE + " datetime NOT NULL," +
             " " + COLUMN_EVM_START_DATE + " text NOT NULL," +
             " " + COLUMN_EVM_EVENT_TYPE + " text NOT NULL," +
-            " " + COLUMN_EVM_CUSTOM_TYPE + " text," +
             " " + COLUMN_EVM_EVENT_PRIVACY + " integer DEFAULT 1," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
             ");";
@@ -58,7 +56,6 @@ public class TableEventMaster {
         values.put(COLUMN_EVM_RECORD_INDEX_ID, event.getEvmRecordIndexId());
         values.put(COLUMN_EVM_START_DATE, event.getEvmStartDate());
         values.put(COLUMN_EVM_EVENT_TYPE, event.getEvmEventType());
-        values.put(COLUMN_EVM_CUSTOM_TYPE, event.getEvmCustomType());
         values.put(COLUMN_EVM_EVENT_PRIVACY, event.getEvmEventPrivacy());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, event.getRcProfileMasterPmId());
 
@@ -79,7 +76,6 @@ public class TableEventMaster {
             values.put(COLUMN_EVM_RECORD_INDEX_ID, arrayListEvent.get(i).getEvmRecordIndexId());
             values.put(COLUMN_EVM_START_DATE, arrayListEvent.get(i).getEvmStartDate());
             values.put(COLUMN_EVM_EVENT_TYPE, arrayListEvent.get(i).getEvmEventType());
-            values.put(COLUMN_EVM_CUSTOM_TYPE, arrayListEvent.get(i).getEvmCustomType());
             values.put(COLUMN_EVM_EVENT_PRIVACY, arrayListEvent.get(i).getEvmEventPrivacy());
             values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListEvent.get(i)
                     .getRcProfileMasterPmId());
@@ -95,10 +91,10 @@ public class TableEventMaster {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RC_EVENT_MASTER, new String[]{COLUMN_EVM_ID,
-                COLUMN_EVM_RECORD_INDEX_ID, COLUMN_EVM_START_DATE, COLUMN_EVM_EVENT_TYPE,
-                COLUMN_EVM_CUSTOM_TYPE, COLUMN_EVM_EVENT_PRIVACY,
-                COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_EVM_ID + "=?", new String[]{String
-                .valueOf(evmId)}, null, null, null, null);
+                        COLUMN_EVM_RECORD_INDEX_ID, COLUMN_EVM_START_DATE, COLUMN_EVM_EVENT_TYPE,
+                        COLUMN_EVM_EVENT_PRIVACY, COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_EVM_ID
+                        + "=?",
+                new String[]{String.valueOf(evmId)}, null, null, null, null);
 
         Event event = new Event();
         if (cursor.moveToFirst()) {
@@ -107,7 +103,6 @@ public class TableEventMaster {
                     (COLUMN_EVM_RECORD_INDEX_ID)));
             event.setEvmStartDate(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_START_DATE)));
             event.setEvmEventType(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_EVENT_TYPE)));
-            event.setEvmCustomType(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_CUSTOM_TYPE)));
             event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
                     (COLUMN_EVM_EVENT_PRIVACY)));
             event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
@@ -127,9 +122,9 @@ public class TableEventMaster {
 
         Cursor cursor = db.query(TABLE_RC_EVENT_MASTER, new String[]{COLUMN_EVM_ID,
                 COLUMN_EVM_RECORD_INDEX_ID, COLUMN_EVM_START_DATE, COLUMN_EVM_EVENT_TYPE,
-                COLUMN_EVM_CUSTOM_TYPE, COLUMN_EVM_EVENT_PRIVACY,
-                COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_EVM_RECORD_INDEX_ID + "=?", new String[]{String
-                .valueOf(evmRecordIndexId)}, null, null, null, null);
+                COLUMN_EVM_EVENT_PRIVACY, COLUMN_RC_PROFILE_MASTER_PM_ID},
+                COLUMN_EVM_RECORD_INDEX_ID + "=?", new String[]{String.valueOf(evmRecordIndexId)
+                }, null, null, null, null);
 
         Event event = new Event();
         if (cursor.moveToFirst()) {
@@ -138,7 +133,6 @@ public class TableEventMaster {
                     (COLUMN_EVM_RECORD_INDEX_ID)));
             event.setEvmStartDate(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_START_DATE)));
             event.setEvmEventType(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_EVENT_TYPE)));
-            event.setEvmCustomType(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_CUSTOM_TYPE)));
             event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
                     (COLUMN_EVM_EVENT_PRIVACY)));
             event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
@@ -154,7 +148,7 @@ public class TableEventMaster {
     }
 
     // Getting All events from Profile Master Id
-    public ArrayList<Event> getEventssFromPmId(int pmId) {
+    public ArrayList<Event> getEventsFromPmId(int pmId) {
         ArrayList<Event> arrayListEvent = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT DISTINCT " + COLUMN_EVM_RECORD_INDEX_ID + ", " +
@@ -216,8 +210,6 @@ public class TableEventMaster {
                         (COLUMN_EVM_START_DATE)));
                 event.setEvmEventType(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EVM_EVENT_TYPE)));
-                event.setEvmCustomType(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_EVM_CUSTOM_TYPE)));
                 event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EVM_EVENT_PRIVACY)));
                 event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
@@ -237,14 +229,20 @@ public class TableEventMaster {
     }
 
     // Getting All Events
-    public ArrayList<Event> getAllEventsBetWeenExceptCurrentUser(String fromDate, String toDate, int loggedInUserPMID) {
+    public ArrayList<Event> getAllEventsBetWeenExceptCurrentUser(String fromDate, String toDate,
+                                                                 int loggedInUserPMID) {
         ArrayList<Event> arrayListEvent = new ArrayList<>();
-        //SELECT  distinct evm_record_index_id, evm_start_date, evm_event_type, rc_profile_master_pm_id FROM rc_event_master
-        // WHERE rc_profile_master_pm_id !=2 and strftime('%m-%d',evm_start_date) between '03-23' and '03-27' order by strftime('%m-%d',evm_start_date) asc
+        //SELECT  distinct evm_record_index_id, evm_start_date, evm_event_type,
+        // rc_profile_master_pm_id FROM rc_event_master
+        // WHERE rc_profile_master_pm_id !=2 and strftime('%m-%d',evm_start_date) between '03-23'
+        // and '03-27' order by strftime('%m-%d',evm_start_date) asc
 
 
-        String selectQuery = "SELECT DISTINCT " + COLUMN_EVM_RECORD_INDEX_ID + ", " + COLUMN_EVM_START_DATE + ", " + COLUMN_EVM_EVENT_TYPE + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " + TABLE_RC_EVENT_MASTER +
-                " WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " !=" + loggedInUserPMID + " and strftime('%m-%d'," + COLUMN_EVM_START_DATE + ") between '" + fromDate + "' and '" +
+        String selectQuery = "SELECT DISTINCT " + COLUMN_EVM_RECORD_INDEX_ID + ", " +
+                COLUMN_EVM_START_DATE + ", " + COLUMN_EVM_EVENT_TYPE + ", " +
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " + TABLE_RC_EVENT_MASTER +
+                " WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " !=" + loggedInUserPMID + " and " +
+                "strftime('%m-%d'," + COLUMN_EVM_START_DATE + ") between '" + fromDate + "' and '" +
                 toDate + "' order by strftime('%m-%d', " + COLUMN_EVM_START_DATE + ") asc";
         Log.i("MAULIK", "selectQuery " + selectQuery);
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
@@ -304,7 +302,6 @@ public class TableEventMaster {
         values.put(COLUMN_EVM_RECORD_INDEX_ID, event.getEvmRecordIndexId());
         values.put(COLUMN_EVM_START_DATE, event.getEvmStartDate());
         values.put(COLUMN_EVM_EVENT_TYPE, event.getEvmEventType());
-        values.put(COLUMN_EVM_CUSTOM_TYPE, event.getEvmCustomType());
         values.put(COLUMN_EVM_EVENT_PRIVACY, event.getEvmEventPrivacy());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, event.getRcProfileMasterPmId());
 

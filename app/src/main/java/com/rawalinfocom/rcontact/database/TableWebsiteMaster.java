@@ -30,10 +30,10 @@ public class TableWebsiteMaster {
     private static final String COLUMN_WM_RECORD_INDEX_ID = "wm_record_index_id";
     static final String COLUMN_WM_WEBSITE_URL = "wm_website_url";
     private static final String COLUMN_WM_WEBSITE_TYPE = "wm_website_type";
-    private static final String COLUMN_WM_CUSTOM_TYPE = "wm_custom_type";
-    private static final String COLUMN_WM_WEBSITE_PRIVACY = "wm_website_privacy";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
+//    private static final String COLUMN_WM_CUSTOM_TYPE = "wm_custom_type";
+//    private static final String COLUMN_WM_WEBSITE_PRIVACY = "wm_website_privacy";
 
     // Table Create Statements
     static final String CREATE_TABLE_RC_WEBSITE_MASTER = "CREATE TABLE " + TABLE_RC_WEBSITE_MASTER
@@ -42,8 +42,6 @@ public class TableWebsiteMaster {
             " " + COLUMN_WM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_WM_WEBSITE_URL + " text NOT NULL," +
             " " + COLUMN_WM_WEBSITE_TYPE + " text," +
-            " " + COLUMN_WM_CUSTOM_TYPE + " text," +
-            " " + COLUMN_WM_WEBSITE_PRIVACY + " integer DEFAULT 1," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
             ");";
 
@@ -56,8 +54,6 @@ public class TableWebsiteMaster {
         values.put(COLUMN_WM_RECORD_INDEX_ID, website.getWmRecordIndexId());
         values.put(COLUMN_WM_WEBSITE_URL, website.getWmWebsiteUrl());
         values.put(COLUMN_WM_WEBSITE_TYPE, website.getWmWebsiteType());
-        values.put(COLUMN_WM_CUSTOM_TYPE, website.getWmCustomType());
-        values.put(COLUMN_WM_WEBSITE_PRIVACY, website.getWmWebsitePrivacy());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, website.getRcProfileMasterPmId());
 
         // Inserting Row
@@ -72,7 +68,6 @@ public class TableWebsiteMaster {
 
         Cursor cursor = db.query(TABLE_RC_WEBSITE_MASTER, new String[]{COLUMN_WM_ID,
                 COLUMN_WM_RECORD_INDEX_ID, COLUMN_WM_WEBSITE_URL, COLUMN_WM_WEBSITE_TYPE,
-                COLUMN_WM_CUSTOM_TYPE, COLUMN_WM_WEBSITE_PRIVACY,
                 COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_WM_ID + "=?", new String[]{String.valueOf
                 (wmId)}, null, null, null, null);
         if (cursor != null)
@@ -86,9 +81,6 @@ public class TableWebsiteMaster {
             website.setWmWebsiteUrl(cursor.getString(cursor.getColumnIndex(COLUMN_WM_WEBSITE_URL)));
             website.setWmWebsiteType(cursor.getString(cursor.getColumnIndex
                     (COLUMN_WM_WEBSITE_TYPE)));
-            website.setWmCustomType(cursor.getString(cursor.getColumnIndex(COLUMN_WM_CUSTOM_TYPE)));
-            website.setWmWebsitePrivacy(cursor.getString(cursor.getColumnIndex
-                    (COLUMN_WM_WEBSITE_PRIVACY)));
             website.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                     (COLUMN_RC_PROFILE_MASTER_PM_ID)));
 
@@ -112,8 +104,6 @@ public class TableWebsiteMaster {
             values.put(COLUMN_WM_RECORD_INDEX_ID, arrayListWebsite.get(i).getWmRecordIndexId());
             values.put(COLUMN_WM_WEBSITE_URL, arrayListWebsite.get(i).getWmWebsiteUrl());
             values.put(COLUMN_WM_WEBSITE_TYPE, arrayListWebsite.get(i).getWmWebsiteType());
-            values.put(COLUMN_WM_CUSTOM_TYPE, arrayListWebsite.get(i).getWmCustomType());
-            values.put(COLUMN_WM_WEBSITE_PRIVACY, arrayListWebsite.get(i).getWmWebsitePrivacy());
             values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListWebsite.get(i)
                     .getRcProfileMasterPmId());
 
@@ -143,10 +133,6 @@ public class TableWebsiteMaster {
                         (COLUMN_WM_WEBSITE_URL)));
                 website.setWmWebsiteType(cursor.getString(cursor.getColumnIndex
                         (COLUMN_WM_WEBSITE_TYPE)));
-                website.setWmCustomType(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_WM_CUSTOM_TYPE)));
-                website.setWmWebsitePrivacy(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_WM_WEBSITE_PRIVACY)));
                 website.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_RC_PROFILE_MASTER_PM_ID)));
                 // Adding Website to list
@@ -170,7 +156,6 @@ public class TableWebsiteMaster {
         String selectQuery = "SELECT DISTINCT " + COLUMN_WM_RECORD_INDEX_ID + ", " +
                 COLUMN_WM_WEBSITE_URL + ", " +
                 COLUMN_WM_WEBSITE_TYPE + ", " +
-                COLUMN_WM_WEBSITE_PRIVACY + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
                 TABLE_RC_WEBSITE_MASTER + " WHERE " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
@@ -188,8 +173,6 @@ public class TableWebsiteMaster {
                         (COLUMN_WM_WEBSITE_URL)));
                 website.setWmWebsiteType(cursor.getString(cursor.getColumnIndex
                         (COLUMN_WM_WEBSITE_TYPE)));
-                website.setWmWebsitePrivacy(cursor.getString(cursor.getColumnIndex
-                        (COLUMN_WM_WEBSITE_PRIVACY)));
                 website.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_RC_PROFILE_MASTER_PM_ID)));
                 // Adding Website to list
@@ -229,8 +212,6 @@ public class TableWebsiteMaster {
         values.put(COLUMN_WM_RECORD_INDEX_ID, website.getWmRecordIndexId());
         values.put(COLUMN_WM_WEBSITE_URL, website.getWmWebsiteUrl());
         values.put(COLUMN_WM_WEBSITE_TYPE, website.getWmWebsiteType());
-        values.put(COLUMN_WM_CUSTOM_TYPE, website.getWmCustomType());
-        values.put(COLUMN_WM_WEBSITE_PRIVACY, website.getWmWebsitePrivacy());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, website.getRcProfileMasterPmId());
 
         // updating row

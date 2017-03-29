@@ -267,10 +267,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     }
 
     private void displayImAccount(ProfileDetailViewHolder holder, int position) {
-        ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount) arrayList.get
+        final ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount) arrayList
+                .get
                 (position);
-        holder.textMain.setText(imAccount.getIMAccountProtocol());
-        holder.textSub.setText(imAccount.getIMAccountType());
+        holder.textMain.setText(imAccount.getIMAccountDetails());
+        holder.textSub.setText(imAccount.getIMAccountProtocol());
 
         holder.textSub.setVisibility(View.GONE);
 
@@ -283,6 +284,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         } else {
             holder.textMain.setTextColor(colorPineGreen);
         }
+
+        /*holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(imAccount.getIMAccountProtocol())
+            }
+        });*/
 
     }
 

@@ -182,7 +182,7 @@ public class OtpTimerService extends Service implements WsResponseListener {
     private void getMspDeliveryStatus(OtpLog otpLog) {
 
         WsRequestObject mspDeliveryStatusObject = new WsRequestObject();
-        mspDeliveryStatusObject.setPmId(otpLog.getRcProfileMasterPmId());
+        mspDeliveryStatusObject.setPmId(Integer.parseInt(otpLog.getRcProfileMasterPmId()));
         mspDeliveryStatusObject.setMobileNumber(mobileNumber);
         mspDeliveryStatusObject.setOtp(otpLog.getOldOtp());
         mspDeliveryStatusObject.setOtpGenerationTime(otpLog.getOldGeneratedAt());

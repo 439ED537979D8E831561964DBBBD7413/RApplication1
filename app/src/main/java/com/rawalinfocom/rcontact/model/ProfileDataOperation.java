@@ -374,7 +374,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("pb_gender")
     public String getPbGender() {
-        return pbGender;
+        return StringUtils.defaultString(pbGender);
     }
 
     public void setPbGender(String pbGender) {
