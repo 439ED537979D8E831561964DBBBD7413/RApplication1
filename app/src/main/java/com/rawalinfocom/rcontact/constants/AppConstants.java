@@ -110,6 +110,7 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_DELETE_LOGS = "action_local_broadcast_delete_logs";
     public static String ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS = "action_local_broadcast_remove_call_logs";
     public static String ACTION_LOCAL_BROADCAST_PROFILE_BLOCK= "action_local_broadcast_profile_block";
+    public static String ACTION_LOCAL_BROADCAST_UNBLOCK = "action_local_broadcast_unblock";
 
 
     //</editor-fold>

@@ -39,5 +39,6 @@
     <color name="darkGray">#767676</color>
     <color name="veryVeryLightGray">#E7E7E7</color>
     <color name="veryDarkDesaturatedCyanLimeGreen">#2A4C40</color>
+    <color name="mostlyDesaturatedDarkCyanLimeGreen">#548A7C</color>
 
 </resources>

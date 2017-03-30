@@ -191,7 +191,22 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
 
-                } else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
+                }else if(value.equalsIgnoreCase(context.getString(R.string.unblock_All))){
+
+                    if (Utils.getHashMapPreferenceForBlock(context, AppConstants
+                            .PREF_BLOCK_CONTACT_LIST) != null) {
+                        HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
+                                Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
+                        if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+                            blockProfileHashMapList.clear();
+                            Utils.setHashMapPreference(context, AppConstants.PREF_BLOCK_CONTACT_LIST,
+                                    blockProfileHashMapList);
+                        }
+                        Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_UNBLOCK);
+                        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+                    }
+                }else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.clear_call_log))) {
 

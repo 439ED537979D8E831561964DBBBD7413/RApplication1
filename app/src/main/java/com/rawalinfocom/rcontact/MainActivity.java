@@ -192,6 +192,9 @@ public class MainActivity extends BaseActivity implements NavigationView
                             .show();
                 }
             }
+        }else if(id == R.id.nav_blocked_contacts){
+
+            startActivityIntent(this, BlockContactListActivity.class,new Bundle());
         }
         /*}*/
        /* else if (id == R.id.nav_gallery) {
