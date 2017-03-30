@@ -45,8 +45,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         /*db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);*/
         db.execSQL(TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);
         db.execSQL(TableRCNotificationUpdates.CREATE_TABLE_RC_NOTIFICATION_UPDATES);
-        db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);
-        db.execSQL(TableRCNotificationUpdates.CREATE_TABLE_RC_NOTIFICATION_UPDATES);
     }
 
     @Override
