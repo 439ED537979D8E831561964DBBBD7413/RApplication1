@@ -2,22 +2,43 @@ package com.rawalinfocom.rcontact.notifications;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.events.MyLayoutManager;
+import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.database.TableCommentMaster;
+import com.rawalinfocom.rcontact.database.TableEventMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.Comment;
+import com.rawalinfocom.rcontact.model.Event;
+import com.rawalinfocom.rcontact.model.EventComment;
+import com.rawalinfocom.rcontact.model.EventCommentData;
+import com.rawalinfocom.rcontact.model.UserProfile;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.notifications.adapters.NotiRatingAdapter;
+import com.rawalinfocom.rcontact.notifications.model.NotiCommentsItem;
+import com.rawalinfocom.rcontact.notifications.model.NotiRatingItem;
 
-import java.util.Arrays;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,7 +48,7 @@ import butterknife.ButterKnife;
  * Created by maulik on 15/03/17.
  */
 
-public class NotiRatingFragment extends BaseFragment {
+public class NotiRatingFragment extends BaseFragment implements WsResponseListener {
 
 
     @BindView(R.id.search_view_events)
@@ -62,6 +83,11 @@ public class NotiRatingFragment extends BaseFragment {
 
     @BindView(R.id.text_view_more)
     TextView textViewMore;
+    TableCommentMaster tableCommentMaster;
+
+    List<NotiRatingItem> listTodayRating;
+    List<NotiRatingItem> listYesterdayRating;
+    List<NotiRatingItem> listPastRating;
 
     @Override
     public void getFragmentArguments() {
@@ -85,24 +111,36 @@ public class NotiRatingFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         init();
-        initData();
+        tableCommentMaster = new TableCommentMaster(getDatabaseHandler());
+        getAllRatingComment(this);
+        //initData();
     }
 
     private void initData() {
-        NotiRatingItem item1 = new NotiRatingItem("Aakar Jain", "Aakar Jain reply you on your rating and comments.", "11:15 PM");
-        NotiRatingItem item2 = new NotiRatingItem("Angarika Shah", "Angarika Shah reply you on your rating and comments.", "11:15 PM");
-        NotiRatingItem item3 = new NotiRatingItem("Angarika Shah 1", "Angarika Shah 1 reply you on your rating and comments.", "11:15 PM");
-        NotiRatingItem item4 = new NotiRatingItem("Keval Pandit", "Keval Pandit reply you on your rating and comments.", "11:15 PM");
-        NotiRatingItem item5 = new NotiRatingItem("Keyur Kambli", "Keyur Kambli reply you on your rating and comments.", "11:15 PM");
-        NotiRatingItem item6 = new NotiRatingItem("Virat Gujarati", "Virat Gujarati reply you on your rating and comments.", "11:15 PM");
 
-        List<NotiRatingItem> listTodayRating = Arrays.asList(item1, item2, item3, item4, item5, item6);
-        List<NotiRatingItem> listYesterdayRating = Arrays.asList(item1, item2, item3);
-        List<NotiRatingItem> listPastRating = Arrays.asList(item1, item2, item3, item4);
+        String today = getDate(0); // 22
+        String yesterDay = getDate(-1); // 21
+        String dayBeforeYesterday = getDate(-2); //20
+        String pastday5thDay = getDate(-6); //16
 
-        NotiRatingAdapter todayRatingAdapter = new NotiRatingAdapter(getActivity(), listTodayRating);
-        NotiRatingAdapter yesterdayRatingAdapter = new NotiRatingAdapter(getActivity(), listYesterdayRating);
-        NotiRatingAdapter pastRatingAdapter = new NotiRatingAdapter(getActivity(), listPastRating);
+        ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllRatingReplyReceived(today, today);
+        ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllRatingReplyReceived(yesterDay, yesterDay);
+        ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllRatingReplyReceived(pastday5thDay, dayBeforeYesterday);
+
+//        NotiRatingItem item1 = new NotiRatingItem("Aakar Jain", "Aakar Jain reply you on your rating and comments.", "11:15 PM");
+//        NotiRatingItem item2 = new NotiRatingItem("Angarika Shah", "Angarika Shah reply you on your rating and comments.", "11:15 PM");
+//        NotiRatingItem item3 = new NotiRatingItem("Angarika Shah 1", "Angarika Shah 1 reply you on your rating and comments.", "11:15 PM");
+//        NotiRatingItem item4 = new NotiRatingItem("Keval Pandit", "Keval Pandit reply you on your rating and comments.", "11:15 PM");
+//        NotiRatingItem item5 = new NotiRatingItem("Keyur Kambli", "Keyur Kambli reply you on your rating and comments.", "11:15 PM");
+//        NotiRatingItem item6 = new NotiRatingItem("Virat Gujarati", "Virat Gujarati reply you on your rating and comments.", "11:15 PM");
+
+        listTodayRating = createRatingReplyList(replyReceivedToday);
+        listYesterdayRating = createRatingReplyList(replyReceivedYesterDay);
+        listPastRating = createRatingReplyList(replyReceivedPastDays);
+
+        NotiRatingAdapter todayRatingAdapter = new NotiRatingAdapter(getActivity(), listTodayRating, 0);
+        NotiRatingAdapter yesterdayRatingAdapter = new NotiRatingAdapter(getActivity(), listYesterdayRating, 1);
+        NotiRatingAdapter pastRatingAdapter = new NotiRatingAdapter(getActivity(), listPastRating, 2);
 
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -110,7 +148,7 @@ public class NotiRatingFragment extends BaseFragment {
         int height = (displaymetrics.heightPixels * 49) / 100;
 
         recyclerTodayRating.setAdapter(todayRatingAdapter);
-        recyclerTodayRating.setLayoutManager(new MyLayoutManager(getActivity(), recyclerTodayRating, height));
+        recyclerTodayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerTodayRating, height));
         RecyclerView.Adapter mAdapter = recyclerTodayRating.getAdapter();
         int totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > 3) {
@@ -118,14 +156,14 @@ public class NotiRatingFragment extends BaseFragment {
         }
 
         recyclerYesterDayRating.setAdapter(yesterdayRatingAdapter);
-        recyclerYesterDayRating.setLayoutManager(new MyLayoutManager(getActivity(), recyclerPastDayRating, height));
+        recyclerYesterDayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerPastDayRating, height));
         mAdapter = recyclerYesterDayRating.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > 3) {
             recyclerYesterDayRating.getLayoutParams().height = height;
         }
         recyclerPastDayRating.setAdapter(pastRatingAdapter);
-        recyclerPastDayRating.setLayoutManager(new MyLayoutManager(getActivity(), recyclerPastDayRating, height));
+        recyclerPastDayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerPastDayRating, height));
         mAdapter = recyclerPastDayRating.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > 3) {
@@ -133,6 +171,50 @@ public class NotiRatingFragment extends BaseFragment {
         }
         recyclerYesterDayRating.setVisibility(View.GONE);
         recyclerPastDayRating.setVisibility(View.GONE);
+    }
+
+    private String getDate(int dayToAddorSub) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+        Date date = new Date();
+        date.setTime(date.getTime() + dayToAddorSub * 24 * 60 * 60 * 1000);
+        return sdf.format(date);
+    }
+
+    private List<NotiRatingItem> createRatingReplyList(ArrayList<Comment> replyList) {
+        List<NotiRatingItem> list = new ArrayList<>();
+        for (Comment comment : replyList) {
+            NotiRatingItem item = new NotiRatingItem();
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+
+            int pmId = comment.getRcProfileMasterPmId();
+            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
+
+            item.setRaterName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+            item.setRating(comment.getCrmRating());
+            item.setNotiTime(comment.getCrmRepliedAt());
+            item.setComment(comment.getCrmComment());
+            item.setReply(comment.getCrmReply());
+            item.setCommentTime(comment.getCrmCreatedAt());
+            item.setReplyTime(comment.getCrmRepliedAt());
+
+            list.add(item);
+
+        }
+        return list;
+    }
+
+    private void getAllRatingComment(Fragment fragment) {
+
+        WsRequestObject addCommentObject = new WsRequestObject();
+
+        if (Utils.isNetworkAvailable(getActivity())) {
+            new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    addCommentObject, null, WsResponseObject.class, WsConstants
+                    .REQ_GET_EVENT_COMMENT, "Getting comments..", true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
+        } else {
+            Toast.makeText(getActivity(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void init() {
@@ -196,5 +278,57 @@ public class NotiRatingFragment extends BaseFragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onDeliveryResponse(String serviceType, Object data, Exception error) {
+        if (error == null) {
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_EVENT_COMMENT)) {
+
+                WsResponseObject wsResponseObject = (WsResponseObject) data;
+                ArrayList<EventCommentData> eventSendCommentData = wsResponseObject.getEventSendCommentData();
+                saveReplyDataToDb(eventSendCommentData);
+                Utils.hideProgressDialog();
+                initData();
+            }
+        }
+    }
+
+    private void saveReplyDataToDb(ArrayList<EventCommentData> eventSendCommentData) {
+        if (eventSendCommentData == null) {
+            return;
+        }
+        for (EventCommentData eventCommentData : eventSendCommentData) {
+//            ArrayList<EventComment> allBirthdayComments = eventCommentData.getBirthday();
+//            ArrayList<EventComment> allAnniversaryComments = eventCommentData.getAnniversary();
+//            ArrayList<EventComment> allCustomEventsComments = eventCommentData.getCustom();
+            ArrayList<EventComment> allRatingComments = eventCommentData.getRating();
+            Log.i("MAULIK", "allRatingComments" + allRatingComments.size());
+//            if (allBirthdayComments != null) {
+//                for (EventComment eventComment : allBirthdayComments) {
+//                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
+//                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+//
+//                }
+//            }
+//            if (allAnniversaryComments != null) {
+//                for (EventComment eventComment : allAnniversaryComments) {
+//                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
+//                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+//                }
+//            }
+//            if (allCustomEventsComments != null) {
+//                for (EventComment eventComment : allCustomEventsComments) {
+//                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
+//                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+//                }
+//            }
+            if (allRatingComments != null) {
+                for (EventComment eventComment : allRatingComments) {
+                    tableCommentMaster.addReply(eventComment.getPrId(), eventComment.getReply(),
+                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+                }
+            }
+        }
     }
 }

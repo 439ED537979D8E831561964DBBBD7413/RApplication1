@@ -3,13 +3,6 @@ package com.rawalinfocom.rcontact.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Environment;
-import android.util.Log;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 
 /**
  * Created by Monal on 21/10/16.
@@ -26,8 +19,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Database Name
     public static final String DATABASE_NAME = "RContact.db";
 
-    private static String databasePath = "";
-
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -35,6 +26,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // creating required tables
+
         db.execSQL(TableCountryMaster.CREATE_TABLE_RC_COUNTRY_MASTER);
         db.execSQL(TableOtpLogDetails.CREATE_TABLE_OTP_LOG_DETAILS);
         db.execSQL(TableProfileMaster.CREATE_TABLE_RC_PROFILE_MASTER);
@@ -50,9 +42,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(TableOrganizationMaster.CREATE_TABLE_RC_ORGANIZATION_MASTER);
         db.execSQL(TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
         db.execSQL(TableWebsiteMaster.CREATE_TABLE_RC_WEBSITE_MASTER);
-//        db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);
-        Log.i("MAULIK", TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);
+        /*db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);*/
         db.execSQL(TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);
+        db.execSQL(TableRCNotificationUpdates.CREATE_TABLE_RC_NOTIFICATION_UPDATES);
+        db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);
+        db.execSQL(TableRCNotificationUpdates.CREATE_TABLE_RC_NOTIFICATION_UPDATES);
     }
 
     @Override
@@ -77,11 +71,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TableOrganizationMaster
                 .CREATE_TABLE_RC_ORGANIZATION_MASTER);
         db.execSQL("DROP TABLE IF EXISTS " + TableRelationMaster.CREATE_TABLE_RC_RELATION_MASTER);
-        db.execSQL("DROP TABLE IF EXISTS " + TableWebsiteMaster.CREATE_TABLE_RC_WEBSITE_MASTER);
         /*db.execSQL("DROP TABLE IF EXISTS " + TableContactRatingMaster
                 .CREATE_TABLE_RC_CONTACT_RATING_MASTER);*/
         db.execSQL("DROP TABLE IF EXISTS " + TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);
-
+        db.execSQL("DROP TABLE IF EXISTS " + TableRCNotificationUpdates.CREATE_TABLE_RC_NOTIFICATION_UPDATES);
         // create new tables
         onCreate(db);
     }
