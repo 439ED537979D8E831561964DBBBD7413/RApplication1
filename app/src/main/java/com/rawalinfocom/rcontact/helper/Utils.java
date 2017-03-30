@@ -344,6 +344,17 @@ public class Utils {
     }
 
 
+    public static ArrayList<Object> getArrayListCallLogPreference(Context context, String key) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedpreferences.getString(key, null);
+        Type type = new TypeToken<ArrayList<Object>>() {
+        }.getType();
+        return gson.fromJson(json, type);
+    }
+
+
     public static void removePreference(Context context, String key) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);

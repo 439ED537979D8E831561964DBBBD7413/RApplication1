@@ -147,6 +147,7 @@ public class AppConstants {
     public static String PREF_CALL_LOG_SYNCED = "pref_call_log_synced";
     public static String PREF_BLOCK_CONTACT_LIST= "pref_block_contact_list";
     public static String PREF_BLOCK_PROFILE = "pref_block_profile";
+    public static String PREF_CALL_LOG_LIST = "pref_call_log_list";
 
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,

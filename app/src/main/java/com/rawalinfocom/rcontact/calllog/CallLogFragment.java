@@ -404,6 +404,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         arrayListCallLogs = new ArrayList<>();
         arrayListCallLogHeader = new ArrayList<>();
         arrayListObjectCallLogs = new ArrayList<>();
+        makeBlockedNumberList();
         initSpinner();
         logsRunnable = new Runnable() {
             @Override
@@ -418,6 +419,38 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
             logsRunnable.run();
         }
 
+    }
+
+    private void makeBlockedNumberList() {
+        if (Utils.getHashMapPreferenceForBlock(getActivity(), AppConstants
+                .PREF_BLOCK_CONTACT_LIST) != null) {
+            HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
+                    Utils.getHashMapPreferenceForBlock(getActivity(), AppConstants.PREF_BLOCK_CONTACT_LIST);
+            ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+            ArrayList<String> listOfBlockedNumber = new ArrayList<>();
+            String blockedNumber = "";
+            String hashKey = "";
+            if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+                for (String key : blockProfileHashMapList.keySet()) {
+                    System.out.println(key);
+                    hashKey = key;
+                    if (blockProfileHashMapList.containsKey(hashKey)) {
+                        callLogTypeList.addAll(blockProfileHashMapList.get(hashKey));
+                    }
+                }
+
+                if (callLogTypeList != null) {
+                    for (int j = 0; j < callLogTypeList.size(); j++) {
+                        String tempNumber = callLogTypeList.get(j).getNumber();
+                        if (!TextUtils.isEmpty(tempNumber)) {
+                            listOfBlockedNumber.add(tempNumber);
+                        }
+                    }
+                    Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST, listOfBlockedNumber);
+                }
+            }
+
+        }
     }
 
     private class LoadsCallLogsInBackground extends AsyncTask<Void, Void, Void> {
@@ -533,6 +566,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         arrayListObjectCallLogs = new ArrayList<>();
         arrayListCallLogsHistory = new ArrayList<>();
         tempList = new ArrayList<>();
+
+        ArrayList<String> listOfBlockedNumbers = Utils.getArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST);
 
         if (callType.equalsIgnoreCase(MISSED_CALLS)) {
             callLogs = getLogsByCallType(AppConstants.MISSED_CALLS);
@@ -706,6 +741,24 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     }
                 }
             }
+        if (listOfBlockedNumbers != null && listOfBlockedNumbers.size() > 0) {
+            for (int i = 0; i < listOfBlockedNumbers.size(); i++) {
+                String blockNumber = listOfBlockedNumbers.get(i);
+                for (int k = 0; k < arrayListObjectCallLogs.size(); k++) {
+                    if (arrayListObjectCallLogs.get(k) instanceof CallLogType) {
+                        CallLogType tempCallLogType = (CallLogType) arrayListObjectCallLogs.get(k);
+                        if (!(((CallLogType) arrayListObjectCallLogs.get(k)).getNumber().equalsIgnoreCase(blockNumber))) {
+                        } else {
+                            int itemPosition = arrayListObjectCallLogs.indexOf(tempCallLogType);
+                            if (itemPosition != -1) {
+                                tempCallLogType.setBlockedType(AppConstants.BLOCKED);
+                                arrayListObjectCallLogs.set(itemPosition, tempCallLogType);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
     }
 
@@ -1578,7 +1631,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                             }
                         }
                     }
-
                 }
 
             }
