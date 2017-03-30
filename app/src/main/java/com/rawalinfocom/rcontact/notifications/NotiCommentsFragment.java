@@ -49,7 +49,7 @@ import butterknife.ButterKnife;
 public class NotiCommentsFragment extends BaseFragment implements WsResponseListener {
 
 
-    @BindView(R.id.search_view_events)
+    @BindView(R.id.search_view_noti_comments)
     SearchView searchViewEvents;
 
     @BindView(R.id.header1)

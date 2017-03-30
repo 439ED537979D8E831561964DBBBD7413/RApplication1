@@ -8,15 +8,23 @@
 
 
     <android.support.v7.widget.SearchView
-        android:id="@+id/search_view_events"
+        android:id="@+id/search_view_noti_comments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/divider_timeline_search"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/search_view_noti_comments"
+        android:layout_gravity="center_vertical"
+        android:background="@color/colorDarkGray" />
 
     <RelativeLayout
         android:id="@+id/relative_header1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/search_view_events">
+        android:layout_below="@id/search_view_noti_comments">
 
         <RelativeLayout
             android:id="@+id/h1"

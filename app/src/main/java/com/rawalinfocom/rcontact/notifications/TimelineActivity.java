@@ -415,7 +415,6 @@ public class TimelineActivity extends BaseActivity implements RippleView
             ArrayList<EventComment> allAnniversaryComments = eventCommentData.getAnniversary();
             ArrayList<EventComment> allCustomEventsComments = eventCommentData.getCustom();
             ArrayList<EventComment> allRatingComments = eventCommentData.getRating();
-            Log.i("MAULIK", "rating:::" + allRatingComments.size());
             if (allBirthdayComments != null) {
                 for (EventComment eventComment : allBirthdayComments) {
                     Comment comment = createComment(eventComment, "Birthday");
