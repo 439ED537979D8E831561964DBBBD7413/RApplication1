@@ -38,22 +38,19 @@ import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
-import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
-//import com.rawalinfocom.rcontact.database.TableContactRatingMaster;
+import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.CallConfirmationListDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
-import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.ProfileMenuOptionDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.CallLogType;
-import com.rawalinfocom.rcontact.model.DbRating;
+import com.rawalinfocom.rcontact.model.Comment;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -65,15 +62,11 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 import com.rawalinfocom.rcontact.model.ProfileVisit;
 import com.rawalinfocom.rcontact.model.Rating;
-import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -371,8 +364,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
                     if (profileRatingResponse.getProfileRating() != null) {
 
-                        DbRating dbRating = new DbRating();
                         Rating responseRating = profileRatingResponse.getProfileRating();
+
+                        /*DbRating dbRating = new DbRating();
+
                         dbRating.setRcProfileMasterPmId(String.valueOf(responseRating.getPrToPmId
                                 ()));
                         dbRating.setCrmStatus(String.valueOf(responseRating.getPrStatus()));
@@ -381,9 +376,23 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         dbRating.setCrmComment(responseRating.getPrComment());
                         dbRating.setCrmCreatedAt(responseRating.getCreatedAt());
 
-//                        TableContactRatingMaster tableContactRatingMaster = new
-//                                TableContactRatingMaster(databaseHandler);
-//                        tableContactRatingMaster.addRating(dbRating);
+                        TableContactRatingMaster tableContactRatingMaster = new
+                                TableContactRatingMaster(databaseHandler);
+                        tableContactRatingMaster.addRating(dbRating);*/
+
+                        Comment comment = new Comment();
+                        comment.setRcProfileMasterPmId(responseRating.getPrToPmId());
+                        comment.setCrmStatus(responseRating.getPrStatus());
+                        comment.setCrmRating(responseRating.getPrRatingStars());
+                        comment.setCrmType(TableCommentMaster.COMMENT_TYPE_RATING);
+                        comment.setCrmCloudPrId(String.valueOf(responseRating.getPrId()));
+                        comment.setCrmComment(responseRating.getPrComment());
+                        comment.setCrmCreatedAt(responseRating.getCreatedAt());
+                        comment.setCrmUpdatedAt(responseRating.getCreatedAt());
+
+                        TableCommentMaster tableCommentMaster = new TableCommentMaster
+                                (databaseHandler);
+                        tableCommentMaster.addComment(comment);
 
                         TableProfileMaster tableProfileMaster = new TableProfileMaster
                                 (databaseHandler);
@@ -429,14 +438,16 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         ArrayList<String> listPhoneNumber = new ArrayList<>();
                         if (count > 1) {
                             for (int i = 0; i < tempPhoneNumber.size(); i++) {
-                                ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(i);
+                                ProfileDataOperationPhoneNumber phoneNumber =
+                                        (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(i);
                                 String number = phoneNumber.getPhoneNumber();
                                 listPhoneNumber.add(number);
                             }
 
                             CallConfirmationListDialog callConfirmationListDialog = new
                                     CallConfirmationListDialog(this, listPhoneNumber);
-                            callConfirmationListDialog.setDialogTitle("Please select a number to call");
+                            callConfirmationListDialog.setDialogTitle("Please select a number to " +
+                                    "call");
                             callConfirmationListDialog.showDialog();
 
                         } else {
@@ -483,24 +494,33 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             case R.id.ripple_action_right_right:
                 ProfileMenuOptionDialog profileMenuOptionDialog;
                 boolean isFromCallLogTab = true;
-                if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase("[Unknown]")*/) {
-                    ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
-                            this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
+                if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase
+                ("[Unknown]")*/) {
+                    ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
+                                    .getString(R.string.edit),
+                            this.getString(R.string.view_in_ac), this.getString(R.string
+                                    .view_in_rc),
                             this.getString(R.string.call_reminder),
                             this.getString(R.string.block), this.getString(R.string.delete),
                             this.getString(R.string.clear_call_log)));
-                    profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, contactName,
+                    profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName,
+                            contactName,
                             0, isFromCallLogTab, arrayListHistory);
                     profileMenuOptionDialog.showDialog();
 
                 } else {
                     if (!TextUtils.isEmpty(profileContactNumber)) {
-                        ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
-                                this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
+                        ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this
+                                        .getString(R.string.add_to_contact),
+                                this.getString(R.string.add_to_existing_contact), this.getString
+                                        (R.string.view_profile),
                                 this.getString(R.string.copy_phone_number),
-                                this.getString(R.string.call_reminder), this.getString(R.string.block),
-                                this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
-                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, profileContactNumber,
+                                this.getString(R.string.call_reminder), this.getString(R.string
+                                        .block),
+                                this.getString(R.string.delete), this.getString(R.string
+                                        .clear_call_log)));
+                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
+                                arrayListNumber, profileContactNumber,
                                 0, isFromCallLogTab, arrayListHistory);
                         profileMenuOptionDialog.showDialog();
                     }
