@@ -12,8 +12,9 @@ public class AppConstants {
     public static String PLAY_STORE_LINK = "https://play.google.com/store/apps/details?id=";
 
     //<editor-fold desc="Permission Request Code">
-    public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 3;
-    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 4;
+    public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1003;
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1004;
+    public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1005;
     //</editor-fold>
 
     //<editor-fold desc="Profile Detail Section">
