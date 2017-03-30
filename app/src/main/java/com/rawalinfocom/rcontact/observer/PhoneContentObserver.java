@@ -428,9 +428,8 @@ public class PhoneContentObserver extends ContentObserver {
                                 (ContactsContract.CommonDataKinds.Im.TYPE))));
 
                 imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
-                        (contactImCursor.getInt(
-                                (contactImCursor.getColumnIndex(ContactsContract.CommonDataKinds
-                                        .Im.PROTOCOL)))));
+                        (contactImCursor.getInt((contactImCursor.getColumnIndex
+                                (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
                 imAccount.setIMAccountPublic("1");
 

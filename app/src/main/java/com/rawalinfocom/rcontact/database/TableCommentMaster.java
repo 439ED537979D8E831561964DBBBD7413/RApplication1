@@ -58,7 +58,7 @@ public class TableCommentMaster {
             " " + COLUMN_CRM_CREATED_AT + " datetime NOT NULL," +
             " " + COLUMN_CRM_REPLIED_AT + " datetime," +
             " " + COLUMN_CRM_UPDATED_AT + " datetime NOT NULL," +
-            " " + COLUMN_EVM_RECORD_INDEX_ID + " text NOT NULL" +
+            " " + COLUMN_EVM_RECORD_INDEX_ID + " text" +
             ");";
 
     // Adding new Event
@@ -201,7 +201,7 @@ public class TableCommentMaster {
                 comment.setCrmStatus(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_STATUS)));
                 comment.setCrmRating(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_RATING)));
                 comment.setCrmType(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_TYPE)));
-                comment.setCrmCloudPrId(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CLOUD_PR_ID)));
+                comment.setCrmCloudPrId(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CLOUD_COMMENT_ID)));
                 comment.setRcProfileMasterPmId(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
                 comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
                 comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));

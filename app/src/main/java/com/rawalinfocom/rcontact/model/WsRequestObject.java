@@ -127,7 +127,7 @@ public class WsRequestObject {
     private String prComment;
     private String prRatingStars;
     private String prStatus;
-    private String prToPmId;
+    private int prToPmId;
 
     private int sendProfileType;
     private int pmIdWhose;
@@ -355,11 +355,11 @@ public class WsRequestObject {
     }
 
     @JsonProperty("pr_to_pm_id")
-    public String getPrToPmId() {
+    public int getPrToPmId() {
         return prToPmId;
     }
 
-    public void setPrToPmId(String prToPmId) {
+    public void setPrToPmId(int prToPmId) {
         this.prToPmId = prToPmId;
     }
 

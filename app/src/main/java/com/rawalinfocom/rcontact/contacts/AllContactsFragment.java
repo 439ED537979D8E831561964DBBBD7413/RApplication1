@@ -617,7 +617,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         organization.setOmRecordIndexId(arrayListOrganization.get(j).getOrgId());
                         organization.setOmOrganizationCompany(arrayListOrganization.get(j)
                                 .getOrgName
-                                ());
+                                        ());
 //                    organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgType());
 //                    organization.setOmOrganizationTitle(arrayListOrganization.get(j).getOrgName
 // ());
@@ -658,7 +658,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster
                             (getDatabaseHandler
-                            ());
+                                    ());
                     tableWebsiteMaster.addArrayWebsite(websiteList);
                 }
                 //</editor-fold>
@@ -689,7 +689,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     TableAddressMaster tableAddressMaster = new TableAddressMaster
                             (getDatabaseHandler
-                            ());
+                                    ());
                     tableAddressMaster.addArrayAddress(addressList);
                 }
                 //</editor-fold>
@@ -1239,9 +1239,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                                     (ContactsContract.CommonDataKinds.Im.TYPE))));
 
                     imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
-                            (contactImCursor.getInt(
-                                    (contactImCursor.getColumnIndex(ContactsContract.CommonDataKinds
-                                            .Im.PROTOCOL)))));
+                            (contactImCursor.getInt((contactImCursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
                     imAccount.setIMAccountPublic("1");
 
