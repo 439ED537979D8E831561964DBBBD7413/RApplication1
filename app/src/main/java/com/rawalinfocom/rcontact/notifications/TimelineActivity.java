@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -34,8 +33,8 @@ import com.rawalinfocom.rcontact.model.Rating;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
-import com.rawalinfocom.rcontact.notifications.adapters.TimelineAdapter;
-import com.rawalinfocom.rcontact.notifications.model.TimelineItem;
+import com.rawalinfocom.rcontact.adapters.TimelineAdapter;
+import com.rawalinfocom.rcontact.model.TimelineItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

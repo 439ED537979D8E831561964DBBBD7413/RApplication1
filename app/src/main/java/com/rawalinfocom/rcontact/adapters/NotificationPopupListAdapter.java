@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.notifications.adapters;
+package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

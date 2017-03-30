@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.notifications.adapters;
+package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
 import android.graphics.drawable.LayerDrawable;
@@ -23,7 +23,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
-import com.rawalinfocom.rcontact.notifications.model.TimelineItem;
+import com.rawalinfocom.rcontact.model.TimelineItem;
 
 import java.util.List;
 
