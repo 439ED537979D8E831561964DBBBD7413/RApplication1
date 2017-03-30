@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingStart="@dimen/activity_horizontal_margin"
-                android:text="Today"
+                android:text="@string/today"
                 android:textAppearance="?android:textAppearanceMedium" />
 
             <ImageView
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingStart="@dimen/activity_horizontal_margin"
-                android:text="Yesterday"
+                android:text="@string/yesterday"
                 android:textAppearance="?android:textAppearanceMedium" />
 
             <ImageView
@@ -129,7 +129,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingStart="@dimen/activity_horizontal_margin"
-                android:text="Past 5 days"
+                android:text="@string/past_5_days"
                 android:textAppearance="?android:textAppearanceMedium" />
 
             <ImageView
@@ -169,7 +169,9 @@
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:background="@drawable/background_border"
         android:gravity="center"
-        android:text="@string/footer_timeline_text"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:text="@string/footer_noti_rating_text"
         android:textAllCaps="true"
         android:textColor="@color/colorPrimary" />
 </RelativeLayout>
