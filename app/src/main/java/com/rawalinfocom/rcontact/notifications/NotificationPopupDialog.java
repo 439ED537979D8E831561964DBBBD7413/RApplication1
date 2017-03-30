@@ -65,8 +65,6 @@ public class NotificationPopupDialog {
 
         tvDialogTitle.setTypeface(Utils.typefaceSemiBold(context));
         recycleViewDialog = (RecyclerView) dialog.findViewById(R.id.recycle_view_dialog);
-
-        stringArrayList = arrayList;
         dialogTitle = getDialogTitle();
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
