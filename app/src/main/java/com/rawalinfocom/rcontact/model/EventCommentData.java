@@ -22,11 +22,23 @@ public class EventCommentData {
     @JsonProperty("birthday")
     private ArrayList<EventComment> birthday;
 
+    @JsonProperty("anniversary")
+    private ArrayList<EventComment> anniversary;
+
     @JsonProperty("custom")
     private ArrayList<EventComment> custom;
 
-    @JsonProperty("anniversary")
-    private ArrayList<EventComment> anniversary;
+    @JsonProperty("rating")
+    private ArrayList<EventComment> rating;
+
+
+    public ArrayList<EventComment> getRating() {
+        return rating;
+    }
+
+    public void setRating(ArrayList<EventComment> rating) {
+        this.rating = rating;
+    }
 
     public ArrayList<EventComment> getBirthday() {
         return birthday;

@@ -22,7 +22,6 @@ import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
-import com.rawalinfocom.rcontact.events.MyLayoutManager;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Comment;
@@ -32,6 +31,8 @@ import com.rawalinfocom.rcontact.model.EventCommentData;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.notifications.adapters.NotiCommentsAdapter;
+import com.rawalinfocom.rcontact.notifications.model.NotiCommentsItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,9 +81,11 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
 
     @BindView(R.id.text_view_more)
     TextView textViewMore;
+
     List<NotiCommentsItem> listTodayComments;
     List<NotiCommentsItem> listYesterdayComments;
     List<NotiCommentsItem> listPastComments;
+
     TableCommentMaster tableCommentMaster;
 
     @Override
@@ -124,9 +127,9 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
         ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllReplyReceived(yesterDay, yesterDay);
         ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllReplyReceived(pastday5thDay, dayBeforeYesterday);
 
-        listTodayComments = createListToday(replyReceivedToday);
-        listYesterdayComments = createListToday(replyReceivedYesterDay);
-        listPastComments = createListToday(replyReceivedPastDays);
+        listTodayComments = createReplyList(replyReceivedToday);
+        listYesterdayComments = createReplyList(replyReceivedYesterDay);
+        listPastComments = createReplyList(replyReceivedPastDays);
 
         NotiCommentsAdapter todayRatingAdapter = new NotiCommentsAdapter(getActivity(), listTodayComments, 0);
         NotiCommentsAdapter yesterdayRatingAdapter = new NotiCommentsAdapter(getActivity(), listYesterdayComments, 1);
@@ -159,7 +162,7 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
         int height = (displaymetrics.heightPixels * heightPercent) / 100;
 
         recyclerTodayComments.setAdapter(todayRatingAdapter);
-        recyclerTodayComments.setLayoutManager(new MyLayoutManager(getActivity(), recyclerTodayComments, height));
+        recyclerTodayComments.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerTodayComments, height));
         RecyclerView.Adapter mAdapter = recyclerTodayComments.getAdapter();
         int totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > maxItemCount) {
@@ -167,14 +170,14 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
         }
 
         recyclerYesterDayComments.setAdapter(yesterdayRatingAdapter);
-        recyclerYesterDayComments.setLayoutManager(new MyLayoutManager(getActivity(), recyclerYesterDayComments, height));
+        recyclerYesterDayComments.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerYesterDayComments, height));
         mAdapter = recyclerYesterDayComments.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > maxItemCount) {
             recyclerYesterDayComments.getLayoutParams().height = height;
         }
         recyclerPastDayComments.setAdapter(pastRatingAdapter);
-        recyclerPastDayComments.setLayoutManager(new MyLayoutManager(getActivity(), recyclerPastDayComments, height));
+        recyclerPastDayComments.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerPastDayComments, height));
         mAdapter = recyclerPastDayComments.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > maxItemCount) {
@@ -184,23 +187,29 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
         recyclerPastDayComments.setVisibility(View.GONE);
     }
 
-    private List<NotiCommentsItem> createListToday(ArrayList<Comment> replyList) {
+    private List<NotiCommentsItem> createReplyList(ArrayList<Comment> replyList) {
         List<NotiCommentsItem> list = new ArrayList<>();
         for (Comment comment : replyList) {
             NotiCommentsItem item = new NotiCommentsItem();
             TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
             TableEventMaster tableEventMaster = new TableEventMaster(getDatabaseHandler());
-            Event event = tableEventMaster.getEventByEvmRecordIndexId(Integer.parseInt(comment.getEvmRecordIndexId()));
+            if ("Rating".equalsIgnoreCase(comment.getCrmType())) {
+
+            } else {
+                Event event = tableEventMaster.getEventByEvmRecordIndexId(Integer.parseInt(comment.getEvmRecordIndexId()));
+                item.setEventName(event.getEvmEventType());
+            }
+
             int pmId = comment.getRcProfileMasterPmId();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
             item.setCommenterName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
             item.setCommenterInfo(userProfile.getPmFirstName() + " reply you on your message");
-            item.setNotiCommentTime(Utils.getLocalTimeFromUTCTime(comment.getCrmRepliedAt()));
+            item.setNotiCommentTime(comment.getCrmRepliedAt());
             item.setComment(comment.getCrmComment());
             item.setReply(comment.getCrmReply());
-            item.setCommentTime(Utils.getLocalTimeFromUTCTime(comment.getCrmCreatedAt()));
-            item.setReplyTime(Utils.getLocalTimeFromUTCTime(comment.getCrmRepliedAt()));
-            item.setEventName(event.getEvmEventType());
+            item.setCommentTime(comment.getCrmCreatedAt());
+            item.setReplyTime(comment.getCrmRepliedAt());
+
             list.add(item);
 
         }
@@ -313,22 +322,32 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
             ArrayList<EventComment> allBirthdayComments = eventCommentData.getBirthday();
             ArrayList<EventComment> allAnniversaryComments = eventCommentData.getAnniversary();
             ArrayList<EventComment> allCustomEventsComments = eventCommentData.getCustom();
+            // ArrayList<EventComment> allRatingComments = eventCommentData.getRating();
             if (allBirthdayComments != null) {
                 for (EventComment eventComment : allBirthdayComments) {
-                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(), eventComment.getReplyAt(), eventComment.getUpdatedDate());
+                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
+                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
 
                 }
             }
             if (allAnniversaryComments != null) {
                 for (EventComment eventComment : allAnniversaryComments) {
-                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(), eventComment.getReplyAt(), eventComment.getUpdatedDate());
+                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
+                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
                 }
             }
             if (allCustomEventsComments != null) {
                 for (EventComment eventComment : allCustomEventsComments) {
-                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(), eventComment.getReplyAt(), eventComment.getUpdatedDate());
+                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
+                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
                 }
             }
+//            if (allRatingComments != null) {
+//                for (EventComment eventComment : allRatingComments) {
+//                    tableCommentMaster.addReply(eventComment.getPrId(), eventComment.getReply(),
+//                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+//                }
+//            }
         }
     }
 }

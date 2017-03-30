@@ -836,7 +836,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     }
 
     private void addressDetails() {
-       /* TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
+        TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
 
         ArrayList<Address> arrayListAddress = tableAddressMaster.getAddressesFromPmId(Integer
                 .parseInt(getUserPmId()));
@@ -844,7 +844,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         for (int i = 0; i < arrayListAddress.size(); i++) {
             ProfileDataOperationAddress address = new ProfileDataOperationAddress();
             address.setCountry(arrayListAddress.get(i).getAmCountry());
-            address.setState(arrayListAddress.get(i).getAmRegion());
+            address.setState(arrayListAddress.get(i).getAmState());
             address.setCity(arrayListAddress.get(i).getAmCity());
             address.setStreet(arrayListAddress.get(i).getAmStreet());
             address.setNeighborhood(arrayListAddress.get(i).getAmNeighborhood());
@@ -858,9 +858,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             for (int i = 0; i < arrayListAddressObject.size(); i++) {
                 addAddressView(arrayListAddressObject.get(i));
             }
-        } else {*/
-        addAddressView(null);
-//        }
+        } else {
+            addAddressView(null);
+        }
     }
 
     private void addView(int viewType, final LinearLayout linearLayout, Object detailObject, int
@@ -1170,7 +1170,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             inputCity.setText(address.getCity());
             inputStreet.setText(address.getStreet());
             inputNeighborhood.setText(address.getNeighborhood());
-            inputPinCode.setText(address.getPoBox());
+            inputPinCode.setText(address.getPostCode());
             int spinnerPosition;
             if (Arrays.asList(getResources().getStringArray(R.array.types_email_address))
                     .contains(StringUtils.defaultString(address.getAddressType()))) {

@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.notifications.adapters.NotiRContactsAdapter;
+import com.rawalinfocom.rcontact.notifications.model.NotiRContactsItem;
 
 import java.util.Arrays;
 import java.util.List;

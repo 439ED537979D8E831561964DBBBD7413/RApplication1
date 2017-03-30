@@ -2,15 +2,21 @@ package com.rawalinfocom.rcontact.notifications;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.LayerDrawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.notifications.adapters.NotificationPopupListAdapter;
 
 import java.util.ArrayList;
 
@@ -20,17 +26,29 @@ import java.util.ArrayList;
 
 public class NotificationPopupDialog {
 
-    RecyclerView recycleViewDialog;
-    private Context context;
+    private RecyclerView recycleViewDialog;
     private Dialog dialog;
+    private LinearLayout ratingInfoLayout;
     private String dialogTag;
     private TextView tvDialogTitle;
+    private TextView tvDialogRating;
+    private RatingBar ratingBar;
     private ArrayList<String> stringArrayList;
-    String dialogTitle;
+    private String dialogTitle;
+    private String ratingInfo;
+
+    public String getRatingInfo() {
+        return ratingInfo;
+    }
+
+    public void setRatingInfo(String ratingInfo) {
+        this.ratingInfo = ratingInfo;
+        tvDialogRating.setText(this.ratingInfo);
+        ratingBar.setRating(Float.parseFloat(this.ratingInfo));
+    }
 
 
-    public NotificationPopupDialog(Context context, ArrayList<String> arrayList) {
-        this.context = context;
+    public NotificationPopupDialog(Context context, ArrayList<String> arrayList, Boolean isRatingPopup) {
         this.stringArrayList = arrayList;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -43,6 +61,8 @@ public class NotificationPopupDialog {
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
         tvDialogTitle = (TextView) dialog.findViewById(R.id.tvDialogTitle);
+        ratingInfoLayout = (LinearLayout) dialog.findViewById(R.id.rating_info);
+
         tvDialogTitle.setTypeface(Utils.typefaceSemiBold(context));
         recycleViewDialog = (RecyclerView) dialog.findViewById(R.id.recycle_view_dialog);
 
@@ -50,11 +70,28 @@ public class NotificationPopupDialog {
         dialogTitle = getDialogTitle();
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
+        if (isRatingPopup) {
+            ratingInfoLayout.setVisibility(View.VISIBLE);
+            tvDialogRating = (TextView) dialog.findViewById(R.id.text_rating_given);
+            ratingBar = (RatingBar) dialog.findViewById(R.id.given_rating_bar);
+
+            LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
+            Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(context, R.color
+                    .vivid_yellow));
+            Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(context, android.R
+                    .color.darker_gray));
+            // Empty stars
+            Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(context, android.R
+                    .color.darker_gray));
+        } else {
+            ratingInfoLayout.setVisibility(View.GONE);
+        }
         NotificationPopupListAdapter materialListAdapter = new NotificationPopupListAdapter(context, stringArrayList);
         recycleViewDialog.setAdapter(materialListAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         recycleViewDialog.setLayoutManager(linearLayoutManager);
         recycleViewDialog.setHasFixedSize(true);
+
     }
 
     public void setDialogTitle(String text) {
