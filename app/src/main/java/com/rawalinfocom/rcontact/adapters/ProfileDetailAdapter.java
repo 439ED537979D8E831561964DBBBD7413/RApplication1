@@ -266,13 +266,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
     }
 
-    private void displayImAccount(ProfileDetailViewHolder holder, int position) {
-        ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount) arrayList.get
-                (position);
-        holder.textMain.setText(imAccount.getIMAccountProtocol());
-        holder.textSub.setText(imAccount.getIMAccountType());
+    private void displayImAccount(final ProfileDetailViewHolder holder, int position) {
+        final ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount) arrayList
+                .get(position);
+        holder.textMain.setText(imAccount.getIMAccountDetails());
+        holder.textSub.setText(imAccount.getIMAccountProtocol());
 
-        holder.textSub.setVisibility(View.GONE);
+//        holder.textSub.setVisibility(View.GONE);
 
         int imRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(imAccount.getIMRcpType(),
                 String.valueOf(context.getResources().getInteger(R.integer
@@ -284,6 +284,31 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.textMain.setTextColor(colorPineGreen);
         }
 
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
+                    String url = null;
+
+                    if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
+                        url = "https://www.facebook.com/" + imAccount.getIMAccountDetails();
+                    } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
+                        url = "https://twitter.com/" + imAccount.getIMAccountDetails();
+                    } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
+                        url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                            ("google")) {
+                        url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
+                    }
+
+                    if (url != null) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse(url));
+                        context.startActivity(intent);
+                    }
+                }
+            }
+        });
     }
 
     private void displayEvent(ProfileDetailViewHolder holder, int position) {

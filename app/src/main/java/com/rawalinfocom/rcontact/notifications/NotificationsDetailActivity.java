@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact;
+package com.rawalinfocom.rcontact.notifications;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,11 +9,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.RippleView;
-import com.rawalinfocom.rcontact.notifications.NotiCommentsFragment;
-import com.rawalinfocom.rcontact.notifications.NotiRContactsFragment;
-import com.rawalinfocom.rcontact.notifications.NotiRatingFragment;
-import com.rawalinfocom.rcontact.notifications.NotiRequestFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

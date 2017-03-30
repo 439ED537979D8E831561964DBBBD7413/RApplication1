@@ -41,4 +41,7 @@
     <color name="veryDarkDesaturatedCyanLimeGreen">#2A4C40</color>
     <color name="mostlyDesaturatedDarkCyanLimeGreen">#548A7C</color>
 
+    <color name="dialogTitleTextColor">#E6444444</color>
+    <color name="dialogUserNameTextColor">#E600796b</color>
+
 </resources>

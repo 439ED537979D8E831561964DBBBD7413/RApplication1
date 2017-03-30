@@ -8,8 +8,7 @@ public class ImAccount {
 
     private String imId;
     private String imRecordIndexId;
-    private String imImType;
-    private String imCustomType;
+    private String imImDetail;
     private String imImProtocol;
     private String imImPrivacy;
     private String rcProfileMasterPmId;
@@ -22,20 +21,12 @@ public class ImAccount {
         this.imId = imId;
     }
 
-    public String getImImType() {
-        return imImType;
+    public String getImImDetail() {
+        return imImDetail;
     }
 
-    public void setImImType(String imImType) {
-        this.imImType = imImType;
-    }
-
-    public String getImCustomType() {
-        return imCustomType;
-    }
-
-    public void setImCustomType(String imCustomType) {
-        this.imCustomType = imCustomType;
+    public void setImImDetail(String imImDetail) {
+        this.imImDetail = imImDetail;
     }
 
     public String getImImProtocol() {

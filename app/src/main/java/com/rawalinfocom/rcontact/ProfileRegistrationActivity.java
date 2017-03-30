@@ -719,7 +719,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
-                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
+//                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
                 email.setRcProfileMasterPmId(userProfileRegistered.getPmId());
                 arrayListEmail.add(email);
             }
@@ -739,14 +739,18 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 organization.setOmRecordIndexId(arrayListOrganization.get(i).getOrgId());
                 organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName
                         ());
-                organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgType());
+               /* organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgType());
                 organization.setOmOrganizationTitle(arrayListOrganization.get(i).getOrgName());
                 organization.setOmOrganizationDepartment(arrayListOrganization.get(i)
                         .getOrgDepartment());
                 organization.setOmJobDescription(arrayListOrganization.get(i)
                         .getOrgJobTitle());
                 organization.setOmOfficeLocation(arrayListOrganization.get(i)
-                        .getOrgOfficeLocation());
+                        .getOrgOfficeLocation());*/
+                organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
+                        .getOrgJobTitle());
+                organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
+                        .getIsCurrent()));
                 organization.setRcProfileMasterPmId(userProfileRegistered.getPmId());
                 organizationList.add(organization);
             }
@@ -785,6 +789,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 Address address = new Address();
                 address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                 address.setAmCity(arrayListAddress.get(j).getCity());
+                address.setAmState(arrayListAddress.get(j).getState());
                 address.setAmCountry(arrayListAddress.get(j).getCountry());
                 address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
                 address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
@@ -794,7 +799,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 address.setAmAddressType(arrayListAddress.get(j).getAddressType());
                 address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
                 address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
-                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
+//                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                 address.setRcProfileMasterPmId(userProfileRegistered.getPmId());
                 addressList.add(address);
             }
@@ -812,9 +817,9 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             for (int j = 0; j < arrayListImAccount.size(); j++) {
                 ImAccount imAccount = new ImAccount();
                 imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
-                imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(arrayListImAccount.get(j).getIMAccountPublic());
+                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
 //                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 imAccount.setRcProfileMasterPmId(userProfileRegistered.getPmId());
                 imAccountsList.add(imAccount);
@@ -890,7 +895,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         profileRegistrationObject.setFirstName(firstName);
         profileRegistrationObject.setLastName(lastName);
         profileRegistrationObject.setEmailId(emailId);
-        profileRegistrationObject.setPmId(userProfile.getPmId());
+        profileRegistrationObject.setPmId(Integer.parseInt(userProfile.getPmId()));
         profileRegistrationObject.setPbSocialId(socialMediaId);
         profileRegistrationObject.setProfileImage(null);
         // TODO: 09/02/17 uncomment

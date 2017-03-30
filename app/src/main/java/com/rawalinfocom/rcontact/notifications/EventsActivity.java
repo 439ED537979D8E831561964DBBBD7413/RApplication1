@@ -1,10 +1,9 @@
-package com.rawalinfocom.rcontact;
+package com.rawalinfocom.rcontact.notifications;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -12,14 +11,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
-import com.rawalinfocom.rcontact.events.EventAdapter;
-import com.rawalinfocom.rcontact.events.EventItem;
-import com.rawalinfocom.rcontact.events.MyLayoutManager;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
@@ -28,6 +26,8 @@ import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.EventComment;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.notifications.adapters.EventAdapter;
+import com.rawalinfocom.rcontact.notifications.model.EventItem;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -209,7 +209,7 @@ public class EventsActivity extends BaseActivity implements RippleView
 
         todayEventAdapter = new EventAdapter(this, listTodayEvent, 0);
         recyclerViewToday.setAdapter(todayEventAdapter);
-        recyclerViewToday.setLayoutManager(new MyLayoutManager(getApplicationContext(), recyclerViewToday, height));
+        recyclerViewToday.setLayoutManager(new CustomLayoutManager(getApplicationContext(), recyclerViewToday, height));
         RecyclerView.Adapter mAdapter = recyclerViewToday.getAdapter();
         int totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > maxItemCount) {
@@ -218,7 +218,7 @@ public class EventsActivity extends BaseActivity implements RippleView
 
         recentEventAdapter = new EventAdapter(this, listRecentEvent, 1);
         recyclerViewRecent.setAdapter(recentEventAdapter);
-        recyclerViewRecent.setLayoutManager(new MyLayoutManager(getApplicationContext(), recyclerViewRecent, height));
+        recyclerViewRecent.setLayoutManager(new CustomLayoutManager(getApplicationContext(), recyclerViewRecent, height));
         mAdapter = recyclerViewRecent.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > maxItemCount) {
@@ -227,7 +227,7 @@ public class EventsActivity extends BaseActivity implements RippleView
 
         upcomingEventAdapter = new EventAdapter(this, listUpcomingEvent, 2);
         recyclerViewUpcoming.setAdapter(upcomingEventAdapter);
-        recyclerViewUpcoming.setLayoutManager(new MyLayoutManager(getApplicationContext(), recyclerViewUpcoming, height));
+        recyclerViewUpcoming.setLayoutManager(new CustomLayoutManager(getApplicationContext(), recyclerViewUpcoming, height));
         mAdapter = recyclerViewUpcoming.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > maxItemCount + 1) {

@@ -10,9 +10,10 @@ public class Event {
     private String evmRecordIndexId;
     private String evmStartDate;
     private String evmEventType;
-    private String evmCustomType;
     private String evmEventPrivacy;
     private String rcProfileMasterPmId;
+
+    //    private String evmCustomType;
 
     public String getEvmId() {
         return evmId;
@@ -36,14 +37,6 @@ public class Event {
 
     public void setEvmEventType(String evmEventType) {
         this.evmEventType = evmEventType;
-    }
-
-    public String getEvmCustomType() {
-        return evmCustomType;
-    }
-
-    public void setEvmCustomType(String evmCustomType) {
-        this.evmCustomType = evmCustomType;
     }
 
     public String getEvmEventPrivacy() {

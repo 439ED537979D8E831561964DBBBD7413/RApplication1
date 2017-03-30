@@ -55,17 +55,16 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
-import com.rawalinfocom.rcontact.database.TableContactRatingMaster;
+import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
-import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.ProfileMenuOptionDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.CallLogType;
-import com.rawalinfocom.rcontact.model.DbRating;
+import com.rawalinfocom.rcontact.model.Comment;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -393,12 +392,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
 
-
-
-        if(profileActivityCallInstance){
+        if (profileActivityCallInstance) {
             fetchCallLogHistoryDateWise(historyNumber);
 
-        }else{
+        } else {
             if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
                 fetchAllCallLogHistory(contactName);
             } else {
@@ -690,8 +687,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                     if (profileRatingResponse.getProfileRating() != null) {
 
-                        DbRating dbRating = new DbRating();
                         Rating responseRating = profileRatingResponse.getProfileRating();
+
+                       /* DbRating dbRating = new DbRating();
                         dbRating.setRcProfileMasterPmId(String.valueOf(responseRating.getPrToPmId
                                 ()));
                         dbRating.setCrmStatus(String.valueOf(responseRating.getPrStatus()));
@@ -702,7 +700,21 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                         TableContactRatingMaster tableContactRatingMaster = new
                                 TableContactRatingMaster(databaseHandler);
-                        tableContactRatingMaster.addRating(dbRating);
+                        tableContactRatingMaster.addRating(dbRating);*/
+
+                        Comment comment = new Comment();
+                        comment.setRcProfileMasterPmId(responseRating.getPrToPmId());
+                        comment.setCrmStatus(responseRating.getPrStatus());
+                        comment.setCrmRating(responseRating.getPrRatingStars());
+                        comment.setCrmType(TableCommentMaster.COMMENT_TYPE_RATING);
+                        comment.setCrmCloudPrId(String.valueOf(responseRating.getPrId()));
+                        comment.setCrmComment(responseRating.getPrComment());
+                        comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(responseRating.getCreatedAt()));
+                        comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(responseRating.getCreatedAt()));
+
+                        TableCommentMaster tableCommentMaster = new TableCommentMaster
+                                (databaseHandler);
+                        tableCommentMaster.addComment(comment);
 
                         TableProfileMaster tableProfileMaster = new TableProfileMaster
                                 (databaseHandler);
@@ -1599,11 +1611,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
         //</editor-fold>
 
-        linearGender.setVisibility(View.GONE);
+        if (StringUtils.length(StringUtils.defaultString(profileDetail != null ?
+                profileDetail.getPbGender() : null)) > 0) {
+            textGender.setText(profileDetail.getPbGender());
+        } else {
+            linearGender.setVisibility(View.GONE);
+        }
 
         if (Utils.isArraylistNullOrEmpty(arrayListEvent) && Utils.isArraylistNullOrEmpty
                 (arrayListPhoneBookEvent)
-//                && Utils.isArraylistNullOrEmpty(arrayListAddress)
+                && StringUtils.length(StringUtils.defaultString(profileDetail != null ?
+                profileDetail.getPbGender() : null)) <= 0
                 ) {
             cardOtherDetails.setVisibility(View.GONE);
         } else {
@@ -2116,7 +2134,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void getProfileDetail() {
 
         WsRequestObject profileDetailObject = new WsRequestObject();
-        profileDetailObject.setPmId(pmId);
+        profileDetailObject.setPmId(Integer.parseInt(pmId));
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
@@ -2132,7 +2150,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void setFavouriteStatus(ArrayList<ProfileData> favourites) {
 
         WsRequestObject favouriteStatusObject = new WsRequestObject();
-        favouriteStatusObject.setPmId(getUserPmId());
+        favouriteStatusObject.setPmId(Integer.parseInt(getUserPmId()));
         favouriteStatusObject.setFavourites(favourites);
 
         if (Utils.isNetworkAvailable(this)) {
@@ -2149,11 +2167,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void submitRating(String ratingStar, String comment) {
 
         WsRequestObject ratingObject = new WsRequestObject();
-        ratingObject.setPmId(getUserPmId());
+        ratingObject.setPmId(Integer.parseInt(getUserPmId()));
         ratingObject.setPrComment(comment);
         ratingObject.setPrRatingStars(ratingStar);
         ratingObject.setPrStatus(String.valueOf(getResources().getInteger(R.integer.rating_done)));
-        ratingObject.setPrToPmId(pmId);
+        ratingObject.setPrToPmId(Integer.parseInt(pmId));
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
@@ -2168,7 +2186,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void shareContact() {
 
         WsRequestObject uploadContactObject = new WsRequestObject();
-        uploadContactObject.setPmId(getUserPmId());
+        uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
         uploadContactObject.setSendProfileType(getResources().getInteger(R.integer
                 .send_profile_non_rcp_social));
         uploadContactObject.setContactData(profileDataOperationVcard);

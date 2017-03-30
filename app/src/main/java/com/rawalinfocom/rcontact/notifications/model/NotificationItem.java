@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.notifications;
+package com.rawalinfocom.rcontact.notifications.model;
 
 /**
  * Created by maulik on 14/03/17.
@@ -34,7 +34,7 @@ public class NotificationItem {
     public int getNotificationItemType() {
         return notificationItemType;
     }
-// 1= > Timeline
+    // 1= > Timeline
     // 2= > Requests
     // 3= > Rating
     // 4= > Comments

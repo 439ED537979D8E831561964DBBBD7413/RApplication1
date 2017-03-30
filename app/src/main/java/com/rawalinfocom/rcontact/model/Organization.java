@@ -9,14 +9,17 @@ public class Organization {
     private String omId;
     private String omRecordIndexId;
     private String omOrganizationCompany;
-    private String omOrganizationType;
+    private String omOrganizationDesignation;
+    private String omIsCurrent;
+    private String omOrganizationPrivacy;
+    private String rcProfileMasterPmId;
+
+    /*private String omOrganizationType;
     private String omCustomType;
     private String omOrganizationTitle;
     private String omOrganizationDepartment;
     private String omJobDescription;
-    private String omOfficeLocation;
-    private String omOrganizationPrivacy;
-    private String rcProfileMasterPmId;
+    private String omOfficeLocation;*/
 
     public String getOmId() {
         return omId;
@@ -32,54 +35,6 @@ public class Organization {
 
     public void setOmOrganizationCompany(String omOrganizationCompany) {
         this.omOrganizationCompany = omOrganizationCompany;
-    }
-
-    public String getOmOrganizationType() {
-        return omOrganizationType;
-    }
-
-    public void setOmOrganizationType(String omOrganizationType) {
-        this.omOrganizationType = omOrganizationType;
-    }
-
-    public String getOmCustomType() {
-        return omCustomType;
-    }
-
-    public void setOmCustomType(String omCustomType) {
-        this.omCustomType = omCustomType;
-    }
-
-    public String getOmOrganizationTitle() {
-        return omOrganizationTitle;
-    }
-
-    public void setOmOrganizationTitle(String omOrganizationTitle) {
-        this.omOrganizationTitle = omOrganizationTitle;
-    }
-
-    public String getOmOrganizationDepartment() {
-        return omOrganizationDepartment;
-    }
-
-    public void setOmOrganizationDepartment(String omOrganizationDepartment) {
-        this.omOrganizationDepartment = omOrganizationDepartment;
-    }
-
-    public String getOmJobDescription() {
-        return omJobDescription;
-    }
-
-    public void setOmJobDescription(String omJobDescription) {
-        this.omJobDescription = omJobDescription;
-    }
-
-    public String getOmOfficeLocation() {
-        return omOfficeLocation;
-    }
-
-    public void setOmOfficeLocation(String omOfficeLocation) {
-        this.omOfficeLocation = omOfficeLocation;
     }
 
     public String getOmOrganizationPrivacy() {
@@ -104,5 +59,21 @@ public class Organization {
 
     public void setOmRecordIndexId(String omRecordIndexId) {
         this.omRecordIndexId = omRecordIndexId;
+    }
+
+    public String getOmOrganizationDesignation() {
+        return omOrganizationDesignation;
+    }
+
+    public void setOmOrganizationDesignation(String omOrganizationDesignation) {
+        this.omOrganizationDesignation = omOrganizationDesignation;
+    }
+
+    public String getOmIsCurrent() {
+        return omIsCurrent;
+    }
+
+    public void setOmIsCurrent(String omIsCurrent) {
+        this.omIsCurrent = omIsCurrent;
     }
 }

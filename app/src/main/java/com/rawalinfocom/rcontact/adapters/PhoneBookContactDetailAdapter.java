@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
@@ -148,6 +149,8 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
         TextView textMain;
         @BindView(R.id.text_sub)
         TextView textSub;
+        @BindView(R.id.relative_row_contact_details)
+        RelativeLayout relativeRowContactDetails;
 
         ContactDetailViewHolder(View itemView) {
             super(itemView);

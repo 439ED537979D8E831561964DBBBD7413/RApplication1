@@ -14,15 +14,16 @@ public class Address {
     private String amNeighborhood;
     private String amPostCode;
     private String amPoBox;
-    private String amRegion;
+    private String amState;
     private String amStreet;
     private String amAddressType;
-    private String amCustomType;
     private String amGoogleLatitude;
     private String amGoogleLongitude;
-    private String amGoogleAddress;
     private String amAddressPrivacy;
     private String rcProfileMasterPmId;
+
+//    private String amCustomType;
+//    private String amGoogleAddress;
 
     public String getAmId() {
         return amId;
@@ -80,12 +81,12 @@ public class Address {
         this.amPoBox = amPoBox;
     }
 
-    public String getAmRegion() {
-        return amRegion;
+    public String getAmState() {
+        return amState;
     }
 
-    public void setAmRegion(String amRegion) {
-        this.amRegion = amRegion;
+    public void setAmState(String amState) {
+        this.amState = amState;
     }
 
     public String getAmStreet() {
@@ -104,14 +105,6 @@ public class Address {
         this.amAddressType = amAddressType;
     }
 
-    public String getAmCustomType() {
-        return amCustomType;
-    }
-
-    public void setAmCustomType(String amCustomType) {
-        this.amCustomType = amCustomType;
-    }
-
     public String getAmGoogleLatitude() {
         return amGoogleLatitude;
     }
@@ -126,14 +119,6 @@ public class Address {
 
     public void setAmGoogleLongitude(String amGoogleLongitude) {
         this.amGoogleLongitude = amGoogleLongitude;
-    }
-
-    public String getAmGoogleAddress() {
-        return amGoogleAddress;
-    }
-
-    public void setAmGoogleAddress(String amGoogleAddress) {
-        this.amGoogleAddress = amGoogleAddress;
     }
 
     public String getAmAddressPrivacy() {

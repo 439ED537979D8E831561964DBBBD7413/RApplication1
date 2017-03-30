@@ -1,6 +1,8 @@
-package com.rawalinfocom.rcontact.timeline;
+package com.rawalinfocom.rcontact.notifications.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.LayerDrawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.TimelineActivity;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -21,6 +22,8 @@ import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.notifications.TimelineActivity;
+import com.rawalinfocom.rcontact.notifications.model.TimelineItem;
 
 import java.util.List;
 
@@ -54,7 +57,10 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         holder.textTimelineNotiTime.setText(item.getNotiTime());
         String wisherComment = item.getWisherComment();
         String userComment = item.getUserComment();
-        int notiType = item.getNotiType();
+
+        int notiType = 0;
+        if ("Rating".equalsIgnoreCase(item.getCrmType()))
+            notiType = 1;
         if (wisherComment != null && wisherComment.length() != 0) {
             holder.textWisherComment.setVisibility(View.VISIBLE);
             holder.textWisherComment.setText(wisherComment);
@@ -66,7 +72,10 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             holder.textWisherComment.setVisibility(View.GONE);
             if (notiType == 1) {
                 //set rating done time only
-                holder.textWisherCommentTime.setText("12:03PM");
+                if (recyclerPosition == 0)
+                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "hh:mm a"));
+                else
+                    holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "dd MMM, hh:mm a"));
             }
         }
         if (userComment != null && userComment.length() != 0) {
@@ -85,7 +94,18 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             holder.layoutUserCommentPending.setVisibility(View.VISIBLE);
         }
         if (notiType == 1) {
-            holder.textRatingGiven.setText(item.getEventDetail());
+            holder.ratingInfo.setVisibility(View.VISIBLE);
+            holder.textRatingGiven.setText(item.getCrmRating());
+            holder.givenRatingBar.setRating(Float.parseFloat(item.getCrmRating()));
+            LayerDrawable stars = (LayerDrawable) holder.givenRatingBar.getProgressDrawable();
+            // Filled stars
+            Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(context, R.color
+                    .vivid_yellow));
+            Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(context, android.R
+                    .color.darker_gray));
+            // Empty stars
+            Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(context, android.R
+                    .color.darker_gray));
             holder.textEventDetailInfo.setVisibility(View.GONE);
         } else if (notiType == 0) {
             holder.textEventDetailInfo.setText(item.getEventDetail());
@@ -107,19 +127,31 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
     }
 
     private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int commentStatusReceived, int evmRecordIndexId) {
+
         WsRequestObject addCommentObject = new WsRequestObject();
-
-        addCommentObject.setType(crmType);
-        addCommentObject.setCommentId(crmCloudPrId);
-        addCommentObject.setReply(userComment);
-        addCommentObject.setEvmRecordIndexId(evmRecordIndexId);
-        addCommentObject.setStatus(commentStatusReceived + "");
-
+        if (crmType.equalsIgnoreCase("Rating")) {
+            addCommentObject.setPrId(crmCloudPrId);
+            addCommentObject.setPrReply(userComment);
+            addCommentObject.setPrStatus(commentStatusReceived + "");
+        } else {
+            addCommentObject.setType(crmType);
+            addCommentObject.setCommentId(crmCloudPrId);
+            addCommentObject.setReply(userComment);
+            addCommentObject.setEvmRecordIndexId(evmRecordIndexId);
+            addCommentObject.setStatus(commentStatusReceived + "");
+        }
         if (Utils.isNetworkAvailable(context)) {
-            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    addCommentObject, null, WsResponseObject.class, WsConstants
-                    .REQ_ADD_EVENT_COMMENT, "Sending comments..", true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
+            if (crmType.equalsIgnoreCase("Rating")) {
+                new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                        addCommentObject, null, WsResponseObject.class, WsConstants
+                        .REQ_PROFILE_RATING, "Sending comments..", true).execute
+                        (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
+            } else {
+                new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                        addCommentObject, null, WsResponseObject.class, WsConstants
+                        .REQ_ADD_EVENT_COMMENT, "Sending comments..", true).execute
+                        (WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
+            }
         } else {
             //show no toast
             Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
