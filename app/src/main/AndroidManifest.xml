@@ -59,7 +59,7 @@
         <!--              The API key for  Google Maps-based APIs. -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key"/>
+            android:value="@string/google_maps_key" />
 
 
         <activity android:name=".MobileNumberRegistrationActivity" />
@@ -116,18 +116,17 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".timeline.TimelineActivity" />
-        <activity android:name=".events.EventsActivity" />
+        <activity android:name=".notifications.TimelineActivity" />
+        <activity android:name=".notifications.EventsActivity" />
         <activity android:name=".notifications.NotificationsActivity" />
         <activity android:name=".notifications.NotificationsDetailActivity" />
 
         <activity
             android:name=".contacts.EditProfileActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".contacts.MapsActivity">
-        </activity>
+        <activity android:name=".contacts.MapsActivity" />
         <activity android:name=".calllog.CallLogDeleteActivity" />
-        <activity android:name=".calllog.CallHistoryDetailsActivity"></activity>
+        <activity android:name=".calllog.CallHistoryDetailsActivity" />
     </application>
 
 </manifest>

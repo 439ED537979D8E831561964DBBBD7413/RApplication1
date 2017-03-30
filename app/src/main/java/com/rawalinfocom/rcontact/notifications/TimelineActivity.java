@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.timeline;
+package com.rawalinfocom.rcontact.notifications;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -22,7 +23,6 @@ import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
-import com.rawalinfocom.rcontact.events.MyLayoutManager;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
@@ -30,9 +30,12 @@ import com.rawalinfocom.rcontact.model.Comment;
 import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.EventComment;
 import com.rawalinfocom.rcontact.model.EventCommentData;
+import com.rawalinfocom.rcontact.model.Rating;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.notifications.adapters.TimelineAdapter;
+import com.rawalinfocom.rcontact.notifications.model.TimelineItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -231,7 +234,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
 
 
         recyclerViewToday.setAdapter(todayTimelineAdapter);
-        recyclerViewToday.setLayoutManager(new MyLayoutManager(this, recyclerViewToday, height));
+        recyclerViewToday.setLayoutManager(new CustomLayoutManager(this, recyclerViewToday, height));
         RecyclerView.Adapter adapter = recyclerViewToday.getAdapter();
         int itemCount = adapter.getItemCount();
         if (itemCount > maxItemCount) {
@@ -239,7 +242,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
         }
 
         recyclerViewYesterday.setAdapter(yesterdayTimelineAdapter);
-        recyclerViewYesterday.setLayoutManager(new MyLayoutManager(this, recyclerViewYesterday, height));
+        recyclerViewYesterday.setLayoutManager(new CustomLayoutManager(this, recyclerViewYesterday, height));
         adapter = recyclerViewYesterday.getAdapter();
         itemCount = adapter.getItemCount();
         if (itemCount > maxItemCount) {
@@ -247,7 +250,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
         }
 
         recyclerViewPast5day.setAdapter(past5daysTimelineAdapter);
-        recyclerViewPast5day.setLayoutManager(new MyLayoutManager(this, recyclerViewPast5day, height));
+        recyclerViewPast5day.setLayoutManager(new CustomLayoutManager(this, recyclerViewPast5day, height));
         adapter = recyclerViewPast5day.getAdapter();
         itemCount = adapter.getItemCount();
         if (itemCount > maxItemCount) {
@@ -271,6 +274,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
             item.setWisherCommentTime(comment.getCrmCreatedAt());
             item.setCrmCloudPrId(comment.getCrmCloudPrId());
             item.setCrmType(comment.getCrmType());
+            item.setCrmRating(comment.getCrmRating());
             item.setEvmRecordIndexId(Integer.parseInt(comment.getEvmRecordIndexId()));
             item.setUserComment(comment.getCrmReply());
             item.setUserCommentTime(comment.getCrmRepliedAt());
@@ -323,7 +327,41 @@ public class TimelineActivity extends BaseActivity implements RippleView
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
         if (error == null) {
-            if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_EVENT_COMMENT)) {
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_RATING)) {
+
+                {
+                    WsResponseObject wsResponseObject = (WsResponseObject) data;
+                    Rating rating = wsResponseObject.getProfileRating();
+
+                    int updated = tableCommentMaster.addReply(rating.getPrId() + "", rating.getPrReply(), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
+                    if (updated != 0) {
+                        if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
+                            switch (selectedRecycler) {
+                                case 0:
+                                    listTimelineToday.get(selectedRecyclerItem).setUserComment(rating.getPrReply());
+                                    listTimelineToday.get(selectedRecyclerItem).setUserCommentTime(Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
+                                    todayTimelineAdapter.notifyDataSetChanged();
+                                    break;
+                                case 1:
+                                    listTimelineYesterday.get(selectedRecyclerItem).setUserComment(rating.getPrReply());
+                                    listTimelineYesterday.get(selectedRecyclerItem).setUserCommentTime(Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
+                                    yesterdayTimelineAdapter.notifyDataSetChanged();
+                                    break;
+                                case 2:
+                                    listTimelinePastDay.get(selectedRecyclerItem).setUserComment(rating.getPrReply());
+                                    listTimelinePastDay.get(selectedRecyclerItem).setUserCommentTime(Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
+                                    past5daysTimelineAdapter.notifyDataSetChanged();
+                                    break;
+                            }
+                            selectedRecycler = -1;
+                            selectedRecyclerItem = -1;
+                        }
+                        Utils.hideProgressDialog();
+                    }
+
+
+                }
+            } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_EVENT_COMMENT)) {
 
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
                 ArrayList<EventCommentData> eventReceiveCommentData = wsResponseObject.getEventReceiveCommentData();
@@ -334,7 +372,8 @@ public class TimelineActivity extends BaseActivity implements RippleView
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
                 EventComment eventComment = wsResponseObject.getEventComment();
 
-                int updated = tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(), eventComment.getReplyAt(), eventComment.getUpdatedDate());
+                int updated = tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
+                        Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
                 if (updated != 0) {
                     if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
                         switch (selectedRecycler) {
@@ -375,6 +414,8 @@ public class TimelineActivity extends BaseActivity implements RippleView
             ArrayList<EventComment> allBirthdayComments = eventCommentData.getBirthday();
             ArrayList<EventComment> allAnniversaryComments = eventCommentData.getAnniversary();
             ArrayList<EventComment> allCustomEventsComments = eventCommentData.getCustom();
+            ArrayList<EventComment> allRatingComments = eventCommentData.getRating();
+            Log.i("MAULIK", "rating:::" + allRatingComments.size());
             if (allBirthdayComments != null) {
                 for (EventComment eventComment : allBirthdayComments) {
                     Comment comment = createComment(eventComment, "Birthday");
@@ -393,6 +434,12 @@ public class TimelineActivity extends BaseActivity implements RippleView
                     tableCommentMaster.addComment(comment);
                 }
             }
+            if (allRatingComments != null) {
+                for (EventComment eventComment : allRatingComments) {
+                    Comment comment = createComment(eventComment, "Rating");
+                    tableCommentMaster.addComment(comment);
+                }
+            }
         }
     }
 
@@ -401,7 +448,12 @@ public class TimelineActivity extends BaseActivity implements RippleView
         comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
         comment.setCrmRating("");
         comment.setCrmType(commentType);
-        comment.setCrmCloudPrId(eventComment.getId());
+        if (commentType.equalsIgnoreCase("Rating")) {
+            comment.setCrmCloudPrId(eventComment.getPrId());
+            comment.setCrmRating(eventComment.getRatingStars());
+        } else {
+            comment.setCrmCloudPrId(eventComment.getId());
+        }
         comment.setRcProfileMasterPmId(eventComment.getFromPmId());
         comment.setCrmComment(eventComment.getComment());
         comment.setCrmReply(eventComment.getReply());

@@ -20,6 +20,18 @@ package com.rawalinfocom.rcontact.model;
     "created_date": "2017-03-23 10:31:04",
     "updated_date": "2017-03-23 10:31:04"
   }
+        "rating": [
+        {
+          "id": "14907701149044",
+          "pr_id": "8",
+          "from_pm_id": 17,
+          "rating_stars": "1.0",
+          "comment": "please update ur profile",
+          "reply": "",
+          "reply_at": "",
+          "created_date": "2017-03-29 06:48:34",
+          "updated_date": "2017-03-29 06:48:34"
+        }
 }*/
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -50,8 +62,14 @@ public class EventComment {
     @JsonProperty("comment")
     private String comment;
 
+    @JsonProperty("rating_stars")
+    private String ratingStars;
+
     @JsonProperty("id")
     private String id;
+
+    @JsonProperty("pr_id")
+    private String prId;
 
     @JsonProperty("created_date")
     private String createdDate;
@@ -64,6 +82,22 @@ public class EventComment {
 
     @JsonProperty("status")
     private String status;
+
+    public String getRatingStars() {
+        return ratingStars;
+    }
+
+    public void setRatingStars(String ratingStars) {
+        this.ratingStars = ratingStars;
+    }
+
+    public String getPrId() {
+        return prId;
+    }
+
+    public void setPrId(String prId) {
+        this.prId = prId;
+    }
 
     public String getDate() {
         return date;

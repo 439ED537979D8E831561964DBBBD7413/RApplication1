@@ -127,7 +127,7 @@ public class WsRequestObject {
     private String prComment;
     private String prRatingStars;
     private String prStatus;
-    private String prToPmId;
+    private int prToPmId;
 
     private int sendProfileType;
     private int pmIdWhose;
@@ -151,6 +151,28 @@ public class WsRequestObject {
     private ArrayList<ProfileVisit> arrayListProfileVisit;
 
     private ArrayList<ProfileDataOperation> profileEdit;
+
+    @JsonProperty("pr_reply")
+    private String prReply;
+
+    @JsonProperty("pr_id")
+    private String prId;
+
+    public String getPrReply() {
+        return prReply;
+    }
+
+    public void setPrReply(String prReply) {
+        this.prReply = prReply;
+    }
+
+    public String getPrId() {
+        return prId;
+    }
+
+    public void setPrId(String prId) {
+        this.prId = prId;
+    }
 
     @JsonProperty("submit_rating")
     private ArrayList<Rating> ratings;
@@ -355,11 +377,11 @@ public class WsRequestObject {
     }
 
     @JsonProperty("pr_to_pm_id")
-    public String getPrToPmId() {
+    public int getPrToPmId() {
         return prToPmId;
     }
 
-    public void setPrToPmId(String prToPmId) {
+    public void setPrToPmId(int prToPmId) {
         this.prToPmId = prToPmId;
     }
 

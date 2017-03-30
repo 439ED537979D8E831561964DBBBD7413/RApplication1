@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.notifications;
+package com.rawalinfocom.rcontact.notifications.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.timeline.TimelineActivity;
+import com.rawalinfocom.rcontact.notifications.model.NotificationItem;
+import com.rawalinfocom.rcontact.notifications.NotificationsDetailActivity;
+import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 
 import java.util.List;
 
