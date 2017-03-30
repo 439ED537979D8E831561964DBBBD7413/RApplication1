@@ -707,8 +707,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         comment.setCrmType(TableCommentMaster.COMMENT_TYPE_RATING);
                         comment.setCrmCloudPrId(String.valueOf(responseRating.getPrId()));
                         comment.setCrmComment(responseRating.getPrComment());
-                        comment.setCrmCreatedAt(responseRating.getCreatedAt());
-                        comment.setCrmUpdatedAt(responseRating.getCreatedAt());
+                        comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(responseRating.getCreatedAt()));
+                        comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(responseRating.getCreatedAt()));
 
                         TableCommentMaster tableCommentMaster = new TableCommentMaster
                                 (databaseHandler);

@@ -1,20 +1,19 @@
-package com.rawalinfocom.rcontact.events;
+package com.rawalinfocom.rcontact.notifications;
 
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.ViewGroup;
 
 /**
  * Created by maulik on 11/03/17.
  */
 
-public class MyLayoutManager extends LinearLayoutManager {
+public class CustomLayoutManager extends LinearLayoutManager {
     private RecyclerView recyclerView;
     private int height;
 
-    public MyLayoutManager(Context context, RecyclerView recyclerView, int height) {
+    public CustomLayoutManager(Context context, RecyclerView recyclerView, int height) {
         super(context);
         this.recyclerView = recyclerView;
         this.height = height;

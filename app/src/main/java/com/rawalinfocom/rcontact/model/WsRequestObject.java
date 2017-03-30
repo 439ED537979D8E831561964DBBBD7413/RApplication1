@@ -152,6 +152,28 @@ public class WsRequestObject {
 
     private ArrayList<ProfileDataOperation> profileEdit;
 
+    @JsonProperty("pr_reply")
+    private String prReply;
+
+    @JsonProperty("pr_id")
+    private String prId;
+
+    public String getPrReply() {
+        return prReply;
+    }
+
+    public void setPrReply(String prReply) {
+        this.prReply = prReply;
+    }
+
+    public String getPrId() {
+        return prId;
+    }
+
+    public void setPrId(String prId) {
+        this.prId = prId;
+    }
+
     @JsonProperty("submit_rating")
     private ArrayList<Rating> ratings;
 
