@@ -127,6 +127,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private boolean isReload = false;
     RContactApplication rContactApplication;
 
+    boolean isFromSettings = false;
+
     //<editor-fold desc="Constructors">
 
     public AllContactsFragment() {
@@ -203,10 +205,13 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @Override
     public void onResume() {
         super.onResume();
-        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
-                .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            if (!isReload) {
-                init();
+        if (isFromSettings) {
+            isFromSettings = false;
+            if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
+                    .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                if (!isReload) {
+                    init();
+                }
             }
         }
     }
@@ -970,6 +975,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     case R.id.rippleRight:
                         permissionConfirmationDialog.dismissDialog();
+                        isFromSettings = true;
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                                 Uri.fromParts("package", getActivity().getPackageName(), null));
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

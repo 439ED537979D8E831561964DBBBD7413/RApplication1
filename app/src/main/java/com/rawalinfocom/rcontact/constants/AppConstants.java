@@ -15,6 +15,7 @@ public class AppConstants {
     public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1003;
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1004;
     public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1005;
+    public static final int MY_PERMISSIONS_REQUEST_CAMERA = 1006;
     //</editor-fold>
 
     //<editor-fold desc="Profile Detail Section">
