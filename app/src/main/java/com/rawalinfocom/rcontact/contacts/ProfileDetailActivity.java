@@ -2050,8 +2050,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     logObject.setHistoryNumberType(numberTypeLog);
                     callDetails.add(logObject);
                 }
+                cursor.close();
             }
-            cursor.close();
+
 
 
         } catch (SecurityException e) {
