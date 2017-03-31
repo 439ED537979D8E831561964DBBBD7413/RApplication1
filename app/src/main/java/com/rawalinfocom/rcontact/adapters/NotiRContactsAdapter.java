@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.NotiRContactsItem;
 
 import java.util.List;
@@ -58,7 +59,7 @@ public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdap
     public void onBindViewHolder(MyViewHolder holder, int position) {
         NotiRContactsItem item = list.get(position);
         holder.textTitle.setText(item.getNotiTitle());
-        holder.textNotiTime.setText(item.getNotiTime());
+        holder.textNotiTime.setText(Utils.formatDateTime(item.getNotiTime(),"dd MMM, hh:mm a"));
         holder.textDetailInfo.setText(item.getNotiDetails());
 
     }

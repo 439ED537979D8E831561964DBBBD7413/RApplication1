@@ -9,11 +9,14 @@ public class NotiRContactsItem {
     private String notiTitle;
     private String notiTime;
     private String notiDetails;
+    private String notiId;
 
-    public NotiRContactsItem(String notiTitle, String notiDetails, String notiTime) {
-        this.notiTitle = notiTitle;
-        this.notiTime = notiTime;
-        this.notiDetails = notiDetails;
+    public String getNotiId() {
+        return notiId;
+    }
+
+    public void setNotiId(String notiId) {
+        this.notiId = notiId;
     }
 
     public String getNotiTitle() {
@@ -26,5 +29,17 @@ public class NotiRContactsItem {
 
     public String getNotiDetails() {
         return notiDetails;
+    }
+
+    public void setNotiTitle(String notiTitle) {
+        this.notiTitle = notiTitle;
+    }
+
+    public void setNotiTime(String notiTime) {
+        this.notiTime = notiTime;
+    }
+
+    public void setNotiDetails(String notiDetails) {
+        this.notiDetails = notiDetails;
     }
 }
