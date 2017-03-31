@@ -2,8 +2,11 @@ package com.rawalinfocom.rcontact.calllog;
 
 import android.annotation.TargetApi;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
@@ -12,6 +15,7 @@ import android.os.Bundle;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -295,6 +299,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     protected void onResume() {
         super.onResume();
 
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
+        localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
+
         if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
             fetchAllCallLogHistory(contactName);
         } else {
@@ -303,6 +311,25 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             }
         }
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
+    }
+
+    private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("Profile Activity ", "onReceive() of LocalBroadcast");
+
+            arrayListHistory.clear();
+            recyclerCallHistory.setVisibility(View.GONE);
+            setHistoryAdapter();
+
+        }
+    };
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
@@ -489,7 +516,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             case R.id.ripple_action_right_right:
 
                 ProfileMenuOptionDialog profileMenuOptionDialog;
-                boolean isFromCallLogTab = true;
+                boolean isFromCallLogTab = false;
                 String blockedNumber ="";
                 ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
                 HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
@@ -576,7 +603,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
+//    @TargetApi(Build.VERSION_CODES.M)
     private ArrayList<CallLogType> getNumbersFromName(String number) {
         Cursor cursor = null;
         ArrayList<CallLogType> listNumber = new ArrayList<>();
@@ -1782,4 +1809,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         }
         return "Other";
     }
+
+
 }

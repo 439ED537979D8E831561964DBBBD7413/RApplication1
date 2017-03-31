@@ -351,7 +351,7 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
         return cursor;
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
+//    @TargetApi(Build.VERSION_CODES.M)
     private ArrayList<CallLogType> getNumbersFromName(String number) {
         Cursor cursor = null;
         ArrayList<CallLogType> listNumber = new ArrayList<>();

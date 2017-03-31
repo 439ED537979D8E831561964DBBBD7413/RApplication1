@@ -256,6 +256,31 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     }
                 }, 1500);
             }
+
+            makeBlockedNumberList();
+            ArrayList<String> listOfBlockedNumbers = Utils.getArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST);
+            if (listOfBlockedNumbers != null && listOfBlockedNumbers.size() > 0) {
+                loadsCallLogsInBackgroundAsyncTask = new LoadsCallLogsInBackground();
+                loadsCallLogsInBackgroundAsyncTask.execute();
+
+            }else{
+                if(arrayListObjectCallLogs != null && arrayListObjectCallLogs.size() > 0 ){
+                    for (int k = 0; k < arrayListObjectCallLogs.size(); k++) {
+                        if (arrayListObjectCallLogs.get(k) instanceof CallLogType) {
+                            CallLogType tempCallLogType = (CallLogType) arrayListObjectCallLogs.get(k);
+                            if ((((CallLogType) arrayListObjectCallLogs.get(k)).getBlockedType()== AppConstants.BLOCKED)) {
+                                int itemPosition = arrayListObjectCallLogs.indexOf(tempCallLogType);
+                                if (itemPosition != -1) {
+                                    tempCallLogType.setBlockedType(AppConstants.UNBLOCK);
+                                    arrayListObjectCallLogs.set(itemPosition, tempCallLogType);
+                                    callLogListAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -448,6 +473,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     }
                     Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST, listOfBlockedNumber);
                 }
+            }else{
+                Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST, new ArrayList());
             }
 
         }
@@ -1376,7 +1403,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         return callDetails;
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
+//    @TargetApi(Build.VERSION_CODES.M)
     private ArrayList<CallLogType> getNumbersFromName(String number) {
         Cursor cursor = null;
         ArrayList<CallLogType> listNumber = new ArrayList<>();

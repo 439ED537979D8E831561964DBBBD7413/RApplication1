@@ -258,7 +258,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     }
 
 
-    @TargetApi(Build.VERSION_CODES.M)
+//    @TargetApi(Build.VERSION_CODES.M)
     private ArrayList<CallLogType> getNumbersFromName(String number) {
         Cursor cursor = null;
         ArrayList<CallLogType> listNumber = new ArrayList<>();
@@ -414,6 +414,10 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 
+                Intent localBroadcastIntent2 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
+                LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager2.sendBroadcast(localBroadcastIntent2);
+
             }
 
         }catch (SecurityException e){
@@ -441,6 +445,11 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS,true);
                 LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
+
+                Intent localBroadcastIntent2 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
+                LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager2.sendBroadcast(localBroadcastIntent2);
+
 
             }
 

@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.provider.Telephony;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -177,21 +178,50 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             }
 
             if(!TextUtils.isEmpty(blockedNumber)){
-                Telephony telephonyService;
-                try{
-                    TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-                    Method m1 = tm.getClass().getDeclaredMethod("getITelephony");
-                    m1.setAccessible(true);
-                    Object iTelephony = m1.invoke(tm);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Telephony telephonyService;
+                    try{
+                        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+                        Method m1 = tm.getClass().getDeclaredMethod("getITelephony");
+                        m1.setAccessible(true);
+                        Object iTelephony = m1.invoke(tm);
 
-                    Method m2 = iTelephony.getClass().getDeclaredMethod("silenceRinger");
-                    Method m3 = iTelephony.getClass().getDeclaredMethod("endCall");
+                        Method m2 = iTelephony.getClass().getDeclaredMethod("silenceRinger");
+                        Method m3 = iTelephony.getClass().getDeclaredMethod("endCall");
 
-                    m2.invoke(iTelephony);
-                    m3.invoke(iTelephony);
+                        m2.invoke(iTelephony);
+                        m3.invoke(iTelephony);
 
-                }catch (Exception e){
-                    e.printStackTrace();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }else{
+                    try{
+
+                        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+
+                        // Get the getITelephony() method
+                        Class classTelephony = Class.forName(telephonyManager.getClass().getName());
+                        Method methodGetITelephony = classTelephony.getDeclaredMethod("getITelephony");
+
+                        // Ignore that the method is supposed to be private
+                        methodGetITelephony.setAccessible(true);
+
+                        // Invoke getITelephony() to get the ITelephony interface
+                        Object telephonyInterface = methodGetITelephony.invoke(telephonyManager);
+
+                        // Get the endCall method from ITelephony
+                        Class telephonyInterfaceClass = Class.forName(telephonyInterface.getClass().getName());
+                        Method methodEndCall = telephonyInterfaceClass.getDeclaredMethod("endCall");
+
+                        // Invoke endCall()
+                        methodEndCall.invoke(telephonyInterface);
+
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
 
             }

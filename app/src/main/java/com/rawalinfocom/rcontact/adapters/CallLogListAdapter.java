@@ -261,9 +261,9 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         int blockedType = callLogType.getBlockedType();
 
-        if(blockedType>0){
+        if (blockedType > 0) {
             holder.imageCallType.setImageResource(R.drawable.ic_block);
-        }else{
+        } else {
 
             int callType = callLogType.getType();
             if (callType > 0) {
@@ -400,7 +400,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                     context.getString(R.string.call_reminder), context.getString(R.string.block)));
                         }
 
-                        materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date, name, "","");
+                        materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date, name, "", "");
                         materialListDialog.setDialogTitle(name);
                         materialListDialog.showDialog();
 
@@ -438,6 +438,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     key = callLogType.getUniqueContactId();
                 }
 
+
                 if (date == 0) {
                     selectedLogDate = dateFromReceiver;
                 } else {
@@ -455,7 +456,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
                 }
                 intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, key);
-                intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID,uniqueRowID);
+                intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueRowID);
                 context.startActivity(intent);
                 ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
             }
