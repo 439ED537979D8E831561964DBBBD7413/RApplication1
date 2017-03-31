@@ -30,12 +30,33 @@
 
     </group>
 
+
+   <!-- <group android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/ic_menu_settings"
+            android:title="Settings" />
+        <menu>
+            <group>
+                <item
+                    android:id="@+id/nav_blocked_contacts"
+                    android:title="Block Contact List"
+                    android:icon="@drawable/ic_menu_Block"></item>
+            </group>
+        </menu>
+    </group>-->
+
     <group>
 
         <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_menu_settings"
             android:title="Settings" />
+        <item
+            android:id="@+id/nav_blocked_contacts"
+            android:title="Block Contact List"
+            android:icon="@drawable/ic_block"></item>
+
         <item
             android:id="@+id/nav_rate"
             android:icon="@drawable/ic_menu_rate"

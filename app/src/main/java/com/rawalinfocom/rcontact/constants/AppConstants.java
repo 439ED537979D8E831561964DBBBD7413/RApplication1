@@ -86,6 +86,8 @@ public class AppConstants {
     public static boolean EXTRA_CALL_LOG_DELETED_VALUE = true;
     public static String EXTRA_CALL_LOG_SWITCH_TAB = "message";
     public static boolean EXTRA_CALL_LOG_SWITCH_TAB_VALUE = true;
+    public static String EXTRA_CALL_LOG_BLOCK = "message";
+    public static boolean EXTRA_CALL_LOG_BLOCK_VALUE = true;
     public static String EXTRA_CALL_ARRAY_LIST = "extra_call_array_list";
     public static String EXTRA_DELETE_ALL_CALL_LOGS = "extra_delete_all_call_logs";
     public static String EXTRA_REMOVE_CALL_LOGS = "extra_remove_call_logs";
@@ -93,6 +95,9 @@ public class AppConstants {
     public static String EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS = "extra_clear_call_logs_from_contacts";
     public static String EXTRA_OBJECT_LOCATION = "extra_object_location";
     public static String EXTRA_OBJECT_ADDRESS = "extra_object_address";
+    public static String EXTRA_CALL_UNIQUE_ID = "extra_call_unique_id";
+    public static String EXTRA_UNIQUE_CONTACT_ID = "extra_unique_contact_id";
+
 
 
     //</editor-fold>
@@ -107,6 +112,10 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_PROFILE = "action_local_broadcast_profile";
     public static String ACTION_LOCAL_BROADCAST_DELETE_LOGS = "action_local_broadcast_delete_logs";
     public static String ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS = "action_local_broadcast_remove_call_logs";
+    public static String ACTION_LOCAL_BROADCAST_PROFILE_BLOCK= "action_local_broadcast_profile_block";
+    public static String ACTION_LOCAL_BROADCAST_UNBLOCK = "action_local_broadcast_unblock";
+    public static String ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY = "action_local_broadcast_call_history_activity";
+
 
 
     //</editor-fold>
@@ -141,6 +150,9 @@ public class AppConstants {
     public static String PREF_SYNC_CALL_LOG = "pref_sync_call_log";
     public static String PREF_CALL_LOG_SIZE_WITH_DIFF = "pref_call_log_size_with_diff";
     public static String PREF_CALL_LOG_SYNCED = "pref_call_log_synced";
+    public static String PREF_BLOCK_CONTACT_LIST= "pref_block_contact_list";
+    public static String PREF_BLOCK_PROFILE = "pref_block_profile";
+    public static String PREF_CALL_LOG_LIST = "pref_call_log_list";
 
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
@@ -184,6 +196,9 @@ public class AppConstants {
     public static final int INCOMING = 1;
     public static final int OUTGOING = 2;
     public static final int MISSED = 3;
+    public static final int BLOCKED =  4;
+    public static final int UNBLOCK =  0;
+
     //</editor-fold>
 
     //<editor-fold desc="Event constants">
