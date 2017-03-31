@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.contacts;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -12,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -36,7 +38,6 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -58,6 +59,7 @@ import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
@@ -221,6 +223,10 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     private File mFileTemp;
     private Uri fileUri;
 
+    boolean isStorageFromSettings = false, isCameraFromSettings = false;
+
+    MaterialDialog permissionConfirmationDialog;
+
     ArrayList<ProfileDataOperation> arrayListProfile;
 //    ArrayList<ProfileDataOperation> arrayListMergedProfile;
 
@@ -236,6 +242,25 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 //        userOldProfile = new ProfileDataOperation();
         arrayListProfile = new ArrayList<>();
         init();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isStorageFromSettings) {
+            isStorageFromSettings = false;
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+                    .WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                showChooseImageIntent();
+            }
+        }
+        if (isCameraFromSettings) {
+            isCameraFromSettings = false;
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+                    .WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                selectImageFromCamera();
+            }
+        }
     }
 
     @Override
@@ -517,7 +542,24 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     showChooseImageIntent();
 
                 } else {
-                    Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
+                    showPermissionConfirmationDialog("Storage permission is required for " +
+                            "uploading profile image. Do you want to try again?", true);
+                }
+            }
+            break;
+
+            case AppConstants.MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
+
+                    selectImageFromCamera();
+
+                } else {
+//                    Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
+                    showPermissionConfirmationDialog("Camera permission is required for taking " +
+                            "photo. Do you want to try again?", false);
                 }
             }
             break;
@@ -1348,7 +1390,16 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                selectImageFromCamera();
+                if (ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest
+                        .permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(EditProfileActivity.this, new
+                            String[]{Manifest.permission.CAMERA}, AppConstants
+                            .MY_PERMISSIONS_REQUEST_CAMERA);
+
+                } else {
+                    selectImageFromCamera();
+                }
             }
         });
 
@@ -2399,6 +2450,44 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             tableEventMaster.addArrayEvent(eventList);
         }
         //</editor-fold>
+
+    }
+
+    private void showPermissionConfirmationDialog(String message, final boolean isStorage) {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        permissionConfirmationDialog.dismissDialog();
+                        break;
+
+                    case R.id.rippleRight:
+                        permissionConfirmationDialog.dismissDialog();
+                        if (isStorage) {
+                            isStorageFromSettings = true;
+                        } else {
+                            isCameraFromSettings = true;
+                        }
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", getPackageName(), null));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        permissionConfirmationDialog = new MaterialDialog(this, cancelListener);
+        permissionConfirmationDialog.setTitleVisibility(View.GONE);
+        permissionConfirmationDialog.setLeftButtonText("Cancel");
+        permissionConfirmationDialog.setRightButtonText("OK");
+        permissionConfirmationDialog.setDialogBody(message);
+
+        permissionConfirmationDialog.showDialog();
 
     }
 

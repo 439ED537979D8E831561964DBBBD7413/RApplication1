@@ -193,12 +193,10 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         gpsTracker = new GPSTracker(this, null);
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
-                .ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
+                .ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission
                     .ACCESS_FINE_LOCATION}, AppConstants
                     .MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-
         } else {
             if (Utils.isLocationEnabled(this)) {
                /* latitude = gpsTracker.getLatitude();
