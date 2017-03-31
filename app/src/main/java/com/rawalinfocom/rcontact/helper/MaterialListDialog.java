@@ -36,8 +36,11 @@ public class MaterialListDialog {
     String numberToCall;
     RecyclerView.Adapter callingAdapter;
     long callLogDateToDelete;
-
-    public MaterialListDialog(Context context, ArrayList<String> arrayList, String number,long date) {
+    String contactName;
+    String uniqueRowId;
+    String key;
+    public MaterialListDialog(Context context, ArrayList<String> arrayList, String number,long date,String name,
+                              String uniqueRowId, String key) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -61,6 +64,10 @@ public class MaterialListDialog {
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
 
+        contactName = name;
+        this.uniqueRowId =  uniqueRowId;
+        this.key = key;
+
         setAdapter();
 
         LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(context);
@@ -73,7 +80,7 @@ public class MaterialListDialog {
     private void setAdapter() {
         if(!TextUtils.isEmpty(numberToCall)){
             CallLogDialogListAdapter materialListAdapter = new CallLogDialogListAdapter(context, stringArrayList, numberToCall,
-                    callLogDateToDelete);
+                    callLogDateToDelete,contactName,uniqueRowId, key);
             recycleViewDialog.setAdapter(materialListAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
         }

@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,6 +25,7 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -34,11 +36,15 @@ import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.CallLogType;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -203,6 +209,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         final CallLogType callLogType = (CallLogType) arrayListCallLogs.get(position);
         final String name = callLogType.getName();
         final String number = callLogType.getNumber();
+        final String uniqueRowID = callLogType.getUniqueContactId();
+
         if (!TextUtils.isEmpty(number)) {
             holder.textTempNumber.setText(number);
         }
@@ -235,10 +243,11 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
         final long date = callLogType.getDate();
-        Date dateFromReceiver1 =  callLogType.getCallReceiverDate();
-        if(dateFromReceiver1 != null){
-            dateFromReceiver =  dateFromReceiver1.getTime();
+        Date dateFromReceiver1 = callLogType.getCallReceiverDate();
+        if (dateFromReceiver1 != null) {
+            dateFromReceiver = dateFromReceiver1.getTime();
         }
+
         if (date > 0) {
             Date date1 = new Date(date);
             String logDate = new SimpleDateFormat("hh:mm a").format(date1);
@@ -248,21 +257,30 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             String callReceiverDate = new SimpleDateFormat("hh:mm a").format(callDate);
             holder.textContactDate.setText(callReceiverDate);
         }
-        int callType = callLogType.getType();
-        if (callType > 0) {
-            switch (callType) {
-                case AppConstants.INCOMING:
-                    holder.imageCallType.setImageResource(R.drawable.ic_call_incoming);
-                    break;
-                case AppConstants.OUTGOING:
-                    holder.imageCallType.setImageResource(R.drawable.ic_call_outgoing);
-                    break;
-                case AppConstants.MISSED:
-                    holder.imageCallType.setImageResource(R.drawable.ic_call_missed);
-                    break;
-                default:
-                    break;
 
+
+        int blockedType = callLogType.getBlockedType();
+
+        if (blockedType > 0) {
+            holder.imageCallType.setImageResource(R.drawable.ic_block);
+        } else {
+
+            int callType = callLogType.getType();
+            if (callType > 0) {
+                switch (callType) {
+                    case AppConstants.INCOMING:
+                        holder.imageCallType.setImageResource(R.drawable.ic_call_incoming);
+                        break;
+                    case AppConstants.OUTGOING:
+                        holder.imageCallType.setImageResource(R.drawable.ic_call_outgoing);
+                        break;
+                    case AppConstants.MISSED:
+                        holder.imageCallType.setImageResource(R.drawable.ic_call_missed);
+                        break;
+                    default:
+                        break;
+
+                }
             }
         }
 
@@ -304,38 +322,105 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             public void onClick(View v) {
 
                 selectedPosition = position;
+                selectedCallLogData = callLogType;
+                String blockedNumber = "";
+                String key = "";
+                key = callLogType.getLocalPbRowId();
+                if (key.equalsIgnoreCase(" ")) {
+                    key = callLogType.getUniqueContactId();
+                }
 
-                if (!TextUtils.isEmpty(name)) {
-                    Pattern numberPat = Pattern.compile("\\d+");
-                    Matcher matcher1 = numberPat.matcher(name);
-                    if (matcher1.find()) {
-                        arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.add_to_contact),
-                                context.getString(R.string.add_to_existing_contact)
-                                , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
-                                context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.block)));
-                    } else {
-                        arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.send_sms),
-                                context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number),
-                                context.getString(R.string.call_reminder), context.getString(R.string.block)));
-                    }
+                ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+                HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
+                        Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
 
-                    materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date);
-                    materialListDialog.setDialogTitle(name);
-                    materialListDialog.showDialog();
+                if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+                    if (blockProfileHashMapList.containsKey(key))
+                        callLogTypeList.addAll(blockProfileHashMapList.get(key));
 
-                } else {
-                    if (!TextUtils.isEmpty(number)) {
-                        String formatedNumber = Utils.getFormattedNumber(context, number);
-                        arrayListForUnknownContact = new ArrayList<>(Arrays.asList("Call " + formatedNumber, context.getString(R.string.add_to_contact),
-                                context.getString(R.string.add_to_existing_contact)
-                                , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
-                                context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.block)));
-                        materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number, date);
-                        materialListDialog.setDialogTitle(number);
-                        materialListDialog.setCallingAdapter(CallLogListAdapter.this);
-                        materialListDialog.showDialog();
+                }
+                if (callLogTypeList != null) {
+                    for (int j = 0; j < callLogTypeList.size(); j++) {
+                        Log.i("value", callLogTypeList.get(j) + "");
+                        String tempNumber = callLogTypeList.get(j).getNumber();
+                        if (tempNumber.equalsIgnoreCase(number)) {
+                            blockedNumber = tempNumber;
+                        }
                     }
                 }
+
+                if (!TextUtils.isEmpty(blockedNumber)) {
+                    if (!TextUtils.isEmpty(name)) {
+                        Pattern numberPat = Pattern.compile("\\d+");
+                        Matcher matcher1 = numberPat.matcher(name);
+                        if (matcher1.find()) {
+                            arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.add_to_contact),
+                                    context.getString(R.string.add_to_existing_contact)
+                                    , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
+                                    context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.unblock)));
+                        } else {
+                            arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.send_sms),
+                                    context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number),
+                                    context.getString(R.string.call_reminder), context.getString(R.string.unblock)));
+                        }
+
+                        materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date, name, "",
+                                key);
+                        materialListDialog.setDialogTitle(name);
+                        materialListDialog.showDialog();
+
+                    } else {
+                        if (!TextUtils.isEmpty(number)) {
+                            String formatedNumber = Utils.getFormattedNumber(context, number);
+                            arrayListForUnknownContact = new ArrayList<>(Arrays.asList("Call " + formatedNumber, context.getString(R.string.add_to_contact),
+                                    context.getString(R.string.add_to_existing_contact)
+                                    , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
+                                    context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder),
+                                    context.getString(R.string.unblock)));
+
+                            materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number, date, "", uniqueRowID,
+                                    key);
+                            materialListDialog.setDialogTitle(number);
+                            materialListDialog.setCallingAdapter(CallLogListAdapter.this);
+                            materialListDialog.showDialog();
+                        }
+                    }
+                } else {
+                    if (!TextUtils.isEmpty(name)) {
+                        Pattern numberPat = Pattern.compile("\\d+");
+                        Matcher matcher1 = numberPat.matcher(name);
+                        if (matcher1.find()) {
+                            arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.add_to_contact),
+                                    context.getString(R.string.add_to_existing_contact)
+                                    , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
+                                    context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.block)));
+                        } else {
+                            arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.send_sms),
+                                    context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number),
+                                    context.getString(R.string.call_reminder), context.getString(R.string.block)));
+                        }
+
+                        materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date, name, "", "");
+                        materialListDialog.setDialogTitle(name);
+                        materialListDialog.showDialog();
+
+                    } else {
+                        if (!TextUtils.isEmpty(number)) {
+                            String formatedNumber = Utils.getFormattedNumber(context, number);
+                            arrayListForUnknownContact = new ArrayList<>(Arrays.asList("Call " + formatedNumber, context.getString(R.string.add_to_contact),
+                                    context.getString(R.string.add_to_existing_contact)
+                                    , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
+                                    context.getString(R.string.copy_phone_number), context.getString(R.string.call_reminder), context.getString(R.string.block)));
+
+                            materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact, number, date, "", uniqueRowID,
+                                    "");
+                            materialListDialog.setDialogTitle(number);
+                            materialListDialog.setCallingAdapter(CallLogListAdapter.this);
+                            materialListDialog.showDialog();
+                        }
+                    }
+                }
+
             }
         });
 
@@ -346,10 +431,17 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             public void onClick(View v) {
 
                 selectedPosition = position;
-                selectedCallLogData =  callLogType;
-                if(date == 0){
-                    selectedLogDate =  dateFromReceiver;
-                }else{
+                selectedCallLogData = callLogType;
+                String key = "";
+                key = callLogType.getLocalPbRowId();
+                if (key.equalsIgnoreCase(" ")) {
+                    key = callLogType.getUniqueContactId();
+                }
+
+
+                if (date == 0) {
+                    selectedLogDate = dateFromReceiver;
+                } else {
                     selectedLogDate = date;
                 }
                 AppConstants.isFromReceiver = false;
@@ -358,11 +450,13 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, formatedNumber);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
-                if(date == 0 ){
+                if (date == 0) {
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, dateFromReceiver);
-                }else{
+                } else {
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
                 }
+                intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, key);
+                intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueRowID);
                 context.startActivity(intent);
                 ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
             }

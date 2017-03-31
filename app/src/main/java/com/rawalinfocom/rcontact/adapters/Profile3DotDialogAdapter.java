@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.CallLog;
+import android.provider.ContactsContract;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -33,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,15 +54,22 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     long callLogDateToDelete;
     boolean isFromCallLogFragment = false;
     ArrayList<CallLogType> arrayListCallLogType;
+    String dialogName;
+    String uniqueRowId;
+    String key;
 
     public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number, long date,
-                                    boolean isFromCallLogs, ArrayList<CallLogType> list) {
+                                    boolean isFromCallLogs, ArrayList<CallLogType> list, String name, String uniqueRowId,
+                                    String key) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
         this.callLogDateToDelete = date;
         this.isFromCallLogFragment =  isFromCallLogs;
         this.arrayListCallLogType =  list;
+        this.dialogName =  name;
+        this.uniqueRowId =  uniqueRowId;
+        this.key =  key;
     }
 
     @Override
@@ -93,7 +103,110 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.block))) {
 
-                } else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
+                    ArrayList<CallLogType> listToBlock = new ArrayList<CallLogType>();
+                    HashMap<String,ArrayList<CallLogType>> listHashMap =  new HashMap<String, ArrayList<CallLogType>>();
+                    String uniqueContactId = "";
+                    if (!TextUtils.isEmpty(dialogName)) {
+                        listToBlock = getNumbersFromName(dialogName);
+                        Log.i("block list size =", listToBlock.size() + "");
+                        for (int i=0; i<listToBlock.size();i++){
+                            CallLogType callLogType =  listToBlock.get(i);
+                            uniqueContactId = callLogType.getUniqueContactId();
+                        }
+
+                    } else {
+
+                        Log.i("Number to block", numberToCall);
+                        CallLogType callLogType = new CallLogType();
+                        uniqueContactId = uniqueRowId;
+                        callLogType.setUniqueContactId(uniqueContactId);
+                        callLogType.setNumber(numberToCall);
+                        listToBlock.add(callLogType);
+                        Log.i("block list size =", listToBlock.size() + "");
+                    }
+
+                    if (Utils.getHashMapPreferenceForBlock(context, AppConstants
+                            .PREF_BLOCK_CONTACT_LIST) != null) {
+                        listHashMap.putAll(Utils.getHashMapPreferenceForBlock(context, AppConstants
+                                .PREF_BLOCK_CONTACT_LIST));
+                    }
+                    if (listHashMap.containsKey(uniqueContactId)) {
+
+                    } else {
+                        listHashMap.put(uniqueContactId, listToBlock);
+                    }
+                    Utils.setHashMapPreference(context, AppConstants.PREF_BLOCK_CONTACT_LIST,
+                            listHashMap);
+
+                    Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE_BLOCK);
+                    localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_BLOCK,
+                            true);
+                    LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                    myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+                } else if(value.equalsIgnoreCase(context.getString(R.string.unblock))){
+
+                    if (Utils.getHashMapPreferenceForBlock(context, AppConstants
+                            .PREF_BLOCK_CONTACT_LIST) != null) {
+                        HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
+                                Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
+                        ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+                        String blockedNumber = "";
+                        if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+                            if (blockProfileHashMapList.containsKey(key))
+                                callLogTypeList.addAll(blockProfileHashMapList.get(key));
+
+                        }
+                        if (callLogTypeList != null) {
+                            for (int j = 0; j < callLogTypeList.size(); j++) {
+                                String tempNumber = callLogTypeList.get(j).getNumber();
+                                String blockContactName =  callLogTypeList.get(j).getName();
+                                if(!TextUtils.isEmpty(numberToCall)){
+                                    Pattern numberPat = Pattern.compile("\\d+");
+                                    Matcher matcher1 = numberPat.matcher(numberToCall);
+                                    if (matcher1.find()) {
+                                        if (tempNumber.equalsIgnoreCase(numberToCall)) {
+                                            blockedNumber = tempNumber;
+                                        }
+                                    } else {
+                                        if (blockContactName.equalsIgnoreCase(numberToCall)) {
+                                            blockedNumber = blockContactName;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if(!TextUtils.isEmpty(blockedNumber)){
+                            blockProfileHashMapList.remove(key);
+                            Utils.setHashMapPreference(context, AppConstants.PREF_BLOCK_CONTACT_LIST,
+                                    blockProfileHashMapList);
+                        }
+                    }
+
+                    Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE_BLOCK);
+                    localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_BLOCK,
+                            false);
+                    LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                    myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+
+                }else if(value.equalsIgnoreCase(context.getString(R.string.unblock_All))){
+
+                    if (Utils.getHashMapPreferenceForBlock(context, AppConstants
+                            .PREF_BLOCK_CONTACT_LIST) != null) {
+                        HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
+                                Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
+                        if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+                            blockProfileHashMapList.clear();
+                            Utils.setHashMapPreference(context, AppConstants.PREF_BLOCK_CONTACT_LIST,
+                                    blockProfileHashMapList);
+                        }
+                        Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_UNBLOCK);
+                        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+                    }
+                }else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.clear_call_log))) {
 
@@ -142,6 +255,74 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
             }
         });
 
+    }
+
+
+//    @TargetApi(Build.VERSION_CODES.M)
+    private ArrayList<CallLogType> getNumbersFromName(String number) {
+        Cursor cursor = null;
+        ArrayList<CallLogType> listNumber = new ArrayList<>();
+        try {
+            final Uri Person = Uri.withAppendedPath(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI,
+                    Uri.encode(number));
+
+            cursor = context.getContentResolver().query(Person, null,
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " =?", new String[]{number}, null);
+
+            if (cursor != null && cursor.getCount() > 0) {
+                int number1 = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                while (cursor.moveToNext()) {
+                    CallLogType callLogType = new CallLogType();
+                    String profileNumber = cursor.getString(number1);
+                    String formattedNumber = Utils.getFormattedNumber(context, profileNumber);
+                    String uniqueContactId = getStarredStatusFromNumber(profileNumber);
+                    callLogType.setUniqueContactId(uniqueContactId);
+                    callLogType.setName(number);
+                    callLogType.setNumber(formattedNumber);
+                    listNumber.add(callLogType);
+                }
+            }
+            cursor.close();
+
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return listNumber;
+    }
+
+    private String getStarredStatusFromNumber(String phoneNumber) {
+        String numberId = "";
+        try {
+
+            numberId = "";
+            ContentResolver contentResolver = context.getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.LOOKUP_KEY));
+//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return numberId;
     }
 
     private void deleteCallLogByNumber(String number) {
@@ -233,6 +414,10 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 
+                Intent localBroadcastIntent2 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
+                LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager2.sendBroadcast(localBroadcastIntent2);
+
             }
 
         }catch (SecurityException e){
@@ -260,6 +445,11 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS,true);
                 LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
+
+                Intent localBroadcastIntent2 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
+                LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager2.sendBroadcast(localBroadcastIntent2);
+
 
             }
 

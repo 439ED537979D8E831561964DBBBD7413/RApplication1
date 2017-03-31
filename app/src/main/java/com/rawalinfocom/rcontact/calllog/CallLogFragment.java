@@ -62,11 +62,13 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -254,6 +256,31 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     }
                 }, 1500);
             }
+
+            makeBlockedNumberList();
+            ArrayList<String> listOfBlockedNumbers = Utils.getArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST);
+            if (listOfBlockedNumbers != null && listOfBlockedNumbers.size() > 0) {
+                loadsCallLogsInBackgroundAsyncTask = new LoadsCallLogsInBackground();
+                loadsCallLogsInBackgroundAsyncTask.execute();
+
+            }else{
+                if(arrayListObjectCallLogs != null && arrayListObjectCallLogs.size() > 0 ){
+                    for (int k = 0; k < arrayListObjectCallLogs.size(); k++) {
+                        if (arrayListObjectCallLogs.get(k) instanceof CallLogType) {
+                            CallLogType tempCallLogType = (CallLogType) arrayListObjectCallLogs.get(k);
+                            if ((((CallLogType) arrayListObjectCallLogs.get(k)).getBlockedType()== AppConstants.BLOCKED)) {
+                                int itemPosition = arrayListObjectCallLogs.indexOf(tempCallLogType);
+                                if (itemPosition != -1) {
+                                    tempCallLogType.setBlockedType(AppConstants.UNBLOCK);
+                                    arrayListObjectCallLogs.set(itemPosition, tempCallLogType);
+                                    callLogListAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -348,6 +375,10 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         IntentFilter intentFilter3 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS);
         localBroadcastManagerRemoveFromCallLogs.registerReceiver(localBroadcastReceiverRemoveFromCallLogs, intentFilter3);
 
+        LocalBroadcastManager localBroadcastManagerBlock = LocalBroadcastManager.getInstance(getActivity());
+        IntentFilter intentFilter4 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE_BLOCK);
+        localBroadcastManagerBlock.registerReceiver(localBroadcastReceiverBlock, intentFilter4);
+
     }
 
     private void unregisterLocalbroadcast() {
@@ -359,6 +390,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
         LocalBroadcastManager localBroadcastManagerRemoveLogs = LocalBroadcastManager.getInstance(getActivity());
         localBroadcastManagerRemoveLogs.unregisterReceiver(localBroadcastReceiverRemoveFromCallLogs);
+
+        LocalBroadcastManager localBroadcastManagerProfileBlock = LocalBroadcastManager.getInstance(getActivity());
+        localBroadcastManagerProfileBlock.unregisterReceiver(localBroadcastReceiverBlock);
 
     }
 
@@ -395,6 +429,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         arrayListCallLogs = new ArrayList<>();
         arrayListCallLogHeader = new ArrayList<>();
         arrayListObjectCallLogs = new ArrayList<>();
+        makeBlockedNumberList();
         initSpinner();
         logsRunnable = new Runnable() {
             @Override
@@ -409,6 +444,40 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
             logsRunnable.run();
         }
 
+    }
+
+    private void makeBlockedNumberList() {
+        if (Utils.getHashMapPreferenceForBlock(getActivity(), AppConstants
+                .PREF_BLOCK_CONTACT_LIST) != null) {
+            HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
+                    Utils.getHashMapPreferenceForBlock(getActivity(), AppConstants.PREF_BLOCK_CONTACT_LIST);
+            ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+            ArrayList<String> listOfBlockedNumber = new ArrayList<>();
+            String blockedNumber = "";
+            String hashKey = "";
+            if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+                for (String key : blockProfileHashMapList.keySet()) {
+                    System.out.println(key);
+                    hashKey = key;
+                    if (blockProfileHashMapList.containsKey(hashKey)) {
+                        callLogTypeList.addAll(blockProfileHashMapList.get(hashKey));
+                    }
+                }
+
+                if (callLogTypeList != null) {
+                    for (int j = 0; j < callLogTypeList.size(); j++) {
+                        String tempNumber = callLogTypeList.get(j).getNumber();
+                        if (!TextUtils.isEmpty(tempNumber)) {
+                            listOfBlockedNumber.add(tempNumber);
+                        }
+                    }
+                    Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST, listOfBlockedNumber);
+                }
+            }else{
+                Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST, new ArrayList());
+            }
+
+        }
     }
 
     private class LoadsCallLogsInBackground extends AsyncTask<Void, Void, Void> {
@@ -524,6 +593,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         arrayListObjectCallLogs = new ArrayList<>();
         arrayListCallLogsHistory = new ArrayList<>();
         tempList = new ArrayList<>();
+
+        ArrayList<String> listOfBlockedNumbers = Utils.getArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST);
 
         if (callType.equalsIgnoreCase(MISSED_CALLS)) {
             callLogs = getLogsByCallType(AppConstants.MISSED_CALLS);
@@ -697,6 +768,24 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     }
                 }
             }
+        if (listOfBlockedNumbers != null && listOfBlockedNumbers.size() > 0) {
+            for (int i = 0; i < listOfBlockedNumbers.size(); i++) {
+                String blockNumber = listOfBlockedNumbers.get(i);
+                for (int k = 0; k < arrayListObjectCallLogs.size(); k++) {
+                    if (arrayListObjectCallLogs.get(k) instanceof CallLogType) {
+                        CallLogType tempCallLogType = (CallLogType) arrayListObjectCallLogs.get(k);
+                        if (!(((CallLogType) arrayListObjectCallLogs.get(k)).getNumber().equalsIgnoreCase(blockNumber))) {
+                        } else {
+                            int itemPosition = arrayListObjectCallLogs.indexOf(tempCallLogType);
+                            if (itemPosition != -1) {
+                                tempCallLogType.setBlockedType(AppConstants.BLOCKED);
+                                arrayListObjectCallLogs.set(itemPosition, tempCallLogType);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
     }
 
@@ -1314,6 +1403,40 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         return callDetails;
     }
 
+//    @TargetApi(Build.VERSION_CODES.M)
+    private ArrayList<CallLogType> getNumbersFromName(String number) {
+        Cursor cursor = null;
+        ArrayList<CallLogType> listNumber = new ArrayList<>();
+        try {
+            final Uri Person = Uri.withAppendedPath(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI,
+                    Uri.encode(number));
+
+            cursor = getActivity().getContentResolver().query(Person, null,
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " =?", new String[]{number}, null);
+
+            if (cursor != null && cursor.getCount() > 0) {
+                int number1 = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                while (cursor.moveToNext()) {
+                    CallLogType callLogType = new CallLogType();
+                    String profileNumber = cursor.getString(number1);
+                    String formattedNumber = Utils.getFormattedNumber(getActivity(), profileNumber);
+                    String uniqueContactId = getStarredStatusFromNumber(profileNumber);
+                    callLogType.setUniqueContactId(uniqueContactId);
+                    callLogType.setName(number);
+                    callLogType.setNumber(formattedNumber);
+                    listNumber.add(callLogType);
+                }
+            }
+            cursor.close();
+
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return listNumber;
+    }
+
     //</editor-fold>
     boolean clearLogs;
     boolean clearLogsFromContacts;
@@ -1324,7 +1447,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
             clearLogs = intent.getBooleanExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS, false);
             clearLogsFromContacts = intent.getBooleanExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS, false);
 
-            Handler handler =  new Handler();
+            Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -1347,7 +1470,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     }
 
                 }
-            },1000);
+            }, 1000);
         }
     };
 
@@ -1437,6 +1560,106 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                 AppConstants.isBackgroundProcessStopped = true;
 
             } else {
+            }
+
+        }
+    };
+
+
+    private BroadcastReceiver localBroadcastReceiverBlock = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+
+            boolean isBlocked = intent.getBooleanExtra(AppConstants.EXTRA_CALL_LOG_BLOCK, false);
+
+            if (isBlocked) {
+                if (callLogListAdapter != null) {
+                    CallLogType callDataToUpdate = callLogListAdapter.getSelectedCallLogData();
+                    String number = callDataToUpdate.getNumber();
+                    String key = "";
+                    key = callDataToUpdate.getLocalPbRowId();
+                    if (key.equalsIgnoreCase(" ")) {
+                        key = callDataToUpdate.getUniqueContactId();
+                    }
+                    if (Utils.getHashMapPreferenceForBlock(context, AppConstants
+                            .PREF_BLOCK_CONTACT_LIST) != null) {
+                        HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
+                                Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
+                        ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+                        String blockedNumber = "";
+                        if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+                            if (blockProfileHashMapList.containsKey(key))
+                                callLogTypeList.addAll(blockProfileHashMapList.get(key));
+
+                        }
+                        if (callLogTypeList != null) {
+                            for (int j = 0; j < callLogTypeList.size(); j++) {
+                                blockedNumber = callLogTypeList.get(j).getNumber();
+                                for (int k = 0; k < arrayListObjectCallLogs.size(); k++) {
+                                    if (arrayListObjectCallLogs.get(k) instanceof CallLogType) {
+                                        CallLogType tempCallLogType = (CallLogType) arrayListObjectCallLogs.get(k);
+                                        if (!(((CallLogType) arrayListObjectCallLogs.get(k)).getNumber().equalsIgnoreCase(blockedNumber))) {
+                                        } else {
+                                            itemPosition = arrayListObjectCallLogs.indexOf(tempCallLogType);
+                                            if (itemPosition != -1) {
+                                                tempCallLogType.setBlockedType(AppConstants.BLOCKED);
+                                                arrayListObjectCallLogs.set(itemPosition, tempCallLogType);
+                                                callLogListAdapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+
+            } else {
+
+                if (callLogListAdapter != null) {
+                    CallLogType callDataToUpdate = callLogListAdapter.getSelectedCallLogData();
+                    String number = callDataToUpdate.getNumber();
+                    String name = callDataToUpdate.getName();
+                    if (!TextUtils.isEmpty(name)) {
+                        ArrayList<CallLogType> listOfBlock = getNumbersFromName(name);
+                        for (int i = 0; i < listOfBlock.size(); i++) {
+                            String numberToUnblock = listOfBlock.get(i).getNumber();
+                            for (int j = 0; j < arrayListObjectCallLogs.size(); j++) {
+                                if (arrayListObjectCallLogs.get(j) instanceof CallLogType) {
+                                    CallLogType tempCallLogType = (CallLogType) arrayListObjectCallLogs.get(j);
+                                    if (!(((CallLogType) arrayListObjectCallLogs.get(j)).getNumber().equalsIgnoreCase(numberToUnblock))) {
+                                    } else {
+                                        itemPosition = arrayListObjectCallLogs.indexOf(tempCallLogType);
+                                        if (itemPosition != -1) {
+                                            tempCallLogType.setBlockedType(AppConstants.UNBLOCK);
+                                            arrayListObjectCallLogs.set(itemPosition, tempCallLogType);
+                                            callLogListAdapter.notifyDataSetChanged();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        for (int j = 0; j < arrayListObjectCallLogs.size(); j++) {
+                            if (arrayListObjectCallLogs.get(j) instanceof CallLogType) {
+                                CallLogType tempCallLogType = (CallLogType) arrayListObjectCallLogs.get(j);
+                                if (!(((CallLogType) arrayListObjectCallLogs.get(j)).getNumber().equalsIgnoreCase(number))) {
+                                } else {
+                                    itemPosition = arrayListObjectCallLogs.indexOf(tempCallLogType);
+                                    if (itemPosition != -1) {
+                                        tempCallLogType.setBlockedType(AppConstants.UNBLOCK);
+                                        arrayListObjectCallLogs.set(itemPosition, tempCallLogType);
+                                        callLogListAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
 
         }
