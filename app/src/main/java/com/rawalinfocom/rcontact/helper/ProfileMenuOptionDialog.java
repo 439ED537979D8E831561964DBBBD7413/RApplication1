@@ -45,9 +45,12 @@ public class ProfileMenuOptionDialog {
     long callLogDateToDelete;
     boolean isFromCallLogFragment = false;
     ArrayList<CallLogType> arrayListCallLogType;
-
+    String name ="";
+    String uniqueID = "";
+    String key;
     public ProfileMenuOptionDialog(Context context, ArrayList<String> arrayList, String number, long date,
-                                   boolean isFromCallTab , ArrayList<CallLogType> list) {
+                                   boolean isFromCallTab , ArrayList<CallLogType> list, String name, String uniqueRowId,
+                                   String key) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -81,8 +84,11 @@ public class ProfileMenuOptionDialog {
 
         isFromCallLogFragment =  isFromCallTab;
         arrayListCallLogType =  list;
-        setAdapter();
+        this.name =  name;
+        this.key = key;
+        this.uniqueID =  uniqueRowId;
 
+        setAdapter();
         LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(context);
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);
         localBroadcastManager.registerReceiver(localBroadcastReceiverDialog,intentFilter);
@@ -93,7 +99,7 @@ public class ProfileMenuOptionDialog {
     private void setAdapter() {
         if(!TextUtils.isEmpty(numberToCall)){
             Profile3DotDialogAdapter profile3DotDialogAdapter = new Profile3DotDialogAdapter(context, stringArrayList, numberToCall,
-                    callLogDateToDelete,isFromCallLogFragment,arrayListCallLogType);
+                    callLogDateToDelete,isFromCallLogFragment,arrayListCallLogType,name,uniqueID,key);
             recycleViewDialog.setAdapter(profile3DotDialogAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
         }
