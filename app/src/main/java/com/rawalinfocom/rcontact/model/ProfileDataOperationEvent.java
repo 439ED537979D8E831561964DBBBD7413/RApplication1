@@ -41,13 +41,13 @@ public class ProfileDataOperationEvent implements Serializable {
     }
 
     //    @JsonProperty("event_date")
-//    @JsonProperty("event_datetime")
-    @JsonGetter("event_datetime")
+    @JsonProperty("event_datetime")
+//    @JsonGetter("event_datetime")
     public String getEventDate() {
         return StringUtils.defaultString(this.eventDate);
     }
 
-    @JsonSetter("event_date")
+//    @JsonSetter("event_date")
     public void setEventDate(String eventDate) {
         this.eventDate = eventDate;
     }
