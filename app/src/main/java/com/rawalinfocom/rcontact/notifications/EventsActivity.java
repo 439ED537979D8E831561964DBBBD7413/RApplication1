@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.adapters.EventAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
@@ -24,10 +25,9 @@ import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Comment;
 import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.EventComment;
+import com.rawalinfocom.rcontact.model.EventItem;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
-import com.rawalinfocom.rcontact.adapters.EventAdapter;
-import com.rawalinfocom.rcontact.model.EventItem;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -102,7 +102,7 @@ public class EventsActivity extends BaseActivity implements RippleView
     }
 
     private void init() {
-        textToolbarTitle.setText("Events");
+        textToolbarTitle.setText(getResources().getString(R.string.nav_text_events));
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
 
         textTodayTitle.setTypeface(Utils.typefaceRegular(this));
@@ -295,8 +295,9 @@ public class EventsActivity extends BaseActivity implements RippleView
 
     private int getEventType(String eventName) {
         int eventType = 0;
-        if ("Birthday".equalsIgnoreCase(eventName)) eventType = AppConstants.COMMENT_TYPE_BIRTHDAY;
-        if ("Aniversary".equalsIgnoreCase(eventName))
+        if (getResources().getString(R.string.text_birthday).equalsIgnoreCase(eventName))
+            eventType = AppConstants.COMMENT_TYPE_BIRTHDAY;
+        if (getResources().getString(R.string.text_anniversary).equalsIgnoreCase(eventName))
             eventType = AppConstants.COMMENT_TYPE_ANNIVERSARY;
 
         return eventType;
@@ -314,13 +315,13 @@ public class EventsActivity extends BaseActivity implements RippleView
         if (eventYears <= 0) return s;
         if (eventType == AppConstants.COMMENT_TYPE_BIRTHDAY) {
             if (eventYears == 1) {
-                s = eventYears + " Year Old";
+                s = eventYears + " " + getResources().getString(R.string.text_year_old);
             } else {
-                s = eventYears + " Years Old";
+                s = eventYears + " " + getResources().getString(R.string.text_years_old);
             }
         }
         if (eventType == AppConstants.COMMENT_TYPE_ANNIVERSARY) {
-            s = Utils.addDateSufixes(eventYears) + " Aniversary";
+            s = Utils.addDateSufixes(eventYears) + " " + getResources().getString(R.string.text_anniversary);
         }
         return s;
     }
@@ -353,13 +354,9 @@ public class EventsActivity extends BaseActivity implements RippleView
                 comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()));
                 comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
                 comment.setEvmRecordIndexId(evmRecordId);
-                //  Comment dummyReceived = addDummyTimelineItem(eventComment);
+
                 if (evmRecordId != null) {
                     tableCommentMaster.addComment(comment);
-                      /*dummy entry start*/
-                    /*this is dummy received entry*/
-                    //     tableCommentMaster.addComment(dummyReceived);
-                    /*dummy entry end*/
                     evmRecordId = "";
                     switch (selectedRecycler) {
                         case 0:
@@ -385,7 +382,7 @@ public class EventsActivity extends BaseActivity implements RippleView
                 }
             }
         } else {
-            Toast.makeText(EventsActivity.this, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EventsActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
         }
 
     }
