@@ -152,6 +152,17 @@
     <string name="view_profile">View Profile</string>
     <string name="unblock_All">Unblock All</string>
 
+    <string name="nav_text_home">Home</string>
+    <string name="nav_text_account">Account</string>
+    <string name="nav_text_timeline">Timeline</string>
+    <string name="nav_text_events">Events</string>
+    <string name="nav_text_invite_contact">Invite contact</string>
+    <string name="nav_text_share_rcontact">Share RContact App</string>
+    <string name="nav_text_settings">Settings</string>
+    <string name="nav_text_block_contact">Block Contact List</string>
+    <string name="nav_text_rate_us">Rate us</string>
+    <string name="nav_text_about_help">About and Help</string>
+    <string name="nav_text_export_db">Export DB</string>
 
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
