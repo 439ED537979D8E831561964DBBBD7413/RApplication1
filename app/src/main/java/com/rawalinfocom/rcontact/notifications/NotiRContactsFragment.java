@@ -2,19 +2,29 @@ package com.rawalinfocom.rcontact.notifications;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.notifications.adapters.NotiRContactsAdapter;
-import com.rawalinfocom.rcontact.notifications.model.NotiRContactsItem;
+import com.rawalinfocom.rcontact.model.RcontactUpdatesData;
+import com.rawalinfocom.rcontact.adapters.NotiRContactsAdapter;
+import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.database.TableRCNotificationUpdates;
+import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.NotiRContactsItem;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,9 +33,9 @@ import butterknife.ButterKnife;
  * Created by maulik on 15/03/17.
  */
 
-public class NotiRContactsFragment extends BaseFragment {
+public class NotiRContactsFragment extends BaseFragment implements WsResponseListener {
 
-
+    TableRCNotificationUpdates tableRCNotificationUpdates;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerRContactsNoti;
 
@@ -50,24 +60,64 @@ public class NotiRContactsFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        tableRCNotificationUpdates = new TableRCNotificationUpdates(getDatabaseHandler());
+        tableRCNotificationUpdates.deleteAllPreviousUpdates();
         init();
-        initData();
+        getAllRContactUpdates(this);
+        // initData();
     }
 
     private void initData() {
-        NotiRContactsItem item1 = new NotiRContactsItem("RContacts app update", "New app update is available for RContact app in Play Store.Kindly download latest update.", "11:15 PM");
-        NotiRContactsItem item2 = new NotiRContactsItem("RContacts app update", "New app update is available for RContact app in Play Store.Kindly download latest update.", "11:15 PM");
-        NotiRContactsItem item3 = new NotiRContactsItem("RContacts app update", "New app update is available for RContact app in Play Store.Kindly download latest update.", "11:15 PM");
-        NotiRContactsItem item4 = new NotiRContactsItem("RContacts app update", "New app update is available for RContact app in Play Store.Kindly download latest update.", "11:15 PM");
-        NotiRContactsItem item5 = new NotiRContactsItem("RContacts app update", "New app update is available for RContact app in Play Store.Kindly download latest update.", "11:15 PM");
-        NotiRContactsItem item6 = new NotiRContactsItem("RContacts app update", "New app update is available for RContact app in Play Store.Kindly download latest update.", "11:15 PM");
-        List<NotiRContactsItem> listTodayRequest = Arrays.asList(item1, item2, item3, item4, item5, item6);
-        NotiRContactsAdapter todayRequestAdapter = new NotiRContactsAdapter(getActivity(), listTodayRequest);
-        recyclerRContactsNoti.setAdapter(todayRequestAdapter);
+
+        ArrayList<NotiRContactsItem> updates = tableRCNotificationUpdates.getAllUpdatesFromDB();
+        NotiRContactsAdapter updtaes = new NotiRContactsAdapter(getActivity(), updates);
+        recyclerRContactsNoti.setAdapter(updtaes);
         recyclerRContactsNoti.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     private void init() {
 
+    }
+
+    private void getAllRContactUpdates(Fragment fragment) {
+
+        WsRequestObject allUpdatesObject = new WsRequestObject();
+
+        if (Utils.isNetworkAvailable(getActivity())) {
+            new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    allUpdatesObject, null, WsResponseObject.class, WsConstants
+                    .REQ_GET_RCONTACT_UPDATES, "Getting updates..", true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_GET_RCONTACT_UPDATES);
+        } else {
+            Toast.makeText(getActivity(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onDeliveryResponse(String serviceType, Object data, Exception error) {
+        if (error == null) {
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_RCONTACT_UPDATES)) {
+
+                WsResponseObject wsResponseObject = (WsResponseObject) data;
+                ArrayList<RcontactUpdatesData> updatesData = wsResponseObject.getRcontactUpdate();
+                saveUpdatesToDb(updatesData);
+                Utils.hideProgressDialog();
+                initData();
+            }
+        } else {
+            Utils.hideProgressDialog();
+            Toast.makeText(getActivity(), "Operation failed.. please try again", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveUpdatesToDb(ArrayList<RcontactUpdatesData> updatesData) {
+        {
+            if (updatesData == null) {
+                return;
+            }
+            for (RcontactUpdatesData rconUpdate : updatesData) {
+                tableRCNotificationUpdates.addUpdate(rconUpdate);
+            }
+        }
     }
 }

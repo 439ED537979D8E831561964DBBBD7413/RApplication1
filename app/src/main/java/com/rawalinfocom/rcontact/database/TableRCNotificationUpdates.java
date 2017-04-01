@@ -1,5 +1,15 @@
 package com.rawalinfocom.rcontact.database;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.rawalinfocom.rcontact.model.RcontactUpdatesData;
+import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.NotiRContactsItem;
+
+import java.util.ArrayList;
+
 /**
  * Created by maulik on 28/03/17.
  */
@@ -13,14 +23,14 @@ public class TableRCNotificationUpdates {
     }
 
     // Table Names
-    static final String TABLE_RC_NOTIFICATION_UPDATES = "rc_notification_updates";
+    private static final String TABLE_RC_NOTIFICATION_UPDATES = "rc_notification_updates";
 
     // Column Names
     private static final String COLUMN_NU_ID = "nu_id";
     private static final String COLUMN_NU_CLOUD_ID = "nu_cloud_rupdate_id";
-    static final String COLUMN_NU_TITLE = "nu_title";
-    static final String COLUMN_NU_DETAILS = "nu_details";
-    static final String COLUMN_CREATED_AT = "created_at";
+    private static final String COLUMN_NU_TITLE = "nu_title";
+    private static final String COLUMN_NU_DETAILS = "nu_details";
+    private static final String COLUMN_CREATED_AT = "created_at";
 
     // Table Create Statements
     static final String CREATE_TABLE_RC_NOTIFICATION_UPDATES = "CREATE TABLE " + TABLE_RC_NOTIFICATION_UPDATES +
@@ -32,4 +42,52 @@ public class TableRCNotificationUpdates {
             " " + COLUMN_CREATED_AT + " datetime" +
             ");";
 
+    public void addUpdate(RcontactUpdatesData rconUpdate) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NU_TITLE, rconUpdate.getTitle());
+        values.put(COLUMN_NU_DETAILS, rconUpdate.getDetails());
+        values.put(COLUMN_NU_CLOUD_ID, rconUpdate.getId());
+        values.put(COLUMN_CREATED_AT, Utils.getLocalTimeFromUTCTime(rconUpdate.getCreatedAt()));
+
+        db.insert(TABLE_RC_NOTIFICATION_UPDATES, null, values);
+
+        db.close();
+    }
+
+    public void deleteAllPreviousUpdates() {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        db.execSQL("delete from " + TABLE_RC_NOTIFICATION_UPDATES);
+    }
+
+    public ArrayList<NotiRContactsItem> getAllUpdatesFromDB() {
+        ArrayList<NotiRContactsItem> arrayListEvent = new ArrayList<>();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_RC_NOTIFICATION_UPDATES + " order by " +
+                COLUMN_CREATED_AT + " desc";
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                NotiRContactsItem item = new NotiRContactsItem();
+                item.setNotiId(cursor.getString(cursor.getColumnIndex(COLUMN_NU_CLOUD_ID)));
+                item.setNotiTitle(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_NU_TITLE)));
+                item.setNotiDetails(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_NU_DETAILS)));
+                item.setNotiTime(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CREATED_AT)));
+                arrayListEvent.add(item);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+        }
+
+        db.close();
+
+        return arrayListEvent;
+    }
 }

@@ -26,8 +26,8 @@ import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.EventComment;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
-import com.rawalinfocom.rcontact.notifications.adapters.EventAdapter;
-import com.rawalinfocom.rcontact.notifications.model.EventItem;
+import com.rawalinfocom.rcontact.adapters.EventAdapter;
+import com.rawalinfocom.rcontact.model.EventItem;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

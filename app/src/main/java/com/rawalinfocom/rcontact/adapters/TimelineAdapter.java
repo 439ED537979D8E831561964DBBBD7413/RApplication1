@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.notifications.adapters;
+package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
 import android.graphics.drawable.LayerDrawable;
@@ -23,7 +23,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
-import com.rawalinfocom.rcontact.notifications.model.TimelineItem;
+import com.rawalinfocom.rcontact.model.TimelineItem;
 
 import java.util.List;
 
@@ -61,7 +61,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         int notiType = 0;
         if ("Rating".equalsIgnoreCase(item.getCrmType()))
             notiType = 1;
-        if (wisherComment != null && wisherComment.length() != 0) {
+        if (wisherComment != null && wisherComment.length() > 0) {
             holder.textWisherComment.setVisibility(View.VISIBLE);
             holder.textWisherComment.setText(wisherComment);
             if (recyclerPosition == 0)
@@ -78,9 +78,8 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
                     holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "dd MMM, hh:mm a"));
             }
         }
-        if (userComment != null && userComment.length() != 0) {
+        if (userComment != null && userComment.length() > 0) {
             holder.layoutUserCommentDone.setVisibility(View.VISIBLE);
-
             holder.textUserComment.setText(userComment);
 
             if (recyclerPosition == 0)
@@ -107,7 +106,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(context, android.R
                     .color.darker_gray));
             holder.textEventDetailInfo.setVisibility(View.GONE);
-        } else if (notiType == 0) {
+        } else {
             holder.textEventDetailInfo.setText(item.getEventDetail());
             holder.ratingInfo.setVisibility(View.GONE);
         }

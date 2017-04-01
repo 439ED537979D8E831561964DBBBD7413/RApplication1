@@ -153,8 +153,18 @@
     <string name="unblock_All">Unblock All</string>
 
 
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="past_5_days">Past 5 Days</string>
+    <string name="recent_events">Recent Events</string>
+    <string name="upcoming_events">Upcoming Events</string>
+    <string name="past_pending_requests">Past Pending Requests</string>
+
+    <string name="footer_noti_rating_text">Switch to Website for more 20 Notifications</string>
+    <string name="footer_noti_comments_text">If you want to see Previous Timeline Comments switch to Website</string>
     <string name="footer_events_text">If you want to see Upcoming Events switch to Website</string>
     <string name="footer_timeline_text">If you want to see Previous Timeline Events switch to Website</string>
+
     <string name="title_activity_call_histroy_detail">CallHistroyDetailActivity</string>
 
     <string name="block_action_title">Blocked contacts list</string>
