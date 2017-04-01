@@ -2,7 +2,11 @@ package com.rawalinfocom.rcontact.calllog;
 
 import android.annotation.TargetApi;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
@@ -11,6 +15,7 @@ import android.os.Bundle;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -42,18 +47,17 @@ import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
-//import com.rawalinfocom.rcontact.database.TableContactRatingMaster;
+import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.CallConfirmationListDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
-import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.ProfileMenuOptionDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.CallLogType;
-import com.rawalinfocom.rcontact.model.DbRating;
+import com.rawalinfocom.rcontact.model.Comment;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -65,15 +69,11 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 import com.rawalinfocom.rcontact.model.ProfileVisit;
 import com.rawalinfocom.rcontact.model.Rating;
-import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -148,23 +148,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     ImageView imageRightLeft;
     ImageView imageRightCenter;
 
-   /* @BindView(R.id.ripple_action_back)
-    RippleView rippleActionBack;
-    @BindView(R.id.text_toolbar_title)
-    TextView textToolbarTitle;
-    @BindView(R.id.image_right_left)
-    ImageView imageRightLeft;
-    @BindView(R.id.ripple_action_right_left)
-    RippleView rippleActionRightLeft;
-    @BindView(R.id.image_right_center)
-    ImageView imageRightCenter;
-    @BindView(R.id.ripple_action_right_center)
-    RippleView rippleActionRightCenter;
-    @BindView(R.id.image_right_right)
-    ImageView imageRightRight;
-    @BindView(R.id.ripple_action_right_right)
-    RippleView rippleActionRightRight;*/
-
     private final String TAG_IMAGE_FAVOURITE = "tag_favourite";
     private final String TAG_IMAGE_UN_FAVOURITE = "tag_un_favourite";
     private final String TAG_IMAGE_CALL = "tag_call";
@@ -192,6 +175,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     long historyDate;
     CallHistoryListAdapter callHistoryListAdapter;
     ArrayList<Object> tempPhoneNumber;
+    String hashMapKey =  "";
+    String uniqueContactId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -217,6 +202,13 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 historyDate = intent.getLongExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, 0);
             }
 
+            if (intent.hasExtra(AppConstants.EXTRA_CALL_UNIQUE_ID)) {
+                hashMapKey = intent.getStringExtra(AppConstants.EXTRA_CALL_UNIQUE_ID);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID)) {
+                uniqueContactId = intent.getStringExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID);
+            }
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
@@ -307,6 +299,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     protected void onResume() {
         super.onResume();
 
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
+        localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
+
         if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
             fetchAllCallLogHistory(contactName);
         } else {
@@ -315,6 +311,25 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             }
         }
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
+    }
+
+    private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("Profile Activity ", "onReceive() of LocalBroadcast");
+
+            arrayListHistory.clear();
+            recyclerCallHistory.setVisibility(View.GONE);
+            setHistoryAdapter();
+
+        }
+    };
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
@@ -371,8 +386,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
                     if (profileRatingResponse.getProfileRating() != null) {
 
-                        DbRating dbRating = new DbRating();
                         Rating responseRating = profileRatingResponse.getProfileRating();
+
+                        /*DbRating dbRating = new DbRating();
+
                         dbRating.setRcProfileMasterPmId(String.valueOf(responseRating.getPrToPmId
                                 ()));
                         dbRating.setCrmStatus(String.valueOf(responseRating.getPrStatus()));
@@ -381,9 +398,23 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         dbRating.setCrmComment(responseRating.getPrComment());
                         dbRating.setCrmCreatedAt(responseRating.getCreatedAt());
 
-//                        TableContactRatingMaster tableContactRatingMaster = new
-//                                TableContactRatingMaster(databaseHandler);
-//                        tableContactRatingMaster.addRating(dbRating);
+                        TableContactRatingMaster tableContactRatingMaster = new
+                                TableContactRatingMaster(databaseHandler);
+                        tableContactRatingMaster.addRating(dbRating);*/
+
+                        Comment comment = new Comment();
+                        comment.setRcProfileMasterPmId(responseRating.getPrToPmId());
+                        comment.setCrmStatus(responseRating.getPrStatus());
+                        comment.setCrmRating(responseRating.getPrRatingStars());
+                        comment.setCrmType(TableCommentMaster.COMMENT_TYPE_RATING);
+                        comment.setCrmCloudPrId(String.valueOf(responseRating.getPrId()));
+                        comment.setCrmComment(responseRating.getPrComment());
+                        comment.setCrmCreatedAt(responseRating.getCreatedAt());
+                        comment.setCrmUpdatedAt(responseRating.getCreatedAt());
+
+                        TableCommentMaster tableCommentMaster = new TableCommentMaster
+                                (databaseHandler);
+                        tableCommentMaster.addComment(comment);
 
                         TableProfileMaster tableProfileMaster = new TableProfileMaster
                                 (databaseHandler);
@@ -429,14 +460,16 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         ArrayList<String> listPhoneNumber = new ArrayList<>();
                         if (count > 1) {
                             for (int i = 0; i < tempPhoneNumber.size(); i++) {
-                                ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(i);
+                                ProfileDataOperationPhoneNumber phoneNumber =
+                                        (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(i);
                                 String number = phoneNumber.getPhoneNumber();
                                 listPhoneNumber.add(number);
                             }
 
                             CallConfirmationListDialog callConfirmationListDialog = new
                                     CallConfirmationListDialog(this, listPhoneNumber);
-                            callConfirmationListDialog.setDialogTitle("Please select a number to call");
+                            callConfirmationListDialog.setDialogTitle("Please select a number to " +
+                                    "call");
                             callConfirmationListDialog.showDialog();
 
                         } else {
@@ -481,34 +514,127 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 break;
 
             case R.id.ripple_action_right_right:
-                ProfileMenuOptionDialog profileMenuOptionDialog;
-                boolean isFromCallLogTab = true;
-                if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase("[Unknown]")*/) {
-                    ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
-                            this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
-                            this.getString(R.string.call_reminder),
-                            this.getString(R.string.block), this.getString(R.string.delete),
-                            this.getString(R.string.clear_call_log)));
-                    profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, contactName,
-                            0, isFromCallLogTab, arrayListHistory);
-                    profileMenuOptionDialog.showDialog();
 
-                } else {
-                    if (!TextUtils.isEmpty(profileContactNumber)) {
-                        ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
-                                this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
-                                this.getString(R.string.copy_phone_number),
-                                this.getString(R.string.call_reminder), this.getString(R.string.block),
-                                this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
-                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, profileContactNumber,
-                                0, isFromCallLogTab, arrayListHistory);
-                        profileMenuOptionDialog.showDialog();
+                ProfileMenuOptionDialog profileMenuOptionDialog;
+                boolean isFromCallLogTab = false;
+                String blockedNumber ="";
+                ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+                HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
+                        Utils.getHashMapPreferenceForBlock(this, AppConstants.PREF_BLOCK_CONTACT_LIST);
+
+                if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+                    if (blockProfileHashMapList.containsKey(hashMapKey))
+                        callLogTypeList.addAll(blockProfileHashMapList.get(hashMapKey));
+
+                }
+                String name ="";
+                if(!TextUtils.isEmpty(contactName)){
+                    ArrayList<CallLogType> callLogTypes =  getNumbersFromName(contactName);
+                    if(callLogTypes!=null && callLogTypes.size()>0){
+                        for(int i=0; i< callLogTypes.size(); i++){
+                            CallLogType callLogType = callLogTypes.get(i);
+                            name = callLogType.getName();
+                        }
                     }
+
+                }
+
+                if (callLogTypeList != null) {
+                    for (int j = 0; j < callLogTypeList.size(); j++) {
+                        Log.i("value", callLogTypeList.get(j) + "");
+                        String tempNumber = callLogTypeList.get(j).getName();
+                        if (tempNumber.equalsIgnoreCase(name)) {
+                            blockedNumber = tempNumber;
+                        }
+                    }
+                }
+
+                if (!TextUtils.isEmpty(blockedNumber)){
+                    if (!TextUtils.isEmpty(contactName)) {
+                        ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
+                                this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
+                                this.getString(R.string.call_reminder),
+                                this.getString(R.string.unblock), this.getString(R.string.delete),
+                                this.getString(R.string.clear_call_log)));
+                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, contactName,
+                                0, isFromCallLogTab, arrayListHistory,contactName,"",hashMapKey);
+                        profileMenuOptionDialog.showDialog();
+
+                    } else {
+                        if (!TextUtils.isEmpty(profileContactNumber)) {
+                            ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
+                                    this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
+                                    this.getString(R.string.copy_phone_number),
+                                    this.getString(R.string.call_reminder), this.getString(R.string.unblock),
+                                    this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
+                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, profileContactNumber,
+                                    0, isFromCallLogTab, arrayListHistory,"",uniqueContactId,hashMapKey);
+                            profileMenuOptionDialog.showDialog();
+                        }
+                    }
+                }else {
+                    if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase("[Unknown]")*/) {
+                        ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
+                                this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
+                                this.getString(R.string.call_reminder),
+                                this.getString(R.string.block), this.getString(R.string.delete),
+                                this.getString(R.string.clear_call_log)));
+                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, contactName,
+                                0, isFromCallLogTab, arrayListHistory,contactName,"","");
+                        profileMenuOptionDialog.showDialog();
+
+                    } else {
+                        if (!TextUtils.isEmpty(profileContactNumber)) {
+                            ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
+                                    this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
+                                    this.getString(R.string.copy_phone_number),
+                                    this.getString(R.string.call_reminder), this.getString(R.string.block),
+                                    this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
+                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, profileContactNumber,
+                                    0, isFromCallLogTab, arrayListHistory,"",uniqueContactId,"");
+                            profileMenuOptionDialog.showDialog();
+                        }
+                    }
+
                 }
                 break;
 
         }
 
+    }
+
+//    @TargetApi(Build.VERSION_CODES.M)
+    private ArrayList<CallLogType> getNumbersFromName(String number) {
+        Cursor cursor = null;
+        ArrayList<CallLogType> listNumber = new ArrayList<>();
+        try {
+            final Uri Person = Uri.withAppendedPath(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI,
+                    Uri.encode(number));
+
+            cursor = this.getContentResolver().query(Person, null,
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " =?", new String[]{number}, null);
+
+            if (cursor != null && cursor.getCount() > 0) {
+                int number1 = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                while (cursor.moveToNext()) {
+                    CallLogType callLogType = new CallLogType();
+                    String profileNumber = cursor.getString(number1);
+                    String formattedNumber = Utils.getFormattedNumber(this, profileNumber);
+                    String uniqueContactId = getStarredStatusFromNumber(profileNumber);
+                    callLogType.setUniqueContactId(uniqueContactId);
+                    callLogType.setName(number);
+                    callLogType.setNumber(formattedNumber);
+                    listNumber.add(callLogType);
+                }
+            }
+            cursor.close();
+
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return listNumber;
     }
 
     private void init() {
@@ -1554,6 +1680,14 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 //                            Log.e("User Image", userImage);
                     }
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
+                    String uniquePhoneBookId = getStarredStatusFromNumber(phNum);
+                    if (!TextUtils.isEmpty(uniquePhoneBookId)){
+                        hashMapKey = uniquePhoneBookId;
+                    }else{
+                        hashMapKey =  cursor.getString(callLogId);
+                        uniqueContactId = cursor.getString(callLogId);
+                    }
+
                     CallLogType logObject = new CallLogType();
                     logObject.setHistoryNumber(phNum);
                     logObject.setHistoryType(callType);
@@ -1574,6 +1708,41 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
         return callDetails;
     }
+
+    private String getStarredStatusFromNumber(String phoneNumber) {
+        String numberId = "";
+        try {
+
+            numberId = "";
+            ContentResolver contentResolver = this.getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.LOOKUP_KEY));
+//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return numberId;
+    }
+
+
 
     private String getPhoneNumberType(int type) {
         switch (type) {
@@ -1640,4 +1809,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         }
         return "Other";
     }
+
+
 }

@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +16,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -114,7 +117,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ArrayList<String> arrayListContactEmails;
     ArrayList<String> arrayListFavouriteContacts;
 
-    MaterialDialog callConfirmationDialog;
+    MaterialDialog callConfirmationDialog, permissionConfirmationDialog;
 
     PhoneBookContacts phoneBookContacts;
 
@@ -123,6 +126,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private View rootView;
     private boolean isReload = false;
     RContactApplication rContactApplication;
+
+    boolean isFromSettings = false;
 
     //<editor-fold desc="Constructors">
 
@@ -198,6 +203,20 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (isFromSettings) {
+            isFromSettings = false;
+            if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
+                    .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                if (!isReload) {
+                    init();
+                }
+            }
+        }
+    }
+
+    @Override
     public void getFragmentArguments() {
 
     }
@@ -208,6 +227,19 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_all_contacts, container, false);
             ButterKnife.bind(this, rootView);
+
+            // Connect the recycler to the scroller (to let the scroller scroll the list)
+            scrollerAllContact.setRecyclerView(recyclerViewContactList);
+
+            // Connect the scroller to the recycler (to let the recycler scroll the scroller's
+            // handle)
+            recyclerViewContactList.setOnScrollListener(scrollerAllContact.getOnScrollListener());
+
+            // Connect the section indicator to the scroller
+            scrollerAllContact.setSectionIndicator(titleIndicator);
+
+            setRecyclerViewLayoutManager(recyclerViewContactList);
+
         }
         return rootView;
     }
@@ -215,10 +247,18 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (!isReload) {
-            init();
+
+        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
+                .READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{android.Manifest.permission.READ_CONTACTS},
+                    AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+        } else {
+            if (!isReload) {
+                init();
+            }
         }
     }
+
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
@@ -337,6 +377,36 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     }*/
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
+
+                    // Permission Granted
+
+                    if (!isReload) {
+                        init();
+                    }
+
+
+                } else {
+
+                    // Permission Denied
+//                    getActivity().onBackPressed();
+                    showPermissionConfirmationDialog();
+
+                }
+            }
+            break;
+        }
+    }
+
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(cursorListReceiver);
@@ -356,8 +426,18 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
 
+
+     /*   VerticalRecyclerViewFastScroller scrollerAllContact = new
+                VerticalRecyclerViewFastScroller(getActivity());
+
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout
+                .LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+        relativeRootAllContacts.addView(scrollerAllContact);*/
+
         // Connect the recycler to the scroller (to let the scroller scroll the list)
-        scrollerAllContact.setRecyclerView(recyclerViewContactList);
+      /* scrollerAllContact.setRecyclerView(recyclerViewContactList);
 
         // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
         recyclerViewContactList.setOnScrollListener(scrollerAllContact.getOnScrollListener());
@@ -365,7 +445,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         // Connect the section indicator to the scroller
         scrollerAllContact.setSectionIndicator(titleIndicator);
 
-        setRecyclerViewLayoutManager(recyclerViewContactList);
+        setRecyclerViewLayoutManager(recyclerViewContactList);*/
 
         initSwipe();
 
@@ -617,7 +697,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         organization.setOmRecordIndexId(arrayListOrganization.get(j).getOrgId());
                         organization.setOmOrganizationCompany(arrayListOrganization.get(j)
                                 .getOrgName
-                                ());
+                                        ());
 //                    organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgType());
 //                    organization.setOmOrganizationTitle(arrayListOrganization.get(j).getOrgName
 // ());
@@ -658,7 +738,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster
                             (getDatabaseHandler
-                            ());
+                                    ());
                     tableWebsiteMaster.addArrayWebsite(websiteList);
                 }
                 //</editor-fold>
@@ -689,7 +769,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                     TableAddressMaster tableAddressMaster = new TableAddressMaster
                             (getDatabaseHandler
-                            ());
+                                    ());
                     tableAddressMaster.addArrayAddress(addressList);
                 }
                 //</editor-fold>
@@ -877,6 +957,42 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         callConfirmationDialog.setDialogBody("Call " + number + "?");
 
         callConfirmationDialog.showDialog();
+
+    }
+
+    private void showPermissionConfirmationDialog() {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        permissionConfirmationDialog.dismissDialog();
+                        getActivity().finish();
+                        break;
+
+                    case R.id.rippleRight:
+                        permissionConfirmationDialog.dismissDialog();
+                        isFromSettings = true;
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", getActivity().getPackageName(), null));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        permissionConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+        permissionConfirmationDialog.setTitleVisibility(View.GONE);
+        permissionConfirmationDialog.setLeftButtonText("Cancel");
+        permissionConfirmationDialog.setRightButtonText("OK");
+        permissionConfirmationDialog.setDialogBody("Contact read permission is required of this " +
+                "app. Do you want to try again?");
+
+        permissionConfirmationDialog.showDialog();
 
     }
 
@@ -1239,9 +1355,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                                     (ContactsContract.CommonDataKinds.Im.TYPE))));
 
                     imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
-                            (contactImCursor.getInt(
-                                    (contactImCursor.getColumnIndex(ContactsContract.CommonDataKinds
-                                            .Im.PROTOCOL)))));
+                            (contactImCursor.getInt((contactImCursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
                     imAccount.setIMAccountPublic("1");
 

@@ -136,6 +136,7 @@
     <string name="remove_from_call_log">Remove from Call Log</string>
     <string name="copy_phone_number">Copy Phone Number</string>
     <string name="block">Block</string>
+    <string name="unblock">Unblock</string>
     <string name="call_reminder">Call Reminder</string>
     <string name="add_to_contact">Add to Contact</string>
     <string name="add_to_existing_contact">Add to Existing Contact</string>
@@ -149,6 +150,8 @@
     <string name="delete">Delete</string>
     <string name="clear_call_log">Clear Call Log</string>
     <string name="view_profile">View Profile</string>
+    <string name="unblock_All">Unblock All</string>
+
 
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
@@ -163,4 +166,6 @@
     <string name="footer_timeline_text">If you want to see Previous Timeline Events switch to Website</string>
 
     <string name="title_activity_call_histroy_detail">CallHistroyDetailActivity</string>
+
+    <string name="block_action_title">Blocked contacts list</string>
 </resources>

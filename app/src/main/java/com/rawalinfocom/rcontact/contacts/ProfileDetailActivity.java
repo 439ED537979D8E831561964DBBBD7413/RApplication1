@@ -259,6 +259,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Date callReceiverDate;
     CallHistoryListAdapter callHistoryListAdapter;
     String profileContactNumber;
+    String hashMapKey =  "";
+    String uniqueContactId = "";
 
 
     //<editor-fold desc="Override Methods">
@@ -292,6 +294,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 historyDate = intent.getLongExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, 0);
             }
 
+            if (intent.hasExtra(AppConstants.EXTRA_CALL_UNIQUE_ID)) {
+                hashMapKey = intent.getStringExtra(AppConstants.EXTRA_CALL_UNIQUE_ID);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID)) {
+                uniqueContactId = intent.getStringExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID);
+            }
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
@@ -423,32 +432,22 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 break;
 
             case R.id.ripple_call_log:
-               /* profileLayoutVisibility();
-                buttonCallLog.setClickable(false);
-                buttonCallLog.setEnabled(false);
-                buttonCallLog.setBackgroundColor(getResources().getColor(R.color.colorDarkGray));
-                rippleCallLog.setEnabled(false);*/
 
                 Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, historyName);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, historyDate);
-                intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
-                intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, phoneBookId);
-                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
-                intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, cloudContactName);
-                intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, checkNumberFavourite);
-                intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER,historyNumber);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME,historyName);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE,historyDate);
+                intent.putExtra(AppConstants.EXTRA_PM_ID,pmId);
+                intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID,phoneBookId);
+                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME,contactName);
+                intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME,cloudContactName);
+                intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE,checkNumberFavourite);
+                intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION,listClickedPosition);
+                intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, hashMapKey);
+                intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID,uniqueContactId);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
 
-              /*  if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
-                    fetchAllCallLogHistory(contactName);
-                } else {
-                    if (!TextUtils.isEmpty(profileContactNumber)) {
-                        fetchAllCallLogHistory(profileContactNumber);
-                    }
-                }*/
                 break;
 
 
@@ -512,69 +511,74 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 boolean isFromCallLogTab = false;
                 if (profileActivityCallInstance) {
                     isFromCallLogTab = true;
-                    if (!TextUtils.isEmpty(historyName)) {
-                        ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
-                                        .getString(R.string.edit),
-                                this.getString(R.string.view_in_ac), this.getString(R.string
-                                        .view_in_rc),
-                                this.getString(R.string.call_reminder),
-                                this.getString(R.string.block), this.getString(R.string.delete),
-                                this.getString(R.string.clear_call_log)));
-                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                arrayListName, historyNumber,
-                                historyDate, isFromCallLogTab, arrayListHistory);
-                        profileMenuOptionDialog.showDialog();
+                    String blockedNumber = "";
+                    ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+                    HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
+                            Utils.getHashMapPreferenceForBlock(this, AppConstants.PREF_BLOCK_CONTACT_LIST);
 
-                    } else {
-                        if (!TextUtils.isEmpty(historyNumber)) {
-                            ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
-                                    (this.getString(R.string.add_to_contact),
-                                            this.getString(R.string.add_to_existing_contact), this
-                                                    .getString(R.string.view_profile),
-                                            this.getString(R.string.copy_phone_number),
-                                            this.getString(R.string.call_reminder), this.getString(R
-                                                    .string.block),
-                                            this.getString(R.string.delete), this.getString(R.string
-                                                    .clear_call_log)));
-                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                    arrayListNumber, historyNumber,
-                                    historyDate, isFromCallLogTab, arrayListHistory);
-                            profileMenuOptionDialog.showDialog();
-                        }
-                    }
-                } else {
-                    isFromCallLogTab = false;
-                    if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase
-                            ("[Unknown]")) {
-                        ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
-                                        .getString(R.string.edit),
-                                this.getString(R.string.view_in_ac), this.getString(R.string
-                                        .view_in_rc),
-                                this.getString(R.string.call_reminder),
-                                this.getString(R.string.block), this.getString(R.string.delete),
-                                this.getString(R.string.clear_call_log)));
-                        profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                arrayListName, contactName,
-                                historyDate, isFromCallLogTab, arrayListHistory);
-                        profileMenuOptionDialog.showDialog();
-
-                    } else {
-                        if (!TextUtils.isEmpty(profileContactNumber)) {
-                            ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
-                                    (this.getString(R.string.add_to_contact),
-                                            this.getString(R.string.add_to_existing_contact), this
-                                                    .getString(R.string.view_profile),
-                                            this.getString(R.string.copy_phone_number),
-                                            this.getString(R.string.call_reminder), this.getString(R
-                                                    .string.block), this.getString(R.string.delete),
-                                            this.getString(R.string.clear_call_log)));
-                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                    arrayListNumber, profileContactNumber
-                                    , historyDate, isFromCallLogTab, arrayListHistory);
-                            profileMenuOptionDialog.showDialog();
-                        }
+                    if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+                        if (blockProfileHashMapList.containsKey(hashMapKey))
+                            callLogTypeList.addAll(blockProfileHashMapList.get(hashMapKey));
 
                     }
+                    if (callLogTypeList != null) {
+                        for (int j = 0; j < callLogTypeList.size(); j++) {
+                            Log.i("value", callLogTypeList.get(j) + "");
+                            String tempNumber = callLogTypeList.get(j).getNumber();
+                            if (tempNumber.equalsIgnoreCase(historyNumber)) {
+                                blockedNumber = tempNumber;
+                            }
+                        }
+                    }
+                    if (!TextUtils.isEmpty(blockedNumber)){
+                        if (!TextUtils.isEmpty(historyName)) {
+                            ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
+                                    this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
+                                    this.getString(R.string.call_reminder),
+                                    this.getString(R.string.unblock), this.getString(R.string.delete),
+                                    this.getString(R.string.clear_call_log)));
+                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, historyNumber,
+                                    historyDate, isFromCallLogTab, arrayListHistory,historyName,"",hashMapKey);
+                            profileMenuOptionDialog.showDialog();
+
+                        } else {
+                            if (!TextUtils.isEmpty(historyNumber)) {
+                                ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
+                                        this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
+                                        this.getString(R.string.copy_phone_number),
+                                        this.getString(R.string.call_reminder), this.getString(R.string.unblock),
+                                        this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
+                                profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, historyNumber,
+                                        historyDate, isFromCallLogTab, arrayListHistory,"",uniqueContactId,hashMapKey);
+                                profileMenuOptionDialog.showDialog();
+                            }
+                        }
+                    }else{
+                        if (!TextUtils.isEmpty(historyName)) {
+                            ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
+                                    this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
+                                    this.getString(R.string.call_reminder),
+                                    this.getString(R.string.block), this.getString(R.string.delete),
+                                    this.getString(R.string.clear_call_log)));
+                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, historyNumber,
+                                    historyDate, isFromCallLogTab, arrayListHistory,historyName,"","");
+                            profileMenuOptionDialog.showDialog();
+
+                        } else {
+                            if (!TextUtils.isEmpty(historyNumber)) {
+                                ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
+                                        this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
+                                        this.getString(R.string.copy_phone_number),
+                                        this.getString(R.string.call_reminder), this.getString(R.string.block),
+                                        this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
+                                profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, historyNumber,
+                                        historyDate, isFromCallLogTab, arrayListHistory,"",uniqueContactId,"");
+                                profileMenuOptionDialog.showDialog();
+                            }
+                        }
+                    }
+
+
                 }
                 break;
         }
@@ -936,10 +940,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleActionRightRight.setOnRippleCompleteListener(this);
         rippleCallLog.setOnRippleCompleteListener(this);
 
-
-        /*buttonCallLog.setClickable(true);
-        buttonCallLog.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-        rippleCallLog.setEnabled(true);*/
 
         LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
         // Filled stars
@@ -2050,8 +2050,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     logObject.setHistoryNumberType(numberTypeLog);
                     callDetails.add(logObject);
                 }
+                cursor.close();
             }
-            cursor.close();
+
 
 
         } catch (SecurityException e) {

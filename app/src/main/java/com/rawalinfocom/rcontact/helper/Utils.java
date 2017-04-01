@@ -43,6 +43,7 @@ import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
+import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.Country;
 
 import org.apache.commons.lang3.StringUtils;
@@ -255,6 +256,8 @@ public class Utils {
         return gson.fromJson(json, type);
     }
 
+
+
     public static void setIntegerPreference(Context context, String key, int value) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
@@ -327,6 +330,30 @@ public class Utils {
         }.getType();
         return gson.fromJson(json, type);
     }
+
+    public static HashMap<String,ArrayList<CallLogType>> getHashMapPreferenceForBlock(Context context, String key) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedpreferences.getString(key, null);
+        /*Type type = new TypeToken<HashMap>() {
+        }.getType();*/
+        Type type = new TypeToken<HashMap<String,ArrayList<CallLogType>>>() {
+        }.getType();
+        return gson.fromJson(json, type);
+    }
+
+
+    public static ArrayList<Object> getArrayListCallLogPreference(Context context, String key) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedpreferences.getString(key, null);
+        Type type = new TypeToken<ArrayList<Object>>() {
+        }.getType();
+        return gson.fromJson(json, type);
+    }
+
 
     public static void removePreference(Context context, String key) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
