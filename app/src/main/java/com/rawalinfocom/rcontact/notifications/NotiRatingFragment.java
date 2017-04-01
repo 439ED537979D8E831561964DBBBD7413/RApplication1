@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,21 +19,18 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
-import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Comment;
-import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.EventComment;
 import com.rawalinfocom.rcontact.model.EventCommentData;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
-import com.rawalinfocom.rcontact.notifications.adapters.NotiRatingAdapter;
-import com.rawalinfocom.rcontact.notifications.model.NotiCommentsItem;
-import com.rawalinfocom.rcontact.notifications.model.NotiRatingItem;
+import com.rawalinfocom.rcontact.adapters.NotiRatingAdapter;
+import com.rawalinfocom.rcontact.model.NotiRatingItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,7 +47,7 @@ import butterknife.ButterKnife;
 public class NotiRatingFragment extends BaseFragment implements WsResponseListener {
 
 
-    @BindView(R.id.search_view_events)
+    @BindView(R.id.search_view_noti_rating)
     SearchView searchViewEvents;
 
     @BindView(R.id.header1)
@@ -127,13 +123,6 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllRatingReplyReceived(yesterDay, yesterDay);
         ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllRatingReplyReceived(pastday5thDay, dayBeforeYesterday);
 
-//        NotiRatingItem item1 = new NotiRatingItem("Aakar Jain", "Aakar Jain reply you on your rating and comments.", "11:15 PM");
-//        NotiRatingItem item2 = new NotiRatingItem("Angarika Shah", "Angarika Shah reply you on your rating and comments.", "11:15 PM");
-//        NotiRatingItem item3 = new NotiRatingItem("Angarika Shah 1", "Angarika Shah 1 reply you on your rating and comments.", "11:15 PM");
-//        NotiRatingItem item4 = new NotiRatingItem("Keval Pandit", "Keval Pandit reply you on your rating and comments.", "11:15 PM");
-//        NotiRatingItem item5 = new NotiRatingItem("Keyur Kambli", "Keyur Kambli reply you on your rating and comments.", "11:15 PM");
-//        NotiRatingItem item6 = new NotiRatingItem("Virat Gujarati", "Virat Gujarati reply you on your rating and comments.", "11:15 PM");
-
         listTodayRating = createRatingReplyList(replyReceivedToday);
         listYesterdayRating = createRatingReplyList(replyReceivedYesterDay);
         listPastRating = createRatingReplyList(replyReceivedPastDays);
@@ -142,33 +131,56 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         NotiRatingAdapter yesterdayRatingAdapter = new NotiRatingAdapter(getActivity(), listYesterdayRating, 1);
         NotiRatingAdapter pastRatingAdapter = new NotiRatingAdapter(getActivity(), listPastRating, 2);
 
-
         DisplayMetrics displaymetrics = new DisplayMetrics();
+        int density = getResources().getDisplayMetrics().densityDpi;
+        int heightPercent = 40;
+        int maxItemCount = 1;
+        switch (density) {
+            case DisplayMetrics.DENSITY_LOW: /*120*/
+                heightPercent = 30;
+                maxItemCount = 1;
+                break;
+            case DisplayMetrics.DENSITY_MEDIUM: /*160*/
+                heightPercent = 30;
+                maxItemCount = 1;
+                break;
+            case DisplayMetrics.DENSITY_HIGH: /*320*/
+                heightPercent = 35;
+                maxItemCount = 1;
+                break;
+            case DisplayMetrics.DENSITY_XXHIGH: /*480*/
+            case DisplayMetrics.DENSITY_XXXHIGH: /*680*/
+                heightPercent = 40;
+                maxItemCount = 2;
+                break;
+        }
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = (displaymetrics.heightPixels * 49) / 100;
+        int height = (displaymetrics.heightPixels * heightPercent) / 100;
 
         recyclerTodayRating.setAdapter(todayRatingAdapter);
         recyclerTodayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerTodayRating, height));
         RecyclerView.Adapter mAdapter = recyclerTodayRating.getAdapter();
         int totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > 3) {
+        if (totalItemCount > maxItemCount) {
             recyclerTodayRating.getLayoutParams().height = height;
         }
 
         recyclerYesterDayRating.setAdapter(yesterdayRatingAdapter);
-        recyclerYesterDayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerPastDayRating, height));
+        recyclerYesterDayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerYesterDayRating, height));
         mAdapter = recyclerYesterDayRating.getAdapter();
         totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > 3) {
+        if (totalItemCount > maxItemCount) {
             recyclerYesterDayRating.getLayoutParams().height = height;
         }
+
         recyclerPastDayRating.setAdapter(pastRatingAdapter);
         recyclerPastDayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerPastDayRating, height));
         mAdapter = recyclerPastDayRating.getAdapter();
         totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > 3) {
+        if (totalItemCount > maxItemCount) {
             recyclerPastDayRating.getLayoutParams().height = height;
         }
+
         recyclerYesterDayRating.setVisibility(View.GONE);
         recyclerPastDayRating.setVisibility(View.GONE);
     }
@@ -196,7 +208,6 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
             item.setReply(comment.getCrmReply());
             item.setCommentTime(comment.getCrmCreatedAt());
             item.setReplyTime(comment.getCrmRepliedAt());
-
             list.add(item);
 
         }
@@ -299,30 +310,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
             return;
         }
         for (EventCommentData eventCommentData : eventSendCommentData) {
-//            ArrayList<EventComment> allBirthdayComments = eventCommentData.getBirthday();
-//            ArrayList<EventComment> allAnniversaryComments = eventCommentData.getAnniversary();
-//            ArrayList<EventComment> allCustomEventsComments = eventCommentData.getCustom();
             ArrayList<EventComment> allRatingComments = eventCommentData.getRating();
-            Log.i("MAULIK", "allRatingComments" + allRatingComments.size());
-//            if (allBirthdayComments != null) {
-//                for (EventComment eventComment : allBirthdayComments) {
-//                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
-//                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-//
-//                }
-//            }
-//            if (allAnniversaryComments != null) {
-//                for (EventComment eventComment : allAnniversaryComments) {
-//                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
-//                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-//                }
-//            }
-//            if (allCustomEventsComments != null) {
-//                for (EventComment eventComment : allCustomEventsComments) {
-//                    tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
-//                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-//                }
-//            }
             if (allRatingComments != null) {
                 for (EventComment eventComment : allRatingComments) {
                     tableCommentMaster.addReply(eventComment.getPrId(), eventComment.getReply(),

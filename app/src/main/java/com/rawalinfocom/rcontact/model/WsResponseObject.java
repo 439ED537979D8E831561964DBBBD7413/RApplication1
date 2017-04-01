@@ -18,11 +18,32 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WsResponseObject {
 
+    @JsonProperty("rcontact_update")
+    private ArrayList<RcontactUpdatesData> rcontactUpdatesData;
+
     @JsonProperty("receive_comment")
     private ArrayList<EventCommentData> eventReceiveCommentData;
 
     @JsonProperty("send_comment")
     private ArrayList<EventCommentData> eventSendCommentData;
+
+    private String status;
+    private String message;
+
+    private OtpLog otpLog;
+    private UserProfile userProfile;
+
+    private ProfileDataOperation profileDetail;
+
+    private ArrayList<Country> arrayListCountry;
+    private ArrayList<ProfileDataOperation> arrayListUserRcProfile;
+    private ArrayList<ProfileData> arrayListMapping;
+
+    private String profileSharingData;
+
+    public ArrayList<RcontactUpdatesData> getRcontactUpdate() {
+        return rcontactUpdatesData;
+    }
 
     public ArrayList<EventCommentData> getEventReceiveCommentData() {
         return eventReceiveCommentData;
@@ -39,20 +60,6 @@ public class WsResponseObject {
     public void setEventSendCommentData(ArrayList<EventCommentData> eventSendCommentData) {
         this.eventSendCommentData = eventSendCommentData;
     }
-
-    private String status;
-    private String message;
-
-    private OtpLog otpLog;
-    private UserProfile userProfile;
-
-    private ProfileDataOperation profileDetail;
-
-    private ArrayList<Country> arrayListCountry;
-    private ArrayList<ProfileDataOperation> arrayListUserRcProfile;
-    private ArrayList<ProfileData> arrayListMapping;
-
-    private String profileSharingData;
 
     @JsonProperty("profile_rating")
     private Rating profileRating;

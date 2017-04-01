@@ -3,7 +3,6 @@ package com.rawalinfocom.rcontact.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.rawalinfocom.rcontact.model.Event;
 
@@ -121,8 +120,8 @@ public class TableEventMaster {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RC_EVENT_MASTER, new String[]{COLUMN_EVM_ID,
-                COLUMN_EVM_RECORD_INDEX_ID, COLUMN_EVM_START_DATE, COLUMN_EVM_EVENT_TYPE,
-                COLUMN_EVM_EVENT_PRIVACY, COLUMN_RC_PROFILE_MASTER_PM_ID},
+                        COLUMN_EVM_RECORD_INDEX_ID, COLUMN_EVM_START_DATE, COLUMN_EVM_EVENT_TYPE,
+                        COLUMN_EVM_EVENT_PRIVACY, COLUMN_RC_PROFILE_MASTER_PM_ID},
                 COLUMN_EVM_RECORD_INDEX_ID + "=?", new String[]{String.valueOf(evmRecordIndexId)
                 }, null, null, null, null);
 
@@ -244,7 +243,6 @@ public class TableEventMaster {
                 " WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " !=" + loggedInUserPMID + " and " +
                 "strftime('%m-%d'," + COLUMN_EVM_START_DATE + ") between '" + fromDate + "' and '" +
                 toDate + "' order by strftime('%m-%d', " + COLUMN_EVM_START_DATE + ") asc";
-        Log.i("MAULIK", "selectQuery " + selectQuery);
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 

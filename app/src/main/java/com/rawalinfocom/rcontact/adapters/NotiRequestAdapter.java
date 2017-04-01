@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.notifications.adapters;
+package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.notifications.model.NotiRequestItem;
+import com.rawalinfocom.rcontact.model.NotiRequestItem;
 
 import java.util.List;
 

@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.notifications.adapters.NotificationPopupListAdapter;
+import com.rawalinfocom.rcontact.adapters.NotificationPopupListAdapter;
 
 import java.util.ArrayList;
 
@@ -65,8 +65,6 @@ public class NotificationPopupDialog {
 
         tvDialogTitle.setTypeface(Utils.typefaceSemiBold(context));
         recycleViewDialog = (RecyclerView) dialog.findViewById(R.id.recycle_view_dialog);
-
-        stringArrayList = arrayList;
         dialogTitle = getDialogTitle();
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
