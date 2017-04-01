@@ -313,6 +313,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
                                     "All " +
                                             "Contact Synced");
+                            Utils.setStringPreference(getActivity(), AppConstants
+                                    .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System
+                                    .currentTimeMillis() - 10000));
 //                        sendBroadCastToStartCallLogInsertion();
                             Utils.setBooleanPreference(getActivity(), AppConstants
                                     .PREF_SYNC_CALL_LOG, true);
