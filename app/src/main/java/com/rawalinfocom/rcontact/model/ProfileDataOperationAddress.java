@@ -83,7 +83,7 @@ public class ProfileDataOperationAddress implements Serializable {
         this.street = street;
     }
 
-    @JsonProperty("google_log")
+    @JsonProperty("google_lng")
     public String getGoogleLongitude() {
         return StringUtils.defaultString(this.googleLongitude);
     }
