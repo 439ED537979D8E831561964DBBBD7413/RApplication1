@@ -99,8 +99,10 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_RCONTACT_UPDATES)) {
 
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
-                ArrayList<RcontactUpdatesData> updatesData = wsResponseObject.getRcontactUpdate();
-                saveUpdatesToDb(updatesData);
+                if (wsResponseObject != null) {
+                    ArrayList<RcontactUpdatesData> updatesData = wsResponseObject.getRcontactUpdate();
+                    saveUpdatesToDb(updatesData);
+                }
                 Utils.hideProgressDialog();
                 initData();
             }
