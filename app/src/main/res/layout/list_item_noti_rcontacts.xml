@@ -30,22 +30,19 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3">
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="0dp"
+
+                <TextView
+                    android:id="@+id/text_title"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2">
+                    android:ellipsize="end"
+                    android:maxLength="25"
+                    android:maxLines="1"
+                    android:textColor="@color/colorPrimary"
+                    tools:text="RContacts app update " />
 
-                    <TextView
-                        android:id="@+id/text_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:textColor="@color/colorPrimary"
-                        tools:text="RContacts app update" />
-                </LinearLayout>
 
                 <TextView
                     android:id="@+id/text_noti_time"

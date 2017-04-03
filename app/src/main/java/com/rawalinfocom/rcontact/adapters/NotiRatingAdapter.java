@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.notifications.adapters;
+package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.notifications.NotificationPopupDialog;
-import com.rawalinfocom.rcontact.notifications.model.NotiCommentsItem;
+import com.rawalinfocom.rcontact.model.NotiRatingItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,32 +24,31 @@ import butterknife.ButterKnife;
  * Created by maulik on 15/03/17.
  */
 
-public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapter.MyViewHolder> {
+public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.MyViewHolder> {
 
 
     private Context context;
-    private List<NotiCommentsItem> list;
+    private List<NotiRatingItem> list;
     private int recyclerPosition;
     NotificationPopupDialog notificationPopupDialog;
 
-    public NotiCommentsAdapter(Context context, List<NotiCommentsItem> list, int recyclerPosition) {
+    public NotiRatingAdapter(Context context, List<NotiRatingItem> list, int recyclerPosition) {
         this.context = context;
         this.list = list;
-        this.recyclerPosition = recyclerPosition;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.image_commenter)
-        ImageView imageCommenter;
-        @BindView(R.id.text_commenter_name)
-        TextView textCommenterName;
-        @BindView(R.id.text_comment_noti_time)
-        TextView textCommentNotiTime;
-        @BindView(R.id.text_comment_detail_info)
-        TextView textCommentDetailInfo;
-        @BindView(R.id.button_comment_view_reply)
-        Button buttonCommentViewReply;
+        @BindView(R.id.image_rater)
+        ImageView imageRater;
+        @BindView(R.id.text_rater_name)
+        TextView textRaterName;
+        @BindView(R.id.text_rating_noti_time)
+        TextView textRatingNotiTime;
+        @BindView(R.id.text_rating_detail_info)
+        TextView textRatingDetailInfo;
+        @BindView(R.id.button_rating_view_reply)
+        Button buttonRatingViewReply;
 
         public MyViewHolder(View view) {
             super(view);
@@ -60,39 +59,38 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_noti_comments, parent, false);
+                .inflate(R.layout.list_item_noti_rating, parent, false);
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        final NotiCommentsItem item = list.get(position);
-        holder.textCommenterName.setText(item.getCommenterName());
-        holder.textCommentDetailInfo.setText(item.getCommenterInfo());
+        final NotiRatingItem item = list.get(position);
+        holder.textRaterName.setText(item.getRaterName());
         if (recyclerPosition == 2) {
-            holder.textCommentNotiTime.setText(Utils.formatDateTime(item.getNotiCommentTime(), "dd MMM, hh:mm a"));
+            holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "dd MMM, hh:mm a"));
         } else {
-            holder.textCommentNotiTime.setText(Utils.formatDateTime(item.getNotiCommentTime(), "hh:mm a"));
+            holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "hh:mm a"));
         }
-        holder.buttonCommentViewReply.setText("VIEW REPLY");
-        holder.buttonCommentViewReply.setOnClickListener(new View.OnClickListener() {
+        holder.textRatingDetailInfo.setText(item.getRaterName() + " reply you on your rating and comment.");
+        holder.buttonRatingViewReply.setText("VIEW REPLY");
+        holder.buttonRatingViewReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 ArrayList<String> arrayListComments = new ArrayList<>();
-
-                arrayListComments.add(item.getCommenterName());
-                arrayListComments.add(item.getEventName());
+                arrayListComments.add(item.getRaterName());
+                arrayListComments.add("Rating");
                 arrayListComments.add(item.getComment());
                 arrayListComments.add(Utils.formatDateTime(item.getCommentTime(), "dd MMM, hh:mm a"));
                 arrayListComments.add(item.getReply());
                 arrayListComments.add(Utils.formatDateTime(item.getReplyTime(), "dd MMM, hh:mm a"));
-
-                notificationPopupDialog = new NotificationPopupDialog(context, arrayListComments, false);
-                notificationPopupDialog.setDialogTitle(item.getCommenterName() + " Reply You");
+                notificationPopupDialog = new NotificationPopupDialog(context, arrayListComments, true);
+                notificationPopupDialog.setDialogTitle(item.getRaterName() + " Rate You");
+                notificationPopupDialog.setRatingInfo(item.getRating());
                 notificationPopupDialog.showDialog();
             }
         });
+
 
     }
 

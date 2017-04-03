@@ -1,8 +1,10 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,12 +40,14 @@ public class ProfileDataOperationEvent implements Serializable {
         this.eventType = eventType;
     }
 
-//    @JsonProperty("event_date")
+    //    @JsonProperty("event_date")
     @JsonProperty("event_datetime")
+//    @JsonGetter("event_datetime")
     public String getEventDate() {
         return StringUtils.defaultString(this.eventDate);
     }
 
+//    @JsonSetter("event_date")
     public void setEventDate(String eventDate) {
         this.eventDate = eventDate;
     }

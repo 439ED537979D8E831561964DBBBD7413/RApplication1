@@ -12,8 +12,11 @@ public class AppConstants {
     public static String PLAY_STORE_LINK = "https://play.google.com/store/apps/details?id=";
 
     //<editor-fold desc="Permission Request Code">
-    public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 3;
-    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 4;
+    public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1003;
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1004;
+    public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1005;
+    public static final int MY_PERMISSIONS_REQUEST_CAMERA = 1006;
+    public static final int MY_PERMISSIONS_CALL_LOG = 1007;
     //</editor-fold>
 
     //<editor-fold desc="Profile Detail Section">
@@ -150,6 +153,7 @@ public class AppConstants {
     public static String PREF_BLOCK_CONTACT_LIST= "pref_block_contact_list";
     public static String PREF_BLOCK_PROFILE = "pref_block_profile";
     public static String PREF_CALL_LOG_LIST = "pref_call_log_list";
+    public static String PREF_CONTACT_LAST_SYNC_TIME = "pref_contact_last_sync_time";
 
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,

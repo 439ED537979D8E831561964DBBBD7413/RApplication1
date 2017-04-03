@@ -15,8 +15,8 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.notifications.adapters.NotiRequestAdapter;
-import com.rawalinfocom.rcontact.notifications.model.NotiRequestItem;
+import com.rawalinfocom.rcontact.adapters.NotiRequestAdapter;
+import com.rawalinfocom.rcontact.model.NotiRequestItem;
 
 import java.util.Arrays;
 import java.util.List;
