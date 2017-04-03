@@ -21,14 +21,6 @@
             android:id="@+id/progressBarCallLog"
             android:layout_centerInParent="true"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/text_loading"
-            android:text="Loading..."
-            android:layout_below="@+id/progressBarCallLog"
-            android:layout_centerHorizontal="true"/>
-
 
     </RelativeLayout>
 
@@ -50,9 +42,33 @@
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/recycler_call_logs"
-            >
+            android:id="@+id/recycler_call_logs">
         </android.support.v7.widget.RecyclerView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyle"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:id="@+id/progressBarLoadCallLogs"
+                android:layout_centerInParent="true"
+                android:visibility="gone"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_loading"
+                android:padding="@dimen/margin_10dp"
+                android:text="Loading More"
+                android:layout_gravity="center_horizontal"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
 
     </LinearLayout>
 

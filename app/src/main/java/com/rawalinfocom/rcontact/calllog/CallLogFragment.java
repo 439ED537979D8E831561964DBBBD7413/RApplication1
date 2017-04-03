@@ -866,8 +866,30 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                     break;
             }
 
+
+            /*Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -1);
+            Date yesDate;
+            yesDate = cal.getTime();
+            String yesterdayDate = new SimpleDateFormat("dd/MM/yyyy").format(yesDate);
+            Log.i("Call yesterday date", yesterdayDate);
+
+            Calendar c = Calendar.getInstance();
+            Date cDate = c.getTime();
+            String currentDate = new SimpleDateFormat("dd/MM/yyyy").format(cDate);
+            Log.i("Call Current date", currentDate);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Date dateToFetch = sdf.parse(currentDate);
+            long dateToShow = dateToFetch.getTime();
+
+            String  where =   android.provider.CallLog.Calls.TYPE + " =?"
+                    + " AND " + android.provider.CallLog.Calls.DATE + " =?";
+            String[] selectionArguments = new String[]{"type = 1",String.valueOf(dateToShow)};*/
+
             Cursor cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI,
                     null, selection, null, order);
+           /*Cursor cursor =  getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI,
+                   null, where , selectionArguments, null);*/
             int cursorCount = cursor.getCount();
 
             if (cursor != null) {
