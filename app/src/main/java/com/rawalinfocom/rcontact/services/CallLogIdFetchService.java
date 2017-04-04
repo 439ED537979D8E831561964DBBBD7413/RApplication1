@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.IBinder;
 import android.provider.CallLog;
-import android.provider.ContactsContract;
-import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -26,7 +23,6 @@ public class CallLogIdFetchService extends Service {
     public CallLogIdFetchService() {
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -48,7 +44,7 @@ public class CallLogIdFetchService extends Service {
 
         cursor.close();
 
-        Utils.setArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET, arrayListCallLogIds);
+        Utils.setArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET, arrayListCallLogIds);
         sendMessage();
 
         return super.onStartCommand(intent, flags, startId);

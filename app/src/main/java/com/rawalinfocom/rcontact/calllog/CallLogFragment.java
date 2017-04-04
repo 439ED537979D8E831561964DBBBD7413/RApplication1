@@ -47,6 +47,7 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.CallLogListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -618,21 +619,24 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         arrayListObjectCallLogs = new ArrayList<>();
         arrayListCallLogsHistory = new ArrayList<>();
         tempList = new ArrayList<>();
+        RContactApplication rContactApplication = (RContactApplication)
+                getActivity().getApplicationContext();
 
+        callLogs = rContactApplication.getArrayListCallLogType();
         ArrayList<String> listOfBlockedNumbers = Utils.getArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST);
 
         if (callType.equalsIgnoreCase(MISSED_CALLS)) {
-            callLogs = getLogsByCallType(AppConstants.MISSED_CALLS);
+//            callLogs = getLogsByCallType(AppConstants.MISSED_CALLS);
         } else if (callType.equalsIgnoreCase(INCOMING_CALLS)) {
-            callLogs = getLogsByCallType(AppConstants.INCOMING_CALLS);
+//            callLogs = getLogsByCallType(AppConstants.INCOMING_CALLS);
         } else if (callType.equalsIgnoreCase(OUTGOING_CALLS)) {
-            callLogs = getLogsByCallType(AppConstants.OUTGOING_CALLS);
+//            callLogs = getLogsByCallType(AppConstants.OUTGOING_CALLS);
         } else {
-            callLogs = getLogsByCallType(AppConstants.ALL_CALLS);
+//            callLogs = getLogsByCallType(AppConstants.ALL_CALLS);
         }
         int sizeOfCallLog = callLogs.size();
         tempList.addAll(callLogs);
-        try {
+        /*try {
 
             if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_SYNC_CALL_LOG, false)) {
                 if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED,
@@ -675,7 +679,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
         // To show recent call on top
 //        Collections.reverse(callLogs);
