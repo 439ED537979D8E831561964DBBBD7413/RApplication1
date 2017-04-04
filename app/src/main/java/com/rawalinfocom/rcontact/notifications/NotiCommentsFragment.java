@@ -31,8 +31,8 @@ import com.rawalinfocom.rcontact.model.EventCommentData;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
-import com.rawalinfocom.rcontact.notifications.adapters.NotiCommentsAdapter;
-import com.rawalinfocom.rcontact.notifications.model.NotiCommentsItem;
+import com.rawalinfocom.rcontact.adapters.NotiCommentsAdapter;
+import com.rawalinfocom.rcontact.model.NotiCommentsItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ import butterknife.ButterKnife;
 public class NotiCommentsFragment extends BaseFragment implements WsResponseListener {
 
 
-    @BindView(R.id.search_view_events)
+    @BindView(R.id.search_view_noti_comments)
     SearchView searchViewEvents;
 
     @BindView(R.id.header1)

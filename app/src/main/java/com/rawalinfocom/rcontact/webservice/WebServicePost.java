@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -207,6 +208,7 @@ class WebServicePost {
             if (mapper == null) {
                 mapper = new ObjectMapper();
                 mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             }
             lock.unlock();
         } catch (Exception ex) {

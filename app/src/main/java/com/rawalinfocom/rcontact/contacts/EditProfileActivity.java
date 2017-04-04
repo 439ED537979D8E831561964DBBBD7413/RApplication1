@@ -363,7 +363,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     Spinner eventType = (Spinner) view.findViewById(R.id.spinner_type);
                     RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
                             .id.relative_row_edit_profile);
-                    event.setEventDate(eventDate.getText().toString());
+                    event.setEventDateTime(eventDate.getText().toString());
                     event.setEventType((String) eventType.getSelectedItem());
                     event.setEventId((String) relativeRowEditProfile.getTag());
 
@@ -837,7 +837,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     (), "yyyy-MM-dd hh:mm:ss", EVENT_DATE_FORMAT);
 
             ProfileDataOperationEvent event = new ProfileDataOperationEvent();
-            event.setEventDate(formattedDate);
+            event.setEventDateTime(formattedDate);
             event.setEventType(arrayListEvent.get(i).getEvmEventType());
             event.setEventId(arrayListEvent.get(i).getEvmRecordIndexId());
             arrayListEventObject.add(event);
@@ -1072,7 +1072,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
                 if (detailObject != null) {
                     ProfileDataOperationEvent event = (ProfileDataOperationEvent) detailObject;
-                    inputValue.setText(event.getEventDate());
+                    inputValue.setText(event.getEventDateTime());
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(event.getEventType()))) {
                         spinnerPosition = spinnerEventAdapter.getPosition(event.getEventType());
@@ -1793,8 +1793,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                         ProfileDataOperationEvent event = new ProfileDataOperationEvent();
                         event.setEventType(arrayListNewEvent.get(arrayListAddedPositions.get
                                 (i)).getEventType());
-                        event.setEventDate(arrayListNewEvent.get(arrayListAddedPositions
-                                .get(i)).getEventDate());
+                        event.setEventDateTime(arrayListNewEvent.get(arrayListAddedPositions
+                                .get(i)).getEventDateTime());
                         events.add(event);
                     }
                     profileDataOperation.setPbEvent(events);
@@ -2018,8 +2018,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                                 (arrayListReplacedPositions.get(i)).getEventId());
                         event.setEventType(arrayListNewEvent.get
                                 (arrayListReplacedPositions.get(i)).getEventType());
-                        event.setEventDate(arrayListNewEvent.get
-                                (arrayListReplacedPositions.get(i)).getEventDate());
+                        event.setEventDateTime(arrayListNewEvent.get
+                                (arrayListReplacedPositions.get(i)).getEventDateTime());
                         events.add(event);
                     }
                     profileDataOperation.setPbEvent(events);
@@ -2440,7 +2440,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             for (int j = 0; j < arrayListEvent.size(); j++) {
                 Event event = new Event();
                 event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
-                event.setEvmStartDate(arrayListEvent.get(j).getEventDate());
+                event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                 event.setEvmEventType(arrayListEvent.get(j).getEventType());
                 event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
                 event.setRcProfileMasterPmId(getUserPmId());

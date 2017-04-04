@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -34,13 +33,14 @@ import com.rawalinfocom.rcontact.model.Rating;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
-import com.rawalinfocom.rcontact.notifications.adapters.TimelineAdapter;
-import com.rawalinfocom.rcontact.notifications.model.TimelineItem;
+import com.rawalinfocom.rcontact.adapters.TimelineAdapter;
+import com.rawalinfocom.rcontact.model.TimelineItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,14 +50,12 @@ public class TimelineActivity extends BaseActivity implements RippleView
 
     @BindView(R.id.text_toolbar_title)
     TextView textToolbarTitle;
+
     @BindView(R.id.ripple_action_back)
     RippleView rippleActionBack;
+
     @BindView(R.id.recyclerview1)
     RecyclerView recyclerViewToday;
-    @BindView(R.id.image_action_back)
-    ImageView imageActionBack;
-    @BindView(R.id.relative_action_back)
-    RelativeLayout relativeActionBack;
     @BindView(R.id.search_view_timeline)
     SearchView searchViewTimeline;
     @BindView(R.id.recyclerview2)
@@ -72,12 +70,6 @@ public class TimelineActivity extends BaseActivity implements RippleView
     RelativeLayout headerYesterdayLayout;
     @BindView(R.id.h3)
     RelativeLayout headerPast5daysLayout;
-    @BindView(R.id.header1)
-    RelativeLayout header1;
-    @BindView(R.id.header2)
-    RelativeLayout header2;
-    @BindView(R.id.header3)
-    RelativeLayout header3;
     @BindView(R.id.header1_icon)
     ImageView headerTodayIcon;
     @BindView(R.id.header2_icon)
@@ -124,7 +116,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
         headerPast5DaysTitle.setTypeface(Utils.typefaceRegular(this));
 
         rippleActionBack.setOnRippleCompleteListener(this);
-        textToolbarTitle.setText("Timeline");
+        textToolbarTitle.setText(getResources().getString(R.string.nav_text_timeline));
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
 
         headerTodayIcon.setImageResource(R.drawable.ic_collapse);
@@ -269,7 +261,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
             int pmId = comment.getRcProfileMasterPmId();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
             item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
-            item.setEventDetail("wishes you on your " + event.getEvmEventType());
+            item.setEventDetail(getResources().getString(R.string.text_wishes_on_your) + event.getEvmEventType());
             item.setWisherComment(comment.getCrmComment());
             item.setWisherCommentTime(comment.getCrmCreatedAt());
             item.setCrmCloudPrId(comment.getCrmCloudPrId());
@@ -310,10 +302,10 @@ public class TimelineActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(context)) {
             new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_EVENT_COMMENT, "Getting comments..", true).execute
+                    .REQ_GET_EVENT_COMMENT, getResources().getString(R.string.msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
         } else {
-            Toast.makeText(TimelineActivity.this, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -402,7 +394,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
 
             }
         } else {
-            Toast.makeText(TimelineActivity.this, "There is some error, please try again.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -415,28 +407,27 @@ public class TimelineActivity extends BaseActivity implements RippleView
             ArrayList<EventComment> allAnniversaryComments = eventCommentData.getAnniversary();
             ArrayList<EventComment> allCustomEventsComments = eventCommentData.getCustom();
             ArrayList<EventComment> allRatingComments = eventCommentData.getRating();
-            Log.i("MAULIK", "rating:::" + allRatingComments.size());
             if (allBirthdayComments != null) {
                 for (EventComment eventComment : allBirthdayComments) {
-                    Comment comment = createComment(eventComment, "Birthday");
+                    Comment comment = createComment(eventComment, getResources().getString(R.string.text_birthday));
                     tableCommentMaster.addComment(comment);
                 }
             }
             if (allAnniversaryComments != null) {
                 for (EventComment eventComment : allAnniversaryComments) {
-                    Comment comment = createComment(eventComment, "Anniversary");
+                    Comment comment = createComment(eventComment, getResources().getString(R.string.text_anniversary));
                     tableCommentMaster.addComment(comment);
                 }
             }
             if (allCustomEventsComments != null) {
                 for (EventComment eventComment : allCustomEventsComments) {
-                    Comment comment = createComment(eventComment, "Custom");
+                    Comment comment = createComment(eventComment, getResources().getString(R.string.text_custom));
                     tableCommentMaster.addComment(comment);
                 }
             }
             if (allRatingComments != null) {
                 for (EventComment eventComment : allRatingComments) {
-                    Comment comment = createComment(eventComment, "Rating");
+                    Comment comment = createComment(eventComment, getResources().getString(R.string.text_rating));
                     tableCommentMaster.addComment(comment);
                 }
             }
@@ -448,7 +439,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
         comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
         comment.setCrmRating("");
         comment.setCrmType(commentType);
-        if (commentType.equalsIgnoreCase("Rating")) {
+        if (commentType.equalsIgnoreCase(getResources().getString(R.string.text_rating))) {
             comment.setCrmCloudPrId(eventComment.getPrId());
             comment.setCrmRating(eventComment.getRatingStars());
         } else {
