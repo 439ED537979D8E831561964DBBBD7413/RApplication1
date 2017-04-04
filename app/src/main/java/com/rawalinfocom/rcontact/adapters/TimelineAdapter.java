@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.notifications.adapters;
+package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
 import android.graphics.drawable.LayerDrawable;
@@ -20,10 +20,10 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.TimelineItem;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
-import com.rawalinfocom.rcontact.notifications.model.TimelineItem;
 
 import java.util.List;
 
@@ -59,9 +59,9 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         String userComment = item.getUserComment();
 
         int notiType = 0;
-        if ("Rating".equalsIgnoreCase(item.getCrmType()))
+        if (context.getResources().getString(R.string.text_rating).equalsIgnoreCase(item.getCrmType()))
             notiType = 1;
-        if (wisherComment != null && wisherComment.length() != 0) {
+        if (wisherComment != null && wisherComment.length() > 0) {
             holder.textWisherComment.setVisibility(View.VISIBLE);
             holder.textWisherComment.setText(wisherComment);
             if (recyclerPosition == 0)
@@ -78,9 +78,8 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
                     holder.textWisherCommentTime.setText(Utils.formatDateTime(item.getWisherCommentTime(), "dd MMM, hh:mm a"));
             }
         }
-        if (userComment != null && userComment.length() != 0) {
+        if (userComment != null && userComment.length() > 0) {
             holder.layoutUserCommentDone.setVisibility(View.VISIBLE);
-
             holder.textUserComment.setText(userComment);
 
             if (recyclerPosition == 0)
@@ -107,7 +106,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(context, android.R
                     .color.darker_gray));
             holder.textEventDetailInfo.setVisibility(View.GONE);
-        } else if (notiType == 0) {
+        } else {
             holder.textEventDetailInfo.setText(item.getEventDetail());
             holder.ratingInfo.setVisibility(View.GONE);
         }
@@ -120,7 +119,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
                     TimelineActivity.selectedRecyclerItem = position;
                     addReplyonComment(item.getCrmType(), item.getCrmCloudPrId(), userComment, AppConstants.COMMENT_STATUS_RECEIVED, item.getEvmRecordIndexId());
                 } else {
-                    Toast.makeText(context, "Please enter some comment first!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getResources().getString(R.string.msg_please_enter_some_comment), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -129,7 +128,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
     private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int commentStatusReceived, int evmRecordIndexId) {
 
         WsRequestObject addCommentObject = new WsRequestObject();
-        if (crmType.equalsIgnoreCase("Rating")) {
+        if (crmType.equalsIgnoreCase(context.getResources().getString(R.string.text_rating))) {
             addCommentObject.setPrId(crmCloudPrId);
             addCommentObject.setPrReply(userComment);
             addCommentObject.setPrStatus(commentStatusReceived + "");
@@ -141,20 +140,20 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             addCommentObject.setStatus(commentStatusReceived + "");
         }
         if (Utils.isNetworkAvailable(context)) {
-            if (crmType.equalsIgnoreCase("Rating")) {
+            if (crmType.equalsIgnoreCase(context.getResources().getString(R.string.text_rating))) {
                 new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
-                        .REQ_PROFILE_RATING, "Sending comments..", true).execute
+                        .REQ_PROFILE_RATING, context.getResources().getString(R.string.msg_please_wait), true).execute
                         (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
             } else {
                 new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
-                        .REQ_ADD_EVENT_COMMENT, "Sending comments..", true).execute
+                        .REQ_ADD_EVENT_COMMENT, context.getResources().getString(R.string.msg_please_wait), true).execute
                         (WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
             }
         } else {
             //show no toast
-            Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
         }
     }
 

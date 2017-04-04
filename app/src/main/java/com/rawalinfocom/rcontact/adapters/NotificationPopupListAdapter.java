@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.notifications.adapters;
+package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -41,8 +41,11 @@ public class NotificationPopupListAdapter extends RecyclerView.Adapter<Notificat
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.textWisherName.setText(stringArrayList.get(0));
         holder.textTimelineNotiTime.setText(stringArrayList.get(1));
-
-        holder.textWisherComment.setText(stringArrayList.get(2));
+        if (stringArrayList.get(2).length() > 0) {
+            holder.textWisherComment.setText(stringArrayList.get(2));
+        } else {
+            holder.textWisherComment.setVisibility(View.GONE);
+        }
         holder.textWisherCommentTime.setText(stringArrayList.get(3));
 
         holder.textUserComment.setText(stringArrayList.get(4));

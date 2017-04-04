@@ -10,8 +10,8 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.RippleView;
-import com.rawalinfocom.rcontact.notifications.adapters.NotificationsMainAdapter;
-import com.rawalinfocom.rcontact.notifications.model.NotificationItem;
+import com.rawalinfocom.rcontact.adapters.NotificationsMainAdapter;
+import com.rawalinfocom.rcontact.model.NotificationItem;
 
 import java.util.Arrays;
 import java.util.List;

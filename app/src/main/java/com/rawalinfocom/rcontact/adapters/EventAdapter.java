@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.notifications.adapters;
+package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +20,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.notifications.EventsActivity;
-import com.rawalinfocom.rcontact.notifications.model.EventItem;
+import com.rawalinfocom.rcontact.model.EventItem;
 
 import java.util.List;
 
@@ -54,20 +54,21 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         holder.textEventName.setText(item.getEventName());
         holder.textEventCommentTime.setText(Utils.formatDateTime(item.getCommentTime(), "dd-MM hh:mm a"));
         int notiType = item.getEventType();
+        String on = context.getResources().getString(R.string.text_on);
         if (notiType == AppConstants.COMMENT_TYPE_BIRTHDAY) {
             if (recyclerPosition == 0)
                 holder.textEventDetailInfo.setText(item.getEventDetail() + ", " + item.getEventName());
             else
-                holder.textEventDetailInfo.setText(item.getEventDetail() + ", " + item.getEventName() + " on " + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
+                holder.textEventDetailInfo.setText(item.getEventDetail() + ", " + item.getEventName() + on + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
         } else if (notiType == AppConstants.COMMENT_TYPE_ANNIVERSARY) {
-            holder.textEventDetailInfo.setText(item.getEventDetail() + " on " + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
+            holder.textEventDetailInfo.setText(item.getEventDetail() + on + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
         } else {
-            holder.textEventDetailInfo.setText(item.getEventName() + " on " + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
+            holder.textEventDetailInfo.setText(item.getEventName() + on + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
         }
         if (recyclerPosition != 2) {
             if (!item.isEventCommentPending()) {
                 holder.textUserComment.setVisibility(View.VISIBLE);
-                holder.textUserComment.setText("You wrote to " + item.getPersonFirstName() + "'s Timeline");
+                holder.textUserComment.setText(context.getResources().getString(R.string.text_you_wrote_on_timeline, item.getPersonFirstName()));
                 holder.layoutUserCommentPending.setVisibility(View.GONE);
             } else {
                 holder.textUserComment.setVisibility(View.GONE);
@@ -89,7 +90,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
                     EventsActivity.selectedRecyclerItem = position;
                     addEventComment(item.getEventName(), item.getPersonRcpPmId(), userComment, item.getEventDate(), AppConstants.COMMENT_STATUS_SENT, item.getEventRecordIndexId());
                 } else {
-                    Toast.makeText(context, "Please enter some comment first!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getResources().getString(R.string.msg_please_enter_some_comment), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -152,11 +153,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         if (Utils.isNetworkAvailable(context)) {
             new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
-                    .REQ_ADD_EVENT_COMMENT, "Sending comments..", true).execute
+                    .REQ_ADD_EVENT_COMMENT, context.getResources().getString(R.string.msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
         } else {
             //show no toast
-            Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
         }
     }
 

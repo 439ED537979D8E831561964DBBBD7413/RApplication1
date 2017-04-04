@@ -216,7 +216,7 @@ public class QueryManager {
         if (eventCursor.moveToFirst()) {
             do {
                 ProfileDataOperationEvent event = new ProfileDataOperationEvent();
-                event.setEventDate(StringUtils.defaultString(eventCursor.getString(eventCursor
+                event.setEventDateTime(StringUtils.defaultString(eventCursor.getString(eventCursor
                         .getColumnIndex(TableEventMaster.COLUMN_EVM_START_DATE))));
                 event.setEventType(StringUtils.defaultString(eventCursor.getString(eventCursor
                         .getColumnIndex(TableEventMaster.COLUMN_EVM_EVENT_TYPE))));
