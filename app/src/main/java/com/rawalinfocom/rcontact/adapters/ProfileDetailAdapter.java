@@ -312,13 +312,16 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     }
 
     private void displayEvent(ProfileDetailViewHolder holder, int position) {
-        ProfileDataOperationEvent event = (ProfileDataOperationEvent) arrayList.get(position);
+        ProfileDataOperationEvent event = (ProfileDataOperationEvent) arrayList
+                .get(position);
 
         String convertedDate;
-        if (StringUtils.startsWith(event.getEventDate(), "--")) {
-            convertedDate = Utils.convertDateFormat(event.getEventDate(), "--MM-dd", "dd'th' MMM");
+        if (StringUtils.startsWith(event.getEventDateTime(), "--")) {
+            convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "--MM-dd", "dd'th' " +
+                    "MMM");
         } else {
-            convertedDate = Utils.convertDateFormat(event.getEventDate(), "yyyy-MM-dd", "dd'th' " +
+            convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "yyyy-MM-dd",
+                    "dd'th' " +
                     "MMM, yyyy");
         }
 

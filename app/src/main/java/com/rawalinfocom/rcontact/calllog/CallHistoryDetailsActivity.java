@@ -43,8 +43,6 @@ import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
-import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
@@ -1384,7 +1382,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 .getInt(contactEventCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Event.TYPE))));
 
-                event.setEventDate(contactEventCursor.getString(contactEventCursor
+                event.setEventDateTime(contactEventCursor.getString(contactEventCursor
                         .getColumnIndex(ContactsContract.CommonDataKinds.Event
                                 .START_DATE)));
 
@@ -1396,7 +1394,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 .getInt(contactEventCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Event.TYPE))));
 
-                eventOperation.setEventDate(contactEventCursor.getString(contactEventCursor
+                eventOperation.setEventDateTime(contactEventCursor.getString(contactEventCursor
                         .getColumnIndex(ContactsContract.CommonDataKinds.Event
                                 .START_DATE)));
 
