@@ -534,6 +534,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         AllCallLogViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            textSimType.setVisibility(View.GONE);
 
 
         }

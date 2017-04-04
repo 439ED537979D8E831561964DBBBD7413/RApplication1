@@ -9,6 +9,7 @@ import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.appevents.AppEventsLogger;
+import com.rawalinfocom.rcontact.model.CallLogType;
 
 import java.util.ArrayList;
 
@@ -30,6 +31,11 @@ public class RContactApplication extends Application {
 
     boolean isFavouriteModified;
 
+    ArrayList<Object> arrayListObjectCallLogs;
+    ArrayList<String> arrayListcallLogsHeaders;
+    ArrayList<CallLogType> arrayListCallLogType;
+
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -41,6 +47,10 @@ public class RContactApplication extends Application {
         arrayListAllContactHeaders = new ArrayList<>();
         arrayListFavPhoneBookContacts = new ArrayList<>();
         arrayListFavContactHeaders = new ArrayList<>();
+
+        arrayListcallLogsHeaders = new ArrayList<>();
+        arrayListObjectCallLogs =  new ArrayList<>();
+        arrayListCallLogType =  new ArrayList<>();
 
         // Facebook Initialization
 //        FacebookSdk.sdkInitialize(getApplicationContext());
@@ -129,5 +139,29 @@ public class RContactApplication extends Application {
 
     public void setFavouriteModified(boolean favouriteModified) {
         isFavouriteModified = favouriteModified;
+    }
+
+    public ArrayList<Object> getArrayListObjectCallLogs() {
+        return arrayListObjectCallLogs;
+    }
+
+    public void setArrayListObjectCallLogs(ArrayList<Object> arrayListObjectCallLogs) {
+        this.arrayListObjectCallLogs = arrayListObjectCallLogs;
+    }
+
+    public ArrayList<String> getArrayListcallLogsHeaders() {
+        return arrayListcallLogsHeaders;
+    }
+
+    public void setArrayListcallLogsHeaders(ArrayList<String> arrayListcallLogsHeaders) {
+        this.arrayListcallLogsHeaders = arrayListcallLogsHeaders;
+    }
+
+    public ArrayList<CallLogType> getArrayListCallLogType() {
+        return arrayListCallLogType;
+    }
+
+    public void setArrayListCallLogType(ArrayList<CallLogType> arrayListCallLogType) {
+        this.arrayListCallLogType = arrayListCallLogType;
     }
 }
