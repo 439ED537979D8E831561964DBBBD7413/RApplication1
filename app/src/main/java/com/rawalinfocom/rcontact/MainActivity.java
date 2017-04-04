@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -35,12 +36,14 @@ import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
+import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -56,6 +59,7 @@ import com.rawalinfocom.rcontact.notifications.EventsActivity;
 import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
+import com.rawalinfocom.rcontact.services.CallLogIdFetchService;
 import com.rawalinfocom.rcontact.services.ContactSyncService;
 import com.rawalinfocom.rcontact.sms.SmsFragment;
 
@@ -91,6 +95,8 @@ public class MainActivity extends BaseActivity implements NavigationView
     private ArrayList<ProfileData> arrayListUserContact;
     private ArrayList<ProfileData> arrayListDeletedUserContact;
     private PhoneBookContacts phoneBookContacts;
+    int LIST_PARTITION_COUNT = 10;
+    private ArrayList<String> listOfCallLogIds ;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -100,6 +106,9 @@ public class MainActivity extends BaseActivity implements NavigationView
         ButterKnife.bind(this);
         Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
         startService(contactIdFetchService);
+
+        Intent callLogIdFetchService =  new Intent(this, CallLogIdFetchService.class);
+        startService(callLogIdFetchService);
 
         if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()
                 .getInteger(R.integer.launch_mobile_registration)) == getResources().getInteger(R
@@ -476,6 +485,80 @@ public class MainActivity extends BaseActivity implements NavigationView
         this.unregisterReceiver(networkConnectionReceiver);
     }
 
+    // =========================================== Call Logs ==================================================//
+
+    private void getCallLogsByRawId(){
+
+        ArrayList<String> callLogsIdsList =  Utils.getArrayListPreference(this,AppConstants.PREF_CALL_LOGS_ID_SET);
+        if(callLogsIdsList.size()<0){
+            PhoneBookCallLogs phoneBookCallLogs =  new PhoneBookCallLogs(this);
+            Cursor cursor =  phoneBookCallLogs.getAllCallLogId();
+            callLogsIdsList =  new ArrayList<>();
+            if (cursor != null){
+                int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
+                while (cursor.moveToNext()) {
+                    callLogsIdsList.add(cursor.getString(rowId));
+                }
+            }
+
+            cursor.close();
+            Utils.setArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET, callLogsIdsList);
+
+        }
+
+        if(callLogsIdsList != null && callLogsIdsList.size()>0){
+            if(callLogsIdsList.size() > LIST_PARTITION_COUNT){
+                for (ArrayList<String> partition : chopped(callLogsIdsList, LIST_PARTITION_COUNT)) {
+                    // do something with partition
+                    fetchCallLogsFromIds(partition);
+                    break;
+                }
+            }else{
+                fetchCallLogsFromIds(callLogsIdsList);
+            }
+
+        }
+    }
+
+    private void fetchCallLogsFromIds (ArrayList<String> listOfRowIds){
+
+    }
+
+    private ArrayList<ArrayList<String>> chopped(ArrayList<String> list, final int L) {
+        ArrayList<ArrayList<String>> parts = new ArrayList<ArrayList<String>>();
+        final int N = list.size();
+        for (int i = 0; i < N; i += L) {
+            parts.add(new ArrayList<String>(
+                    list.subList(i, Math.min(N, i + L)))
+            );
+        }
+        return parts;
+    }
+
+    private ArrayList<String> divideCallLogId(ArrayList<String> list) {
+        int size = 0;
+        listOfCallLogIds = new ArrayList<>();
+        if (list != null && list.size() > 0) {
+            size = list.size();
+            if (size > LIST_PARTITION_COUNT) {
+                for (ArrayList<String> partition : chopped(list, LIST_PARTITION_COUNT)) {
+                    // do something with partition
+                    Log.i("Partition of Call Logs Ids", partition.size() + " from " + size + "");
+                    listOfCallLogIds.addAll(partition);
+                    break;
+                }
+            } else {
+                listOfCallLogIds.addAll(list);
+
+            }
+        }
+
+        return listOfCallLogIds;
+    }
+
+
+
+    //============================================ Contacts ===================================================//
     public void syncBackgroundContacts() {
 
         /*Cursor cursor = phoneBookContacts.getUpdatedContacts(String.valueOf(System

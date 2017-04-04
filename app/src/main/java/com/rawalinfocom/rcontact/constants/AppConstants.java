@@ -105,6 +105,7 @@ public class AppConstants {
     //<editor-fold desc="Intent Action">
 
     public static String ACTION_CONTACT_FETCH = "action_contact_fetch";
+    public static String ACTION_CALL_LOG_FETCH = "action_call_log_fetch";
     public static String ACTION_START_CALL_LOG_INSERTION = "action_start_call_log_insertion";
     public static String ACTION_LOCAL_BROADCAST = "action_local_broadcast";
     public static String ACTION_LOCAL_BROADCAST_DIALOG = "action_local_broadcast_dialog";
@@ -154,6 +155,7 @@ public class AppConstants {
     public static String PREF_BLOCK_PROFILE = "pref_block_profile";
     public static String PREF_CALL_LOG_LIST = "pref_call_log_list";
     public static String PREF_CONTACT_LAST_SYNC_TIME = "pref_contact_last_sync_time";
+    public static String PREF_CALL_LOGS_ID_SET = "pref_call_logs_id_set";
 
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,

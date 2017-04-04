@@ -128,6 +128,12 @@
         <activity android:name=".calllog.CallLogDeleteActivity" />
         <activity android:name=".calllog.CallHistoryDetailsActivity" />
         <activity android:name=".BlockContactListActivity"></activity>
+
+        <service
+            android:name=".services.CallLogIdFetchService"
+            android:enabled="true"
+            android:exported="true" />
+
     </application>
 
 </manifest>
