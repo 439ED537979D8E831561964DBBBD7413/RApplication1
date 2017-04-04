@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.adapters.TimelineAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -30,17 +32,15 @@ import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.EventComment;
 import com.rawalinfocom.rcontact.model.EventCommentData;
 import com.rawalinfocom.rcontact.model.Rating;
+import com.rawalinfocom.rcontact.model.TimelineItem;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
-import com.rawalinfocom.rcontact.adapters.TimelineAdapter;
-import com.rawalinfocom.rcontact.model.TimelineItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -181,6 +181,53 @@ public class TimelineActivity extends BaseActivity implements RippleView
         });
         recyclerViewYesterday.setVisibility(View.GONE);
         recyclerViewPast5day.setVisibility(View.GONE);
+        searchViewTimeline.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+                    todayTimelineAdapter.updateList(listTimelineToday);
+                    yesterdayTimelineAdapter.updateList(listTimelineYesterday);
+                    past5daysTimelineAdapter.updateList(listTimelinePastDay);
+                }
+                return false;
+            }
+        });
+
+    }
+
+    private void filter(String query) {
+        {
+
+            List<TimelineItem> temp = new ArrayList<>();
+            for (TimelineItem item : listTimelineToday) {
+                if (item.getWisherName().toLowerCase().contains(query.toLowerCase())) {
+                    temp.add(item);
+                }
+            }
+            todayTimelineAdapter.updateList(temp);
+
+            temp = new ArrayList<>();
+            for (TimelineItem item : listTimelineYesterday) {
+                if (item.getWisherName().toLowerCase().contains(query.toLowerCase())) {
+                    temp.add(item);
+                }
+            }
+            yesterdayTimelineAdapter.updateList(temp);
+
+            temp = new ArrayList<>();
+            for (TimelineItem item : listTimelinePastDay) {
+                if (item.getWisherName().toLowerCase().contains(query.toLowerCase())) {
+                    temp.add(item);
+                }
+            }
+            past5daysTimelineAdapter.updateList(temp);
+        }
     }
 
     private void initData() {

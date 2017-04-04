@@ -17,10 +17,10 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.EventItem;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.notifications.EventsActivity;
-import com.rawalinfocom.rcontact.model.EventItem;
 
 import java.util.List;
 
@@ -99,6 +99,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    public void updateList(List<EventItem> list) {
+        this.list = list;
+        notifyDataSetChanged();
     }
 
 

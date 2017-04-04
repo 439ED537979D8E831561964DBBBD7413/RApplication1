@@ -43,5 +43,6 @@
 
     <color name="dialogTitleTextColor">#E6444444</color>
     <color name="dialogUserNameTextColor">#E600796b</color>
+    <color name="button_background_color">#3300796b</color>
 
 </resources>
