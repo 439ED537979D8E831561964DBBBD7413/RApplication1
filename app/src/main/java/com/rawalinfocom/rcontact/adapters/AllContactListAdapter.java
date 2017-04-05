@@ -789,6 +789,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         @BindView(R.id.button_invite)
         Button buttonInvite;
 
+
         AllContactViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);

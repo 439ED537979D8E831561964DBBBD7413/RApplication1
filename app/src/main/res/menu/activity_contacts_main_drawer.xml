@@ -20,6 +20,10 @@
             android:icon="@drawable/ic_menu_user_circle"
             android:title="@string/nav_text_events" />
         <item
+            android:id="@+id/nav_user_rating_history"
+            android:icon="@drawable/ic_menu_user_circle"
+            android:title="@string/nav_text_rating_history" />
+        <item
             android:id="@+id/nav_invite"
             android:icon="@drawable/ic_menu_invite"
             android:title="@string/nav_text_invite_contact" />

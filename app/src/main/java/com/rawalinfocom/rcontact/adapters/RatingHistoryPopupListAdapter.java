@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,11 +20,13 @@ import butterknife.ButterKnife;
  * Created by maulik on 15/03/17.
  */
 
-public class NotificationPopupListAdapter extends RecyclerView.Adapter<NotificationPopupListAdapter.MyViewHolder> {
+public class RatingHistoryPopupListAdapter extends RecyclerView.Adapter<RatingHistoryPopupListAdapter.MyViewHolder> {
+
+
     private ArrayList<String> stringArrayList;
     private Context context;
 
-    public NotificationPopupListAdapter(Context context, ArrayList<String> stringArrayList) {
+    public RatingHistoryPopupListAdapter(Context context, ArrayList<String> stringArrayList) {
         this.stringArrayList = stringArrayList;
         this.context = context;
     }
@@ -33,14 +34,12 @@ public class NotificationPopupListAdapter extends RecyclerView.Adapter<Notificat
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_notification_popup, parent, false);
+                .inflate(R.layout.list_item_rating_history_popup, parent, false);
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        holder.textWisherName.setText(stringArrayList.get(0));
-        holder.textTimelineNotiTime.setText(stringArrayList.get(1));
         if (stringArrayList.get(2) != null && stringArrayList.get(2).length() > 0) {
             holder.textWisherComment.setText(stringArrayList.get(2));
         } else {
@@ -64,14 +63,6 @@ public class NotificationPopupListAdapter extends RecyclerView.Adapter<Notificat
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.image_wisher)
-        ImageView imageWisher;
-        @BindView(R.id.text_wisher_name)
-        TextView textWisherName;
-        @BindView(R.id.text_event_name)
-        TextView textEventName;
-        @BindView(R.id.text_timeline_noti_time)
-        TextView textTimelineNotiTime;
         @BindView(R.id.image_wisher_small)
         ImageView imageWisherSmall;
         @BindView(R.id.text_wisher_comment)
@@ -80,20 +71,10 @@ public class NotificationPopupListAdapter extends RecyclerView.Adapter<Notificat
         TextView textWisherCommentTime;
         @BindView(R.id.image_user)
         ImageView imageUser;
-        @BindView(R.id.edittext_user_comment)
-        EditText edittextUserComment;
-        @BindView(R.id.button_user_comment_submit)
-        ImageView buttonUserCommentSubmit;
-        @BindView(R.id.layout_user_comment_pending)
-        LinearLayout layoutUserCommentPending;
         @BindView(R.id.text_user_comment)
         TextView textUserComment;
         @BindView(R.id.text_user_comment_time)
         TextView textUserCommentTime;
-        @BindView(R.id.layout_user_comment_done)
-        LinearLayout layoutUserCommentDone;
-        @BindView(R.id.linear_content_main)
-        LinearLayout linearContentMain;
 
         MyViewHolder(View itemView) {
             super(itemView);
