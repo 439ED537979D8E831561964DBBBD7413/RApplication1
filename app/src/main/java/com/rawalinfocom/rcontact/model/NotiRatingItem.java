@@ -14,6 +14,16 @@ public class NotiRatingItem {
     private String reply;
     private String replyTime;
 
+    public int getHistoryType() {
+        return historyType;
+    }
+
+    public void setHistoryType(int historyType) {
+        this.historyType = historyType;
+    }
+
+    private int historyType;
+
     public String getRaterName() {
         return raterName;
     }

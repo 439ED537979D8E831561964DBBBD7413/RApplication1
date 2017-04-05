@@ -187,8 +187,6 @@ public class TableCommentMaster {
 
     public ArrayList<Comment> getAllReplyReceived(String fromDate, String toDate) {
         ArrayList<Comment> arrayListReplyReceived = new ArrayList<>();
-//SELECT  * FROM rc_comment_master WHERE crm_status=1 and crm_type!='Rating' and crm_reply!='' and
-// strftime('%m-%d',crm_replied_at) between '03-29' and '03-29' order by crm_replied_at desc
         String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
                 " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and " + COLUMN_CRM_TYPE + "!='Rating' and "
                 + COLUMN_CRM_REPLY + "!=''" + " and strftime('%m-%d'," +
@@ -223,8 +221,6 @@ public class TableCommentMaster {
 
     public ArrayList<Comment> getAllRatingReplyReceived(String fromDate, String toDate) {
         ArrayList<Comment> arrayListReplyReceived = new ArrayList<>();
-//SELECT  * FROM rc_comment_master WHERE crm_status=1 and crm_type!='Rating' and crm_reply!='' and
-// strftime('%m-%d',crm_replied_at) between '03-29' and '03-29' order by crm_replied_at desc
         String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
                 " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and " + COLUMN_CRM_TYPE + "='Rating' and "
                 + COLUMN_CRM_REPLY + "!=''" + " and strftime('%m-%d'," +
@@ -255,5 +251,73 @@ public class TableCommentMaster {
         db.close();
 
         return arrayListReplyReceived;
+    }
+
+    public ArrayList<Comment> getAllRatingDone(String fromDate, String toDate) {
+        ArrayList<Comment> arrayList = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
+                " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and " + COLUMN_CRM_TYPE + "='Rating' "
+                + " and strftime('%m-%d'," +
+                COLUMN_CRM_CREATED_AT + ") between '" + fromDate + "' and '" + toDate + "' order by " + COLUMN_CRM_CREATED_AT + " desc";
+        Log.i("MAULIK", "selectQuery" + selectQuery);
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Comment comment = new Comment();
+                comment.setCrmId(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_ID)));
+                comment.setCrmStatus(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_STATUS)));
+                comment.setCrmRating(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_RATING)));
+                comment.setCrmType(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_TYPE)));
+                comment.setCrmCloudPrId(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CLOUD_COMMENT_ID)));
+                comment.setRcProfileMasterPmId(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
+                comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
+                comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));
+                comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CREATED_AT)));
+                comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLIED_AT)));
+                comment.setCrmUpdatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_UPDATED_AT)));
+                comment.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_RECORD_INDEX_ID)));
+                arrayList.add(comment);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        db.close();
+
+        return arrayList;
+    }
+
+    public ArrayList<Comment> getAllRatingReceived(String from, String to) {
+        ArrayList<Comment> arrayList = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
+                " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_RECEIVED + " and " + COLUMN_CRM_TYPE + "='Rating' "
+                + " and strftime('%m-%d'," +
+                COLUMN_CRM_CREATED_AT + ") between '" + from + "' and '" + to + "' order by " + COLUMN_CRM_CREATED_AT + " desc";
+        Log.i("MAULIK", "selectQuery" + selectQuery);
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Comment comment = new Comment();
+                comment.setCrmId(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_ID)));
+                comment.setCrmStatus(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_STATUS)));
+                comment.setCrmRating(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_RATING)));
+                comment.setCrmType(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_TYPE)));
+                comment.setCrmCloudPrId(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CLOUD_COMMENT_ID)));
+                comment.setRcProfileMasterPmId(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
+                comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
+                comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));
+                comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CREATED_AT)));
+                comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLIED_AT)));
+                comment.setCrmUpdatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_UPDATED_AT)));
+                comment.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_RECORD_INDEX_ID)));
+                arrayList.add(comment);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        db.close();
+
+        return arrayList;
     }
 }
