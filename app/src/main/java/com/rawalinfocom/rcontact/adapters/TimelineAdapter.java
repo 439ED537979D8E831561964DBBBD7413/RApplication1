@@ -162,6 +162,11 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         return list.size();
     }
 
+    public void updateList(List<TimelineItem> list) {
+        this.list = list;
+        notifyDataSetChanged();
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.image_wisher)
         ImageView imageWisher;

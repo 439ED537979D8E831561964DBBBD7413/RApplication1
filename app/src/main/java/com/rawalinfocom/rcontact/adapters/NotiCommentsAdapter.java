@@ -38,6 +38,11 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
         this.recyclerPosition = recyclerPosition;
     }
 
+    public void updateList(List<NotiCommentsItem> list) {
+        this.list = list;
+        notifyDataSetChanged();
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.image_commenter)
