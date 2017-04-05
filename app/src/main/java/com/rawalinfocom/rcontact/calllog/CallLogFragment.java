@@ -44,6 +44,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
@@ -91,7 +92,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
     @BindView(R.id.linearMainContent)
     LinearLayout linearMainContent;
     @BindView(R.id.linearCallLogMain)
-    LinearLayout linearCallLogMain;
+    RelativeLayout linearCallLogMain;
     @BindView(R.id.text_loading)
     TextView textLoading;
     @BindView(R.id.spinner_call_filter)
@@ -124,7 +125,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
     private boolean isFirstTime;
     RContactApplication rContactApplication;
     MaterialDialog permissionConfirmationDialog;
-
+    int logsDisplayed =  10;
+    ArrayList<String> listOfIds;
 
     //<editor-fold desc="Constructors">
 
@@ -492,6 +494,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
                 if (dy > 0) //check for scroll down
                 {
+                    relativeLoadingData.setVisibility(View.VISIBLE);
+                    logsDisplayed = Utils.getIntegerPreference(getActivity(),AppConstants.PREF_CALL_LOG_TO_FETCH_COUNT,10);
 
                    /* visibleItemCount = mLayoutManager.getChildCount();
                     totalItemCount = mLayoutManager.getItemCount();
@@ -652,7 +656,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
     // This is to be run only when READ_CONTACTS and READ_CALL_LOG permission are granted
     @SuppressLint("SimpleDateFormat")
-    private void loadLogs(String callType) {
+    private void    loadLogs(String callType) {
 
         List<CallLogType> callLogs = new ArrayList<>();
         arrayListCallLogs = new ArrayList<>();
@@ -661,7 +665,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         arrayListCallLogsHistory = new ArrayList<>();
         tempList = new ArrayList<>();
         ArrayList<String> listOfBlockedNumbers = Utils.getArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST);
-        ArrayList<String> listOfIds = Utils.getArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOGS_ID_SET);
+        listOfIds = Utils.getArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOGS_ID_SET);
         if (listOfIds == null) {
             PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(getActivity());
             listOfIds = new ArrayList<>();
@@ -677,15 +681,15 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         }
 
         if (listOfIds != null && listOfIds.size() > 0) {
-            /*int indexToBeginSync =  Utils.getIntegerPreference(this,AppConstants.PREF_CALL_LOG_SYNCED_COUNT,0);
+            int indexToBeginSync =  Utils.getIntegerPreference(getActivity(),AppConstants.PREF_CALL_LOG_TO_FETCH_COUNT,0);
             ArrayList<String> tempIdsList = new ArrayList<>();
-            for(int i = indexToBeginSync; i<callLogsIdsList.size(); i++){
-                String ids =  callLogsIdsList.get(i);
+            for(int i = indexToBeginSync; i<listOfIds.size(); i++){
+                String ids =  listOfIds.get(i);
                 tempIdsList.add(ids);
-            }*/
+            }
 
-            if (listOfIds.size() > LIST_PARTITION_COUNT) {
-                for (ArrayList<String> partition : chopped(listOfIds, LIST_PARTITION_COUNT)) {
+            if (tempIdsList.size() > LIST_PARTITION_COUNT) {
+                for (ArrayList<String> partition : chopped(tempIdsList, LIST_PARTITION_COUNT)) {
                     // do something with partition
                     fetchCallLogsFromIds(partition);
                     break;
@@ -856,6 +860,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
     }
 
     private void setAdapter() {
+        relativeLoadingData.setVisibility(View.GONE);
         if (arrayListCallLogHeader != null && arrayListObjectCallLogs != null
                 && arrayListCallLogHeader.size() > 0 && arrayListObjectCallLogs.size() > 0) {
             callLogListAdapter = new CallLogListAdapter(getActivity(), arrayListObjectCallLogs,
