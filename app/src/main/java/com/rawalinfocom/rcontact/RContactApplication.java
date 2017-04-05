@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
+import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ public class RContactApplication extends Application {
         arrayListFavContactHeaders = new ArrayList<>();
 
         // Facebook Initialization
-//        FacebookSdk.sdkInitialize(getApplicationContext());
-//        AppEventsLogger.activateApp(this);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
 
