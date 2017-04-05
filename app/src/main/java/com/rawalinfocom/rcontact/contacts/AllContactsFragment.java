@@ -319,6 +319,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 //                        sendBroadCastToStartCallLogInsertion();
                             Utils.setBooleanPreference(getActivity(), AppConstants
                                     .PREF_SYNC_CALL_LOG, true);
+
+                            Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
+                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
                         }
 
                     /* Populate recycler view */

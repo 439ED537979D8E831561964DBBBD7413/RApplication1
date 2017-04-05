@@ -3,7 +3,9 @@ package com.rawalinfocom.rcontact;
 import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -157,7 +159,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 }
             });
         }
-
+        registerLocalBroadCastReceiver();
 
         if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()
                 .getInteger(R.integer.launch_mobile_registration)) == getResources().getInteger(R
@@ -395,6 +397,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         if (networkConnectionReceiver != null) {
             unregisterBroadcastReceiver();
         }
+
+        unRegisterLocalBroadCastReceiver();
     }
 
     //</editor-fold>
@@ -569,11 +573,30 @@ public class MainActivity extends BaseActivity implements NavigationView
     public void registerBroadcastReceiver() {
         this.registerReceiver(networkConnectionReceiver, new IntentFilter("android.net.conn" +
                 ".CONNECTIVITY_CHANGE"));
+
+
+
     }
 
     public void unregisterBroadcastReceiver() {
         this.unregisterReceiver(networkConnectionReceiver);
+
     }
+
+    private void registerLocalBroadCastReceiver(){
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance
+                (this);
+        IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
+        localBroadcastManager.registerReceiver(localBroadcastReceiverCallLogSync, intentFilter);
+    }
+
+    private void unRegisterLocalBroadCastReceiver(){
+        LocalBroadcastManager localBroadcastManagerProfileBlock = LocalBroadcastManager.getInstance(this);
+        localBroadcastManagerProfileBlock.unregisterReceiver(localBroadcastReceiverCallLogSync);
+
+    }
+
+
 
     // =========================================== Call Logs ==================================================//
 
@@ -634,6 +657,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                     String ids =  callLogsIdsList.get(i);
                     tempIdsList.add(ids);
             }
+
             if(tempIdsList.size() > LIST_PARTITION_COUNT){
                 for (ArrayList<String> partition : chopped(tempIdsList, LIST_PARTITION_COUNT)) {
                     // do something with partition
@@ -645,6 +669,7 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         }
     }
+
 
     private void fetchCallLogsFromIds (ArrayList<String> listOfRowIds){
         try{
@@ -702,7 +727,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             ArrayList<CallLogType> arrayListHistoryCount = new ArrayList<>();
                             for (int j = 0; j < arrayListHistory.size(); j++) {
                                 CallLogType tempCallLogType = arrayListHistory.get(j);
-                                String simNumber = arrayListHistory.get(i).getHistoryCallSimNumber();
+                                String simNumber = arrayListHistory.get(j).getHistoryCallSimNumber();
                                 log.setCallSimNumber(simNumber);
                                 long tempdate = tempCallLogType.getHistoryDate();
                                 Date objDate1 = new Date(tempdate);
@@ -719,9 +744,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             Log.i("History size ", logCount + "" + " of " + cursor.getString(number));
                             Log.i("History", "----------------------------------");
                             callLogTypeArrayListMain.add(log);
-                            RContactApplication rContactApplication = (RContactApplication)
-                                    getApplicationContext();
-                            rContactApplication.setArrayListCallLogType(callLogTypeArrayListMain);
+
                         }
                         cursor.close();
                     }
@@ -733,6 +756,14 @@ public class MainActivity extends BaseActivity implements NavigationView
         }
 
     }
+
+    private BroadcastReceiver localBroadcastReceiverCallLogSync = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+            syncCallLogDataToServer(callLogTypeArrayListMain);
+        }
+    };
 
     private void syncCallLogDataToServer(ArrayList<CallLogType> list){
         if (Utils.getBooleanPreference(this, AppConstants.PREF_SYNC_CALL_LOG, false)) {

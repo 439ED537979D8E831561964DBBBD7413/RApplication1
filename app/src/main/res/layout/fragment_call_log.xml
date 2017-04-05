@@ -48,7 +48,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:id="@+id/relativeLoadingData"
+            android:visibility="gone">
 
             <ProgressBar
                 style="?android:attr/progressBarStyle"
@@ -56,7 +58,7 @@
                 android:layout_height="20dp"
                 android:id="@+id/progressBarLoadCallLogs"
                 android:layout_centerInParent="true"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -65,7 +67,8 @@
                 android:padding="@dimen/margin_10dp"
                 android:text="Loading More"
                 android:layout_gravity="center_horizontal"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"/>
 
         </RelativeLayout>
 
