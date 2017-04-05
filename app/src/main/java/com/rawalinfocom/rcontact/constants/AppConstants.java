@@ -59,6 +59,13 @@ public class AppConstants {
 
     //</editor-fold>
 
+    // <editor-fold desc="Result Codes">
+
+    public static int RESULT_CODE_MAP_LOCATION_SELECTION = 3;
+    public static int RESULT_CODE_MY_LOCATION_SELECTION = 4;
+
+    //</editor-fold>
+
     //<editor-fold desc="Intent Extra">
 
     public static String EXTRA_OBJECT_COUNTRY = "extra_object_country";
@@ -97,6 +104,9 @@ public class AppConstants {
     public static String EXTRA_OBJECT_ADDRESS = "extra_object_address";
     public static String EXTRA_CALL_UNIQUE_ID = "extra_call_unique_id";
     public static String EXTRA_UNIQUE_CONTACT_ID = "extra_unique_contact_id";
+    public static String EXTRA_FORMATTED_ADDRESS = "extra_formatted_address";
+    public static String EXTRA_LATITUDE = "extra_latitude";
+    public static String EXTRA_LONGITUDE = "extra_longitude";
 
 
 

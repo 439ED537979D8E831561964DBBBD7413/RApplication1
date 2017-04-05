@@ -183,8 +183,11 @@ public class TableAddressMaster {
                 COLUMN_AM_CITY + ", " +
                 COLUMN_AM_STREET + ", " +
                 COLUMN_AM_NEIGHBORHOOD + ", " +
+                COLUMN_AM_FORMATTED_ADDRESS + ", " +
                 COLUMN_AM_POST_CODE + ", " +
                 COLUMN_AM_ADDRESS_TYPE + ", " +
+                COLUMN_AM_GOOGLE_LATITUDE + ", " +
+                COLUMN_AM_GOOGLE_LONGITUDE + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
                 TABLE_RC_ADDRESS_MASTER + " WHERE " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
@@ -208,8 +211,14 @@ public class TableAddressMaster {
                         (COLUMN_AM_STREET)));
                 address.setAmNeighborhood(cursor.getString(cursor.getColumnIndex
                         (COLUMN_AM_NEIGHBORHOOD)));
+                address.setAmFormattedAddress(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_FORMATTED_ADDRESS)));
                 address.setAmPostCode(cursor.getString(cursor.getColumnIndex
                         (COLUMN_AM_POST_CODE)));
+                address.setAmGoogleLatitude(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_GOOGLE_LATITUDE)));
+                address.setAmGoogleLongitude(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_GOOGLE_LONGITUDE)));
                 address.setAmAddressType(cursor.getString(cursor.getColumnIndex
                         (COLUMN_AM_ADDRESS_TYPE)));
                 address.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
