@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_small"
+                android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text_label_my_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/margin_small"
+        android:text="My Address"/>
+
+    <TextView
+        android:id="@+id/text_my_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_label_my_address"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        tools:text="Flat No 50, Main building name\nstreet name, city, state,\n country, 300121"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/text_my_address"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:background="@color/veryLightGray"/>
+
+    <TextView
+        android:id="@+id/text_label_google_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/margin_small"
+        android:text="Google Address"/>
+
+    <TextView
+        android:id="@+id/text_google_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_label_google_address"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        tools:text="Flat No 50, Main building name\nstreet name, city, state,\n country, 300121"/>
+
+    <Button
+        android:id="@+id/button_my_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_google_address"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_large"
+        android:background="@color/colorAccent"
+        android:text="Use My Address"
+        android:textColor="@color/colorWhite"/>
+
+    <Button
+        android:id="@+id/button_google_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_my_address"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small"
+        android:background="@color/colorAccent"
+        android:text="Use Google Address"
+        android:textColor="@color/colorWhite"/>
+
+</RelativeLayout>
