@@ -16,9 +16,9 @@ public class ProfileDataOperationImAccount implements Serializable {
     private String IMAccountType;
     private String IMAccountDetails;
     private String IMAccountProtocol;
-    private String IMAccountPublic;
+    private int IMAccountPublic;
 
-//    private int IMRcpType;
+    //    private int IMRcpType;
     private String IMRcpType;
 
     @JsonProperty("im_id")
@@ -49,11 +49,11 @@ public class ProfileDataOperationImAccount implements Serializable {
     }
 
     @JsonProperty("im_account_public")
-    public String getIMAccountPublic() {
-        return StringUtils.defaultString(this.IMAccountPublic);
+    public int getIMAccountPublic() {
+        return this.IMAccountPublic;
     }
 
-    public void setIMAccountPublic(String IMAccountPublic) {
+    public void setIMAccountPublic(int IMAccountPublic) {
         this.IMAccountPublic = IMAccountPublic;
     }
 

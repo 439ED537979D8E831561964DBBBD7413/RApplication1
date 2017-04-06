@@ -767,6 +767,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
 //                    address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                         address.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                        address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j)
+                                .getAddPublic()));
                         addressList.add(address);
                     }
 
@@ -787,7 +789,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
 //                    imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                         imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
-                        imAccount.setImImPrivacy(arrayListImAccount.get(j).getIMAccountPublic());
+                        imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j).getIMAccountPublic()));
                         imAccount.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         imAccountsList.add(imAccount);
                     }
@@ -1328,6 +1330,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     address.setAddressType(phoneBookContacts.getAddressType(contactAddressCursor,
                             contactAddressCursor.getInt(contactAddressCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.StructuredPostal.TYPE))));
+                    address.setAddPublic(1);
 
                     arrayListAddress.add(address);
 
@@ -1361,7 +1364,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             (contactImCursor.getInt((contactImCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
-                    imAccount.setIMAccountPublic("1");
+                    imAccount.setIMAccountPublic(1);
 
 
                     arrayListImAccount.add(imAccount);
