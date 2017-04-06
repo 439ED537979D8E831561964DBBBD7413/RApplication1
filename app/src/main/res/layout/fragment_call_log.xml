@@ -7,22 +7,23 @@
     android:background="@color/colorWhite"
     tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
 
-    <RelativeLayout
+   <!-- <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/relativeProgressBar"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">-->
 
         <ProgressBar
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/progressBarCallLog"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
 
 
-    </RelativeLayout>
+    <!--</RelativeLayout>-->
 
     <Spinner
         android:id="@+id/spinner_call_filter"
@@ -36,7 +37,6 @@
         android:layout_height="match_parent"
         android:id="@+id/linearMainContent"
         android:layout_below="@+id/spinner_call_filter"
-        android:layout_above="@+id/relativeLoadingData"
         android:orientation="vertical"
         android:visibility="visible">
 
@@ -48,7 +48,7 @@
 
     </LinearLayout>
 
-    <RelativeLayout
+   <!-- <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -74,7 +74,16 @@
             android:layout_centerHorizontal="true"
             android:visibility="gone"/>
 
-    </RelativeLayout>
-
+    </RelativeLayout>-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_loading"
+        android:padding="@dimen/margin_10dp"
+        android:text="No logs to display"
+        android:layout_gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"/>
 
 </RelativeLayout>
