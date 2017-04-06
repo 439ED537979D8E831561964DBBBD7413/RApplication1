@@ -278,189 +278,14 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
             case R.id.ripple_action_right_left:
 
-                Gson gson = new Gson();
-                String oldObjectJson, newObjectJson;
-
-                //<editor-fold desc="Email">
-                ArrayList<ProfileDataOperationEmail> arrayListNewEmail = new ArrayList<>();
-                for (int i = 0; i < linearEmailDetails.getChildCount(); i++) {
-                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                    View view = linearEmailDetails.getChildAt(i);
-                    EditText emailId = (EditText) view.findViewById(R.id.input_value);
-                    Spinner emailType = (Spinner) view.findViewById(R.id.spinner_type);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
-                            .id.relative_row_edit_profile);
-                    email.setEmEmailId(emailId.getText().toString());
-                    email.setEmType((String) emailType.getSelectedItem());
-                    email.setEmId((String) relativeRowEditProfile.getTag());
-
-                    arrayListNewEmail.add(email);
-
+                if (StringUtils.length(inputFirstName.getText().toString()) < 1 || StringUtils
+                        .length(inputLastName.getText().toString()) < 1) {
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "Please add valid " +
+                            "name!");
+                } else {
+                    getUpdatedProfile();
                 }
 
-                oldObjectJson = gson.toJson(arrayListEmailObject);
-                newObjectJson = gson.toJson(arrayListNewEmail);
-
-                ArrayList<ProfileDataOperation> updatedEmails = new ArrayList<>();
-                updatedEmails.addAll(compareJsonStructure(AppConstants.EMAIL, oldObjectJson,
-                        newObjectJson));
-                //</editor-fold>
-
-                //<editor-fold desc="Phone Number">
-                ArrayList<ProfileDataOperationPhoneNumber> arrayListNewPhone = new ArrayList<>();
-                for (int i = 0; i < linearPhoneDetails.getChildCount(); i++) {
-                    ProfileDataOperationPhoneNumber phoneNumber = new
-                            ProfileDataOperationPhoneNumber();
-                    View view = linearPhoneDetails.getChildAt(i);
-                    EditText emailId = (EditText) view.findViewById(R.id.input_value);
-                    Spinner emailType = (Spinner) view.findViewById(R.id.spinner_type);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
-                            .id.relative_row_edit_profile);
-                    phoneNumber.setPhoneNumber(emailId.getText().toString());
-                    phoneNumber.setPhoneType((String) emailType.getSelectedItem());
-                    phoneNumber.setPhoneId((String) relativeRowEditProfile.getTag());
-
-                    arrayListNewPhone.add(phoneNumber);
-
-                }
-
-                oldObjectJson = gson.toJson(arrayListPhoneNumberObject);
-                newObjectJson = gson.toJson(arrayListNewPhone);
-
-                ArrayList<ProfileDataOperation> updatedNumbers = new ArrayList<>();
-                updatedNumbers.addAll(compareJsonStructure(AppConstants.PHONE_NUMBER,
-                        oldObjectJson, newObjectJson));
-                //</editor-fold>
-
-                // <editor-fold desc="Website">
-                ArrayList<ProfileDataOperationWebAddress> arrayListNewWebAddress = new
-                        ArrayList<>();
-                for (int i = 0; i < linearWebsiteDetails.getChildCount(); i++) {
-                    ProfileDataOperationWebAddress webAddress = new
-                            ProfileDataOperationWebAddress();
-                    View view = linearWebsiteDetails.getChildAt(i);
-                    EditText website = (EditText) view.findViewById(R.id.input_value);
-                    Spinner websiteType = (Spinner) view.findViewById(R.id.spinner_type);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
-                            .id.relative_row_edit_profile);
-                    webAddress.setWebAddress(website.getText().toString());
-                    webAddress.setWebType((String) websiteType.getSelectedItem());
-                    webAddress.setWebId((String) relativeRowEditProfile.getTag());
-
-                    arrayListNewWebAddress.add(webAddress);
-
-                }
-
-                oldObjectJson = gson.toJson(arrayListWebsiteObject);
-                newObjectJson = gson.toJson(arrayListNewWebAddress);
-
-                ArrayList<ProfileDataOperation> updatedWebAddress = new ArrayList<>();
-                updatedWebAddress.addAll(compareJsonStructure(AppConstants.WEBSITE,
-                        oldObjectJson, newObjectJson));
-                //</editor-fold>
-
-                // <editor-fold desc="Event">
-                ArrayList<ProfileDataOperationEvent> arrayListNewEvent = new ArrayList<>();
-                for (int i = 0; i < linearEventDetails.getChildCount(); i++) {
-                    ProfileDataOperationEvent event = new ProfileDataOperationEvent();
-                    View view = linearEventDetails.getChildAt(i);
-                    EditText eventDate = (EditText) view.findViewById(R.id.input_value);
-                    Spinner eventType = (Spinner) view.findViewById(R.id.spinner_type);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
-                            .id.relative_row_edit_profile);
-                    event.setEventDateTime(eventDate.getText().toString());
-                    event.setEventType((String) eventType.getSelectedItem());
-                    event.setEventId((String) relativeRowEditProfile.getTag());
-
-                    arrayListNewEvent.add(event);
-
-                }
-
-                oldObjectJson = gson.toJson(arrayListEventObject);
-                newObjectJson = gson.toJson(arrayListNewEvent);
-
-                ArrayList<ProfileDataOperation> updatedEvent = new ArrayList<>();
-                updatedEvent.addAll(compareJsonStructure(AppConstants.EVENT, oldObjectJson,
-                        newObjectJson));
-                //</editor-fold>
-
-                // <editor-fold desc="Organization">
-                ArrayList<ProfileDataOperationOrganization> arrayListNewOrganization = new
-                        ArrayList<>();
-                for (int i = 0; i < linearOrganizationDetail.getChildCount(); i++) {
-                    ProfileDataOperationOrganization organization = new
-                            ProfileDataOperationOrganization();
-                    View view = linearOrganizationDetail.getChildAt(i);
-                    EditText inputCompanyName = (EditText) view.findViewById(R.id
-                            .input_company_name);
-                    EditText inputDesignationName = (EditText) view.findViewById(R.id
-                            .input_designation_name);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
-                            .id.relative_row_edit_profile);
-                    organization.setOrgName(inputCompanyName.getText().toString());
-                    organization.setOrgJobTitle(inputDesignationName.getText().toString());
-                    organization.setOrgId((String) relativeRowEditProfile.getTag());
-
-                    arrayListNewOrganization.add(organization);
-
-                }
-
-                oldObjectJson = gson.toJson(arrayListOrganizationObject);
-                newObjectJson = gson.toJson(arrayListNewOrganization);
-
-                ArrayList<ProfileDataOperation> updatedOrganization = new ArrayList<>();
-                updatedOrganization.addAll(compareJsonStructure(AppConstants.ORGANIZATION,
-                        oldObjectJson, newObjectJson));
-
-                //</editor-fold>
-
-                // <editor-fold desc="Address">
-              /*  ArrayList<ProfileDataOperationAddress> arrayListNewAddress = new ArrayList<>();
-                for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
-                    ProfileDataOperationAddress address = new ProfileDataOperationAddress();
-                    View view = linearAddressDetails.getChildAt(i);
-                    Spinner addressType = (Spinner) view.findViewById(R.id.spinner_type);
-                    EditText country = (EditText) view.findViewById(R.id.input_country);
-                    EditText state = (EditText) view.findViewById(R.id.input_state);
-                    EditText city = (EditText) view.findViewById(R.id.input_city);
-                    EditText street = (EditText) view.findViewById(R.id.input_street);
-                    EditText neighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
-                    EditText poBox = (EditText) view.findViewById(R.id.input_po_box);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
-                            .id.relative_row_edit_profile);
-
-                    address.setCountry(country.getText().toString());
-                    address.setState(state.getText().toString());
-                    address.setCity(city.getText().toString());
-                    address.setStreet(street.getText().toString());
-                    address.setNeighborhood(neighborhood.getText().toString());
-                    address.setPoBox(poBox.getText().toString());
-                    address.setAddressType((String) addressType.getSelectedItem());
-                    address.setAddId((String) relativeRowEditProfile.getTag());
-
-                    arrayListNewAddress.add(address);
-
-                }
-
-                oldObjectJson = gson.toJson(arrayListAddressObject);
-                newObjectJson = gson.toJson(arrayListNewAddress);
-
-                ArrayList<ProfileDataOperation> updatedAddress = new ArrayList<>();
-                updatedAddress.addAll(compareJsonStructure(AppConstants.ADDRESS,
-                        oldObjectJson, newObjectJson));*/
-
-                //</editor-fold>
-
-                ArrayList<ArrayList<ProfileDataOperation>> arrayList = new ArrayList<>();
-                arrayList.add(updatedNumbers);
-                arrayList.add(updatedEmails);
-                arrayList.add(updatedWebAddress);
-                arrayList.add(updatedEvent);
-                arrayList.add(updatedOrganization);
-//                arrayList.add(updatedAddress);
-
-                Log.i("onComplete", new Gson().toJson(combineResult(arrayList)));
-                editProfile(combineResult(arrayList));
 
                 break;
 
@@ -531,11 +356,18 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 EditText inputCity = (EditText) linearView.findViewById(R.id.input_city);
                 EditText inputStreet = (EditText) linearView.findViewById(R.id.input_street);
                 EditText inputPinCode = (EditText) linearView.findViewById(R.id.input_pin_code);
+                TextView textLatitude = (TextView) linearView.findViewById(R.id.input_latitude);
+                TextView textLongitude = (TextView) linearView.findViewById(R.id.input_longitude);
+                TextView textGoogleAddress = (TextView) linearView.findViewById(R.id
+                        .input_google_address);
                 try {
                     mapLatitude = Double.parseDouble(objAddress.getLatitude());
                     mapLongitude = Double.parseDouble(objAddress.getLongitude());
                 } catch (Exception ignore) {
                 }
+                textLatitude.setText(objAddress.getLatitude());
+                textLongitude.setText(objAddress.getLongitude());
+                textGoogleAddress.setText(locationString);
                 if (resultCode == AppConstants.RESULT_CODE_MAP_LOCATION_SELECTION) {
                     inputCountry.setText(objAddress.getCountry());
                     inputState.setText(objAddress.getState());
@@ -612,7 +444,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
                     storeProfileDataToDb(profileDetail);
 
-                    Log.i("onDeliveryResponse", editProfileResponse.getMessage());
+                    Utils.showSuccessSnackBar(this, relativeRootEditProfile, "Profile Updated " +
+                            "Successfully! ");
+//                    Log.i("onDeliveryResponse", editProfileResponse.getMessage());
 
                 } else {
                     if (editProfileResponse != null) {
@@ -761,6 +595,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             phoneNumber.setPhoneNumber(arrayListMobileNumber.get(i).getMnmMobileNumber());
             phoneNumber.setPhoneType(arrayListMobileNumber.get(i).getMnmNumberType());
             phoneNumber.setPhoneId(arrayListMobileNumber.get(i).getMnmRecordIndexId());
+            phoneNumber.setPhonePublic(Integer.parseInt(arrayListMobileNumber.get(i)
+                    .getMnmNumberPrivacy()));
             arrayListPhoneNumberObject.add(phoneNumber);
         }
         if (arrayListPhoneNumberObject.size() > 0) {
@@ -784,6 +620,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             email.setEmEmailId(arrayListEmail.get(i).getEmEmailAddress());
             email.setEmType(arrayListEmail.get(i).getEmEmailType());
             email.setEmId(arrayListEmail.get(i).getEmRecordIndexId());
+            email.setEmPublic(Integer.parseInt(arrayListEmail.get(i).getEmEmailPrivacy()));
             arrayListEmailObject.add(email);
         }
         if (arrayListEmailObject.size() > 0) {
@@ -838,6 +675,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 //            imAccount.setIMAccountType(arrayListImAccount.get(i).getImImType());
             imAccount.setIMAccountDetails(arrayListImAccount.get(i).getImImDetail());
             imAccount.setIMId(arrayListImAccount.get(i).getImRecordIndexId());
+            imAccount.setIMAccountPublic(Integer.parseInt(arrayListImAccount.get(i)
+                    .getImImPrivacy()));
             arrayListSocialContactObject.add(imAccount);
             arrayListProfileDataImAccount.add(imAccount);
         }
@@ -869,6 +708,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             event.setEventDateTime(formattedDate);
             event.setEventType(arrayListEvent.get(i).getEvmEventType());
             event.setEventId(arrayListEvent.get(i).getEvmRecordIndexId());
+            event.setEventPublic(Integer.parseInt(arrayListEvent.get(i).getEvmEventPrivacy()));
             arrayListEventObject.add(event);
         }
 
@@ -906,7 +746,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         }
     }
 
-    private void addressDetails() {
+    private void
+    addressDetails() {
         TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
 
         ArrayList<Address> arrayListAddress = tableAddressMaster.getAddressesFromPmId(Integer
@@ -925,6 +766,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             address.setGoogleLatitude(arrayListAddress.get(i).getAmGoogleLatitude());
             address.setGoogleLongitude(arrayListAddress.get(i).getAmGoogleLongitude());
             address.setAddId(arrayListAddress.get(i).getAmRecordIndexId());
+            address.setAddPublic(Integer.parseInt(arrayListAddress.get(i).getAmAddressPrivacy()));
             arrayListAddressObject.add(address);
         }
 
@@ -946,6 +788,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         LinearLayout linerCheckbox = (LinearLayout) view.findViewById(R.id.liner_checkbox);
         final CheckBox checkboxHideYear = (CheckBox) view.findViewById(R.id.checkbox_hide_year);
         TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
+        TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
         final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
                 .relative_row_edit_profile);
 
@@ -978,6 +821,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                             detailObject;
                     inputValue.setText(phoneNumber.getPhoneNumber());
+                    textIsPublic.setText(String.valueOf(phoneNumber.getPhonePublic()));
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(phoneNumber.getPhoneType()))) {
                         spinnerPosition = spinnerPhoneAdapter.getPosition(phoneNumber.getPhoneType
@@ -1007,6 +851,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 if (detailObject != null) {
                     ProfileDataOperationEmail email = (ProfileDataOperationEmail) detailObject;
                     inputValue.setText(email.getEmEmailId());
+                    textIsPublic.setText(String.valueOf(email.getEmPublic()));
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(email.getEmType()))) {
                         spinnerPosition = spinnerEmailAdapter.getPosition(email.getEmType());
@@ -1071,6 +916,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount)
                             detailObject;
                     inputValue.setText(imAccount.getIMAccountDetails());
+                    textIsPublic.setText(String.valueOf(imAccount.getIMAccountPublic()));
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(imAccount
                             .getIMAccountProtocol()))) {
@@ -1105,6 +951,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 if (detailObject != null) {
                     ProfileDataOperationEvent event = (ProfileDataOperationEvent) detailObject;
                     inputValue.setText(event.getEventDateTime());
+                    textIsPublic.setText(String.valueOf(event.getEventPublic()));
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(event.getEventType()))) {
                         spinnerPosition = spinnerEventAdapter.getPosition(event.getEventType());
@@ -1209,6 +1056,10 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         inputNeighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
         inputPinCode = (EditText) view.findViewById(R.id.input_pin_code);
         final EditText inputPoBox = (EditText) view.findViewById(R.id.input_po_box);
+        final TextView textLatitude = (TextView) view.findViewById(R.id.input_latitude);
+        final TextView textLongitude = (TextView) view.findViewById(R.id.input_longitude);
+        final TextView textGoogleAddress = (TextView) view.findViewById(R.id.input_google_address);
+        final TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
 
         final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
                 .relative_row_edit_profile);
@@ -1245,8 +1096,11 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             inputStreet.setText(address.getStreet());
             inputNeighborhood.setText(address.getNeighborhood());
             inputPinCode.setText(address.getPostCode());
+            textLatitude.setText(address.getGoogleLatitude());
+            textLongitude.setText(address.getGoogleLongitude());
+            textIsPublic.setText(String.valueOf(address.getAddPublic()));
             formattedAddress = address.getFormattedAddress();
-            int spinnerPosition;
+            /*int spinnerPosition;
             if (Arrays.asList(getResources().getStringArray(R.array.types_email_address))
                     .contains(StringUtils.defaultString(address.getAddressType()))) {
                 spinnerPosition = spinnerPhoneAdapter.getPosition(address.getAddressType());
@@ -1255,7 +1109,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 spinnerPhoneAdapter.notifyDataSetChanged();
                 spinnerPosition = spinnerPhoneAdapter.getPosition(address.getAddressType());
             }
-            spinnerType.setSelection(spinnerPosition);
+            spinnerType.setSelection(spinnerPosition);*/
             relativeRowEditProfile.setTag(address.getAddId());
         }
 
@@ -2463,7 +2317,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
 //                imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
-                imAccount.setImImPrivacy(arrayListImAccount.get(j).getIMAccountPublic());
+                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
+                        .getIMAccountPublic()));
                 imAccount.setRcProfileMasterPmId(getUserPmId());
                 imAccountsList.add(imAccount);
             }
@@ -2534,6 +2389,270 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
         permissionConfirmationDialog.showDialog();
 
+    }
+
+    private void getUpdatedProfile() {
+
+        //<editor-fold desc="Email">
+        ArrayList<ProfileDataOperationEmail> arrayListNewEmail = new ArrayList<>();
+        for (int i = 0; i < linearEmailDetails.getChildCount(); i++) {
+            ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+            View view = linearEmailDetails.getChildAt(i);
+            EditText emailId = (EditText) view.findViewById(R.id.input_value);
+            Spinner emailType = (Spinner) view.findViewById(R.id.spinner_type);
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            email.setEmEmailId(emailId.getText().toString());
+            email.setEmType((String) emailType.getSelectedItem());
+            email.setEmId((String) relativeRowEditProfile.getTag());
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                email.setEmPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                email.setEmPublic(1);
+            }
+
+            arrayListNewEmail.add(email);
+
+        }
+
+        //</editor-fold>
+
+        //<editor-fold desc="Phone Number">
+        ArrayList<ProfileDataOperationPhoneNumber> arrayListNewPhone = new ArrayList<>();
+        for (int i = 0; i < linearPhoneDetails.getChildCount(); i++) {
+            ProfileDataOperationPhoneNumber phoneNumber = new
+                    ProfileDataOperationPhoneNumber();
+            View view = linearPhoneDetails.getChildAt(i);
+            EditText emailId = (EditText) view.findViewById(R.id.input_value);
+            Spinner emailType = (Spinner) view.findViewById(R.id.spinner_type);
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            phoneNumber.setPhoneNumber(emailId.getText().toString());
+            phoneNumber.setPhoneType((String) emailType.getSelectedItem());
+            phoneNumber.setPhoneId((String) relativeRowEditProfile.getTag());
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                phoneNumber.setPhonePublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                phoneNumber.setPhonePublic(1);
+            }
+
+
+            arrayListNewPhone.add(phoneNumber);
+
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Website">
+        ArrayList<ProfileDataOperationWebAddress> arrayListNewWebAddress = new
+                ArrayList<>();
+        for (int i = 0; i < linearWebsiteDetails.getChildCount(); i++) {
+            ProfileDataOperationWebAddress webAddress = new
+                    ProfileDataOperationWebAddress();
+            View view = linearWebsiteDetails.getChildAt(i);
+            EditText website = (EditText) view.findViewById(R.id.input_value);
+            Spinner websiteType = (Spinner) view.findViewById(R.id.spinner_type);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            webAddress.setWebAddress(website.getText().toString());
+            webAddress.setWebType((String) websiteType.getSelectedItem());
+            webAddress.setWebId((String) relativeRowEditProfile.getTag());
+
+            arrayListNewWebAddress.add(webAddress);
+
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Event">
+        ArrayList<ProfileDataOperationEvent> arrayListNewEvent = new ArrayList<>();
+        for (int i = 0; i < linearEventDetails.getChildCount(); i++) {
+            ProfileDataOperationEvent event = new ProfileDataOperationEvent();
+            View view = linearEventDetails.getChildAt(i);
+            EditText eventDate = (EditText) view.findViewById(R.id.input_value);
+            Spinner eventType = (Spinner) view.findViewById(R.id.spinner_type);
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+            CheckBox checkboxHideYear = (CheckBox) view.findViewById(R.id
+                    .checkbox_hide_year);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            if (eventDate.getText().toString().length() > 0) {
+                event.setEventDateTime(Utils.convertDateFormat(eventDate.getText()
+                        .toString(), EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
+            }
+//                    event.setEventDateTime(eventDate.getText().toString());
+            event.setEventType((String) eventType.getSelectedItem());
+            event.setIsYearHidden(checkboxHideYear.isChecked() ? 1 : 0);
+            event.setEventId((String) relativeRowEditProfile.getTag());
+//            event.setEventPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                event.setEventPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                event.setEventPublic(1);
+            }
+
+            arrayListNewEvent.add(event);
+
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Organization">.
+        ArrayList<ProfileDataOperationOrganization> arrayListNewOrganization = new
+                ArrayList<>();
+        for (int i = 0; i < linearOrganizationDetail.getChildCount(); i++) {
+            ProfileDataOperationOrganization organization = new
+                    ProfileDataOperationOrganization();
+            View view = linearOrganizationDetail.getChildAt(i);
+            EditText inputCompanyName = (EditText) view.findViewById(R.id
+                    .input_company_name);
+            EditText inputDesignationName = (EditText) view.findViewById(R.id
+                    .input_designation_name);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            CheckBox checkboxOrganization = (CheckBox) view.findViewById(R.id
+                    .checkbox_organization);
+            organization.setOrgName(inputCompanyName.getText().toString());
+            organization.setOrgJobTitle(inputDesignationName.getText().toString());
+            organization.setOrgId((String) relativeRowEditProfile.getTag());
+            organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
+
+            arrayListNewOrganization.add(organization);
+
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Social Contact">.
+        ArrayList<ProfileDataOperationImAccount> arrayListNewImAccount = new ArrayList<>();
+        for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
+            ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+            View view = linearSocialContactDetails.getChildAt(i);
+            EditText imAccountName = (EditText) view.findViewById(R.id.input_value);
+            Spinner imAccountProtocol = (Spinner) view.findViewById(R.id.spinner_type);
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            imAccount.setIMAccountDetails(imAccountName.getText().toString());
+            imAccount.setIMAccountProtocol((String) imAccountProtocol.getSelectedItem());
+            imAccount.setIMId((String) relativeRowEditProfile.getTag());
+
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                imAccount.setIMAccountPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                imAccount.setIMAccountPublic(1);
+            }
+
+            arrayListNewImAccount.add(imAccount);
+
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Address">
+        ArrayList<ProfileDataOperationAddress> arrayListNewAddress = new ArrayList<>();
+        for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
+            ProfileDataOperationAddress address = new ProfileDataOperationAddress();
+            View view = linearAddressDetails.getChildAt(i);
+            Spinner addressType = (Spinner) view.findViewById(R.id.spinner_type);
+            EditText country = (EditText) view.findViewById(R.id.input_country);
+            EditText state = (EditText) view.findViewById(R.id.input_state);
+            EditText city = (EditText) view.findViewById(R.id.input_city);
+            EditText street = (EditText) view.findViewById(R.id.input_street);
+            EditText neighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
+            EditText pinCode = (EditText) view.findViewById(R.id.input_pin_code);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            TextView textLatitude = (TextView) view.findViewById(R.id.input_latitude);
+            TextView textLongitude = (TextView) view.findViewById(R.id.input_longitude);
+            TextView textGoogleAddress = (TextView) view.findViewById(R.id
+                    .input_google_address);
+
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+
+            String countryName = country.getText().toString();
+            String stateName = state.getText().toString();
+            String cityName = city.getText().toString();
+            String streetName = street.getText().toString();
+            String neighborhoodName = neighborhood.getText().toString();
+            String pinCodeName = pinCode.getText().toString();
+
+            String[] addressStrings = {streetName, neighborhoodName, cityName, stateName,
+                    countryName, pinCodeName};
+
+            String formattedAddress = "";
+
+            for (int j = 0; j < addressStrings.length; j++) {
+                if (j != addressStrings.length - 1) {
+                    if (StringUtils.length(addressStrings[j]) > 0) {
+                        formattedAddress = formattedAddress + StringUtils.appendIfMissing
+                                (addressStrings[j], ", ");
+                    }
+                } else {
+                    formattedAddress = formattedAddress + pinCodeName;
+                }
+            }
+
+            address.setCountry(countryName);
+            address.setState(stateName);
+            address.setCity(cityName);
+            address.setStreet(streetName);
+            address.setNeighborhood(neighborhoodName);
+            address.setPostCode(pinCodeName);
+            address.setFormattedAddress(StringUtils.removeEnd(formattedAddress, ", "));
+            address.setAddressType((String) addressType.getSelectedItem());
+            address.setGoogleAddress(textGoogleAddress.getText().toString());
+            address.setGoogleLatitude(textLatitude.getText().toString());
+            address.setGoogleLongitude(textLongitude.getText().toString());
+//            address.setAddPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            address.setAddId((String) relativeRowEditProfile.getTag());
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                address.setAddPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                address.setAddPublic(1);
+            }
+
+            arrayListNewAddress.add(address);
+
+        }
+
+        //</editor-fold>*/
+
+        ArrayList<ProfileDataOperation> arrayList = new ArrayList<>();
+
+        int radioButtonID = radioGroupGender.getCheckedRadioButtonId();
+        View radioButton = radioGroupGender.findViewById(radioButtonID);
+        int index = radioGroupGender.indexOfChild(radioButton);
+
+        RadioButton r = (RadioButton) radioGroupGender.getChildAt(index);
+        String selectedText = r.getText().toString();
+
+        String bitmapString = "";
+        if (selectedBitmap != null) {
+            bitmapString = Utils.convertBitmapToBase64(selectedBitmap);
+        }
+
+        ProfileDataOperation profileDataOperation = new ProfileDataOperation();
+
+        profileDataOperation.setPbNameFirst(inputFirstName.getText().toString());
+        profileDataOperation.setPbNameLast(inputLastName.getText().toString());
+        profileDataOperation.setPbGender(selectedText);
+        profileDataOperation.setPbProfilePhoto(bitmapString);
+
+        profileDataOperation.setPbEmailId(arrayListNewEmail);
+        profileDataOperation.setPbPhoneNumber(arrayListNewPhone);
+        profileDataOperation.setPbWebAddress(arrayListNewWebAddress);
+        profileDataOperation.setPbEvent(arrayListNewEvent);
+        profileDataOperation.setPbAddress(arrayListNewAddress);
+        profileDataOperation.setPbOrganization(arrayListNewOrganization);
+        profileDataOperation.setPbIMAccounts(arrayListNewImAccount);
+
+        arrayList.add(profileDataOperation);
+//                arrayList.add(updatedAddress);
+
+        editProfile(arrayList);
     }
 
     //</editor-fold>

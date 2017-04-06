@@ -84,7 +84,7 @@
 
             </LinearLayout>
 
-            <RelativeLayout
+            <!--<RelativeLayout
                 android:id="@+id/relative_organization_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -119,13 +119,13 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/relative_organization_details"
                 android:layout_margin="@dimen/margin_tiny"
-                android:orientation="vertical"/>
+                android:orientation="vertical"/>-->
 
             <RelativeLayout
                 android:id="@+id/relative_contact_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/linear_organization_detail"
+                android:layout_below="@id/linear_section_top"
                 android:layout_marginTop="@dimen/margin_small">
 
                 <ImageView
@@ -195,12 +195,48 @@
                 android:layout_margin="@dimen/margin_tiny"
                 android:orientation="vertical"/>
 
+            <RelativeLayout
+                android:id="@+id/relative_organization_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_email_details"
+                android:layout_marginTop="@dimen/margin_small">
+
+                <ImageView
+                    android:id="@+id/image_add_organization"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/str_content_description"
+                    android:src="@drawable/ic_action_add"/>
+
+                <TextView
+                    android:id="@+id/text_label_organization"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/image_add_organization"
+                    android:layout_toStartOf="@id/image_add_organization"
+                    android:text="@string/str_organization"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/colorBlack"/>
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_organization_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relative_organization_details"
+                android:layout_margin="@dimen/margin_tiny"
+                android:orientation="vertical"/>
 
             <RelativeLayout
                 android:id="@+id/relative_website_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/linear_email_details"
+                android:layout_below="@id/linear_organization_detail"
                 android:layout_marginTop="@dimen/margin_small">
 
                 <ImageView
