@@ -22,12 +22,12 @@ public class CustomLayoutManager extends LinearLayoutManager {
 
     @Override
     public void onLayoutCompleted(RecyclerView.State state) {
-        int x = recyclerView.computeVerticalScrollRange();
-        if (x > height) {
-            recyclerView.getLayoutParams().height = height;
-        } else {
-            recyclerView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        }
+//        int x = recyclerView.computeVerticalScrollRange();
+//        if (x > height) {
+//            recyclerView.getLayoutParams().height = height;
+//        } else {
+//            recyclerView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//        }
         super.onLayoutCompleted(state);
     }
 

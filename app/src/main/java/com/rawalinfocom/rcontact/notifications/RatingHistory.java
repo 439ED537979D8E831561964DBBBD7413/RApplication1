@@ -1,32 +1,46 @@
 package com.rawalinfocom.rcontact.notifications;
 
 import android.app.Service;
+import android.content.Context;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.design.widget.TabLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.NotiRatingHistoryAdapter;
+import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Comment;
+import com.rawalinfocom.rcontact.model.EventComment;
+import com.rawalinfocom.rcontact.model.EventCommentData;
 import com.rawalinfocom.rcontact.model.NotiRatingItem;
 import com.rawalinfocom.rcontact.model.UserProfile;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -101,7 +115,7 @@ public class RatingHistory extends BaseActivity implements RippleView
     NotiRatingHistoryAdapter pastRatingAdapter;
 
     private static int tabIndex = 0;
-
+    int height;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +125,21 @@ public class RatingHistory extends BaseActivity implements RippleView
         init();
         tableCommentMaster = new TableCommentMaster(databaseHandler);
         initData();
+        getAllEventRatingReceived(RatingHistory.this);
+    }
+
+    private void getAllEventRatingReceived(Context context) {
+        WsRequestObject addCommentObject = new WsRequestObject();
+
+        if (Utils.isNetworkAvailable(context)) {
+            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    addCommentObject, null, WsResponseObject.class, WsConstants
+                    .REQ_GET_EVENT_COMMENT, getResources().getString(R.string.msg_please_wait), true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
+        } else {
+            Toast.makeText(RatingHistory.this, getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
+
+        }
     }
 
     private void init() {
@@ -315,54 +344,64 @@ public class RatingHistory extends BaseActivity implements RippleView
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         int density = getResources().getDisplayMetrics().densityDpi;
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int heightMaulik = size.y;
+
+        Log.i("MAULIK", "heightMaulik" + heightMaulik);
+
         int heightPercent = 40;
-        int maxItemCount = 1;
         switch (density) {
             case DisplayMetrics.DENSITY_LOW: /*120*/
                 heightPercent = 30;
-                maxItemCount = 1;
                 break;
             case DisplayMetrics.DENSITY_MEDIUM: /*160*/
                 heightPercent = 30;
-                maxItemCount = 1;
                 break;
             case DisplayMetrics.DENSITY_HIGH: /*320*/
                 heightPercent = 35;
-                maxItemCount = 1;
                 break;
             case DisplayMetrics.DENSITY_XXHIGH: /*480*/
             case DisplayMetrics.DENSITY_XXXHIGH: /*680*/
                 heightPercent = 40;
-                maxItemCount = 2;
                 break;
         }
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = (displaymetrics.heightPixels * heightPercent) / 100;
+        height = (displaymetrics.heightPixels * heightPercent) / 100;
+        //height = heightMaulik / 3;
+        Log.i("MAULIK", "height" + height);
 
-        recyclerViewToday.setLayoutManager(new CustomLayoutManager(this, recyclerViewToday, height));
-        RecyclerView.Adapter mAdapter = recyclerViewToday.getAdapter();
-        int totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > maxItemCount) {
+        recyclerViewToday.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewToday.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int heightRecy = recyclerViewToday.getMeasuredHeight();
+
+        Log.i("MAULIK", "recyclerViewToday::" + heightRecy);
+        if (heightRecy > height) {
             recyclerViewToday.getLayoutParams().height = height;
         } else {
             recyclerViewToday.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
 
 
-        recyclerViewYesterday.setLayoutManager(new CustomLayoutManager(this, recyclerViewYesterday, height));
-        mAdapter = recyclerViewYesterday.getAdapter();
-        totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > maxItemCount) {
+        recyclerViewYesterday.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewYesterday.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        heightRecy = recyclerViewYesterday.getMeasuredHeight();
+
+        Log.i("MAULIK", "recyclerViewYesterday::" + heightRecy);
+        if (heightRecy > height) {
             recyclerViewYesterday.getLayoutParams().height = height;
         } else {
             recyclerViewYesterday.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
 
 
-        recyclerViewPast5day.setLayoutManager(new CustomLayoutManager(this, recyclerViewPast5day, height));
-        mAdapter = recyclerViewPast5day.getAdapter();
-        totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > maxItemCount) {
+        recyclerViewPast5day.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewPast5day.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        heightRecy = recyclerViewPast5day.getMeasuredHeight();
+
+        Log.i("MAULIK", "recyclerViewPast5day::" + heightRecy);
+        if (heightRecy > height) {
             recyclerViewPast5day.getLayoutParams().height = height;
         } else {
             recyclerViewPast5day.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -378,8 +417,18 @@ public class RatingHistory extends BaseActivity implements RippleView
 
             int pmId = comment.getRcProfileMasterPmId();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
+            UserProfile currentUserProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
+            if (historyType == 0) {
+                // 0 done
 
-            item.setRaterName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+                item.setRaterName(currentUserProfile.getPmFirstName() + " " + currentUserProfile.getPmLastName());
+                item.setReceiverPersonName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+
+            } else {
+                // 1 receive
+                item.setRaterName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+                item.setReceiverPersonName(currentUserProfile.getPmFirstName() + " " + currentUserProfile.getPmLastName());
+            }
             item.setRating(comment.getCrmRating());
             item.setNotiTime(comment.getCrmCreatedAt());
             item.setComment(comment.getCrmComment());
@@ -450,7 +499,101 @@ public class RatingHistory extends BaseActivity implements RippleView
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
+        if (error == null) {
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_EVENT_COMMENT)) {
 
+                WsResponseObject wsResponseObject = (WsResponseObject) data;
+                ArrayList<EventCommentData> eventReceiveCommentData = wsResponseObject.getEventReceiveCommentData();
+                saveCommentDataToDb(eventReceiveCommentData);
+                Utils.hideProgressDialog();
+            }
+        } else {
+            Utils.hideProgressDialog();
+            Toast.makeText(RatingHistory.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveCommentDataToDb(ArrayList<EventCommentData> eventReceiveCommentData) {
+        if (eventReceiveCommentData == null) {
+            return;
+        }
+        for (EventCommentData eventCommentData : eventReceiveCommentData) {
+            ArrayList<EventComment> allRatingComments = eventCommentData.getRating();
+            if (allRatingComments != null) {
+                for (EventComment eventComment : allRatingComments) {
+                    Comment comment = createComment(eventComment, getResources().getString(R.string.text_rating));
+                    tableCommentMaster.addComment(comment);
+                    tableCommentMaster.addReply(eventComment.getPrId(), eventComment.getReply(),
+                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+                }
+            }
+        }
+        refreshAllList();
+    }
+
+    private Comment createComment(EventComment eventComment, String commentType) {
+        Comment comment = new Comment();
+        comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
+        comment.setCrmRating("");
+        comment.setCrmType(commentType);
+        if (commentType.equalsIgnoreCase(getResources().getString(R.string.text_rating))) {
+            comment.setCrmCloudPrId(eventComment.getPrId());
+            comment.setCrmRating(eventComment.getRatingStars());
+        } else {
+            comment.setCrmCloudPrId(eventComment.getId());
+        }
+        comment.setRcProfileMasterPmId(eventComment.getFromPmId());
+        comment.setCrmComment(eventComment.getComment());
+        comment.setCrmReply(eventComment.getReply());
+        comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getCreatedDate()));
+        comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()));
+        comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+        comment.setEvmRecordIndexId(eventComment.getEventRecordIndexId() + "");
+        return comment;
+    }
+
+    private void refreshAllList() {
+        String today = getDate(0); // 22
+        String yesterDay = getDate(-1); // 21
+        String dayBeforeYesterday = getDate(-2); //20
+        String pastday5thDay = getDate(-6); //16
+
+        ArrayList<Comment> ratingDoneToday = tableCommentMaster.getAllRatingDone(today, today);
+        ArrayList<Comment> ratingDoneYesterday = tableCommentMaster.getAllRatingDone(yesterDay, yesterDay);
+        ArrayList<Comment> ratingDonePast5day = tableCommentMaster.getAllRatingDone(pastday5thDay, dayBeforeYesterday);
+
+        ArrayList<Comment> ratingReceiveToday = tableCommentMaster.getAllRatingReceived(today, today);
+        ArrayList<Comment> ratingReceiveYesterday = tableCommentMaster.getAllRatingReceived(yesterDay, yesterDay);
+        ArrayList<Comment> ratingReceivePast5day = tableCommentMaster.getAllRatingReceived(pastday5thDay, dayBeforeYesterday);
+
+
+        listTodayRatingDone = createRatingList(ratingDoneToday, 0);
+        listYesterdayRatingDone = createRatingList(ratingDoneYesterday, 0);
+        listPastRatingDone = createRatingList(ratingDonePast5day, 0);
+
+        listTodayRatingReceive = createRatingList(ratingReceiveToday, 1);
+        listYesterdayRatingReceive = createRatingList(ratingReceiveYesterday, 1);
+        listPastRatingReceive = createRatingList(ratingReceivePast5day, 1);
+
+        if (tabIndex == 0) {
+            if (todayRatingAdapter != null)
+                todayRatingAdapter.updateList(listTodayRatingDone);
+            if (yesterdayRatingAdapter != null)
+                yesterdayRatingAdapter.updateList(listYesterdayRatingDone);
+            if (pastRatingAdapter != null) {
+                pastRatingAdapter.updateList(listPastRatingDone);
+                updateHeight();
+            }
+        } else {
+            if (todayRatingAdapter != null)
+                todayRatingAdapter.updateList(listTodayRatingReceive);
+            if (yesterdayRatingAdapter != null)
+                yesterdayRatingAdapter.updateList(listYesterdayRatingReceive);
+            if (pastRatingAdapter != null) {
+                pastRatingAdapter.updateList(listPastRatingReceive);
+                updateHeight();
+            }
+        }
     }
 
     @Override
@@ -460,5 +603,11 @@ public class RatingHistory extends BaseActivity implements RippleView
                 onBackPressed();
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        softKeyboard.unRegisterSoftKeyboardCallback();
     }
 }

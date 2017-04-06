@@ -97,6 +97,8 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
     @BindView(R.id.layout_root)
     RelativeLayout layoutRoot;
     SoftKeyboard softKeyboard;
+    int maxItemCount;
+    int height;
 
     @Override
     public void getFragmentArguments() {
@@ -121,8 +123,9 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         ButterKnife.bind(this, view);
         init();
         tableCommentMaster = new TableCommentMaster(getDatabaseHandler());
+        initData();
         getAllRatingComment(this);
-        //initData();
+
     }
 
     private void initData() {
@@ -147,7 +150,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         DisplayMetrics displaymetrics = new DisplayMetrics();
         int density = getResources().getDisplayMetrics().densityDpi;
         int heightPercent = 40;
-        int maxItemCount = 1;
+        maxItemCount = 1;
         switch (density) {
             case DisplayMetrics.DENSITY_LOW: /*120*/
                 heightPercent = 30;
@@ -168,7 +171,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
                 break;
         }
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = (displaymetrics.heightPixels * heightPercent) / 100;
+        height = (displaymetrics.heightPixels * heightPercent) / 100;
 
         recyclerTodayRating.setAdapter(todayRatingAdapter);
         recyclerTodayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerTodayRating, height));
@@ -386,8 +389,10 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
                 ArrayList<EventCommentData> eventSendCommentData = wsResponseObject.getEventSendCommentData();
                 saveReplyDataToDb(eventSendCommentData);
                 Utils.hideProgressDialog();
-                initData();
             }
+        } else {
+            Utils.hideProgressDialog();
+            Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -401,6 +406,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
                 for (EventComment eventComment : allRatingComments) {
                     tableCommentMaster.addReply(eventComment.getPrId(), eventComment.getReply(),
                             Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+                    refreshAllList();
                 }
             }
         }
@@ -411,5 +417,39 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         super.onDestroy();
         softKeyboard.unRegisterSoftKeyboardCallback();
 
+    }
+
+    private void refreshAllList() {
+        String today = getDate(0); // 22
+        String yesterDay = getDate(-1); // 21
+        String dayBeforeYesterday = getDate(-2); //20
+        String pastday5thDay = getDate(-6); //16
+
+        ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllRatingReplyReceived(today, today);
+        ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllRatingReplyReceived(yesterDay, yesterDay);
+        ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllRatingReplyReceived(pastday5thDay, dayBeforeYesterday);
+
+        listTodayRating = createRatingReplyList(replyReceivedToday);
+        listYesterdayRating = createRatingReplyList(replyReceivedYesterDay);
+        listPastRating = createRatingReplyList(replyReceivedPastDays);
+
+        todayRatingAdapter.updateList(listTodayRating);
+        yesterdayRatingAdapter.updateList(listYesterdayRating);
+        pastRatingAdapter.updateList(listPastRating);
+        RecyclerView.Adapter adapter = recyclerTodayRating.getAdapter();
+        int itemCount = adapter.getItemCount();
+        if (itemCount > maxItemCount) {
+            recyclerTodayRating.getLayoutParams().height = height;
+        }
+        adapter = recyclerYesterDayRating.getAdapter();
+        itemCount = adapter.getItemCount();
+        if (itemCount > maxItemCount) {
+            recyclerYesterDayRating.getLayoutParams().height = height;
+        }
+        adapter = recyclerPastDayRating.getAdapter();
+        itemCount = adapter.getItemCount();
+        if (itemCount > maxItemCount) {
+            recyclerPastDayRating.getLayoutParams().height = height;
+        }
     }
 }

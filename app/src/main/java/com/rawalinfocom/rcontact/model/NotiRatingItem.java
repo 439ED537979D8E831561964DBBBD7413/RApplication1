@@ -13,6 +13,16 @@ public class NotiRatingItem {
     private String commentTime;
     private String reply;
     private String replyTime;
+    private int historyType;
+    private String receiverPersonName;
+
+    public String getReceiverPersonName() {
+        return receiverPersonName;
+    }
+
+    public void setReceiverPersonName(String receiverPersonName) {
+        this.receiverPersonName = receiverPersonName;
+    }
 
     public int getHistoryType() {
         return historyType;
@@ -22,7 +32,6 @@ public class NotiRatingItem {
         this.historyType = historyType;
     }
 
-    private int historyType;
 
     public String getRaterName() {
         return raterName;

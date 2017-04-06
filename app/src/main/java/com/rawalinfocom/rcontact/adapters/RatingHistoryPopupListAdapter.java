@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
@@ -40,19 +39,22 @@ public class RatingHistoryPopupListAdapter extends RecyclerView.Adapter<RatingHi
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+        holder.textRaterName.setText(stringArrayList.get(0));
+        holder.textReceiverName.setText(stringArrayList.get(1));
         if (stringArrayList.get(2) != null && stringArrayList.get(2).length() > 0) {
-            holder.textWisherComment.setText(stringArrayList.get(2));
+            holder.textRaterComment.setText(stringArrayList.get(2));
         } else {
-            holder.textWisherComment.setVisibility(View.GONE);
+            holder.textRaterComment.setVisibility(View.GONE);
         }
-        holder.textWisherCommentTime.setText(stringArrayList.get(3));
+        holder.textRaterCommentTime.setText(stringArrayList.get(3));
         if (stringArrayList.get(4) != null && stringArrayList.get(4).length() > 0) {
-            holder.textUserComment.setText(stringArrayList.get(4));
-            holder.textUserCommentTime.setText(stringArrayList.get(5));
+            holder.textReceiverComment.setText(stringArrayList.get(4));
+            holder.textReceiverCommentTime.setText(stringArrayList.get(5));
         } else {
-            holder.textUserComment.setVisibility(View.GONE);
-            holder.textUserCommentTime.setVisibility(View.GONE);
-            holder.imageUser.setVisibility(View.GONE);
+            holder.textReceiverComment.setVisibility(View.GONE);
+            holder.textReceiverCommentTime.setVisibility(View.GONE);
+            holder.imageReceiver.setVisibility(View.GONE);
+            holder.textReceiverName.setVisibility(View.GONE);
         }
     }
 
@@ -63,18 +65,22 @@ public class RatingHistoryPopupListAdapter extends RecyclerView.Adapter<RatingHi
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.image_wisher_small)
-        ImageView imageWisherSmall;
-        @BindView(R.id.text_wisher_comment)
-        TextView textWisherComment;
-        @BindView(R.id.text_wisher_comment_time)
-        TextView textWisherCommentTime;
-        @BindView(R.id.image_user)
-        ImageView imageUser;
-        @BindView(R.id.text_user_comment)
-        TextView textUserComment;
-        @BindView(R.id.text_user_comment_time)
-        TextView textUserCommentTime;
+        @BindView(R.id.image_rater)
+        ImageView imageRater;
+        @BindView(R.id.text_rater_name)
+        TextView textRaterName;
+        @BindView(R.id.text_rater_comment)
+        TextView textRaterComment;
+        @BindView(R.id.text_rater_comment_time)
+        TextView textRaterCommentTime;
+        @BindView(R.id.image_receiver)
+        ImageView imageReceiver;
+        @BindView(R.id.text_receiver_name)
+        TextView textReceiverName;
+        @BindView(R.id.text_receiver_comment)
+        TextView textReceiverComment;
+        @BindView(R.id.text_receiver_comment_time)
+        TextView textReceiverCommentTime;
 
         MyViewHolder(View itemView) {
             super(itemView);

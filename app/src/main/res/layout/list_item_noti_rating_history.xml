@@ -87,7 +87,7 @@
                 android:id="@+id/text_rating_detail_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Send you request for Home RequestSend you request for Home Request" />
+                tools:text=" you receive comment and rating from" />
 
         </LinearLayout>
 
