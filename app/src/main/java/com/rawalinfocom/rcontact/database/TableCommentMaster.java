@@ -59,7 +59,8 @@ public class TableCommentMaster {
             " " + COLUMN_CRM_CREATED_AT + " datetime NOT NULL," +
             " " + COLUMN_CRM_REPLIED_AT + " datetime," +
             " " + COLUMN_CRM_UPDATED_AT + " datetime NOT NULL," +
-            " " + COLUMN_EVM_RECORD_INDEX_ID + " text" +
+            " " + COLUMN_EVM_RECORD_INDEX_ID + " text," +
+            " UNIQUE(" + COLUMN_CRM_CLOUD_COMMENT_ID + ")" +
             ");";
 
     // Adding new Event
@@ -78,9 +79,11 @@ public class TableCommentMaster {
         values.put(COLUMN_CRM_REPLIED_AT, comment.getCrmRepliedAt());
         values.put(COLUMN_CRM_UPDATED_AT, comment.getCrmUpdatedAt());
         values.put(COLUMN_EVM_RECORD_INDEX_ID, comment.getEvmRecordIndexId());
-
-        db.insert(TABLE_RC_COMMENT_MASTER, null, values);
-        db.close();
+        try {
+            db.insert(TABLE_RC_COMMENT_MASTER, null, values);
+            db.close();
+        } catch (Exception e) {
+        }
     }
 
 
@@ -117,11 +120,9 @@ public class TableCommentMaster {
             cursor.close();
         }
         db.close();
-        // return comment
         return comment;
     }
 
-    // Getting All Comment Received Between two dates
     public ArrayList<Comment> getAllCommentReceivedBetween(String fromDate, String toDate) {
         ArrayList<Comment> arrayListCommentReceived = new ArrayList<>();
 
@@ -161,11 +162,6 @@ public class TableCommentMaster {
         return arrayListCommentReceived;
     }
 
-    public void deleteAllReceivedComments() {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        db.execSQL("delete from " + TABLE_RC_COMMENT_MASTER + " WHERE crm_status=2");
-    }
-
     public int addReply(String id, String reply, String replyAt, String updatedDate) {
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
@@ -191,7 +187,7 @@ public class TableCommentMaster {
                 " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and " + COLUMN_CRM_TYPE + "!='Rating' and "
                 + COLUMN_CRM_REPLY + "!=''" + " and strftime('%m-%d'," +
                 COLUMN_CRM_REPLIED_AT + ") between '" + fromDate + "' and '" + toDate + "' order by " + COLUMN_CRM_REPLIED_AT + " desc";
-        Log.i("MAULIK", "selectQuery" + selectQuery);
+
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -225,7 +221,7 @@ public class TableCommentMaster {
                 " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and " + COLUMN_CRM_TYPE + "='Rating' and "
                 + COLUMN_CRM_REPLY + "!=''" + " and strftime('%m-%d'," +
                 COLUMN_CRM_REPLIED_AT + ") between '" + fromDate + "' and '" + toDate + "' order by " + COLUMN_CRM_REPLIED_AT + " desc";
-        Log.i("MAULIK", "selectQuery" + selectQuery);
+
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -259,7 +255,6 @@ public class TableCommentMaster {
                 " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and " + COLUMN_CRM_TYPE + "='Rating' "
                 + " and strftime('%m-%d'," +
                 COLUMN_CRM_CREATED_AT + ") between '" + fromDate + "' and '" + toDate + "' order by " + COLUMN_CRM_CREATED_AT + " desc";
-        Log.i("MAULIK", "selectQuery" + selectQuery);
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -293,7 +288,6 @@ public class TableCommentMaster {
                 " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_RECEIVED + " and " + COLUMN_CRM_TYPE + "='Rating' "
                 + " and strftime('%m-%d'," +
                 COLUMN_CRM_CREATED_AT + ") between '" + from + "' and '" + to + "' order by " + COLUMN_CRM_CREATED_AT + " desc";
-        Log.i("MAULIK", "selectQuery" + selectQuery);
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

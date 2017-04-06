@@ -5,6 +5,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,6 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RatingHistoryPopupDialog;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.NotiRatingItem;
-import com.rawalinfocom.rcontact.notifications.NotificationPopupDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +40,7 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
     public NotiRatingHistoryAdapter(Context context, List<NotiRatingItem> list, int recyclerPosition) {
         this.context = context;
         this.list = list;
+        this.recyclerPosition = recyclerPosition;
     }
 
     public void updateList(List<NotiRatingItem> list) {
@@ -80,13 +81,22 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_noti_rating_history, parent, false);
+        itemView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int width = itemView.getMeasuredWidth();
+        int height = itemView.getMeasuredHeight();
+        Log.i("MAULIK", "oncreateheight::" + height);
+        Log.i("MAULIK", "oncreatewidth::" + width);
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final NotiRatingItem item = list.get(position);
-        holder.textRaterName.setText(item.getRaterName());
+        if (item.getHistoryType() == 0) {
+            holder.textRaterName.setText(item.getReceiverPersonName());
+        } else {
+            holder.textRaterName.setText(item.getRaterName());
+        }
         Float rating = Float.parseFloat(item.getRating());
         holder.textRatingGiven.setText(rating + "");
         holder.givenRatingBar.setRating(rating);
@@ -99,32 +109,32 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
         Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(context, android.R
                 .color.darker_gray));
 
-        if (recyclerPosition == 2) {
-            holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "dd MMM, hh:mm a"));
-        } else {
+        if (recyclerPosition == 0) {
             holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "hh:mm a"));
+        } else {
+            holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "dd MMM, hh:mm a"));
         }
         if (item.getHistoryType() == 0) {
             holder.historyPlaceHolder.setText(context.getResources().getString(R.string.text_you_rated));
-            holder.textRatingDetailInfo.setText("You wrote comment and give rating to " + item.getRaterName());
+            holder.textRatingDetailInfo.setText("You wrote comment and give rating to " + item.getReceiverPersonName());
         } else {
             holder.historyPlaceHolder.setText(context.getResources().getString(R.string.text_rated_you));
-            holder.textRatingDetailInfo.setText("You receive comment rating from" + item.getRaterName());
+            holder.textRatingDetailInfo.setText("You receive comment rating from " + item.getRaterName());
         }
-        //holder.buttonRatingViewReply.setText("VIEW REPLY");
         holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArrayList<String> arrayListComments = new ArrayList<>();
                 arrayListComments.add(item.getRaterName());
-                arrayListComments.add("Rating");
+                arrayListComments.add(item.getReceiverPersonName());
                 arrayListComments.add(item.getComment());
                 arrayListComments.add(Utils.formatDateTime(item.getCommentTime(), "dd MMM, hh:mm a"));
                 arrayListComments.add(item.getReply());
                 arrayListComments.add(Utils.formatDateTime(item.getReplyTime(), "dd MMM, hh:mm a"));
+
                 notificationPopupDialog = new RatingHistoryPopupDialog(context, arrayListComments, true);
                 if (item.getHistoryType() == 0) {
-                    notificationPopupDialog.setDialogTitle(context.getResources().getString(R.string.text_you_rated) + " " + item.getRaterName());
+                    notificationPopupDialog.setDialogTitle(context.getResources().getString(R.string.text_you_rated) + " " + item.getReceiverPersonName());
                 } else {
                     notificationPopupDialog.setDialogTitle(item.getRaterName() + " " + context.getResources().getString(R.string.text_rated_you));
                 }

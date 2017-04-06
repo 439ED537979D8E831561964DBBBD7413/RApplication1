@@ -91,14 +91,15 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
     List<NotiCommentsItem> listTodayComments;
     List<NotiCommentsItem> listYesterdayComments;
     List<NotiCommentsItem> listPastComments;
-
+    int maxItemCount;
+    int height;
     TableCommentMaster tableCommentMaster;
 
-    NotiCommentsAdapter todayRatingAdapter;
+    NotiCommentsAdapter todayCommentsAdapter;
 
-    NotiCommentsAdapter yesterdayRatingAdapter;
+    NotiCommentsAdapter yesterdayCommentsAdapter;
 
-    NotiCommentsAdapter pastRatingAdapter;
+    NotiCommentsAdapter pastCommentsAdapter;
     @BindView(R.id.layout_root)
     RelativeLayout layoutRoot;
 
@@ -126,8 +127,9 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
         init();
 
         tableCommentMaster = new TableCommentMaster(getDatabaseHandler());
+        initData();
         getAllEventComment(this);
-        //initData();
+
     }
 
     private void initData() {
@@ -146,14 +148,14 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
         listYesterdayComments = createReplyList(replyReceivedYesterDay);
         listPastComments = createReplyList(replyReceivedPastDays);
 
-        todayRatingAdapter = new NotiCommentsAdapter(getActivity(), listTodayComments, 0);
-        yesterdayRatingAdapter = new NotiCommentsAdapter(getActivity(), listYesterdayComments, 1);
-        pastRatingAdapter = new NotiCommentsAdapter(getActivity(), listPastComments, 2);
+        todayCommentsAdapter = new NotiCommentsAdapter(getActivity(), listTodayComments, 0);
+        yesterdayCommentsAdapter = new NotiCommentsAdapter(getActivity(), listYesterdayComments, 1);
+        pastCommentsAdapter = new NotiCommentsAdapter(getActivity(), listPastComments, 2);
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         int density = getResources().getDisplayMetrics().densityDpi;
         int heightPercent = 40;
-        int maxItemCount = 3;
+        maxItemCount = 3;
         switch (density) {
             case DisplayMetrics.DENSITY_LOW: /*120*/
                 heightPercent = 30;
@@ -174,9 +176,9 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
                 break;
         }
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = (displaymetrics.heightPixels * heightPercent) / 100;
+        height = (displaymetrics.heightPixels * heightPercent) / 100;
 
-        recyclerTodayComments.setAdapter(todayRatingAdapter);
+        recyclerTodayComments.setAdapter(todayCommentsAdapter);
         recyclerTodayComments.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerTodayComments, height));
         RecyclerView.Adapter mAdapter = recyclerTodayComments.getAdapter();
         int totalItemCount = mAdapter.getItemCount();
@@ -184,14 +186,14 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
             recyclerTodayComments.getLayoutParams().height = height;
         }
 
-        recyclerYesterDayComments.setAdapter(yesterdayRatingAdapter);
+        recyclerYesterDayComments.setAdapter(yesterdayCommentsAdapter);
         recyclerYesterDayComments.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerYesterDayComments, height));
         mAdapter = recyclerYesterDayComments.getAdapter();
         totalItemCount = mAdapter.getItemCount();
         if (totalItemCount > maxItemCount) {
             recyclerYesterDayComments.getLayoutParams().height = height;
         }
-        recyclerPastDayComments.setAdapter(pastRatingAdapter);
+        recyclerPastDayComments.setAdapter(pastCommentsAdapter);
         recyclerPastDayComments.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerPastDayComments, height));
         mAdapter = recyclerPastDayComments.getAdapter();
         totalItemCount = mAdapter.getItemCount();
@@ -332,9 +334,9 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
                 if (TextUtils.isEmpty(newText)) {
 
 
-                    todayRatingAdapter.updateList(listTodayComments);
-                    yesterdayRatingAdapter.updateList(listYesterdayComments);
-                    pastRatingAdapter.updateList(listPastComments);
+                    todayCommentsAdapter.updateList(listTodayComments);
+                    yesterdayCommentsAdapter.updateList(listYesterdayComments);
+                    pastCommentsAdapter.updateList(listPastComments);
                 }
                 return false;
             }
@@ -350,7 +352,7 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
                     temp.add(item);
                 }
             }
-            todayRatingAdapter.updateList(temp);
+            todayCommentsAdapter.updateList(temp);
 
             temp = new ArrayList<>();
             for (NotiCommentsItem item : listYesterdayComments) {
@@ -358,7 +360,7 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
                     temp.add(item);
                 }
             }
-            yesterdayRatingAdapter.updateList(temp);
+            yesterdayCommentsAdapter.updateList(temp);
 
             temp = new ArrayList<>();
             for (NotiCommentsItem item : listPastComments) {
@@ -366,7 +368,7 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
                     temp.add(item);
                 }
             }
-            pastRatingAdapter.updateList(temp);
+            pastCommentsAdapter.updateList(temp);
         }
     }
 
@@ -400,8 +402,10 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
                 ArrayList<EventCommentData> eventSendCommentData = wsResponseObject.getEventSendCommentData();
                 saveReplyDataToDb(eventSendCommentData);
                 Utils.hideProgressDialog();
-                initData();
             }
+        } else {
+            Utils.hideProgressDialog();
+            Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -417,7 +421,6 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
                 for (EventComment eventComment : allBirthdayComments) {
                     tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
                             Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-
                 }
             }
             if (allAnniversaryComments != null) {
@@ -433,6 +436,7 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
                 }
             }
         }
+        refreshAllList();
     }
 
     @Override
@@ -440,5 +444,40 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
         super.onDestroy();
         softKeyboard.unRegisterSoftKeyboardCallback();
 
+    }
+
+    private void refreshAllList() {
+        String today = getDate(0); // 22
+        String yesterDay = getDate(-1); // 21
+        String dayBeforeYesterday = getDate(-2); //20
+        String pastday5thDay = getDate(-6); //16
+
+        ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllReplyReceived(today, today);
+        ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllReplyReceived(yesterDay, yesterDay);
+        ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllReplyReceived(pastday5thDay, dayBeforeYesterday);
+
+        listTodayComments = createReplyList(replyReceivedToday);
+        listYesterdayComments = createReplyList(replyReceivedYesterDay);
+        listPastComments = createReplyList(replyReceivedPastDays);
+
+        todayCommentsAdapter.updateList(listTodayComments);
+        yesterdayCommentsAdapter.updateList(listYesterdayComments);
+        pastCommentsAdapter.updateList(listPastComments);
+
+        RecyclerView.Adapter adapter = recyclerTodayComments.getAdapter();
+        int itemCount = adapter.getItemCount();
+        if (itemCount > maxItemCount) {
+            recyclerTodayComments.getLayoutParams().height = height;
+        }
+        adapter = recyclerYesterDayComments.getAdapter();
+        itemCount = adapter.getItemCount();
+        if (itemCount > maxItemCount) {
+            recyclerYesterDayComments.getLayoutParams().height = height;
+        }
+        adapter = recyclerPastDayComments.getAdapter();
+        itemCount = adapter.getItemCount();
+        if (itemCount > maxItemCount) {
+            recyclerPastDayComments.getLayoutParams().height = height;
+        }
     }
 }

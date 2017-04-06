@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.rawalinfocom.rcontact.model.RcontactUpdatesData;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -39,7 +40,8 @@ public class TableRCNotificationUpdates {
             " " + COLUMN_NU_TITLE + " text," +
             " " + COLUMN_NU_DETAILS + " text," +
             " " + COLUMN_NU_CLOUD_ID + " text," +
-            " " + COLUMN_CREATED_AT + " datetime" +
+            " " + COLUMN_CREATED_AT + " datetime," +
+            " UNIQUE(" + COLUMN_NU_CLOUD_ID + ")" +
             ");";
 
     public void addUpdate(RcontactUpdatesData rconUpdate) {
@@ -50,16 +52,19 @@ public class TableRCNotificationUpdates {
         values.put(COLUMN_NU_DETAILS, rconUpdate.getDetails());
         values.put(COLUMN_NU_CLOUD_ID, rconUpdate.getId());
         values.put(COLUMN_CREATED_AT, Utils.getLocalTimeFromUTCTime(rconUpdate.getCreatedAt()));
+        try {
+            db.insert(TABLE_RC_NOTIFICATION_UPDATES, null, values);
 
-        db.insert(TABLE_RC_NOTIFICATION_UPDATES, null, values);
-
-        db.close();
+            db.close();
+        } catch (Exception E) {
+            Log.i("MAULIK", "error duplicate entry");
+        }
     }
 
-    public void deleteAllPreviousUpdates() {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        db.execSQL("delete from " + TABLE_RC_NOTIFICATION_UPDATES);
-    }
+//    public void deleteAllPreviousUpdates() {
+//        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+//        db.execSQL("delete from " + TABLE_RC_NOTIFICATION_UPDATES);
+//    }
 
     public ArrayList<NotiRContactsItem> getAllUpdatesFromDB() {
         ArrayList<NotiRContactsItem> arrayListEvent = new ArrayList<>();

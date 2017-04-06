@@ -128,7 +128,9 @@
         <activity android:name=".calllog.CallLogDeleteActivity" />
         <activity android:name=".calllog.CallHistoryDetailsActivity" />
         <activity android:name=".BlockContactListActivity" />
-        <activity android:name=".notifications.RatingHistory"></activity>
+        <activity
+            android:name=".notifications.RatingHistory"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>
