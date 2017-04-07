@@ -2,7 +2,6 @@ package com.rawalinfocom.rcontact.notifications;
 
 import android.app.Service;
 import android.content.Context;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,8 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -116,6 +113,10 @@ public class RatingHistory extends BaseActivity implements RippleView
 
     private static int tabIndex = 0;
     int height;
+    String today;
+    String yesterDay;
+    String dayBeforeYesterday;
+    String pastday5thDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,7 +193,6 @@ public class RatingHistory extends BaseActivity implements RippleView
                         textViewMore.setVisibility(View.VISIBLE);
                     }
                 });
-
             }
 
             @Override
@@ -281,12 +281,14 @@ public class RatingHistory extends BaseActivity implements RippleView
                         todayRatingAdapter.updateList(listTodayRatingDone);
                         yesterdayRatingAdapter.updateList(listYesterdayRatingDone);
                         pastRatingAdapter.updateList(listPastRatingDone);
+                        updateHeight();
                     }
                 } else {
                     if (TextUtils.isEmpty(newText)) {
                         todayRatingAdapter.updateList(listTodayRatingReceive);
                         yesterdayRatingAdapter.updateList(listYesterdayRatingReceive);
                         pastRatingAdapter.updateList(listPastRatingReceive);
+                        updateHeight();
                     }
 
                 }
@@ -305,10 +307,10 @@ public class RatingHistory extends BaseActivity implements RippleView
 
     private void initData() {
 
-        String today = getDate(0); // 22
-        String yesterDay = getDate(-1); // 21
-        String dayBeforeYesterday = getDate(-2); //20
-        String pastday5thDay = getDate(-6); //16
+        today = getDate(0);
+        yesterDay = getDate(-1);
+        dayBeforeYesterday = getDate(-2);
+        pastday5thDay = getDate(-6);
 
         ArrayList<Comment> ratingDoneToday = tableCommentMaster.getAllRatingDone(today, today);
         ArrayList<Comment> ratingDoneYesterday = tableCommentMaster.getAllRatingDone(yesterDay, yesterDay);
@@ -344,69 +346,44 @@ public class RatingHistory extends BaseActivity implements RippleView
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         int density = getResources().getDisplayMetrics().densityDpi;
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int heightMaulik = size.y;
-
-        Log.i("MAULIK", "heightMaulik" + heightMaulik);
-
         int heightPercent = 40;
+
         switch (density) {
             case DisplayMetrics.DENSITY_LOW: /*120*/
-                heightPercent = 30;
+                heightPercent = 28;
                 break;
             case DisplayMetrics.DENSITY_MEDIUM: /*160*/
+                heightPercent = 28;
+                break;
+            case DisplayMetrics.DENSITY_HIGH: /*240*/
                 heightPercent = 30;
                 break;
-            case DisplayMetrics.DENSITY_HIGH: /*320*/
-                heightPercent = 35;
+            case DisplayMetrics.DENSITY_XHIGH: /*320*/
+                heightPercent = 33;
                 break;
             case DisplayMetrics.DENSITY_XXHIGH: /*480*/
+                heightPercent = 37;
+                break;
             case DisplayMetrics.DENSITY_XXXHIGH: /*680*/
                 heightPercent = 40;
                 break;
         }
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         height = (displaymetrics.heightPixels * heightPercent) / 100;
-        //height = heightMaulik / 3;
-        Log.i("MAULIK", "height" + height);
+        setRecyclerViewHeight(recyclerViewToday, height);
+        setRecyclerViewHeight(recyclerViewYesterday, height);
+        setRecyclerViewHeight(recyclerViewPast5day, height);
+    }
 
-        recyclerViewToday.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewToday.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int heightRecy = recyclerViewToday.getMeasuredHeight();
-
-        Log.i("MAULIK", "recyclerViewToday::" + heightRecy);
-        if (heightRecy > height) {
-            recyclerViewToday.getLayoutParams().height = height;
+    private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int heightRecycler = recyclerView.getMeasuredHeight();
+        if (heightRecycler > height) {
+            recyclerView.getLayoutParams().height = height;
         } else {
-            recyclerViewToday.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            recyclerView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
-
-
-        recyclerViewYesterday.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewYesterday.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        heightRecy = recyclerViewYesterday.getMeasuredHeight();
-
-        Log.i("MAULIK", "recyclerViewYesterday::" + heightRecy);
-        if (heightRecy > height) {
-            recyclerViewYesterday.getLayoutParams().height = height;
-        } else {
-            recyclerViewYesterday.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        }
-
-
-        recyclerViewPast5day.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewPast5day.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        heightRecy = recyclerViewPast5day.getMeasuredHeight();
-
-        Log.i("MAULIK", "recyclerViewPast5day::" + heightRecy);
-        if (heightRecy > height) {
-            recyclerViewPast5day.getLayoutParams().height = height;
-        } else {
-            recyclerViewPast5day.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        }
-
     }
 
     private List<NotiRatingItem> createRatingList(ArrayList<Comment> listComment, int historyType) {
@@ -420,7 +397,6 @@ public class RatingHistory extends BaseActivity implements RippleView
             UserProfile currentUserProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
             if (historyType == 0) {
                 // 0 done
-
                 item.setRaterName(currentUserProfile.getPmFirstName() + " " + currentUserProfile.getPmLastName());
                 item.setReceiverPersonName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
 
@@ -445,10 +421,9 @@ public class RatingHistory extends BaseActivity implements RippleView
     private void filter(String query, int tabIndex) {
 
         if (tabIndex == 0) {
-
             List<NotiRatingItem> temp = new ArrayList<>();
             for (NotiRatingItem item : listTodayRatingDone) {
-                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
+                if (item.getReceiverPersonName().toLowerCase().contains(query.toLowerCase())) {
                     temp.add(item);
                 }
             }
@@ -456,7 +431,7 @@ public class RatingHistory extends BaseActivity implements RippleView
 
             temp = new ArrayList<>();
             for (NotiRatingItem item : listYesterdayRatingDone) {
-                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
+                if (item.getReceiverPersonName().toLowerCase().contains(query.toLowerCase())) {
                     temp.add(item);
                 }
             }
@@ -464,11 +439,12 @@ public class RatingHistory extends BaseActivity implements RippleView
 
             temp = new ArrayList<>();
             for (NotiRatingItem item : listPastRatingDone) {
-                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
+                if (item.getReceiverPersonName().toLowerCase().contains(query.toLowerCase())) {
                     temp.add(item);
                 }
             }
             pastRatingAdapter.updateList(temp);
+            updateHeight();
         } else {
 
             List<NotiRatingItem> temp = new ArrayList<>();
@@ -480,7 +456,7 @@ public class RatingHistory extends BaseActivity implements RippleView
             todayRatingAdapter.updateList(temp);
 
             temp = new ArrayList<>();
-            for (NotiRatingItem item : listTodayRatingReceive) {
+            for (NotiRatingItem item : listYesterdayRatingReceive) {
                 if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
                     temp.add(item);
                 }
@@ -488,12 +464,13 @@ public class RatingHistory extends BaseActivity implements RippleView
             yesterdayRatingAdapter.updateList(temp);
 
             temp = new ArrayList<>();
-            for (NotiRatingItem item : listTodayRatingReceive) {
+            for (NotiRatingItem item : listPastRatingReceive) {
                 if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
                     temp.add(item);
                 }
             }
             pastRatingAdapter.updateList(temp);
+            updateHeight();
         }
     }
 
@@ -553,11 +530,6 @@ public class RatingHistory extends BaseActivity implements RippleView
     }
 
     private void refreshAllList() {
-        String today = getDate(0); // 22
-        String yesterDay = getDate(-1); // 21
-        String dayBeforeYesterday = getDate(-2); //20
-        String pastday5thDay = getDate(-6); //16
-
         ArrayList<Comment> ratingDoneToday = tableCommentMaster.getAllRatingDone(today, today);
         ArrayList<Comment> ratingDoneYesterday = tableCommentMaster.getAllRatingDone(yesterDay, yesterDay);
         ArrayList<Comment> ratingDonePast5day = tableCommentMaster.getAllRatingDone(pastday5thDay, dayBeforeYesterday);
@@ -576,23 +548,18 @@ public class RatingHistory extends BaseActivity implements RippleView
         listPastRatingReceive = createRatingList(ratingReceivePast5day, 1);
 
         if (tabIndex == 0) {
-            if (todayRatingAdapter != null)
-                todayRatingAdapter.updateList(listTodayRatingDone);
-            if (yesterdayRatingAdapter != null)
-                yesterdayRatingAdapter.updateList(listYesterdayRatingDone);
-            if (pastRatingAdapter != null) {
-                pastRatingAdapter.updateList(listPastRatingDone);
-                updateHeight();
-            }
+            todayRatingAdapter.updateList(listTodayRatingDone);
+            yesterdayRatingAdapter.updateList(listYesterdayRatingDone);
+            pastRatingAdapter.updateList(listPastRatingDone);
+            updateHeight();
+
         } else {
-            if (todayRatingAdapter != null)
-                todayRatingAdapter.updateList(listTodayRatingReceive);
-            if (yesterdayRatingAdapter != null)
-                yesterdayRatingAdapter.updateList(listYesterdayRatingReceive);
-            if (pastRatingAdapter != null) {
-                pastRatingAdapter.updateList(listPastRatingReceive);
-                updateHeight();
-            }
+
+            todayRatingAdapter.updateList(listTodayRatingReceive);
+            yesterdayRatingAdapter.updateList(listYesterdayRatingReceive);
+            pastRatingAdapter.updateList(listPastRatingReceive);
+            updateHeight();
+
         }
     }
 
