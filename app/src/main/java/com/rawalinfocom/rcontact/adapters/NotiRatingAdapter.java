@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.notifications.NotificationPopupDialog;
 import com.rawalinfocom.rcontact.model.NotiRatingItem;
+import com.rawalinfocom.rcontact.notifications.NotificationPopupDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +35,11 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
     public NotiRatingAdapter(Context context, List<NotiRatingItem> list, int recyclerPosition) {
         this.context = context;
         this.list = list;
+    }
+
+    public void updateList(List<NotiRatingItem> list) {
+        this.list = list;
+        notifyDataSetChanged();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

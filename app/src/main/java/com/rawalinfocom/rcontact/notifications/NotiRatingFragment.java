@@ -1,14 +1,19 @@
 package com.rawalinfocom.rcontact.notifications;
 
+import android.app.Service;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,6 +21,7 @@ import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.adapters.NotiRatingAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
@@ -26,11 +32,10 @@ import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Comment;
 import com.rawalinfocom.rcontact.model.EventComment;
 import com.rawalinfocom.rcontact.model.EventCommentData;
+import com.rawalinfocom.rcontact.model.NotiRatingItem;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
-import com.rawalinfocom.rcontact.adapters.NotiRatingAdapter;
-import com.rawalinfocom.rcontact.model.NotiRatingItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,7 +53,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
 
 
     @BindView(R.id.search_view_noti_rating)
-    SearchView searchViewEvents;
+    SearchView searchViewNotiRating;
 
     @BindView(R.id.header1)
     TextView textTodayTitle;
@@ -84,6 +89,14 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
     List<NotiRatingItem> listTodayRating;
     List<NotiRatingItem> listYesterdayRating;
     List<NotiRatingItem> listPastRating;
+
+    NotiRatingAdapter todayRatingAdapter;
+    NotiRatingAdapter yesterdayRatingAdapter;
+    NotiRatingAdapter pastRatingAdapter;
+
+    @BindView(R.id.layout_root)
+    RelativeLayout layoutRoot;
+    SoftKeyboard softKeyboard;
 
     @Override
     public void getFragmentArguments() {
@@ -127,9 +140,9 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         listYesterdayRating = createRatingReplyList(replyReceivedYesterDay);
         listPastRating = createRatingReplyList(replyReceivedPastDays);
 
-        NotiRatingAdapter todayRatingAdapter = new NotiRatingAdapter(getActivity(), listTodayRating, 0);
-        NotiRatingAdapter yesterdayRatingAdapter = new NotiRatingAdapter(getActivity(), listYesterdayRating, 1);
-        NotiRatingAdapter pastRatingAdapter = new NotiRatingAdapter(getActivity(), listPastRating, 2);
+        todayRatingAdapter = new NotiRatingAdapter(getActivity(), listTodayRating, 0);
+        yesterdayRatingAdapter = new NotiRatingAdapter(getActivity(), listYesterdayRating, 1);
+        pastRatingAdapter = new NotiRatingAdapter(getActivity(), listPastRating, 2);
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         int density = getResources().getDisplayMetrics().densityDpi;
@@ -229,6 +242,33 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
     }
 
     private void init() {
+        InputMethodManager im = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
+        softKeyboard = new SoftKeyboard(layoutRoot, im);
+        softKeyboard.setSoftKeyboardCallback(new SoftKeyboard.SoftKeyboardChanged() {
+
+            @Override
+            public void onSoftKeyboardHide() {
+                // Code here
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        textViewMore.setVisibility(View.VISIBLE);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onSoftKeyboardShow() {
+                // Code here
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        textViewMore.setVisibility(View.GONE);
+                    }
+                });
+            }
+        });
         textTodayTitle.setTypeface(Utils.typefaceRegular(getActivity()));
         textYesterDayTitle.setTypeface(Utils.typefaceRegular(getActivity()));
         textPastDaysTitle.setTypeface(Utils.typefaceRegular(getActivity()));
@@ -289,6 +329,52 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
                 }
             }
         });
+        searchViewNotiRating.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+                    todayRatingAdapter.updateList(listTodayRating);
+                    yesterdayRatingAdapter.updateList(listYesterdayRating);
+                    pastRatingAdapter.updateList(listPastRating);
+                }
+                return false;
+            }
+        });
+    }
+
+    private void filter(String query) {
+        {
+
+            List<NotiRatingItem> temp = new ArrayList<>();
+            for (NotiRatingItem item : listTodayRating) {
+                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
+                    temp.add(item);
+                }
+            }
+            todayRatingAdapter.updateList(temp);
+
+            temp = new ArrayList<>();
+            for (NotiRatingItem item : listYesterdayRating) {
+                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
+                    temp.add(item);
+                }
+            }
+            yesterdayRatingAdapter.updateList(temp);
+
+            temp = new ArrayList<>();
+            for (NotiRatingItem item : listPastRating) {
+                if (item.getRaterName().toLowerCase().contains(query.toLowerCase())) {
+                    temp.add(item);
+                }
+            }
+            pastRatingAdapter.updateList(temp);
+        }
     }
 
     @Override
@@ -318,5 +404,12 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
                 }
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        softKeyboard.unRegisterSoftKeyboardCallback();
+
     }
 }

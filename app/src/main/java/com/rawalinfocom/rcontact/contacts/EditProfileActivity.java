@@ -219,6 +219,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
     UserProfile userProfile;
 
+    String formattedAddress;
+
     Bitmap selectedBitmap = null;
     private File mFileTemp;
     private Uri fileUri;
@@ -228,6 +230,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     MaterialDialog permissionConfirmationDialog;
 
     ArrayList<ProfileDataOperation> arrayListProfile;
+    private int clickedPosition = -1;
+
+    double mapLatitude = 0, mapLongitude = 0;
 //    ArrayList<ProfileDataOperation> arrayListMergedProfile;
 
 //    ProfileDataOperation userOldProfile;
@@ -363,7 +368,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     Spinner eventType = (Spinner) view.findViewById(R.id.spinner_type);
                     RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
                             .id.relative_row_edit_profile);
-                    event.setEventDate(eventDate.getText().toString());
+                    event.setEventDateTime(eventDate.getText().toString());
                     event.setEventType((String) eventType.getSelectedItem());
                     event.setEventId((String) relativeRowEditProfile.getTag());
 
@@ -520,11 +525,35 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 String locationString = data.getStringExtra(AppConstants.EXTRA_OBJECT_LOCATION);
                 ReverseGeocodingAddress objAddress = (ReverseGeocodingAddress) data
                         .getSerializableExtra(AppConstants.EXTRA_OBJECT_ADDRESS);
-                inputCountry.setText(objAddress.getCountry());
-                inputState.setText(objAddress.getState());
-                inputCity.setText(objAddress.getCity());
-                inputStreet.setText(objAddress.getAddressLine());
-                inputPinCode.setText(objAddress.getPostalCode());
+                View linearView = linearAddressDetails.getChildAt(clickedPosition);
+                EditText inputCountry = (EditText) linearView.findViewById(R.id.input_country);
+                EditText inputState = (EditText) linearView.findViewById(R.id.input_state);
+                EditText inputCity = (EditText) linearView.findViewById(R.id.input_city);
+                EditText inputStreet = (EditText) linearView.findViewById(R.id.input_street);
+                EditText inputPinCode = (EditText) linearView.findViewById(R.id.input_pin_code);
+                try {
+                    mapLatitude = Double.parseDouble(objAddress.getLatitude());
+                    mapLongitude = Double.parseDouble(objAddress.getLongitude());
+                } catch (Exception ignore) {
+                }
+                if (resultCode == AppConstants.RESULT_CODE_MAP_LOCATION_SELECTION) {
+                    inputCountry.setText(objAddress.getCountry());
+                    inputState.setText(objAddress.getState());
+                    inputCity.setText(objAddress.getCity());
+                    inputStreet.setText(objAddress.getAddressLine());
+                    inputPinCode.setText(objAddress.getPostalCode());
+                } else if (resultCode == AppConstants.RESULT_CODE_MY_LOCATION_SELECTION) {
+                    inputCountry.setText(((ProfileDataOperationAddress) arrayListAddressObject.get
+                            (clickedPosition)).getCountry());
+                    inputState.setText(((ProfileDataOperationAddress) arrayListAddressObject.get
+                            (clickedPosition)).getState());
+                    inputCity.setText(((ProfileDataOperationAddress) arrayListAddressObject.get
+                            (clickedPosition)).getCity());
+                    inputStreet.setText(((ProfileDataOperationAddress) arrayListAddressObject.get
+                            (clickedPosition)).getStreet());
+                    inputPinCode.setText(((ProfileDataOperationAddress) arrayListAddressObject.get
+                            (clickedPosition)).getPostCode());
+                }
             }
         }
     }
@@ -837,7 +866,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     (), "yyyy-MM-dd hh:mm:ss", EVENT_DATE_FORMAT);
 
             ProfileDataOperationEvent event = new ProfileDataOperationEvent();
-            event.setEventDate(formattedDate);
+            event.setEventDateTime(formattedDate);
             event.setEventType(arrayListEvent.get(i).getEvmEventType());
             event.setEventId(arrayListEvent.get(i).getEvmRecordIndexId());
             arrayListEventObject.add(event);
@@ -889,19 +918,22 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             address.setState(arrayListAddress.get(i).getAmState());
             address.setCity(arrayListAddress.get(i).getAmCity());
             address.setStreet(arrayListAddress.get(i).getAmStreet());
+            address.setFormattedAddress(arrayListAddress.get(i).getAmFormattedAddress());
             address.setNeighborhood(arrayListAddress.get(i).getAmNeighborhood());
             address.setPostCode(arrayListAddress.get(i).getAmPostCode());
             address.setAddressType(arrayListAddress.get(i).getAmAddressType());
+            address.setGoogleLatitude(arrayListAddress.get(i).getAmGoogleLatitude());
+            address.setGoogleLongitude(arrayListAddress.get(i).getAmGoogleLongitude());
             address.setAddId(arrayListAddress.get(i).getAmRecordIndexId());
             arrayListAddressObject.add(address);
         }
 
         if (arrayListAddressObject.size() > 0) {
             for (int i = 0; i < arrayListAddressObject.size(); i++) {
-                addAddressView(arrayListAddressObject.get(i));
+                addAddressView(arrayListAddressObject.get(i), i);
             }
         } else {
-            addAddressView(null);
+            addAddressView(null, -1);
         }
     }
 
@@ -1072,7 +1104,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
                 if (detailObject != null) {
                     ProfileDataOperationEvent event = (ProfileDataOperationEvent) detailObject;
-                    inputValue.setText(event.getEventDate());
+                    inputValue.setText(event.getEventDateTime());
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(event.getEventType()))) {
                         spinnerPosition = spinnerEventAdapter.getPosition(event.getEventType());
@@ -1164,7 +1196,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         linearLayout.addView(view);
     }
 
-    private void addAddressView(Object detailObject) {
+    private void addAddressView(final Object detailObject, final int position) {
         View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_address,
                 null);
         TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
@@ -1213,6 +1245,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             inputStreet.setText(address.getStreet());
             inputNeighborhood.setText(address.getNeighborhood());
             inputPinCode.setText(address.getPostCode());
+            formattedAddress = address.getFormattedAddress();
             int spinnerPosition;
             if (Arrays.asList(getResources().getStringArray(R.array.types_email_address))
                     .contains(StringUtils.defaultString(address.getAddressType()))) {
@@ -1249,6 +1282,18 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             public void onClick(View v) {
 //                startActivityIntent(EditProfileActivity.this, MapsActivity.class, null);
                 Intent intent = new Intent(EditProfileActivity.this, MapsActivity.class);
+                if (detailObject != null && position != -1) {
+                    intent.putExtra(AppConstants.EXTRA_FORMATTED_ADDRESS, (
+                            (ProfileDataOperationAddress) arrayListAddressObject.get(position))
+                            .getFormattedAddress());
+                    mapLatitude = Double.parseDouble(((ProfileDataOperationAddress)
+                            arrayListAddressObject.get(position)).getGoogleLatitude());
+                    mapLongitude = Double.parseDouble(((ProfileDataOperationAddress)
+                            arrayListAddressObject.get(position)).getGoogleLongitude());
+                    intent.putExtra(AppConstants.EXTRA_LATITUDE, mapLatitude);
+                    intent.putExtra(AppConstants.EXTRA_LONGITUDE, mapLongitude);
+                    clickedPosition = position;
+                }
                 startActivityForResult(intent, AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
             }
@@ -1511,7 +1556,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             }
         }
         if (toAdd) {
-            addAddressView(null);
+            addAddressView(null, -1);
         }
     }
 
@@ -1793,8 +1838,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                         ProfileDataOperationEvent event = new ProfileDataOperationEvent();
                         event.setEventType(arrayListNewEvent.get(arrayListAddedPositions.get
                                 (i)).getEventType());
-                        event.setEventDate(arrayListNewEvent.get(arrayListAddedPositions
-                                .get(i)).getEventDate());
+                        event.setEventDateTime(arrayListNewEvent.get(arrayListAddedPositions
+                                .get(i)).getEventDateTime());
                         events.add(event);
                     }
                     profileDataOperation.setPbEvent(events);
@@ -2018,8 +2063,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                                 (arrayListReplacedPositions.get(i)).getEventId());
                         event.setEventType(arrayListNewEvent.get
                                 (arrayListReplacedPositions.get(i)).getEventType());
-                        event.setEventDate(arrayListNewEvent.get
-                                (arrayListReplacedPositions.get(i)).getEventDate());
+                        event.setEventDateTime(arrayListNewEvent.get
+                                (arrayListReplacedPositions.get(i)).getEventDateTime());
                         events.add(event);
                     }
                     profileDataOperation.setPbEvent(events);
@@ -2440,7 +2485,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             for (int j = 0; j < arrayListEvent.size(); j++) {
                 Event event = new Event();
                 event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
-                event.setEvmStartDate(arrayListEvent.get(j).getEventDate());
+                event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                 event.setEvmEventType(arrayListEvent.get(j).getEventType());
                 event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
                 event.setRcProfileMasterPmId(getUserPmId());

@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.notifications;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
@@ -86,7 +87,6 @@ public class EventsActivity extends BaseActivity implements RippleView
     public static int selectedRecycler = -1;
     public static int selectedRecyclerItem = -1;
     TableCommentMaster tableCommentMaster;
-    String today;
     List<EventItem> listTodayEvent;
     List<EventItem> listRecentEvent;
     List<EventItem> listUpcomingEvent;
@@ -161,6 +161,51 @@ public class EventsActivity extends BaseActivity implements RippleView
 
             }
         });
+        searchViewEvents.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+                    todayEventAdapter.updateList(listTodayEvent);
+                    recentEventAdapter.updateList(listRecentEvent);
+                    upcomingEventAdapter.updateList(listUpcomingEvent);
+                }
+                return false;
+            }
+        });
+
+    }
+
+    void filter(String text) {
+
+        List<EventItem> temp = new ArrayList<>();
+        for (EventItem item : listTodayEvent) {
+            if (item.getPersonName().toLowerCase().contains(text.toLowerCase())) {
+                temp.add(item);
+            }
+        }
+        todayEventAdapter.updateList(temp);
+
+        temp = new ArrayList<>();
+        for (EventItem item : listRecentEvent) {
+            if (item.getPersonName().toLowerCase().contains(text.toLowerCase())) {
+                temp.add(item);
+            }
+        }
+        recentEventAdapter.updateList(temp);
+
+        temp = new ArrayList<>();
+        for (EventItem item : listUpcomingEvent) {
+            if (item.getPersonName().toLowerCase().contains(text.toLowerCase())) {
+                temp.add(item);
+            }
+        }
+        upcomingEventAdapter.updateList(temp);
     }
 
     private void initData() {

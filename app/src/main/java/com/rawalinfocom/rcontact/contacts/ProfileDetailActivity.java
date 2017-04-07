@@ -1572,7 +1572,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 .getInt(contactEventCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Event.TYPE))));
 
-                event.setEventDate(contactEventCursor.getString(contactEventCursor
+                event.setEventDateTime(contactEventCursor.getString(contactEventCursor
                         .getColumnIndex(ContactsContract.CommonDataKinds.Event
                                 .START_DATE)));
 
@@ -1584,7 +1584,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 .getInt(contactEventCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Event.TYPE))));
 
-                eventOperation.setEventDate(contactEventCursor.getString(contactEventCursor
+                eventOperation.setEventDateTime(contactEventCursor.getString(contactEventCursor
                         .getColumnIndex(ContactsContract.CommonDataKinds.Event
                                 .START_DATE)));
 

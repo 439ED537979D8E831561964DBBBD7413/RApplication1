@@ -809,7 +809,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     for (int j = 0; j < arrayListEvent.size(); j++) {
                         Event event = new Event();
                         event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
-                        event.setEvmStartDate(arrayListEvent.get(j).getEventDate());
+                        event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                         event.setEvmEventType(arrayListEvent.get(j).getEventType());
                         event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic
                                 ()));
@@ -1398,13 +1398,13 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                                     .START_DATE));
 
                     if (StringUtils.startsWith(eventDate, "--")) {
-                        eventDate = "0000" + eventDate.substring(1, StringUtils.length(eventDate));
+                        eventDate = "1900" + eventDate.substring(1, StringUtils.length(eventDate));
                     }
 
                     /*event.setEventDate(contactEventCursor.getString(contactEventCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Event
                                     .START_DATE)));*/
-                    event.setEventDate(eventDate);
+                    event.setEventDateTime(eventDate);
 
                     event.setEventPublic(1);
 

@@ -464,10 +464,10 @@ public class PhoneContentObserver extends ContentObserver {
                                 .START_DATE));
 
                 if (StringUtils.startsWith(eventDate, "--")) {
-                    eventDate = "0000" + eventDate.substring(1, StringUtils.length(eventDate));
+                    eventDate = "1900" + eventDate.substring(1, StringUtils.length(eventDate));
                 }
 
-                event.setEventDate(eventDate);
+                event.setEventDateTime(eventDate);
 
                 event.setEventPublic(1);
 

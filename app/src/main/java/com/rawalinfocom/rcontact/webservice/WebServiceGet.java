@@ -106,8 +106,7 @@ public class WebServiceGet {
             lock.lock();
             if (mapper == null) {
                 mapper = new ObjectMapper();
-                mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES,
-                        false);
+                mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
             }
             lock.unlock();
         } catch (Exception ex) {
