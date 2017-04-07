@@ -230,7 +230,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     MaterialDialog permissionConfirmationDialog;
 
     ArrayList<ProfileDataOperation> arrayListProfile;
-    private int clickedPosition = -1;
+    int clickedPosition = -1;
 
     double mapLatitude = 0, mapLongitude = 0;
 //    ArrayList<ProfileDataOperation> arrayListMergedProfile;
@@ -576,8 +576,14 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 radioGroupGender.check(R.id.radio_male);
             }
 
-//            userOldProfile.setPbNameFirst(userProfile.getPmFirstName());
-//            userOldProfile.setPbNameLast(userProfile.getPmLastName());
+            Glide.with(this)
+                    .load(userProfile.getPmProfileImage())
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.mipmap.ic_launcher)
+                    .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                    .override(200, 200)
+                    .into(imageProfile);
+
         }
 
 
@@ -734,6 +740,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             organization.setOrgJobTitle(arrayListOrganization.get(i).getOmOrganizationDesignation
                     ());
             organization.setOrgId(arrayListOrganization.get(i).getOmRecordIndexId());
+            organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i)
+                    .getOmIsCurrent()));
             arrayListOrganizationObject.add(organization);
         }
 
@@ -1140,14 +1148,23 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     intent.putExtra(AppConstants.EXTRA_FORMATTED_ADDRESS, (
                             (ProfileDataOperationAddress) arrayListAddressObject.get(position))
                             .getFormattedAddress());
-                    mapLatitude = Double.parseDouble(((ProfileDataOperationAddress)
+                }
+                if (position != -1) {
+                  /*  mapLatitude = Double.parseDouble(((ProfileDataOperationAddress)
                             arrayListAddressObject.get(position)).getGoogleLatitude());
                     mapLongitude = Double.parseDouble(((ProfileDataOperationAddress)
                             arrayListAddressObject.get(position)).getGoogleLongitude());
                     intent.putExtra(AppConstants.EXTRA_LATITUDE, mapLatitude);
-                    intent.putExtra(AppConstants.EXTRA_LONGITUDE, mapLongitude);
-                    clickedPosition = position;
+                    intent.putExtra(AppConstants.EXTRA_LONGITUDE, mapLongitude);*/
+                    View view = linearAddressDetails.getChildAt(position);
+                    TextView textLatitude = (TextView) view.findViewById(R.id.input_latitude);
+                    TextView textLongitude = (TextView) view.findViewById(R.id.input_longitude);
+                    intent.putExtra(AppConstants.EXTRA_LATITUDE, Double.parseDouble(StringUtils
+                            .defaultIfEmpty(textLatitude.getText().toString(), "0")));
+                    intent.putExtra(AppConstants.EXTRA_LONGITUDE, Double.parseDouble(StringUtils
+                            .defaultIfEmpty(textLongitude.getText().toString(), "0")));
                 }
+                clickedPosition = position;
                 startActivityForResult(intent, AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
             }
@@ -1183,6 +1200,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             relativeRowEditProfile.setTag(organization.getOrgId());
             inputCompanyName.setText(organization.getOrgName());
             inputDesignationName.setText(organization.getOrgJobTitle());
+            if (organization.getIsCurrent() == 1) {
+                checkboxOrganization.setChecked(true);
+            }
         }
 
         checkboxOrganization.setOnCheckedChangeListener(new CompoundButton
@@ -1410,7 +1430,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             }
         }
         if (toAdd) {
-            addAddressView(null, -1);
+//            addAddressView(null, -1);
+            addAddressView(null, linearAddressDetails.getChildCount());
         }
     }
 
@@ -2150,6 +2171,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         userProfile.setPmNosqlMasterId(profileDetail.getNoSqlMasterId());
         userProfile.setPmJoiningDate(profileDetail.getJoiningDate());
         userProfile.setPmGender(profileDetail.getPbGender());
+        userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
 
         tableProfileMaster.updateUserProfile(userProfile);
         //</editor-fold>
@@ -2315,6 +2337,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             for (int j = 0; j < arrayListImAccount.size(); j++) {
                 ImAccount imAccount = new ImAccount();
                 imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
+                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
 //                imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
@@ -2481,6 +2504,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             if (eventDate.getText().toString().length() > 0) {
                 event.setEventDateTime(Utils.convertDateFormat(eventDate.getText()
                         .toString(), EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
+               /* event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString(),
+                        EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));*/
             }
 //                    event.setEventDateTime(eventDate.getText().toString());
             event.setEventType((String) eventType.getSelectedItem());
