@@ -260,6 +260,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
         recyclerViewToday.setAdapter(todayTimelineAdapter);
         recyclerViewYesterday.setAdapter(yesterdayTimelineAdapter);
         recyclerViewPast5day.setAdapter(past5daysTimelineAdapter);
+
         updateHeight();
     }
 
@@ -274,8 +275,11 @@ public class TimelineActivity extends BaseActivity implements RippleView
             case DisplayMetrics.DENSITY_MEDIUM: /*160*/
                 heightPercent = 35;
                 break;
-            case DisplayMetrics.DENSITY_HIGH: /*320*/
+            case DisplayMetrics.DENSITY_HIGH: /*240*/
                 heightPercent = 42;
+                break;
+            case DisplayMetrics.DENSITY_XHIGH: /*320*/
+                heightPercent = 45;
                 break;
             case DisplayMetrics.DENSITY_XXHIGH: /*480*/
             case DisplayMetrics.DENSITY_XXXHIGH: /*680*/

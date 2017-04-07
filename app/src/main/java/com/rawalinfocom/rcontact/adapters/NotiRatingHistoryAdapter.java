@@ -81,11 +81,6 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_noti_rating_history, parent, false);
-        itemView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int width = itemView.getMeasuredWidth();
-        int height = itemView.getMeasuredHeight();
-        Log.i("MAULIK", "oncreateheight::" + height);
-        Log.i("MAULIK", "oncreatewidth::" + width);
         return new MyViewHolder(itemView);
     }
 
