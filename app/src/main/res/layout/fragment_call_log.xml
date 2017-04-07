@@ -37,18 +37,19 @@
         android:layout_height="match_parent"
         android:id="@+id/linearMainContent"
         android:layout_below="@+id/spinner_call_filter"
+        android:layout_above="@+id/relativeLoadingData"
         android:orientation="vertical"
         android:visibility="visible">
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/recycler_call_logs">
         </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
 
-   <!-- <RelativeLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -64,7 +65,7 @@
             android:layout_centerInParent="true"
             android:visibility="visible"/>
 
-        <TextView
+       <!-- <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/text_loading"
@@ -72,9 +73,9 @@
             android:text="Loading More"
             android:layout_gravity="center_horizontal"
             android:layout_centerHorizontal="true"
-            android:visibility="gone"/>
+            android:visibility="gone"/>-->
 
-    </RelativeLayout>-->
+    </RelativeLayout>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -188,6 +188,16 @@ public class AppConstants {
     public static void setIsCallLogFragment(boolean isCallLogFragment) {
         AppConstants.isCallLogFragment = isCallLogFragment;
     }
+
+    public static boolean isFirstTime;
+
+    public static boolean isFirstTime() {
+        return isFirstTime;
+    }
+
+    public static void setIsFirstTime(boolean isFirstTime) {
+        AppConstants.isFirstTime = isFirstTime;
+    }
     //</editor-fold>
 
 
