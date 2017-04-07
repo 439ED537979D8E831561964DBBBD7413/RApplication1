@@ -379,7 +379,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             fetchCallLogHistory(historyName);
 
         } else {*/
-        fetchCallLogHistoryDateWise(historyNumber);
+//        fetchCallLogHistoryDateWise(historyNumber);
+        fetchAllCallLogHistory(historyNumber);
 
 //        }
 
@@ -393,7 +394,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
 
         if (profileActivityCallInstance) {
-            fetchCallLogHistoryDateWise(historyNumber);
+//            fetchCallLogHistoryDateWise(historyNumber);
+            fetchAllCallLogHistory(historyNumber);
 
         } else {
             if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {

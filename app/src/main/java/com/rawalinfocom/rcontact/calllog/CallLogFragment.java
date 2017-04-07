@@ -119,7 +119,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG, Manifest
             .permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
     public static CallLogType callLogTypeReceiver;
-    private int LIST_PARTITION_COUNT = 15;
+    private int LIST_PARTITION_COUNT = 10;
     private static boolean startInsertion = false;
     private boolean isFirstTime;
     RContactApplication rContactApplication;
