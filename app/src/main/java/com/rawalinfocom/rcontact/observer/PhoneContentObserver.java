@@ -398,6 +398,8 @@ public class PhoneContentObserver extends ContentObserver {
                 address.setAddressType(phoneBookContacts.getAddressType(contactAddressCursor,
                         contactAddressCursor.getInt(contactAddressCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.StructuredPostal.TYPE))));
+                address.setAddPublic(1);
+
 
                 arrayListAddress.add(address);
 
@@ -431,7 +433,7 @@ public class PhoneContentObserver extends ContentObserver {
                         (contactImCursor.getInt((contactImCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
-                imAccount.setIMAccountPublic("1");
+                imAccount.setIMAccountPublic(1);
 
 
                 arrayListImAccount.add(imAccount);

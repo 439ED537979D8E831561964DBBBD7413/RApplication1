@@ -816,7 +816,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 ImAccount imAccount = new ImAccount();
                 imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
-                imAccount.setImImPrivacy(arrayListImAccount.get(j).getIMAccountPublic());
+                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j).getIMAccountPublic()));
                 imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
 //                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 imAccount.setRcProfileMasterPmId(userProfileRegistered.getPmId());
