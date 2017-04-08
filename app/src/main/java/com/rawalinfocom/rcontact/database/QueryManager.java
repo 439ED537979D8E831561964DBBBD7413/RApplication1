@@ -251,8 +251,9 @@ public class QueryManager {
                 imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
                         .getString(imAccountCursor.getColumnIndex(TableImMaster
                                 .COLUMN_IM_PROTOCOL))));
-                imAccount.setIMAccountPublic(StringUtils.defaultString(imAccountCursor.getString
-                        (imAccountCursor.getColumnIndex(TableImMaster.COLUMN_IM_PRIVACY)), "0"));
+                imAccount.setIMAccountPublic(Integer.parseInt(StringUtils.defaultString(imAccountCursor
+                        .getString(imAccountCursor.getColumnIndex(TableImMaster
+                                .COLUMN_IM_PRIVACY)), "0")));
                 imAccount.setIMRcpType(String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_cloud_phone_book)));
                 arrayListImAccount.add(imAccount);
@@ -282,6 +283,9 @@ public class QueryManager {
                                 .COLUMN_AM_FORMATTED_ADDRESS))));
                 address.setAddressType(StringUtils.defaultString(addressCursor.getString
                         (addressCursor.getColumnIndex(TableAddressMaster.COLUMN_AM_ADDRESS_TYPE))));
+                address.setAddPublic(Integer.parseInt(StringUtils.defaultString(addressCursor
+                        .getString(addressCursor.getColumnIndex(TableAddressMaster
+                                .COLUMN_AM_ADDRESS_PRIVACY)), "0")));
                 address.setRcpType(String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_cloud_phone_book)));
                 arrayListAddress.add(address);

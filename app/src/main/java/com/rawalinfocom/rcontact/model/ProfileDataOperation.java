@@ -17,7 +17,6 @@ public class ProfileDataOperation implements Serializable {
 
     private ArrayList<ProfileDataOperationPhoneNumber> pbPhoneNumber;
     private String flag;
-    //    private ArrayList<String> pbWebAddress;
     private ArrayList<ProfileDataOperationWebAddress> pbWebAddress;
     private ArrayList<ProfileDataOperationEvent> pbEvent;
     private String pbNameSuffix;
@@ -26,7 +25,6 @@ public class ProfileDataOperation implements Serializable {
     private String pbNameMiddle;
     private ArrayList<ProfileDataOperationOrganization> pbOrganization;
     private String isFavourite;
-    //    private ArrayList<ProfileDataOperationRelationship> pbRelationship;
     private String pbSource;
     private String pbNamePrefix;
     private String pbNameLast;
@@ -42,8 +40,6 @@ public class ProfileDataOperation implements Serializable {
     private String rcpPmId;
     private String updatedAt;
     private String noSqlMasterId;
-    //    private String verifiedEmailAddress;
-//    private String emCloudId;
     private ArrayList<ProfileDataOperationEmail> verifiedEmailIds;
     private String verifiedMobileNumber;
     private String mnmCloudId;

@@ -40,11 +40,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flipkart.zjsonpatch.JsonDiff;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -85,9 +80,6 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -230,12 +222,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     MaterialDialog permissionConfirmationDialog;
 
     ArrayList<ProfileDataOperation> arrayListProfile;
-    private int clickedPosition = -1;
+    int clickedPosition = -1;
 
     double mapLatitude = 0, mapLongitude = 0;
-//    ArrayList<ProfileDataOperation> arrayListMergedProfile;
-
-//    ProfileDataOperation userOldProfile;
 
     //<editor-fold desc="Override Methods">
 
@@ -244,7 +233,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
         ButterKnife.bind(this);
-//        userOldProfile = new ProfileDataOperation();
         arrayListProfile = new ArrayList<>();
         init();
     }
@@ -278,189 +266,13 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
             case R.id.ripple_action_right_left:
 
-                Gson gson = new Gson();
-                String oldObjectJson, newObjectJson;
-
-                //<editor-fold desc="Email">
-                ArrayList<ProfileDataOperationEmail> arrayListNewEmail = new ArrayList<>();
-                for (int i = 0; i < linearEmailDetails.getChildCount(); i++) {
-                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                    View view = linearEmailDetails.getChildAt(i);
-                    EditText emailId = (EditText) view.findViewById(R.id.input_value);
-                    Spinner emailType = (Spinner) view.findViewById(R.id.spinner_type);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
-                            .id.relative_row_edit_profile);
-                    email.setEmEmailId(emailId.getText().toString());
-                    email.setEmType((String) emailType.getSelectedItem());
-                    email.setEmId((String) relativeRowEditProfile.getTag());
-
-                    arrayListNewEmail.add(email);
-
+                if (StringUtils.length(inputFirstName.getText().toString()) < 1 || StringUtils
+                        .length(inputLastName.getText().toString()) < 1) {
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "Please add valid " +
+                            "name!");
+                } else {
+                    getUpdatedProfile();
                 }
-
-                oldObjectJson = gson.toJson(arrayListEmailObject);
-                newObjectJson = gson.toJson(arrayListNewEmail);
-
-                ArrayList<ProfileDataOperation> updatedEmails = new ArrayList<>();
-                updatedEmails.addAll(compareJsonStructure(AppConstants.EMAIL, oldObjectJson,
-                        newObjectJson));
-                //</editor-fold>
-
-                //<editor-fold desc="Phone Number">
-                ArrayList<ProfileDataOperationPhoneNumber> arrayListNewPhone = new ArrayList<>();
-                for (int i = 0; i < linearPhoneDetails.getChildCount(); i++) {
-                    ProfileDataOperationPhoneNumber phoneNumber = new
-                            ProfileDataOperationPhoneNumber();
-                    View view = linearPhoneDetails.getChildAt(i);
-                    EditText emailId = (EditText) view.findViewById(R.id.input_value);
-                    Spinner emailType = (Spinner) view.findViewById(R.id.spinner_type);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
-                            .id.relative_row_edit_profile);
-                    phoneNumber.setPhoneNumber(emailId.getText().toString());
-                    phoneNumber.setPhoneType((String) emailType.getSelectedItem());
-                    phoneNumber.setPhoneId((String) relativeRowEditProfile.getTag());
-
-                    arrayListNewPhone.add(phoneNumber);
-
-                }
-
-                oldObjectJson = gson.toJson(arrayListPhoneNumberObject);
-                newObjectJson = gson.toJson(arrayListNewPhone);
-
-                ArrayList<ProfileDataOperation> updatedNumbers = new ArrayList<>();
-                updatedNumbers.addAll(compareJsonStructure(AppConstants.PHONE_NUMBER,
-                        oldObjectJson, newObjectJson));
-                //</editor-fold>
-
-                // <editor-fold desc="Website">
-                ArrayList<ProfileDataOperationWebAddress> arrayListNewWebAddress = new
-                        ArrayList<>();
-                for (int i = 0; i < linearWebsiteDetails.getChildCount(); i++) {
-                    ProfileDataOperationWebAddress webAddress = new
-                            ProfileDataOperationWebAddress();
-                    View view = linearWebsiteDetails.getChildAt(i);
-                    EditText website = (EditText) view.findViewById(R.id.input_value);
-                    Spinner websiteType = (Spinner) view.findViewById(R.id.spinner_type);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
-                            .id.relative_row_edit_profile);
-                    webAddress.setWebAddress(website.getText().toString());
-                    webAddress.setWebType((String) websiteType.getSelectedItem());
-                    webAddress.setWebId((String) relativeRowEditProfile.getTag());
-
-                    arrayListNewWebAddress.add(webAddress);
-
-                }
-
-                oldObjectJson = gson.toJson(arrayListWebsiteObject);
-                newObjectJson = gson.toJson(arrayListNewWebAddress);
-
-                ArrayList<ProfileDataOperation> updatedWebAddress = new ArrayList<>();
-                updatedWebAddress.addAll(compareJsonStructure(AppConstants.WEBSITE,
-                        oldObjectJson, newObjectJson));
-                //</editor-fold>
-
-                // <editor-fold desc="Event">
-                ArrayList<ProfileDataOperationEvent> arrayListNewEvent = new ArrayList<>();
-                for (int i = 0; i < linearEventDetails.getChildCount(); i++) {
-                    ProfileDataOperationEvent event = new ProfileDataOperationEvent();
-                    View view = linearEventDetails.getChildAt(i);
-                    EditText eventDate = (EditText) view.findViewById(R.id.input_value);
-                    Spinner eventType = (Spinner) view.findViewById(R.id.spinner_type);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
-                            .id.relative_row_edit_profile);
-                    event.setEventDateTime(eventDate.getText().toString());
-                    event.setEventType((String) eventType.getSelectedItem());
-                    event.setEventId((String) relativeRowEditProfile.getTag());
-
-                    arrayListNewEvent.add(event);
-
-                }
-
-                oldObjectJson = gson.toJson(arrayListEventObject);
-                newObjectJson = gson.toJson(arrayListNewEvent);
-
-                ArrayList<ProfileDataOperation> updatedEvent = new ArrayList<>();
-                updatedEvent.addAll(compareJsonStructure(AppConstants.EVENT, oldObjectJson,
-                        newObjectJson));
-                //</editor-fold>
-
-                // <editor-fold desc="Organization">
-                ArrayList<ProfileDataOperationOrganization> arrayListNewOrganization = new
-                        ArrayList<>();
-                for (int i = 0; i < linearOrganizationDetail.getChildCount(); i++) {
-                    ProfileDataOperationOrganization organization = new
-                            ProfileDataOperationOrganization();
-                    View view = linearOrganizationDetail.getChildAt(i);
-                    EditText inputCompanyName = (EditText) view.findViewById(R.id
-                            .input_company_name);
-                    EditText inputDesignationName = (EditText) view.findViewById(R.id
-                            .input_designation_name);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
-                            .id.relative_row_edit_profile);
-                    organization.setOrgName(inputCompanyName.getText().toString());
-                    organization.setOrgJobTitle(inputDesignationName.getText().toString());
-                    organization.setOrgId((String) relativeRowEditProfile.getTag());
-
-                    arrayListNewOrganization.add(organization);
-
-                }
-
-                oldObjectJson = gson.toJson(arrayListOrganizationObject);
-                newObjectJson = gson.toJson(arrayListNewOrganization);
-
-                ArrayList<ProfileDataOperation> updatedOrganization = new ArrayList<>();
-                updatedOrganization.addAll(compareJsonStructure(AppConstants.ORGANIZATION,
-                        oldObjectJson, newObjectJson));
-
-                //</editor-fold>
-
-                // <editor-fold desc="Address">
-              /*  ArrayList<ProfileDataOperationAddress> arrayListNewAddress = new ArrayList<>();
-                for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
-                    ProfileDataOperationAddress address = new ProfileDataOperationAddress();
-                    View view = linearAddressDetails.getChildAt(i);
-                    Spinner addressType = (Spinner) view.findViewById(R.id.spinner_type);
-                    EditText country = (EditText) view.findViewById(R.id.input_country);
-                    EditText state = (EditText) view.findViewById(R.id.input_state);
-                    EditText city = (EditText) view.findViewById(R.id.input_city);
-                    EditText street = (EditText) view.findViewById(R.id.input_street);
-                    EditText neighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
-                    EditText poBox = (EditText) view.findViewById(R.id.input_po_box);
-                    RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
-                            .id.relative_row_edit_profile);
-
-                    address.setCountry(country.getText().toString());
-                    address.setState(state.getText().toString());
-                    address.setCity(city.getText().toString());
-                    address.setStreet(street.getText().toString());
-                    address.setNeighborhood(neighborhood.getText().toString());
-                    address.setPoBox(poBox.getText().toString());
-                    address.setAddressType((String) addressType.getSelectedItem());
-                    address.setAddId((String) relativeRowEditProfile.getTag());
-
-                    arrayListNewAddress.add(address);
-
-                }
-
-                oldObjectJson = gson.toJson(arrayListAddressObject);
-                newObjectJson = gson.toJson(arrayListNewAddress);
-
-                ArrayList<ProfileDataOperation> updatedAddress = new ArrayList<>();
-                updatedAddress.addAll(compareJsonStructure(AppConstants.ADDRESS,
-                        oldObjectJson, newObjectJson));*/
-
-                //</editor-fold>
-
-                ArrayList<ArrayList<ProfileDataOperation>> arrayList = new ArrayList<>();
-                arrayList.add(updatedNumbers);
-                arrayList.add(updatedEmails);
-                arrayList.add(updatedWebAddress);
-                arrayList.add(updatedEvent);
-                arrayList.add(updatedOrganization);
-//                arrayList.add(updatedAddress);
-
-                Log.i("onComplete", new Gson().toJson(combineResult(arrayList)));
-                editProfile(combineResult(arrayList));
 
                 break;
 
@@ -474,7 +286,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
 
             selectedBitmap = BitmapFactory.decodeFile(fileUri.getPath());
-//            imageProfile.setImageBitmap(bitmap);
 
             Glide.with(this)
                     .load(fileUri)
@@ -509,7 +320,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 fileOutputStream.close();
 
                 selectedBitmap = BitmapFactory.decodeFile(picturePath);
-//                imageProfile.setImageBitmap(bitmap);
 
                 Glide.with(this)
                         .load(mFileTemp)
@@ -531,11 +341,18 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 EditText inputCity = (EditText) linearView.findViewById(R.id.input_city);
                 EditText inputStreet = (EditText) linearView.findViewById(R.id.input_street);
                 EditText inputPinCode = (EditText) linearView.findViewById(R.id.input_pin_code);
+                TextView textLatitude = (TextView) linearView.findViewById(R.id.input_latitude);
+                TextView textLongitude = (TextView) linearView.findViewById(R.id.input_longitude);
+                TextView textGoogleAddress = (TextView) linearView.findViewById(R.id
+                        .input_google_address);
                 try {
                     mapLatitude = Double.parseDouble(objAddress.getLatitude());
                     mapLongitude = Double.parseDouble(objAddress.getLongitude());
                 } catch (Exception ignore) {
                 }
+                textLatitude.setText(objAddress.getLatitude());
+                textLongitude.setText(objAddress.getLongitude());
+                textGoogleAddress.setText(locationString);
                 if (resultCode == AppConstants.RESULT_CODE_MAP_LOCATION_SELECTION) {
                     inputCountry.setText(objAddress.getCountry());
                     inputState.setText(objAddress.getState());
@@ -571,7 +388,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     showChooseImageIntent();
 
                 } else {
-//                    Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
                     showPermissionConfirmationDialog("Storage permission is required for " +
                             "uploading profile image. Do you want to try again?", true);
                 }
@@ -586,7 +402,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     selectImageFromCamera();
 
                 } else {
-//                    Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
                     showPermissionConfirmationDialog("Camera permission is required for taking " +
                             "photo. Do you want to try again?", false);
                 }
@@ -612,7 +427,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
                     storeProfileDataToDb(profileDetail);
 
-                    Log.i("onDeliveryResponse", editProfileResponse.getMessage());
+                    Utils.showSuccessSnackBar(this, relativeRootEditProfile, "Profile Updated " +
+                            "Successfully! ");
+//                    Log.i("onDeliveryResponse", editProfileResponse.getMessage());
 
                 } else {
                     if (editProfileResponse != null) {
@@ -742,8 +559,14 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 radioGroupGender.check(R.id.radio_male);
             }
 
-//            userOldProfile.setPbNameFirst(userProfile.getPmFirstName());
-//            userOldProfile.setPbNameLast(userProfile.getPmLastName());
+            Glide.with(this)
+                    .load(userProfile.getPmProfileImage())
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.mipmap.ic_launcher)
+                    .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                    .override(200, 200)
+                    .into(imageProfile);
+
         }
 
 
@@ -761,6 +584,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             phoneNumber.setPhoneNumber(arrayListMobileNumber.get(i).getMnmMobileNumber());
             phoneNumber.setPhoneType(arrayListMobileNumber.get(i).getMnmNumberType());
             phoneNumber.setPhoneId(arrayListMobileNumber.get(i).getMnmRecordIndexId());
+            phoneNumber.setPhonePublic(Integer.parseInt(arrayListMobileNumber.get(i)
+                    .getMnmNumberPrivacy()));
             arrayListPhoneNumberObject.add(phoneNumber);
         }
         if (arrayListPhoneNumberObject.size() > 0) {
@@ -784,6 +609,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             email.setEmEmailId(arrayListEmail.get(i).getEmEmailAddress());
             email.setEmType(arrayListEmail.get(i).getEmEmailType());
             email.setEmId(arrayListEmail.get(i).getEmRecordIndexId());
+            email.setEmPublic(Integer.parseInt(arrayListEmail.get(i).getEmEmailPrivacy()));
             arrayListEmailObject.add(email);
         }
         if (arrayListEmailObject.size() > 0) {
@@ -802,15 +628,12 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         ArrayList<Website> arrayListWebsite = tableWebsiteMaster.getWebsiteFromPmId(Integer
                 .parseInt(getUserPmId()));
         arrayListWebsiteObject = new ArrayList<>();
-        ArrayList<ProfileDataOperationWebAddress> arrayListProfileDataWebAddress = new
-                ArrayList<>();
         for (int i = 0; i < arrayListWebsite.size(); i++) {
             ProfileDataOperationWebAddress webAddress = new ProfileDataOperationWebAddress();
             webAddress.setWebAddress(arrayListWebsite.get(i).getWmWebsiteUrl());
             webAddress.setWebType(arrayListWebsite.get(i).getWmWebsiteType());
             webAddress.setWebId(arrayListWebsite.get(i).getWmRecordIndexId());
             arrayListWebsiteObject.add(webAddress);
-            arrayListProfileDataWebAddress.add(webAddress);
         }
 
         if (arrayListWebsiteObject.size() > 0) {
@@ -818,7 +641,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 addView(AppConstants.WEBSITE, linearWebsiteDetails, arrayListWebsiteObject.get(i)
                         , i);
             }
-//            userOldProfile.setPbWebAddress(arrayListProfileDataWebAddress);
         } else {
             addView(AppConstants.WEBSITE, linearWebsiteDetails, null, -1);
         }
@@ -831,15 +653,15 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         ArrayList<ImAccount> arrayListImAccount = tableImMaster.getImAccountFromPmId(Integer
                 .parseInt(getUserPmId()));
         arrayListSocialContactObject = new ArrayList<>();
-        ArrayList<ProfileDataOperationImAccount> arrayListProfileDataImAccount = new ArrayList<>();
         for (int i = 0; i < arrayListImAccount.size(); i++) {
             ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
             imAccount.setIMAccountProtocol(arrayListImAccount.get(i).getImImProtocol());
 //            imAccount.setIMAccountType(arrayListImAccount.get(i).getImImType());
             imAccount.setIMAccountDetails(arrayListImAccount.get(i).getImImDetail());
             imAccount.setIMId(arrayListImAccount.get(i).getImRecordIndexId());
+            imAccount.setIMAccountPublic(Integer.parseInt(arrayListImAccount.get(i)
+                    .getImImPrivacy()));
             arrayListSocialContactObject.add(imAccount);
-            arrayListProfileDataImAccount.add(imAccount);
         }
 
         if (arrayListSocialContactObject.size() > 0) {
@@ -847,7 +669,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails,
                         arrayListSocialContactObject.get(i), i);
             }
-//            userOldProfile.setPbIMAccounts(arrayListProfileDataImAccount);
         } else {
             addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails, null, -1);
         }
@@ -869,6 +690,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             event.setEventDateTime(formattedDate);
             event.setEventType(arrayListEvent.get(i).getEvmEventType());
             event.setEventId(arrayListEvent.get(i).getEvmRecordIndexId());
+            event.setEventPublic(Integer.parseInt(arrayListEvent.get(i).getEvmEventPrivacy()));
             arrayListEventObject.add(event);
         }
 
@@ -894,6 +716,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             organization.setOrgJobTitle(arrayListOrganization.get(i).getOmOrganizationDesignation
                     ());
             organization.setOrgId(arrayListOrganization.get(i).getOmRecordIndexId());
+            organization.setIsCurrent(Integer.parseInt(arrayListOrganization.get(i)
+                    .getOmIsCurrent()));
             arrayListOrganizationObject.add(organization);
         }
 
@@ -925,6 +749,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             address.setGoogleLatitude(arrayListAddress.get(i).getAmGoogleLatitude());
             address.setGoogleLongitude(arrayListAddress.get(i).getAmGoogleLongitude());
             address.setAddId(arrayListAddress.get(i).getAmRecordIndexId());
+            address.setAddPublic(Integer.parseInt(arrayListAddress.get(i).getAmAddressPrivacy()));
             arrayListAddressObject.add(address);
         }
 
@@ -946,6 +771,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         LinearLayout linerCheckbox = (LinearLayout) view.findViewById(R.id.liner_checkbox);
         final CheckBox checkboxHideYear = (CheckBox) view.findViewById(R.id.checkbox_hide_year);
         TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
+        TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
         final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
                 .relative_row_edit_profile);
 
@@ -978,6 +804,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                             detailObject;
                     inputValue.setText(phoneNumber.getPhoneNumber());
+                    textIsPublic.setText(String.valueOf(phoneNumber.getPhonePublic()));
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(phoneNumber.getPhoneType()))) {
                         spinnerPosition = spinnerPhoneAdapter.getPosition(phoneNumber.getPhoneType
@@ -1007,6 +834,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 if (detailObject != null) {
                     ProfileDataOperationEmail email = (ProfileDataOperationEmail) detailObject;
                     inputValue.setText(email.getEmEmailId());
+                    textIsPublic.setText(String.valueOf(email.getEmPublic()));
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(email.getEmType()))) {
                         spinnerPosition = spinnerEmailAdapter.getPosition(email.getEmType());
@@ -1071,6 +899,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount)
                             detailObject;
                     inputValue.setText(imAccount.getIMAccountDetails());
+                    textIsPublic.setText(String.valueOf(imAccount.getIMAccountPublic()));
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(imAccount
                             .getIMAccountProtocol()))) {
@@ -1103,8 +932,11 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 spinnerType.setAdapter(spinnerEventAdapter);
                 inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
                 if (detailObject != null) {
-                    ProfileDataOperationEvent event = (ProfileDataOperationEvent) detailObject;
+                    ProfileDataOperationEvent event = (ProfileDataOperationEvent)
+                            detailObject;
                     inputValue.setText(event.getEventDateTime());
+                    textIsPublic.setText(String.valueOf(event.getEventPublic()));
+                    checkboxHideYear.setChecked(event.getIsYearHidden() == 1);
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(event.getEventType()))) {
                         spinnerPosition = spinnerEventAdapter.getPosition(event.getEventType());
@@ -1209,6 +1041,10 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         inputNeighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
         inputPinCode = (EditText) view.findViewById(R.id.input_pin_code);
         final EditText inputPoBox = (EditText) view.findViewById(R.id.input_po_box);
+        final TextView textLatitude = (TextView) view.findViewById(R.id.input_latitude);
+        final TextView textLongitude = (TextView) view.findViewById(R.id.input_longitude);
+        final TextView textGoogleAddress = (TextView) view.findViewById(R.id.input_google_address);
+        final TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
 
         final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
                 .relative_row_edit_profile);
@@ -1245,8 +1081,11 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             inputStreet.setText(address.getStreet());
             inputNeighborhood.setText(address.getNeighborhood());
             inputPinCode.setText(address.getPostCode());
+            textLatitude.setText(address.getGoogleLatitude());
+            textLongitude.setText(address.getGoogleLongitude());
+            textIsPublic.setText(String.valueOf(address.getAddPublic()));
             formattedAddress = address.getFormattedAddress();
-            int spinnerPosition;
+            /*int spinnerPosition;
             if (Arrays.asList(getResources().getStringArray(R.array.types_email_address))
                     .contains(StringUtils.defaultString(address.getAddressType()))) {
                 spinnerPosition = spinnerPhoneAdapter.getPosition(address.getAddressType());
@@ -1255,7 +1094,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 spinnerPhoneAdapter.notifyDataSetChanged();
                 spinnerPosition = spinnerPhoneAdapter.getPosition(address.getAddressType());
             }
-            spinnerType.setSelection(spinnerPosition);
+            spinnerType.setSelection(spinnerPosition);*/
             relativeRowEditProfile.setTag(address.getAddId());
         }
 
@@ -1286,14 +1125,23 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     intent.putExtra(AppConstants.EXTRA_FORMATTED_ADDRESS, (
                             (ProfileDataOperationAddress) arrayListAddressObject.get(position))
                             .getFormattedAddress());
-                    mapLatitude = Double.parseDouble(((ProfileDataOperationAddress)
+                }
+                if (position != -1) {
+                  /*  mapLatitude = Double.parseDouble(((ProfileDataOperationAddress)
                             arrayListAddressObject.get(position)).getGoogleLatitude());
                     mapLongitude = Double.parseDouble(((ProfileDataOperationAddress)
                             arrayListAddressObject.get(position)).getGoogleLongitude());
                     intent.putExtra(AppConstants.EXTRA_LATITUDE, mapLatitude);
-                    intent.putExtra(AppConstants.EXTRA_LONGITUDE, mapLongitude);
-                    clickedPosition = position;
+                    intent.putExtra(AppConstants.EXTRA_LONGITUDE, mapLongitude);*/
+                    View view = linearAddressDetails.getChildAt(position);
+                    TextView textLatitude = (TextView) view.findViewById(R.id.input_latitude);
+                    TextView textLongitude = (TextView) view.findViewById(R.id.input_longitude);
+                    intent.putExtra(AppConstants.EXTRA_LATITUDE, Double.parseDouble(StringUtils
+                            .defaultIfEmpty(textLatitude.getText().toString(), "0")));
+                    intent.putExtra(AppConstants.EXTRA_LONGITUDE, Double.parseDouble(StringUtils
+                            .defaultIfEmpty(textLongitude.getText().toString(), "0")));
                 }
+                clickedPosition = position;
                 startActivityForResult(intent, AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
             }
@@ -1329,6 +1177,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             relativeRowEditProfile.setTag(organization.getOrgId());
             inputCompanyName.setText(organization.getOrgName());
             inputDesignationName.setText(organization.getOrgJobTitle());
+            checkboxOrganization.setChecked(organization.getIsCurrent() == 1);
         }
 
         checkboxOrganization.setOnCheckedChangeListener(new CompoundButton
@@ -1547,8 +1396,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                             1 ||
                     StringUtils.length(StringUtils.trimToEmpty(inputStreet.getText().toString()))
                             < 1) {
-            /*if (inputCountry.getText().length() < 1 || inputState.getText().length() < 1 ||
-                    inputCity.getText().length() < 1 || inputStreet.getText().length() < 1) {*/
                 toAdd = false;
                 break;
             } else {
@@ -1556,7 +1403,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             }
         }
         if (toAdd) {
-            addAddressView(null, -1);
+            addAddressView(null, linearAddressDetails.getChildCount());
         }
     }
 
@@ -1667,612 +1514,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         dialog.show();
     }
 
-    private ArrayList<ProfileDataOperation> compareJsonStructure(int objectType, String
-            oldObjectJson, String newObjectJson) {
-
-        ArrayList<Integer> arrayListAddedPositions = new ArrayList<>();
-        ArrayList<Integer> arrayListRemovedPositions = new ArrayList<>();
-        ArrayList<Integer> arrayListReplacedPositions = new ArrayList<>();
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        try {
-            JsonNode tree1 = mapper.readTree(oldObjectJson);
-            JsonNode tree2 = mapper.readTree(newObjectJson);
-
-            Log.i("onComplete", String.valueOf(tree1.equals(tree2)));
-
-            if (!tree1.equals(tree2)) {
-                JsonNode patchNode = JsonDiff.asJson(tree1, tree2);
-                String diff = patchNode.toString();
-                Log.i("diff", diff);
-                JSONArray jsonArray = new JSONArray(diff);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    String operation = jsonObject.optString("op");
-                    if (operation.equalsIgnoreCase("add")) {
-                        int position;
-                        if (StringUtils.countMatches(jsonObject.optString("path"),
-                                StringUtils.defaultString("/")) > 1) {
-                            position = Integer.valueOf(StringUtils.substring(jsonObject
-                                    .optString("path"), 1, StringUtils.indexOf(jsonObject
-                                    .getString("path"), StringUtils.defaultString
-                                    ("/"), 1)));
-                        } else {
-                            position = Integer.valueOf(StringUtils.substring(jsonObject
-                                    .optString("path"), 1));
-                        }
-                        arrayListAddedPositions.add(position);
-                    } else if (operation.equalsIgnoreCase("replace")) {
-                        int position;
-                        if (StringUtils.countMatches(jsonObject.optString("path"),
-                                StringUtils.defaultString("/")) > 1) {
-                            position = Integer.valueOf(StringUtils.substring(jsonObject
-                                    .optString("path"), 1, StringUtils.indexOf(jsonObject
-                                    .getString("path"), StringUtils.defaultString
-                                    ("/"), 1)));
-                        } else {
-                            position = Integer.valueOf(StringUtils.substring(jsonObject
-                                    .optString("path"), 1));
-                        }
-                        arrayListReplacedPositions.add(position);
-                    } else if (operation.equalsIgnoreCase("remove")) {
-                        int position;
-                        if (StringUtils.countMatches(jsonObject.optString("path"),
-                                StringUtils.defaultString("/")) > 1) {
-                            position = Integer.valueOf(StringUtils.substring(jsonObject
-                                    .optString("path"), 1, StringUtils.indexOf(jsonObject
-                                    .getString("path"), StringUtils.defaultString
-                                    ("/"), 1)));
-                        } else {
-                            position = Integer.valueOf(StringUtils.substring(jsonObject
-                                    .optString("path"), 1));
-                        }
-                        if (!arrayListReplacedPositions.contains(position)) {
-                            arrayListRemovedPositions.add(position);
-                        }
-                    }
-                    Log.i("operation", operation);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.i("onComplete", "Exception");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        ArrayList<ProfileDataOperation> arrayListTempProfile = new ArrayList<>();
-        Gson gson = new Gson();
-
-        if (arrayListAddedPositions.size() > 0) {
-            ProfileDataOperation profileDataOperation = new ProfileDataOperation();
-            profileDataOperation.setFlag(String.valueOf(getResources().getInteger
-                    (R.integer.sync_update_insert)));
-            switch (objectType) {
-                case AppConstants.EMAIL:
-                    ArrayList<ProfileDataOperationEmail> arrayListNewEmail = gson.fromJson
-                            (newObjectJson, new TypeToken<ArrayList<ProfileDataOperationEmail>>() {
-                            }.getType());
-                    ArrayList<ProfileDataOperationEmail> emails = new ArrayList<>();
-                    for (int i = 0; i < arrayListAddedPositions.size(); i++) {
-                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                        email.setEmType(arrayListNewEmail.get(arrayListAddedPositions.get
-                                (i)).getEmType());
-                        email.setEmEmailId(arrayListNewEmail.get(arrayListAddedPositions
-                                .get(i)).getEmEmailId());
-                        emails.add(email);
-                    }
-                    profileDataOperation.setPbEmailId(emails);
-                    break;
-                case AppConstants.PHONE_NUMBER:
-                    ArrayList<ProfileDataOperationPhoneNumber> arrayListNewPhone = gson.fromJson
-                            (newObjectJson, new
-                                    TypeToken<ArrayList<ProfileDataOperationPhoneNumber>>() {
-                                    }.getType());
-                    ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
-                    for (int i = 0; i < arrayListAddedPositions.size(); i++) {
-                        ProfileDataOperationPhoneNumber phoneNumber = new
-                                ProfileDataOperationPhoneNumber();
-                        phoneNumber.setPhoneType(arrayListNewPhone.get(arrayListAddedPositions.get
-                                (i)).getPhoneType());
-                        phoneNumber.setPhoneNumber(arrayListNewPhone.get(arrayListAddedPositions
-                                .get(i)).getPhoneNumber());
-                        phoneNumbers.add(phoneNumber);
-                    }
-                    profileDataOperation.setPbPhoneNumber(phoneNumbers);
-                    break;
-                case AppConstants.WEBSITE:
-                    ArrayList<ProfileDataOperationWebAddress> arrayListNewWebsite = gson.fromJson
-                            (newObjectJson, new
-                                    TypeToken<ArrayList<ProfileDataOperationWebAddress>>() {
-                                    }.getType());
-                    ArrayList<ProfileDataOperationWebAddress> webAddresses = new ArrayList<>();
-                    for (int i = 0; i < arrayListAddedPositions.size(); i++) {
-                        if (arrayListNewWebsite.get(arrayListAddedPositions
-                                .get(i)).getWebAddress().length() > 0) {
-                            ProfileDataOperationWebAddress webAddress = new
-                                    ProfileDataOperationWebAddress();
-                            webAddress.setWebType(arrayListNewWebsite.get(arrayListAddedPositions
-                                    .get(i)).getWebType());
-                            webAddress.setWebAddress(arrayListNewWebsite.get(arrayListAddedPositions
-                                    .get(i)).getWebAddress());
-                            webAddresses.add(webAddress);
-                        }
-                    }
-                    if (webAddresses.size() > 0) {
-                        profileDataOperation.setPbWebAddress(webAddresses);
-                    }
-                    break;
-                case AppConstants.ORGANIZATION:
-                    ArrayList<ProfileDataOperationOrganization> arrayListNewOrganization = gson
-                            .fromJson
-                                    (newObjectJson, new
-                                            TypeToken<ArrayList<ProfileDataOperationOrganization>>() {
-                                            }.getType());
-                    ArrayList<ProfileDataOperationOrganization> organizations = new ArrayList<>();
-                    for (int i = 0; i < arrayListAddedPositions.size(); i++) {
-                        if (arrayListNewOrganization.get(arrayListAddedPositions
-                                .get(i)).getOrgName().length() > 0) {
-                            ProfileDataOperationOrganization organization = new
-                                    ProfileDataOperationOrganization();
-                            organization.setOrgName(arrayListNewOrganization.get
-                                    (arrayListAddedPositions.get(i)).getOrgName());
-                            organization.setOrgJobTitle(arrayListNewOrganization.get
-                                    (arrayListAddedPositions.get(i)).getOrgJobTitle());
-                            organizations.add(organization);
-                        }
-                    }
-                    if (organizations.size() > 0) {
-                        profileDataOperation.setPbOrganization(organizations);
-                    }
-                    break;
-                case AppConstants.EVENT:
-                    ArrayList<ProfileDataOperationEvent> arrayListNewEvent = gson.fromJson
-                            (newObjectJson, new
-                                    TypeToken<ArrayList<ProfileDataOperationEvent>>() {
-                                    }.getType());
-                    ArrayList<ProfileDataOperationEvent> events = new ArrayList<>();
-                    for (int i = 0; i < arrayListAddedPositions.size(); i++) {
-                        ProfileDataOperationEvent event = new ProfileDataOperationEvent();
-                        event.setEventType(arrayListNewEvent.get(arrayListAddedPositions.get
-                                (i)).getEventType());
-                        event.setEventDateTime(arrayListNewEvent.get(arrayListAddedPositions
-                                .get(i)).getEventDateTime());
-                        events.add(event);
-                    }
-                    profileDataOperation.setPbEvent(events);
-                    break;
-                case AppConstants.ADDRESS:
-                    ArrayList<ProfileDataOperationAddress> arrayListNewAddress = gson.fromJson
-                            (newObjectJson, new TypeToken<ArrayList<ProfileDataOperationAddress>>
-                                    () {
-                            }.getType());
-                    ArrayList<ProfileDataOperationAddress> addresses = new ArrayList<>();
-                    for (int i = 0; i < arrayListAddedPositions.size(); i++) {
-                        ProfileDataOperationAddress address = new ProfileDataOperationAddress();
-                        address.setCountry(arrayListNewAddress.get(arrayListAddedPositions.get
-                                (i)).getCountry());
-                        address.setState(arrayListNewAddress.get(arrayListAddedPositions
-                                .get(i)).getState());
-                        address.setCity(arrayListNewAddress.get(arrayListAddedPositions
-                                .get(i)).getCity());
-                        address.setStreet(arrayListNewAddress.get(arrayListAddedPositions
-                                .get(i)).getStreet());
-                        address.setNeighborhood(arrayListNewAddress.get(arrayListAddedPositions
-                                .get(i)).getNeighborhood());
-                        address.setPostCode(arrayListNewAddress.get(arrayListAddedPositions
-                                .get(i)).getPostCode());
-                        address.setAddressType(arrayListNewAddress.get(arrayListAddedPositions
-                                .get(i)).getAddressType());
-                        addresses.add(address);
-                    }
-                    profileDataOperation.setPbAddress(addresses);
-                    break;
-            }
-            arrayListTempProfile.add(profileDataOperation);
-        }
-
-        if (arrayListRemovedPositions.size() > 0) {
-            ProfileDataOperation profileDataOperation = new ProfileDataOperation();
-            profileDataOperation.setFlag(String.valueOf(getResources().getInteger
-                    (R.integer.sync_update_delete)));
-            switch (objectType) {
-                case AppConstants.EMAIL:
-                    ArrayList<ProfileDataOperationEmail> emails = new ArrayList<>();
-                    for (int i = 0; i < arrayListRemovedPositions.size(); i++) {
-                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                        email.setEmId(((ProfileDataOperationEmail) arrayListEmailObject
-                                .get(i)).getEmId());
-                       /* email.setEmId(String.valueOf(arrayListRemovedPositions.get(i)));*/
-                        emails.add(email);
-                    }
-                    profileDataOperation.setPbEmailId(emails);
-                    break;
-
-                case AppConstants.PHONE_NUMBER:
-                    ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
-                    for (int i = 0; i < arrayListRemovedPositions.size(); i++) {
-                        ProfileDataOperationPhoneNumber phoneNumber = new
-                                ProfileDataOperationPhoneNumber();
-                        phoneNumber.setPhoneId(((ProfileDataOperationPhoneNumber)
-                                arrayListPhoneNumberObject
-                                        .get(i)).getPhoneId());
-                        /*phoneNumber.setPhoneId(String.valueOf(arrayListRemovedPositions.get(i))
-                        );*/
-                        phoneNumbers.add(phoneNumber);
-                    }
-                    profileDataOperation.setPbPhoneNumber(phoneNumbers);
-                    break;
-
-                case AppConstants.WEBSITE:
-                    ArrayList<ProfileDataOperationWebAddress> webAddresses = new ArrayList<>();
-                    for (int i = 0; i < arrayListRemovedPositions.size(); i++) {
-                        ProfileDataOperationWebAddress webAddress = new
-                                ProfileDataOperationWebAddress();
-                        webAddress.setWebId(((ProfileDataOperationWebAddress)
-                                arrayListWebsiteObject.get(i)).getWebId());
-                        /*webAddress.setWebId(String.valueOf(arrayListRemovedPositions.get(i)));*/
-                        webAddresses.add(webAddress);
-                    }
-                    profileDataOperation.setPbWebAddress(webAddresses);
-                    break;
-
-                case AppConstants.ORGANIZATION:
-                    ArrayList<ProfileDataOperationOrganization> organizations = new ArrayList<>();
-                    for (int i = 0; i < arrayListRemovedPositions.size(); i++) {
-                        ProfileDataOperationOrganization organization = new
-                                ProfileDataOperationOrganization();
-                        organization.setOrgId(((ProfileDataOperationOrganization)
-                                arrayListOrganizationObject.get(i)).getOrgId());
-                        /*webAddress.setWebId(String.valueOf(arrayListRemovedPositions.get(i)));*/
-                        organizations.add(organization);
-                    }
-                    profileDataOperation.setPbOrganization(organizations);
-                    break;
-
-                case AppConstants.EVENT:
-                    ArrayList<ProfileDataOperationEvent> events = new ArrayList<>();
-                    for (int i = 0; i < arrayListRemovedPositions.size(); i++) {
-                        ProfileDataOperationEvent event = new ProfileDataOperationEvent();
-                        event.setEventId(((ProfileDataOperationEvent)
-                                arrayListEventObject.get(i)).getEventId());
-                        /*event.setEventId(String.valueOf(arrayListRemovedPositions.get(i)));*/
-                        events.add(event);
-                    }
-                    profileDataOperation.setPbEvent(events);
-                    break;
-                case AppConstants.ADDRESS:
-                    ArrayList<ProfileDataOperationAddress> addresses = new ArrayList<>();
-                    for (int i = 0; i < arrayListRemovedPositions.size(); i++) {
-                        ProfileDataOperationAddress address = new ProfileDataOperationAddress();
-                        address.setAddId(((ProfileDataOperationAddress)
-                                arrayListAddressObject.get(i)).getAddId());
-                        /*event.setEventId(String.valueOf(arrayListRemovedPositions.get(i)));*/
-                        addresses.add(address);
-                    }
-                    profileDataOperation.setPbAddress(addresses);
-                    break;
-            }
-            arrayListTempProfile.add(profileDataOperation);
-        }
-
-        if (arrayListReplacedPositions.size() > 0) {
-            ProfileDataOperation profileDataOperation = new ProfileDataOperation();
-            profileDataOperation.setFlag(String.valueOf(getResources().getInteger
-                    (R.integer.sync_update_update)));
-            switch (objectType) {
-                case AppConstants.EMAIL:
-                    ArrayList<ProfileDataOperationEmail> arrayListNewEmail = gson.fromJson
-                            (newObjectJson, new TypeToken<ArrayList<ProfileDataOperationEmail>>() {
-                            }.getType());
-                    ArrayList<ProfileDataOperationEmail> emails = new ArrayList<>();
-                    for (int i = 0; i < arrayListReplacedPositions.size(); i++) {
-                        ProfileDataOperationEmail email = new ProfileDataOperationEmail();
-                        /*email.setEmId(((ProfileDataOperationEmail) arrayListEmailObject
-                                .get(i)).getEmId());*/
-                        email.setEmId(arrayListNewEmail.get(arrayListReplacedPositions.get
-                                (i)).getEmId());
-                        email.setEmType(arrayListNewEmail.get(arrayListReplacedPositions.get
-                                (i)).getEmType());
-                        email.setEmEmailId(arrayListNewEmail.get(arrayListReplacedPositions
-                                .get(i)).getEmEmailId());
-                        emails.add(email);
-                    }
-                    profileDataOperation.setPbEmailId(emails);
-                    break;
-                case AppConstants.PHONE_NUMBER:
-                    ArrayList<ProfileDataOperationPhoneNumber> arrayListNewPhoneNumber = gson
-                            .fromJson
-                                    (newObjectJson, new
-                                            TypeToken<ArrayList<ProfileDataOperationPhoneNumber>>
-                                                    () {
-                                            }.getType());
-                    ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
-                    for (int i = 0; i < arrayListReplacedPositions.size(); i++) {
-                        ProfileDataOperationPhoneNumber phoneNumber = new
-                                ProfileDataOperationPhoneNumber();
-                        /*phoneNumber.setPhoneId(((ProfileDataOperationPhoneNumber)
-                                arrayListPhoneNumberObject.get(i)).getPhoneId());*/
-                        phoneNumber.setPhoneId(arrayListNewPhoneNumber.get
-                                (arrayListReplacedPositions.get(i)).getPhoneId());
-                        phoneNumber.setPhoneType(arrayListNewPhoneNumber.get
-                                (arrayListReplacedPositions.get(i)).getPhoneType());
-                        phoneNumber.setPhoneNumber(arrayListNewPhoneNumber.get
-                                (arrayListReplacedPositions.get(i)).getPhoneNumber());
-                        phoneNumbers.add(phoneNumber);
-                    }
-                    profileDataOperation.setPbPhoneNumber(phoneNumbers);
-                    break;
-                case AppConstants.WEBSITE:
-                    ArrayList<ProfileDataOperationWebAddress> arrayListNewWebAddress = gson
-                            .fromJson
-                                    (newObjectJson, new
-                                            TypeToken<ArrayList<ProfileDataOperationWebAddress>>
-                                                    () {
-                                            }.getType());
-                    ArrayList<ProfileDataOperationWebAddress> webAddresses = new ArrayList<>();
-                    for (int i = 0; i < arrayListReplacedPositions.size(); i++) {
-                        ProfileDataOperationWebAddress webAddress = new
-                                ProfileDataOperationWebAddress();
-                        /*webAddress.setWebId(((ProfileDataOperationWebAddress)
-                                arrayListWebsiteObject.get(i)).getWebId());*/
-                        webAddress.setWebId(arrayListNewWebAddress.get
-                                (arrayListReplacedPositions.get(i)).getWebId());
-                        webAddress.setWebType(arrayListNewWebAddress.get
-                                (arrayListReplacedPositions.get(i)).getWebType());
-                        webAddress.setWebAddress(arrayListNewWebAddress.get
-                                (arrayListReplacedPositions.get(i)).getWebAddress());
-                        webAddresses.add(webAddress);
-                    }
-                    profileDataOperation.setPbWebAddress(webAddresses);
-                    break;
-                case AppConstants.ORGANIZATION:
-                    ArrayList<ProfileDataOperationOrganization> arrayListNewOrganization = gson
-                            .fromJson
-                                    (newObjectJson, new
-                                            TypeToken<ArrayList<ProfileDataOperationOrganization>>() {
-                                            }.getType());
-                    ArrayList<ProfileDataOperationOrganization> organizations = new ArrayList<>();
-                    for (int i = 0; i < arrayListReplacedPositions.size(); i++) {
-                        ProfileDataOperationOrganization organization = new
-                                ProfileDataOperationOrganization();
-                       /* event.setEventId(((ProfileDataOperationEvent)
-                                arrayListEventObject.get(i)).getEventId());*/
-                        organization.setOrgId(arrayListNewOrganization.get
-                                (arrayListReplacedPositions.get(i)).getOrgId());
-                        organization.setOrgName(arrayListNewOrganization.get
-                                (arrayListReplacedPositions.get(i)).getOrgName());
-                        organization.setOrgJobTitle(arrayListNewOrganization.get
-                                (arrayListReplacedPositions.get(i)).getOrgJobTitle());
-                        organizations.add(organization);
-                    }
-                    profileDataOperation.setPbOrganization(organizations);
-                    break;
-                case AppConstants.EVENT:
-                    ArrayList<ProfileDataOperationEvent> arrayListNewEvent = gson.fromJson
-                            (newObjectJson, new TypeToken<ArrayList<ProfileDataOperationEvent>>() {
-                            }.getType());
-                    ArrayList<ProfileDataOperationEvent> events = new ArrayList<>();
-                    for (int i = 0; i < arrayListReplacedPositions.size(); i++) {
-                        ProfileDataOperationEvent event = new ProfileDataOperationEvent();
-                       /* event.setEventId(((ProfileDataOperationEvent)
-                                arrayListEventObject.get(i)).getEventId());*/
-                        event.setEventId(arrayListNewEvent.get
-                                (arrayListReplacedPositions.get(i)).getEventId());
-                        event.setEventType(arrayListNewEvent.get
-                                (arrayListReplacedPositions.get(i)).getEventType());
-                        event.setEventDateTime(arrayListNewEvent.get
-                                (arrayListReplacedPositions.get(i)).getEventDateTime());
-                        events.add(event);
-                    }
-                    profileDataOperation.setPbEvent(events);
-                    break;
-                case AppConstants.ADDRESS:
-                    ArrayList<ProfileDataOperationAddress> arrayListNewAddress = gson.fromJson
-                            (newObjectJson, new TypeToken<ArrayList<ProfileDataOperationAddress>>
-                                    () {
-                            }.getType());
-                    ArrayList<ProfileDataOperationAddress> addresses = new ArrayList<>();
-                    for (int i = 0; i < arrayListReplacedPositions.size(); i++) {
-                        ProfileDataOperationAddress address = new ProfileDataOperationAddress();
-                       /* event.setEventId(((ProfileDataOperationEvent)
-                                arrayListEventObject.get(i)).getEventId());*/
-                        address.setAddId(arrayListNewAddress.get
-                                (arrayListReplacedPositions.get(i)).getAddId());
-                        address.setAddressType(arrayListNewAddress.get
-                                (arrayListReplacedPositions.get(i)).getAddressType());
-                        address.setCountry(arrayListNewAddress.get
-                                (arrayListReplacedPositions.get(i)).getCountry());
-                        address.setState(arrayListNewAddress.get
-                                (arrayListReplacedPositions.get(i)).getState());
-                        address.setCity(arrayListNewAddress.get
-                                (arrayListReplacedPositions.get(i)).getCity());
-                        address.setStreet(arrayListNewAddress.get
-                                (arrayListReplacedPositions.get(i)).getStreet());
-                        address.setNeighborhood(arrayListNewAddress.get
-                                (arrayListReplacedPositions.get(i)).getNeighborhood());
-                        address.setPostCode(arrayListNewAddress.get
-                                (arrayListReplacedPositions.get(i)).getPostCode());
-                        addresses.add(address);
-                    }
-                    profileDataOperation.setPbAddress(addresses);
-                    break;
-            }
-            arrayListTempProfile.add(profileDataOperation);
-        }
-//                        editProfile(arrayListProfile);
-        /*Log.i("onComplete", arrayListProfile.toString());*/
-
-        return arrayListTempProfile;
-
-    }
-
-    private ArrayList<ProfileDataOperation> combineResult(ArrayList<ArrayList<ProfileDataOperation>>
-                                                                  arrayList) {
-        ArrayList<ProfileDataOperation> arrayListMergedProfile = new ArrayList<>();
-        ProfileDataOperation profileDataInsert = new ProfileDataOperation();
-        profileDataInsert.setFlag(String.valueOf(getResources().getInteger(R.integer
-                .sync_update_insert)));
-        for (int i = 0; i < arrayList.size(); i++) {
-            for (int j = 0; j < arrayList.get(i).size(); j++) {
-                if (Integer.parseInt(arrayList.get(i).get(j).getFlag()) == getResources()
-                        .getInteger(R.integer.sync_update_insert)) {
-                    switch (i) {
-                        case 0:
-                            profileDataInsert.setPbPhoneNumber(arrayList.get(i).get(j)
-                                    .getPbPhoneNumber());
-                            break;
-
-                        case 1:
-                            profileDataInsert.setPbEmailId(arrayList.get(i).get(j).getPbEmailId());
-                            break;
-
-                        case 2:
-                            profileDataInsert.setPbWebAddress(arrayList.get(i).get(j)
-                                    .getPbWebAddress());
-                            break;
-
-                        case 3:
-                            profileDataInsert.setPbEvent(arrayList.get(i).get(j).getPbEvent());
-                            break;
-
-                        case 4:
-                            profileDataInsert.setPbOrganization(arrayList.get(i).get(j)
-                                    .getPbOrganization());
-                            break;
-
-                        case 5:
-                            profileDataInsert.setPbAddress(arrayList.get(i).get(j).getPbAddress());
-                            break;
-                    }
-                }
-            }
-        }
-        arrayListMergedProfile.add(profileDataInsert);
-
-        ProfileDataOperation profileDataUpdate = new ProfileDataOperation();
-        profileDataUpdate.setFlag(String.valueOf(getResources().getInteger(R.integer
-                .sync_update_update)));
-        for (int i = 0; i < arrayList.size(); i++) {
-            for (int j = 0; j < arrayList.get(i).size(); j++) {
-                if (Integer.parseInt(arrayList.get(i).get(j).getFlag()) == getResources()
-                        .getInteger(R.integer.sync_update_update)) {
-                    switch (i) {
-                        case 0:
-                            profileDataUpdate.setPbPhoneNumber(arrayList.get(i).get(j)
-                                    .getPbPhoneNumber());
-                            break;
-                        case 1:
-                            profileDataUpdate.setPbEmailId(arrayList.get(i).get(j).getPbEmailId());
-                            break;
-
-                        case 2:
-                            profileDataUpdate.setPbWebAddress(arrayList.get(i).get(j)
-                                    .getPbWebAddress());
-                            break;
-
-                        case 3:
-                            profileDataUpdate.setPbEvent(arrayList.get(i).get(j).getPbEvent());
-                            break;
-
-                        case 4:
-                            profileDataUpdate.setPbOrganization(arrayList.get(i).get(j)
-                                    .getPbOrganization());
-                            break;
-
-                        case 5:
-                            profileDataUpdate.setPbAddress(arrayList.get(i).get(j).getPbAddress());
-                            break;
-                    }
-                }
-            }
-        }
-        arrayListMergedProfile.add(profileDataUpdate);
-
-        ProfileDataOperation profileDataDelete = new ProfileDataOperation();
-        profileDataDelete.setFlag(String.valueOf(getResources().getInteger(R.integer
-                .sync_update_delete)));
-        for (int i = 0; i < arrayList.size(); i++) {
-            for (int j = 0; j < arrayList.get(i).size(); j++) {
-                if (Integer.parseInt(arrayList.get(i).get(j).getFlag()) == getResources()
-                        .getInteger(R.integer.sync_update_delete)) {
-                    switch (i) {
-                        case 0:
-                            profileDataDelete.setPbPhoneNumber(arrayList.get(i).get(j)
-                                    .getPbPhoneNumber());
-                            break;
-                        case 1:
-                            profileDataDelete.setPbEmailId(arrayList.get(i).get(j).getPbEmailId());
-                            break;
-
-                        case 2:
-                            profileDataDelete.setPbWebAddress(arrayList.get(i).get(j)
-                                    .getPbWebAddress());
-                            break;
-
-                        case 3:
-                            profileDataDelete.setPbEvent(arrayList.get(i).get(j).getPbEvent());
-                            break;
-
-                        case 4:
-                            profileDataDelete.setPbOrganization(arrayList.get(i).get(j)
-                                    .getPbOrganization());
-                            break;
-
-                        case 5:
-                            profileDataDelete.setPbAddress(arrayList.get(i).get(j).getPbAddress());
-                            break;
-                    }
-                }
-            }
-        }
-        arrayListMergedProfile.add(profileDataDelete);
-
-        ProfileDataOperation profileNameGender = new ProfileDataOperation();
-        boolean isUpdated = false;
-        profileNameGender.setFlag(String.valueOf(getResources().getInteger(R.integer
-                .sync_update_update)));
-        if (userProfile != null) {
-            if (!StringUtils.equals(userProfile.getPmFirstName(), inputFirstName.getText()
-                    .toString())) {
-                isUpdated = true;
-                profileNameGender.setPbNameFirst(inputFirstName.getText().toString());
-            }
-            if (!StringUtils.equals(userProfile.getPmLastName(), inputLastName.getText()
-                    .toString())) {
-                isUpdated = true;
-                profileNameGender.setPbNameLast(inputLastName.getText().toString());
-            }
-
-
-            int radioButtonID = radioGroupGender.getCheckedRadioButtonId();
-            View radioButton = radioGroupGender.findViewById(radioButtonID);
-            int index = radioGroupGender.indexOfChild(radioButton);
-
-            RadioButton r = (RadioButton) radioGroupGender.getChildAt(index);
-            String selectedText = r.getText().toString();
-
-            if (!StringUtils.equals(userProfile.getPmGender(), selectedText)) {
-                isUpdated = true;
-                profileNameGender.setPbGender(selectedText);
-            }
-
-            if (selectedBitmap != null) {
-                isUpdated = true;
-                String imageToBase64 = Utils.convertBitmapToBase64(selectedBitmap);
-                profileNameGender.setPbProfilePhoto(imageToBase64);
-            }
-        }
-        if (isUpdated) {
-            arrayListMergedProfile.add(profileNameGender);
-        }
-
-        return arrayListMergedProfile;
-
-    }
-
     private void storeProfileDataToDb(ProfileDataOperation profileDetail) {
 
         //<editor-fold desc="Basic Details">
@@ -2296,6 +1537,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         userProfile.setPmNosqlMasterId(profileDetail.getNoSqlMasterId());
         userProfile.setPmJoiningDate(profileDetail.getJoiningDate());
         userProfile.setPmGender(profileDetail.getPbGender());
+        userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
 
         tableProfileMaster.updateUserProfile(userProfile);
         //</editor-fold>
@@ -2345,7 +1587,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
-//                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
                 email.setRcProfileMasterPmId(getUserPmId());
                 arrayListEmail.add(email);
             }
@@ -2375,14 +1616,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                         .getOrgJobTitle());
                 organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
                         .getIsCurrent()));
-               /* organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgType());
-                organization.setOmOrganizationTitle(arrayListOrganization.get(i).getOrgName());
-                organization.setOmOrganizationDepartment(arrayListOrganization.get(i)
-                        .getOrgDepartment());
-                organization.setOmJobDescription(arrayListOrganization.get(i)
-                        .getOrgJobTitle());
-                organization.setOmOfficeLocation(arrayListOrganization.get(i)
-                        .getOrgOfficeLocation());*/
                 organization.setRcProfileMasterPmId(getUserPmId());
                 organizationList.add(organization);
             }
@@ -2461,9 +1694,11 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             for (int j = 0; j < arrayListImAccount.size(); j++) {
                 ImAccount imAccount = new ImAccount();
                 imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
+                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
 //                imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
-                imAccount.setImImPrivacy(arrayListImAccount.get(j).getIMAccountPublic());
+                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
+                        .getIMAccountPublic()));
                 imAccount.setRcProfileMasterPmId(getUserPmId());
                 imAccountsList.add(imAccount);
             }
@@ -2480,13 +1715,15 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         tableEventMaster.deleteEvent(getUserPmId());
 
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
-            ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail.getPbEvent();
+            ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail
+                    .getPbEvent();
             ArrayList<Event> eventList = new ArrayList<>();
             for (int j = 0; j < arrayListEvent.size(); j++) {
                 Event event = new Event();
                 event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
                 event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                 event.setEvmEventType(arrayListEvent.get(j).getEventType());
+                event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
                 event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
                 event.setRcProfileMasterPmId(getUserPmId());
                 eventList.add(event);
@@ -2534,6 +1771,272 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
         permissionConfirmationDialog.showDialog();
 
+    }
+
+    private void getUpdatedProfile() {
+
+        //<editor-fold desc="Email">
+        ArrayList<ProfileDataOperationEmail> arrayListNewEmail = new ArrayList<>();
+        for (int i = 0; i < linearEmailDetails.getChildCount(); i++) {
+            ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+            View view = linearEmailDetails.getChildAt(i);
+            EditText emailId = (EditText) view.findViewById(R.id.input_value);
+            Spinner emailType = (Spinner) view.findViewById(R.id.spinner_type);
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            email.setEmEmailId(emailId.getText().toString());
+            email.setEmType((String) emailType.getSelectedItem());
+            email.setEmId((String) relativeRowEditProfile.getTag());
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                email.setEmPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                email.setEmPublic(1);
+            }
+
+            arrayListNewEmail.add(email);
+
+        }
+
+        //</editor-fold>
+
+        //<editor-fold desc="Phone Number">
+        ArrayList<ProfileDataOperationPhoneNumber> arrayListNewPhone = new ArrayList<>();
+        for (int i = 0; i < linearPhoneDetails.getChildCount(); i++) {
+            ProfileDataOperationPhoneNumber phoneNumber = new
+                    ProfileDataOperationPhoneNumber();
+            View view = linearPhoneDetails.getChildAt(i);
+            EditText emailId = (EditText) view.findViewById(R.id.input_value);
+            Spinner emailType = (Spinner) view.findViewById(R.id.spinner_type);
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            phoneNumber.setPhoneNumber(emailId.getText().toString());
+            phoneNumber.setPhoneType((String) emailType.getSelectedItem());
+            phoneNumber.setPhoneId((String) relativeRowEditProfile.getTag());
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                phoneNumber.setPhonePublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                phoneNumber.setPhonePublic(1);
+            }
+
+
+            arrayListNewPhone.add(phoneNumber);
+
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Website">
+        ArrayList<ProfileDataOperationWebAddress> arrayListNewWebAddress = new
+                ArrayList<>();
+        for (int i = 0; i < linearWebsiteDetails.getChildCount(); i++) {
+            ProfileDataOperationWebAddress webAddress = new
+                    ProfileDataOperationWebAddress();
+            View view = linearWebsiteDetails.getChildAt(i);
+            EditText website = (EditText) view.findViewById(R.id.input_value);
+            Spinner websiteType = (Spinner) view.findViewById(R.id.spinner_type);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            webAddress.setWebAddress(website.getText().toString());
+            webAddress.setWebType((String) websiteType.getSelectedItem());
+            webAddress.setWebId((String) relativeRowEditProfile.getTag());
+
+            arrayListNewWebAddress.add(webAddress);
+
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Event">
+        ArrayList<ProfileDataOperationEvent> arrayListNewEvent = new ArrayList<>();
+        for (int i = 0; i < linearEventDetails.getChildCount(); i++) {
+            ProfileDataOperationEvent event = new ProfileDataOperationEvent();
+            View view = linearEventDetails.getChildAt(i);
+            EditText eventDate = (EditText) view.findViewById(R.id.input_value);
+            Spinner eventType = (Spinner) view.findViewById(R.id.spinner_type);
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+            CheckBox checkboxHideYear = (CheckBox) view.findViewById(R.id
+                    .checkbox_hide_year);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            if (eventDate.getText().toString().length() > 0) {
+                event.setEventDateTime(Utils.convertDateFormat(eventDate.getText()
+                        .toString(), EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
+                event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString(),
+                        EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
+            }
+//                    event.setEventDateTime(eventDate.getText().toString());
+            event.setEventType((String) eventType.getSelectedItem());
+            event.setIsYearHidden(checkboxHideYear.isChecked() ? 1 : 0);
+            event.setEventId((String) relativeRowEditProfile.getTag());
+//            event.setEventPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                event.setEventPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                event.setEventPublic(1);
+            }
+
+            arrayListNewEvent.add(event);
+
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Organization">.
+        ArrayList<ProfileDataOperationOrganization> arrayListNewOrganization = new
+                ArrayList<>();
+        for (int i = 0; i < linearOrganizationDetail.getChildCount(); i++) {
+            ProfileDataOperationOrganization organization = new
+                    ProfileDataOperationOrganization();
+            View view = linearOrganizationDetail.getChildAt(i);
+            EditText inputCompanyName = (EditText) view.findViewById(R.id
+                    .input_company_name);
+            EditText inputDesignationName = (EditText) view.findViewById(R.id
+                    .input_designation_name);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            CheckBox checkboxOrganization = (CheckBox) view.findViewById(R.id
+                    .checkbox_organization);
+            organization.setOrgName(inputCompanyName.getText().toString());
+            organization.setOrgJobTitle(inputDesignationName.getText().toString());
+            organization.setOrgId((String) relativeRowEditProfile.getTag());
+            organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
+
+            arrayListNewOrganization.add(organization);
+
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Social Contact">.
+        ArrayList<ProfileDataOperationImAccount> arrayListNewImAccount = new ArrayList<>();
+        for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
+            ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+            View view = linearSocialContactDetails.getChildAt(i);
+            EditText imAccountName = (EditText) view.findViewById(R.id.input_value);
+            Spinner imAccountProtocol = (Spinner) view.findViewById(R.id.spinner_type);
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            imAccount.setIMAccountDetails(imAccountName.getText().toString());
+            imAccount.setIMAccountProtocol((String) imAccountProtocol.getSelectedItem());
+            imAccount.setIMId((String) relativeRowEditProfile.getTag());
+
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                imAccount.setIMAccountPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                imAccount.setIMAccountPublic(1);
+            }
+
+            arrayListNewImAccount.add(imAccount);
+
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Address">
+        ArrayList<ProfileDataOperationAddress> arrayListNewAddress = new ArrayList<>();
+        for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
+            ProfileDataOperationAddress address = new ProfileDataOperationAddress();
+            View view = linearAddressDetails.getChildAt(i);
+            Spinner addressType = (Spinner) view.findViewById(R.id.spinner_type);
+            EditText country = (EditText) view.findViewById(R.id.input_country);
+            EditText state = (EditText) view.findViewById(R.id.input_state);
+            EditText city = (EditText) view.findViewById(R.id.input_city);
+            EditText street = (EditText) view.findViewById(R.id.input_street);
+            EditText neighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
+            EditText pinCode = (EditText) view.findViewById(R.id.input_pin_code);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            TextView textLatitude = (TextView) view.findViewById(R.id.input_latitude);
+            TextView textLongitude = (TextView) view.findViewById(R.id.input_longitude);
+            TextView textGoogleAddress = (TextView) view.findViewById(R.id
+                    .input_google_address);
+
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+
+            String countryName = country.getText().toString();
+            String stateName = state.getText().toString();
+            String cityName = city.getText().toString();
+            String streetName = street.getText().toString();
+            String neighborhoodName = neighborhood.getText().toString();
+            String pinCodeName = pinCode.getText().toString();
+
+            String[] addressStrings = {streetName, neighborhoodName, cityName, stateName,
+                    countryName, pinCodeName};
+
+            String formattedAddress = "";
+
+            for (int j = 0; j < addressStrings.length; j++) {
+                if (j != addressStrings.length - 1) {
+                    if (StringUtils.length(addressStrings[j]) > 0) {
+                        formattedAddress = formattedAddress + StringUtils.appendIfMissing
+                                (addressStrings[j], ", ");
+                    }
+                } else {
+                    formattedAddress = formattedAddress + pinCodeName;
+                }
+            }
+
+            address.setCountry(countryName);
+            address.setState(stateName);
+            address.setCity(cityName);
+            address.setStreet(streetName);
+            address.setNeighborhood(neighborhoodName);
+            address.setPostCode(pinCodeName);
+            address.setFormattedAddress(StringUtils.removeEnd(formattedAddress, ", "));
+            address.setAddressType((String) addressType.getSelectedItem());
+            address.setGoogleAddress(textGoogleAddress.getText().toString());
+            address.setGoogleLatitude(textLatitude.getText().toString());
+            address.setGoogleLongitude(textLongitude.getText().toString());
+//            address.setAddPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            address.setAddId((String) relativeRowEditProfile.getTag());
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                address.setAddPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                address.setAddPublic(1);
+            }
+
+            arrayListNewAddress.add(address);
+
+        }
+
+        //</editor-fold>*/
+
+        ArrayList<ProfileDataOperation> arrayList = new ArrayList<>();
+
+        int radioButtonID = radioGroupGender.getCheckedRadioButtonId();
+        View radioButton = radioGroupGender.findViewById(radioButtonID);
+        int index = radioGroupGender.indexOfChild(radioButton);
+
+        RadioButton r = (RadioButton) radioGroupGender.getChildAt(index);
+        String selectedText = r.getText().toString();
+
+        String bitmapString = "";
+        if (selectedBitmap != null) {
+            bitmapString = Utils.convertBitmapToBase64(selectedBitmap);
+        }
+
+        ProfileDataOperation profileDataOperation = new ProfileDataOperation();
+
+        profileDataOperation.setPbNameFirst(inputFirstName.getText().toString());
+        profileDataOperation.setPbNameLast(inputLastName.getText().toString());
+        profileDataOperation.setPbGender(selectedText);
+        profileDataOperation.setPbProfilePhoto(bitmapString);
+
+        profileDataOperation.setPbEmailId(arrayListNewEmail);
+        profileDataOperation.setPbPhoneNumber(arrayListNewPhone);
+        profileDataOperation.setPbWebAddress(arrayListNewWebAddress);
+        profileDataOperation.setPbEvent(arrayListNewEvent);
+        profileDataOperation.setPbAddress(arrayListNewAddress);
+        profileDataOperation.setPbOrganization(arrayListNewOrganization);
+        profileDataOperation.setPbIMAccounts(arrayListNewImAccount);
+
+        arrayList.add(profileDataOperation);
+//                arrayList.add(updatedAddress);
+
+        editProfile(arrayList);
     }
 
     //</editor-fold>
