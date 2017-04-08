@@ -40,11 +40,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flipkart.zjsonpatch.JsonDiff;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -85,9 +80,6 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -940,7 +932,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 spinnerType.setAdapter(spinnerEventAdapter);
                 inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
                 if (detailObject != null) {
-                    ProfileDataOperationEvent event = (ProfileDataOperationEvent) detailObject;
+                    ProfileDataOperationEvent event = (ProfileDataOperationEvent)
+                            detailObject;
                     inputValue.setText(event.getEventDateTime());
                     textIsPublic.setText(String.valueOf(event.getEventPublic()));
                     checkboxHideYear.setChecked(event.getIsYearHidden() == 1);
@@ -1521,7 +1514,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         dialog.show();
     }
 
-    private void storeProfileDataToDb(ProfileDataOperation profileDetail)  {
+    private void storeProfileDataToDb(ProfileDataOperation profileDetail) {
 
         //<editor-fold desc="Basic Details">
         TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
@@ -1722,7 +1715,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         tableEventMaster.deleteEvent(getUserPmId());
 
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
-            ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail.getPbEvent();
+            ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail
+                    .getPbEvent();
             ArrayList<Event> eventList = new ArrayList<>();
             for (int j = 0; j < arrayListEvent.size(); j++) {
                 Event event = new Event();
@@ -1869,8 +1863,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             if (eventDate.getText().toString().length() > 0) {
                 event.setEventDateTime(Utils.convertDateFormat(eventDate.getText()
                         .toString(), EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
-               /* event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString(),
-                        EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));*/
+                event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString(),
+                        EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
             }
 //                    event.setEventDateTime(eventDate.getText().toString());
             event.setEventType((String) eventType.getSelectedItem());

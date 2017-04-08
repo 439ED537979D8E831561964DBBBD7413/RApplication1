@@ -793,7 +793,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
 //                    imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                         imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
-                        imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j).getIMAccountPublic()));
+                        imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
+                                .getIMAccountPublic()));
                         imAccount.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         imAccountsList.add(imAccount);
                     }
@@ -813,8 +814,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
                         event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                         event.setEvmEventType(arrayListEvent.get(j).getEventType());
-                        event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic
-                                ()));
+                        event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j)
+                                .getEventPublic()));
                         event.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         eventList.add(event);
                     }
@@ -1016,8 +1017,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 /*HashSet<String> retrievedContactIdSet = (HashSet<String>) Utils
                         .getStringSetPreference(getActivity(), AppConstants
                                 .PREF_CONTACT_ID_SET);*/
-                ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity(),
-                        AppConstants.PREF_CONTACT_ID_SET);
+                ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity
+                        (), AppConstants.PREF_CONTACT_ID_SET);
                 if (arrayListContactIds != null) {
                     arrayListContactId = new ArrayList<>(arrayListContactIds);
                     phoneBookOperations();
