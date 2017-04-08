@@ -824,7 +824,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                         (contactImCursor.getInt((contactImCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
-                imAccount.setIMAccountPublic("1");
+                imAccount.setIMAccountPublic(1);
 
 
                 arrayListImAccount.add(imAccount);

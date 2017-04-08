@@ -1,5 +1,7 @@
 package com.rawalinfocom.rcontact.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Created by user on 29/11/16.
  */
@@ -122,7 +124,7 @@ public class Address {
     }
 
     public String getAmAddressPrivacy() {
-        return amAddressPrivacy;
+        return StringUtils.defaultString(amAddressPrivacy, "1");
     }
 
     public void setAmAddressPrivacy(String amAddressPrivacy) {

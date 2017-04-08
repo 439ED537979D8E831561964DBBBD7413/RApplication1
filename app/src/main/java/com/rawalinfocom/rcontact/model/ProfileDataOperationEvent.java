@@ -1,11 +1,8 @@
 package com.rawalinfocom.rcontact.model;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,17 +10,15 @@ import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonIgnoreType
 public class ProfileDataOperationEvent implements Serializable {
 
     private String eventId;
     private String eventType;
-//    private String eventDate;
     private String eventDateTime;
+    private String eventDate;
     private int eventPublic;
-
-    //    private int eventRcType;
     private String eventRcType;
+    private int isYearHidden;
 
     @JsonProperty("event_id")
     public String getEventId() {
@@ -43,12 +38,7 @@ public class ProfileDataOperationEvent implements Serializable {
         this.eventType = eventType;
     }
 
-   /* @JsonSetter("event_date")
-    public void setEventDate(String eventDate) {
-        this.eventDate = eventDate;
-    }*/
-
-    @JsonGetter("event_datetime")
+    @JsonProperty("event_datetime")
     public String getEventDateTime() {
         return eventDateTime;
     }
@@ -66,6 +56,16 @@ public class ProfileDataOperationEvent implements Serializable {
         this.eventPublic = eventPublic;
     }
 
+    @JsonProperty(value = "event_date", access = JsonProperty.Access.READ_ONLY)
+    public String getEventDate() {
+        return eventDate;
+    }
+
+    @JsonProperty(value = "event_date", access = JsonProperty.Access.READ_ONLY)
+    public void setEventDate(String eventDate) {
+        this.eventDate = eventDate;
+    }
+
     /*public int getEventRcType() {
         return eventRcType;
     }
@@ -80,5 +80,14 @@ public class ProfileDataOperationEvent implements Serializable {
 
     public void setEventRcType(String eventRcType) {
         this.eventRcType = eventRcType;
+    }
+
+    @JsonProperty("is_year_hidden")
+    public int getIsYearHidden() {
+        return isYearHidden;
+    }
+
+    public void setIsYearHidden(int isYearHidden) {
+        this.isYearHidden = isYearHidden;
     }
 }
