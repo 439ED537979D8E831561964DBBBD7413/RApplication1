@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,16 +10,13 @@ import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonIgnoreType
 public class ProfileDataOperationEvent implements Serializable {
 
     private String eventId;
     private String eventType;
-    private String eventDate;
     private String eventDateTime;
+    private String eventDate;
     private int eventPublic;
-
-    //    private int eventRcType;
     private String eventRcType;
     private int isYearHidden;
 
@@ -42,15 +38,6 @@ public class ProfileDataOperationEvent implements Serializable {
         this.eventType = eventType;
     }
 
-   /* @JsonProperty("event_date")
-    public String getEventDate() {
-        return eventDate;
-    }
-
-    public void setEventDate(String eventDate) {
-        this.eventDate = eventDate;
-    }*/
-
     @JsonProperty("event_datetime")
     public String getEventDateTime() {
         return eventDateTime;
@@ -67,6 +54,16 @@ public class ProfileDataOperationEvent implements Serializable {
 
     public void setEventPublic(int eventPublic) {
         this.eventPublic = eventPublic;
+    }
+
+    @JsonProperty(value = "event_date", access = JsonProperty.Access.READ_ONLY)
+    public String getEventDate() {
+        return eventDate;
+    }
+
+    @JsonProperty(value = "event_date", access = JsonProperty.Access.READ_ONLY)
+    public void setEventDate(String eventDate) {
+        this.eventDate = eventDate;
     }
 
     /*public int getEventRcType() {

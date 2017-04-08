@@ -535,12 +535,12 @@ public class TableProfileMaster {
 
         Cursor eventCursor = db.rawQuery(eventQuery, null);
 
-        ArrayList<ProfileDataOperationEvent> arrayListEvent = new ArrayList<>();
+        ArrayList<ProfileDataOperationEventDateTime> arrayListEvent = new ArrayList<>();
 
         // looping through all rows and adding to list
         if (eventCursor.moveToFirst()) {
             do {
-                ProfileDataOperationEvent event = new ProfileDataOperationEvent();
+                ProfileDataOperationEventDateTime event = new ProfileDataOperationEventDateTime();
                 event.setEventDate(StringUtils.defaultString(eventCursor.getString(0)));
                 event.setEventType(StringUtils.defaultString(eventCursor.getString(1)));
                 event.setEventPublic(StringUtils.defaultString(eventCursor.getString(2), "0"));
