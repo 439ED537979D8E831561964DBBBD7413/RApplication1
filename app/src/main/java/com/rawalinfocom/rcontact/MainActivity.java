@@ -404,7 +404,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Dial Pad", Snackbar.LENGTH_SHORT).show();
+//                Snackbar.make(view, "Dial Pad", Snackbar.LENGTH_SHORT).show();
+                openDialer();
             }
         });
 
@@ -430,6 +431,11 @@ public class MainActivity extends BaseActivity implements NavigationView
         Utils.changeTabsFont(this, tabMain);
 
 
+    }
+
+    private void openDialer(){
+        Intent intent =  new Intent(Intent.ACTION_DIAL);
+        startActivity(intent);
     }
 
     private void showAddToContact(boolean value) {
