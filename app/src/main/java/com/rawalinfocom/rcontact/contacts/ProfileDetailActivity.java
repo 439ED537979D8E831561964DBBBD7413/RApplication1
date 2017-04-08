@@ -535,8 +535,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     if (!TextUtils.isEmpty(blockedNumber)){
                         if (!TextUtils.isEmpty(historyName)) {
                             ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
-                                    this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
-                                    this.getString(R.string.call_reminder),
+                                    /*this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
+                                    this.getString(R.string.call_reminder),*/
                                     this.getString(R.string.unblock), this.getString(R.string.delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, historyNumber,
@@ -548,7 +548,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
                                         this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
                                         this.getString(R.string.copy_phone_number),
-                                        this.getString(R.string.call_reminder), this.getString(R.string.unblock),
+                                        /*this.getString(R.string.call_reminder),*/ this.getString(R.string.unblock),
                                         this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, historyNumber,
                                         historyDate, isFromCallLogTab, arrayListHistory,"",uniqueContactId,hashMapKey);
@@ -558,8 +558,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     }else{
                         if (!TextUtils.isEmpty(historyName)) {
                             ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
-                                    this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
-                                    this.getString(R.string.call_reminder),
+                                    /*this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
+                                    this.getString(R.string.call_reminder),*/
                                     this.getString(R.string.block), this.getString(R.string.delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, historyNumber,
@@ -571,7 +571,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
                                         this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
                                         this.getString(R.string.copy_phone_number),
-                                        this.getString(R.string.call_reminder), this.getString(R.string.block),
+                                        /*this.getString(R.string.call_reminder), */this.getString(R.string.block),
                                         this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, historyNumber,
                                         historyDate, isFromCallLogTab, arrayListHistory,"",uniqueContactId,"");
@@ -1919,7 +1919,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void fetchAllCallLogHistory(String value) {
         if (!TextUtils.isEmpty(value)) {
             arrayListHistory = callLogHistory(value);
-            Log.i("History size  ", arrayListHistory.size() + "" + " of  " + value);
+                       Log.i("History size  ", arrayListHistory.size() + "" + " of  " + value);
         }
         setHistoryAdapter();
     }
