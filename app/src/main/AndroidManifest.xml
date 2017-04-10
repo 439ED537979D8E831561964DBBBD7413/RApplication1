@@ -127,7 +127,13 @@
         <activity android:name=".contacts.MapsActivity" />
         <activity android:name=".calllog.CallLogDeleteActivity" />
         <activity android:name=".calllog.CallHistoryDetailsActivity" />
-        <activity android:name=".BlockContactListActivity" />
+        <activity android:name=".BlockContactListActivity"></activity>
+
+        <service
+            android:name=".services.CallLogIdFetchService"
+            android:enabled="true"
+            android:exported="true" />
+
         <activity
             android:name=".notifications.RatingHistory"
             android:windowSoftInputMode="adjustResize" />
