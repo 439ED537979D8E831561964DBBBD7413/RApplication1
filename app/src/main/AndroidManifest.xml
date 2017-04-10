@@ -127,7 +127,6 @@
         <activity android:name=".contacts.MapsActivity" />
         <activity android:name=".calllog.CallLogDeleteActivity" />
         <activity android:name=".calllog.CallHistoryDetailsActivity" />
-        <activity android:name=".BlockContactListActivity" />
         <activity android:name=".BlockContactListActivity"></activity>
 
         <service
