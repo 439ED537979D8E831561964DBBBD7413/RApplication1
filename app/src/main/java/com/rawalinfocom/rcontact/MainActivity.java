@@ -71,6 +71,7 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.notifications.EventsActivity;
 import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
+import com.rawalinfocom.rcontact.notifications.RatingHistory;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
 import com.rawalinfocom.rcontact.services.CallLogIdFetchService;
@@ -253,8 +254,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                     Uri path = Uri.fromFile(fileLocation);
                     Intent emailIntent = new Intent(Intent.ACTION_SEND);
                     emailIntent.setType("vnd.android.cursor.dir/email");
-                    String to[] = {"development@rawalinfocom.com"};
-//                    emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
                     emailIntent.putExtra(Intent.EXTRA_STREAM, path);
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
                     startActivity(Intent.createChooser(emailIntent, "Send email..."));
@@ -268,21 +267,10 @@ public class MainActivity extends BaseActivity implements NavigationView
         } else if (id == R.id.nav_user_events) {
             startActivityIntent(MainActivity.this, EventsActivity.class, null);
         } else if (id == R.id.nav_blocked_contacts) {
-
             startActivityIntent(this, BlockContactListActivity.class, new Bundle());
+        } else if (id == R.id.nav_user_rating_history) {
+            startActivityIntent(this, RatingHistory.class, new Bundle());
         }
-        /*}*/
-       /* else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -1486,7 +1474,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                         (contactImCursor.getInt((contactImCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
-                imAccount.setIMAccountPublic("1");
+                imAccount.setIMAccountPublic(1);
 
 
                 arrayListImAccount.add(imAccount);

@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.model.Comment;
 import com.rawalinfocom.rcontact.model.RcontactUpdatesData;
 import com.rawalinfocom.rcontact.adapters.NotiRContactsAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -38,6 +39,7 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
     TableRCNotificationUpdates tableRCNotificationUpdates;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerRContactsNoti;
+    NotiRContactsAdapter updtaesAdapter;
 
     @Override
     public void getFragmentArguments() {
@@ -61,17 +63,16 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         tableRCNotificationUpdates = new TableRCNotificationUpdates(getDatabaseHandler());
-        tableRCNotificationUpdates.deleteAllPreviousUpdates();
         init();
+        initData();
         getAllRContactUpdates(this);
-        // initData();
     }
 
     private void initData() {
 
         ArrayList<NotiRContactsItem> updates = tableRCNotificationUpdates.getAllUpdatesFromDB();
-        NotiRContactsAdapter updtaes = new NotiRContactsAdapter(getActivity(), updates);
-        recyclerRContactsNoti.setAdapter(updtaes);
+        updtaesAdapter = new NotiRContactsAdapter(getActivity(), updates);
+        recyclerRContactsNoti.setAdapter(updtaesAdapter);
         recyclerRContactsNoti.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
@@ -104,11 +105,11 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
                     saveUpdatesToDb(updatesData);
                 }
                 Utils.hideProgressDialog();
-                initData();
+
             }
         } else {
             Utils.hideProgressDialog();
-            Toast.makeText(getActivity(), "Operation failed.. please try again", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -119,7 +120,14 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
             }
             for (RcontactUpdatesData rconUpdate : updatesData) {
                 tableRCNotificationUpdates.addUpdate(rconUpdate);
+                refreshAllList();
             }
         }
+
+    }
+
+    private void refreshAllList() {
+        ArrayList<NotiRContactsItem> updates = tableRCNotificationUpdates.getAllUpdatesFromDB();
+        updtaesAdapter.updateList(updates);
     }
 }

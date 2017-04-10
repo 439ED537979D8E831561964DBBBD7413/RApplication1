@@ -472,7 +472,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.putExtra(AppConstants.EXTRA_OBJECT_LOCATION, textMyAddress.getText()
+                intent.putExtra(AppConstants.EXTRA_OBJECT_LOCATION, textGoogleAddress.getText()
                         .toString());
                 intent.putExtra(AppConstants.EXTRA_OBJECT_ADDRESS, objAddress);
                 setResult(AppConstants.RESULT_CODE_MY_LOCATION_SELECTION, intent);
