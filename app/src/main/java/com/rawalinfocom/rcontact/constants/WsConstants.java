@@ -71,6 +71,8 @@ public class WsConstants {
     public static final String REQ_ADD_EVENT_COMMENT = "event-comment";
     public static final String REQ_GET_EVENT_COMMENT = "get-event-comment";
     public static final String REQ_GET_RCONTACT_UPDATES = "get-rcontact-update";
+    public static final String REQ_PROFILE_PRIVACY_REQUEST = "profile-privacy-request";
+    public static final String REQ_GET_PROFILE_PRIVACY_REQUEST = "get-profile-privacy-request";
 
 
 }
