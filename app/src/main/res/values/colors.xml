@@ -46,5 +46,6 @@
     <color name="button_background_color">#3300796b</color>
     <color name="dialer_green">#033B35</color>
     <color name="dialer_text_gray">#969696</color>
+    <color name="dialer_background">#F0F0F0</color>
 
 </resources>

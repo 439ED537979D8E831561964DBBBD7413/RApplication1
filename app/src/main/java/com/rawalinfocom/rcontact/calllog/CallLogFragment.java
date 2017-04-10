@@ -591,7 +591,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                 if (!TextUtils.isEmpty(value)) {
                     Log.i("callType", value);
                     selectedCallType = value;
-                    spinnerCount = spinnerCount + 1;
 
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
@@ -600,6 +599,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                             if (AppConstants.isFirstTime()) {
                                 AppConstants.setIsFirstTime(false);
                                 loadLogs(selectedCallType);
+                                spinnerCount = spinnerCount + 1;
+
                             } else {
                                 arrayListCallLogs = rContactApplication.getArrayListCallLogType();
                                 makeDataToDisplay(selectedCallType, arrayListCallLogs);
