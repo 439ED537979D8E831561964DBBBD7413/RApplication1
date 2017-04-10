@@ -185,6 +185,7 @@
     <string name="title_activity_call_histroy_detail">CallHistroyDetailActivity</string>
 
     <string name="block_action_title">Blocked contacts list</string>
-    <string name="text_rating_done">Rating Done</string>
-    <string name="text_rating_receive">Rating Receive</string>
+    <string name="dialer_text_add_to_contact">Add to Contacts</string>
+
+
 </resources>
