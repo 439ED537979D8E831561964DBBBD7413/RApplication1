@@ -71,7 +71,6 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -128,6 +127,7 @@
         <activity android:name=".calllog.CallLogDeleteActivity" />
         <activity android:name=".calllog.CallHistoryDetailsActivity" />
         <activity android:name=".BlockContactListActivity"></activity>
+        <activity android:name=".calldialer.DialerActivity"/>
 
         <service
             android:name=".services.CallLogIdFetchService"

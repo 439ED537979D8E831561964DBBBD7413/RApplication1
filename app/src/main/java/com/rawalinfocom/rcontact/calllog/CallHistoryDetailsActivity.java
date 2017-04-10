@@ -550,8 +550,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 if (!TextUtils.isEmpty(blockedNumber)){
                     if (!TextUtils.isEmpty(contactName)) {
                         ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
-                                this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
-                                this.getString(R.string.call_reminder),
+                                /*this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
+                                this.getString(R.string.call_reminder),*/
                                 this.getString(R.string.unblock), this.getString(R.string.delete),
                                 this.getString(R.string.clear_call_log)));
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, contactName,
@@ -563,7 +563,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
                                     this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
                                     this.getString(R.string.copy_phone_number),
-                                    this.getString(R.string.call_reminder), this.getString(R.string.unblock),
+                                    /*this.getString(R.string.call_reminder),*/ this.getString(R.string.unblock),
                                     this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, profileContactNumber,
                                     0, isFromCallLogTab, arrayListHistory,"",uniqueContactId,hashMapKey);
@@ -573,8 +573,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 }else {
                     if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase("[Unknown]")*/) {
                         ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
-                                this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
-                                this.getString(R.string.call_reminder),
+                                /*this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
+                                this.getString(R.string.call_reminder),*/
                                 this.getString(R.string.block), this.getString(R.string.delete),
                                 this.getString(R.string.clear_call_log)));
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, contactName,
@@ -586,7 +586,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
                                     this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
                                     this.getString(R.string.copy_phone_number),
-                                    this.getString(R.string.call_reminder), this.getString(R.string.block),
+                                    /*this.getString(R.string.call_reminder), */this.getString(R.string.block),
                                     this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, profileContactNumber,
                                     0, isFromCallLogTab, arrayListHistory,"",uniqueContactId,"");

@@ -119,7 +119,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG, Manifest
             .permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
     public static CallLogType callLogTypeReceiver;
-    private int LIST_PARTITION_COUNT = 15;
+    private int LIST_PARTITION_COUNT = 10;
     private static boolean startInsertion = false;
     private boolean isFirstTime;
     RContactApplication rContactApplication;
@@ -591,7 +591,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                 if (!TextUtils.isEmpty(value)) {
                     Log.i("callType", value);
                     selectedCallType = value;
-                    spinnerCount = spinnerCount + 1;
 
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
@@ -600,6 +599,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                             if (AppConstants.isFirstTime()) {
                                 AppConstants.setIsFirstTime(false);
                                 loadLogs(selectedCallType);
+                                spinnerCount = spinnerCount + 1;
+
                             } else {
                                 arrayListCallLogs = rContactApplication.getArrayListCallLogType();
                                 makeDataToDisplay(selectedCallType, arrayListCallLogs);

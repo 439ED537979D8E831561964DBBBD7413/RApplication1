@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact;
 import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -44,6 +45,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -392,7 +394,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Dial Pad", Snackbar.LENGTH_SHORT).show();
+//                Snackbar.make(view, "Dial Pad", Snackbar.LENGTH_SHORT).show();
+                openDialer();
             }
         });
 
@@ -419,6 +422,14 @@ public class MainActivity extends BaseActivity implements NavigationView
 
 
     }
+
+    private void openDialer(){
+        Intent intent = new Intent(MainActivity.this, DialerActivity.class);
+        ActivityOptions options = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
+        }
+        startActivity(intent, options.toBundle());    }
 
     private void showAddToContact(boolean value) {
         ImageView imageViewAddContact = (ImageView) findViewById(R.id.image_add_contact);
