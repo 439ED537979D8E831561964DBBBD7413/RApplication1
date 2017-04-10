@@ -16,6 +16,12 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WsRequestObject {
 
+    @JsonProperty("car_id")
+    private int carId;
+
+    @JsonProperty("car_status")
+    private int carStatus;
+
     @JsonProperty("date")
     private String date;
 
@@ -33,6 +39,23 @@ public class WsRequestObject {
 
     @JsonProperty("reply")
     private String reply;
+
+
+    public int getCarId() {
+        return carId;
+    }
+
+    public void setCarId(int carId) {
+        this.carId = carId;
+    }
+
+    public int getCarStatus() {
+        return carStatus;
+    }
+
+    public void setCarStatus(int carStatus) {
+        this.carStatus = carStatus;
+    }
 
     public void setToPmId(int toPmId) {
         this.toPmId = toPmId;

@@ -359,10 +359,10 @@ public class RatingHistory extends BaseActivity implements RippleView
                 heightPercent = 30;
                 break;
             case DisplayMetrics.DENSITY_XHIGH: /*320*/
-                heightPercent = 33;
+                heightPercent = 37;
                 break;
             case DisplayMetrics.DENSITY_XXHIGH: /*480*/
-                heightPercent = 37;
+                heightPercent = 40;
                 break;
             case DisplayMetrics.DENSITY_XXXHIGH: /*680*/
                 heightPercent = 40;

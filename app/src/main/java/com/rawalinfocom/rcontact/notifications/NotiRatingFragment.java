@@ -237,7 +237,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_EVENT_COMMENT, "Getting comments..", true).execute
+                    .REQ_GET_EVENT_COMMENT, getResources().getString(R.string.msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
         } else {
             Toast.makeText(getActivity(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
