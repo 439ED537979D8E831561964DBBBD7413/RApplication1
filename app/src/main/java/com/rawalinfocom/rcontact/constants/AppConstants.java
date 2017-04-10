@@ -59,6 +59,13 @@ public class AppConstants {
 
     //</editor-fold>
 
+    // <editor-fold desc="Result Codes">
+
+    public static int RESULT_CODE_MAP_LOCATION_SELECTION = 3;
+    public static int RESULT_CODE_MY_LOCATION_SELECTION = 4;
+
+    //</editor-fold>
+
     //<editor-fold desc="Intent Extra">
 
     public static String EXTRA_OBJECT_COUNTRY = "extra_object_country";
@@ -97,6 +104,9 @@ public class AppConstants {
     public static String EXTRA_OBJECT_ADDRESS = "extra_object_address";
     public static String EXTRA_CALL_UNIQUE_ID = "extra_call_unique_id";
     public static String EXTRA_UNIQUE_CONTACT_ID = "extra_unique_contact_id";
+    public static String EXTRA_FORMATTED_ADDRESS = "extra_formatted_address";
+    public static String EXTRA_LATITUDE = "extra_latitude";
+    public static String EXTRA_LONGITUDE = "extra_longitude";
 
 
 
@@ -105,6 +115,7 @@ public class AppConstants {
     //<editor-fold desc="Intent Action">
 
     public static String ACTION_CONTACT_FETCH = "action_contact_fetch";
+    public static String ACTION_CALL_LOG_FETCH = "action_call_log_fetch";
     public static String ACTION_START_CALL_LOG_INSERTION = "action_start_call_log_insertion";
     public static String ACTION_LOCAL_BROADCAST = "action_local_broadcast";
     public static String ACTION_LOCAL_BROADCAST_DIALOG = "action_local_broadcast_dialog";
@@ -115,6 +126,7 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_PROFILE_BLOCK= "action_local_broadcast_profile_block";
     public static String ACTION_LOCAL_BROADCAST_UNBLOCK = "action_local_broadcast_unblock";
     public static String ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY = "action_local_broadcast_call_history_activity";
+    public static String ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC = "action_local_broadcast_call_log_sync";
 
 
 
@@ -154,6 +166,9 @@ public class AppConstants {
     public static String PREF_BLOCK_PROFILE = "pref_block_profile";
     public static String PREF_CALL_LOG_LIST = "pref_call_log_list";
     public static String PREF_CONTACT_LAST_SYNC_TIME = "pref_contact_last_sync_time";
+    public static String PREF_CALL_LOGS_ID_SET = "pref_call_logs_id_set";
+    public static String PREF_CALL_LOG_SYNCED_COUNT = "pref_call_log_synced_count";
+    public static String PREF_CALL_LOG_TO_FETCH_COUNT = "pref_call_log_to_fetch_count";
 
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
@@ -182,6 +197,16 @@ public class AppConstants {
 
     public static void setIsCallLogFragment(boolean isCallLogFragment) {
         AppConstants.isCallLogFragment = isCallLogFragment;
+    }
+
+    public static boolean isFirstTime;
+
+    public static boolean isFirstTime() {
+        return isFirstTime;
+    }
+
+    public static void setIsFirstTime(boolean isFirstTime) {
+        AppConstants.isFirstTime = isFirstTime;
     }
     //</editor-fold>
 

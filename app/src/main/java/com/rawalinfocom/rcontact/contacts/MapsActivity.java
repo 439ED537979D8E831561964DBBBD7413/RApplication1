@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.contacts;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -57,24 +60,30 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
     ImageView imageRightRight;
     @BindView(R.id.ripple_action_right_right)
     RippleView rippleActionRightRight;
-    @BindView(R.id.image_right_left)
-    ImageView imageRightLeft;
-    @BindView(R.id.ripple_action_right_left)
-    RippleView rippleActionRightLeft;
+    /* @BindView(R.id.image_right_left)
+     ImageView imageRightLeft;
+     @BindView(R.id.ripple_action_right_left)
+     RippleView rippleActionRightLeft;*/
     @BindView(R.id.linear_action_right)
     LinearLayout linearActionRight;
-    @BindView(R.id.relative_last_address)
-    RelativeLayout relativeLastAddress;
+    /* @BindView(R.id.relative_last_address)
+     RelativeLayout relativeLastAddress;*/
     @BindView(R.id.relative_action_back)
     RelativeLayout relativeActionBack;
-    @BindView(R.id.text_label_address)
-    TextView textLabelAddress;
-    @BindView(R.id.text_address)
-    TextView textAddress;
-    @BindView(R.id.button_cancel)
-    Button buttonCancel;
-    @BindView(R.id.button_done)
-    Button buttonDone;
+    /* @BindView(R.id.text_label_address)
+     TextView textLabelAddress;
+     @BindView(R.id.text_address)
+     TextView textAddress;
+     @BindView(R.id.button_cancel)
+     Button buttonCancel;
+     @BindView(R.id.button_done)
+     Button buttonDone;*/
+    @BindView(R.id.button_fetch_address)
+    Button buttonFetchAddress;
+    @BindView(R.id.relative_fetch_address)
+    RelativeLayout relativeFetchAddress;
+    @BindView(R.id.ripple_fetch_address)
+    RippleView rippleFetchAddress;
 
 
     SupportMapFragment mapFragment;
@@ -86,6 +95,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
     GPSTracker gpsTracker;
     ReverseGeocodingAddress objAddress;
 
+    private String defaultFormattedAddress = "Surat, Gujarat, India";
+
     //<editor-fold desc="Override Methods">
 
     @Override
@@ -95,6 +106,29 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
         ButterKnife.bind(this);
 
         gpsTracker = new GPSTracker(this, null);
+
+        Intent intent = getIntent();
+
+        if (intent != null) {
+            if (intent.hasExtra(AppConstants.EXTRA_FORMATTED_ADDRESS)) {
+                defaultFormattedAddress = intent.getStringExtra(AppConstants
+                        .EXTRA_FORMATTED_ADDRESS);
+            }
+            if (intent.hasExtra(AppConstants.EXTRA_LATITUDE)) {
+                try {
+                    latitude = intent.getDoubleExtra(AppConstants.EXTRA_LATITUDE, 0);
+                } catch (Exception ignore) {
+                }
+            }
+            if (intent.hasExtra(AppConstants.EXTRA_LONGITUDE)) {
+                try {
+                    longitude = intent.getDoubleExtra(AppConstants.EXTRA_LONGITUDE, 0);
+                } catch (Exception ignore) {
+                }
+
+            }
+        }
+
 
         init();
     }
@@ -178,7 +212,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
             else if (serviceType.contains(WsConstants.REQ_GEO_CODING_ADDRESS)) {
 
                 Utils.hideSoftKeyboard(this, inputSearchLocation);
-                relativeLastAddress.setVisibility(View.VISIBLE);
+//                relativeLastAddress.setVisibility(View.VISIBLE);
 
                 objAddress = (ReverseGeocodingAddress) data;
 
@@ -193,8 +227,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                         if (latitude != 0 && longitude != 0) {
                             if (serviceType.contains("_TRUE")) {
                                 addMapMarker();
+                            } else {
+                                showAddressDialog(objAddress.getAddress());
                             }
-                            textAddress.setText(objAddress.getAddress());
+//                            textAddress.setText(objAddress.getAddress());
+//                            showAddressDialog(objAddress.getAddress());
                         } else {
                             Utils.showErrorSnackBar(this, relativeRootMap, "Unable to find " +
                                     "Location");
@@ -221,11 +258,24 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
     public void onComplete(RippleView rippleView) {
 
         switch (rippleView.getId()) {
+
             case R.id.ripple_action_back:
                 onBackPressed();
                 break;
 
-            case R.id.ripple_action_right_left:
+
+            case R.id.ripple_fetch_address:
+               /* if (objAddress != null) {
+                    showAddressDialog(objAddress.getAddress());
+                } else {*/
+                AsyncGeoCoding asyncGeoCodingFetch = new AsyncGeoCoding(this, true, WsConstants
+                        .REQ_GEO_CODING_ADDRESS + "_FALSE");
+                asyncGeoCodingFetch.execute(null, String.valueOf(latitude), String.valueOf
+                        (longitude));
+//                }
+                break;
+
+            /*case R.id.ripple_action_right_left:
                 if (StringUtils.length(StringUtils.trim(inputSearchLocation.getText().toString())
                 ) > 0) {
                     AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(this, true, WsConstants
@@ -235,13 +285,24 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 } else {
                     Utils.showErrorSnackBar(this, relativeRootMap, "Please add Address to search");
                 }
-                break;
+                break;*/
 
             case R.id.ripple_action_right_right:
-                AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(this, true, WsConstants
+             /*   AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(this, true, WsConstants
                         .REQ_GEO_CODING_ADDRESS + "_FALSE");
                 asyncGeoCoding.execute(null, String.valueOf(latitude), String.valueOf(longitude));
-//                getLocationDetail();
+//                getLocationDetail();*/
+
+                if (StringUtils.length(StringUtils.trim(inputSearchLocation.getText().toString())
+                ) > 0) {
+                    AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(this, true, WsConstants
+                            .REQ_GEO_CODING_ADDRESS + "_TRUE");
+                    asyncGeoCoding.execute(StringUtils.trim(inputSearchLocation.getText()
+                            .toString()));
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootMap, "Please add Address to search");
+                }
+
                 break;
         }
 
@@ -292,29 +353,30 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
 
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionRightRight.setOnRippleCompleteListener(this);
-        rippleActionRightLeft.setOnRippleCompleteListener(this);
+        rippleFetchAddress.setOnRippleCompleteListener(this);
 
-        textLabelAddress.setTypeface(Utils.typefaceSemiBold(this));
-        textAddress.setTypeface(Utils.typefaceRegular(this));
-        buttonCancel.setTypeface(Utils.typefaceRegular(this));
-        buttonDone.setTypeface(Utils.typefaceRegular(this));
+        if (latitude == 0 || longitude == 0) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission
+                    .ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
+                        .ACCESS_FINE_LOCATION}, AppConstants
+                        .MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission
-                .ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
-                    .ACCESS_FINE_LOCATION}, AppConstants
-                    .MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-
-        } else {
-            if (Utils.isLocationEnabled(this)) {
-                getLocationDetail();
             } else {
-                gpsTracker.showSettingsAlert();
+                if (Utils.isLocationEnabled(this)) {
+                    getLocationDetail();
+                } else {
+                    gpsTracker.showSettingsAlert();
+                }
             }
+        } else {
+            AsyncReverseGeoCoding asyncReverseGeoCoding = new AsyncReverseGeoCoding(this,
+                    WsConstants.REQ_REVERSE_GEO_CODING_ADDRESS, false);
+            asyncReverseGeoCoding.execute(new LatLng(latitude, longitude));
         }
 
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
+        /*buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 relativeLastAddress.setVisibility(View.GONE);
@@ -332,7 +394,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 finish();
                 overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
             }
-        });
+        });*/
 
     }
 
@@ -360,6 +422,66 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 .REQ_REVERSE_GEO_CODING_ADDRESS, false);
         asyncReverseGeoCoding.execute(new LatLng(latitude, longitude));
 
+    }
+
+    private void showAddressDialog(String googleAddress) {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_map_address);
+        dialog.setCancelable(true);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        TextView textLabelMyAddress = (TextView) dialog.findViewById(R.id.text_label_my_address);
+        final TextView textMyAddress = (TextView) dialog.findViewById(R.id.text_my_address);
+        TextView textLabelGoogleAddress = (TextView) dialog.findViewById(R.id
+                .text_label_google_address);
+        final TextView textGoogleAddress = (TextView) dialog.findViewById(R.id.text_google_address);
+        Button buttonMyAddress = (Button) dialog.findViewById(R.id.button_my_address);
+        Button buttonGoogleAddress = (Button) dialog.findViewById(R.id.button_google_address);
+
+        textMyAddress.setText(defaultFormattedAddress);
+        textGoogleAddress.setText(googleAddress);
+
+        textLabelMyAddress.setTypeface(Utils.typefaceSemiBold(this));
+        textLabelGoogleAddress.setTypeface(Utils.typefaceSemiBold(this));
+        textMyAddress.setTypeface(Utils.typefaceRegular(this));
+        textGoogleAddress.setTypeface(Utils.typefaceRegular(this));
+        buttonMyAddress.setTypeface(Utils.typefaceRegular(this));
+        buttonGoogleAddress.setTypeface(Utils.typefaceRegular(this));
+
+        buttonGoogleAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtra(AppConstants.EXTRA_OBJECT_LOCATION, textGoogleAddress.getText()
+                        .toString());
+                intent.putExtra(AppConstants.EXTRA_OBJECT_ADDRESS, objAddress);
+                setResult(AppConstants.RESULT_CODE_MAP_LOCATION_SELECTION, intent);
+                finish();
+                overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
+            }
+        });
+
+        buttonMyAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtra(AppConstants.EXTRA_OBJECT_LOCATION, textGoogleAddress.getText()
+                        .toString());
+                intent.putExtra(AppConstants.EXTRA_OBJECT_ADDRESS, objAddress);
+                setResult(AppConstants.RESULT_CODE_MY_LOCATION_SELECTION, intent);
+                finish();
+                overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
+            }
+        });
+
+        dialog.show();
     }
 
     //</editor-fold>
