@@ -257,7 +257,6 @@ public class Utils {
     }
 
 
-
     public static void setIntegerPreference(Context context, String key, int value) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
@@ -331,14 +330,14 @@ public class Utils {
         return gson.fromJson(json, type);
     }
 
-    public static HashMap<String,ArrayList<CallLogType>> getHashMapPreferenceForBlock(Context context, String key) {
+    public static HashMap<String, ArrayList<CallLogType>> getHashMapPreferenceForBlock(Context context, String key) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedpreferences.getString(key, null);
         /*Type type = new TypeToken<HashMap>() {
         }.getType();*/
-        Type type = new TypeToken<HashMap<String,ArrayList<CallLogType>>>() {
+        Type type = new TypeToken<HashMap<String, ArrayList<CallLogType>>>() {
         }.getType();
         return gson.fromJson(json, type);
     }
@@ -616,7 +615,7 @@ public class Utils {
             dateFormatter.setTimeZone(TimeZone.getDefault());
             timeStamp = dateFormatter.format(value);
         } catch (Exception e) {
-            timeStamp = "00-00-0000 00:00";
+            timeStamp = "";
         }
         return timeStamp;
     }
