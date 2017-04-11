@@ -162,13 +162,11 @@
     <string name="recent_events">Recent Events</string>
     <string name="upcoming_events">Upcoming Events</string>
     <string name="past_pending_requests">Past Pending Requests</string>
-
     <string name="text_birthday">Birthday</string>
     <string name="text_anniversary">Anniversary</string>
     <string name="text_custom">Custom</string>
     <string name="text_rating">Rating</string>
     <string name="msg_please_enter_some_comment">Please enter some comment first!</string>
-
     <string name="text_wishes_on_your">Wishes you on your\u0020</string>
     <string name="text_year_old">Year Old</string>
     <string name="text_years_old">Years Old</string>
@@ -176,14 +174,23 @@
     <string name="text_you_wrote_on_timeline">You wrote to %1$s\'s Timeline</string>
     <string name="text_reply_you_on_your">%1$s reply you on your message</string>
     <string name="text_rate_you">Rate you</string>
-
+    <string name="text_rating_done">Rating Done</string>
+    <string name="text_rating_receive">Rating Receive</string>
+    <string name="text_tab_profile">Profile</string>
+    <string name="text_tab_request">Requests</string>
+    <string name="text_tab_response">Response</string>
+    <string name="text_tab_comments">Comments</string>
+    <string name="text_tab_rcontact">RContact</string>
+    <string name="text_notifications">Notifications</string>
+    <string name="text_you_rated">You rated</string>
+    <string name="text_rated_you">Rated you</string>
     <string name="footer_noti_rating_text">Switch to Website for more 20 Notifications</string>
     <string name="footer_noti_comments_text">If you want to see Previous Timeline Comments switch to Website</string>
     <string name="footer_events_text">If you want to see Upcoming Events switch to Website</string>
     <string name="footer_timeline_text">If you want to see Previous Timeline Events switch to Website</string>
+    <string name="footer_rating_history_text">If you want to see Contact Rating History switch to Website</string>
 
     <string name="title_activity_call_histroy_detail">CallHistroyDetailActivity</string>
-
     <string name="block_action_title">Blocked contacts list</string>
     <string name="dialer_text_add_to_contact">Add to Contacts</string>
 

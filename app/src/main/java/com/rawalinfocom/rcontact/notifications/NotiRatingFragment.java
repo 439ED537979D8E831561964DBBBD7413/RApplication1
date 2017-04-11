@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
@@ -97,6 +98,10 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
     @BindView(R.id.layout_root)
     RelativeLayout layoutRoot;
     SoftKeyboard softKeyboard;
+    String today;
+    String yesterDay;
+    String dayBeforeYesterday;
+    String pastday5thDay;
 
     @Override
     public void getFragmentArguments() {
@@ -121,16 +126,17 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         ButterKnife.bind(this, view);
         init();
         tableCommentMaster = new TableCommentMaster(getDatabaseHandler());
+        initData();
         getAllRatingComment(this);
-        //initData();
+
     }
 
     private void initData() {
 
-        String today = getDate(0); // 22
-        String yesterDay = getDate(-1); // 21
-        String dayBeforeYesterday = getDate(-2); //20
-        String pastday5thDay = getDate(-6); //16
+        today = getDate(0);
+        yesterDay = getDate(-1);
+        dayBeforeYesterday = getDate(-2);
+        pastday5thDay = getDate(-6);
 
         ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllRatingReplyReceived(today, today);
         ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllRatingReplyReceived(yesterDay, yesterDay);
@@ -144,58 +150,55 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         yesterdayRatingAdapter = new NotiRatingAdapter(getActivity(), listYesterdayRating, 1);
         pastRatingAdapter = new NotiRatingAdapter(getActivity(), listPastRating, 2);
 
+        recyclerTodayRating.setAdapter(todayRatingAdapter);
+        recyclerYesterDayRating.setAdapter(yesterdayRatingAdapter);
+        recyclerPastDayRating.setAdapter(pastRatingAdapter);
+        updateHeight();
+    }
+
+    private void updateHeight() {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         int density = getResources().getDisplayMetrics().densityDpi;
         int heightPercent = 40;
-        int maxItemCount = 1;
+
         switch (density) {
             case DisplayMetrics.DENSITY_LOW: /*120*/
                 heightPercent = 30;
-                maxItemCount = 1;
+
                 break;
             case DisplayMetrics.DENSITY_MEDIUM: /*160*/
                 heightPercent = 30;
-                maxItemCount = 1;
+
                 break;
-            case DisplayMetrics.DENSITY_HIGH: /*320*/
+            case DisplayMetrics.DENSITY_HIGH: /*240*/
                 heightPercent = 35;
-                maxItemCount = 1;
+                break;
+            case DisplayMetrics.DENSITY_XHIGH: /*320*/
+                heightPercent = 37;
                 break;
             case DisplayMetrics.DENSITY_XXHIGH: /*480*/
             case DisplayMetrics.DENSITY_XXXHIGH: /*680*/
                 heightPercent = 40;
-                maxItemCount = 2;
+
                 break;
         }
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = (displaymetrics.heightPixels * heightPercent) / 100;
 
-        recyclerTodayRating.setAdapter(todayRatingAdapter);
-        recyclerTodayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerTodayRating, height));
-        RecyclerView.Adapter mAdapter = recyclerTodayRating.getAdapter();
-        int totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > maxItemCount) {
-            recyclerTodayRating.getLayoutParams().height = height;
-        }
+        setRecyclerViewHeight(recyclerTodayRating, height);
+        setRecyclerViewHeight(recyclerYesterDayRating, height);
+        setRecyclerViewHeight(recyclerPastDayRating, height);
+    }
 
-        recyclerYesterDayRating.setAdapter(yesterdayRatingAdapter);
-        recyclerYesterDayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerYesterDayRating, height));
-        mAdapter = recyclerYesterDayRating.getAdapter();
-        totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > maxItemCount) {
-            recyclerYesterDayRating.getLayoutParams().height = height;
+    private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int heightRecycler = recyclerView.getMeasuredHeight();
+        if (heightRecycler > height) {
+            recyclerView.getLayoutParams().height = height;
+        } else {
+            recyclerView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
-
-        recyclerPastDayRating.setAdapter(pastRatingAdapter);
-        recyclerPastDayRating.setLayoutManager(new CustomLayoutManager(getActivity(), recyclerPastDayRating, height));
-        mAdapter = recyclerPastDayRating.getAdapter();
-        totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > maxItemCount) {
-            recyclerPastDayRating.getLayoutParams().height = height;
-        }
-
-        recyclerYesterDayRating.setVisibility(View.GONE);
-        recyclerPastDayRating.setVisibility(View.GONE);
     }
 
     private String getDate(int dayToAddorSub) {
@@ -234,7 +237,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_EVENT_COMMENT, "Getting comments..", true).execute
+                    .REQ_GET_EVENT_COMMENT, getResources().getString(R.string.msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
         } else {
             Toast.makeText(getActivity(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
@@ -342,10 +345,14 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
                     todayRatingAdapter.updateList(listTodayRating);
                     yesterdayRatingAdapter.updateList(listYesterdayRating);
                     pastRatingAdapter.updateList(listPastRating);
+                    updateHeight();
                 }
                 return false;
             }
         });
+
+        recyclerYesterDayRating.setVisibility(View.GONE);
+        recyclerPastDayRating.setVisibility(View.GONE);
     }
 
     private void filter(String query) {
@@ -374,6 +381,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
                 }
             }
             pastRatingAdapter.updateList(temp);
+            updateHeight();
         }
     }
 
@@ -386,8 +394,10 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
                 ArrayList<EventCommentData> eventSendCommentData = wsResponseObject.getEventSendCommentData();
                 saveReplyDataToDb(eventSendCommentData);
                 Utils.hideProgressDialog();
-                initData();
             }
+        } else {
+            Utils.hideProgressDialog();
+            Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -401,6 +411,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
                 for (EventComment eventComment : allRatingComments) {
                     tableCommentMaster.addReply(eventComment.getPrId(), eventComment.getReply(),
                             Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+                    refreshAllList();
                 }
             }
         }
@@ -411,5 +422,22 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         super.onDestroy();
         softKeyboard.unRegisterSoftKeyboardCallback();
 
+    }
+
+    private void refreshAllList() {
+
+        ArrayList<Comment> replyReceivedToday = tableCommentMaster.getAllRatingReplyReceived(today, today);
+        ArrayList<Comment> replyReceivedYesterDay = tableCommentMaster.getAllRatingReplyReceived(yesterDay, yesterDay);
+        ArrayList<Comment> replyReceivedPastDays = tableCommentMaster.getAllRatingReplyReceived(pastday5thDay, dayBeforeYesterday);
+
+        listTodayRating = createRatingReplyList(replyReceivedToday);
+        listYesterdayRating = createRatingReplyList(replyReceivedYesterDay);
+        listPastRating = createRatingReplyList(replyReceivedPastDays);
+
+        todayRatingAdapter.updateList(listTodayRating);
+        yesterdayRatingAdapter.updateList(listYesterdayRating);
+        pastRatingAdapter.updateList(listPastRating);
+
+        updateHeight();
     }
 }

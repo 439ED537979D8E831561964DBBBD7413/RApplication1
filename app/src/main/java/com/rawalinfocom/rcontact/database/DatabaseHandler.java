@@ -45,6 +45,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         /*db.execSQL(TableContactRatingMaster.CREATE_TABLE_RC_CONTACT_RATING_MASTER);*/
         db.execSQL(TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);
         db.execSQL(TableRCNotificationUpdates.CREATE_TABLE_RC_NOTIFICATION_UPDATES);
+        db.execSQL(TableRCContactRequest.CREATE_TABLE_RC_CONTACT_REQUEST);
     }
 
     @Override
@@ -73,6 +74,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 .CREATE_TABLE_RC_CONTACT_RATING_MASTER);*/
         db.execSQL("DROP TABLE IF EXISTS " + TableCommentMaster.CREATE_TABLE_RC_COMMENT_MASTER);
         db.execSQL("DROP TABLE IF EXISTS " + TableRCNotificationUpdates.CREATE_TABLE_RC_NOTIFICATION_UPDATES);
+        db.execSQL("DROP TABLE IF EXISTS " + TableRCContactRequest.CREATE_TABLE_RC_CONTACT_REQUEST);
         // create new tables
         onCreate(db);
     }

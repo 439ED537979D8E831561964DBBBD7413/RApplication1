@@ -41,15 +41,20 @@ public class NotificationPopupListAdapter extends RecyclerView.Adapter<Notificat
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.textWisherName.setText(stringArrayList.get(0));
         holder.textTimelineNotiTime.setText(stringArrayList.get(1));
-        if (stringArrayList.get(2).length() > 0) {
+        if (stringArrayList.get(2) != null && stringArrayList.get(2).length() > 0) {
             holder.textWisherComment.setText(stringArrayList.get(2));
         } else {
             holder.textWisherComment.setVisibility(View.GONE);
         }
         holder.textWisherCommentTime.setText(stringArrayList.get(3));
-
-        holder.textUserComment.setText(stringArrayList.get(4));
-        holder.textUserCommentTime.setText(stringArrayList.get(5));
+        if (stringArrayList.get(4) != null && stringArrayList.get(4).length() > 0) {
+            holder.textUserComment.setText(stringArrayList.get(4));
+            holder.textUserCommentTime.setText(stringArrayList.get(5));
+        } else {
+            holder.textUserComment.setVisibility(View.GONE);
+            holder.textUserCommentTime.setVisibility(View.GONE);
+            holder.imageUser.setVisibility(View.GONE);
+        }
     }
 
     @Override

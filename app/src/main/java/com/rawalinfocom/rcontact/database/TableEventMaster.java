@@ -30,6 +30,7 @@ public class TableEventMaster {
     private static final String COLUMN_EVM_RECORD_INDEX_ID = "evm_record_index_id";
     static final String COLUMN_EVM_START_DATE = "evm_start_date";
     static final String COLUMN_EVM_EVENT_TYPE = "evm_event_type";
+    static final String COLUMN_EVM_IS_YEAR_HIDDEN = "evm_is_year_hidden";
     static final String COLUMN_EVM_EVENT_PRIVACY = "evm_event_privacy";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
@@ -42,6 +43,7 @@ public class TableEventMaster {
             " " + COLUMN_EVM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_EVM_START_DATE + " text NOT NULL," +
             " " + COLUMN_EVM_EVENT_TYPE + " text NOT NULL," +
+            " " + COLUMN_EVM_IS_YEAR_HIDDEN + " integer," +
             " " + COLUMN_EVM_EVENT_PRIVACY + " integer DEFAULT 1," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
             ");";
@@ -55,6 +57,7 @@ public class TableEventMaster {
         values.put(COLUMN_EVM_RECORD_INDEX_ID, event.getEvmRecordIndexId());
         values.put(COLUMN_EVM_START_DATE, event.getEvmStartDate());
         values.put(COLUMN_EVM_EVENT_TYPE, event.getEvmEventType());
+        values.put(COLUMN_EVM_IS_YEAR_HIDDEN, event.getEvmIsYearHidden());
         values.put(COLUMN_EVM_EVENT_PRIVACY, event.getEvmEventPrivacy());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, event.getRcProfileMasterPmId());
 
@@ -75,6 +78,7 @@ public class TableEventMaster {
             values.put(COLUMN_EVM_RECORD_INDEX_ID, arrayListEvent.get(i).getEvmRecordIndexId());
             values.put(COLUMN_EVM_START_DATE, arrayListEvent.get(i).getEvmStartDate());
             values.put(COLUMN_EVM_EVENT_TYPE, arrayListEvent.get(i).getEvmEventType());
+            values.put(COLUMN_EVM_IS_YEAR_HIDDEN, arrayListEvent.get(i).getEvmIsYearHidden());
             values.put(COLUMN_EVM_EVENT_PRIVACY, arrayListEvent.get(i).getEvmEventPrivacy());
             values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListEvent.get(i)
                     .getRcProfileMasterPmId());
@@ -91,7 +95,8 @@ public class TableEventMaster {
 
         Cursor cursor = db.query(TABLE_RC_EVENT_MASTER, new String[]{COLUMN_EVM_ID,
                         COLUMN_EVM_RECORD_INDEX_ID, COLUMN_EVM_START_DATE, COLUMN_EVM_EVENT_TYPE,
-                        COLUMN_EVM_EVENT_PRIVACY, COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_EVM_ID
+                        COLUMN_EVM_IS_YEAR_HIDDEN, COLUMN_EVM_EVENT_PRIVACY,
+                        COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_EVM_ID
                         + "=?",
                 new String[]{String.valueOf(evmId)}, null, null, null, null);
 
@@ -102,6 +107,8 @@ public class TableEventMaster {
                     (COLUMN_EVM_RECORD_INDEX_ID)));
             event.setEvmStartDate(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_START_DATE)));
             event.setEvmEventType(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_EVENT_TYPE)));
+            event.setEvmIsYearHidden(cursor.getInt(cursor.getColumnIndex
+                    (COLUMN_EVM_IS_YEAR_HIDDEN)));
             event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
                     (COLUMN_EVM_EVENT_PRIVACY)));
             event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
@@ -121,7 +128,8 @@ public class TableEventMaster {
 
         Cursor cursor = db.query(TABLE_RC_EVENT_MASTER, new String[]{COLUMN_EVM_ID,
                         COLUMN_EVM_RECORD_INDEX_ID, COLUMN_EVM_START_DATE, COLUMN_EVM_EVENT_TYPE,
-                        COLUMN_EVM_EVENT_PRIVACY, COLUMN_RC_PROFILE_MASTER_PM_ID},
+                        COLUMN_EVM_IS_YEAR_HIDDEN, COLUMN_EVM_EVENT_PRIVACY,
+                        COLUMN_RC_PROFILE_MASTER_PM_ID},
                 COLUMN_EVM_RECORD_INDEX_ID + "=?", new String[]{String.valueOf(evmRecordIndexId)
                 }, null, null, null, null);
 
@@ -132,6 +140,8 @@ public class TableEventMaster {
                     (COLUMN_EVM_RECORD_INDEX_ID)));
             event.setEvmStartDate(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_START_DATE)));
             event.setEvmEventType(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_EVENT_TYPE)));
+            event.setEvmIsYearHidden(cursor.getInt(cursor.getColumnIndex
+                    (COLUMN_EVM_IS_YEAR_HIDDEN)));
             event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
                     (COLUMN_EVM_EVENT_PRIVACY)));
             event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
@@ -154,6 +164,7 @@ public class TableEventMaster {
                 COLUMN_EVM_START_DATE + ", " +
                 COLUMN_EVM_EVENT_TYPE + ", " +
                 COLUMN_EVM_EVENT_PRIVACY + ", " +
+                COLUMN_EVM_IS_YEAR_HIDDEN + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
                 TABLE_RC_EVENT_MASTER + " WHERE " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
@@ -171,6 +182,8 @@ public class TableEventMaster {
                         (COLUMN_EVM_START_DATE)));
                 event.setEvmEventType(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EVM_EVENT_TYPE)));
+                event.setEvmIsYearHidden(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_EVM_IS_YEAR_HIDDEN)));
                 event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EVM_EVENT_PRIVACY)));
                 event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
@@ -209,6 +222,8 @@ public class TableEventMaster {
                         (COLUMN_EVM_START_DATE)));
                 event.setEvmEventType(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EVM_EVENT_TYPE)));
+                event.setEvmIsYearHidden(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_EVM_IS_YEAR_HIDDEN)));
                 event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EVM_EVENT_PRIVACY)));
                 event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
@@ -300,6 +315,7 @@ public class TableEventMaster {
         values.put(COLUMN_EVM_RECORD_INDEX_ID, event.getEvmRecordIndexId());
         values.put(COLUMN_EVM_START_DATE, event.getEvmStartDate());
         values.put(COLUMN_EVM_EVENT_TYPE, event.getEvmEventType());
+        values.put(COLUMN_EVM_IS_YEAR_HIDDEN, event.getEvmIsYearHidden());
         values.put(COLUMN_EVM_EVENT_PRIVACY, event.getEvmEventPrivacy());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, event.getRcProfileMasterPmId());
 
