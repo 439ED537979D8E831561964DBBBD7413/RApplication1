@@ -8,6 +8,7 @@ import android.provider.CallLog;
 import android.provider.ContactsContract;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -20,6 +21,7 @@ import java.util.Date;
  * Created by user on 08/02/17.
  */
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CallLogType implements Serializable {
 
@@ -41,16 +43,24 @@ public class CallLogType implements Serializable {
     @JsonIgnore
     private String logDate;
 
-    @JsonIgnore
+    //    @JsonIgnore
+    @JsonProperty("historyNumber")
     private String historyNumber;
-    @JsonIgnore
+    //    @JsonIgnore
+    @JsonProperty("historyDate")
     private long historyDate;
+
+    @JsonProperty("historyDuration")
+    private String historyCallTime;
+    //    @JsonIgnore
+    @JsonProperty("historyType")
+    private int historyType;
+    //    @JsonIgnore
+    @JsonProperty("historyNumberType")
+    private String historyNumberType;
+
     @JsonIgnore
     private int historyDuration;
-    @JsonIgnore
-    private int historyType;
-    @JsonIgnore
-    private String historyNumberType;
     @JsonIgnore
     private int historyLogCount;
     @JsonIgnore
@@ -141,6 +151,7 @@ public class CallLogType implements Serializable {
     public void setArrayListCallHistory(ArrayList<CallLogType> arrayListCallHistory) {
         this.arrayListCallHistory = arrayListCallHistory;
     }
+
     public String getName() {
         return name;
     }
@@ -257,6 +268,7 @@ public class CallLogType implements Serializable {
         this.historyNumber = historyNumber;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public long getHistoryDate() {
         return historyDate;
     }
@@ -272,7 +284,7 @@ public class CallLogType implements Serializable {
     public void setHistoryDuration(int historyDuration) {
         this.historyDuration = historyDuration;
     }
-
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public int getHistoryType() {
         return historyType;
     }
@@ -390,5 +402,13 @@ public class CallLogType implements Serializable {
 
     public void setBlockedType(int blockedType) {
         this.blockedType = blockedType;
+    }
+
+    public String getHistoryCallTime() {
+        return historyCallTime;
+    }
+
+    public void setHistoryCallTime(String historyCallTime) {
+        this.historyCallTime = historyCallTime;
     }
 }
