@@ -310,7 +310,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                 rContactApplication.setArrayListCallLogType(arrayListCallLogs);
                 ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
                 callLogTypeArrayList.add(callLogTypeReceiver);
-                if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_SYNC_CALL_LOG, false)) {
+                if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_SYNC_CALL_LOG, false) &&
+                        Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED,
+                                false)) {
                     insertServiceCall(callLogTypeArrayList);
                 }
             }
@@ -958,17 +960,20 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
     private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
 
-        WsRequestObject deviceDetailObject = new WsRequestObject();
-        deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
-        if (Utils.isNetworkAvailable(getActivity())) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_UPLOAD_CALL_LOGS, null, true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
-        } else {
-            Utils.showErrorSnackBar(getActivity(), linearCallLogMain, getResources()
-                    .getString(R.string.msg_no_network));
+        if(Utils.isNetworkAvailable(getActivity())){
+            WsRequestObject deviceDetailObject = new WsRequestObject();
+            deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
+            if (Utils.isNetworkAvailable(getActivity())) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                        deviceDetailObject, null, WsResponseObject.class, WsConstants
+                        .REQ_UPLOAD_CALL_LOGS, null, true).execute
+                        (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
+            } else {
+                Utils.showErrorSnackBar(getActivity(), linearCallLogMain, getResources()
+                        .getString(R.string.msg_no_network));
+            }
         }
+
     }
 
     private ArrayList<ArrayList<String>> chopped(ArrayList<String> list, final int L) {

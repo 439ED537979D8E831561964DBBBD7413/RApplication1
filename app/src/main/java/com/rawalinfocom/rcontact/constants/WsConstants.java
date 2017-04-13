@@ -19,7 +19,7 @@ public class WsConstants {
     public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
 
     //    Maulik
-    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
 
     // Shailesh
 //    public static final String WS_ROOT = "http://10.0.21.14:8000/api/v1/";
@@ -73,6 +73,7 @@ public class WsConstants {
     public static final String REQ_GET_RCONTACT_UPDATES = "get-rcontact-update";
     public static final String REQ_PROFILE_PRIVACY_REQUEST = "profile-privacy-request";
     public static final String REQ_GET_PROFILE_PRIVACY_REQUEST = "get-profile-privacy-request";
+    public static final String REQ_GET_CALL_LOG_HISTORY_REQUEST = "call-history";
 
 
 }

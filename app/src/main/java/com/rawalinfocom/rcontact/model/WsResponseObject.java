@@ -53,6 +53,8 @@ public class WsResponseObject {
     private ArrayList<ProfileDataOperation> arrayListUserRcProfile;
     private ArrayList<ProfileData> arrayListMapping;
 
+    private  ArrayList<CallLogType> arrayListCallLogHistory;
+
     private String profileSharingData;
 
     public ArrayList<PrivacyRequestDataItem> getPrivacyRequestData() {
@@ -181,5 +183,9 @@ public class WsResponseObject {
 
     public void setArrayListMapping(ArrayList<ProfileData> arrayListMapping) {
         this.arrayListMapping = arrayListMapping;
+    }
+    @JsonProperty("call_history")
+    public ArrayList<CallLogType> getArrayListCallLogHistory() {
+        return arrayListCallLogHistory;
     }
 }

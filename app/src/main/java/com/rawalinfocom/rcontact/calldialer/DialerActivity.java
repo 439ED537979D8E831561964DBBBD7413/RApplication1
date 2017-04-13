@@ -116,8 +116,7 @@ public class DialerActivity extends Activity {
         ButterKnife.bind(this);
 
         editTextNumber.setCursorVisible(false);
-        initandClickEvents();;
-
+        initandClickEvents();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setEnterTransition(makeEnterTransition());

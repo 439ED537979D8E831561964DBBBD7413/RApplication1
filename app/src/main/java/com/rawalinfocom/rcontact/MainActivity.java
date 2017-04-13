@@ -330,7 +330,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             if (temp != null && temp.size() > 0)
                                 insertServiceCall(newList);
                         } else {
-                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
                         }
 
                     } else {
@@ -341,7 +341,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
                         }
                         else {
-                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
                             Utils.setBooleanPreference(this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, true);
                         }
@@ -656,7 +656,7 @@ public class MainActivity extends BaseActivity implements NavigationView
             for(int i=0; i<listOfRowIds.size();i++){
                 String uniqueCallLogId =  listOfRowIds.get(i);
                 if(!TextUtils.isEmpty(uniqueCallLogId)){
-                    String order = CallLog.Calls.DATE + " DESC";
+                    String order = CallLog.Calls.DATE + " ASC";
                     Cursor cursor =  this.getContentResolver().query(CallLog.Calls.CONTENT_URI,
                             null, CallLog.Calls._ID +" = " + uniqueCallLogId , null, order);
 
@@ -764,14 +764,17 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
     private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
 
-        WsRequestObject deviceDetailObject = new WsRequestObject();
-        deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_UPLOAD_CALL_LOGS, null, true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
+        if(Utils.isNetworkAvailable(MainActivity.this)){
+            WsRequestObject deviceDetailObject = new WsRequestObject();
+            deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
+            if (Utils.isNetworkAvailable(this)) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                        deviceDetailObject, null, WsResponseObject.class, WsConstants
+                        .REQ_UPLOAD_CALL_LOGS, null, true).execute
+                        (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
+            }
         }
+
     }
 
     private ArrayList<ArrayList<String>> chopped(ArrayList<String> list, final int L) {
