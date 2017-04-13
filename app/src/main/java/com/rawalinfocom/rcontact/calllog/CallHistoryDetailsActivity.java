@@ -35,6 +35,7 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
@@ -44,6 +45,7 @@ import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
@@ -54,6 +56,7 @@ import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProfileMenuOptionDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.CallLogHistoryType;
 import com.rawalinfocom.rcontact.model.CallLogType;
@@ -147,6 +150,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     RippleView rippleActionRightRight;
     ImageView imageRightLeft;
     ImageView imageRightCenter;
+    String profileThumbnail;
 
     private final String TAG_IMAGE_FAVOURITE = "tag_favourite";
     private final String TAG_IMAGE_UN_FAVOURITE = "tag_un_favourite";
@@ -214,6 +218,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (intent.hasExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID)) {
                 uniqueContactId = intent.getStringExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE)) {
+                profileThumbnail = intent.getStringExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE);
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
@@ -908,6 +916,19 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             textName.setVisibility(View.GONE);
         }
 
+        profileThumbnail =  getPhotoUrlFromNumber();
+        if(!TextUtils.isEmpty(profileThumbnail)){
+            Glide.with(this)
+                    .load(profileThumbnail)
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(CallHistoryDetailsActivity.this))
+                    .override(200, 200)
+                    .into(imageProfile);
+        }else{
+            imageProfile.setImageResource(R.drawable.home_screen_profile);
+        }
+
        /* if (displayOwnProfile) {
             textToolbarTitle.setText(getString(R.string.title_my_profile));
             linearCallSms.setVisibility(View.GONE);
@@ -929,6 +950,53 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             }
         }
 
+    }
+
+
+    private String getPhotoUrlFromNumber() {
+        String phoneNumber = "";
+        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")){
+                ArrayList<CallLogType> listOfNumbers = getNumbersFromName(contactName);
+                if(listOfNumbers!=null && listOfNumbers.size()>0){
+                    for(int i=0; i<listOfNumbers.size(); i++){
+                        CallLogType callLogType = listOfNumbers.get(i);
+                        phoneNumber =  callLogType.getNumber();
+                        break;
+                    }
+                }
+        }
+
+        String photoThumbUrl = "";
+        try {
+
+            photoThumbUrl = "";
+            ContentResolver contentResolver = getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                    photoThumbUrl = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.PHOTO_THUMBNAIL_URI));
+//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return photoThumbUrl;
     }
 
     private void setCallLogHistoryDetails() {

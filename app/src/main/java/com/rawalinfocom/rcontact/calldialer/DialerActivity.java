@@ -195,7 +195,12 @@ public class DialerActivity extends Activity {
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
-                finishAfterTransition();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    finishAfterTransition();
+                }else{
+                    finish();
+                    overridePendingTransition(R.anim.slide_out_up,R.anim.slide_in_up);
+                }
 
             }
         });

@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -600,9 +601,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                         public void run() {
                             if (AppConstants.isFirstTime()) {
                                 AppConstants.setIsFirstTime(false);
-                                loadLogs(selectedCallType);
                                 spinnerCount = spinnerCount + 1;
-
+                                loadLogs(selectedCallType);
                             } else {
                                 arrayListCallLogs = rContactApplication.getArrayListCallLogType();
                                 makeDataToDisplay(selectedCallType, arrayListCallLogs);
@@ -928,7 +928,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
             if (callLogListAdapter == null) {
                 setAdapter();
             } else {
-                callLogListAdapter.notifyItemRangeInserted(logsDisplayed, callLogs.size());
+//                callLogListAdapter.notifyItemRangeInserted(logsDisplayed, callLogs.size());
+                callLogListAdapter.notifyDataSetChanged();
             }
 
             if (spinnerCount > 0) {
@@ -1144,6 +1145,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                         while (cursor.moveToNext()) {
                             CallLogType log = new CallLogType(getActivity());
                             log.setNumber(cursor.getString(number));
+
                             String userName = cursor.getString(name);
                             if (!TextUtils.isEmpty(userName))
                                 log.setName(userName);
@@ -1162,12 +1164,19 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                             String userNumber = cursor.getString(number);
                             String uniquePhoneBookId = getStarredStatusFromNumber(userNumber);
                             Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" + userNumber);
-                            if (!TextUtils.isEmpty(uniquePhoneBookId))
+                            if (!TextUtils.isEmpty(uniquePhoneBookId)){
                                 log.setLocalPbRowId(uniquePhoneBookId);
+                            }
                             else
                                 log.setLocalPbRowId(" ");
 
                             log.setFlag(7);
+                            String photoThumbNail =  getPhotoUrlFromNumber(userNumber);
+                            if(!TextUtils.isEmpty(photoThumbNail)){
+                                log.setProfileImage(photoThumbNail);
+                            }else{
+                                log.setProfileImage("");
+                            }
                             ArrayList<CallLogType> arrayListHistory;
                    /* if (!TextUtils.isEmpty(userName)) {
                         arrayListHistory = callLogHistory(userName);
@@ -1206,6 +1215,76 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    private Uri getPhotoUri(long contactId) {
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        try {
+            Cursor cursor = contentResolver
+                    .query(ContactsContract.Data.CONTENT_URI,
+                            null,
+                            ContactsContract.Data.CONTACT_ID
+                                    + "="
+                                    + contactId
+                                    + " AND "
+
+                                    + ContactsContract.Data.MIMETYPE
+                                    + "='"
+                                    + ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE
+                                    + "'", null, null);
+
+            if (cursor != null) {
+                if (!cursor.moveToFirst()) {
+                    return null; // no photo
+                }
+            } else {
+                return null; // error in cursor process
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        Uri person = ContentUris.withAppendedId(
+                ContactsContract.Contacts.CONTENT_URI, contactId);
+        return Uri.withAppendedPath(person,
+                ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+    }
+
+    private String getPhotoUrlFromNumber(String phoneNumber) {
+        String photoThumbUrl = "";
+        try {
+
+            photoThumbUrl = "";
+            ContentResolver contentResolver = getActivity().getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                    photoThumbUrl = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.PHOTO_THUMBNAIL_URI));
+//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return photoThumbUrl;
     }
 
 

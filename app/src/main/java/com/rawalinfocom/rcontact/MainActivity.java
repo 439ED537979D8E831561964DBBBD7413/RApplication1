@@ -424,12 +424,24 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
     private void openDialer(){
-        Intent intent = new Intent(MainActivity.this, DialerActivity.class);
-        ActivityOptions options = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
+        try{
+
+            Intent intent = new Intent(MainActivity.this, DialerActivity.class);
+            ActivityOptions options = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
+                startActivity(intent, options.toBundle());
+
+            }else{
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        startActivity(intent, options.toBundle());    }
+
+    }
 
     private void showAddToContact(boolean value) {
         ImageView imageViewAddContact = (ImageView) findViewById(R.id.image_add_contact);
