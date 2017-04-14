@@ -173,7 +173,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     long historyDate;
     CallHistoryListAdapter callHistoryListAdapter;
     ArrayList<Object> tempPhoneNumber;
-    String hashMapKey =  "";
+    String hashMapKey = "";
     String uniqueContactId = "";
 
     @Override
@@ -515,7 +515,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
                 ProfileMenuOptionDialog profileMenuOptionDialog;
                 boolean isFromCallLogTab = false;
-                String blockedNumber ="";
+                String blockedNumber = "";
                 ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
                 HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
                         Utils.getHashMapPreferenceForBlock(this, AppConstants.PREF_BLOCK_CONTACT_LIST);
@@ -525,11 +525,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         callLogTypeList.addAll(blockProfileHashMapList.get(hashMapKey));
 
                 }
-                String name ="";
-                if(!TextUtils.isEmpty(contactName)){
-                    ArrayList<CallLogType> callLogTypes =  getNumbersFromName(contactName);
-                    if(callLogTypes!=null && callLogTypes.size()>0){
-                        for(int i=0; i< callLogTypes.size(); i++){
+                String name = "";
+                if (!TextUtils.isEmpty(contactName)) {
+                    ArrayList<CallLogType> callLogTypes = getNumbersFromName(contactName);
+                    if (callLogTypes != null && callLogTypes.size() > 0) {
+                        for (int i = 0; i < callLogTypes.size(); i++) {
                             CallLogType callLogType = callLogTypes.get(i);
                             name = callLogType.getName();
                         }
@@ -547,7 +547,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     }
                 }
 
-                if (!TextUtils.isEmpty(blockedNumber)){
+                if (!TextUtils.isEmpty(blockedNumber)) {
                     if (!TextUtils.isEmpty(contactName)) {
                         ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
                                 this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
@@ -555,7 +555,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 this.getString(R.string.unblock), this.getString(R.string.delete),
                                 this.getString(R.string.clear_call_log)));
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, contactName,
-                                0, isFromCallLogTab, arrayListHistory,contactName,"",hashMapKey);
+                                0, isFromCallLogTab, arrayListHistory, contactName, "", hashMapKey);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -566,11 +566,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                     this.getString(R.string.call_reminder), this.getString(R.string.unblock),
                                     this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, profileContactNumber,
-                                    0, isFromCallLogTab, arrayListHistory,"",uniqueContactId,hashMapKey);
+                                    0, isFromCallLogTab, arrayListHistory, "", uniqueContactId, hashMapKey);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
-                }else {
+                } else {
                     if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase("[Unknown]")*/) {
                         ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
                                 this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
@@ -578,7 +578,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 this.getString(R.string.block), this.getString(R.string.delete),
                                 this.getString(R.string.clear_call_log)));
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, contactName,
-                                0, isFromCallLogTab, arrayListHistory,contactName,"","");
+                                0, isFromCallLogTab, arrayListHistory, contactName, "", "");
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -589,7 +589,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                     this.getString(R.string.call_reminder), this.getString(R.string.block),
                                     this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, profileContactNumber,
-                                    0, isFromCallLogTab, arrayListHistory,"",uniqueContactId,"");
+                                    0, isFromCallLogTab, arrayListHistory, "", uniqueContactId, "");
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -601,7 +601,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
     }
 
-//    @TargetApi(Build.VERSION_CODES.M)
+    //    @TargetApi(Build.VERSION_CODES.M)
     private ArrayList<CallLogType> getNumbersFromName(String number) {
         Cursor cursor = null;
         ArrayList<CallLogType> listNumber = new ArrayList<>();
@@ -1125,7 +1125,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             tempEmail.addAll(arrayListEmail);
             tempEmail.addAll(arrayListPhoneBookEmail);
             ProfileDetailAdapter emailDetailAdapter = new ProfileDetailAdapter(this, tempEmail,
-                    AppConstants.EMAIL);
+                    AppConstants.EMAIL, displayOwnProfile);
         } else {
         }
         //</editor-fold>
@@ -1341,7 +1341,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             tempImAccount.addAll(arrayListImAccount);
             tempImAccount.addAll(arrayListPhoneBookImAccount);
             ProfileDetailAdapter imAccountDetailAdapter = new ProfileDetailAdapter(this,
-                    tempImAccount, AppConstants.IM_ACCOUNT);
+                    tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile);
         } else {
         }
         //</editor-fold>
@@ -1679,10 +1679,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     }
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
                     String uniquePhoneBookId = getStarredStatusFromNumber(phNum);
-                    if (!TextUtils.isEmpty(uniquePhoneBookId)){
+                    if (!TextUtils.isEmpty(uniquePhoneBookId)) {
                         hashMapKey = uniquePhoneBookId;
-                    }else{
-                        hashMapKey =  cursor.getString(callLogId);
+                    } else {
+                        hashMapKey = cursor.getString(callLogId);
                         uniqueContactId = cursor.getString(callLogId);
                     }
 
@@ -1739,7 +1739,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
         return numberId;
     }
-
 
 
     private String getPhoneNumberType(int type) {
