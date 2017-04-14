@@ -60,7 +60,7 @@
                         android:layout_height="100dp"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@mipmap/ic_launcher"/>
+                        android:src="@drawable/home_screen_profile"/>
 
                     <LinearLayout
                         android:id="@+id/linear_basic_detail_rating"

@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -599,11 +600,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                         @Override
                         public void run() {
                             if (AppConstants.isFirstTime()) {
+                                spinnerCount = spinnerCount + 1;
                                 AppConstants.setIsFirstTime(false);
                                 loadLogs(selectedCallType);
-                                spinnerCount = spinnerCount + 1;
-
                             } else {
+
                                 arrayListCallLogs = rContactApplication.getArrayListCallLogType();
                                 makeDataToDisplay(selectedCallType, arrayListCallLogs);
                             }
@@ -737,7 +738,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
     }
 
-    private void makeDataToDisplay(String callType, ArrayList<CallLogType> callLogs) {
+    private void  makeDataToDisplay(String callType, ArrayList<CallLogType> callLogs) {
         makeBlockedNumberList();
         ArrayList<String> listOfBlockedNumbers = Utils.getArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST);
         List<CallLogType> filteredList = new ArrayList<>();
@@ -928,11 +929,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
             if (callLogListAdapter == null) {
                 setAdapter();
             } else {
-                callLogListAdapter.notifyItemRangeInserted(logsDisplayed, callLogs.size());
+//                callLogListAdapter.notifyItemRangeInserted(logsDisplayed, callLogs.size());
+                callLogListAdapter.notifyDataSetChanged();
             }
 
             if (spinnerCount > 0) {
                 setAdapter();
+//                recyclerCallLogs.scrollToPosition(callLogListAdapter.getItemCount()-1);
             }
 
         } else {
@@ -954,7 +957,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
             callLogListAdapter = new CallLogListAdapter(getActivity(), arrayListObjectCallLogs,
                     arrayListCallLogHeader);
             recyclerCallLogs.setAdapter(callLogListAdapter);
-            recyclerCallLogs.setFocusable(false);
         }
     }
 
@@ -1144,6 +1146,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                         while (cursor.moveToNext()) {
                             CallLogType log = new CallLogType(getActivity());
                             log.setNumber(cursor.getString(number));
+
                             String userName = cursor.getString(name);
                             if (!TextUtils.isEmpty(userName))
                                 log.setName(userName);
@@ -1162,12 +1165,19 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                             String userNumber = cursor.getString(number);
                             String uniquePhoneBookId = getStarredStatusFromNumber(userNumber);
                             Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" + userNumber);
-                            if (!TextUtils.isEmpty(uniquePhoneBookId))
+                            if (!TextUtils.isEmpty(uniquePhoneBookId)){
                                 log.setLocalPbRowId(uniquePhoneBookId);
+                            }
                             else
                                 log.setLocalPbRowId(" ");
 
                             log.setFlag(7);
+                            String photoThumbNail =  getPhotoUrlFromNumber(userNumber);
+                            if(!TextUtils.isEmpty(photoThumbNail)){
+                                log.setProfileImage(photoThumbNail);
+                            }else{
+                                log.setProfileImage("");
+                            }
                             ArrayList<CallLogType> arrayListHistory;
                    /* if (!TextUtils.isEmpty(userName)) {
                         arrayListHistory = callLogHistory(userName);
@@ -1206,6 +1216,40 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private String getPhotoUrlFromNumber(String phoneNumber) {
+        String photoThumbUrl = "";
+        try {
+
+            photoThumbUrl = "";
+            ContentResolver contentResolver = getActivity().getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                    photoThumbUrl = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.PHOTO_THUMBNAIL_URI));
+//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return photoThumbUrl;
     }
 
 

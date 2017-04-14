@@ -13,6 +13,8 @@ import android.transition.TransitionSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -109,11 +111,16 @@ public class DialerActivity extends Activity {
     LinearLayout numberPad;
     MaterialDialog callConfirmationDialog;
 
+    Animation slideDownAnimation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialer);
         ButterKnife.bind(this);
+
+        slideDownAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.slide_down_animation);
 
         editTextNumber.setCursorVisible(false);
         initandClickEvents();
@@ -195,7 +202,12 @@ public class DialerActivity extends Activity {
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
-                finishAfterTransition();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    finishAfterTransition();
+                }else{
+                    finish();
+                    overridePendingTransition(R.anim.slide_in_up,R.anim.slide_down_animation);
+                }
 
             }
         });

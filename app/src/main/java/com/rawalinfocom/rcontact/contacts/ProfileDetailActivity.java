@@ -42,6 +42,7 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.ContactListingActivity;
 import com.rawalinfocom.rcontact.R;
@@ -63,6 +64,7 @@ import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProfileMenuOptionDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.CallLogHistoryType;
 import com.rawalinfocom.rcontact.model.CallLogType;
@@ -269,7 +271,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     ProgressBar progressBarLoadCallLogs;
     @BindView(R.id.button_view_old_records)
     Button buttonViewOldRecords;
-
+    LinearLayoutManager mLinearLayoutManager;
+    String profileThumbnail = "";
 
     //<editor-fold desc="Override Methods">
 
@@ -308,6 +311,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (intent.hasExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID)) {
                 uniqueContactId = intent.getStringExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE)) {
+                profileThumbnail = intent.getStringExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE);
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
@@ -461,6 +468,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
                 intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, hashMapKey);
                 intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueContactId);
+                intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileThumbnail);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
 
@@ -1013,6 +1021,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
                 }
             }
+
+            if(!TextUtils.isEmpty(profileThumbnail)){
+                Glide.with(this)
+                        .load(profileThumbnail)
+                        .placeholder(R.drawable.home_screen_profile)
+                        .error(R.drawable.home_screen_profile)
+                        .bitmapTransform(new CropCircleTransformation(ProfileDetailActivity.this))
+                        .override(200, 200)
+                        .into(imageProfile);
+            }else{
+                imageProfile.setImageResource(R.drawable.home_screen_profile);
+            }
+
         }
     }
 
@@ -1059,6 +1080,33 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         buttonViewOldRecords.setTypeface(Utils.typefaceRegular(this));
         rippleViewOldRecords.setVisibility(View.VISIBLE);
         rippleViewOldRecords.setOnRippleCompleteListener(this);
+
+        mLinearLayoutManager = new LinearLayoutManager(this);
+        recyclerCallHistory.setLayoutManager(mLinearLayoutManager);
+
+        recyclerCallHistory.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy > 0) //check for scroll down
+                {
+                    int visibleItemCount = mLinearLayoutManager.getChildCount();
+                    int totalItemCount = mLinearLayoutManager.getItemCount();
+                    int pastVisiblesItems = mLinearLayoutManager.findFirstVisibleItemPosition();
+                    if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                        Log.v("...", "Last Item Wow !");
+                        //Do pagination.. i.e. fetch new data
+                    }
+                }
+
+            }
+        });
 
 
         LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
@@ -1124,6 +1172,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
         }
+
+        if(!TextUtils.isEmpty(profileThumbnail)){
+            Glide.with(this)
+                    .load(profileThumbnail)
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(ProfileDetailActivity.this))
+                    .override(200, 200)
+                    .into(imageProfile);
+        }else{
+            imageProfile.setImageResource(R.drawable.home_screen_profile);
+        }
+
         imageRightCenter.setImageResource(R.drawable.ic_phone);
         imageRightCenter.setTag(TAG_IMAGE_CALL);
 
@@ -2060,7 +2121,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             callHistoryListAdapter = new CallHistoryListAdapter(arrayListHistory);
             recyclerCallHistory.setAdapter(callHistoryListAdapter);
             recyclerCallHistory.setFocusable(false);
-            setRecyclerViewLayoutManager(recyclerCallHistory);
+//            setRecyclerViewLayoutManager(recyclerCallHistory);
         } else {
             recyclerCallHistory.setVisibility(View.GONE);
             rippleViewOldRecords.setVisibility(View.GONE);
@@ -2103,7 +2164,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
         return cursor;
     }
-
 
     @TargetApi(Build.VERSION_CODES.M)
     private Cursor getCallHistoryDataByName(String name) {
