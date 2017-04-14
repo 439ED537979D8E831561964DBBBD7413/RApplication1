@@ -259,7 +259,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Date callReceiverDate;
     CallHistoryListAdapter callHistoryListAdapter;
     String profileContactNumber;
-    String hashMapKey = "";
+    String hashMapKey =  "";
     String uniqueContactId = "";
 
 
@@ -434,17 +434,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             case R.id.ripple_call_log:
 
                 Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, historyName);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, historyDate);
-                intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
-                intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, phoneBookId);
-                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
-                intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, cloudContactName);
-                intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, checkNumberFavourite);
-                intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER,historyNumber);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME,historyName);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE,historyDate);
+                intent.putExtra(AppConstants.EXTRA_PM_ID,pmId);
+                                                                                                                                                                                          intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID,phoneBookId);
+                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME,contactName);
+                intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME,cloudContactName);
+                intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE,checkNumberFavourite);
+                intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION,listClickedPosition);
                 intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, hashMapKey);
-                intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueContactId);
+                intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID,uniqueContactId);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
 
