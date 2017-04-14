@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/linearCallLogMain"
     android:background="@color/colorWhite"
@@ -43,8 +44,10 @@
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/recycler_call_logs">
+            android:layout_height="wrap_content"
+            android:id="@+id/recycler_call_logs"
+            app:reverseLayout="true"
+            app:stackFromEnd="true">
         </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>

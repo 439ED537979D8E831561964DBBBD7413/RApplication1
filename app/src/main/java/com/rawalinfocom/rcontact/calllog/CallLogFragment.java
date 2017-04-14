@@ -600,10 +600,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
                         @Override
                         public void run() {
                             if (AppConstants.isFirstTime()) {
-                                AppConstants.setIsFirstTime(false);
                                 spinnerCount = spinnerCount + 1;
+                                AppConstants.setIsFirstTime(false);
                                 loadLogs(selectedCallType);
                             } else {
+
                                 arrayListCallLogs = rContactApplication.getArrayListCallLogType();
                                 makeDataToDisplay(selectedCallType, arrayListCallLogs);
                             }
@@ -737,7 +738,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
     }
 
-    private void makeDataToDisplay(String callType, ArrayList<CallLogType> callLogs) {
+    private void  makeDataToDisplay(String callType, ArrayList<CallLogType> callLogs) {
         makeBlockedNumberList();
         ArrayList<String> listOfBlockedNumbers = Utils.getArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOG_LIST);
         List<CallLogType> filteredList = new ArrayList<>();
@@ -934,6 +935,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
 
             if (spinnerCount > 0) {
                 setAdapter();
+//                recyclerCallLogs.scrollToPosition(callLogListAdapter.getItemCount()-1);
             }
 
         } else {
@@ -955,7 +957,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
             callLogListAdapter = new CallLogListAdapter(getActivity(), arrayListObjectCallLogs,
                     arrayListCallLogHeader);
             recyclerCallLogs.setAdapter(callLogListAdapter);
-            recyclerCallLogs.setFocusable(false);
         }
     }
 
@@ -1215,42 +1216,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener 
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-
-    private Uri getPhotoUri(long contactId) {
-        ContentResolver contentResolver = getActivity().getContentResolver();
-        try {
-            Cursor cursor = contentResolver
-                    .query(ContactsContract.Data.CONTENT_URI,
-                            null,
-                            ContactsContract.Data.CONTACT_ID
-                                    + "="
-                                    + contactId
-                                    + " AND "
-
-                                    + ContactsContract.Data.MIMETYPE
-                                    + "='"
-                                    + ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE
-                                    + "'", null, null);
-
-            if (cursor != null) {
-                if (!cursor.moveToFirst()) {
-                    return null; // no photo
-                }
-            } else {
-                return null; // error in cursor process
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        Uri person = ContentUris.withAppendedId(
-                ContactsContract.Contacts.CONTENT_URI, contactId);
-        return Uri.withAppendedPath(person,
-                ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
     }
 
     private String getPhotoUrlFromNumber(String phoneNumber) {
