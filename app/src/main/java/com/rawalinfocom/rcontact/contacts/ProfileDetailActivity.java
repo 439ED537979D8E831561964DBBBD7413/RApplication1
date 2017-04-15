@@ -1,11 +1,13 @@
 package com.rawalinfocom.rcontact.contacts;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,11 +16,14 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.CardView;
@@ -83,6 +88,7 @@ import com.rawalinfocom.rcontact.model.Rating;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.services.CallLogIdFetchService;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -273,7 +279,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     Button buttonViewOldRecords;
     LinearLayoutManager mLinearLayoutManager;
     String profileThumbnail = "";
-
+    MaterialDialog permissionConfirmationDialog;
     //<editor-fold desc="Override Methods">
 
     @Override
@@ -431,6 +437,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
     }
 
+
+
     @Override
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
@@ -456,22 +464,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             case R.id.ripple_call_log:
 
-                Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, historyName);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, historyDate);
-                intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
-                intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, phoneBookId);
-                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
-                intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, cloudContactName);
-                intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, checkNumberFavourite);
-                intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
-                intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, hashMapKey);
-                intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueContactId);
-                intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileThumbnail);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter, R.anim.exit);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission
+                            .READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.READ_CALL_LOG},
+                                AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
 
+                    } else {
+                        openCallLogHistoryDetailsActivity();
+
+                    }
+                }else {
+                    openCallLogHistoryDetailsActivity();
+                }
                 break;
 
 
@@ -609,6 +614,67 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
+
+                    // Permission Granted
+                    openCallLogHistoryDetailsActivity();
+
+                } else {
+
+                    // Permission Denied
+                    showPermissionConfirmationDialog();
+
+                }
+            }
+            break;
+        }
+    }
+
+
+    private void showPermissionConfirmationDialog() {
+
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        permissionConfirmationDialog.dismissDialog();
+                        finish();
+                        break;
+
+                    case R.id.rippleRight:
+                        permissionConfirmationDialog.dismissDialog();
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", getPackageName(), null));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        permissionConfirmationDialog = new MaterialDialog(this, cancelListener);
+        permissionConfirmationDialog.setTitleVisibility(View.GONE);
+        permissionConfirmationDialog.setLeftButtonText("Cancel");
+        permissionConfirmationDialog.setRightButtonText("OK");
+        permissionConfirmationDialog.setDialogBody("Call log permission is required. Do you want " +
+                "to try again?");
+
+        permissionConfirmationDialog.showDialog();
+
+    }
+
     private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -620,6 +686,25 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         }
     };
+
+
+    private void openCallLogHistoryDetailsActivity(){
+        Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
+        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
+        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, historyName);
+        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, historyDate);
+        intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
+        intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, phoneBookId);
+        intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
+        intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, cloudContactName);
+        intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, checkNumberFavourite);
+        intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
+        intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, hashMapKey);
+        intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueContactId);
+        intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileThumbnail);
+        startActivity(intent);
+        overridePendingTransition(R.anim.enter, R.anim.exit);
+    }
 
     private void getOldCallHistory() {
         ArrayList<CallLogHistoryType> arrayListToSend = new ArrayList<>();

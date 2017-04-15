@@ -1,27 +1,27 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearCallLogMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:id="@+id/linearCallLogMain"
     android:background="@color/colorWhite"
+    android:orientation="vertical"
     tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
 
-   <!-- <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/relativeProgressBar"
-        android:orientation="vertical"
-        android:visibility="visible">-->
+    <!-- <RelativeLayout
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:id="@+id/relativeProgressBar"
+         android:orientation="vertical"
+         android:visibility="visible">-->
 
-        <ProgressBar
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/progressBarCallLog"
-            android:layout_centerInParent="true"
-            android:visibility="gone"/>
+    <ProgressBar
+        android:id="@+id/progressBarCallLog"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
 
     <!--</RelativeLayout>-->
@@ -30,62 +30,125 @@
         android:id="@+id/spinner_call_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true">
-    </Spinner>
+        android:layout_alignParentRight="true"></Spinner>
 
-    <LinearLayout
+
+    <!--<ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/linearMainContent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/spinner_call_filter"
-        android:layout_above="@+id/relativeLoadingData"
-        android:orientation="vertical"
-        android:visibility="visible">
+        android:background="@color/colorVeryLightGray"
+        android:scrollbars="none">-->
 
-        <android.support.v7.widget.RecyclerView
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/recycler_call_logs">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_below="@+id/spinner_call_filter">
+            <RelativeLayout
+                android:id="@+id/linearMainContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/relativeLoadingData"
+                android:orientation="vertical"
+                android:visibility="visible">
 
-    </LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_call_logs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/relativeLoadingData"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone">
+                </android.support.v7.widget.RecyclerView>
 
-        <ProgressBar
-            style="?android:attr/progressBarStyle"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/progressBarLoadCallLogs"
-            android:layout_centerInParent="true"
-            android:visibility="visible"/>
+            </RelativeLayout>
 
-       <!-- <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/text_loading"
-            android:padding="@dimen/margin_10dp"
-            android:text="Loading More"
-            android:layout_gravity="center_horizontal"
-            android:layout_centerHorizontal="true"
-            android:visibility="gone"/>-->
+            <com.rawalinfocom.rcontact.helper.RippleView
+                android:id="@+id/ripple_view_old_records"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_button"
+                android:layout_below="@+id/linearMainContent"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/margin_10dp"
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:visibility="gone"
+                app:rv_alpha="@integer/alpha_ripple"
+                app:rv_color="@color/colorWhite"
+                app:rv_rippleDuration="@integer/duration_ripple">
 
-    </RelativeLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/text_loading"
-        android:padding="@dimen/margin_10dp"
-        android:text="No logs to display"
-        android:layout_gravity="center_horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="gone"/>
+                <Button
+                    android:id="@+id/button_view_old_records"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/recycler_call_logs"
+                    android:layout_centerHorizontal="true"
+                    android:background="@color/colorAccent"
+                    android:padding="@dimen/padding_10dp"
+                    android:text="View previous logs"
+                    android:textColor="@color/colorWhite" />
+            </com.rawalinfocom.rcontact.helper.RippleView>
+
+            <ProgressBar
+                android:id="@+id/progressBarLoadCallLogs"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/linearMainContent"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/text_loading_logs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linearMainContent"
+                android:layout_centerHorizontal="true"
+                android:padding="@dimen/margin_10dp"
+                android:text="loading..."
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:id="@+id/relativeLoadingData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:id="@+id/progressBarLoadCallLogs1"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:visibility="visible" />
+
+                <!-- <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:id="@+id/text_loading"
+                     android:padding="@dimen/margin_10dp"
+                     android:text="Loading More"
+                     android:layout_gravity="center_horizontal"
+                     android:layout_centerHorizontal="true"
+                     android:visibility="gone"/>-->
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/text_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_horizontal"
+                android:padding="@dimen/margin_10dp"
+                android:text="No logs to display"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+
+   <!-- </ScrollView>-->
 
 </RelativeLayout>

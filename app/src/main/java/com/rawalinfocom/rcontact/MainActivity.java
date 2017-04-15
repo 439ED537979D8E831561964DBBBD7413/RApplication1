@@ -29,6 +29,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -123,6 +124,8 @@ public class MainActivity extends BaseActivity implements NavigationView
     String callLogResponseDate = "";
     int logsSyncedCount =  10;
     MaterialDialog permissionConfirmationDialog;
+    private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
+            .permission.READ_CALL_LOG};
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -133,27 +136,9 @@ public class MainActivity extends BaseActivity implements NavigationView
         Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
         startService(contactIdFetchService);
 
-
-
         callLogTypeArrayListMain = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission
-                    .READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_CALL_LOG},
-                        AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-
-            } else {
-
-                Intent callLogIdFetchService =  new Intent(this, CallLogIdFetchService.class);
-                startService(callLogIdFetchService);
-
-                AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        getCallLogsByRawId();
-                    }
-                });
-            }
+            checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
         }else{
             AsyncTask.execute(new Runnable() {
                 @Override
@@ -211,6 +196,26 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute(String permissions[], int requestCode) {
+
+        boolean contacts = ContextCompat.checkSelfPermission(MainActivity.this, permissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;
+        boolean logs = ContextCompat.checkSelfPermission(MainActivity.this, permissions[1]) !=
+                PackageManager.PERMISSION_GRANTED;
+        if (contacts || logs ) {
+            requestPermissions(permissions, requestCode);
+        } else {
+            Intent callLogIdFetchService =  new Intent(this, CallLogIdFetchService.class);
+            startService(callLogIdFetchService);
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    getCallLogsByRawId();
+                }
+            });
+        }
+    }
 
     @Override
     protected void onPause() {
@@ -352,7 +357,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                         Log.e("error response", callLogInsertionResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "userProfileResponse null");
-                        Toast.makeText(this,getString(R.string.msg_try_later),Toast.LENGTH_SHORT).show();
+                        Log.e("onDeliveryResponse: ", getString(R.string.msg_try_later));
+//                        Toast.makeText(this,getString(R.string.msg_try_later),Toast.LENGTH_SHORT).show();
                     }
                 }
             }else {
@@ -370,6 +376,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         }
 
         unRegisterLocalBroadCastReceiver();
+        Utils.setBooleanPreference(this, AppConstants
+                .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
     }
 
     //</editor-fold>
@@ -593,7 +601,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     // =========================================== Call Logs ==================================================//
 
 
-    @Override
+ /*   @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -623,6 +631,33 @@ public class MainActivity extends BaseActivity implements NavigationView
                 }
             }
             break;
+        }
+    }*/
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.M)
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == AppConstants.READ_LOGS && permissions[0].equals(Manifest.permission
+                .READ_CONTACTS) && permissions[1].equals(Manifest.permission.READ_CALL_LOG)) {
+            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED && grantResults[1] ==
+                    PermissionChecker.PERMISSION_GRANTED) {
+
+                Intent callLogIdFetchService =  new Intent(this, CallLogIdFetchService.class);
+                startService(callLogIdFetchService);
+
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        getCallLogsByRawId();
+                    }
+                });
+
+            } else {
+                showPermissionConfirmationDialog();
+            }
         }
     }
     private void getCallLogsByRawId(){
