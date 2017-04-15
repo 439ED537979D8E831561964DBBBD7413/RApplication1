@@ -69,7 +69,8 @@ public class PrivacyRequestDataItem {
         this.ppmTag = ppmTag;
     }
 
-    @JsonProperty("ppm_tag")
+
+    @JsonProperty("ppt_tag")
     private String ppmTag;
 
 

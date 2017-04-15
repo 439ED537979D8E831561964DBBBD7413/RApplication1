@@ -52,6 +52,7 @@
     <string name="title_all_organizations">All Organizations</string>
     <string name="action_close">Close</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_ok">Ok</string>
     <string name="str_comment">Comment</string>
     <string name="str_choose_from_contacts">Choose from Contacts</string>
     <string name="str_select_social_media">Select Social Media</string>
@@ -192,6 +193,11 @@
 
     <string name="title_activity_call_histroy_detail">CallHistroyDetailActivity</string>
     <string name="block_action_title">Blocked contacts list</string>
+    <string name="privacy_everyone">Everyone</string>
+    <string name="privacy_my_contact">My Contacts</string>
+    <string name="privacy_only_me">Only Me</string>
+    <string name="privacy_dialog_title">Privacy Setting</string>
+
     <string name="dialer_text_add_to_contact">Add to Contacts</string>
 
 
