@@ -45,7 +45,7 @@ public class EventComment {
     private String date;
 
     @JsonProperty("event_record_index_id")
-    private int eventRecordIndexId;
+    private String eventRecordIndexId;
 
     @JsonProperty("reply_date")
     private String replyAt;
@@ -107,11 +107,11 @@ public class EventComment {
         this.date = date;
     }
 
-    public int getEventRecordIndexId() {
+    public String getEventRecordIndexId() {
         return eventRecordIndexId;
     }
 
-    public void setEventRecordIndexId(int eventRecordIndexId) {
+    public void setEventRecordIndexId(String eventRecordIndexId) {
         this.eventRecordIndexId = eventRecordIndexId;
     }
 

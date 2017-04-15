@@ -10,9 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.contacts.PrivacySettingPopupDialog;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -36,6 +38,7 @@ import butterknife.ButterKnife;
 public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdapter
         .ProfileDetailViewHolder> {
 
+
     private Context context;
     private ArrayList<Object> arrayList;
 
@@ -43,12 +46,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
     private int colorBlack, colorPineGreen;
 
+    private boolean isOwnProfile = false;
+
     public ProfileDetailAdapter(Context context, ArrayList<Object> arrayList, int
-            profileDetailType) {
+            profileDetailType, boolean isOwnProfile) {
         this.context = context;
         this.profileDetailType = profileDetailType;
         this.arrayList = arrayList;
-
+        this.isOwnProfile = isOwnProfile;
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
 
@@ -63,7 +68,20 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
     @Override
     public void onBindViewHolder(ProfileDetailViewHolder holder, int position) {
-
+        if (isOwnProfile) {
+            holder.buttonPrivacy.setVisibility(View.VISIBLE);
+        } else {
+            holder.buttonPrivacy.setVisibility(View.GONE);
+        }
+        holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "Privacy Button Clicked", Toast.LENGTH_SHORT).show();
+                PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(context);
+                privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                privacySettingPopupDialog.showDialog();
+            }
+        });
         switch (profileDetailType) {
             case AppConstants.PHONE_NUMBER:
                 displayPhoneNumber(holder, position);
@@ -93,6 +111,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 displayGender(holder, position);
                 break;
         }
+
 
     }
 
@@ -236,7 +255,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                Intent intent = new Intent(Intent.ACTION_VIEW,
                         Uri.parse("google.navigation:q=" + holder.textMain.getText()));
                 context.startActivity(intent);
             }
@@ -322,7 +341,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         } else {
             convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "yyyy-MM-dd",
                     "dd'th' " +
-                    "MMM, yyyy");
+                            "MMM, yyyy");
         }
 
         holder.textMain.setText(convertedDate);
@@ -365,6 +384,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         TextView textSub;
         @BindView(R.id.image_view)
         ImageView imageView;
+        @BindView(R.id.button_privacy)
+        ImageView buttonPrivacy;
 
         ProfileDetailViewHolder(View itemView) {
             super(itemView);
@@ -372,8 +393,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             textMain.setTypeface(Utils.typefaceRegular(context));
             textSub.setTypeface(Utils.typefaceRegular(context));
-
         }
+
     }
+
 
 }

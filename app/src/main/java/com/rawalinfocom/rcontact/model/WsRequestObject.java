@@ -31,8 +31,8 @@ public class WsRequestObject {
     @JsonProperty("to_pm_id")
     private int toPmId;
 
-    @JsonProperty("evm_record_index_id")
-    private int evmRecordIndexId;
+    @JsonProperty("event_record_index_id")
+    private String eventRecordIndexId;
 
     @JsonProperty("id")
     private String commentId;
@@ -77,12 +77,12 @@ public class WsRequestObject {
         this.reply = reply;
     }
 
-    public int getEvmRecordIndexId() {
-        return evmRecordIndexId;
+    public String getEvmRecordIndexId() {
+        return eventRecordIndexId;
     }
 
-    public void setEvmRecordIndexId(int evmRecordIndexId) {
-        this.evmRecordIndexId = evmRecordIndexId;
+    public void setEvmRecordIndexId(String eventRecordIndexId) {
+        this.eventRecordIndexId = eventRecordIndexId;
     }
 
 

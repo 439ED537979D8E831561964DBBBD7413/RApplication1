@@ -18,7 +18,7 @@ public class TimelineItem {
     private String crmCloudPrId;
     private String crmType;
     private String crmRating;
-    private int evmRecordIndexId;
+    private String evmRecordIndexId;
 
     public String getCrmRating() {
         return crmRating;
@@ -32,11 +32,11 @@ public class TimelineItem {
         return crmCloudPrId;
     }
 
-    public int getEvmRecordIndexId() {
+    public String getEvmRecordIndexId() {
         return evmRecordIndexId;
     }
 
-    public void setEvmRecordIndexId(int evmRecordIndexId) {
+    public void setEvmRecordIndexId(String evmRecordIndexId) {
         this.evmRecordIndexId = evmRecordIndexId;
     }
 
