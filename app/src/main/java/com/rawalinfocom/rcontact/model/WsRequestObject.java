@@ -31,8 +31,8 @@ public class WsRequestObject {
     @JsonProperty("to_pm_id")
     private int toPmId;
 
-    @JsonProperty("evm_record_index_id")
-    private int evmRecordIndexId;
+    @JsonProperty("event_record_index_id")
+    private String eventRecordIndexId;
 
     @JsonProperty("id")
     private String commentId;
@@ -77,12 +77,12 @@ public class WsRequestObject {
         this.reply = reply;
     }
 
-    public int getEvmRecordIndexId() {
-        return evmRecordIndexId;
+    public String getEvmRecordIndexId() {
+        return eventRecordIndexId;
     }
 
-    public void setEvmRecordIndexId(int evmRecordIndexId) {
-        this.evmRecordIndexId = evmRecordIndexId;
+    public void setEvmRecordIndexId(String eventRecordIndexId) {
+        this.eventRecordIndexId = eventRecordIndexId;
     }
 
 
@@ -175,6 +175,7 @@ public class WsRequestObject {
 
     private ArrayList<ProfileDataOperation> profileEdit;
 
+    private ArrayList<CallLogHistoryType> historyTypeArrayList;
     @JsonProperty("pr_reply")
     private String prReply;
 
@@ -543,5 +544,14 @@ public class WsRequestObject {
 
     public void setProfileEdit(ArrayList<ProfileDataOperation> profileEdit) {
         this.profileEdit = profileEdit;
+    }
+
+    @JsonProperty("call_history")
+    public ArrayList<CallLogHistoryType> getHistoryTypeArrayList() {
+        return historyTypeArrayList;
+    }
+
+    public void setHistoryTypeArrayList(ArrayList<CallLogHistoryType> historyTypeArrayList) {
+        this.historyTypeArrayList = historyTypeArrayList;
     }
 }

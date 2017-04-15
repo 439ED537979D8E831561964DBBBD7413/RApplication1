@@ -17,6 +17,7 @@ public class ProfileData {
     //    private String givenName;
     private ArrayList<ProfileDataOperation> operation;
     private ArrayList<String> rcpPmId;
+    private String profileUrl;
 
     @JsonProperty("pb_local_phonebook_id")
     public String getLocalPhoneBookId() {
@@ -61,4 +62,12 @@ public class ProfileData {
     public void setGivenName(String givenName) {
         this.givenName = givenName;
     }*/
+
+    public String getProfileUrl() {
+        return profileUrl;
+    }
+
+    public void setProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
 }

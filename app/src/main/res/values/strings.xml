@@ -198,6 +198,7 @@
     <string name="privacy_only_me">Only Me</string>
     <string name="privacy_dialog_title">Privacy Setting</string>
 
+    <string name="dialer_text_add_to_contact">Add to Contacts</string>
 
 
 </resources>

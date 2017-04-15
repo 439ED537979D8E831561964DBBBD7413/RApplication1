@@ -2,15 +2,20 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.drawable.LayerDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -37,6 +43,7 @@ import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
@@ -84,7 +91,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private TableProfileEmailMapping tableProfileEmailMapping;
 
     private ArrayList<Integer> arrayListExpandedPositions;
-
 
     //<editor-fold desc="Constructor">
     public AllContactListAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
@@ -265,6 +271,20 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             }
         }
 
+        final String profileImage =  profileData.getProfileUrl();
+        if(!TextUtils.isEmpty(profileImage)){
+            Glide.with(context)
+                    .load(profileImage)
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .override(200, 200)
+                    .into(holder.imageProfile);
+        }else{
+            holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
+        }
+
+
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -315,6 +335,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                         bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textCloudName
                                 .getText().toString());
                     }
+                    bundle.putString(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE,profileImage);
                     ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
                             .class, bundle);
                 }
@@ -486,6 +507,9 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 .getPbEmailId())) {
             displayEmail(holder, profileData, displayNumber, contactDisplayName, position);
         }
+
+
+
 
        /* if (holder.textCloudContactName.getVisibility() == View.VISIBLE && holder
                 .textCloudContactName.getText().toString().length() > 0) {
@@ -863,5 +887,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     //</editor-fold>
+
+
 
 }

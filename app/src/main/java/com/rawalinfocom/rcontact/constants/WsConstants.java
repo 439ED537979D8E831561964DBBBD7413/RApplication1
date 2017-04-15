@@ -15,8 +15,8 @@ public class WsConstants {
     // QA Server
 //    public static final String WS_ROOT = "http://54.186.222.230/api/v1/";
 
-    // Aniruddh
-    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
+//    // Aniruddh
+//    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
 
     //    Maulik
     public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
@@ -66,13 +66,14 @@ public class WsConstants {
     public static final String REQ_REVERSE_GEO_CODING_ADDRESS = "req_reverse_geo_coding_address";
     public static final String REQ_GEO_CODING_ADDRESS = "req_geo_coding_address";
 
-//    public static final String REQ_UPLOAD_CALL_LOGS = "call-log";
+    //    public static final String REQ_UPLOAD_CALL_LOGS = "call-log";
     public static final String REQ_UPLOAD_CALL_LOGS = "sync-call-log";
     public static final String REQ_ADD_EVENT_COMMENT = "event-comment";
     public static final String REQ_GET_EVENT_COMMENT = "get-event-comment";
     public static final String REQ_GET_RCONTACT_UPDATES = "get-rcontact-update";
     public static final String REQ_PROFILE_PRIVACY_REQUEST = "profile-privacy-request";
     public static final String REQ_GET_PROFILE_PRIVACY_REQUEST = "get-profile-privacy-request";
+    public static final String REQ_GET_CALL_LOG_HISTORY_REQUEST = "call-history";
 
 
 }

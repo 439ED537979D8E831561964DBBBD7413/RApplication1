@@ -311,7 +311,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
             TimelineItem item = new TimelineItem();
             TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
             TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
-            Event event = tableEventMaster.getEventByEvmRecordIndexId(Integer.parseInt(comment.getEvmRecordIndexId()));
+            Event event = tableEventMaster.getEventByEvmRecordIndexId(comment.getEvmRecordIndexId());
             int pmId = comment.getRcProfileMasterPmId();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
             item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
@@ -321,7 +321,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
             item.setCrmCloudPrId(comment.getCrmCloudPrId());
             item.setCrmType(comment.getCrmType());
             item.setCrmRating(comment.getCrmRating());
-            item.setEvmRecordIndexId(Integer.parseInt(comment.getEvmRecordIndexId()));
+            item.setEvmRecordIndexId(comment.getEvmRecordIndexId());
             item.setUserComment(comment.getCrmReply());
             item.setUserCommentTime(comment.getCrmRepliedAt());
             list.add(item);

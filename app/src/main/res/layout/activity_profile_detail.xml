@@ -1,16 +1,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/relative_root_profile_detail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_root_profile_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <include
         android:id="@+id/include_toolbar"
         layout="@layout/layout_toolbar_profile_detail"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
+        android:layout_height="?attr/actionBarSize" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -46,7 +46,7 @@
                     android:scrollHorizontally="true"
                     android:singleLine="true"
                     android:textAppearance="?android:textAppearanceMedium"
-                    tools:text="Hello World"/>
+                    tools:text="Hello World" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -59,7 +59,7 @@
                         android:layout_height="100dp"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@mipmap/ic_launcher"/>
+                        android:src="@drawable/home_screen_profile" />
 
                     <LinearLayout
                         android:id="@+id/linear_basic_detail_rating"
@@ -75,7 +75,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="@dimen/margin_tiny"
-                            tools:text="12345"/>
+                            tools:text="12345" />
 
                         <RatingBar
                             android:id="@+id/rating_user"
@@ -84,7 +84,7 @@
                             android:layout_height="wrap_content"
                             android:isIndicator="true"
                             android:stepSize="1"
-                            tools:rating="4"/>
+                            tools:rating="4" />
 
                     </LinearLayout>
 
@@ -111,7 +111,7 @@
                                 android:singleLine="true"
                                 android:textAppearance="?android:textAppearanceMedium"
                                 android:textColor="@color/colorAccent"
-                                tools:text="Monal Godiwala"/>
+                                tools:text="Monal Godiwala" />
 
                         </HorizontalScrollView>
 
@@ -145,7 +145,7 @@
                                 android:padding="2dp"
                                 android:singleLine="true"
                                 android:textColor="@color/colorAccent"
-                                tools:text="Managing Director"/>
+                                tools:text="Managing Director" />
 
                             <TextView
                                 android:id="@+id/text_organization"
@@ -154,7 +154,7 @@
                                 android:padding="2dp"
                                 android:singleLine="true"
                                 android:textColor="@color/colorAccent"
-                                tools:text="Blazze Apps"/>
+                                tools:text="Blazze Apps" />
 
                             <TextView
                                 android:id="@+id/text_view_all_organization"
@@ -163,7 +163,7 @@
                                 android:padding="2dp"
                                 android:text="View All Organizations"
                                 android:visibility="gone"
-                                tools:visibility="visible"/>
+                                tools:visibility="visible" />
 
                         </LinearLayout>
 
@@ -200,7 +200,7 @@
                         android:layout_height="wrap_content"
                         android:background="@color/colorAccent"
                         android:text="Call Log"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
                 </com.rawalinfocom.rcontact.helper.RippleView>
 
                 <com.rawalinfocom.rcontact.helper.RippleView
@@ -221,7 +221,7 @@
                         android:layout_height="wrap_content"
                         android:background="@color/colorAccent"
                         android:text="SMS"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
                 </com.rawalinfocom.rcontact.helper.RippleView>
 
 
@@ -244,7 +244,7 @@
                     android:paddingLeft="@dimen/padding_10dp"
                     android:paddingTop="10dp"
                     android:text="Call History"
-                    android:textColor="@color/colorDarkGray"/>
+                    android:textColor="@color/colorDarkGray" />
 
                 <TextView
                     android:id="@+id/text_no_history_to_show"
@@ -255,12 +255,12 @@
                     android:layout_marginTop="@dimen/margin_15dp"
                     android:gravity="center"
                     android:visibility="gone"
-                    tools:text="No history to show"/>
+                    tools:text="No history to show" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_call_history"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_alignLeft="@+id/text_text_call_history"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
@@ -342,6 +342,39 @@
                 -->
 
             </RelativeLayout>
+            <com.rawalinfocom.rcontact.helper.RippleView
+                android:id="@+id/ripple_view_old_records"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_button"
+                android:layout_below="@+id/relative_call_history"
+                android:layout_centerHorizontal="true"
+                app:rv_alpha="@integer/alpha_ripple"
+                app:rv_color="@color/colorWhite"
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:layout_marginBottom="@dimen/margin_10dp"
+                app:rv_rippleDuration="@integer/duration_ripple">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button_view_old_records"
+                    android:layout_below="@+id/recycler_call_history"
+                    android:layout_centerHorizontal="true"
+                    android:background="@color/colorAccent"
+                    android:textColor="@color/colorWhite"
+                    android:text="View old records"
+                    android:padding="@dimen/padding_10dp"/>
+            </com.rawalinfocom.rcontact.helper.RippleView>
+
+            <ProgressBar
+                style="?android:attr/progressBarStyle"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:id="@+id/progressBarLoadCallLogs"
+                android:layout_below="@+id/relative_call_history"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"/>
 
             <RelativeLayout
                 android:id="@+id/relative_contact_details"
@@ -379,7 +412,7 @@
                                 android:layout_margin="@dimen/margin_tiny"
                                 android:contentDescription="@string/str_content_description"
                                 android:src="@drawable/ic_action_call"
-                                android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -392,14 +425,14 @@
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:text="@string/str_phone"
-                                    android:textColor="@color/colorBlack"/>
+                                    android:textColor="@color/colorBlack" />
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/recycler_view_contact_number"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
-                                    android:overScrollMode="never"/>
+                                    android:overScrollMode="never" />
 
                             </LinearLayout>
 
@@ -419,7 +452,7 @@
                                 android:layout_margin="@dimen/margin_tiny"
                                 android:contentDescription="@string/str_content_description"
                                 android:src="@drawable/ic_action_sms"
-                                android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -432,14 +465,14 @@
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:text="@string/str_email"
-                                    android:textColor="@color/colorBlack"/>
+                                    android:textColor="@color/colorBlack" />
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/recycler_view_email"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
-                                    android:overScrollMode="never"/>
+                                    android:overScrollMode="never" />
 
                             </LinearLayout>
 
@@ -465,7 +498,7 @@
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:contentDescription="@string/str_content_description"
                                     android:src="@drawable/ic_action_sms"
-                                    android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                    android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -478,14 +511,14 @@
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/margin_tiny"
                                         android:text="@string/str_website"
-                                        android:textColor="@color/colorBlack"/>
+                                        android:textColor="@color/colorBlack" />
 
                                     <android.support.v7.widget.RecyclerView
                                         android:id="@+id/recycler_view_website"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/margin_tiny"
-                                        android:overScrollMode="never"/>
+                                        android:overScrollMode="never" />
 
                                 </LinearLayout>
 
@@ -505,7 +538,7 @@
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:contentDescription="@string/str_content_description"
                                     android:src="@drawable/ic_action_sms"
-                                    android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                    android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -518,14 +551,14 @@
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/margin_tiny"
                                         android:text="@string/str_address"
-                                        android:textColor="@color/colorBlack"/>
+                                        android:textColor="@color/colorBlack" />
 
                                     <android.support.v7.widget.RecyclerView
                                         android:id="@+id/recycler_view_address"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/margin_tiny"
-                                        android:overScrollMode="never"/>
+                                        android:overScrollMode="never" />
 
                                 </LinearLayout>
 
@@ -545,7 +578,7 @@
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:contentDescription="@string/str_content_description"
                                     android:src="@drawable/ic_action_sms"
-                                    android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                    android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -558,14 +591,14 @@
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/margin_tiny"
                                         android:text="@string/str_social_contact"
-                                        android:textColor="@color/colorBlack"/>
+                                        android:textColor="@color/colorBlack" />
 
                                     <android.support.v7.widget.RecyclerView
                                         android:id="@+id/recycler_view_social_contact"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_margin="@dimen/margin_tiny"
-                                        android:overScrollMode="never"/>
+                                        android:overScrollMode="never" />
 
                                 </LinearLayout>
 
@@ -591,7 +624,7 @@
                                 android:gravity="left|center_vertical"
                                 android:padding="@dimen/activity_half_horizontal_margin"
                                 android:text="View More"
-                                android:textAllCaps="false"/>
+                                android:textAllCaps="false" />
 
                         </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -627,7 +660,7 @@
                                 android:layout_margin="@dimen/margin_tiny"
                                 android:contentDescription="@string/str_content_description"
                                 android:src="@drawable/ic_action_call"
-                                android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -640,14 +673,14 @@
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:text="@string/str_event"
-                                    android:textColor="@color/colorBlack"/>
+                                    android:textColor="@color/colorBlack" />
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/recycler_view_event"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
-                                    android:overScrollMode="never"/>
+                                    android:overScrollMode="never" />
 
                             </LinearLayout>
 
@@ -667,7 +700,7 @@
                                 android:layout_margin="@dimen/margin_tiny"
                                 android:contentDescription="@string/str_content_description"
                                 android:src="@drawable/ic_action_sms"
-                                android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -680,7 +713,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:text="@string/str_gender"
-                                    android:textColor="@color/colorBlack"/>
+                                    android:textColor="@color/colorBlack" />
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
@@ -695,7 +728,7 @@
                                         android:layout_margin="@dimen/activity_half_horizontal_margin"
                                         android:contentDescription="@string/str_content_description"
                                         android:src="@drawable/ic_action_sms"
-                                        android:tint="@color/colorVeryDarkGrayishBlue2"/>
+                                        android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                                     <TextView
                                         android:id="@+id/text_gender"
@@ -704,7 +737,7 @@
                                         android:layout_centerVertical="true"
                                         android:layout_toLeftOf="@id/image_icon_gender"
                                         android:textColor="@color/colorAccent"
-                                        tools:text="Female"/>
+                                        tools:text="Female" />
 
                                 </RelativeLayout>
 

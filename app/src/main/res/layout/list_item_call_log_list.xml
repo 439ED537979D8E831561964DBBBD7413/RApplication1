@@ -18,7 +18,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:contentDescription="@string/str_content_description"
-            android:background="@drawable/rcontacticon">
+            android:background="@drawable/home_screen_profile">
         </ImageView>
 
         <ImageView
