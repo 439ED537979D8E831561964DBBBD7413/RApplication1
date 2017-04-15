@@ -152,7 +152,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         addCommentObject.setToPmId(toPmId);
         addCommentObject.setComment(comment);
         addCommentObject.setDate(date);
-        addCommentObject.setEvmRecordIndexId(Integer.parseInt(eventRecordIndexId));
+        addCommentObject.setEvmRecordIndexId(eventRecordIndexId);
         addCommentObject.setStatus(status + "");
 
         if (Utils.isNetworkAvailable(context)) {

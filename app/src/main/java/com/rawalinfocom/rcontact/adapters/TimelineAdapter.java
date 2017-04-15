@@ -125,7 +125,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         });
     }
 
-    private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int commentStatusReceived, int evmRecordIndexId) {
+    private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int commentStatusReceived, String evmRecordIndexId) {
 
         WsRequestObject addCommentObject = new WsRequestObject();
         if (crmType.equalsIgnoreCase(context.getResources().getString(R.string.text_rating))) {
