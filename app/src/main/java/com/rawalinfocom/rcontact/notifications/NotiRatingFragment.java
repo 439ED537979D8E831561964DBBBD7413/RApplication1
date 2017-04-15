@@ -240,7 +240,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
                     .REQ_GET_EVENT_COMMENT, getResources().getString(R.string.msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
         } else {
-            Toast.makeText(getActivity(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
         }
     }
 

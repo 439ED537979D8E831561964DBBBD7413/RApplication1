@@ -218,7 +218,7 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
             if (getResources().getString(R.string.text_rating).equalsIgnoreCase(comment.getCrmType())) {
 
             } else {
-                Event event = tableEventMaster.getEventByEvmRecordIndexId(Integer.parseInt(comment.getEvmRecordIndexId()));
+                Event event = tableEventMaster.getEventByEvmRecordIndexId(comment.getEvmRecordIndexId());
                 item.setEventName(event.getEvmEventType());
             }
 
