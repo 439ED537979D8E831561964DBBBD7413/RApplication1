@@ -1298,7 +1298,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             tempEmail.addAll(arrayListEmail);
             tempEmail.addAll(arrayListPhoneBookEmail);
             ProfileDetailAdapter emailDetailAdapter = new ProfileDetailAdapter(this, tempEmail,
-                    AppConstants.EMAIL);
+                    AppConstants.EMAIL,displayOwnProfile);
         } else {
         }
         //</editor-fold>
@@ -1514,7 +1514,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             tempImAccount.addAll(arrayListImAccount);
             tempImAccount.addAll(arrayListPhoneBookImAccount);
             ProfileDetailAdapter imAccountDetailAdapter = new ProfileDetailAdapter(this,
-                    tempImAccount, AppConstants.IM_ACCOUNT);
+                    tempImAccount, AppConstants.IM_ACCOUNT,displayOwnProfile);
         } else {
         }
         //</editor-fold>

@@ -438,7 +438,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
 
-
     @Override
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
@@ -464,7 +463,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             case R.id.ripple_call_log:
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission
                             .READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(new String[]{Manifest.permission.READ_CALL_LOG},
@@ -474,7 +473,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         openCallLogHistoryDetailsActivity();
 
                     }
-                }else {
+                } else {
                     openCallLogHistoryDetailsActivity();
                 }
                 break;
@@ -688,7 +687,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     };
 
 
-    private void openCallLogHistoryDetailsActivity(){
+    private void openCallLogHistoryDetailsActivity() {
         Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
         intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
         intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, historyName);
@@ -709,15 +708,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void getOldCallHistory() {
         ArrayList<CallLogHistoryType> arrayListToSend = new ArrayList<>();
         if (arrayListHistory != null && arrayListHistory.size() > 0) {
-                CallLogType callLogType = arrayListHistory.get(arrayListHistory.size() - 1);
-                String number = callLogType.getHistoryNumber();
-                long date = callLogType.getHistoryDate();
+            CallLogType callLogType = arrayListHistory.get(arrayListHistory.size() - 1);
+            String number = callLogType.getHistoryNumber();
+            long date = callLogType.getHistoryDate();
                 /*Date date1 = new Date(date);
                 String finalDate = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss").format(date1);*/
-                CallLogHistoryType callLogHistoryType =  new CallLogHistoryType();
-                callLogHistoryType.setHistoryNumber(number);
-                callLogHistoryType.setHistoryDate(date);
-                arrayListToSend.add(callLogHistoryType);
+            CallLogHistoryType callLogHistoryType = new CallLogHistoryType();
+            callLogHistoryType.setHistoryNumber(number);
+            callLogHistoryType.setHistoryDate(date);
+            arrayListToSend.add(callLogHistoryType);
 
             fetchOldRecordsServiceCall(arrayListToSend);
 
@@ -925,7 +924,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     if (oldHistoryList != null && oldHistoryList.size() > 0) {
                         rippleViewOldRecords.setVisibility(View.VISIBLE);
                         arrayListHistory.addAll(oldHistoryList);
-                        if(callHistoryListAdapter!=null){
+                        if (callHistoryListAdapter != null) {
                             callHistoryListAdapter.notifyDataSetChanged();
                         }
                     } else {
@@ -1107,7 +1106,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 }
             }
 
-            if(!TextUtils.isEmpty(profileThumbnail)){
+            if (!TextUtils.isEmpty(profileThumbnail)) {
                 Glide.with(this)
                         .load(profileThumbnail)
                         .placeholder(R.drawable.home_screen_profile)
@@ -1115,7 +1114,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         .bitmapTransform(new CropCircleTransformation(ProfileDetailActivity.this))
                         .override(200, 200)
                         .into(imageProfile);
-            }else{
+            } else {
                 imageProfile.setImageResource(R.drawable.home_screen_profile);
             }
 
@@ -1258,7 +1257,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         }
 
-        if(!TextUtils.isEmpty(profileThumbnail)){
+        if (!TextUtils.isEmpty(profileThumbnail)) {
             Glide.with(this)
                     .load(profileThumbnail)
                     .placeholder(R.drawable.home_screen_profile)
@@ -1266,7 +1265,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     .bitmapTransform(new CropCircleTransformation(ProfileDetailActivity.this))
                     .override(200, 200)
                     .into(imageProfile);
-        }else{
+        } else {
             imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
 
@@ -1505,7 +1504,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 linearPhone.setVisibility(View.VISIBLE);
                 phoneDetailAdapter = new ProfileDetailAdapter(this,
-                        tempPhoneNumber, AppConstants.PHONE_NUMBER);
+                        tempPhoneNumber, AppConstants.PHONE_NUMBER, displayOwnProfile);
                 recyclerViewContactNumber.setAdapter(phoneDetailAdapter);
             } else {
                 linearPhone.setVisibility(View.GONE);
@@ -1568,7 +1567,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempEmail.addAll(arrayListPhoneBookEmail);
                 linearEmail.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter emailDetailAdapter = new ProfileDetailAdapter(this, tempEmail,
-                        AppConstants.EMAIL);
+                        AppConstants.EMAIL, displayOwnProfile);
                 recyclerViewEmail.setAdapter(emailDetailAdapter);
             } else {
                 linearEmail.setVisibility(View.GONE);
@@ -1634,7 +1633,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 linearWebsite.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter websiteDetailAdapter = new ProfileDetailAdapter(this,
-                        tempWebsite, AppConstants.WEBSITE);
+                        tempWebsite, AppConstants.WEBSITE, displayOwnProfile);
                 recyclerViewWebsite.setAdapter(websiteDetailAdapter);
             } else {
                 linearWebsite.setVisibility(View.GONE);
@@ -1735,7 +1734,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempAddress.addAll(arrayListPhoneBookAddress);
                 linearAddress.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter addressDetailAdapter = new ProfileDetailAdapter(this,
-                        tempAddress, AppConstants.ADDRESS);
+                        tempAddress, AppConstants.ADDRESS, displayOwnProfile);
                 recyclerViewAddress.setAdapter(addressDetailAdapter);
             } else {
                 linearAddress.setVisibility(View.GONE);
@@ -1796,7 +1795,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempImAccount.addAll(arrayListPhoneBookImAccount);
                 linearSocialContact.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter imAccountDetailAdapter = new ProfileDetailAdapter(this,
-                        tempImAccount, AppConstants.IM_ACCOUNT);
+                        tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile);
                 recyclerViewSocialContact.setAdapter(imAccountDetailAdapter);
             } else {
                 linearSocialContact.setVisibility(View.GONE);
@@ -1873,7 +1872,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempEvent.addAll(arrayListPhoneBookEvent);
                 linearEvent.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter eventDetailAdapter = new ProfileDetailAdapter(this, tempEvent,
-                        AppConstants.EVENT);
+                        AppConstants.EVENT, displayOwnProfile);
                 recyclerViewEvent.setAdapter(eventDetailAdapter);
             } else {
                 linearEvent.setVisibility(View.GONE);
