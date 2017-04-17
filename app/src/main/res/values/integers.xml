@@ -42,4 +42,9 @@
     <integer name="sync_delete">5</integer>
     <integer name="sync_update">6</integer>
 
+    <!-- Privacy -->
+    <integer name="privacy_everyone">1</integer>
+    <integer name="privacy_my_contact">2</integer>
+    <integer name="privacy_private">3</integer>
+
 </resources>

@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -98,8 +100,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts_main);
         ButterKnife.bind(this);
-        Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
-        startService(contactIdFetchService);
+        /*Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
+        startService(contactIdFetchService);*/
 
         if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()
                 .getInteger(R.integer.launch_mobile_registration)) == getResources().getInteger(R
@@ -123,6 +125,12 @@ public class MainActivity extends BaseActivity implements NavigationView
             startActivityIntent(this, ProfileRegistrationActivity.class, null);
 //            }
         } else {
+
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+                    .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
+                startService(contactIdFetchService);
+            }
 
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
@@ -514,9 +522,8 @@ public class MainActivity extends BaseActivity implements NavigationView
 
                         ArrayList<ProfileDataOperation> arrayListOperations = new ArrayList<>();
                         ProfileDataOperation profileDataOperation = new ProfileDataOperation();
-                        profileDataOperation.setFlag(String.valueOf(getResources().getInteger(R
-                                .integer
-                                .sync_delete)));
+                        profileDataOperation.setFlag(getResources().getInteger(R.integer
+                                .sync_delete));
                         arrayListOperations.add(profileDataOperation);
 
                         profileData.setOperation(arrayListOperations);
@@ -574,7 +581,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         profileData.setLocalPhoneBookId(rawId);
 
         ProfileDataOperation operation = new ProfileDataOperation();
-        operation.setFlag(flag);
+        operation.setFlag(Integer.parseInt(flag));
 
         //<editor-fold desc="Structured Name">
         Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);
