@@ -144,6 +144,7 @@ public class WsRequestObject {
     private String type;
     private String deviceId;
     private String socialMediaTokenId;
+    private String createdBy;
 
     private String profileImage;
 
@@ -176,6 +177,7 @@ public class WsRequestObject {
     private ArrayList<ProfileDataOperation> profileEdit;
 
     private ArrayList<CallLogHistoryType> historyTypeArrayList;
+
     @JsonProperty("pr_reply")
     private String prReply;
 
@@ -544,6 +546,15 @@ public class WsRequestObject {
 
     public void setProfileEdit(ArrayList<ProfileDataOperation> profileEdit) {
         this.profileEdit = profileEdit;
+    }
+
+    @JsonProperty("created_by")
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
     @JsonProperty("call_history")

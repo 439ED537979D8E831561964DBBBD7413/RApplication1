@@ -1101,7 +1101,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));*/
 
             ProfileDataOperation operation = new ProfileDataOperation();
-            operation.setFlag(String.valueOf(getResources().getInteger(R.integer.sync_insert)));
+            operation.setFlag(getResources().getInteger(R.integer.sync_insert));
 
             //<editor-fold desc="Structured Name">
             Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);
@@ -1163,23 +1163,25 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
 
             if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
-                int numberCount = 0;
+//                int numberCount = 0;
                 while (contactNumberCursor.moveToNext()) {
 
                     ProfileDataOperationPhoneNumber phoneNumber = new
                             ProfileDataOperationPhoneNumber();
 
-                    phoneNumber.setPhoneId(String.valueOf(++numberCount));
+//                    phoneNumber.setPhoneId(String.valueOf(++numberCount));
                     phoneNumber.setPhoneNumber(Utils.getFormattedNumber(getActivity(),
                             contactNumberCursor.getString(contactNumberCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.NUMBER))));
                     phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                             (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.TYPE))));
-                    phoneNumber.setPhonePublic(1);
+//                    phoneNumber.setPhonePublic(1);
                     profileData.setProfileUrl(getPhotoUrlFromRawId(Utils.getFormattedNumber(getActivity(),
                             contactNumberCursor.getString(contactNumberCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.NUMBER)))));
+                    phoneNumber.setPhonePublic(getResources().getInteger(R.integer
+                            .privacy_my_contact));
 
                     arrayListPhoneNumber.add(phoneNumber);
 
@@ -1204,19 +1206,19 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             ArrayList<ProfileDataOperationEmail> arrayListEmailId = new ArrayList<>();
 
             if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
-                int emailCount = 0;
+//                int emailCount = 0;
                 while (contactEmailCursor.moveToNext()) {
 
                     ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
 
-                    emailId.setEmId(String.valueOf(++emailCount));
+//                    emailId.setEmId(String.valueOf(++emailCount));
                     emailId.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
                     emailId.setEmType(phoneBookContacts.getEmailType(contactEmailCursor,
                             contactEmailCursor.getInt
                                     (contactEmailCursor.getColumnIndex(ContactsContract
                                             .CommonDataKinds.Email.TYPE))));
-                    emailId.setEmPublic(1);
+                    emailId.setEmPublic(getResources().getInteger(R.integer.privacy_my_contact));
 
                     arrayListEmailId.add(emailId);
                     arrayListContactEmails.add(emailId.getEmEmailId());
@@ -1264,18 +1266,19 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = new ArrayList<>();
 
             if (contactWebsiteCursor != null && contactWebsiteCursor.getCount() > 0) {
-                int websiteCount = 0;
+//                int websiteCount = 0;
                 while (contactWebsiteCursor.moveToNext()) {
 
                     ProfileDataOperationWebAddress webAddress = new
                             ProfileDataOperationWebAddress();
 
-                    webAddress.setWebId(String.valueOf(++websiteCount));
+//                    webAddress.setWebId(String.valueOf(++websiteCount));
                     webAddress.setWebAddress(contactWebsiteCursor.getString(contactWebsiteCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
                     webAddress.setWebType(phoneBookContacts.getWebsiteType(contactWebsiteCursor,
                             (contactWebsiteCursor.getInt(contactWebsiteCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Website.TYPE)))));
+                    webAddress.setWebPublic(getResources().getInteger(R.integer.privacy_everyone));
 
                    /* String website = contactWebsiteCursor.getString(contactWebsiteCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));*/
@@ -1297,14 +1300,14 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
             if (contactOrganizationCursor != null && contactOrganizationCursor.getCount() > 0) {
 
-                int organizationCount = 0;
+//                int organizationCount = 0;
 
                 while (contactOrganizationCursor.moveToNext()) {
 
                     ProfileDataOperationOrganization organization = new
                             ProfileDataOperationOrganization();
 
-                    organization.setOrgId(String.valueOf(++organizationCount));
+//                    organization.setOrgId(String.valueOf(++organizationCount));
                     organization.setOrgName(contactOrganizationCursor.getString
                             (contactOrganizationCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.Organization.COMPANY)));
@@ -1325,6 +1328,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     organization.setOrgOfficeLocation(contactOrganizationCursor.getString
                             (contactOrganizationCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.Organization.OFFICE_LOCATION)));
+                    organization.setIsCurrent(1);
+                    organization.setOrgPublic(getResources().getInteger(R.integer
+                            .privacy_everyone));
 
                     arrayListOrganization.add(organization);
 
@@ -1340,12 +1346,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             ArrayList<ProfileDataOperationAddress> arrayListAddress = new ArrayList<>();
 
             if (contactAddressCursor != null && contactAddressCursor.getCount() > 0) {
-                int addressCount = 0;
+//                int addressCount = 0;
                 while (contactAddressCursor.moveToNext()) {
 
                     ProfileDataOperationAddress address = new ProfileDataOperationAddress();
 
-                    address.setAddId(String.valueOf(++addressCount));
+//                    address.setAddId(String.valueOf(++addressCount));
                     address.setFormattedAddress(contactAddressCursor.getString
                             (contactAddressCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS)));
@@ -1370,7 +1376,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     address.setAddressType(phoneBookContacts.getAddressType(contactAddressCursor,
                             contactAddressCursor.getInt(contactAddressCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.StructuredPostal.TYPE))));
-                    address.setAddPublic(1);
+                    address.setAddPublic(getResources().getInteger(R.integer.privacy_my_contact));
 
                     arrayListAddress.add(address);
 
@@ -1387,12 +1393,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
             if (contactImCursor != null && contactImCursor.getCount() > 0) {
 
-                int imCount = 0;
+//                int imCount = 0;
                 while (contactImCursor.moveToNext()) {
 
                     ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
 
-                    imAccount.setIMId(String.valueOf(++imCount));
+//                    imAccount.setIMId(String.valueOf(++imCount));
                     imAccount.setIMAccountDetails(contactImCursor.getString(contactImCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Im.DATA1)));
 
@@ -1404,7 +1410,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             (contactImCursor.getInt((contactImCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
-                    imAccount.setIMAccountPublic(1);
+                    imAccount.setIMAccountPublic(getResources().getInteger(R.integer
+                            .privacy_my_contact));
 
 
                     arrayListImAccount.add(imAccount);
@@ -1421,12 +1428,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             ArrayList<ProfileDataOperationEvent> arrayListEvent = new ArrayList<>();
 
             if (contactEventCursor != null && contactEventCursor.getCount() > 0) {
-                int eventCount = 0;
+//                int eventCount = 0;
                 while (contactEventCursor.moveToNext()) {
 
                     ProfileDataOperationEvent event = new ProfileDataOperationEvent();
 
-                    event.setEventId(String.valueOf(++eventCount));
+//                    event.setEventId(String.valueOf(++eventCount));
                     event.setEventType(phoneBookContacts.getEventType(contactEventCursor,
                             contactEventCursor
                                     .getInt(contactEventCursor.getColumnIndex(ContactsContract
@@ -1445,7 +1452,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                                     .START_DATE)));*/
                     event.setEventDateTime(eventDate);
 
-                    event.setEventPublic(1);
+                    event.setEventPublic(getResources().getInteger(R.integer.privacy_my_contact));
 
                     arrayListEvent.add(event);
 
