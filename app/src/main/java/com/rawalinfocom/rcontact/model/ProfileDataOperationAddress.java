@@ -27,7 +27,6 @@ public class ProfileDataOperationAddress implements Serializable {
     private String formattedAddress;
     private int addPublic;
 
-    //    private int rcpType;
     private String rcpType;
 
     @JsonProperty("add_id")
@@ -155,14 +154,6 @@ public class ProfileDataOperationAddress implements Serializable {
     public void setAddPublic(int addPublic) {
         this.addPublic = addPublic;
     }
-
-    /* public int getRcpType() {
-        return rcpType;
-    }
-
-    public void setRcpType(int rcpType) {
-        this.rcpType = rcpType;
-    }*/
 
     public String getRcpType() {
         return rcpType;

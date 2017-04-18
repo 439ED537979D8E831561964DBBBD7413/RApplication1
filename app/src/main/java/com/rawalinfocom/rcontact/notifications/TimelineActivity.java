@@ -3,11 +3,14 @@ package com.rawalinfocom.rcontact.notifications;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -86,12 +89,19 @@ public class TimelineActivity extends BaseActivity implements RippleView
     private TimelineAdapter todayTimelineAdapter;
     private TimelineAdapter yesterdayTimelineAdapter;
     private TimelineAdapter past5daysTimelineAdapter;
+
     TableCommentMaster tableCommentMaster;
     public static int selectedRecycler = -1;
     public static int selectedRecyclerItem = -1;
+
     List<TimelineItem> listTimelineToday;
     List<TimelineItem> listTimelineYesterday;
     List<TimelineItem> listTimelinePastDay;
+
+    String today;
+    String yesterDay;
+    String dayBeforeYesterday;
+    String pastday5thDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,12 +111,8 @@ public class TimelineActivity extends BaseActivity implements RippleView
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         init();
         tableCommentMaster = new TableCommentMaster(databaseHandler);
-
-        // temporory code start
-        tableCommentMaster.deleteAllReceivedComments();
+        initData();
         getAllEventComment(TimelineActivity.this);
-        //initData();
-        // temporory code end
     }
 
     private void init() {
@@ -194,6 +200,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
                     todayTimelineAdapter.updateList(listTimelineToday);
                     yesterdayTimelineAdapter.updateList(listTimelineYesterday);
                     past5daysTimelineAdapter.updateList(listTimelinePastDay);
+                    updateHeight();
                 }
                 return false;
             }
@@ -227,41 +234,20 @@ public class TimelineActivity extends BaseActivity implements RippleView
                 }
             }
             past5daysTimelineAdapter.updateList(temp);
+            updateHeight();
         }
     }
 
     private void initData() {
-        //today 22
-        String today = getDate(0); // 22
-        String yesterDay = getDate(-1); // 21
-        String dayBeforeYesterday = getDate(-2); //20
-        String pastday5thDay = getDate(-6); //16
+
+        today = getDate(0);
+        yesterDay = getDate(-1);
+        dayBeforeYesterday = getDate(-2);
+        pastday5thDay = getDate(-6);
+
         ArrayList<Comment> commentsToday = tableCommentMaster.getAllCommentReceivedBetween(today, today);
         ArrayList<Comment> commentsYesterday = tableCommentMaster.getAllCommentReceivedBetween(yesterDay, yesterDay);
         ArrayList<Comment> commentsPastday = tableCommentMaster.getAllCommentReceivedBetween(pastday5thDay, dayBeforeYesterday);
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        int density = getResources().getDisplayMetrics().densityDpi;
-        int heightPercent = 50;
-        int maxItemCount = 1;
-        switch (density) {
-            case DisplayMetrics.DENSITY_LOW: /*120*/
-                heightPercent = 30;
-                break;
-            case DisplayMetrics.DENSITY_MEDIUM: /*160*/
-                heightPercent = 35;
-                break;
-            case DisplayMetrics.DENSITY_HIGH: /*320*/
-                heightPercent = 42;
-                maxItemCount = 1;
-                break;
-            case DisplayMetrics.DENSITY_XXHIGH: /*480*/
-            case DisplayMetrics.DENSITY_XXXHIGH: /*680*/
-                heightPercent = 50;
-                maxItemCount = 2;
-                break;
-        }
-        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = (displaymetrics.heightPixels * heightPercent) / 100;
 
         listTimelineToday = creatTimelineList(commentsToday);
         listTimelineYesterday = creatTimelineList(commentsYesterday);
@@ -271,31 +257,52 @@ public class TimelineActivity extends BaseActivity implements RippleView
         yesterdayTimelineAdapter = new TimelineAdapter(this, listTimelineYesterday, 1);
         past5daysTimelineAdapter = new TimelineAdapter(this, listTimelinePastDay, 2);
 
-
         recyclerViewToday.setAdapter(todayTimelineAdapter);
-        recyclerViewToday.setLayoutManager(new CustomLayoutManager(this, recyclerViewToday, height));
-        RecyclerView.Adapter adapter = recyclerViewToday.getAdapter();
-        int itemCount = adapter.getItemCount();
-        if (itemCount > maxItemCount) {
-            recyclerViewToday.getLayoutParams().height = height;
-        }
-
         recyclerViewYesterday.setAdapter(yesterdayTimelineAdapter);
-        recyclerViewYesterday.setLayoutManager(new CustomLayoutManager(this, recyclerViewYesterday, height));
-        adapter = recyclerViewYesterday.getAdapter();
-        itemCount = adapter.getItemCount();
-        if (itemCount > maxItemCount) {
-            recyclerViewYesterday.getLayoutParams().height = height;
-        }
-
         recyclerViewPast5day.setAdapter(past5daysTimelineAdapter);
-        recyclerViewPast5day.setLayoutManager(new CustomLayoutManager(this, recyclerViewPast5day, height));
-        adapter = recyclerViewPast5day.getAdapter();
-        itemCount = adapter.getItemCount();
-        if (itemCount > maxItemCount) {
-            recyclerViewPast5day.getLayoutParams().height = height;
-        }
 
+        updateHeight();
+    }
+
+    private void updateHeight() {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        int density = getResources().getDisplayMetrics().densityDpi;
+        int heightPercent = 50;
+        switch (density) {
+            case DisplayMetrics.DENSITY_LOW: /*120*/
+                heightPercent = 30;
+                break;
+            case DisplayMetrics.DENSITY_MEDIUM: /*160*/
+                heightPercent = 35;
+                break;
+            case DisplayMetrics.DENSITY_HIGH: /*240*/
+                heightPercent = 42;
+                break;
+            case DisplayMetrics.DENSITY_XHIGH: /*320*/
+                heightPercent = 45;
+                break;
+            case DisplayMetrics.DENSITY_XXHIGH: /*480*/
+            case DisplayMetrics.DENSITY_XXXHIGH: /*680*/
+                heightPercent = 50;
+                break;
+        }
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = (displaymetrics.heightPixels * heightPercent) / 100;
+
+        setRecyclerViewHeight(recyclerViewToday, height);
+        setRecyclerViewHeight(recyclerViewYesterday, height);
+        setRecyclerViewHeight(recyclerViewPast5day, height);
+    }
+
+    private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int heightRecycler = recyclerView.getMeasuredHeight();
+        if (heightRecycler > height) {
+            recyclerView.getLayoutParams().height = height;
+        } else {
+            recyclerView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
     }
 
     private List<TimelineItem> creatTimelineList(ArrayList<Comment> comments) {
@@ -304,7 +311,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
             TimelineItem item = new TimelineItem();
             TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
             TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
-            Event event = tableEventMaster.getEventByEvmRecordIndexId(Integer.parseInt(comment.getEvmRecordIndexId()));
+            Event event = tableEventMaster.getEventByEvmRecordIndexId(comment.getEvmRecordIndexId());
             int pmId = comment.getRcProfileMasterPmId();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
             item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
@@ -314,7 +321,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
             item.setCrmCloudPrId(comment.getCrmCloudPrId());
             item.setCrmType(comment.getCrmType());
             item.setCrmRating(comment.getCrmRating());
-            item.setEvmRecordIndexId(Integer.parseInt(comment.getEvmRecordIndexId()));
+            item.setEvmRecordIndexId(comment.getEvmRecordIndexId());
             item.setUserComment(comment.getCrmReply());
             item.setUserCommentTime(comment.getCrmRepliedAt());
             list.add(item);
@@ -353,6 +360,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
                     (WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
         } else {
             Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -377,19 +385,13 @@ public class TimelineActivity extends BaseActivity implements RippleView
                         if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
                             switch (selectedRecycler) {
                                 case 0:
-                                    listTimelineToday.get(selectedRecyclerItem).setUserComment(rating.getPrReply());
-                                    listTimelineToday.get(selectedRecyclerItem).setUserCommentTime(Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
-                                    todayTimelineAdapter.notifyDataSetChanged();
+                                    addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
                                     break;
                                 case 1:
-                                    listTimelineYesterday.get(selectedRecyclerItem).setUserComment(rating.getPrReply());
-                                    listTimelineYesterday.get(selectedRecyclerItem).setUserCommentTime(Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
-                                    yesterdayTimelineAdapter.notifyDataSetChanged();
+                                    addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
                                     break;
                                 case 2:
-                                    listTimelinePastDay.get(selectedRecyclerItem).setUserComment(rating.getPrReply());
-                                    listTimelinePastDay.get(selectedRecyclerItem).setUserCommentTime(Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
-                                    past5daysTimelineAdapter.notifyDataSetChanged();
+                                    addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
                                     break;
                             }
                             selectedRecycler = -1;
@@ -406,7 +408,6 @@ public class TimelineActivity extends BaseActivity implements RippleView
                 ArrayList<EventCommentData> eventReceiveCommentData = wsResponseObject.getEventReceiveCommentData();
                 saveCommentDataToDb(eventReceiveCommentData);
                 Utils.hideProgressDialog();
-                initData();
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_ADD_EVENT_COMMENT)) {
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
                 EventComment eventComment = wsResponseObject.getEventComment();
@@ -417,19 +418,13 @@ public class TimelineActivity extends BaseActivity implements RippleView
                     if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
                         switch (selectedRecycler) {
                             case 0:
-                                listTimelineToday.get(selectedRecyclerItem).setUserComment(eventComment.getReply());
-                                listTimelineToday.get(selectedRecyclerItem).setUserCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()));
-                                todayTimelineAdapter.notifyDataSetChanged();
+                                addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
                                 break;
                             case 1:
-                                listTimelineYesterday.get(selectedRecyclerItem).setUserComment(eventComment.getReply());
-                                listTimelineYesterday.get(selectedRecyclerItem).setUserCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()));
-                                yesterdayTimelineAdapter.notifyDataSetChanged();
+                                addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
                                 break;
                             case 2:
-                                listTimelinePastDay.get(selectedRecyclerItem).setUserComment(eventComment.getReply());
-                                listTimelinePastDay.get(selectedRecyclerItem).setUserCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()));
-                                past5daysTimelineAdapter.notifyDataSetChanged();
+                                addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
                                 break;
                         }
                         selectedRecycler = -1;
@@ -441,8 +436,15 @@ public class TimelineActivity extends BaseActivity implements RippleView
 
             }
         } else {
+            Utils.hideProgressDialog();
             Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void addReplyAndUpdateList(List<TimelineItem> list, TimelineAdapter adapter, String prReply, String replyAt) {
+        list.get(selectedRecyclerItem).setUserComment(prReply);
+        list.get(selectedRecyclerItem).setUserCommentTime(Utils.getLocalTimeFromUTCTime(replyAt));
+        adapter.notifyDataSetChanged();
     }
 
     private void saveCommentDataToDb(ArrayList<EventCommentData> eventReceiveCommentData) {
@@ -464,6 +466,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
                 for (EventComment eventComment : allAnniversaryComments) {
                     Comment comment = createComment(eventComment, getResources().getString(R.string.text_anniversary));
                     tableCommentMaster.addComment(comment);
+                    refreshAllList();
                 }
             }
             if (allCustomEventsComments != null) {
@@ -479,6 +482,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
                 }
             }
         }
+        refreshAllList();
     }
 
     private Comment createComment(EventComment eventComment, String commentType) {
@@ -502,5 +506,20 @@ public class TimelineActivity extends BaseActivity implements RippleView
         return comment;
     }
 
+    private void refreshAllList() {
+        ArrayList<Comment> commentsToday = tableCommentMaster.getAllCommentReceivedBetween(today, today);
+        ArrayList<Comment> commentsYesterday = tableCommentMaster.getAllCommentReceivedBetween(yesterDay, yesterDay);
+        ArrayList<Comment> commentsPastday = tableCommentMaster.getAllCommentReceivedBetween(pastday5thDay, dayBeforeYesterday);
+
+        listTimelineToday = creatTimelineList(commentsToday);
+        listTimelineYesterday = creatTimelineList(commentsYesterday);
+        listTimelinePastDay = creatTimelineList(commentsPastday);
+
+        todayTimelineAdapter.updateList(listTimelineToday);
+        yesterdayTimelineAdapter.updateList(listTimelineYesterday);
+        past5daysTimelineAdapter.updateList(listTimelinePastDay);
+        updateHeight();
+
+    }
 
 }

@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact;
 import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -28,6 +29,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -44,6 +46,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -69,6 +72,7 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.notifications.EventsActivity;
 import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
+import com.rawalinfocom.rcontact.notifications.RatingHistory;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
 import com.rawalinfocom.rcontact.services.CallLogIdFetchService;
@@ -120,6 +124,8 @@ public class MainActivity extends BaseActivity implements NavigationView
     String callLogResponseDate = "";
     int logsSyncedCount =  10;
     MaterialDialog permissionConfirmationDialog;
+    private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
+            .permission.READ_CALL_LOG};
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -127,30 +133,12 @@ public class MainActivity extends BaseActivity implements NavigationView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts_main);
         ButterKnife.bind(this);
-        Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
-        startService(contactIdFetchService);
-
-
+        /*Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
+        startService(contactIdFetchService);*/
 
         callLogTypeArrayListMain = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission
-                    .READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_CALL_LOG},
-                        AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-
-            } else {
-
-                Intent callLogIdFetchService =  new Intent(this, CallLogIdFetchService.class);
-                startService(callLogIdFetchService);
-
-                AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        getCallLogsByRawId();
-                    }
-                });
-            }
+            checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
         }else{
             AsyncTask.execute(new Runnable() {
                 @Override
@@ -184,6 +172,12 @@ public class MainActivity extends BaseActivity implements NavigationView
 //            }
         } else {
 
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+                    .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
+                startService(contactIdFetchService);
+            }
+
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
 
@@ -208,6 +202,26 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute(String permissions[], int requestCode) {
+
+        boolean contacts = ContextCompat.checkSelfPermission(MainActivity.this, permissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;
+        boolean logs = ContextCompat.checkSelfPermission(MainActivity.this, permissions[1]) !=
+                PackageManager.PERMISSION_GRANTED;
+        if (contacts || logs ) {
+            requestPermissions(permissions, requestCode);
+        } else {
+            Intent callLogIdFetchService =  new Intent(this, CallLogIdFetchService.class);
+            startService(callLogIdFetchService);
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    getCallLogsByRawId();
+                }
+            });
+        }
+    }
 
     @Override
     protected void onPause() {
@@ -251,8 +265,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                     Uri path = Uri.fromFile(fileLocation);
                     Intent emailIntent = new Intent(Intent.ACTION_SEND);
                     emailIntent.setType("vnd.android.cursor.dir/email");
-                    String to[] = {"development@rawalinfocom.com"};
-//                    emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
                     emailIntent.putExtra(Intent.EXTRA_STREAM, path);
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
                     startActivity(Intent.createChooser(emailIntent, "Send email..."));
@@ -266,21 +278,10 @@ public class MainActivity extends BaseActivity implements NavigationView
         } else if (id == R.id.nav_user_events) {
             startActivityIntent(MainActivity.this, EventsActivity.class, null);
         } else if (id == R.id.nav_blocked_contacts) {
-
             startActivityIntent(this, BlockContactListActivity.class, new Bundle());
+        } else if (id == R.id.nav_user_rating_history) {
+            startActivityIntent(this, RatingHistory.class, new Bundle());
         }
-        /*}*/
-       /* else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -340,7 +341,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             if (temp != null && temp.size() > 0)
                                 insertServiceCall(newList);
                         } else {
-                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
                         }
 
                     } else {
@@ -351,7 +352,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
                         }
                         else {
-                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
                             Utils.setBooleanPreference(this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, true);
                         }
@@ -362,7 +363,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                         Log.e("error response", callLogInsertionResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "userProfileResponse null");
-                        Toast.makeText(this,getString(R.string.msg_try_later),Toast.LENGTH_SHORT).show();
+                        Log.e("onDeliveryResponse: ", getString(R.string.msg_try_later));
+//                        Toast.makeText(this,getString(R.string.msg_try_later),Toast.LENGTH_SHORT).show();
                     }
                 }
             }else {
@@ -380,6 +382,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         }
 
         unRegisterLocalBroadCastReceiver();
+        Utils.setBooleanPreference(this, AppConstants
+                .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
     }
 
     //</editor-fold>
@@ -404,7 +408,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Dial Pad", Snackbar.LENGTH_SHORT).show();
+//                Snackbar.make(view, "Dial Pad", Snackbar.LENGTH_SHORT).show();
+                openDialer();
             }
         });
 
@@ -429,6 +434,26 @@ public class MainActivity extends BaseActivity implements NavigationView
         setupTabLayout();
         Utils.changeTabsFont(this, tabMain);
 
+
+    }
+
+    private void openDialer(){
+        try{
+
+            Intent intent = new Intent(MainActivity.this, DialerActivity.class);
+            ActivityOptions options = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
+                startActivity(intent, options.toBundle());
+
+            }else{
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -582,7 +607,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     // =========================================== Call Logs ==================================================//
 
 
-    @Override
+ /*   @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -612,6 +637,33 @@ public class MainActivity extends BaseActivity implements NavigationView
                 }
             }
             break;
+        }
+    }*/
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.M)
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == AppConstants.READ_LOGS && permissions[0].equals(Manifest.permission
+                .READ_CONTACTS) && permissions[1].equals(Manifest.permission.READ_CALL_LOG)) {
+            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED && grantResults[1] ==
+                    PermissionChecker.PERMISSION_GRANTED) {
+
+                Intent callLogIdFetchService =  new Intent(this, CallLogIdFetchService.class);
+                startService(callLogIdFetchService);
+
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        getCallLogsByRawId();
+                    }
+                });
+
+            } else {
+                showPermissionConfirmationDialog();
+            }
         }
     }
     private void getCallLogsByRawId(){
@@ -657,7 +709,7 @@ public class MainActivity extends BaseActivity implements NavigationView
             for(int i=0; i<listOfRowIds.size();i++){
                 String uniqueCallLogId =  listOfRowIds.get(i);
                 if(!TextUtils.isEmpty(uniqueCallLogId)){
-                    String order = CallLog.Calls.DATE + " DESC";
+                    String order = CallLog.Calls.DATE + " ASC";
                     Cursor cursor =  this.getContentResolver().query(CallLog.Calls.CONTENT_URI,
                             null, CallLog.Calls._ID +" = " + uniqueCallLogId , null, order);
 
@@ -765,14 +817,17 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
     private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
 
-        WsRequestObject deviceDetailObject = new WsRequestObject();
-        deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_UPLOAD_CALL_LOGS, null, true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
+        if(Utils.isNetworkAvailable(MainActivity.this)){
+            WsRequestObject deviceDetailObject = new WsRequestObject();
+            deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
+            if (Utils.isNetworkAvailable(this)) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                        deviceDetailObject, null, WsResponseObject.class, WsConstants
+                        .REQ_UPLOAD_CALL_LOGS, null, true).execute
+                        (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
+            }
         }
+
     }
 
     private ArrayList<ArrayList<String>> chopped(ArrayList<String> list, final int L) {
@@ -1165,9 +1220,8 @@ public class MainActivity extends BaseActivity implements NavigationView
 
                         ArrayList<ProfileDataOperation> arrayListOperations = new ArrayList<>();
                         ProfileDataOperation profileDataOperation = new ProfileDataOperation();
-                        profileDataOperation.setFlag(String.valueOf(getResources().getInteger(R
-                                .integer
-                                .sync_delete)));
+                        profileDataOperation.setFlag(getResources().getInteger(R.integer
+                                .sync_delete));
                         arrayListOperations.add(profileDataOperation);
 
                         profileData.setOperation(arrayListOperations);
@@ -1225,7 +1279,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         profileData.setLocalPhoneBookId(rawId);
 
         ProfileDataOperation operation = new ProfileDataOperation();
-        operation.setFlag(flag);
+        operation.setFlag(Integer.parseInt(flag));
 
         //<editor-fold desc="Structured Name">
         Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);

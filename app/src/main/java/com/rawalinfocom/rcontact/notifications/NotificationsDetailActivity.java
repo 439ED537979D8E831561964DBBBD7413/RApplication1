@@ -32,7 +32,7 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
     public static final int TAB_COMMENTS = 2;
     public static final int TAB_RCONTACTS = 3;
 
-    private NotiRequestFragment notiRequestFragment;
+    private NotiProfileFragment notiProfileFragment;
     private NotiRContactsFragment notiRContactsFragment;
     private NotiRatingFragment notiRatingFragment;
     private NotiCommentsFragment notiCommentsFragment;
@@ -85,21 +85,21 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
     }
 
     private void setupTabLayout() {
-        notiRequestFragment = NotiRequestFragment.newInstance();
+        notiProfileFragment = NotiProfileFragment.newInstance();
         notiRatingFragment = NotiRatingFragment.newInstance();
         notiCommentsFragment = NotiCommentsFragment.newInstance();
         notiRContactsFragment = NotiRContactsFragment.newInstance();
 
-        tabNotifications.addTab(tabNotifications.newTab().setText("Request"), true);
-        tabNotifications.addTab(tabNotifications.newTab().setText("Rating"));
-        tabNotifications.addTab(tabNotifications.newTab().setText("Comments"));
-        tabNotifications.addTab(tabNotifications.newTab().setText("Rcontact"));
+        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_profile)), true);
+        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_rating)));
+        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_comments)));
+        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_rcontact)));
     }
 
     private void setCurrentTabFragment(int tabPosition) {
         switch (tabPosition) {
             case 0:
-                replaceFragment(notiRequestFragment);
+                replaceFragment(notiProfileFragment);
                 break;
             case 1:
                 replaceFragment(notiRatingFragment);

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class ProfileDataOperation implements Serializable {
 
     private ArrayList<ProfileDataOperationPhoneNumber> pbPhoneNumber;
-    private String flag;
+    private int flag;
     private ArrayList<ProfileDataOperationWebAddress> pbWebAddress;
     private ArrayList<ProfileDataOperationEvent> pbEvent;
     private String pbNameSuffix;
@@ -51,7 +51,6 @@ public class ProfileDataOperation implements Serializable {
     private String pbGender;
     private String pbProfilePhoto;
 
-
     @JsonProperty("pb_phone_number")
     public ArrayList<ProfileDataOperationPhoneNumber> getPbPhoneNumber() {
         return pbPhoneNumber;
@@ -62,22 +61,13 @@ public class ProfileDataOperation implements Serializable {
     }
 
     @JsonProperty("flag")
-    public String getFlag() {
-        return StringUtils.defaultString(this.flag);
+    public int getFlag() {
+        return this.flag;
     }
 
-    public void setFlag(String flag) {
+    public void setFlag(int flag) {
         this.flag = flag;
     }
-
-   /* @JsonProperty("pb_web_address")
-    public ArrayList<String> getPbWebAddress() {
-        return pbWebAddress;
-    }
-
-    public void setPbWebAddress(ArrayList<String> pbWebAddress) {
-        this.pbWebAddress = pbWebAddress;
-    }*/
 
     @JsonProperty("pb_event")
     public ArrayList<ProfileDataOperationEvent> getPbEvent() {
@@ -142,15 +132,6 @@ public class ProfileDataOperation implements Serializable {
     public void setIsFavourite(String isFavourite) {
         this.isFavourite = isFavourite;
     }
-
-   /* @JsonProperty("pb_relationship")
-    public ArrayList<ProfileDataOperationRelationship> getPbRelationship() {
-        return pbRelationship;
-    }
-
-    public void setPbRelationship(ArrayList<ProfileDataOperationRelationship> pbRelationship) {
-        this.pbRelationship = pbRelationship;
-    }*/
 
     @JsonProperty("pb_source")
     public String getPbSource() {
@@ -277,24 +258,6 @@ public class ProfileDataOperation implements Serializable {
     public void setNoSqlMasterId(String noSqlMasterId) {
         this.noSqlMasterId = noSqlMasterId;
     }
-
-    /*@JsonProperty("email_address")
-    public String getVerifiedEmailAddress() {
-        return StringUtils.defaultString(verifiedEmailAddress);
-    }
-
-    public void setVerifiedEmailAddress(String verifiedEmailAddress) {
-        this.verifiedEmailAddress = verifiedEmailAddress;
-    }
-
-    @JsonProperty("em_id")
-    public String getEmCloudId() {
-        return StringUtils.defaultString(emCloudId);
-    }
-
-    public void setEmCloudId(String emCloudId) {
-        this.emCloudId = emCloudId;
-    }*/
 
     @JsonProperty("mobile_number")
     public String getVerifiedMobileNumber() {

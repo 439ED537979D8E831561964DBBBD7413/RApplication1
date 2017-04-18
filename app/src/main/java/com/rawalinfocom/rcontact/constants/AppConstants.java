@@ -107,6 +107,7 @@ public class AppConstants {
     public static String EXTRA_FORMATTED_ADDRESS = "extra_formatted_address";
     public static String EXTRA_LATITUDE = "extra_latitude";
     public static String EXTRA_LONGITUDE = "extra_longitude";
+    public static String EXTRA_CONTACT_PROFILE_IMAGE = "extra_contact_profile_image";
 
 
 

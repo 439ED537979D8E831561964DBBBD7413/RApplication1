@@ -20,6 +20,7 @@ public class ProfileDataOperationOrganization implements Serializable {
     private String orgJobDescription;
     private String orgOfficeLocation;
     private int isCurrent;
+    private int orgPublic;
 
     //    private int orgRcpType;
     private String orgRcpType;
@@ -87,14 +88,6 @@ public class ProfileDataOperationOrganization implements Serializable {
         this.orgOfficeLocation = orgOfficeLocation;
     }
 
-/*    public int getOrgRcpType() {
-        return orgRcpType;
-    }
-
-    public void setOrgRcpType(int orgRcpType) {
-        this.orgRcpType = orgRcpType;
-    }*/
-
     @JsonProperty("is_current")
     public int getIsCurrent() {
         return isCurrent;
@@ -102,6 +95,15 @@ public class ProfileDataOperationOrganization implements Serializable {
 
     public void setIsCurrent(int isCurrent) {
         this.isCurrent = isCurrent;
+    }
+
+    @JsonProperty("org_public")
+    public int getOrgPublic() {
+        return orgPublic;
+    }
+
+    public void setOrgPublic(int orgPublic) {
+        this.orgPublic = orgPublic;
     }
 
     public String getOrgRcpType() {

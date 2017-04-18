@@ -55,21 +55,21 @@ public class NotificationsActivity extends BaseActivity implements RippleView
     }
 
     public void init() {
-        textToolbarTitle.setText("Notifications");
+        textToolbarTitle.setText(getResources().getString(R.string.text_notifications));
         rippleActionBack.setOnRippleCompleteListener(this);
         imageActionBack.setImageResource(R.drawable.ic_action_back);
     }
 
     private void initData() {
-        NotificationItem item1 = new NotificationItem("Timeline", 100, new String[]{"Paras Savaliya and 6 other friends Birthday wish  on your Birthday",
+        NotificationItem item1 = new NotificationItem(getResources().getString(R.string.nav_text_timeline), 100, new String[]{"Paras Savaliya and 6 other friends Birthday wish  on your Birthday",
                 "Paras Savaliya and 6 other friends Birthday wish  on your Birthday",}, 1);
-        NotificationItem item2 = new NotificationItem("Requests", 100, new String[]{"Paras Savaliya and 6 other friends Birthday wish  on your Birthday",
+        NotificationItem item2 = new NotificationItem(getResources().getString(R.string.text_tab_profile), 100, new String[]{"Paras Savaliya and 6 other friends Birthday wish  on your Birthday",
                 "Paras Savaliya and 6 other friends Birthday wish  on your Birthday",}, 2);
-        NotificationItem item3 = new NotificationItem("Rating", 100, new String[]{"Paras Savaliya and 6 other friends Birthday wish  on your Birthday",
+        NotificationItem item3 = new NotificationItem(getResources().getString(R.string.text_rating), 100, new String[]{"Paras Savaliya and 6 other friends Birthday wish  on your Birthday",
                 "Paras Savaliya and 6 other friends Birthday wish  on your Birthday",}, 3);
-        NotificationItem item4 = new NotificationItem("Comments", 100, new String[]{"Paras Savaliya and 6 other friends Birthday wish  on your Birthday",
+        NotificationItem item4 = new NotificationItem(getResources().getString(R.string.text_tab_comments), 100, new String[]{"Paras Savaliya and 6 other friends Birthday wish  on your Birthday",
                 "Paras Savaliya and 6 other friends Birthday wish  on your Birthday",}, 4);
-        NotificationItem item5 = new NotificationItem("RContacts", 100, new String[]{"Paras Savaliya and 6 other friends Birthday wish  on your Birthday",
+        NotificationItem item5 = new NotificationItem(getResources().getString(R.string.text_tab_rcontact), 100, new String[]{"Paras Savaliya and 6 other friends Birthday wish  on your Birthday",
                 "Paras Savaliya and 6 other friends Birthday wish  on your Birthday",}, 5);
 
         List<NotificationItem> listNotificationsMain = Arrays.asList(item1, item2, item3, item4, item5);
