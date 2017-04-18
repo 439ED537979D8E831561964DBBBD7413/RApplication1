@@ -117,8 +117,8 @@ public class PhoneContentObserver extends ContentObserver {
 
                     ArrayList<ProfileDataOperation> arrayListOperations = new ArrayList<>();
                     ProfileDataOperation profileDataOperation = new ProfileDataOperation();
-                    profileDataOperation.setFlag(String.valueOf(context.getResources().getInteger(R
-                            .integer.sync_delete)));
+                    profileDataOperation.setFlag(context.getResources().getInteger(R.integer
+                            .sync_delete));
                     arrayListOperations.add(profileDataOperation);
 
                     profileData.setOperation(arrayListOperations);
@@ -181,7 +181,7 @@ public class PhoneContentObserver extends ContentObserver {
         profileData.setLocalPhoneBookId(rawId);
 
         ProfileDataOperation operation = new ProfileDataOperation();
-        operation.setFlag(flag);
+        operation.setFlag(Integer.parseInt(flag));
 
         //<editor-fold desc="Structured Name">
         Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);

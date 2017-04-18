@@ -43,5 +43,17 @@
     <dimen name="padding_15dp">15dp</dimen>
     <dimen name="text_size_12sp">12sp</dimen>
     <dimen name="text_size_10sp">10sp</dimen>
+    <dimen name="text_size_16sp">16sp</dimen>
+
+
+    <!--call dialer-->
+    <dimen name="padding_12dp">12dp</dimen>
+    <dimen name="text_size_32sp">32sp</dimen>
+    <dimen name="text_size_45sp">45sp</dimen>
+    <dimen name="padding_14dp">14dp</dimen>
+    <dimen name="margin_28dp">28dp</dimen>
+    <dimen name="margin_20dp">20dp</dimen>
+    <dimen name="margin_25dp">25dp</dimen>
+
 
 </resources>

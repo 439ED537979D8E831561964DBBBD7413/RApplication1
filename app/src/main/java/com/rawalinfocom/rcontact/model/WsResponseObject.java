@@ -18,6 +18,20 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WsResponseObject {
 
+    @JsonProperty("contact_request")
+    private PrivacyRequestDataItem contactRequestData;
+
+    public PrivacyRequestDataItem getContactRequestData() {
+        return contactRequestData;
+    }
+
+    public void setContactRequestData(PrivacyRequestDataItem contactRequestData) {
+        this.contactRequestData = contactRequestData;
+    }
+
+    @JsonProperty("privacy_request_data")
+    private ArrayList<PrivacyRequestDataItem> privacyRequestData;
+
     @JsonProperty("rcontact_update")
     private ArrayList<RcontactUpdatesData> rcontactUpdatesData;
 
@@ -39,7 +53,13 @@ public class WsResponseObject {
     private ArrayList<ProfileDataOperation> arrayListUserRcProfile;
     private ArrayList<ProfileData> arrayListMapping;
 
+    private  ArrayList<CallLogType> arrayListCallLogHistory;
+
     private String profileSharingData;
+
+    public ArrayList<PrivacyRequestDataItem> getPrivacyRequestData() {
+        return privacyRequestData;
+    }
 
     public ArrayList<RcontactUpdatesData> getRcontactUpdate() {
         return rcontactUpdatesData;
@@ -163,5 +183,9 @@ public class WsResponseObject {
 
     public void setArrayListMapping(ArrayList<ProfileData> arrayListMapping) {
         this.arrayListMapping = arrayListMapping;
+    }
+    @JsonProperty("call_history")
+    public ArrayList<CallLogType> getArrayListCallLogHistory() {
+        return arrayListCallLogHistory;
     }
 }

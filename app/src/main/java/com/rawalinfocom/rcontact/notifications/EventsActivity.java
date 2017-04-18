@@ -1,10 +1,13 @@
 package com.rawalinfocom.rcontact.notifications;
 
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -86,7 +89,6 @@ public class EventsActivity extends BaseActivity implements RippleView
     public static int selectedRecycler = -1;
     public static int selectedRecyclerItem = -1;
     TableCommentMaster tableCommentMaster;
-    String today;
     List<EventItem> listTodayEvent;
     List<EventItem> listRecentEvent;
     List<EventItem> listUpcomingEvent;
@@ -161,6 +163,55 @@ public class EventsActivity extends BaseActivity implements RippleView
 
             }
         });
+        searchViewEvents.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+                    todayEventAdapter.updateList(listTodayEvent);
+                    recentEventAdapter.updateList(listRecentEvent);
+                    upcomingEventAdapter.updateList(listUpcomingEvent);
+                    updateHeight();
+                }
+                return false;
+            }
+        });
+        recyclerViewRecent.setVisibility(View.GONE);
+        recyclerViewUpcoming.setVisibility(View.GONE);
+
+    }
+
+    void filter(String text) {
+
+        List<EventItem> temp = new ArrayList<>();
+        for (EventItem item : listTodayEvent) {
+            if (item.getPersonName().toLowerCase().contains(text.toLowerCase())) {
+                temp.add(item);
+            }
+        }
+        todayEventAdapter.updateList(temp);
+
+        temp = new ArrayList<>();
+        for (EventItem item : listRecentEvent) {
+            if (item.getPersonName().toLowerCase().contains(text.toLowerCase())) {
+                temp.add(item);
+            }
+        }
+        recentEventAdapter.updateList(temp);
+
+        temp = new ArrayList<>();
+        for (EventItem item : listUpcomingEvent) {
+            if (item.getPersonName().toLowerCase().contains(text.toLowerCase())) {
+                temp.add(item);
+            }
+        }
+        upcomingEventAdapter.updateList(temp);
+        updateHeight();
     }
 
     private void initData() {
@@ -183,10 +234,22 @@ public class EventsActivity extends BaseActivity implements RippleView
         listRecentEvent = createEventList(eventsRecent, 1);
         listUpcomingEvent = createEventList(eventsUpcoming7, 2);
 
+        todayEventAdapter = new EventAdapter(this, listTodayEvent, 0);
+        recentEventAdapter = new EventAdapter(this, listRecentEvent, 1);
+        upcomingEventAdapter = new EventAdapter(this, listUpcomingEvent, 2);
+
+        recyclerViewToday.setAdapter(todayEventAdapter);
+        recyclerViewRecent.setAdapter(recentEventAdapter);
+        recyclerViewUpcoming.setAdapter(upcomingEventAdapter);
+
+        updateHeight();
+
+    }
+
+    private void updateHeight() {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         int density = getResources().getDisplayMetrics().densityDpi;
         int heightPercent = 50;
-        int maxItemCount = 2;
         switch (density) {
             case DisplayMetrics.DENSITY_LOW: /*120*/
                 heightPercent = 30;
@@ -194,47 +257,34 @@ public class EventsActivity extends BaseActivity implements RippleView
             case DisplayMetrics.DENSITY_MEDIUM: /*160*/
                 heightPercent = 35;
                 break;
-            case DisplayMetrics.DENSITY_HIGH: /*320*/
+            case DisplayMetrics.DENSITY_HIGH: /*240*/
                 heightPercent = 40;
-                maxItemCount = 2;
+                break;
+            case DisplayMetrics.DENSITY_XHIGH: /*320*/
+                heightPercent = 45;
                 break;
             case DisplayMetrics.DENSITY_XXHIGH: /*480*/
             case DisplayMetrics.DENSITY_XXXHIGH: /*680*/
                 heightPercent = 50;
-                maxItemCount = 3;
                 break;
         }
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = (displaymetrics.heightPixels * heightPercent) / 100;
 
-        todayEventAdapter = new EventAdapter(this, listTodayEvent, 0);
-        recyclerViewToday.setAdapter(todayEventAdapter);
-        recyclerViewToday.setLayoutManager(new CustomLayoutManager(getApplicationContext(), recyclerViewToday, height));
-        RecyclerView.Adapter mAdapter = recyclerViewToday.getAdapter();
-        int totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > maxItemCount) {
-            recyclerViewToday.getLayoutParams().height = height;
-        }
+        setRecyclerViewHeight(recyclerViewToday, height);
+        setRecyclerViewHeight(recyclerViewRecent, height);
+        setRecyclerViewHeight(recyclerViewUpcoming, height);
+    }
 
-        recentEventAdapter = new EventAdapter(this, listRecentEvent, 1);
-        recyclerViewRecent.setAdapter(recentEventAdapter);
-        recyclerViewRecent.setLayoutManager(new CustomLayoutManager(getApplicationContext(), recyclerViewRecent, height));
-        mAdapter = recyclerViewRecent.getAdapter();
-        totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > maxItemCount) {
-            recyclerViewRecent.getLayoutParams().height = height;
+    private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int heightRecycler = recyclerView.getMeasuredHeight();
+        if (heightRecycler > height) {
+            recyclerView.getLayoutParams().height = height;
+        } else {
+            recyclerView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
-
-        upcomingEventAdapter = new EventAdapter(this, listUpcomingEvent, 2);
-        recyclerViewUpcoming.setAdapter(upcomingEventAdapter);
-        recyclerViewUpcoming.setLayoutManager(new CustomLayoutManager(getApplicationContext(), recyclerViewUpcoming, height));
-        mAdapter = recyclerViewUpcoming.getAdapter();
-        totalItemCount = mAdapter.getItemCount();
-        if (totalItemCount > maxItemCount + 1) {
-            recyclerViewUpcoming.getLayoutParams().height = height;
-        }
-        recyclerViewRecent.setVisibility(View.GONE);
-        recyclerViewUpcoming.setVisibility(View.GONE);
     }
 
     private List<EventItem> createEventList(ArrayList<Event> events, int listPosition) {

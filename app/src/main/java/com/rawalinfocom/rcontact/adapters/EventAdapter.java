@@ -17,10 +17,10 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.EventItem;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.notifications.EventsActivity;
-import com.rawalinfocom.rcontact.model.EventItem;
 
 import java.util.List;
 
@@ -101,6 +101,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         return list.size();
     }
 
+    public void updateList(List<EventItem> list) {
+        this.list = list;
+        notifyDataSetChanged();
+    }
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.image_person)
@@ -147,7 +152,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         addCommentObject.setToPmId(toPmId);
         addCommentObject.setComment(comment);
         addCommentObject.setDate(date);
-        addCommentObject.setEvmRecordIndexId(Integer.parseInt(eventRecordIndexId));
+        addCommentObject.setEvmRecordIndexId(eventRecordIndexId);
         addCommentObject.setStatus(status + "");
 
         if (Utils.isNetworkAvailable(context)) {

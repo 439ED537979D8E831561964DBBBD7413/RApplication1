@@ -9,7 +9,8 @@ package com.rawalinfocom.rcontact.constants;
 public class WsConstants {
 
     // Monal
-    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
+    public static final String WS_ROOT = "http://54.202.191.41/api/v1/";
 //    public static final String WS_ROOT = "http://10.0.21.123/api/v1/";
 
     // QA Server
@@ -25,6 +26,9 @@ public class WsConstants {
     // Shailesh
 //    public static final String WS_ROOT = "http://10.0.21.14:8000/api/v1/";
 
+    //Jignesh
+//    public static final String WS_ROOT = "http://10.0.21.15/api/v1/";
+
     // Satyam bhai
 //    public static final String WS_ROOT = "http://10.0.21.115:/api/v1/";
 
@@ -37,6 +41,10 @@ public class WsConstants {
 
     // Swati
 //    public static final String WS_ROOT = "http://10.0.21.131/api/v1/";
+
+    // Vijay
+//     public static final String WS_ROOT = "http://10.0.21.16/api/v1/";
+
 
     public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public-view/";
 
@@ -60,11 +68,14 @@ public class WsConstants {
     public static final String REQ_REVERSE_GEO_CODING_ADDRESS = "req_reverse_geo_coding_address";
     public static final String REQ_GEO_CODING_ADDRESS = "req_geo_coding_address";
 
-    public static final String REQ_UPLOAD_CALL_LOGS = "call-log";
-
+    //    public static final String REQ_UPLOAD_CALL_LOGS = "call-log";
+    public static final String REQ_UPLOAD_CALL_LOGS = "sync-call-log";
     public static final String REQ_ADD_EVENT_COMMENT = "event-comment";
     public static final String REQ_GET_EVENT_COMMENT = "get-event-comment";
     public static final String REQ_GET_RCONTACT_UPDATES = "get-rcontact-update";
+    public static final String REQ_PROFILE_PRIVACY_REQUEST = "profile-privacy-request";
+    public static final String REQ_GET_PROFILE_PRIVACY_REQUEST = "get-profile-privacy-request";
+    public static final String REQ_GET_CALL_LOG_HISTORY_REQUEST = "call-history";
 
 
 }
