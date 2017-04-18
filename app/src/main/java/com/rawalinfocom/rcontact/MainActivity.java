@@ -748,7 +748,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             else
                                 log.setLocalPbRowId(" ");
 
-                            log.setFlag(7);
+//                            log.setFlag(7);
                             ArrayList<CallLogType> arrayListHistory;
                    /* if (!TextUtils.isEmpty(userName)) {
                         arrayListHistory = callLogHistory(userName);
@@ -819,6 +819,7 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         if(Utils.isNetworkAvailable(MainActivity.this)){
             WsRequestObject deviceDetailObject = new WsRequestObject();
+            deviceDetailObject.setFlag(7);
             deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
             if (Utils.isNetworkAvailable(this)) {
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
