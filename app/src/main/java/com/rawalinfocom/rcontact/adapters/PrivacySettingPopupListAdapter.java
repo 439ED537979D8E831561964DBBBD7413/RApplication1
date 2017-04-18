@@ -5,10 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.contacts.PrivacySettingPopupDialog;
 
 import java.util.ArrayList;
 
@@ -20,6 +23,7 @@ import butterknife.ButterKnife;
  */
 
 public class PrivacySettingPopupListAdapter extends RecyclerView.Adapter<PrivacySettingPopupListAdapter.MyViewHolder> {
+
 
     private ArrayList<String> stringArrayList;
     private Context context;
@@ -39,6 +43,23 @@ public class PrivacySettingPopupListAdapter extends RecyclerView.Adapter<Privacy
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.tvDialogTitle.setText(stringArrayList.get(position));
+
+        holder.checkbox.setChecked(position == PrivacySettingPopupDialog.lastCheckedPosition);
+        switch (position) {
+            case 0:
+                //everyone
+                holder.imageView.setImageResource(R.drawable.ic_privacy_public);
+                break;
+            case 1:
+                //my contacts
+                holder.imageView.setImageResource(R.drawable.ic_privacy_my_contact);
+                break;
+            case 2:
+                //only me
+                holder.imageView.setImageResource(R.drawable.ic_privacy_onlyme);
+                break;
+
+        }
     }
 
     @Override
@@ -53,12 +74,21 @@ public class PrivacySettingPopupListAdapter extends RecyclerView.Adapter<Privacy
         @BindView(R.id.tvDialogTitle)
         TextView tvDialogTitle;
         @BindView(R.id.checkbox)
-        ImageView checkbox;
+        RadioButton checkbox;
 
         MyViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            checkbox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PrivacySettingPopupDialog.lastCheckedPosition = getAdapterPosition();
+                    notifyDataSetChanged();
 
+                }
+            });
         }
+
+
     }
 }

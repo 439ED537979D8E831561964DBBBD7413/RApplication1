@@ -36,16 +36,15 @@ import butterknife.ButterKnife;
  */
 
 public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdapter
-        .ProfileDetailViewHolder> {
+        .ProfileDetailViewHolder> implements PrivacySettingPopupDialog.DialogCallback {
 
 
     private Context context;
     private ArrayList<Object> arrayList;
-
     private int profileDetailType;
 
     private int colorBlack, colorPineGreen;
-
+    private PrivacySettingPopupDialog.DialogCallback listner;
     private boolean isOwnProfile = false;
 
     public ProfileDetailAdapter(Context context, ArrayList<Object> arrayList, int
@@ -56,6 +55,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         this.isOwnProfile = isOwnProfile;
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
+        listner = this;
 
     }
 
@@ -68,20 +68,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
     @Override
     public void onBindViewHolder(ProfileDetailViewHolder holder, int position) {
-        if (isOwnProfile) {
-            holder.buttonPrivacy.setVisibility(View.VISIBLE);
-        } else {
-            holder.buttonPrivacy.setVisibility(View.GONE);
-        }
-        holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "Privacy Button Clicked", Toast.LENGTH_SHORT).show();
-                PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(context);
-                privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
-                privacySettingPopupDialog.showDialog();
-            }
-        });
+        holder.buttonPrivacy.setVisibility(View.GONE);
         switch (profileDetailType) {
             case AppConstants.PHONE_NUMBER:
                 displayPhoneNumber(holder, position);
@@ -115,7 +102,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
     }
 
-    private void displayPhoneNumber(ProfileDetailViewHolder holder, int position) {
+    private void displayPhoneNumber(ProfileDetailViewHolder holder, final int position) {
         ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                 arrayList.get(position);
         String number = phoneNumber.getPhoneNumber();
@@ -136,13 +123,29 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         int pbRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(phoneNumber.getPbRcpType(),
                 String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_secondary))));
-
+        final ProfileDetailAdapter
+                .ProfileDetailViewHolder viewHodler = holder;
         if (pbRcpType == context.getResources().getInteger(R.integer.rcp_type_primary)) {
             holder.textMain.setText(number + " ◊");
             holder.textMain.setTextColor(colorPineGreen);
+            holder.buttonPrivacy.setVisibility(View.GONE);
         } else if (pbRcpType == context.getResources().getInteger(R.integer.rcp_type_secondary)) {
             holder.textMain.setText(number);
             holder.textMain.setTextColor(colorPineGreen);
+            if (isOwnProfile) {
+                holder.buttonPrivacy.setVisibility(View.VISIBLE);
+            } else {
+                holder.buttonPrivacy.setVisibility(View.GONE);
+            }
+            holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.PHONE_NUMBER, position, 1, "123323424");
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.showDialog();
+                }
+            });
         } else {
             holder.textMain.setText(number);
             holder.textMain.setTextColor(colorBlack);
@@ -150,7 +153,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
     }
 
-    private void displayEmail(final ProfileDetailViewHolder holder, int position) {
+    private void displayEmail(final ProfileDetailViewHolder holder, final int position) {
         ProfileDataOperationEmail email = (ProfileDataOperationEmail) arrayList.get(position);
         String emailId = email.getEmEmailId();
         holder.textSub.setText(email.getEmType());
@@ -178,14 +181,30 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         int emRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(email.getEmRcpType(), String
                 .valueOf(context.getResources().getInteger(R.integer.rcp_type_secondary))));
-
+        final ProfileDetailAdapter
+                .ProfileDetailViewHolder viewHodler = holder;
         if (emRcpType == context.getResources().getInteger(R.integer.rcp_type_primary)) {
             holder.textMain.setText(emailId + " ◊");
             holder.textMain.setTextColor(colorPineGreen);
+            holder.buttonPrivacy.setVisibility(View.GONE);
         } else if (emRcpType == context.getResources().getInteger(R.integer
                 .rcp_type_secondary)) {
             holder.textMain.setText(emailId);
             holder.textMain.setTextColor(colorPineGreen);
+            if (isOwnProfile) {
+                holder.buttonPrivacy.setVisibility(View.VISIBLE);
+            } else {
+                holder.buttonPrivacy.setVisibility(View.GONE);
+            }
+            holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.EMAIL, position, 1, "123323424");
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.showDialog();
+                }
+            });
         } else {
             holder.textMain.setText(emailId);
             holder.textMain.setTextColor(colorBlack);
@@ -194,7 +213,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
     }
 
-    private void displayWebsite(final ProfileDetailViewHolder holder, int position) {
+    private void displayWebsite(final ProfileDetailViewHolder holder, final int position) {
 //        String website = (String) arrayList.get(position);
         ProfileDataOperationWebAddress webAddress = (ProfileDataOperationWebAddress) arrayList
                 .get(position);
@@ -237,16 +256,33 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         int rcpType = Integer.parseInt(StringUtils.defaultIfEmpty(webAddress.getWebRcpType(),
                 String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_secondary))));
-
+        final ProfileDetailAdapter
+                .ProfileDetailViewHolder viewHodler = holder;
         if (rcpType == context.getResources().getInteger(R.integer
                 .rcp_type_local_phone_book)) {
             holder.textMain.setTextColor(colorBlack);
         } else {
             holder.textMain.setTextColor(colorPineGreen);
+            if (isOwnProfile) {
+                holder.buttonPrivacy.setVisibility(View.VISIBLE);
+            } else {
+                holder.buttonPrivacy.setVisibility(View.GONE);
+            }
+            holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.WEBSITE, position, 1, "123323424");
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.showDialog();
+                }
+            });
         }
+
+
     }
 
-    private void displayAddress(final ProfileDetailViewHolder holder, int position) {
+    private void displayAddress(final ProfileDetailViewHolder holder, final int position) {
         ProfileDataOperationAddress address = (ProfileDataOperationAddress) arrayList.get(position);
         holder.textMain.setText(address.getFormattedAddress());
         holder.textSub.setText(address.getAddressType());
@@ -275,17 +311,33 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         int addressRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(address.getRcpType(),
                 String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_secondary))));
-
+        final ProfileDetailAdapter
+                .ProfileDetailViewHolder viewHodler = holder;
         if (addressRcpType == context.getResources().getInteger(R.integer
                 .rcp_type_local_phone_book)) {
             holder.textMain.setTextColor(colorBlack);
         } else {
             holder.textMain.setTextColor(colorPineGreen);
+            if (isOwnProfile) {
+                holder.buttonPrivacy.setVisibility(View.VISIBLE);
+            } else {
+                holder.buttonPrivacy.setVisibility(View.GONE);
+            }
+            holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.ADDRESS, position, 1, "123323424");
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.showDialog();
+                }
+            });
         }
+
 
     }
 
-    private void displayImAccount(final ProfileDetailViewHolder holder, int position) {
+    private void displayImAccount(final ProfileDetailViewHolder holder, final int position) {
         final ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount) arrayList
                 .get(position);
         holder.textMain.setText(imAccount.getIMAccountDetails());
@@ -301,6 +353,22 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.textMain.setTextColor(colorBlack);
         } else {
             holder.textMain.setTextColor(colorPineGreen);
+            final ProfileDetailAdapter
+                    .ProfileDetailViewHolder viewHodler = holder;
+            if (isOwnProfile) {
+                holder.buttonPrivacy.setVisibility(View.VISIBLE);
+            } else {
+                holder.buttonPrivacy.setVisibility(View.GONE);
+            }
+            holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.IM_ACCOUNT, position, 1, "123323424");
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.showDialog();
+                }
+            });
         }
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
@@ -328,9 +396,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             }
         });
+
     }
 
-    private void displayEvent(ProfileDetailViewHolder holder, int position) {
+    private void displayEvent(ProfileDetailViewHolder holder, final int position) {
         ProfileDataOperationEvent event = (ProfileDataOperationEvent) arrayList
                 .get(position);
 
@@ -354,16 +423,32 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         if (eventRcType == context.getResources().getInteger(R.integer.rcp_type_cloud_phone_book)) {
             holder.textMain.setTextColor(colorPineGreen);
+            if (isOwnProfile) {
+                holder.buttonPrivacy.setVisibility(View.VISIBLE);
+            } else {
+                holder.buttonPrivacy.setVisibility(View.GONE);
+            }
+            final ProfileDetailAdapter
+                    .ProfileDetailViewHolder viewHodler = holder;
+            holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.EVENT, position, 1, "123323424");
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.showDialog();
+                }
+            });
         } else {
             holder.textMain.setTextColor(colorBlack);
         }
+
     }
 
-    private void displayGender(ProfileDetailViewHolder holder, int position) {
+    private void displayGender(ProfileDetailViewHolder holder, final int position) {
         String gender = (String) arrayList.get(position);
         holder.textMain.setText(gender);
         holder.textSub.setVisibility(View.GONE);
-
         holder.textMain.setTextColor(colorBlack);
     }
 
@@ -374,6 +459,28 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     @Override
     public int getItemCount() {
         return arrayList.size();
+    }
+
+    @Override
+    public void onSettingSaved(ProfileDetailAdapter
+                                       .ProfileDetailViewHolder viewHolder, int whichItem, int newPrivacy, int itemPosition, int oldPrivacy, String cloudId) {
+        switch (newPrivacy) {
+            case 0:
+                //everyone
+                viewHolder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
+                break;
+            case 1:
+                //my contacts
+                viewHolder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_my_contact);
+                break;
+            case 2:
+                //only me
+                viewHolder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_onlyme);
+                break;
+
+        }
+
+
     }
 
     public class ProfileDetailViewHolder extends RecyclerView.ViewHolder {
