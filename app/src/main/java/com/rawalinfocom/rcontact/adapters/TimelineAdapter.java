@@ -125,7 +125,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         });
     }
 
-    private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int commentStatusReceived, int evmRecordIndexId) {
+    private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int commentStatusReceived, String evmRecordIndexId) {
 
         WsRequestObject addCommentObject = new WsRequestObject();
         if (crmType.equalsIgnoreCase(context.getResources().getString(R.string.text_rating))) {
@@ -160,6 +160,11 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    public void updateList(List<TimelineItem> list) {
+        this.list = list;
+        notifyDataSetChanged();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

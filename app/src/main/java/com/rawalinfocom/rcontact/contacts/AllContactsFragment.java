@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.contacts;
 
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -319,6 +320,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 //                        sendBroadCastToStartCallLogInsertion();
                             Utils.setBooleanPreference(getActivity(), AppConstants
                                     .PREF_SYNC_CALL_LOG, true);
+
+                            Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
+                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
                         }
 
                     /* Populate recycler view */
@@ -1029,6 +1034,37 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     //</editor-fold>
 
     //<editor-fold desc="Phone book Data Cursor">
+    private String getPhotoUrlFromRawId(String phoneNumber) {
+        String photoThumbUrl = "";
+        try {
+
+            ContentResolver contentResolver = getActivity().getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                    photoThumbUrl = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.PHOTO_THUMBNAIL_URI));
+//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return photoThumbUrl;
+    }
 
     private void phoneBookOperations() {
         arrayListUserContact = new ArrayList<>();
@@ -1140,6 +1176,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                             (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.TYPE))));
+//                    phoneNumber.setPhonePublic(1);
+                    profileData.setProfileUrl(getPhotoUrlFromRawId(Utils.getFormattedNumber(getActivity(),
+                            contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Phone.NUMBER)))));
                     phoneNumber.setPhonePublic(getResources().getInteger(R.integer
                             .privacy_my_contact));
 

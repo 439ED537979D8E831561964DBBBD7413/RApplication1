@@ -56,11 +56,10 @@
             android:name="io.fabric.ApiKey"
             android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7" />
 
-        <!--              The API key for  Google Maps-based APIs. -->
+        <!-- The API key for  Google Maps-based APIs. -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key"/>
-
+            android:value="@string/google_maps_key" />
 
         <activity android:name=".MobileNumberRegistrationActivity" />
         <activity
@@ -72,7 +71,6 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -119,8 +117,9 @@
         <activity android:name=".notifications.TimelineActivity" />
         <activity android:name=".notifications.EventsActivity" />
         <activity android:name=".notifications.NotificationsActivity" />
-        <activity android:name=".notifications.NotificationsDetailActivity" />
-
+        <activity
+            android:name=".notifications.NotificationsDetailActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".contacts.EditProfileActivity"
             android:windowSoftInputMode="stateHidden" />
@@ -128,6 +127,16 @@
         <activity android:name=".calllog.CallLogDeleteActivity" />
         <activity android:name=".calllog.CallHistoryDetailsActivity" />
         <activity android:name=".BlockContactListActivity"></activity>
+        <activity android:name=".calldialer.DialerActivity"/>
+
+        <service
+            android:name=".services.CallLogIdFetchService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".notifications.RatingHistory"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

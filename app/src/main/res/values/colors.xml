@@ -42,6 +42,11 @@
     <color name="mostlyDesaturatedDarkCyanLimeGreen">#548A7C</color>
 
     <color name="dialogTitleTextColor">#E6444444</color>
+    <color name="dialogButtonTextColor">#444444</color>
     <color name="dialogUserNameTextColor">#E600796b</color>
+    <color name="button_background_color">#3300796b</color>
+    <color name="dialer_green">#033B35</color>
+    <color name="dialer_text_gray">#969696</color>
+    <color name="dialer_background">#F0F0F0</color>
 
 </resources>

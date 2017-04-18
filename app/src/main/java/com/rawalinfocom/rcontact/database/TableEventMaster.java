@@ -123,14 +123,14 @@ public class TableEventMaster {
         return event;
     }
 
-    public Event getEventByEvmRecordIndexId(int evmRecordIndexId) {
+    public Event getEventByEvmRecordIndexId(String evmRecordIndexId) {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RC_EVENT_MASTER, new String[]{COLUMN_EVM_ID,
                         COLUMN_EVM_RECORD_INDEX_ID, COLUMN_EVM_START_DATE, COLUMN_EVM_EVENT_TYPE,
                         COLUMN_EVM_IS_YEAR_HIDDEN, COLUMN_EVM_EVENT_PRIVACY,
                         COLUMN_RC_PROFILE_MASTER_PM_ID},
-                COLUMN_EVM_RECORD_INDEX_ID + "=?", new String[]{String.valueOf(evmRecordIndexId)
+                COLUMN_EVM_RECORD_INDEX_ID + "=?", new String[]{evmRecordIndexId
                 }, null, null, null, null);
 
         Event event = new Event();

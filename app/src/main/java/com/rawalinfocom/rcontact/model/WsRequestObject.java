@@ -16,6 +16,12 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WsRequestObject {
 
+    @JsonProperty("car_id")
+    private int carId;
+
+    @JsonProperty("car_status")
+    private int carStatus;
+
     @JsonProperty("date")
     private String date;
 
@@ -25,14 +31,31 @@ public class WsRequestObject {
     @JsonProperty("to_pm_id")
     private int toPmId;
 
-    @JsonProperty("evm_record_index_id")
-    private int evmRecordIndexId;
+    @JsonProperty("event_record_index_id")
+    private String eventRecordIndexId;
 
     @JsonProperty("id")
     private String commentId;
 
     @JsonProperty("reply")
     private String reply;
+
+
+    public int getCarId() {
+        return carId;
+    }
+
+    public void setCarId(int carId) {
+        this.carId = carId;
+    }
+
+    public int getCarStatus() {
+        return carStatus;
+    }
+
+    public void setCarStatus(int carStatus) {
+        this.carStatus = carStatus;
+    }
 
     public void setToPmId(int toPmId) {
         this.toPmId = toPmId;
@@ -54,12 +77,12 @@ public class WsRequestObject {
         this.reply = reply;
     }
 
-    public int getEvmRecordIndexId() {
-        return evmRecordIndexId;
+    public String getEvmRecordIndexId() {
+        return eventRecordIndexId;
     }
 
-    public void setEvmRecordIndexId(int evmRecordIndexId) {
-        this.evmRecordIndexId = evmRecordIndexId;
+    public void setEvmRecordIndexId(String eventRecordIndexId) {
+        this.eventRecordIndexId = eventRecordIndexId;
     }
 
 
@@ -153,6 +176,7 @@ public class WsRequestObject {
 
     private ArrayList<ProfileDataOperation> profileEdit;
 
+    private ArrayList<CallLogHistoryType> historyTypeArrayList;
 
     @JsonProperty("pr_reply")
     private String prReply;
@@ -531,5 +555,14 @@ public class WsRequestObject {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    @JsonProperty("call_history")
+    public ArrayList<CallLogHistoryType> getHistoryTypeArrayList() {
+        return historyTypeArrayList;
+    }
+
+    public void setHistoryTypeArrayList(ArrayList<CallLogHistoryType> historyTypeArrayList) {
+        this.historyTypeArrayList = historyTypeArrayList;
     }
 }

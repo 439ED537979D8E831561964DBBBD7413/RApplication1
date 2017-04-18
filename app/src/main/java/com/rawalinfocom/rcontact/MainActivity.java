@@ -1,13 +1,24 @@
 package com.rawalinfocom.rcontact;
 
+import android.*;
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.ActivityOptions;
+import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.CallLog;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -18,11 +29,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,16 +46,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
+import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -56,17 +72,23 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.notifications.EventsActivity;
 import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
+import com.rawalinfocom.rcontact.notifications.RatingHistory;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
+import com.rawalinfocom.rcontact.services.CallLogIdFetchService;
 import com.rawalinfocom.rcontact.services.ContactSyncService;
 import com.rawalinfocom.rcontact.sms.SmsFragment;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -93,6 +115,17 @@ public class MainActivity extends BaseActivity implements NavigationView
     private ArrayList<ProfileData> arrayListUserContact;
     private ArrayList<ProfileData> arrayListDeletedUserContact;
     private PhoneBookContacts phoneBookContacts;
+    int LIST_PARTITION_COUNT = 10;
+    private ArrayList<String> listOfCallLogIds ;
+    private ArrayList<CallLogType> callLogTypeArrayListMain;
+    ArrayList<CallLogType> callLogsListbyChunck;
+    ArrayList<CallLogType> newList;
+    String callLogResponseRowId = "";
+    String callLogResponseDate = "";
+    int logsSyncedCount =  10;
+    MaterialDialog permissionConfirmationDialog;
+    private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
+            .permission.READ_CALL_LOG};
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -102,6 +135,19 @@ public class MainActivity extends BaseActivity implements NavigationView
         ButterKnife.bind(this);
         /*Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
         startService(contactIdFetchService);*/
+
+        callLogTypeArrayListMain = new ArrayList<>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
+        }else{
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    getCallLogsByRawId();
+                }
+            });
+        }
+        registerLocalBroadCastReceiver();
 
         if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()
                 .getInteger(R.integer.launch_mobile_registration)) == getResources().getInteger(R
@@ -156,6 +202,26 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute(String permissions[], int requestCode) {
+
+        boolean contacts = ContextCompat.checkSelfPermission(MainActivity.this, permissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;
+        boolean logs = ContextCompat.checkSelfPermission(MainActivity.this, permissions[1]) !=
+                PackageManager.PERMISSION_GRANTED;
+        if (contacts || logs ) {
+            requestPermissions(permissions, requestCode);
+        } else {
+            Intent callLogIdFetchService =  new Intent(this, CallLogIdFetchService.class);
+            startService(callLogIdFetchService);
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    getCallLogsByRawId();
+                }
+            });
+        }
+    }
 
     @Override
     protected void onPause() {
@@ -199,8 +265,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                     Uri path = Uri.fromFile(fileLocation);
                     Intent emailIntent = new Intent(Intent.ACTION_SEND);
                     emailIntent.setType("vnd.android.cursor.dir/email");
-                    String to[] = {"development@rawalinfocom.com"};
-//                    emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
                     emailIntent.putExtra(Intent.EXTRA_STREAM, path);
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
                     startActivity(Intent.createChooser(emailIntent, "Send email..."));
@@ -214,21 +278,10 @@ public class MainActivity extends BaseActivity implements NavigationView
         } else if (id == R.id.nav_user_events) {
             startActivityIntent(MainActivity.this, EventsActivity.class, null);
         } else if (id == R.id.nav_blocked_contacts) {
-
             startActivityIntent(this, BlockContactListActivity.class, new Bundle());
+        } else if (id == R.id.nav_user_rating_history) {
+            startActivityIntent(this, RatingHistory.class, new Bundle());
         }
-        /*}*/
-       /* else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -275,6 +328,48 @@ public class MainActivity extends BaseActivity implements NavigationView
                 }
             }
             //</editor-fold>
+            else if(serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)){
+                WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
+                if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase
+                        (callLogInsertionResponse
+                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    if (Utils.getBooleanPreference(this, AppConstants
+                            .PREF_CALL_LOG_SYNCED, false)) {
+                        ArrayList<CallLogType> temp = divideCallLogByChunck(newList);
+                        if (temp.size() >= LIST_PARTITION_COUNT) {
+                            if (temp != null && temp.size() > 0)
+                                insertServiceCall(newList);
+                        } else {
+//                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
+                        }
+
+                    } else {
+                        ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
+                        if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0)
+                        {
+                            insertServiceCall(callLogTypeArrayList);
+                            logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
+                        }
+                        else {
+//                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
+                            Utils.setBooleanPreference(this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED, true);
+                        }
+                        Utils.setIntegerPreference(this,AppConstants.PREF_CALL_LOG_SYNCED_COUNT,logsSyncedCount);
+                    }
+                } else {
+                    if (callLogInsertionResponse != null) {
+                        Log.e("error response", callLogInsertionResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "userProfileResponse null");
+                        Log.e("onDeliveryResponse: ", getString(R.string.msg_try_later));
+//                        Toast.makeText(this,getString(R.string.msg_try_later),Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }else {
+                Toast.makeText(this,error.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+            }
 
         }
     }
@@ -285,6 +380,10 @@ public class MainActivity extends BaseActivity implements NavigationView
         if (networkConnectionReceiver != null) {
             unregisterBroadcastReceiver();
         }
+
+        unRegisterLocalBroadCastReceiver();
+        Utils.setBooleanPreference(this, AppConstants
+                .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
     }
 
     //</editor-fold>
@@ -309,7 +408,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Dial Pad", Snackbar.LENGTH_SHORT).show();
+//                Snackbar.make(view, "Dial Pad", Snackbar.LENGTH_SHORT).show();
+                openDialer();
             }
         });
 
@@ -334,6 +434,26 @@ public class MainActivity extends BaseActivity implements NavigationView
         setupTabLayout();
         Utils.changeTabsFont(this, tabMain);
 
+
+    }
+
+    private void openDialer(){
+        try{
+
+            Intent intent = new Intent(MainActivity.this, DialerActivity.class);
+            ActivityOptions options = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
+                startActivity(intent, options.toBundle());
+
+            }else{
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -459,12 +579,590 @@ public class MainActivity extends BaseActivity implements NavigationView
     public void registerBroadcastReceiver() {
         this.registerReceiver(networkConnectionReceiver, new IntentFilter("android.net.conn" +
                 ".CONNECTIVITY_CHANGE"));
+
+
+
     }
 
     public void unregisterBroadcastReceiver() {
         this.unregisterReceiver(networkConnectionReceiver);
+
     }
 
+    private void registerLocalBroadCastReceiver(){
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance
+                (this);
+        IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
+        localBroadcastManager.registerReceiver(localBroadcastReceiverCallLogSync, intentFilter);
+    }
+
+    private void unRegisterLocalBroadCastReceiver(){
+        LocalBroadcastManager localBroadcastManagerProfileBlock = LocalBroadcastManager.getInstance(this);
+        localBroadcastManagerProfileBlock.unregisterReceiver(localBroadcastReceiverCallLogSync);
+
+    }
+
+
+
+    // =========================================== Call Logs ==================================================//
+
+
+ /*   @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
+
+                    // Permission Granted
+                    Intent callLogIdFetchService =  new Intent(this, CallLogIdFetchService.class);
+                    startService(callLogIdFetchService);
+
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            getCallLogsByRawId();
+                        }
+                    });
+
+                } else {
+
+                    // Permission Denied
+//                    getActivity().onBackPressed();
+                    showPermissionConfirmationDialog();
+
+                }
+            }
+            break;
+        }
+    }*/
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.M)
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == AppConstants.READ_LOGS && permissions[0].equals(Manifest.permission
+                .READ_CONTACTS) && permissions[1].equals(Manifest.permission.READ_CALL_LOG)) {
+            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED && grantResults[1] ==
+                    PermissionChecker.PERMISSION_GRANTED) {
+
+                Intent callLogIdFetchService =  new Intent(this, CallLogIdFetchService.class);
+                startService(callLogIdFetchService);
+
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        getCallLogsByRawId();
+                    }
+                });
+
+            } else {
+                showPermissionConfirmationDialog();
+            }
+        }
+    }
+    private void getCallLogsByRawId(){
+
+        ArrayList<String> callLogsIdsList =  Utils.getArrayListPreference(this,AppConstants.PREF_CALL_LOGS_ID_SET);
+        if(callLogsIdsList == null){
+            PhoneBookCallLogs phoneBookCallLogs =  new PhoneBookCallLogs(this);
+            callLogsIdsList =  new ArrayList<>();
+            Cursor cursor =  phoneBookCallLogs.getAllCallLogId();
+            if (cursor != null){
+                int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
+                while (cursor.moveToNext()) {
+                    callLogsIdsList.add(cursor.getString(rowId));
+                }
+            }
+            cursor.close();
+            Utils.setArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET, callLogsIdsList);
+        }
+
+        if(callLogsIdsList != null && callLogsIdsList.size()>0){
+            int indexToBeginSync =  Utils.getIntegerPreference(this,AppConstants.PREF_CALL_LOG_SYNCED_COUNT,0);
+            ArrayList<String> tempIdsList = new ArrayList<>();
+            for(int i = indexToBeginSync; i<callLogsIdsList.size(); i++){
+                    String ids =  callLogsIdsList.get(i);
+                    tempIdsList.add(ids);
+            }
+
+            if(tempIdsList.size() > LIST_PARTITION_COUNT){
+                for (ArrayList<String> partition : chopped(tempIdsList, LIST_PARTITION_COUNT)) {
+                    // do something with partition
+                    fetchCallLogsFromIds(partition);
+                }
+            }else{
+                fetchCallLogsFromIds(tempIdsList);
+            }
+
+        }
+    }
+
+
+    private void fetchCallLogsFromIds (ArrayList<String> listOfRowIds){
+        try{
+            for(int i=0; i<listOfRowIds.size();i++){
+                String uniqueCallLogId =  listOfRowIds.get(i);
+                if(!TextUtils.isEmpty(uniqueCallLogId)){
+                    String order = CallLog.Calls.DATE + " ASC";
+                    Cursor cursor =  this.getContentResolver().query(CallLog.Calls.CONTENT_URI,
+                            null, CallLog.Calls._ID +" = " + uniqueCallLogId , null, order);
+
+                    if (cursor != null) {
+                        int number = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+                        int name = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
+                        int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
+                        int date = cursor.getColumnIndex(CallLog.Calls.DATE);
+                        int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
+                        int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
+                        int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
+
+                        while (cursor.moveToNext()) {
+                            CallLogType log = new CallLogType(this);
+                            log.setNumber(cursor.getString(number));
+                            String userName = cursor.getString(name);
+                            if (!TextUtils.isEmpty(userName))
+                                log.setName(userName);
+                            else
+                                log.setName("");
+
+                            log.setType(cursor.getInt(type));
+                            log.setDuration(cursor.getInt(duration));
+                            log.setDate(cursor.getLong(date));
+                            log.setUniqueContactId(cursor.getString(rowId));
+                            String numberTypeLog = getPhoneNumberType(cursor.getInt(numberType));
+                            Log.i("Number Type", numberTypeLog + " of number " + cursor.getString(number));
+                            Log.i("Number Log Type", getLogType(cursor.getInt(type)) + " of number " +
+                                    cursor.getString(number));
+                            log.setNumberType(numberTypeLog);
+                            String userNumber = cursor.getString(number);
+                            String uniquePhoneBookId = getStarredStatusFromNumber(userNumber);
+                            Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" + userNumber);
+                            if (!TextUtils.isEmpty(uniquePhoneBookId))
+                                log.setLocalPbRowId(uniquePhoneBookId);
+                            else
+                                log.setLocalPbRowId(" ");
+
+                            log.setFlag(7);
+                            ArrayList<CallLogType> arrayListHistory;
+                   /* if (!TextUtils.isEmpty(userName)) {
+                        arrayListHistory = callLogHistory(userName);
+                    } else {*/
+                            arrayListHistory = callLogHistory(userNumber);
+//                    }
+                            log.setArrayListCallHistory(arrayListHistory);
+
+                            ArrayList<CallLogType> arrayListHistoryCount = new ArrayList<>();
+                            for (int j = 0; j < arrayListHistory.size(); j++) {
+                                CallLogType tempCallLogType = arrayListHistory.get(j);
+                                String simNumber = arrayListHistory.get(j).getHistoryCallSimNumber();
+                                log.setCallSimNumber(simNumber);
+                                long tempdate = tempCallLogType.getHistoryDate();
+                                Date objDate1 = new Date(tempdate);
+                                String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format(objDate1);
+                                long callLogDate = log.getDate();
+                                Date intentDate1 = new Date(callLogDate);
+                                String intentDate = new SimpleDateFormat("yyyy-MM-dd").format(intentDate1);
+                                if (intentDate.equalsIgnoreCase(arrayDate)) {
+                                    arrayListHistoryCount.add(tempCallLogType);
+                                }
+                            }
+                            int logCount = arrayListHistoryCount.size();
+                            log.setHistoryLogCount(logCount);
+                            Log.i("History size ", logCount + "" + " of " + cursor.getString(number));
+                            Log.i("History", "----------------------------------");
+                            callLogTypeArrayListMain.add(log);
+
+                        }
+                        cursor.close();
+                    }
+                }
+            }
+            syncCallLogDataToServer(callLogTypeArrayListMain);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private BroadcastReceiver localBroadcastReceiverCallLogSync = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+            syncCallLogDataToServer(callLogTypeArrayListMain);
+        }
+    };
+
+    private void syncCallLogDataToServer(ArrayList<CallLogType> list){
+        if (Utils.getBooleanPreference(this, AppConstants.PREF_SYNC_CALL_LOG, false)) {
+            if (!Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
+                    false)) {
+                if (list.size() > LIST_PARTITION_COUNT) {
+                    ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
+                    if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
+                        insertServiceCall(callLogTypeArrayList);
+                    }
+                } else {
+                    insertServiceCall(list);
+                }
+
+            }
+
+        }
+    }
+    private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
+
+        if(Utils.isNetworkAvailable(MainActivity.this)){
+            WsRequestObject deviceDetailObject = new WsRequestObject();
+            deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
+            if (Utils.isNetworkAvailable(this)) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                        deviceDetailObject, null, WsResponseObject.class, WsConstants
+                        .REQ_UPLOAD_CALL_LOGS, null, true).execute
+                        (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
+            }
+        }
+
+    }
+
+    private ArrayList<ArrayList<String>> chopped(ArrayList<String> list, final int L) {
+        ArrayList<ArrayList<String>> parts = new ArrayList<ArrayList<String>>();
+        final int N = list.size();
+        for (int i = 0; i < N; i += L) {
+            parts.add(new ArrayList<String>(
+                    list.subList(i, Math.min(N, i + L)))
+            );
+        }
+        return parts;
+    }
+
+    private ArrayList<ArrayList<CallLogType>> choppedCallLog(ArrayList<CallLogType> list, final int L) {
+        ArrayList<ArrayList<CallLogType>> parts = new ArrayList<ArrayList<CallLogType>>();
+        final int N = list.size();
+        for (int i = 0; i < N; i += L) {
+            parts.add(new ArrayList<CallLogType>(
+                    list.subList(i, Math.min(N, i + L)))
+            );
+        }
+        return parts;
+    }
+
+    private ArrayList<CallLogType> divideCallLogByChunck() {
+        int size = callLogTypeArrayListMain.size();
+        callLogsListbyChunck = new ArrayList<>();
+        for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayListMain, LIST_PARTITION_COUNT)) {
+            // do something with partition
+            Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+            callLogsListbyChunck.addAll(partition);
+            callLogTypeArrayListMain.removeAll(partition);
+            break;
+        }
+        return callLogsListbyChunck;
+    }
+
+    private ArrayList<CallLogType> divideCallLogByChunck(ArrayList<CallLogType> list) {
+        int size = 0;
+        callLogsListbyChunck = new ArrayList<>();
+        if (list != null && list.size() > 0) {
+            size = list.size();
+            if (size > LIST_PARTITION_COUNT) {
+                for (ArrayList<CallLogType> partition : choppedCallLog(list, LIST_PARTITION_COUNT)) {
+                    // do something with partition
+                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+                    callLogsListbyChunck.addAll(partition);
+                    newList.removeAll(partition);
+                    break;
+                }
+            } else {
+                callLogsListbyChunck.addAll(list);
+                newList.removeAll(list);
+
+            }
+        }
+
+        return callLogsListbyChunck;
+    }
+
+
+    private String getPhoneNumberType(int type) {
+        switch (type) {
+            case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
+                return "Home";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
+                return "Mobile";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
+                return "Work";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
+                return "Fax Work";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
+                return "Fax Home";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_PAGER:
+                return "Pager";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
+                return "Other";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK:
+                return "Callback";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_CAR:
+                return "Car";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
+                return "Company Main";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
+                return "ISDN";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
+                return "Main";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX:
+                return "Other Fax";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_RADIO:
+                return "Radio";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_TELEX:
+                return "Telex";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD:
+                return "Tty Tdd";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
+                return "Work Mobile";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER:
+                return "Work Pager";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT:
+                return "Assistant";
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
+                return "MMS";
+
+        }
+        return "Other";
+    }
+
+    private String getLogType(int type) {
+        switch (type) {
+            case CallLog.Calls.INCOMING_TYPE:
+                return "Incoming";
+            case CallLog.Calls.OUTGOING_TYPE:
+                return "Outgoing";
+            case CallLog.Calls.MISSED_TYPE:
+                return "Missed";
+            case CallLog.Calls.REJECTED_TYPE:
+                return "Rejected";
+            case CallLog.Calls.BLOCKED_TYPE:
+                return "Blocked";
+            case CallLog.Calls.VOICEMAIL_TYPE:
+                return "Voicemail";
+
+        }
+        return "OTHERS";
+    }
+
+    private String getStarredStatusFromNumber(String phoneNumber) {
+        String numberId = "";
+        try {
+
+            numberId = "";
+            ContentResolver contentResolver = this.getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.LOOKUP_KEY));
+//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return numberId;
+    }
+
+    private ArrayList callLogHistory(String number) {
+        String numberToSearch = number;
+        ArrayList<CallLogType> callDetails = new ArrayList<>();
+        Cursor cursor;
+
+        Pattern numberPat = Pattern.compile("\\d+");
+        Matcher matcher1 = numberPat.matcher(number);
+        if (matcher1.find()) {
+            cursor = getCallHistoryDataByNumber(number);
+        } else {
+            cursor = getCallHistoryDataByName(number);
+        }
+
+        try {
+            if (cursor != null && cursor.getCount() > 0) {
+                int number1 = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+                int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
+                int date = cursor.getColumnIndex(CallLog.Calls.DATE);
+                int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
+                int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
+                int account = -1;
+                int account_id = -1;
+                int profileImage = -1;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    account = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME);
+                    //for versions above lollipop
+                    account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
+                    profileImage = cursor.getColumnIndex(CallLog.Calls.CACHED_PHOTO_URI);
+                } else {
+                    account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
+                }
+                while (cursor.moveToNext()) {
+                    String phNum = cursor.getString(number1);
+                    int callType = Integer.parseInt(cursor.getString(type));
+                    String callDate = cursor.getString(date);
+                    long dateOfCall = Long.parseLong(callDate);
+                    String callDuration = cursor.getString(duration);
+                    String accountId = " ";
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        accountId = cursor.getString(account_id);
+                        if (!TextUtils.isEmpty(accountId) && account_id > 0)
+                            Log.e("Sim Type", accountId);
+
+                        String accountName = cursor.getString(account);
+                        if (!TextUtils.isEmpty(accountName))
+                            Log.e("Sim Name", accountName);
+
+//                        String userImage = cursor.getString(profileImage);
+//                        if (userImage != null)
+//                            Log.e("User Image", userImage);
+                    } else {
+                        if (account_id > 0) {
+                            accountId = cursor.getString(account_id);
+                            Log.e("Sim Type", accountId);
+                        }
+                    }
+                    int histroyId = Integer.parseInt(cursor.getString(callLogId));
+                    CallLogType logObject = new CallLogType();
+                    logObject.setHistoryNumber(phNum);
+                    logObject.setHistoryType(callType);
+                    logObject.setHistoryDate(dateOfCall);
+                    logObject.setHistoryDuration(Integer.parseInt(callDuration));
+                    logObject.setHistoryCallSimNumber(accountId);
+                    logObject.setHistoryId(histroyId);
+
+                    Date date1 = new Date(dateOfCall);
+                    String callDataAndTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a").format
+                            (date1);
+                    logObject.setCallDateAndTime(callDataAndTime);
+
+                    String typeOfCall = getLogType(callType);
+                    if (typeOfCall.equalsIgnoreCase("Rejected")) {
+                        typeOfCall = "Missed";
+                    }
+                    logObject.setTypeOfCall(typeOfCall);
+
+                    String durationtoPass = logObject.getCoolDuration(Float.parseFloat
+                            (callDuration));
+                    logObject.setDurationToPass(durationtoPass);
+
+                    callDetails.add(logObject);
+                }
+            }
+
+            cursor.close();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+
+        return callDetails;
+    }
+
+    private Cursor getCallHistoryDataByNumber(String number) {
+        Cursor cursor = null;
+        String order = CallLog.Calls.DATE + " DESC";
+        try {
+            cursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
+                    CallLog.Calls.NUMBER + " =?", new String[]{number}, order);
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return cursor;
+    }
+
+
+    private Cursor getCallHistoryDataByName(String name) {
+        Cursor cursor = null;
+        String order = CallLog.Calls.DATE + " DESC";
+        try {
+            cursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
+                    CallLog.Calls.CACHED_NAME + " =?", new String[]{name}, order);
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return cursor;
+    }
+
+    private void showPermissionConfirmationDialog() {
+
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        permissionConfirmationDialog.dismissDialog();
+                        finish();
+                        break;
+
+                    case R.id.rippleRight:
+                        permissionConfirmationDialog.dismissDialog();
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", getPackageName(), null));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        permissionConfirmationDialog = new MaterialDialog(this, cancelListener);
+        permissionConfirmationDialog.setTitleVisibility(View.GONE);
+        permissionConfirmationDialog.setLeftButtonText("Cancel");
+        permissionConfirmationDialog.setRightButtonText("OK");
+        permissionConfirmationDialog.setDialogBody("Call log permission is required. Do you want " +
+                "to try again?");
+
+        permissionConfirmationDialog.showDialog();
+
+    }
+    //============================================ Contacts ===================================================//
     public void syncBackgroundContacts() {
 
         /*Cursor cursor = phoneBookContacts.getUpdatedContacts(String.valueOf(System

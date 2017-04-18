@@ -206,7 +206,7 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
 
                 } else {
 
-                    Toast.makeText(context, "Please select any one option", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "Please select any one option", Toast.LENGTH_SHORT).show();
                 }
 
                 Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);

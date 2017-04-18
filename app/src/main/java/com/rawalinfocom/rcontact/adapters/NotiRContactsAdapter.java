@@ -48,6 +48,11 @@ public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdap
         }
     }
 
+    public void updateList(List<NotiRContactsItem> list) {
+        this.list = list;
+        notifyDataSetChanged();
+    }
+
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
@@ -59,7 +64,7 @@ public class NotiRContactsAdapter extends RecyclerView.Adapter<NotiRContactsAdap
     public void onBindViewHolder(MyViewHolder holder, int position) {
         NotiRContactsItem item = list.get(position);
         holder.textTitle.setText(item.getNotiTitle());
-        holder.textNotiTime.setText(Utils.formatDateTime(item.getNotiTime(),"dd MMM, hh:mm a"));
+        holder.textNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "dd MMM, hh:mm a"));
         holder.textDetailInfo.setText(item.getNotiDetails());
 
     }
