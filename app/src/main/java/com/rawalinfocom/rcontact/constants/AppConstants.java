@@ -47,7 +47,7 @@ public class AppConstants {
 
     public static final int OTP_VALIDITY_DURATION = 20;
     public static final int OTP_LENGTH = 6;
-    public static boolean isProgressShowing =  false;
+    public static boolean isProgressShowing = false;
     public static boolean isBackgroundProcessStopped = false;
 
     //</editor-fold>
@@ -99,7 +99,8 @@ public class AppConstants {
     public static String EXTRA_DELETE_ALL_CALL_LOGS = "extra_delete_all_call_logs";
     public static String EXTRA_REMOVE_CALL_LOGS = "extra_remove_call_logs";
     public static String EXTRA_CLEAR_CALL_LOGS = "extra_clear_call_logs";
-    public static String EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS = "extra_clear_call_logs_from_contacts";
+    public static String EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS =
+            "extra_clear_call_logs_from_contacts";
     public static String EXTRA_OBJECT_LOCATION = "extra_object_location";
     public static String EXTRA_OBJECT_ADDRESS = "extra_object_address";
     public static String EXTRA_CALL_UNIQUE_ID = "extra_call_unique_id";
@@ -108,7 +109,6 @@ public class AppConstants {
     public static String EXTRA_LATITUDE = "extra_latitude";
     public static String EXTRA_LONGITUDE = "extra_longitude";
     public static String EXTRA_CONTACT_PROFILE_IMAGE = "extra_contact_profile_image";
-
 
 
     //</editor-fold>
@@ -123,12 +123,15 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_TABCHANGE = "action_local_broadcast_tab_change";
     public static String ACTION_LOCAL_BROADCAST_PROFILE = "action_local_broadcast_profile";
     public static String ACTION_LOCAL_BROADCAST_DELETE_LOGS = "action_local_broadcast_delete_logs";
-    public static String ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS = "action_local_broadcast_remove_call_logs";
-    public static String ACTION_LOCAL_BROADCAST_PROFILE_BLOCK= "action_local_broadcast_profile_block";
+    public static String ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS =
+            "action_local_broadcast_remove_call_logs";
+    public static String ACTION_LOCAL_BROADCAST_PROFILE_BLOCK =
+            "action_local_broadcast_profile_block";
     public static String ACTION_LOCAL_BROADCAST_UNBLOCK = "action_local_broadcast_unblock";
-    public static String ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY = "action_local_broadcast_call_history_activity";
-    public static String ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC = "action_local_broadcast_call_log_sync";
-
+    public static String ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY =
+            "action_local_broadcast_call_history_activity";
+    public static String ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC =
+            "action_local_broadcast_call_log_sync";
 
 
     //</editor-fold>
@@ -150,7 +153,7 @@ public class AppConstants {
     public static String PREF_LAUNCH_SCREEN_INT = "pref_launch_screen_int";
     public static String PREF_REGS_USER_OBJECT = "pref_regs_user_object";
     public static String PREF_REGS_MOBILE_NUMBER = "pref_regs_mobile_number";
-    public static String PREF_CONTACT_ID_SET = "pref_contact_id_set";
+    //    public static String PREF_CONTACT_ID_SET = "pref_contact_id_set";
     public static String PREF_SYNCED_CONTACTS = "pref_synced_contacts";
     public static String PREF_USER_PM_ID = "pref_user_pm_id";
     public static String PREF_ACCESS_TOKEN = "pref_access_token";
@@ -163,7 +166,7 @@ public class AppConstants {
     public static String PREF_SYNC_CALL_LOG = "pref_sync_call_log";
     public static String PREF_CALL_LOG_SIZE_WITH_DIFF = "pref_call_log_size_with_diff";
     public static String PREF_CALL_LOG_SYNCED = "pref_call_log_synced";
-    public static String PREF_BLOCK_CONTACT_LIST= "pref_block_contact_list";
+    public static String PREF_BLOCK_CONTACT_LIST = "pref_block_contact_list";
     public static String PREF_BLOCK_PROFILE = "pref_block_profile";
     public static String PREF_CALL_LOG_LIST = "pref_call_log_list";
     public static String PREF_CONTACT_LAST_SYNC_TIME = "pref_contact_last_sync_time";
@@ -174,7 +177,7 @@ public class AppConstants {
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
-            PREF_CONTACT_ID_SET, PREF_USER_PM_ID, PREF_ACCESS_TOKEN,
+            PREF_USER_PM_ID, PREF_ACCESS_TOKEN,
             PREF_FAVOURITE_CONTACT_NUMBER_EMAIL, PREF_PROFILE_VIEWS};
 
     //</editor-fold>
@@ -190,7 +193,7 @@ public class AppConstants {
         AppConstants.isDualSimPhone = isDualSimPhone;
     }
 
-    public static boolean isCallLogFragment =  false;
+    public static boolean isCallLogFragment = false;
 
     public static boolean isCallLogFragment() {
         return isCallLogFragment;
@@ -223,8 +226,8 @@ public class AppConstants {
     public static final int INCOMING = 1;
     public static final int OUTGOING = 2;
     public static final int MISSED = 3;
-    public static final int BLOCKED =  4;
-    public static final int UNBLOCK =  0;
+    public static final int BLOCKED = 4;
+    public static final int UNBLOCK = 0;
 
     //</editor-fold>
 

@@ -1246,10 +1246,10 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     //============================================ Contacts
     // ===================================================//
-    public void syncBackgroundContacts() {
+    /*public void syncBackgroundContacts() {
 
-        /*Cursor cursor = phoneBookContacts.getUpdatedContacts(String.valueOf(System
-                .currentTimeMillis() - 10000));*/
+        *//*Cursor cursor = phoneBookContacts.getUpdatedContacts(String.valueOf(System
+                .currentTimeMillis() - 10000));*//*
         Log.i("syncBackgroundContacts", "Started");
         Cursor cursor = phoneBookContacts.getUpdatedContacts(Utils.getStringPreference(this,
                 AppConstants.PREF_CONTACT_LAST_SYNC_TIME, ""));
@@ -1350,7 +1350,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         } else {
             Log.i("syncBackgroundContacts", "Nothing to sync");
         }
-    }
+    }*/
 
     private void phoneBookOperations(String rawId, String flag) {
         arrayListUserContact = new ArrayList<>();

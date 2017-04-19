@@ -32,7 +32,7 @@
         android:layout_below="@id/text_total_contacts"
         tools:listitem="@layout/list_item_all_contacts"/>
 
-    <com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
+    <!--<com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
         android:id="@+id/scroller_all_contact"
         android:layout_width="24dp"
         android:layout_height="match_parent"
@@ -53,7 +53,7 @@
         android:layout_toLeftOf="@id/scroller_all_contact"
         android:layout_toStartOf="@id/scroller_all_contact"
         recyclerviewfastscroller:rfs_backgroundColor="@color/colorPrimary"
-        recyclerviewfastscroller:rfs_textColor="@color/colorWhite"/>
+        recyclerviewfastscroller:rfs_textColor="@color/colorWhite"/>-->
 
     <include
         layout="@layout/layout_recyclerview_emptyview"

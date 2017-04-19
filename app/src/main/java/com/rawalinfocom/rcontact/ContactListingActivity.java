@@ -291,10 +291,10 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
     private void getContactData() {
 
-        ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(this, AppConstants
-                .PREF_CONTACT_ID_SET);
+      /*  ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(this, AppConstants
+                .PREF_CONTACT_ID_SET);*/
 
-        for (int i = 0; i < arrayListContactIds.size(); i++) {
+      /*  for (int i = 0; i < arrayListContactIds.size(); i++) {
 
             //<editor-fold desc="Contact Number">
             Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(arrayListContactIds
@@ -350,7 +350,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 contactEmailCursor.close();
             }
             //</editor-fold>
-        }
+        }*/
     }
 
     private void setupView() {

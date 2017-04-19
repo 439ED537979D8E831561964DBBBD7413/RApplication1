@@ -17,8 +17,12 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.util.LongSparseArray;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -33,6 +37,7 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
+import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -53,10 +58,6 @@ import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
-        .ColorGroupSectionTitleIndicator;
-import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical
-        .VerticalRecyclerViewFastScroller;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.Email;
@@ -84,11 +85,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AllContactsFragment extends BaseFragment implements WsResponseListener {
+public class AllContactsListFragment extends BaseFragment implements LoaderManager
+        .LoaderCallbacks<Cursor>, WsResponseListener {
 
     private final int CONTACT_CHUNK = 10;
 
@@ -100,42 +104,46 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ProgressWheel progressAllContact;
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
-   /* @BindView(R.id.scroller_all_contact)
-    VerticalRecyclerViewFastScroller scrollerAllContact;
-    @BindView(R.id.title_indicator)
-    ColorGroupSectionTitleIndicator titleIndicator;*/
+    /*    @BindView(R.id.scroller_all_contact)
+        VerticalRecyclerViewFastScroller scrollerAllContact;
+        @BindView(R.id.title_indicator)
+        ColorGroupSectionTitleIndicator titleIndicator;*/
     @BindView(R.id.text_total_contacts)
     TextView textTotalContacts;
 
     ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> arrayListContactHeaders;
-    ArrayList<ProfileData> arrayListUserContact;
+    ArrayList<ProfileData> arrayListUserContact = new ArrayList<>();
     ArrayList<String> arrayListContactId;
     ArrayList<String> arrayListContactNumbers;
     ArrayList<String> arrayListContactEmails;
     ArrayList<String> arrayListFavouriteContacts;
 
+    LongSparseArray<ProfileData> array = new LongSparseArray<>();
+
     MaterialDialog callConfirmationDialog, permissionConfirmationDialog;
 
     PhoneBookContacts phoneBookContacts;
 
-    AllContactListAdapter allContactListAdapter;
+    //    AllContactListAdapter allContactListAdapter;
+    AllContactAdapter allContactListAdapter;
 
     private View rootView;
     private boolean isReload = false;
     RContactApplication rContactApplication;
+    int lastSyncedData = 0;
 
     boolean isFromSettings = false;
 
     //<editor-fold desc="Constructors">
 
-    public AllContactsFragment() {
+    public AllContactsListFragment() {
         // Required empty public constructor
 
     }
 
-    public static AllContactsFragment newInstance() {
-        return new AllContactsFragment();
+    public static AllContactsListFragment newInstance() {
+        return new AllContactsListFragment();
     }
 
     //</editor-fold>
@@ -146,11 +154,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-         /*LocalBroadcastManager.getInstance(getActivity()).registerReceiver(CallLogFragment
-         .broadcastReceiver,
-                        new IntentFilter(AppConstants.ACTION_START_CALL_LOG_INSERTION));*/
 
-        rContactApplication = (RContactApplication) getActivity().getApplicationContext();
+     /*   rContactApplication = (RContactApplication) getActivity().getApplicationContext();
 
         if (arrayListPhoneBookContacts == null) {
 
@@ -196,7 +201,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         } else {
             isReload = true;
-        }
+        }*/
 
     }
 
@@ -222,23 +227,23 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (rootView == null) {
-            rootView = inflater.inflate(R.layout.fragment_all_contacts, container, false);
-            ButterKnife.bind(this, rootView);
+//        if (rootView == null) {
+        rootView = inflater.inflate(R.layout.fragment_all_contacts, container, false);
+        ButterKnife.bind(this, rootView);
 
-          /*  // Connect the recycler to the scroller (to let the scroller scroll the list)
-            scrollerAllContact.setRecyclerView(recyclerViewContactList);
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
+//            scrollerAllContact.setRecyclerView(recyclerViewContactList);
 
-            // Connect the scroller to the recycler (to let the recycler scroll the scroller's
-            // handle)
-            recyclerViewContactList.setOnScrollListener(scrollerAllContact.getOnScrollListener());
+        // Connect the scroller to the recycler (to let the recycler scroll the scroller's
+        // handle)
+//            recyclerViewContactList.setOnScrollListener(scrollerAllContact.getOnScrollListener());
 
-            // Connect the section indicator to the scroller
-            scrollerAllContact.setSectionIndicator(titleIndicator);*/
+        // Connect the section indicator to the scroller
+//            scrollerAllContact.setSectionIndicator(titleIndicator);
 
-            setRecyclerViewLayoutManager(recyclerViewContactList);
+//            setRecyclerViewLayoutManager(recyclerViewContactList);
 
-        }
+//        }
         return rootView;
     }
 
@@ -251,16 +256,15 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             requestPermissions(new String[]{android.Manifest.permission.READ_CONTACTS},
                     AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         } else {
-            if (!isReload) {
-                init();
-            }
+//            if (!isReload) {
+            init();
+//            }
         }
     }
 
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
-
 
         try {
             if (error == null && getActivity() != null) {
@@ -305,7 +309,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                  /* Call uploadContact api if there is more data to sync */
                         if (nextNumber < arrayListContactId.size()) {
-                            phoneBookOperations();
+//                            phoneBookOperations();
                             textTotalContacts.setText(previouslySyncedData + " Contacts");
                         } else {
                             textTotalContacts.setText(arrayListContactId.size() + " Contacts");
@@ -378,12 +382,6 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
     }
 
-    /*private void sendBroadCastToStartCallLogInsertion(){
-        Intent intent = new Intent(AppConstants.ACTION_START_CALL_LOG_INSERTION);
-        intent.putExtra(AppConstants.EXTRA_CALL_LOG_BROADCAST_KEY, true);
-        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
-    }*/
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -413,11 +411,68 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         }
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+        arrayListPhoneBookContacts = new ArrayList<>();
+        arrayListContactHeaders = new ArrayList<>();
+
+        Set<String> set = new HashSet<>();
+        set.add(ContactsContract.Data.MIMETYPE);
+        set.add(ContactsContract.Data.CONTACT_ID);
+        set.add(ContactsContract.Data.PHOTO_ID);
+        set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
+//        set.add(ContactsContract.CommonDataKinds.Phone.TYPE);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.PREFIX);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.SUFFIX);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME);
+        set.add(ContactsContract.Contacts.PHOTO_ID);
+        set.add(ContactsContract.Contacts.LOOKUP_KEY);
+
+        Uri uri = ContactsContract.Data.CONTENT_URI;
+        String[] projection = set.toArray(new String[0]);
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)";
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+        };
+        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+
+        // Starts the query
+        return new CursorLoader(
+                getActivity(),
+                uri,
+                projection,
+                selection,
+                selectionArgs,
+                sortOrder);
+
+    }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(cursorListReceiver);
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        progressAllContact.setVisibility(View.GONE);
+
+        getContactsFromPhonebook(data);
+        data.close();
+
+        setRecyclerViewLayoutManager();
+
+        /*Runnable run = new Runnable() {
+            @Override
+            public void run() {
+                syncContacts();
+            }
+        };
+        AsyncTask.execute(run);*/
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 
     @Override
@@ -435,17 +490,17 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
 
 
-     /*   VerticalRecyclerViewFastScroller scrollerAllContact = new
+      /*  VerticalRecyclerViewFastScroller scrollerAllContact = new
                 VerticalRecyclerViewFastScroller(getActivity());
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout
                 .LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
-        relativeRootAllContacts.addView(scrollerAllContact);*/
+        relativeRootAllContacts.addView(scrollerAllContact);
 
         // Connect the recycler to the scroller (to let the scroller scroll the list)
-      /* scrollerAllContact.setRecyclerView(recyclerViewContactList);
+        scrollerAllContact.setRecyclerView(recyclerViewContactList);
 
         // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
         recyclerViewContactList.setOnScrollListener(scrollerAllContact.getOnScrollListener());
@@ -453,11 +508,11 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         // Connect the section indicator to the scroller
         scrollerAllContact.setSectionIndicator(titleIndicator);
 
-        setRecyclerViewLayoutManager(recyclerViewContactList);*/
+        setRecyclerViewLayoutManager();*/
 
         initSwipe();
 
-      /*  ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity(),
+        /*ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity(),
                 AppConstants.PREF_CONTACT_ID_SET);
         if (arrayListContactIds != null) {
             arrayListContactId = new ArrayList<>(arrayListContactIds);
@@ -476,15 +531,17 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     .services.ContactIdFetchService.class);
             getActivity().startService(contactIdFetchService);
         }*/
-
+        getLoaderManager().initLoader(0, null, this);
+        lastSyncedData = Utils.getIntegerPreference(getActivity(), AppConstants
+                .PREF_SYNCED_CONTACTS, 0);
     }
 
 
     /**
      * Set RecyclerView's LayoutManager
      */
-    public void setRecyclerViewLayoutManager(RecyclerView recyclerView) {
-        int scrollPosition = 0;
+    public void setRecyclerViewLayoutManager() {
+       /* int scrollPosition = 0;
 
         // If a layout manager has already been set, get current scroll position.
         if (recyclerView.getLayoutManager() != null) {
@@ -495,7 +552,75 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.scrollToPosition(scrollPosition);
+        recyclerView.scrollToPosition(scrollPosition);*/
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerViewContactList.setLayoutManager(linearLayoutManager);
+
+        if (arrayListUserContact.size() > 0) {
+            for (int i = 0; i < arrayListUserContact.size(); i++) {
+                String headerLetter = StringUtils.upperCase(StringUtils.substring
+                        (arrayListUserContact.get(i).getTempFirstName(), 0, 1));
+                headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
+                if (!arrayListPhoneBookContacts.contains(headerLetter)) {
+                    arrayListContactHeaders.add(headerLetter);
+                    arrayListPhoneBookContacts.add(headerLetter);
+                }
+                arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
+            }
+
+            allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts,
+                    arrayListContactHeaders);
+
+            recyclerViewContactList.setAdapter(allContactListAdapter);
+        }
+
+    }
+
+    private void getContactsFromPhonebook(Cursor data) {
+        final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
+        final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
+        final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+//        final int phoneTypeIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
+        final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+                .StructuredName.GIVEN_NAME);
+        final int familyNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+                .StructuredName.FAMILY_NAME);
+        final int middleNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+                .StructuredName.MIDDLE_NAME);
+        final int suffixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+                .StructuredName.SUFFIX);
+        final int prefixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+                .StructuredName.PREFIX);
+        final int photoIdIdx = data.getColumnIndex(ContactsContract.Data.PHOTO_ID);
+        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
+
+        while (data.moveToNext()) {
+
+            long id = data.getLong(idIdx);
+            ProfileData profileData = array.get(id);
+
+            if (profileData == null) {
+                profileData = new ProfileData();
+                array.put(id, profileData);
+                arrayListUserContact.add(profileData);
+            }
+
+            profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+
+            switch (data.getString(mimeTypeIdx)) {
+                case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
+                    profileData.setTempNumber(data.getString(phoneIdx));
+                    break;
+                case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
+                    profileData.setTempFirstName(data.getString(givenNameIdx));
+                    profileData.setTempLastName(data.getString(familyNameIdx));
+                    profileData.setTempPrefix(data.getString(prefixNameIdx));
+                    profileData.setTempSufix(data.getString(suffixNameIdx));
+                    profileData.setTempMiddleName(data.getString(middleNameIdx));
+                    break;
+            }
+        }
     }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
@@ -832,11 +957,11 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     private void populateRecyclerView() {
 
         if (allContactListAdapter == null) {
-            allContactListAdapter = new AllContactListAdapter(this,
+            allContactListAdapter = new AllContactAdapter(this,
                     arrayListPhoneBookContacts, arrayListContactHeaders);
             recyclerViewContactList.setAdapter(allContactListAdapter);
 
-            setRecyclerViewLayoutManager(recyclerViewContactList);
+            setRecyclerViewLayoutManager();
 
         } else {
             allContactListAdapter.notifyDataSetChanged();
@@ -1010,7 +1135,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     //</editor-fold>
 
     //<editor-fold desc="Local Broadcast Receiver">
- /*   private BroadcastReceiver cursorListReceiver = new BroadcastReceiver() {
+   /* private BroadcastReceiver cursorListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String message = intent.getStringExtra(AppConstants.EXTRA_LOCAL_BROADCAST_MESSAGE);
@@ -1066,7 +1191,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         return photoThumbUrl;
     }
 
-    private void phoneBookOperations() {
+   /* private void phoneBookOperations() {
         arrayListUserContact = new ArrayList<>();
         arrayListContactNumbers = new ArrayList<>();
         arrayListContactEmails = new ArrayList<>();
@@ -1097,8 +1222,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
             profileData.setLocalPhoneBookId(rawId);
 
-            /* profileData.setGivenName(contactNameCursor.getString(contactNameCursor
-            .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));*/
+            *//* profileData.setGivenName(contactNameCursor.getString(contactNameCursor
+            .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));*//*
 
             ProfileDataOperation operation = new ProfileDataOperation();
             operation.setFlag(getResources().getInteger(R.integer.sync_insert));
@@ -1109,8 +1234,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
             if (contactStructuredNameCursor != null && contactStructuredNameCursor.getCount() > 0) {
 
-                /*   operation.setIsFavourite(contactNameCursor.getString(contactNameCursor
-                .getColumnIndex(ContactsContract.Contacts.STARRED)));*/
+                *//*   operation.setIsFavourite(contactNameCursor.getString(contactNameCursor
+                .getColumnIndex(ContactsContract.Contacts.STARRED)));*//*
                 while (contactStructuredNameCursor.moveToNext()) {
 
                     operation.setPbNamePrefix(contactStructuredNameCursor.getString
@@ -1233,7 +1358,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="Nick Name">
-           /* Cursor contactNickNameCursor = phoneBookContacts.getContactNickName(rawId);
+           *//* Cursor contactNickNameCursor = phoneBookContacts.getContactNickName(rawId);
 
             if (contactNickNameCursor != null && contactNickNameCursor.getCount() > 0) {
                 while (contactNickNameCursor.moveToNext()) {
@@ -1244,11 +1369,11 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                 }
                 contactNickNameCursor.close();
-            }*/
+            }*//*
             //</editor-fold>
 
             //<editor-fold desc="Note">
-          /*  Cursor contactNoteCursor = phoneBookContacts.getContactNote(rawId);
+          *//*  Cursor contactNoteCursor = phoneBookContacts.getContactNote(rawId);
 
             if (contactNoteCursor != null && contactNoteCursor.getCount() > 0) {
                 while (contactNoteCursor.moveToNext()) {
@@ -1258,7 +1383,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                 }
                 contactNoteCursor.close();
-            }*/
+            }*//*
             //</editor-fold>
 
             //<editor-fold desc="Website">
@@ -1281,8 +1406,8 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                                     (ContactsContract.CommonDataKinds.Website.TYPE)))));
                     webAddress.setWebPublic(getResources().getInteger(R.integer.privacy_everyone));
 
-                   /* String website = contactWebsiteCursor.getString(contactWebsiteCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));*/
+                   *//* String website = contactWebsiteCursor.getString(contactWebsiteCursor
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));*//*
 
 //                    arrayListWebsite.add(website);
                     arrayListWebsite.add(webAddress);
@@ -1448,9 +1573,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         eventDate = "1900" + eventDate.substring(1, StringUtils.length(eventDate));
                     }
 
-                    /*event.setEventDate(contactEventCursor.getString(contactEventCursor
+                    *//*event.setEventDate(contactEventCursor.getString(contactEventCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Event
-                                    .START_DATE)));*/
+                                    .START_DATE)));*//*
                     event.setEventDateTime(eventDate);
 
                     event.setEventPublic(getResources().getInteger(R.integer.privacy_my_contact));
@@ -1465,7 +1590,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             //</editor-fold>
 
             //<editor-fold desc="Relation">
-            /*Cursor contactRelationCursor = phoneBookContacts.getContactRelationShip(rawId);
+            *//*Cursor contactRelationCursor = phoneBookContacts.getContactRelationShip(rawId);
             ArrayList<ProfileDataOperationRelationship> arrayListRelationship = new
                     ArrayList<>();
 
@@ -1492,7 +1617,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 contactRelationCursor.close();
             }
 
-            operation.setPbRelationship(arrayListRelationship);*/
+            operation.setPbRelationship(arrayListRelationship);*//*
             //</editor-fold>
 
             arrayListOperation.add(operation);
@@ -1517,7 +1642,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         if (arrayListUserContact.size() > 0) {
 //            arrayListPhoneBookContacts.addAll(arrayListUserContact);
 
-         /*   for (int i = 0; i < arrayListUserContact.size(); i++) {
+         *//*   for (int i = 0; i < arrayListUserContact.size(); i++) {
                 String headerLetter = StringUtils.upperCase(StringUtils.substring
                         (arrayListUserContact.get(i).getOperation().get(0).getPbNameFirst(), 0, 1));
                 headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
@@ -1527,7 +1652,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 }
                 arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
 
-            }*/
+            }*//*
 
             rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
             rContactApplication.setArrayListAllContactHeaders(arrayListContactHeaders);
@@ -1544,7 +1669,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             progressAllContact.setVisibility(View.GONE);
         }
 
-    }
+    }*/
 
     //</editor-fold>
 
