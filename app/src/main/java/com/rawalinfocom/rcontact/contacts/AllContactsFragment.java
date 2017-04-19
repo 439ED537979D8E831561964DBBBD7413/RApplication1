@@ -267,6 +267,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         try {
             if (error == null && getActivity() != null) {
+
                 //<editor-fold desc="REQ_UPLOAD_CONTACTS">
 
                 if (serviceType.contains(WsConstants.REQ_UPLOAD_CONTACTS)) {
