@@ -27,7 +27,7 @@ public class TableEventMaster {
 
     // Column Names
     private static final String COLUMN_EVM_ID = "evm_id";
-    private static final String COLUMN_EVM_RECORD_INDEX_ID = "evm_record_index_id";
+    static final String COLUMN_EVM_RECORD_INDEX_ID = "evm_record_index_id";
     static final String COLUMN_EVM_START_DATE = "evm_start_date";
     static final String COLUMN_EVM_EVENT_TYPE = "evm_event_type";
     static final String COLUMN_EVM_IS_YEAR_HIDDEN = "evm_is_year_hidden";

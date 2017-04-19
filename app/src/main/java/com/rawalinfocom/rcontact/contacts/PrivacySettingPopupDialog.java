@@ -10,7 +10,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.PrivacySettingPopupListAdapter;
@@ -38,7 +37,7 @@ public class PrivacySettingPopupDialog {
     private String dialogTitle;
     private Button cancelButton;
     private Button okButton;
-    public static int lastCheckedPosition = -1;
+    public static int currentPrivacy = -1;
     private DialogCallback callback;
 
     public PrivacySettingPopupDialog(final ProfileDetailAdapter
@@ -51,7 +50,7 @@ public class PrivacySettingPopupDialog {
         layoutParams.copyFrom(dialog.getWindow().getAttributes());
         layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
+        currentPrivacy = privacy - 1;
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
         tvDialogTitle = (TextView) dialog.findViewById(R.id.tvDialogTitle);
         cancelButton = (Button) dialog.findViewById(R.id.cancel_button);
@@ -65,7 +64,7 @@ public class PrivacySettingPopupDialog {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callback.onSettingSaved(viewHolder, itemType, lastCheckedPosition, itemPosition, privacy, cloudId);
+                callback.onSettingSaved(viewHolder, itemType, currentPrivacy, itemPosition, privacy, cloudId);
                 dialog.cancel();
             }
         });

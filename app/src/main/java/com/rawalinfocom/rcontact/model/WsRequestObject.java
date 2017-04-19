@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Monal on 20/10/16.
@@ -40,6 +41,17 @@ public class WsRequestObject {
     @JsonProperty("reply")
     private String reply;
 
+
+    private List<PrivacyDataItem> data;
+
+    @JsonProperty("privacy_data")
+    public List<PrivacyDataItem> getData() {
+        return data;
+    }
+
+    public void setData(List<PrivacyDataItem> data) {
+        this.data = data;
+    }
 
     public int getCarId() {
         return carId;
@@ -84,7 +96,6 @@ public class WsRequestObject {
     public void setEvmRecordIndexId(String eventRecordIndexId) {
         this.eventRecordIndexId = eventRecordIndexId;
     }
-
 
     public String getDate() {
         return date;

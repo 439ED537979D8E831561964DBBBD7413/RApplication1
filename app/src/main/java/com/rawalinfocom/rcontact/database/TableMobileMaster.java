@@ -31,7 +31,7 @@ public class TableMobileMaster {
 
     // Column Names
     private static final String COLUMN_MNM_ID = "mnm_id";
-    private static final String COLUMN_MNM_RECORD_INDEX_ID = "mnm_record_index_id";
+    static final String COLUMN_MNM_RECORD_INDEX_ID = "mnm_record_index_id";
     static final String COLUMN_MNM_MOBILE_NUMBER = "mnm_mobile_number";
     static final String COLUMN_MNM_NUMBER_TYPE = "mnm_number_type";
     static final String COLUMN_MNM_IS_PRIMARY = "mnm_is_primary";

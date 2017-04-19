@@ -27,10 +27,10 @@ public class TableImMaster {
 
     // Column Names
     private static final String COLUMN_IM_ID = "im_id";
-    private static final String COLUMN_IM_RECORD_INDEX_ID = "im_record_index_id";
+    static final String COLUMN_IM_RECORD_INDEX_ID = "im_record_index_id";
     //    static final String COLUMN_IM_IM_TYPE = "im_im_type";
 //    private static final String COLUMN_IM_CUSTOM_TYPE = "im_custom_type";
-    private static final String COLUMN_IM_DETAIL = "im_detail";
+    static final String COLUMN_IM_DETAIL = "im_detail";
     static final String COLUMN_IM_PROTOCOL = "im_protocol";
     static final String COLUMN_IM_PRIVACY = "im_privacy";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";

@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -44,7 +43,7 @@ public class PrivacySettingPopupListAdapter extends RecyclerView.Adapter<Privacy
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.tvDialogTitle.setText(stringArrayList.get(position));
 
-        holder.checkbox.setChecked(position == PrivacySettingPopupDialog.lastCheckedPosition);
+        holder.checkbox.setChecked(position == (PrivacySettingPopupDialog.currentPrivacy));
         switch (position) {
             case 0:
                 //everyone
@@ -82,7 +81,7 @@ public class PrivacySettingPopupListAdapter extends RecyclerView.Adapter<Privacy
             checkbox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PrivacySettingPopupDialog.lastCheckedPosition = getAdapterPosition();
+                    PrivacySettingPopupDialog.currentPrivacy = getAdapterPosition();
                     notifyDataSetChanged();
 
                 }

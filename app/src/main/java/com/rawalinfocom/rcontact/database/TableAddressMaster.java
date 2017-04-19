@@ -27,7 +27,7 @@ public class TableAddressMaster {
 
     // Column Names
     private static final String COLUMN_AM_ID = "am_id";
-    private static final String COLUMN_AM_RECORD_INDEX_ID = "am_record_index_id";
+    static final String COLUMN_AM_RECORD_INDEX_ID = "am_record_index_id";
     private static final String COLUMN_AM_CITY = "am_city";
     private static final String COLUMN_AM_COUNTRY = "am_country";
     static final String COLUMN_AM_FORMATTED_ADDRESS = "am_formatted_address";
