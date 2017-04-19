@@ -360,15 +360,21 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 e.printStackTrace();
             }
 
-            String  where =   CallLog.Calls.NUMBER + " =?"
+            // Date wise deletion
+            /*String  where =   CallLog.Calls.NUMBER + " =?"
                     + " AND " + android.provider.CallLog.Calls.DATE + " BETWEEN ? AND ?";
             String[] selectionArguments = new String[]{number,String.valueOf(dateToCompare),String.valueOf(nextDate)};
+            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI,where, selectionArguments);*/
+
+            // Delete call records for selected number
+            String  where =   CallLog.Calls.NUMBER + " =?";
+            String[] selectionArguments = new String[]{number};
+            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI,where, selectionArguments);
 
             /*int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, CallLog.Calls.NUMBER + " =?"
                     + " AND " + dateToCompare + "=?", new String[]{number, dateToDelete});
             Log.i("Delete Query value", value + "");*/
 
-            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI,where, selectionArguments);
             if(value > 0){
                 Log.i("Delete Query value", value + "");
                 Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();

@@ -468,7 +468,40 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         spinnerCount = 0;
         callLogListAdapter = null;
         adapterSetCount = 0;
-        isLastRecord = false;
+//        isLastRecord = false;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+
+    @Override
+    public Loader onCreateLoader(int id, Bundle args) {
+        progressBarLoadCallLogs.setVisibility(View.VISIBLE);
+        textLoadingLogs.setVisibility(View.VISIBLE);
+        ArrayList<String> callLogIdsArrayList = divideCallLogIdsByChunck();
+        if (callLogIdsArrayList != null && callLogIdsArrayList.size() > 0) {
+            logsDisplayed = logsDisplayed + callLogIdsArrayList.size();
+            loadLogs(selectedCallType);
+        } else {
+            progressBarLoadCallLogs.setVisibility(View.GONE);
+            textLoadingLogs.setVisibility(View.VISIBLE);
+            Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "Last log shown.");
+            isLastRecord = true;
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader loader, Object data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader loader) {
+
     }
     //</editor-fold>
 
@@ -568,6 +601,21 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             isLastRecord = true;
                         }
 //                        getLoaderManager().initLoader(0,null,CallLogFragment.this);
+                    }else{
+                        if(!isLastRecord){
+                            progressBarLoadCallLogs.setVisibility(View.VISIBLE);
+                            textLoadingLogs.setVisibility(View.VISIBLE);
+                            ArrayList<String> callLogIdsArrayList = divideCallLogIdsByChunck();
+                            if (callLogIdsArrayList != null && callLogIdsArrayList.size() > 0) {
+                                logsDisplayed = logsDisplayed + callLogIdsArrayList.size();
+                                loadLogs(selectedCallType);
+                            } else {
+                                progressBarLoadCallLogs.setVisibility(View.GONE);
+                                textLoadingLogs.setVisibility(View.VISIBLE);
+                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "Last log shown.");
+                                isLastRecord = true;
+                            }
+                        }
                     }
 
                 }
@@ -601,6 +649,21 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 isLastRecord = true;
                             }
 //                            getLoaderManager().initLoader(0,null,CallLogFragment.this);
+                        }else{
+                            if(!isLastRecord){
+                                progressBarLoadCallLogs.setVisibility(View.VISIBLE);
+                                textLoadingLogs.setVisibility(View.VISIBLE);
+                                ArrayList<String> callLogIdsArrayList = divideCallLogIdsByChunck();
+                                if (callLogIdsArrayList != null && callLogIdsArrayList.size() > 0) {
+                                    logsDisplayed = logsDisplayed + callLogIdsArrayList.size();
+                                    loadLogs(selectedCallType);
+                                } else {
+                                    progressBarLoadCallLogs.setVisibility(View.GONE);
+                                    textLoadingLogs.setVisibility(View.VISIBLE);
+                                    Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "Last log shown.");
+                                    isLastRecord = true;
+                                }
+                            }
                         }
 
                     }
@@ -681,13 +744,19 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                     makeDataToDisplay(selectedCallType, arrayListCallLogs);
                                 }
                             } else {
-                                arrayListCallLogs = rContactApplication.getArrayListCallLogType();
-                                if (arrayListCallLogs != null && arrayListCallLogs.size() > 0)
-                                {
-                                    makeDataToDisplay(selectedCallType, arrayListCallLogs);
+                                if(!isLastRecord){
+                                    loadLogs(selectedCallType);
                                 }else{
+                                    arrayListCallLogs = rContactApplication.getArrayListCallLogType();
+                                    if (arrayListCallLogs != null && arrayListCallLogs.size() > 0)
+                                    {
+                                        makeDataToDisplay(selectedCallType, arrayListCallLogs);
+                                        initSwipe();
+                                    }else{
 //                                    loadLogs(selectedCallType);
+                                    }
                                 }
+
                             }
                         }
                     }, 200);
@@ -1875,6 +1944,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     //</editor-fold>
 
+    //<editor-fold desc="Local Broadcast Receivers">
     boolean clearLogs;
     boolean clearLogsFromContacts;
     private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
@@ -1891,21 +1961,47 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 public void run() {
                     if (clearLogs) {
                         if (callLogListAdapter != null) {
-                            int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
+                            // when data was loaded everytime
+                            /*int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
                             arrayListObjectCallLogs.remove(itemIndexToRemove);
-                            callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
-                          /*  arrayListCallLogs.remove(itemIndexToRemove);
-                            rContactApplication.setArrayListCallLogType(arrayListCallLogs);*/
+                            callLogListAdapter.notifyItemRemoved(itemIndexToRemove);*/
+
+                            // updated on 19/04/2017, when data are loading from arraylist
+                            CallLogType callDataToUpdate = callLogListAdapter.getSelectedCallLogData();
+                            String number = callDataToUpdate.getNumber();
+                            for(int i=0; i <arrayListCallLogs.size(); i++){
+                                CallLogType callLogType =  arrayListCallLogs.get(i);
+                                String numberToDelete =  callLogType.getNumber();
+                                if(numberToDelete.equalsIgnoreCase(number)){
+                                    arrayListCallLogs.remove(callLogType);
+                                    rContactApplication.setArrayListCallLogType(arrayListCallLogs);
+                                    arrayListObjectCallLogs.remove(callLogType);
+                                    callLogListAdapter.notifyDataSetChanged();
+                                }
+                            }
                             clearLogs = false;
                         }
                     } else {
                         if (clearLogsFromContacts) {
                             if (callLogListAdapter != null) {
-                                int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
+                                // when data was loaded everytime
+                                /*int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
                                 arrayListObjectCallLogs.remove(itemIndexToRemove);
-                                callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
-                               /* arrayListCallLogs.remove(itemIndexToRemove);
-                                rContactApplication.setArrayListCallLogType(arrayListCallLogs);*/
+                                callLogListAdapter.notifyItemRemoved(itemIndexToRemove);*/
+
+                                // updated on 19/04/2017, when data are loading from arraylist
+                                CallLogType callDataToUpdate = callLogListAdapter.getSelectedCallLogData();
+                                String number = callDataToUpdate.getNumber();
+                                for(int i=0; i <arrayListCallLogs.size(); i++){
+                                    CallLogType callLogType =  arrayListCallLogs.get(i);
+                                    String numberToDelete =  callLogType.getNumber();
+                                    if(numberToDelete.equalsIgnoreCase(number)){
+                                        arrayListCallLogs.remove(callLogType);
+                                        rContactApplication.setArrayListCallLogType(arrayListCallLogs);
+                                        arrayListObjectCallLogs.remove(callLogType);
+                                        callLogListAdapter.notifyDataSetChanged();
+                                    }
+                                }
                                 clearLogsFromContacts = false;
                             }
                         }
@@ -1933,9 +2029,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         if (callLogListAdapter != null) {
                             int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
                             arrayListObjectCallLogs.remove(itemIndexToRemove);
+                            // updated on 19/04/2017, when data are loading from arraylist
+                            CallLogType callDataToUpdate = callLogListAdapter.getSelectedCallLogData();
+                            arrayListCallLogs.remove(callDataToUpdate);
+                            rContactApplication.setArrayListCallLogType(arrayListCallLogs);
                             callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
-                           /* arrayListCallLogs.remove(itemIndexToRemove);
-                            rContactApplication.setArrayListCallLogType(arrayListCallLogs);*/
                             removeLogs = false;
                         }
                     }
@@ -1955,11 +2053,24 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     false);
             if (deleteAll) {
                 if (callLogListAdapter != null) {
-                    int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
+                    // when data was loaded everytime
+                    /*int itemIndexToRemove = callLogListAdapter.getSelectedPosition();
                     arrayListObjectCallLogs.remove(itemIndexToRemove);
-                    callLogListAdapter.notifyItemRemoved(itemIndexToRemove);
-                   /* arrayListCallLogs.remove(itemIndexToRemove);
-                    rContactApplication.setArrayListCallLogType(arrayListCallLogs);*/
+                    callLogListAdapter.notifyItemRemoved(itemIndexToRemove);*/
+
+                    // updated on 19/04/2017, when data are loading from arraylist
+                    CallLogType callDataToUpdate = callLogListAdapter.getSelectedCallLogData();
+                    String number = callDataToUpdate.getNumber();
+                    for(int i=0; i <arrayListCallLogs.size(); i++){
+                        CallLogType callLogType =  arrayListCallLogs.get(i);
+                        String numberToDelete =  callLogType.getNumber();
+                        if(numberToDelete.equalsIgnoreCase(number)){
+                            arrayListCallLogs.remove(callLogType);
+                            rContactApplication.setArrayListCallLogType(arrayListCallLogs);
+                            arrayListObjectCallLogs.remove(callLogType);
+                            callLogListAdapter.notifyDataSetChanged();
+                        }
+                    }
                     deleteAll = false;
                 }
             } else {
@@ -1985,6 +2096,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     int count = arrayListHistoryCountAsDay.size();
                     callDataToUpdate.setHistoryLogCount(count);
                     arrayListObjectCallLogs.set(itemIndexToRemove, callDataToUpdate);
+                    if(count == 0){
+                        arrayListCallLogs.remove(callDataToUpdate);
+                        rContactApplication.setArrayListCallLogType(arrayListCallLogs);
+                        arrayListObjectCallLogs.remove(callDataToUpdate);
+
+                    }
                     callLogListAdapter.notifyDataSetChanged();
                 }
 
@@ -2113,37 +2230,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         }
     };
+    //</editor-fold>
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-
-    @Override
-    public Loader onCreateLoader(int id, Bundle args) {
-        progressBarLoadCallLogs.setVisibility(View.VISIBLE);
-        textLoadingLogs.setVisibility(View.VISIBLE);
-        ArrayList<String> callLogIdsArrayList = divideCallLogIdsByChunck();
-        if (callLogIdsArrayList != null && callLogIdsArrayList.size() > 0) {
-            logsDisplayed = logsDisplayed + callLogIdsArrayList.size();
-            loadLogs(selectedCallType);
-        } else {
-            progressBarLoadCallLogs.setVisibility(View.GONE);
-            textLoadingLogs.setVisibility(View.VISIBLE);
-            Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "Last log shown.");
-            isLastRecord = true;
-        }
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader loader, Object data) {
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader loader) {
-
-    }
 }
