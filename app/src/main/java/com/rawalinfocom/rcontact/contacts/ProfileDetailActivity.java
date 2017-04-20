@@ -972,6 +972,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     }
                 }
             }
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_PRIVACY_REQUEST)) {
+                WsResponseObject editProfileResponse = (WsResponseObject) data;
+                if (editProfileResponse != null && StringUtils.equalsIgnoreCase
+                        (editProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                    Toast.makeText(ProfileDetailActivity.this, editProfileResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    Utils.hideProgressDialog();
+                } else {
+                    if (editProfileResponse != null)
+                        Toast.makeText(ProfileDetailActivity.this, editProfileResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(ProfileDetailActivity.this, "Request sending failed!", Toast.LENGTH_SHORT).show();
+                    Utils.hideProgressDialog();
+                }
+            }
 
 
         } else
@@ -1680,7 +1694,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 linearPhone.setVisibility(View.VISIBLE);
                 phoneDetailAdapter = new ProfileDetailAdapter(this,
-                        tempPhoneNumber, AppConstants.PHONE_NUMBER, displayOwnProfile);
+                        tempPhoneNumber, AppConstants.PHONE_NUMBER, displayOwnProfile, pmId);
                 recyclerViewContactNumber.setAdapter(phoneDetailAdapter);
             } else {
                 linearPhone.setVisibility(View.GONE);
@@ -1743,7 +1757,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempEmail.addAll(arrayListPhoneBookEmail);
                 linearEmail.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter emailDetailAdapter = new ProfileDetailAdapter(this, tempEmail,
-                        AppConstants.EMAIL, displayOwnProfile);
+                        AppConstants.EMAIL, displayOwnProfile, pmId);
                 recyclerViewEmail.setAdapter(emailDetailAdapter);
             } else {
                 linearEmail.setVisibility(View.GONE);
@@ -1809,7 +1823,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 linearWebsite.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter websiteDetailAdapter = new ProfileDetailAdapter(this,
-                        tempWebsite, AppConstants.WEBSITE, displayOwnProfile);
+                        tempWebsite, AppConstants.WEBSITE, displayOwnProfile, pmId);
                 recyclerViewWebsite.setAdapter(websiteDetailAdapter);
             } else {
                 linearWebsite.setVisibility(View.GONE);
@@ -1910,7 +1924,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempAddress.addAll(arrayListPhoneBookAddress);
                 linearAddress.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter addressDetailAdapter = new ProfileDetailAdapter(this,
-                        tempAddress, AppConstants.ADDRESS, displayOwnProfile);
+                        tempAddress, AppConstants.ADDRESS, displayOwnProfile, pmId);
                 recyclerViewAddress.setAdapter(addressDetailAdapter);
             } else {
                 linearAddress.setVisibility(View.GONE);
@@ -1971,7 +1985,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempImAccount.addAll(arrayListPhoneBookImAccount);
                 linearSocialContact.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter imAccountDetailAdapter = new ProfileDetailAdapter(this,
-                        tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile);
+                        tempImAccount, AppConstants.IM_ACCOUNT, displayOwnProfile, pmId);
                 recyclerViewSocialContact.setAdapter(imAccountDetailAdapter);
             } else {
                 linearSocialContact.setVisibility(View.GONE);
@@ -2048,7 +2062,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempEvent.addAll(arrayListPhoneBookEvent);
                 linearEvent.setVisibility(View.VISIBLE);
                 ProfileDetailAdapter eventDetailAdapter = new ProfileDetailAdapter(this, tempEvent,
-                        AppConstants.EVENT, displayOwnProfile);
+                        AppConstants.EVENT, displayOwnProfile, pmId);
                 recyclerViewEvent.setAdapter(eventDetailAdapter);
             } else {
                 linearEvent.setVisibility(View.GONE);
@@ -2142,7 +2156,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 String actionNumber = StringUtils.defaultString(((ProfileDetailAdapter
-                        .ProfileDetailViewHolder) viewHolder).textMain.getText()
+                        .ProfileDetailViewHolder) viewHolder).textMain1.getText()
                         .toString());
                 if (direction == ItemTouchHelper.LEFT) {
                     /* SMS */

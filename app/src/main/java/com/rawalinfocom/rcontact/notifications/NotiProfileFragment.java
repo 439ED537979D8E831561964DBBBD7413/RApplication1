@@ -27,6 +27,11 @@ import com.rawalinfocom.rcontact.adapters.NotiProfileAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.database.TableAddressMaster;
+import com.rawalinfocom.rcontact.database.TableEmailMaster;
+import com.rawalinfocom.rcontact.database.TableEventMaster;
+import com.rawalinfocom.rcontact.database.TableImMaster;
+import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableRCContactRequest;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -454,6 +459,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
         for (PrivacyRequestDataItem data : profileData) {
 
             if (data.getCarPmIdTo() == Integer.parseInt(getUserPmId()) && data.getCarAccessPermissionStatus() == 0) {
+                //Request
                 tableRCContactRequest.addRequest(AppConstants.COMMENT_STATUS_RECEIVED,
                         data.getCarId() + "",
                         data.getCarMongodbRecordIndex(),
@@ -462,6 +468,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                         Utils.getLocalTimeFromUTCTime(data.getCreatedAt()),
                         Utils.getLocalTimeFromUTCTime(data.getUpdatedAt()));
             } else if (data.getCarPmIdFrom() == Integer.parseInt(getUserPmId()) && data.getCarAccessPermissionStatus() == 1) {
+                //Response
                 tableRCContactRequest.addRequest(AppConstants.COMMENT_STATUS_SENT,
                         data.getCarId() + "",
                         data.getCarMongodbRecordIndex(),
@@ -469,6 +476,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                         data.getPpmParticular(),
                         Utils.getLocalTimeFromUTCTime(data.getCreatedAt()),
                         Utils.getLocalTimeFromUTCTime(data.getUpdatedAt()));
+                updatePrivacySetting(data.getPpmTag(),data.getCarMongodbRecordIndex());
             }
 
         }
@@ -499,22 +507,27 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
         updateHeight();
     }
 
-    private String getRequestText(String ppmTag, String cloudMongoId) {
-        String requestTypeString;
+    private String updatePrivacySetting(String ppmTag, String cloudMongoId) {
         switch (ppmTag) {
             case "pb_phone_number":
+                TableMobileMaster tableMobileMaster= new TableMobileMaster(getDatabaseHandler());
+                tableMobileMaster.updatePrivacySettingToDefault(cloudMongoId);
                 break;
             case "pb_email_id":
-                break;
-            case "pb_organization":
+                TableEmailMaster tableEmailMaster= new TableEmailMaster(getDatabaseHandler());
+                tableEmailMaster.updatePrivacySettingToDefault(cloudMongoId);
                 break;
             case "pb_address":
-                break;
-            case "pb_web_address":
-                break;
-            case "pb_event":
+                TableAddressMaster tableAddressMaster= new TableAddressMaster(getDatabaseHandler());
+                tableAddressMaster.updatePrivacySettingToDefault(cloudMongoId);
                 break;
             case "pb_im_accounts":
+                TableImMaster tableImMaster=new TableImMaster(getDatabaseHandler());
+                tableImMaster.updatePrivacySettingToDefault(cloudMongoId);
+                break;
+            case "pb_event":
+                TableEventMaster tableEventMaster= new TableEventMaster(getDatabaseHandler());
+                tableEventMaster.updatePrivacySettingToDefault(cloudMongoId);
                 break;
         }
         return "";

@@ -47,7 +47,7 @@ public class TableEmailMaster {
             " " + COLUMN_EM_EMAIL_ADDRESS + " text NOT NULL," +
             " " + COLUMN_EM_EMAIL_TYPE + " text," +
             " " + COLUMN_EM_RECORD_INDEX_ID + " text," +
-            " " + COLUMN_EM_EMAIL_PRIVACY + " integer," +
+            " " + COLUMN_EM_EMAIL_PRIVACY + " integer DEFAULT 2," +
             " " + COLUMN_EM_IS_VERIFIED + " integer," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
             ");";
@@ -260,5 +260,20 @@ public class TableEmailMaster {
         db.delete(TABLE_RC_EMAIL_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
                 new String[]{String.valueOf(rcpId)});
         db.close();
+    }
+
+    public int updatePrivacySettingToDefault(String cloudMongoId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_EM_EMAIL_PRIVACY, 2);
+
+        // updating row
+        int isUpdated = db.update(TABLE_RC_EMAIL_MASTER, values, COLUMN_EM_RECORD_INDEX_ID + " = ?",
+                new String[]{cloudMongoId});
+
+        db.close();
+
+        return isUpdated;
     }
 }

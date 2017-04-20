@@ -44,7 +44,7 @@ public class TableEventMaster {
             " " + COLUMN_EVM_START_DATE + " text NOT NULL," +
             " " + COLUMN_EVM_EVENT_TYPE + " text NOT NULL," +
             " " + COLUMN_EVM_IS_YEAR_HIDDEN + " integer," +
-            " " + COLUMN_EVM_EVENT_PRIVACY + " integer DEFAULT 1," +
+            " " + COLUMN_EVM_EVENT_PRIVACY + " integer DEFAULT 2," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
             ");";
 
@@ -344,4 +344,18 @@ public class TableEventMaster {
         db.close();
     }
 
+    public int updatePrivacySettingToDefault(String cloudMongoId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_EVM_EVENT_PRIVACY, 2);
+
+        // updating row
+        int isUpdated = db.update(TABLE_RC_EVENT_MASTER, values, COLUMN_EVM_RECORD_INDEX_ID + " = ?",
+                new String[]{cloudMongoId});
+
+        db.close();
+
+        return isUpdated;
+    }
 }
