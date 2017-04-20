@@ -17,6 +17,7 @@ public class AppConstants {
     public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1005;
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 1006;
     public static final int MY_PERMISSIONS_CALL_LOG = 1007;
+    public static final int MY_PERMISSIONS_REQUEST_PHONE_CALL = 1008;
     //</editor-fold>
 
     //<editor-fold desc="Profile Detail Section">

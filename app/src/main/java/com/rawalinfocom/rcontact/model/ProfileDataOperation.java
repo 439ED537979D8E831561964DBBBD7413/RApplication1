@@ -17,6 +17,7 @@ public class ProfileDataOperation implements Serializable {
 
     private ArrayList<ProfileDataOperationPhoneNumber> pbPhoneNumber;
     private int flag;
+    private int isFirst;
     private ArrayList<ProfileDataOperationWebAddress> pbWebAddress;
     private ArrayList<ProfileDataOperationEvent> pbEvent;
     private String pbNameSuffix;
@@ -51,6 +52,16 @@ public class ProfileDataOperation implements Serializable {
     private String pbGender;
     private String pbProfilePhoto;
 
+    private String lookupKey;
+    private long id;
+
+    public ProfileDataOperation() {
+    }
+
+    public ProfileDataOperation(long id) {
+        this.id = id;
+    }
+
     @JsonProperty("pb_phone_number")
     public ArrayList<ProfileDataOperationPhoneNumber> getPbPhoneNumber() {
         return pbPhoneNumber;
@@ -67,6 +78,15 @@ public class ProfileDataOperation implements Serializable {
 
     public void setFlag(int flag) {
         this.flag = flag;
+    }
+
+    @JsonProperty("is_first")
+    public int getIsFirst() {
+        return isFirst;
+    }
+
+    public void setIsFirst(int isFirst) {
+        this.isFirst = isFirst;
     }
 
     @JsonProperty("pb_event")
@@ -347,5 +367,80 @@ public class ProfileDataOperation implements Serializable {
 
     public void setPbProfilePhoto(String pbProfilePhoto) {
         this.pbProfilePhoto = pbProfilePhoto;
+    }
+
+    @JsonIgnore
+    public String getLookupKey() {
+        return lookupKey;
+    }
+
+    public void setLookupKey(String lookupKey) {
+        this.lookupKey = lookupKey;
+    }
+
+    @JsonIgnore
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+
+    public void addPhone(ProfileDataOperationPhoneNumber phoneNumber) {
+        if (pbPhoneNumber == null) {
+            pbPhoneNumber = new ArrayList<>();
+        }
+        pbPhoneNumber.add(phoneNumber);
+    }
+
+    public void addEmail(ProfileDataOperationEmail emailId) {
+        if (pbEmailId == null) {
+            pbEmailId = new ArrayList<>();
+        }
+        pbEmailId.add(emailId);
+    }
+
+    public void addWebsite(ProfileDataOperationWebAddress webAddress) {
+        if (pbWebAddress == null) {
+            pbWebAddress = new ArrayList<>();
+        }
+        pbWebAddress.add(webAddress);
+    }
+
+    public void addOrganization(ProfileDataOperationOrganization organization) {
+        if (pbOrganization == null) {
+            pbOrganization = new ArrayList<>();
+        }
+        pbOrganization.add(organization);
+    }
+
+    public void addAddress(ProfileDataOperationAddress address) {
+        if (pbAddress == null) {
+            pbAddress = new ArrayList<>();
+        }
+        pbAddress.add(address);
+    }
+
+  /*  public int getAddressSize() {
+        if (pbAddress == null) {
+            pbAddress = new ArrayList<>();
+        }
+        return pbAddress.size();
+    }*/
+
+    public void addImAccount(ProfileDataOperationImAccount imAccount) {
+        if (pbIMAccounts == null) {
+            pbIMAccounts = new ArrayList<>();
+        }
+        pbIMAccounts.add(imAccount);
+    }
+
+    public void addEvent(ProfileDataOperationEvent event) {
+        if (pbEvent == null) {
+            pbEvent = new ArrayList<>();
+        }
+        pbEvent.add(event);
     }
 }

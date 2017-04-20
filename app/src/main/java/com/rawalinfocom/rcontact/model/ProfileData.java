@@ -25,6 +25,7 @@ public class ProfileData {
     private String tempPrefix;
     private String tempMiddleName;
     private String tempNumber;
+    private boolean tempIsRcp;
 
 
     @JsonProperty("pb_local_phonebook_id")
@@ -131,5 +132,14 @@ public class ProfileData {
 
     public void setTempMiddleName(String tempMiddleName) {
         this.tempMiddleName = tempMiddleName;
+    }
+
+    @JsonIgnore
+    public boolean getTempIsRcp() {
+        return tempIsRcp;
+    }
+
+    public void setTempIsRcp(boolean tempIsRcp) {
+        this.tempIsRcp = tempIsRcp;
     }
 }
