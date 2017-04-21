@@ -134,7 +134,6 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC =
             "action_local_broadcast_call_log_sync";
 
-
     //</editor-fold>
 
     //<editor-fold desc="Fragment Tags">
@@ -220,6 +219,7 @@ public class AppConstants {
 
     //<editor-fold desc="Call-log constants">
     public static final int READ_LOGS = 725;
+    public static final int READ_SMS = 785;
     public static final int INCOMING_CALLS = 672;
     public static final int OUTGOING_CALLS = 609;
     public static final int MISSED_CALLS = 874;
@@ -243,4 +243,13 @@ public class AppConstants {
     public static final int COMMENT_TYPE_RUPDATES = 5;
     //</editor-fold>
 
+    //<editor-fold desc="Otp constants">
+
+    // SMS provider identification
+    public static final String SMS_ORIGIN = "NOTICE";
+
+    // special character to prefix the otp.
+    public static final String OTP_DELIMITER = "is ";
+
+    //</editor-fold>
 }

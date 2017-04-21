@@ -5,12 +5,15 @@ import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.PrivacySettingPopupListAdapter;
+import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.helper.Utils;
 
 import java.util.ArrayList;
@@ -21,25 +24,51 @@ import java.util.ArrayList;
 
 public class PrivacySettingPopupDialog {
 
+
+    public interface DialogCallback {
+        void onSettingSaved(ProfileDetailAdapter
+                                    .ProfileDetailViewHolder view, int whichItem, int newPrivacy, int itemPosition, int oldPrivacy, String cloudId);
+    }
+
     private RecyclerView recycleViewDialog;
     private Dialog dialog;
     private String dialogTag;
     private TextView tvDialogTitle;
     private String dialogTitle;
+    private Button cancelButton;
+    private Button okButton;
+    public static int currentPrivacy = -1;
+    private DialogCallback callback;
 
-
-    public PrivacySettingPopupDialog(Context context) {
+    public PrivacySettingPopupDialog(final ProfileDetailAdapter
+            .ProfileDetailViewHolder viewHolder, final Context context, DialogCallback listner, final int itemType, final int itemPosition, final int privacy, final String cloudId) {
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_privacy_policy);
-
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        callback = listner;
+        final WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         layoutParams.copyFrom(dialog.getWindow().getAttributes());
         layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
+        currentPrivacy = privacy - 1;
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
         tvDialogTitle = (TextView) dialog.findViewById(R.id.tvDialogTitle);
+        cancelButton = (Button) dialog.findViewById(R.id.cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+        okButton = (Button) dialog.findViewById(R.id.ok_button);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callback.onSettingSaved(viewHolder, itemType, currentPrivacy, itemPosition, privacy, cloudId);
+                dialog.cancel();
+            }
+        });
+
 
         tvDialogTitle.setTypeface(Utils.typefaceSemiBold(context));
         recycleViewDialog = (RecyclerView) dialog.findViewById(R.id.recycle_view_dialog);

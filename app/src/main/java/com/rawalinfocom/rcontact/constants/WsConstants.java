@@ -70,6 +70,7 @@ public class WsConstants {
 
     //    public static final String REQ_UPLOAD_CALL_LOGS = "call-log";
     public static final String REQ_UPLOAD_CALL_LOGS = "sync-call-log";
+    public static final String REQ_SET_PRIVACY_SETTING = "set-privacy-setting";
     public static final String REQ_ADD_EVENT_COMMENT = "event-comment";
     public static final String REQ_GET_EVENT_COMMENT = "get-event-comment";
     public static final String REQ_GET_RCONTACT_UPDATES = "get-rcontact-update";

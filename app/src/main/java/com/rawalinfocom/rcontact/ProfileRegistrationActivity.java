@@ -807,6 +807,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 address.setAmAddressType(arrayListAddress.get(j).getAddressType());
                 address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
                 address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
+                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
 //                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                 address.setRcProfileMasterPmId(userProfileRegistered.getPmId());
                 addressList.add(address);

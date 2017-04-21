@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Monal on 20/10/16.
@@ -18,6 +19,15 @@ public class WsRequestObject {
 
     @JsonProperty("car_id")
     private int carId;
+
+    @JsonProperty("car_pm_id_to")
+    private int carPmIdTo;
+
+    @JsonProperty("car_filed_type")
+    private String carFiledType;
+
+    @JsonProperty("car_mongodb_record_index")
+    private String carMongoDbRecordIndex;
 
     @JsonProperty("car_status")
     private int carStatus;
@@ -40,6 +50,41 @@ public class WsRequestObject {
     @JsonProperty("reply")
     private String reply;
 
+
+    private List<PrivacyDataItem> data;
+
+    @JsonProperty("privacy_data")
+    public List<PrivacyDataItem> getData() {
+        return data;
+    }
+
+    public void setData(List<PrivacyDataItem> data) {
+        this.data = data;
+    }
+
+    public int getCarPmIdTo() {
+        return carPmIdTo;
+    }
+
+    public void setCarPmIdTo(int carPmIdTo) {
+        this.carPmIdTo = carPmIdTo;
+    }
+
+    public String getCarFiledType() {
+        return carFiledType;
+    }
+
+    public void setCarFiledType(String carFiledType) {
+        this.carFiledType = carFiledType;
+    }
+
+    public String getCarMongoDbRecordIndex() {
+        return carMongoDbRecordIndex;
+    }
+
+    public void setCarMongoDbRecordIndex(String carMongoDbRecordIndex) {
+        this.carMongoDbRecordIndex = carMongoDbRecordIndex;
+    }
 
     public int getCarId() {
         return carId;
@@ -84,7 +129,6 @@ public class WsRequestObject {
     public void setEvmRecordIndexId(String eventRecordIndexId) {
         this.eventRecordIndexId = eventRecordIndexId;
     }
-
 
     public String getDate() {
         return date;

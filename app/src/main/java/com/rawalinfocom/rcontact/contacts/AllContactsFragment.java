@@ -791,6 +791,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     ArrayList<ImAccount> imAccountsList = new ArrayList<>();
                     for (int j = 0; j < arrayListImAccount.size(); j++) {
                         ImAccount imAccount = new ImAccount();
+                        imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
                         imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
 //                    imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                         imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
