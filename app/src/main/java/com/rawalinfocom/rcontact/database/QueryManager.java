@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
@@ -251,9 +252,10 @@ public class QueryManager {
                 imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
                         .getString(imAccountCursor.getColumnIndex(TableImMaster
                                 .COLUMN_IM_PROTOCOL))));
-                imAccount.setIMAccountPublic(Integer.parseInt(StringUtils.defaultString(imAccountCursor
-                        .getString(imAccountCursor.getColumnIndex(TableImMaster
-                                .COLUMN_IM_PRIVACY)), "0")));
+                imAccount.setIMAccountPublic(Integer.parseInt(StringUtils.defaultString
+                        (imAccountCursor
+                                .getString(imAccountCursor.getColumnIndex(TableImMaster
+                                        .COLUMN_IM_PRIVACY)), "0")));
                 imAccount.setIMRcpType(String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_cloud_phone_book)));
                 arrayListImAccount.add(imAccount);
@@ -326,6 +328,44 @@ public class QueryManager {
 
         // return profile data operation
         return profileDataOperation;
+    }
+
+    public ArrayList<ProfileData> getRcpNumberName(String cloudPmIds) {
+        ArrayList<ProfileData> arrayListProfileData = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT DISTINCT " + TableProfileMaster.COLUMN_PM_FIRST_NAME + ", "
+                + TableProfileMaster.COLUMN_PM_LAST_NAME + ", " + TableProfileMobileMapping
+                .COLUMN_MPM_MOBILE_NUMBER + " FROM " + TableProfileMaster.TABLE_RC_PROFILE_MASTER
+                + " INNER JOIN " + TableProfileMobileMapping.TABLE_PB_PROFILE_MOBILE_MAPPING +
+                " ON " + TableProfileMaster.COLUMN_PM_RCP_ID + " = " + TableProfileMobileMapping
+                .COLUMN_MPM_CLOUD_PM_ID + " WHERE " + TableProfileMaster.COLUMN_PM_RCP_ID + " IN ("
+                + cloudPmIds + ")";
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                ProfileData profileData = new ProfileData();
+                /*profileData.setTempFirstName(cursor.getString(cursor.getColumnIndex
+                        (TableProfileMaster.COLUMN_PM_FIRST_NAME)));
+                profileData.setTempLastName(cursor.getString(cursor.getColumnIndex
+                        (TableProfileMaster.COLUMN_PM_LAST_NAME)));*/
+                profileData.setTempRcpName(cursor.getString(cursor.getColumnIndex
+                        (TableProfileMaster.COLUMN_PM_FIRST_NAME)) + " " + cursor.getString
+                        (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_LAST_NAME)));
+                profileData.setTempNumber(cursor.getString(cursor.getColumnIndex
+                        (TableProfileMobileMapping.COLUMN_MPM_MOBILE_NUMBER)));
+                arrayListProfileData.add(profileData);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+        }
+
+        db.close();
+
+        return arrayListProfileData;
     }
 
 }

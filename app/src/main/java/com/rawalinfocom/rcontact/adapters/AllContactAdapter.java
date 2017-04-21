@@ -28,6 +28,7 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.AllContactsFragment;
+import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
@@ -208,7 +209,9 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void configureAllContactViewHolder(final AllContactViewHolder holder, final int
             position) {
+
         final ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
+
 
         holder.textContactName.setTag(position);
         if (arrayListExpandedPositions.contains(position)) {
@@ -216,6 +219,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         } else {
             holder.recyclerViewMultipleRc.setVisibility(View.GONE);
         }
+
+        holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
 
         String contactDisplayName = "";
         String prefix = profileData.getTempPrefix();
@@ -239,11 +244,73 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
                 "[Unknown]");
-        holder.textCloudContactName.setText("");
+
+        if (profileData.getTempIsRcp()) {
+            holder.textCloudContactName.setVisibility(View.VISIBLE);
+            holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
+            holder.buttonInvite.setVisibility(View.GONE);
+            holder.imageSocialMedia.setVisibility(View.VISIBLE);
+            if (StringUtils.contains(profileData.getTempRcpName(), ",")) {
+                holder.textCloudContactName.setText(" (" + String.valueOf(StringUtils.countMatches
+                        (profileData.getTempRcpName(), ",") + 1) + " RC)");
+                holder.buttonInvite.setVisibility(View.GONE);
+                holder.imageSocialMedia.setVisibility(View.GONE);
+            }
+        } else {
+            holder.textCloudContactName.setVisibility(View.GONE);
+            holder.textCloudContactName.setText("");
+            holder.buttonInvite.setVisibility(View.VISIBLE);
+            holder.imageSocialMedia.setVisibility(View.GONE);
+        }
+
         holder.textContactNumber.setText(profileData.getTempNumber());
-        holder.linearRating.setVisibility(View.GONE);
-        holder.buttonInvite.setVisibility(View.GONE);
-        holder.imageSocialMedia.setVisibility(View.GONE);
+
+        holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                if (StringUtils.isNumeric(String.valueOf(v.getTag()))) {
+                if (holder.recyclerViewMultipleRc.getVisibility() == View.GONE) {
+                    if (StringUtils.contains(String.valueOf(v.getTag()), ",")) {
+                        if (StringUtils.contains(String.valueOf(v.getTag()), ",")) {
+                            holder.recyclerViewMultipleRc.setVisibility(View.VISIBLE);
+                            /*String[] rcpIds = StringUtils.split(String.valueOf(v.getTag()), ",");
+                            TableProfileMaster tableProfileMaster = new TableProfileMaster((
+                                    (BaseActivity) context).databaseHandler);*/
+                            QueryManager queryManager = new QueryManager(((BaseActivity) context)
+                                    .databaseHandler);
+                            ArrayList<ProfileData> arrayList = new ArrayList<>();
+                            arrayList.addAll(queryManager.getRcpNumberName(String.valueOf(v
+                                    .getTag())));
+                           /* for (String rcpId : rcpIds) {
+                                *//*UserProfile userProfile = tableProfileMaster
+                                .getProfileFromCloudPmId
+                                        (Integer.parseInt(rcpIds[i]));*//*
+                                UserProfile userProfile = queryManager.getRcpNumberName(Integer
+                                        .parseInt(rcpId));
+                                ProfileData rcpContact = new ProfileData();
+                                rcpContact.setTempRcpName(userProfile.getPmFirstName() + " " +
+                                        userProfile.getPmLastName());
+                                rcpContact.setTempFirstName((String) holder.textContactName
+                                        .getText());
+                                rcpContact.setTempNumber((String) holder.textContactNumber
+                                        .getText());
+                                arrayList.add(rcpContact);
+                            }*/
+
+                            holder.recyclerViewMultipleRc.setLayoutManager(new LinearLayoutManager
+                                    (context));
+                            ContactListExpandAdapter adapter = new ContactListExpandAdapter(context,
+                                    arrayList);
+                            holder.recyclerViewMultipleRc.setAdapter(adapter);
+                        }
+                    } else {
+                        holder.recyclerViewMultipleRc.setVisibility(View.GONE);
+                    }
+                } else {
+                    holder.recyclerViewMultipleRc.setVisibility(View.GONE);
+                }
+            }
+        });
 
        /* if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
             displayNumber(holder, profileData, contactDisplayName, position);
@@ -755,8 +822,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             }
                             if (arrayList.get(i) instanceof ProfileDataOperationEmail) {
                                 ProfileDataOperationEmail email = (ProfileDataOperationEmail)
-                                        arrayList
-                                                .get(i);
+                                        arrayList.get(i);
                                 emails.add(email.getEmEmailId());
                             }
                         }
@@ -819,6 +885,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             textCloudContactName.setTextColor(colorPineGreen);
 
             recyclerViewMultipleRc.setVisibility(View.GONE);
+            linearRating.setVisibility(View.GONE);
 
             LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
             // Filled stars

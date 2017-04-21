@@ -98,7 +98,7 @@ import butterknife.ButterKnife;
 public class AllContactsListFragment extends BaseFragment implements LoaderManager
         .LoaderCallbacks<Cursor>, WsResponseListener {
 
-    private final int CONTACT_CHUNK = 10;
+    private final int CONTACT_CHUNK = 5;
 
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
@@ -352,7 +352,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         Utils.setIntegerPreference(getActivity(), AppConstants.PREF_SYNCED_CONTACTS,
                                 lastSyncedData);
 
-                        if (lastSyncedData < arrayListUserContact.size()) {
+                        if (lastSyncedData < arrayListSyncUserContact.size()) {
                             backgroundSync(true, uploadContactResponse);
                         } else {
                             Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
@@ -376,7 +376,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                                         (((ProfileData)
                                                                 arrayListPhoneBookContacts.get(i)
                                                         ).getLocalPhoneBookId());
-                                                if (StringUtils.containsWhitespace(name)) {
+                                                ((ProfileData) arrayListPhoneBookContacts.get(i))
+                                                        .setTempRcpName(name);
+                                              /*  if (StringUtils.containsWhitespace(name)) {
                                                     ((ProfileData) arrayListPhoneBookContacts.get
                                                             (i)).setTempFirstName(StringUtils
                                                             .split(name, " ")[0]);
@@ -386,7 +388,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                                 } else {
                                                     ((ProfileData) arrayListPhoneBookContacts.get
                                                             (i)).setTempFirstName(name);
-                                                }
+                                                }*/
                                             } else {
                                                 ((ProfileData) arrayListPhoneBookContacts.get(i))
                                                         .setTempIsRcp(false);
@@ -425,8 +427,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
                             (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                         Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                "Invitation" +
-                                        " sent successfully");
+                                "Invitation sent successfully");
                     } else {
                         if (inviteContactResponse != null) {
                             Log.e("error response", inviteContactResponse.getMessage());
@@ -487,7 +488,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     // Permission Granted
                     Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + callNumber));
                     startActivity(intent);
-
                 } else {
                     // Permission Denied
                     showPermissionConfirmationDialog(AppConstants
@@ -576,7 +576,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
 
-
       /*  VerticalRecyclerViewFastScroller scrollerAllContact = new
                 VerticalRecyclerViewFastScroller(getActivity());
 
@@ -662,6 +661,46 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             recyclerViewContactList.setAdapter(allContactListAdapter);
         }
 
+       /* AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {*/
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler
+                ());
+        ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
+        for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
+            if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
+                if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
+                        (i)).getLocalPhoneBookId())) {
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
+                    String name = tableProfileMaster.getNameFromRawId(((ProfileData)
+                            arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId());
+                    ((ProfileData) arrayListPhoneBookContacts.get(i))
+                            .setTempRcpName(name);
+                           /* if (StringUtils.containsWhitespace(name)) {
+                                ((ProfileData) arrayListPhoneBookContacts.get(i))
+                                        .setTempFirstName(StringUtils.split(name, " ")[0]);
+                                ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempLastName
+                                        (StringUtils.split(name, " ")[1]);
+                            } else {
+                                ((ProfileData) arrayListPhoneBookContacts.get(i))
+                                        .setTempFirstName(name);
+                            }*/
+                } else {
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
+                }
+                final int finalI = i;
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        allContactListAdapter.notifyItemChanged(finalI);
+                    }
+                });
+            }
+        }
+           /* }
+        });*/
+
     }
 
     private void getContactsFromPhonebook(Cursor data) {
@@ -711,74 +750,83 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
-        if (!Utils.isArraylistNullOrEmpty(arrayListContactNumbers)) {
-            TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
-                    (getDatabaseHandler());
-            ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new ArrayList<>();
-            for (int i = 0; i < arrayListContactNumbers.size(); i++) {
-                if (!tableProfileMobileMapping.getIsMobileNumberExists(arrayListContactNumbers
-                        .get(i))) {
+//        if (!Utils.isArraylistNullOrEmpty(arrayListContactNumbers)) {
+        TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
+                (getDatabaseHandler());
+        ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new ArrayList<>();
+//            for (int i = 0; i < arrayListContactNumbers.size(); i++) {
+           /* if (!tableProfileMobileMapping.getIsMobileNumberExists(arrayListContactNumbers
+                    .get(i))) {*/
 
-                    ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
-                    profileMobileMapping.setMpmMobileNumber(arrayListContactNumbers.get(i));
-                    profileMobileMapping.setMpmIsRcp("0");
-                    if (!Utils.isArraylistNullOrEmpty(profileData)) {
-                        for (int j = 0; j < profileData.size(); j++) {
-                            if (StringUtils.equalsIgnoreCase(arrayListContactNumbers.get(i),
-                                    profileData.get(j).getVerifiedMobileNumber())) {
-                                profileMobileMapping.setMpmCloudMnmId(profileData.get(j)
-                                        .getMnmCloudId());
-                                profileMobileMapping.setMpmCloudPmId(profileData.get(j)
-                                        .getRcpPmId());
-                                profileMobileMapping.setMpmIsRcp("1");
-                            }
-                        }
-                    }
-                    arrayListProfileMobileMapping.add(profileMobileMapping);
-                }
+//                ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
+//                profileMobileMapping.setMpmMobileNumber(arrayListContactNumbers.get(i));
+//                profileMobileMapping.setMpmIsRcp("0");
+        if (!Utils.isArraylistNullOrEmpty(profileData)) {
+            for (int j = 0; j < profileData.size(); j++) {
+                /*if (!tableProfileMobileMapping.getIsMobileNumberExists(profileData.get(j)
+                        .getVerifiedMobileNumber())) {*/
+                ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
+                profileMobileMapping.setMpmMobileNumber(profileData.get(j)
+                        .getVerifiedMobileNumber());
+                profileMobileMapping.setMpmCloudMnmId(profileData.get(j)
+                        .getMnmCloudId());
+                profileMobileMapping.setMpmCloudPmId(profileData.get(j).getRcpPmId());
+                profileMobileMapping.setMpmIsRcp("1");
+                arrayListProfileMobileMapping.add(profileMobileMapping);
+//                }
             }
-            tableProfileMobileMapping.addArrayProfileMobileMapping
-                    (arrayListProfileMobileMapping);
         }
+               /* arrayListProfileMobileMapping.add(profileMobileMapping);
+            }*/
+//            }
+        tableProfileMobileMapping.addArrayProfileMobileMapping(arrayListProfileMobileMapping);
+       /* int count = tableProfileMobileMapping.getProfileMobileMappingCount();
+        Log.i("storeToMobileMapping: ", String.valueOf(count));*/
+//        }
     }
 
     private void storeToEmailMapping(ArrayList<ProfileDataOperation> profileData) {
-        if (!Utils.isArraylistNullOrEmpty(arrayListContactEmails)) {
-            TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping
-                    (getDatabaseHandler());
-            ArrayList<ProfileEmailMapping> arrayListProfileEmailMapping = new ArrayList<>();
-            for (int i = 0; i < arrayListContactEmails.size(); i++) {
-                if (!tableProfileEmailMapping.getIsEmailIdExists(arrayListContactEmails.get(i))) {
+//        if (!Utils.isArraylistNullOrEmpty(arrayListContactEmails)) {
+        TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping
+                (getDatabaseHandler());
+        ArrayList<ProfileEmailMapping> arrayListProfileEmailMapping = new ArrayList<>();
+//            for (int i = 0; i < arrayListContactEmails.size(); i++) {
+//            if (!tableProfileEmailMapping.getIsEmailIdExists(arrayListContactEmails.get(i))) {
 
-                    ProfileEmailMapping profileEmailMapping = new ProfileEmailMapping();
-                    profileEmailMapping.setEpmEmailId(arrayListContactEmails.get(i));
-                    profileEmailMapping.setEpmIsRcp("0");
-                    if (!Utils.isArraylistNullOrEmpty(profileData)) {
-                        for (int j = 0; j < profileData.size(); j++) {
-                            if (!Utils.isArraylistNullOrEmpty(profileData.get(j)
-                                    .getVerifiedEmailIds())) {
-                                for (int k = 0; k < profileData.get(j).getVerifiedEmailIds().size();
-                                     k++) {
-                                    if (StringUtils.equalsIgnoreCase(arrayListContactEmails.get(i),
-                                            profileData.get(j).getVerifiedEmailIds().get(k)
-                                                    .getEmEmailId())) {
-                                        profileEmailMapping.setEpmCloudEmId(String.valueOf
-                                                (profileData.get(j).getVerifiedEmailIds().get(k)
-                                                        .getEmId()));
-                                        profileEmailMapping.setEpmCloudPmId(profileData.get(j)
-                                                .getRcpPmId());
-                                        profileEmailMapping.setEpmIsRcp("1");
-                                    }
-                                }
-                            }
+//                    ProfileEmailMapping profileEmailMapping = new ProfileEmailMapping();
+//                    profileEmailMapping.setEpmEmailId(arrayListContactEmails.get(i));
+//                profileEmailMapping.setEpmIsRcp("0");
+        if (!Utils.isArraylistNullOrEmpty(profileData)) {
+            for (int j = 0; j < profileData.size(); j++) {
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(j).getVerifiedEmailIds())) {
+                    for (int k = 0; k < profileData.get(j).getVerifiedEmailIds().size(); k++) {
+                               /* if (StringUtils.equalsIgnoreCase(arrayListContactEmails.get(i),
+                                        profileData.get(j).getVerifiedEmailIds().get(k)
+                                                .getEmEmailId())) {*/
+                        if (!tableProfileEmailMapping.getIsEmailIdExists(profileData.get(j)
+                                .getVerifiedEmailIds().get(k).getEmEmailId())) {
+                            ProfileEmailMapping profileEmailMapping = new ProfileEmailMapping();
+                            profileEmailMapping.setEpmEmailId(profileData.get(j)
+                                    .getVerifiedEmailIds().get(k).getEmEmailId());
+                            profileEmailMapping.setEpmCloudEmId(String.valueOf(profileData
+                                    .get(j).getVerifiedEmailIds().get(k).getEmId()));
+                            profileEmailMapping.setEpmCloudPmId(profileData.get(j).getRcpPmId
+                                    ());
+                            profileEmailMapping.setEpmIsRcp("1");
+//                                }
+                            arrayListProfileEmailMapping.add(profileEmailMapping);
                         }
                     }
-
-                    arrayListProfileEmailMapping.add(profileEmailMapping);
+//                            }
                 }
             }
-            tableProfileEmailMapping.addArrayProfileEmailMapping(arrayListProfileEmailMapping);
+
+//                    arrayListProfileEmailMapping.add(profileEmailMapping);
         }
+//            }
+        tableProfileEmailMapping.addArrayProfileEmailMapping(arrayListProfileEmailMapping);
+//            }
+//        }
     }
 
     private void storeProfileDataToDb(ArrayList<ProfileDataOperation> profileData,
@@ -788,19 +836,19 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         HashMap<String, String> mapLocalRcpId = new HashMap<>();
 
         for (int i = 0; i < mapping.size(); i++) {
-            if (mapping.get(i).getRcpPmId().size() > 0) {
-                for (int j = 0; j < mapping.get(i).getRcpPmId().size(); j++) {
-                    String phonebookRawId;
-                    if (mapLocalRcpId.containsKey(mapping.get(i).getRcpPmId().get(j))) {
-                        phonebookRawId = mapLocalRcpId.get(mapping.get(i).getRcpPmId().get(j)) +
-                                "," + mapping.get(i).getLocalPhoneBookId();
-                    } else {
-                        phonebookRawId = mapping.get(i).getLocalPhoneBookId();
-                    }
-
-                    mapLocalRcpId.put(mapping.get(i).getRcpPmId().get(j), phonebookRawId);
+//            if (mapping.get(i).getRcpPmId().size() > 0) {
+            for (int j = 0; j < mapping.get(i).getRcpPmId().size(); j++) {
+                String phonebookRawId;
+                if (mapLocalRcpId.containsKey(mapping.get(i).getRcpPmId().get(j))) {
+                    phonebookRawId = mapLocalRcpId.get(mapping.get(i).getRcpPmId().get(j)) +
+                            ", " + mapping.get(i).getLocalPhoneBookId();
+                } else {
+                    phonebookRawId = mapping.get(i).getLocalPhoneBookId();
                 }
+
+                mapLocalRcpId.put(mapping.get(i).getRcpPmId().get(j), phonebookRawId);
             }
+//            }
         }
 
         // Basic Profile Data
@@ -833,7 +881,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             if (tableProfileMaster.getRcpIdCount(Integer.parseInt(userProfile.getPmRcpId())) <= 0) {
 
-
                 arrayListUserProfile.add(userProfile);
                 tableProfileMaster.addArrayProfile(arrayListUserProfile);
                 //</editor-fold>
@@ -853,10 +900,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                     if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber(),
                             mobileNumber.getMnmMobileNumber())) {
-                        mobileNumber.setMnmIsPrimary(String.valueOf(getActivity().getResources()
+                        mobileNumber.setMnmIsPrimary(String.valueOf(getResources()
                                 .getInteger(R.integer.rcp_type_primary)));
                     } else {
-                        mobileNumber.setMnmIsPrimary(String.valueOf(getActivity().getResources()
+                        mobileNumber.setMnmIsPrimary(String.valueOf(getResources()
                                 .getInteger(R.integer.rcp_type_secondary)));
                     }
 //                arrayListPhoneNumber.get(j).
@@ -957,8 +1004,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     }
 
                     TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster
-                            (getDatabaseHandler
-                                    ());
+                            (getDatabaseHandler());
                     tableWebsiteMaster.addArrayWebsite(websiteList);
                 }
                 //</editor-fold>
@@ -990,8 +1036,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     }
 
                     TableAddressMaster tableAddressMaster = new TableAddressMaster
-                            (getDatabaseHandler
-                                    ());
+                            (getDatabaseHandler());
                     tableAddressMaster.addArrayAddress(addressList);
                 }
                 //</editor-fold>
@@ -1027,8 +1072,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
                         event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                         event.setEvmEventType(arrayListEvent.get(j).getEventType());
-                        event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j)
-                                .getEventPublic()));
+                        event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic
+                                ()));
                         event.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         eventList.add(event);
                     }
