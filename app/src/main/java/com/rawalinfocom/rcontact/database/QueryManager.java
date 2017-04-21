@@ -88,6 +88,8 @@ public class QueryManager {
                     (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_PHONETIC_LAST_NAME))));
             profileDataOperation.setPbNote(StringUtils.defaultString(cursor.getString(cursor
                     .getColumnIndex(TableProfileMaster.COLUMN_PM_NOTES))));
+            profileDataOperation.setPbGender(StringUtils.defaultString(cursor.getString(cursor
+                    .getColumnIndex(TableProfileMaster.COLUMN_PM_GENDER))));
             profileDataOperation.setIsFavourite(StringUtils.defaultString(cursor.getString(cursor
                     .getColumnIndex(TableProfileMaster.COLUMN_PM_IS_FAVOURITE))));
             profileDataOperation.setProfileRating(StringUtils.defaultString(cursor.getString
@@ -102,7 +104,7 @@ public class QueryManager {
 
         //<editor-fold desc="Phone Number">
         String mobileNumberQuery = "SELECT mobile." + TableMobileMaster.COLUMN_MNM_MOBILE_NUMBER
-                + ",mobile." + TableMobileMaster.COLUMN_MNM_NUMBER_TYPE + ",mobile." +
+                + ",mobile." + TableMobileMaster.COLUMN_MNM_NUMBER_TYPE + ",mobile." + TableMobileMaster.COLUMN_MNM_RECORD_INDEX_ID + ",mobile." +
                 TableMobileMaster.COLUMN_MNM_IS_PRIMARY + ",mobile." + TableMobileMaster
                 .COLUMN_MNM_NUMBER_PRIVACY + " from " + TableMobileMaster
                 .TABLE_RC_MOBILE_NUMBER_MASTER + " mobile WHERE mobile." + TableMobileMaster
@@ -128,6 +130,9 @@ public class QueryManager {
                 phoneNumber.setPhonePublic(Integer.parseInt(StringUtils.defaultString
                         (mobileNumberCursor.getString(mobileNumberCursor.getColumnIndex
                                 (TableMobileMaster.COLUMN_MNM_NUMBER_PRIVACY)), "0")));
+                phoneNumber.setPhoneId(StringUtils.defaultString(mobileNumberCursor.getString
+                        (mobileNumberCursor.getColumnIndex(TableMobileMaster
+                                .COLUMN_MNM_RECORD_INDEX_ID))));
                 arrayListPhoneNumber.add(phoneNumber);
             } while (mobileNumberCursor.moveToNext());
             mobileNumberCursor.close();
@@ -138,7 +143,7 @@ public class QueryManager {
         //<editor-fold desc="EmailId">
         String emailIdQuery = "SELECT email." + TableEmailMaster.COLUMN_EM_EMAIL_ADDRESS + "," +
                 "email." + TableEmailMaster.COLUMN_EM_EMAIL_TYPE + ",email." + TableEmailMaster
-                .COLUMN_EM_EMAIL_PRIVACY +
+                .COLUMN_EM_EMAIL_PRIVACY + ",email." + TableEmailMaster.COLUMN_EM_RECORD_INDEX_ID +
                 ",email." + TableEmailMaster.COLUMN_EM_IS_VERIFIED + " FROM " + TableEmailMaster
                 .TABLE_RC_EMAIL_MASTER + " email where email." + TableEmailMaster
                 .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
@@ -158,6 +163,8 @@ public class QueryManager {
                 email.setEmPublic(Integer.parseInt(StringUtils.defaultString(emailIdCursor
                         .getString(emailIdCursor.getColumnIndex(TableEmailMaster
                                 .COLUMN_EM_EMAIL_PRIVACY)), "0")));
+                email.setEmId(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
+                        .getColumnIndex(TableEmailMaster.COLUMN_EM_RECORD_INDEX_ID))));
               /*  email.setEmRcpType(StringUtils.defaultString(emailIdCursor.getString
                                 (emailIdCursor.getColumnIndex(TableEmailMaster
                                         .COLUMN_EM_IS_PRIMARY)),
@@ -203,7 +210,8 @@ public class QueryManager {
 
         // <editor-fold desc="Event">
         String eventQuery = "SELECT event." + TableEventMaster.COLUMN_EVM_START_DATE + ",event."
-                + TableEventMaster.COLUMN_EVM_EVENT_TYPE + ",event." + TableEventMaster
+                + TableEventMaster.COLUMN_EVM_EVENT_TYPE + ",event."
+                + TableEventMaster.COLUMN_EVM_RECORD_INDEX_ID + ",event." + TableEventMaster
                 .COLUMN_EVM_EVENT_PRIVACY + " FROM " + TableEventMaster.TABLE_RC_EVENT_MASTER + "" +
                 " event WHERE event." + TableEventMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " IN ("
                 + rcpId + ")";
@@ -220,6 +228,8 @@ public class QueryManager {
                         .getColumnIndex(TableEventMaster.COLUMN_EVM_START_DATE))));
                 event.setEventType(StringUtils.defaultString(eventCursor.getString(eventCursor
                         .getColumnIndex(TableEventMaster.COLUMN_EVM_EVENT_TYPE))));
+                event.setEventId(StringUtils.defaultString(eventCursor.getString(eventCursor
+                        .getColumnIndex(TableEventMaster.COLUMN_EVM_RECORD_INDEX_ID))));
                 event.setEventPublic(Integer.parseInt(StringUtils.defaultString(eventCursor
                         .getString(eventCursor.getColumnIndex(TableEventMaster
                                 .COLUMN_EVM_EVENT_PRIVACY)), "0")));
@@ -235,7 +245,9 @@ public class QueryManager {
         // <editor-fold desc="Im Account">
         String imAccountQuery = "SELECT im." +
                 TableImMaster.COLUMN_IM_PROTOCOL + ", im." + TableImMaster
-                .COLUMN_IM_PRIVACY + " FROM " + TableImMaster.TABLE_RC_IM_MASTER + " im WHERE " +
+                .COLUMN_IM_PRIVACY + ", im." + TableImMaster
+                .COLUMN_IM_RECORD_INDEX_ID + ", im." + TableImMaster.COLUMN_IM_DETAIL +
+                " FROM " + TableImMaster.TABLE_RC_IM_MASTER + " im WHERE " +
                 "im." + TableImMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
 
         Cursor imAccountCursor = db.rawQuery(imAccountQuery, null);
@@ -248,6 +260,15 @@ public class QueryManager {
                 ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
                /* imAccount.setIMAccountType(StringUtils.defaultString(imAccountCursor.getString
                         (imAccountCursor.getColumnIndex(TableImMaster.COLUMN_IM_IM_TYPE))));*/
+                imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
+                        .getString(imAccountCursor.getColumnIndex(TableImMaster
+                                .COLUMN_IM_PROTOCOL))));
+                imAccount.setIMAccountDetails(StringUtils.defaultString(imAccountCursor
+                        .getString(imAccountCursor.getColumnIndex(TableImMaster
+                                .COLUMN_IM_DETAIL))));
+                imAccount.setIMId(StringUtils.defaultString(imAccountCursor
+                        .getString(imAccountCursor.getColumnIndex(TableImMaster
+                                .COLUMN_IM_RECORD_INDEX_ID))));
                 imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
                         .getString(imAccountCursor.getColumnIndex(TableImMaster
                                 .COLUMN_IM_PROTOCOL))));
@@ -265,7 +286,7 @@ public class QueryManager {
 
         // <editor-fold desc="Address">
         String addressQuery = "SELECT address." + TableAddressMaster.COLUMN_AM_FORMATTED_ADDRESS
-                + ", address." + TableAddressMaster.COLUMN_AM_ADDRESS_TYPE + ", address." +
+                + ", address." + TableAddressMaster.COLUMN_AM_ADDRESS_TYPE + ", address." + TableAddressMaster.COLUMN_AM_RECORD_INDEX_ID + ", address." +
                 TableAddressMaster.COLUMN_AM_ADDRESS_PRIVACY + " FROM " + TableAddressMaster
                 .TABLE_RC_ADDRESS_MASTER + " address WHERE address." + TableAddressMaster
                 .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
@@ -286,6 +307,8 @@ public class QueryManager {
                 address.setAddPublic(Integer.parseInt(StringUtils.defaultString(addressCursor
                         .getString(addressCursor.getColumnIndex(TableAddressMaster
                                 .COLUMN_AM_ADDRESS_PRIVACY)), "0")));
+                address.setAddId(StringUtils.defaultString(addressCursor.getString
+                        (addressCursor.getColumnIndex(TableAddressMaster.COLUMN_AM_RECORD_INDEX_ID))));
                 address.setRcpType(String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_cloud_phone_book)));
                 arrayListAddress.add(address);
@@ -303,8 +326,6 @@ public class QueryManager {
         Cursor websiteCursor = db.rawQuery(websiteQuery, null);
 
         ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = new ArrayList<>();
-//        ArrayList<String> arrayListWebsite = new ArrayList<>();
-
         // looping through all rows and adding to list
         if (websiteCursor.moveToFirst()) {
             do {
@@ -316,6 +337,7 @@ public class QueryManager {
                /* arrayListWebsite.add(StringUtils.defaultString(websiteCursor.getString
                         (websiteCursor.getColumnIndex(TableWebsiteMaster.COLUMN_WM_WEBSITE_URL)))
                         );*/
+                arrayListWebsite.add(webAddress);
             } while (websiteCursor.moveToNext());
             websiteCursor.close();
         }

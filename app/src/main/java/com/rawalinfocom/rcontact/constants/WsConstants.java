@@ -10,7 +10,7 @@ public class WsConstants {
 
     // Monal
 //    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
-    public static final String WS_ROOT = "http://54.202.191.41/api/v1/";
+//    public static final String WS_ROOT = "http://54.202.191.41/api/v1/";
 //    public static final String WS_ROOT = "http://10.0.21.123/api/v1/";
 
     // QA Server
@@ -21,7 +21,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
 
     //    Maulik
-//    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
+    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
 
     // Shailesh
 //    public static final String WS_ROOT = "http://10.0.21.14:8000/api/v1/";
@@ -70,6 +70,7 @@ public class WsConstants {
 
     //    public static final String REQ_UPLOAD_CALL_LOGS = "call-log";
     public static final String REQ_UPLOAD_CALL_LOGS = "sync-call-log";
+    public static final String REQ_SET_PRIVACY_SETTING = "set-privacy-setting";
     public static final String REQ_ADD_EVENT_COMMENT = "event-comment";
     public static final String REQ_GET_EVENT_COMMENT = "get-event-comment";
     public static final String REQ_GET_RCONTACT_UPDATES = "get-rcontact-update";
