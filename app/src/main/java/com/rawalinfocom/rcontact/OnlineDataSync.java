@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.util.Log;
 
@@ -57,8 +58,15 @@ public class OnlineDataSync {
                         true)) {
                     //Add SMS boolean default shoiuld be false
                     // Start uodated contact sync after above 3 conditions are true
-//                    Log.i("MAULIK", "Checking for updated contacts");
-                    syncPhoneBookContactList();
+
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+//                            Log.i("MAULIK", "Checking for updated contacts");
+                            syncPhoneBookContactList();
+                        }
+                    });
+
                 }
             }
         }
@@ -104,13 +112,14 @@ public class OnlineDataSync {
         if (Utils.getArrayListPreference(context, AppConstants
                 .PREF_CONTACT_ID_SET) == null)
             return;
-
         if (cursor != null) {
-//            Log.i("MAULIK", "cursor" + cursor.getCount());
-        } else {
-            return;
+            if (cursor.getCount() == 0) {
+//                Log.i("MAULIK", "returning since no changes found");
+                return;
+            } else {
+//                Log.i("MAULIK", "changes found" + cursor.getCount());
+            }
         }
-
         String rawId = "-1";
 
         ArrayList<String> rawIdsUpdated = new ArrayList<>();
@@ -118,6 +127,12 @@ public class OnlineDataSync {
         while (cursor.moveToNext()) {
             rawId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts
                     .LOOKUP_KEY));
+//            Log.i("MAULIK", "LOOKUP_KEY" + rawId);
+//            Log.i("MAULIK", "DISPLAY_NAME" + cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+//            Log.i("MAULIK", "NUMBER" + cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+//            Log.i("MAULIK", "RAW_CONTACT_ID" + cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
+//            Log.i("MAULIK", "CONTACT_ID" + cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
+//            Log.i("MAULIK", "Contacts._ID" + cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID)));
             rawIdsUpdated.add(rawId);
         }
         cursor.close();
@@ -127,11 +142,11 @@ public class OnlineDataSync {
         ArrayList<String> arrayListContactIds = new ArrayList<>();
         arrayListContactIds.addAll(Utils.getArrayListPreference(context, AppConstants
                 .PREF_CONTACT_ID_SET));
-
-
-//        Log.i("MAULIK", "arrayListContactIds" + arrayListContactIds.toString());
+//        Log.i("MAULIK", "arrayListContactIds ALL" + arrayListContactIds.toString());
+//        Log.i("MAULIK", "arrayListContactIds SIZE" + arrayListContactIds.size());
 
         for (int i = 0; i < rawIdsUpdated.size(); i++) {
+
             String _rawId = rawIdsUpdated.get(i);
 //            Log.i("MAULIK", "_rawId" + _rawId);
             if (arrayListContactIds.contains(_rawId)) {
@@ -140,31 +155,32 @@ public class OnlineDataSync {
                 phoneBookOperations(_rawId, String.valueOf(context.getResources().getInteger(R
                         .integer.sync_update)));
 
-            } else if (_rawId.equalsIgnoreCase("-1") && i == 0) {
-
-                // Delete
+            } else if (_rawId.equalsIgnoreCase("-1")) {
 //                Log.i("MAULIK", "delete" + _rawId);
-
-                Cursor contactNameCursor = phoneBookContacts.getAllContactId();
-
-                ArrayList<String> arrayListNewContactId = new ArrayList<>();
-
-                while (contactNameCursor.moveToNext()) {
-                    arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
-                            .getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
-                }
-
-                contactNameCursor.close();
+//
+//                // Delete
+//                Log.i("MAULIK", "delete" + _rawId);
+//
+//                Cursor contactNameCursor = phoneBookContacts.getAllContactId();
+//
+//                ArrayList<String> arrayListNewContactId = new ArrayList<>();
+//
+//                while (contactNameCursor.moveToNext()) {
+//                    arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
+//                            .getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
+//                }
+//
+//                contactNameCursor.close();
 //                Log.i("MAULIK", "arrayListNewContactId" + arrayListNewContactId.toString());
-                Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
-                        arrayListNewContactId);
+//                Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
+//                        arrayListNewContactId);
+//
+//                Set<String> oldContactIds = new HashSet<>(arrayListContactIds);
+//                Set<String> newContactIds = new HashSet<>(arrayListNewContactId);
+//                oldContactIds.removeAll(newContactIds);
+//                ArrayList<String> arrayListDeletedIds = new ArrayList<>(oldContactIds);
 
-                Set<String> oldContactIds = new HashSet<>(arrayListContactIds);
-                Set<String> newContactIds = new HashSet<>(arrayListNewContactId);
-                oldContactIds.removeAll(newContactIds);
-                ArrayList<String> arrayListDeletedIds = new ArrayList<>(oldContactIds);
-
-                for (String deletedRawId : arrayListDeletedIds) {
+//                for (String deletedRawId : arrayListDeletedIds) {
 //                    Log.i("MAULIK", "actually deleted" + _rawId);
 //                    ProfileData profileData = new ProfileData();
 //                    profileData.setLocalPhoneBookId(arrayListDeletedIds.get(0));
@@ -182,38 +198,41 @@ public class OnlineDataSync {
 //                    Log.i("MAULIK", "arrayListDeletedUserContact" + arrayListDeletedUserContact.size());
 
 //                    deleteContact();
-                    // Update
-                    phoneBookOperations(deletedRawId, String.valueOf(context.getResources().getInteger(R
-                            .integer.sync_delete)));
-                }
+                // Update
+//                    phoneBookOperations(deletedRawId, String.valueOf(context.getResources().getInteger(R
+//                            .integer.sync_delete)));
+//                }
 
             } else {
-
                 // Insert
-//                Log.i("MAULIK", "insert" + _rawId);
-
                 if (!arrayListContactIds.contains(_rawId)) {
-                    Cursor contactNameCursor = phoneBookContacts.getAllContactId();
-
-                    ArrayList<String> arrayListNewContactId = new ArrayList<>();
-
-                    while (contactNameCursor.moveToNext()) {
-                        arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
-                                .getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
-                    }
-
-                    contactNameCursor.close();
-//                    Log.i("MAULIK", "arrayListNewContactId" + arrayListNewContactId.toString());
-                    Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
-                            arrayListNewContactId);
-
+//                    Log.i("MAULIK", "insert" + _rawId);
                     phoneBookOperations(_rawId, String.valueOf(context
                             .getResources().getInteger(R.integer.sync_insert)));
                 }
 
             }
         }
+        updateSavedIdsArray();
+
         uploadContacts();
+    }
+
+    private void updateSavedIdsArray() {
+        Cursor contactNameCursor = phoneBookContacts.getAllContactId();
+
+        ArrayList<String> arrayListNewContactId = new ArrayList<>();
+
+        while (contactNameCursor.moveToNext()) {
+            arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
+                    .getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
+        }
+
+        contactNameCursor.close();
+        Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
+                arrayListNewContactId);
+//        Log.i("MAULIK", "arrayListNewContactId ALL" + arrayListNewContactId.toString());
+//        Log.i("MAULIK", "arrayListNewContactId SIZE" + arrayListNewContactId.size());
     }
 
     private void sendToCloud(WsRequestObject requestObject, String requestApi) {

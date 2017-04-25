@@ -325,6 +325,8 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.Phone.DATA_VERSION,
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
                 ContactsContract.Contacts._ID,
         };
 
