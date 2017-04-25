@@ -11,6 +11,7 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.rawalinfocom.rcontact.model.CallLogType;
+import com.rawalinfocom.rcontact.model.SmsDataType;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,9 @@ public class RContactApplication extends Application {
     ArrayList<Object> arrayListObjectCallLogs;
     ArrayList<String> arrayListcallLogsHeaders;
     ArrayList<CallLogType> arrayListCallLogType;
+
+    ArrayList<SmsDataType> arrayListSmsLogType;
+    ArrayList<Object> arrayListObjectSmsLogs;
 
 
     @Override
@@ -164,5 +168,21 @@ public class RContactApplication extends Application {
 
     public void setArrayListCallLogType(ArrayList<CallLogType> arrayListCallLogType) {
         this.arrayListCallLogType = arrayListCallLogType;
+    }
+
+    public ArrayList<SmsDataType> getArrayListSmsLogType() {
+        return arrayListSmsLogType;
+    }
+
+    public void setArrayListSmsLogType(ArrayList<SmsDataType> arrayListSmsLogType) {
+        this.arrayListSmsLogType = arrayListSmsLogType;
+    }
+
+    public ArrayList<Object> getArrayListObjectSmsLogs() {
+        return arrayListObjectSmsLogs;
+    }
+
+    public void setArrayListObjectSmsLogs(ArrayList<Object> arrayListObjectSmsLogs) {
+        this.arrayListObjectSmsLogs = arrayListObjectSmsLogs;
     }
 }
