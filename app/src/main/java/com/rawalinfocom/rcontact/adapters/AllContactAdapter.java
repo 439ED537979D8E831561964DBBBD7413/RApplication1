@@ -3,8 +3,10 @@ package com.rawalinfocom.rcontact.adapters;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -32,6 +34,7 @@ import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.AllContactsFragment;
 import com.rawalinfocom.rcontact.contacts.AllContactsListFragment;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
+import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
@@ -87,6 +90,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private ArrayList<Integer> arrayListExpandedPositions;
 
+    PhoneBookContacts phoneBookContacts;
+
     //<editor-fold desc="Constructor">
     public AllContactAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
                              ArrayList<String> arrayListContactHeader) {
@@ -108,6 +113,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 .databaseHandler);
         tableProfileEmailMapping = new TableProfileEmailMapping(((BaseActivity) context)
                 .databaseHandler);
+
+        phoneBookContacts = new PhoneBookContacts(context);
     }
     //</editor-fold>
 
@@ -359,6 +366,74 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         });
         //</editor-fold>
+
+        holder.buttonInvite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
+
+                Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(profileData
+                        .getLocalPhoneBookId());
+                if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
+                    while (contactNumberCursor.moveToNext()) {
+
+                        ProfileDataOperationPhoneNumber phoneNumber = new
+                                ProfileDataOperationPhoneNumber();
+                        phoneNumber.setPhoneNumber(Utils.getFormattedNumber(context,
+                                contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                        (ContactsContract.CommonDataKinds.Phone.NUMBER))));
+                        phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
+                                (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
+                                        (ContactsContract.CommonDataKinds.Phone.TYPE))));
+
+                        phoneNumbers.add(phoneNumber);
+
+                    }
+                    contactNumberCursor.close();
+                }
+
+//                phoneNumbers.addAll(profileData.getOperation().get(0).getPbPhoneNumber());
+                ArrayList<ProfileDataOperationEmail> emailIds = new ArrayList<>();
+//                emailIds.addAll(profileData.getOperation().get(0).getPbEmailId());
+
+                Cursor contactEmailCursor = phoneBookContacts.getContactEmail(profileData
+                        .getLocalPhoneBookId());
+                if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
+                    while (contactEmailCursor.moveToNext()) {
+
+                        ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
+                        emailId.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+                        emailId.setEmType(phoneBookContacts.getEmailType(contactEmailCursor,
+                                contactEmailCursor.getInt(contactEmailCursor.getColumnIndex
+                                        (ContactsContract.CommonDataKinds.Email.TYPE))));
+
+                        emailIds.add(emailId);
+
+                    }
+                    contactEmailCursor.close();
+                }
+
+                if (phoneNumbers.size() + emailIds.size() > 1) {
+                    selectContactDialog(profileData.getTempFirstName(), phoneNumbers, emailIds);
+                } else {
+                    if (phoneNumbers.size() > 0) {
+                        ArrayList<String> numbers = new ArrayList<>();
+                        for (int i = 0; i < phoneNumbers.size(); i++) {
+                            numbers.add(phoneNumbers.get(i).getPhoneNumber());
+                        }
+                        inviteContact(numbers, null);
+                    } else if (emailIds.size() > 0) {
+                        ArrayList<String> emails = new ArrayList<>();
+                        for (int i = 0; i < emailIds.size(); i++) {
+                            emails.add(emailIds.get(i).getEmEmailId());
+                        }
+                        inviteContact(null, emails);
+                    }
+                }
+            }
+        });
 
        /* if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
             displayNumber(holder, profileData, contactDisplayName, position);
