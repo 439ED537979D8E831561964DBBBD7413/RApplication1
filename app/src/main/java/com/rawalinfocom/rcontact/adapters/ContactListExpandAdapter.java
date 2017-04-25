@@ -1,8 +1,11 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,6 +81,13 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
                     .getRcpName(), ",") + 1));
         }*/
 
+        holder.imageSocialMedia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showBottomSheet();
+            }
+        });
+
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,6 +114,29 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public int getItemCount() {
         return arrayListUserContact.size();
+    }
+
+    private void showBottomSheet() {
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
+
+        View view = ((Activity) context).getLayoutInflater().inflate(R.layout
+                .layout_bottom_sheet, null);
+        RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
+        TextView textSheetHeader = ButterKnife.findById(view, R.id.text_sheet_header);
+
+        textSheetHeader.setText("Social Media");
+        textSheetHeader.setTypeface(Utils.typefaceBold(context));
+
+        BottomSheetSocialMediaAdapter adapter = new BottomSheetSocialMediaAdapter(context);
+
+        recyclerViewShare.setLayoutManager(gridLayoutManager);
+        recyclerViewShare.setAdapter(adapter);
+
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+        bottomSheetDialog.setContentView(view);
+        bottomSheetDialog.show();
+
     }
 
     public class AllContactViewHolder extends RecyclerView.ViewHolder {

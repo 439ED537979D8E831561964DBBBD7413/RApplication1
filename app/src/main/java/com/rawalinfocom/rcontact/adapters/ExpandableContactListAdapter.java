@@ -1,10 +1,13 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -122,6 +125,15 @@ class ExpandableContactListAdapter extends RecyclerView
             holder.textContactName.setTextColor(colorBlack);
         }
 
+        //<editor-fold desc="imageSocialMedia Click">
+        holder.imageSocialMedia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showBottomSheet();
+            }
+        });
+        //</editor-fold>
+
         holder.textCloudContactName.setText(displayName);
 
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
@@ -152,6 +164,29 @@ class ExpandableContactListAdapter extends RecyclerView
     @Override
     public int getItemCount() {
         return arrayListDbMobileNumbers.size();
+    }
+
+    private void showBottomSheet() {
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
+
+        View view = ((Activity) context).getLayoutInflater().inflate(R.layout
+                .layout_bottom_sheet, null);
+        RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
+        TextView textSheetHeader = ButterKnife.findById(view, R.id.text_sheet_header);
+
+        textSheetHeader.setText("Social Media");
+        textSheetHeader.setTypeface(Utils.typefaceBold(context));
+
+        BottomSheetSocialMediaAdapter adapter = new BottomSheetSocialMediaAdapter(context);
+
+        recyclerViewShare.setLayoutManager(gridLayoutManager);
+        recyclerViewShare.setAdapter(adapter);
+
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+        bottomSheetDialog.setContentView(view);
+        bottomSheetDialog.show();
+
     }
 
     //<editor-fold desc="View Holders">

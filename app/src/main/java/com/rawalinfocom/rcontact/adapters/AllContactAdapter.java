@@ -248,22 +248,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
                 "[Unknown]");
 
-        /*if (fragment instanceof AllContactsListFragment) {
-            if (position == 1) {
-                holder.textContactName.setTextColor(colorPineGreen);
-                holder.textContactNumber.setTextColor(colorPineGreen);
-                holder.textCloudContactName.setVisibility(View.GONE);
-            } else {
-                holder.textContactName.setTextColor(colorBlack);
-                holder.textContactNumber.setTextColor(colorBlack);
-                holder.textCloudContactName.setVisibility(View.VISIBLE);
-            }
-        } else {
-            holder.textContactName.setTextColor(colorBlack);
-            holder.textContactNumber.setTextColor(colorBlack);
-            holder.textCloudContactName.setVisibility(View.VISIBLE);
-        }*/
-
         if (profileData.getTempIsRcp()) {
             holder.textCloudContactName.setVisibility(View.VISIBLE);
             holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
@@ -303,6 +287,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         holder.textContactNumber.setText(profileData.getTempNumber());
 
+        //<editor-fold desc="relativeRowAllContact Click">
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -364,6 +349,16 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             }
         });
+        //</editor-fold>
+
+        //<editor-fold desc="imageSocialMedia Click">
+        holder.imageSocialMedia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showBottomSheet();
+            }
+        });
+        //</editor-fold>
 
        /* if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
             displayNumber(holder, profileData, contactDisplayName, position);
