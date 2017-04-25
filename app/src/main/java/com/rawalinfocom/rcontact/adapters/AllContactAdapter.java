@@ -30,6 +30,7 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.AllContactsFragment;
+import com.rawalinfocom.rcontact.contacts.AllContactsListFragment;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
@@ -215,7 +216,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         final ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
 
-
         holder.textContactName.setTag(position);
         if (arrayListExpandedPositions.contains(position)) {
             holder.recyclerViewMultipleRc.setVisibility(View.VISIBLE);
@@ -248,6 +248,22 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
                 "[Unknown]");
 
+        /*if (fragment instanceof AllContactsListFragment) {
+            if (position == 1) {
+                holder.textContactName.setTextColor(colorPineGreen);
+                holder.textContactNumber.setTextColor(colorPineGreen);
+                holder.textCloudContactName.setVisibility(View.GONE);
+            } else {
+                holder.textContactName.setTextColor(colorBlack);
+                holder.textContactNumber.setTextColor(colorBlack);
+                holder.textCloudContactName.setVisibility(View.VISIBLE);
+            }
+        } else {
+            holder.textContactName.setTextColor(colorBlack);
+            holder.textContactNumber.setTextColor(colorBlack);
+            holder.textCloudContactName.setVisibility(View.VISIBLE);
+        }*/
+
         if (profileData.getTempIsRcp()) {
             holder.textCloudContactName.setVisibility(View.VISIBLE);
             holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
@@ -267,6 +283,22 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.textCloudContactName.setText("");
             holder.buttonInvite.setVisibility(View.VISIBLE);
             holder.imageSocialMedia.setVisibility(View.GONE);
+        }
+
+        if (fragment instanceof AllContactsListFragment) {
+            if (position == 1) {
+                holder.textContactName.setTextColor(colorPineGreen);
+                holder.textContactNumber.setTextColor(colorPineGreen);
+                holder.textCloudContactName.setVisibility(View.GONE);
+            } else {
+                holder.textContactName.setTextColor(colorBlack);
+                holder.textContactNumber.setTextColor(colorBlack);
+                holder.textCloudContactName.setVisibility(View.VISIBLE);
+            }
+        } else {
+            holder.textContactName.setTextColor(colorBlack);
+            holder.textContactNumber.setTextColor(colorBlack);
+            holder.textCloudContactName.setVisibility(View.VISIBLE);
         }
 
         holder.textContactNumber.setText(profileData.getTempNumber());

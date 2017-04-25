@@ -519,6 +519,45 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         arrayListPhoneBookContacts = new ArrayList<>();
         arrayListContactHeaders = new ArrayList<>();
 
+        arrayListContactHeaders.add(" ");
+        arrayListPhoneBookContacts.add("My Profile");
+
+        ProfileData myProfileData = new ProfileData();
+
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt((
+                (BaseActivity) getActivity()).getUserPmId()));
+
+        TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
+        MobileNumber mobileNumber = tableMobileMaster.getOwnVerifiedMobileNumbersFromPmId
+                (getActivity());
+
+        myProfileData.setTempFirstName(userProfile.getPmFirstName());
+        myProfileData.setTempLastName(userProfile.getPmLastName());
+        myProfileData.setTempNumber(mobileNumber.getMnmMobileNumber());
+        myProfileData.setTempIsRcp(true);
+        myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
+
+       /* ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
+
+        ProfileDataOperation myOperation = new ProfileDataOperation();
+        myOperation.setPbNameFirst(userProfile.getPmFirstName());
+        myOperation.setPbNameLast(userProfile.getPmLastName());
+        myOperation.setProfileRating(userProfile.getProfileRating());
+        myOperation.setTotalProfileRateUser(userProfile.getTotalProfileRateUser());
+
+        ArrayList<ProfileDataOperationPhoneNumber> operationPhoneNumber = new ArrayList<>();
+        ProfileDataOperationPhoneNumber phoneNumber = new ProfileDataOperationPhoneNumber();
+        phoneNumber.setPhoneNumber(mobileNumber.getMnmMobileNumber());
+
+        operationPhoneNumber.add(phoneNumber);
+
+        myOperation.setPbPhoneNumber(operationPhoneNumber);
+
+        arrayListOperation.add(myOperation);
+        myProfileData.setOperation(arrayListOperation);*/
+        arrayListPhoneBookContacts.add(myProfileData);
+
         Set<String> set = new HashSet<>();
         set.add(ContactsContract.Data.MIMETYPE);
         set.add(ContactsContract.Data.CONTACT_ID);
@@ -682,7 +721,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler
                 ());
         ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
-        for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
+        for (int i = 2; i < arrayListPhoneBookContacts.size(); i++) {
             if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
                 if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
                         (i)).getLocalPhoneBookId())) {
