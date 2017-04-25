@@ -629,6 +629,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     private void init() {
 
         textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
+        textTotalContacts.setVisibility(View.GONE);
 
       /*  VerticalRecyclerViewFastScroller scrollerAllContact = new
                 VerticalRecyclerViewFastScroller(getActivity());

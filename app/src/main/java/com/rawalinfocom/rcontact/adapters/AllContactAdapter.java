@@ -79,7 +79,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private ArrayList<String> arrayListContactHeader;
     private int previousPosition = 0;
 
-    private final int HEADER = 0, CONTACT = 1;
+    private final int HEADER = 0, CONTACT = 1, FOOTER = 2;
 
     private int colorBlack, colorPineGreen;
     private int listClickedPosition = -1;
@@ -90,18 +90,21 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private ArrayList<Integer> arrayListExpandedPositions;
 
-    PhoneBookContacts phoneBookContacts;
+    private PhoneBookContacts phoneBookContacts;
 
     //<editor-fold desc="Constructor">
     public AllContactAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
                              ArrayList<String> arrayListContactHeader) {
         this.context = fragment.getActivity();
         this.fragment = fragment;
-        this.arrayListUserContact = arrayListUserContact;
+//        this.arrayListUserContact = arrayListUserContact;
+        this.arrayListUserContact = new ArrayList<>();
+        this.arrayListUserContact.addAll(arrayListUserContact);
         this.arrayListContactHeader = arrayListContactHeader;
         /*this.arrayListContactHeader = new ArrayList<>();
         this.arrayListContactHeader.add("#");
         this.arrayListContactHeader.addAll(arrayListContactHeader);*/
+
 
         arrayListExpandedPositions = new ArrayList<>();
 
@@ -135,6 +138,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 View v2 = inflater.inflate(R.layout.list_item_all_contacts, parent, false);
                 viewHolder = new AllContactViewHolder(v2);
                 break;
+            case FOOTER:
+                View v3 = inflater.inflate(R.layout.footer_all_contacts, parent, false);
+                viewHolder = new ContactFooterViewHolder(v3);
+                break;
         }
         return viewHolder;
     }
@@ -151,13 +158,19 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 AllContactViewHolder contactViewHolder = (AllContactViewHolder) holder;
                 configureAllContactViewHolder(contactViewHolder, position);
                 break;
+            case FOOTER:
+                ContactFooterViewHolder contactFooterViewHolder = (ContactFooterViewHolder) holder;
+                configureFooterViewHolder(contactFooterViewHolder, position);
+                break;
         }
 
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (arrayListUserContact.get(position) instanceof ProfileData) {
+        if (position == arrayListUserContact.size()) {
+            return FOOTER;
+        } else if (arrayListUserContact.get(position) instanceof ProfileData) {
             return CONTACT;
         } else if (arrayListUserContact.get(position) instanceof String) {
             return HEADER;
@@ -167,7 +180,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return arrayListUserContact.size();
+        return (arrayListUserContact.size() + 1);
     }
 
     /**
@@ -254,6 +267,15 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
                 "[Unknown]");
+
+         /* Hide Divider if row is last in Section */
+        if ((position + 1) < arrayListUserContact.size()) {
+            if (arrayListUserContact.get(position + 1) instanceof String) {
+                holder.dividerAllContact.setVisibility(View.GONE);
+            } else {
+                holder.dividerAllContact.setVisibility(View.VISIBLE);
+            }
+        }
 
         if (profileData.getTempIsRcp()) {
             holder.textCloudContactName.setVisibility(View.VISIBLE);
@@ -367,6 +389,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
         //</editor-fold>
 
+        //<editor-fold desc="buttonInvite Click">
         holder.buttonInvite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -434,6 +457,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             }
         });
+        //</editor-fold>
 
        /* if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
             displayNumber(holder, profileData, contactDisplayName, position);
@@ -565,6 +589,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void configureHeaderViewHolder(ContactHeaderViewHolder holder, int position) {
         String letter = (String) arrayListUserContact.get(position);
         holder.textHeader.setText(letter);
+    }
+
+    private void configureFooterViewHolder(ContactFooterViewHolder holder, int position) {
+//        String letter = (String) arrayListUserContact.get(position);
+        holder.textTotalContacts.setText(String.valueOf(arrayListUserContact.size()) + " Contacts");
     }
 
     private void displayNumber(AllContactViewHolder holder, ProfileData profileData, String
@@ -1039,6 +1068,20 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             ButterKnife.bind(this, itemView);
 
             textHeader.setTypeface(Utils.typefaceSemiBold(context));
+
+        }
+    }
+
+    public class ContactFooterViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.text_total_contacts)
+        TextView textTotalContacts;
+
+        ContactFooterViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+
+            textTotalContacts.setTypeface(Utils.typefaceSemiBold(context));
 
         }
     }
