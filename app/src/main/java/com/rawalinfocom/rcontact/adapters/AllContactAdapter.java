@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.LayerDrawable;
+import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -26,8 +27,10 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.AllContactsFragment;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
@@ -52,7 +55,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by Monal on 21/10/16.
+ * Created by Monal on 21/04/16.
  */
 
 public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
@@ -220,7 +223,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.recyclerViewMultipleRc.setVisibility(View.GONE);
         }
 
-        holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
+//        holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
 
         String contactDisplayName = "";
         String prefix = profileData.getTempPrefix();
@@ -250,13 +253,16 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
             holder.buttonInvite.setVisibility(View.GONE);
             holder.imageSocialMedia.setVisibility(View.VISIBLE);
+            holder.relativeRowAllContact.setTag(profileData.getTempRcpId());
             if (StringUtils.contains(profileData.getTempRcpName(), ",")) {
+                holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
                 holder.textCloudContactName.setText(" (" + String.valueOf(StringUtils.countMatches
                         (profileData.getTempRcpName(), ",") + 1) + " RC)");
                 holder.buttonInvite.setVisibility(View.GONE);
                 holder.imageSocialMedia.setVisibility(View.GONE);
             }
         } else {
+            holder.relativeRowAllContact.setTag("-1");
             holder.textCloudContactName.setVisibility(View.GONE);
             holder.textCloudContactName.setText("");
             holder.buttonInvite.setVisibility(View.VISIBLE);
@@ -268,43 +274,58 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Bundle bundle = new Bundle();
+
+                TextView textName = (TextView) v.findViewById(R.id.text_contact_name);
+                TextView textCloudName = (TextView) v.findViewById(R.id.text_cloud_contact_name);
+
 //                if (StringUtils.isNumeric(String.valueOf(v.getTag()))) {
                 if (holder.recyclerViewMultipleRc.getVisibility() == View.GONE) {
                     if (StringUtils.contains(String.valueOf(v.getTag()), ",")) {
-                        if (StringUtils.contains(String.valueOf(v.getTag()), ",")) {
-                            holder.recyclerViewMultipleRc.setVisibility(View.VISIBLE);
-                            /*String[] rcpIds = StringUtils.split(String.valueOf(v.getTag()), ",");
-                            TableProfileMaster tableProfileMaster = new TableProfileMaster((
-                                    (BaseActivity) context).databaseHandler);*/
-                            QueryManager queryManager = new QueryManager(((BaseActivity) context)
-                                    .databaseHandler);
-                            ArrayList<ProfileData> arrayList = new ArrayList<>();
-                            arrayList.addAll(queryManager.getRcpNumberName(String.valueOf(v
-                                    .getTag())));
-                           /* for (String rcpId : rcpIds) {
-                                *//*UserProfile userProfile = tableProfileMaster
-                                .getProfileFromCloudPmId
-                                        (Integer.parseInt(rcpIds[i]));*//*
-                                UserProfile userProfile = queryManager.getRcpNumberName(Integer
-                                        .parseInt(rcpId));
-                                ProfileData rcpContact = new ProfileData();
-                                rcpContact.setTempRcpName(userProfile.getPmFirstName() + " " +
-                                        userProfile.getPmLastName());
-                                rcpContact.setTempFirstName((String) holder.textContactName
-                                        .getText());
-                                rcpContact.setTempNumber((String) holder.textContactNumber
-                                        .getText());
-                                arrayList.add(rcpContact);
-                            }*/
-
-                            holder.recyclerViewMultipleRc.setLayoutManager(new LinearLayoutManager
-                                    (context));
-                            ContactListExpandAdapter adapter = new ContactListExpandAdapter(context,
-                                    arrayList);
-                            holder.recyclerViewMultipleRc.setAdapter(adapter);
-                        }
-                    } else {
+                        // Multiple RCP
+                        holder.recyclerViewMultipleRc.setVisibility(View.VISIBLE);
+                        QueryManager queryManager = new QueryManager(((BaseActivity) context)
+                                .databaseHandler);
+                        ArrayList<ProfileData> arrayList = new ArrayList<>();
+                        arrayList.addAll(queryManager.getRcpNumberName(String.valueOf(v
+                                .getTag())));
+                        holder.recyclerViewMultipleRc.setLayoutManager(new LinearLayoutManager
+                                (context));
+                        ContactListExpandAdapter adapter = new ContactListExpandAdapter(context,
+                                arrayList, profileData.getLocalPhoneBookId());
+                        holder.recyclerViewMultipleRc.setAdapter(adapter);
+                    } else if (StringUtils.equalsAnyIgnoreCase(String.valueOf(v.getTag()), "-1")) {
+                        // Non Rcp
                         holder.recyclerViewMultipleRc.setVisibility(View.GONE);
+                        bundle.putString(AppConstants.EXTRA_PM_ID, "-1");
+                        bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, profileData
+                                .getLocalPhoneBookId());
+                    } else if (StringUtils.equalsAnyIgnoreCase(String.valueOf(v.getTag()), "0")) {
+                        // Own Profile
+                        holder.recyclerViewMultipleRc.setVisibility(View.GONE);
+                    } else if (StringUtils.isNumeric(String.valueOf(v.getTag()))) {
+                        // Single Rcp
+                        bundle.putString(AppConstants.EXTRA_PM_ID, String.valueOf(v.getTag()));
+                        bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, profileData
+                                .getLocalPhoneBookId());
+                        holder.recyclerViewMultipleRc.setVisibility(View.GONE);
+                    }
+                    if (!String.valueOf(v.getTag()).contains(",")) {
+                  /*  TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
+                        TextView textCloudName = (TextView) view.findViewById(R.id
+                                .text_cloud_contact_name);*/
+
+                        bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText()
+                                .toString());
+                        listClickedPosition = (int) textName.getTag();
+                        if (textCloudName.getVisibility() == View.VISIBLE) {
+                            bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textCloudName
+                                    .getText().toString());
+                        }
+//                        bundle.putString(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileImage);
+                        ((BaseActivity) context).startActivityIntent(context,
+                                ProfileDetailActivity.class, bundle);
                     }
                 } else {
                     holder.recyclerViewMultipleRc.setVisibility(View.GONE);

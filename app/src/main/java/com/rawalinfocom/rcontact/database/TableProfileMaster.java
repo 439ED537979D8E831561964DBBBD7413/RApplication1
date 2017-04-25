@@ -482,6 +482,65 @@ public class TableProfileMaster {
         return name;
     }
 
+    public ArrayList<UserProfile> getProfileDetailsFromRawId(String rawId) {
+
+        ArrayList<UserProfile> userProfiles = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT " + COLUMN_PM_RCP_ID + "," + COLUMN_PM_FIRST_NAME + "," +
+                COLUMN_PM_LAST_NAME + " FROM " + TABLE_RC_PROFILE_MASTER + " WHERE " +
+                COLUMN_PM_RAW_ID + " LIKE '%" + rawId + "%'";
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor != null) {
+
+//            if (cursor.getCount() > 1) {
+//                name = String.valueOf(cursor.getCount());
+            if (cursor.moveToFirst()) {
+                do {
+                    UserProfile userProfile = new UserProfile();
+                    userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_FIRST_NAME)));
+                    userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_LAST_NAME)));
+                    userProfile.setPmRcpId(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_RCP_ID)));
+//                        name = userProfile.getPmFirstName() + " " + userProfile.getPmLastName();
+                   /* if (name.equalsIgnoreCase("0")) {
+                        name = userProfile.getPmRcpId();
+                    } else {
+                        name = name + "," + userProfile.getPmRcpId();
+                    }*/
+                    userProfiles.add(userProfile);
+                } while (cursor.moveToNext());
+            }
+//            }
+           /* else if (cursor.getCount() == 1) {
+                if (cursor.moveToFirst()) {
+//                        do {
+                    UserProfile userProfile = new UserProfile();
+                    *//*userProfile.setPmRawId(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_RAW_ID)));*//*
+                    userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_FIRST_NAME)));
+                    userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_LAST_NAME)));
+                    // Adding user profile to list
+                    name = userProfile.getPmFirstName() + " " + userProfile.getPmLastName();
+//                        } while (cursor.moveToNext());
+                }
+            }*/
+            cursor.close();
+        }
+
+        db.close();
+
+        // return user profile list
+        return userProfiles;
+    }
+
     // Deleting single profile
   /*  public void deleteUserProfile(UserProfile userProfile) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();

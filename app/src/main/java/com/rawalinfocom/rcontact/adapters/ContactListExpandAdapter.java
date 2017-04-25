@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,7 +14,10 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileData;
 
@@ -31,11 +35,14 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
     private Context context;
     private ArrayList<ProfileData> arrayListUserContact;
     private int previousPosition = 0;
+    private String phonebookId;
 
     private int colorBlack, colorPineGreen;
 
-    public ContactListExpandAdapter(Context context, ArrayList<ProfileData> arrayListUserContact) {
+    public ContactListExpandAdapter(Context context, ArrayList<ProfileData> arrayListUserContact,
+                                    String phonebookId) {
         this.context = context;
+        this.phonebookId = phonebookId;
         this.arrayListUserContact = arrayListUserContact;
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
@@ -63,12 +70,34 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
         holder.textContactName.setText(contact.getTempFirstName());
         holder.textContactNumber.setText(contact.getTempNumber());
 
+
         holder.textCloudContactName.setVisibility(View.VISIBLE);
         holder.textCloudContactName.setText(contact.getTempRcpName());
        /* if (StringUtils.contains(contact.getRcpName(), ",")) {
             holder.textRcpName.setText(String.valueOf(StringUtils.countMatches(contact
                     .getRcpName(), ",") + 1));
         }*/
+
+        holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
+                TextView textCloudName = (TextView) view.findViewById(R.id
+                        .text_cloud_contact_name);
+
+                Bundle bundle = new Bundle();
+                bundle.putString(AppConstants.EXTRA_PM_ID, contact.getTempRcpId());
+                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, phonebookId);
+                bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
+                if (textCloudName.getVisibility() == View.VISIBLE) {
+                    bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textCloudName
+                            .getText().toString());
+                }
+                ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
+                        .class, bundle);
+            }
+        });
 
     }
 

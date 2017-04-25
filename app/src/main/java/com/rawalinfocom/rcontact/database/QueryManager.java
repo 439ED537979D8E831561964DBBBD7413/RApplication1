@@ -105,11 +105,12 @@ public class QueryManager {
 
         //<editor-fold desc="Phone Number">
         String mobileNumberQuery = "SELECT mobile." + TableMobileMaster.COLUMN_MNM_MOBILE_NUMBER
-                + ",mobile." + TableMobileMaster.COLUMN_MNM_NUMBER_TYPE + ",mobile." + TableMobileMaster.COLUMN_MNM_RECORD_INDEX_ID + ",mobile." +
-                TableMobileMaster.COLUMN_MNM_IS_PRIMARY + ",mobile." + TableMobileMaster
-                .COLUMN_MNM_NUMBER_PRIVACY + " from " + TableMobileMaster
-                .TABLE_RC_MOBILE_NUMBER_MASTER + " mobile WHERE mobile." + TableMobileMaster
-                .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
+                + ",mobile." + TableMobileMaster.COLUMN_MNM_NUMBER_TYPE + ",mobile." +
+                TableMobileMaster.COLUMN_MNM_RECORD_INDEX_ID + ",mobile." + TableMobileMaster
+                .COLUMN_MNM_IS_PRIMARY + ",mobile." + TableMobileMaster.COLUMN_MNM_NUMBER_PRIVACY
+                + " from " + TableMobileMaster.TABLE_RC_MOBILE_NUMBER_MASTER + " mobile WHERE " +
+                "mobile." + TableMobileMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId +
+                ")";
 
         Cursor mobileNumberCursor = db.rawQuery(mobileNumberQuery, null);
 
@@ -273,7 +274,8 @@ public class QueryManager {
                 imAccount.setIMAccountProtocol(StringUtils.defaultString(imAccountCursor
                         .getString(imAccountCursor.getColumnIndex(TableImMaster
                                 .COLUMN_IM_PROTOCOL))));
-                imAccount.setIMAccountPublic(Integer.parseInt(StringUtils.defaultString(imAccountCursor
+                imAccount.setIMAccountPublic(Integer.parseInt(StringUtils.defaultString
+                        (imAccountCursor
                         .getString(imAccountCursor.getColumnIndex(TableImMaster
                                 .COLUMN_IM_PRIVACY)), "0")));
                 imAccount.setIMRcpType(String.valueOf(context.getResources().getInteger(R.integer
@@ -287,7 +289,8 @@ public class QueryManager {
 
         // <editor-fold desc="Address">
         String addressQuery = "SELECT address." + TableAddressMaster.COLUMN_AM_FORMATTED_ADDRESS
-                + ", address." + TableAddressMaster.COLUMN_AM_ADDRESS_TYPE + ", address." + TableAddressMaster.COLUMN_AM_RECORD_INDEX_ID + ", address." +
+                + ", address." + TableAddressMaster.COLUMN_AM_ADDRESS_TYPE + ", address." +
+                TableAddressMaster.COLUMN_AM_RECORD_INDEX_ID + ", address." +
                 TableAddressMaster.COLUMN_AM_ADDRESS_PRIVACY + " FROM " + TableAddressMaster
                 .TABLE_RC_ADDRESS_MASTER + " address WHERE address." + TableAddressMaster
                 .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
@@ -309,7 +312,8 @@ public class QueryManager {
                         .getString(addressCursor.getColumnIndex(TableAddressMaster
                                 .COLUMN_AM_ADDRESS_PRIVACY)), "0")));
                 address.setAddId(StringUtils.defaultString(addressCursor.getString
-                        (addressCursor.getColumnIndex(TableAddressMaster.COLUMN_AM_RECORD_INDEX_ID))));
+                        (addressCursor.getColumnIndex(TableAddressMaster
+                                .COLUMN_AM_RECORD_INDEX_ID))));
                 address.setRcpType(String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_cloud_phone_book)));
                 arrayListAddress.add(address);
@@ -354,13 +358,14 @@ public class QueryManager {
     public ArrayList<ProfileData> getRcpNumberName(String cloudPmIds) {
         ArrayList<ProfileData> arrayListProfileData = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT DISTINCT " + TableProfileMaster.COLUMN_PM_FIRST_NAME + ", "
-                + TableProfileMaster.COLUMN_PM_LAST_NAME + ", " + TableProfileMobileMapping
-                .COLUMN_MPM_MOBILE_NUMBER + " FROM " + TableProfileMaster.TABLE_RC_PROFILE_MASTER
-                + " INNER JOIN " + TableProfileMobileMapping.TABLE_PB_PROFILE_MOBILE_MAPPING +
-                " ON " + TableProfileMaster.COLUMN_PM_RCP_ID + " = " + TableProfileMobileMapping
-                .COLUMN_MPM_CLOUD_PM_ID + " WHERE " + TableProfileMaster.COLUMN_PM_RCP_ID + " IN ("
-                + cloudPmIds + ")";
+        String selectQuery = "SELECT DISTINCT " + TableProfileMaster.COLUMN_PM_RCP_ID + ", " +
+                TableProfileMaster.COLUMN_PM_FIRST_NAME + ", " + TableProfileMaster
+                .COLUMN_PM_LAST_NAME + ", " + TableProfileMobileMapping.COLUMN_MPM_MOBILE_NUMBER
+                + " FROM " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " INNER JOIN " +
+                TableProfileMobileMapping.TABLE_PB_PROFILE_MOBILE_MAPPING + " ON " +
+                TableProfileMaster.COLUMN_PM_RCP_ID + " = " + TableProfileMobileMapping
+                .COLUMN_MPM_CLOUD_PM_ID + " WHERE " + TableProfileMaster.COLUMN_PM_RCP_ID + " IN " +
+                "(" + cloudPmIds + ")";
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -378,9 +383,10 @@ public class QueryManager {
                         (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_LAST_NAME)));
                 profileData.setTempNumber(cursor.getString(cursor.getColumnIndex
                         (TableProfileMobileMapping.COLUMN_MPM_MOBILE_NUMBER)));
+                profileData.setTempRcpId(cursor.getString(cursor.getColumnIndex
+                        (TableProfileMaster.COLUMN_PM_RCP_ID)));
                 arrayListProfileData.add(profileData);
             } while (cursor.moveToNext());
-
             cursor.close();
         }
 
