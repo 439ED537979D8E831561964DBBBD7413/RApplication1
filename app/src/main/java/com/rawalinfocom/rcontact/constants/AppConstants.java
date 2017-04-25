@@ -158,9 +158,10 @@ public class AppConstants {
 
     public static String PREF_CALL_LOG_SIZE = "pref_call_log_size";
     public static String PREF_CALL_LOG_STARTS_FIRST_TIME = "pref_call_log_start_first_time";
-    public static String PREF_SYNC_CALL_LOG = "pref_sync_call_log";
     public static String PREF_CALL_LOG_SIZE_WITH_DIFF = "pref_call_log_size_with_diff";
+    public static String PREF_CONTACT_SYNCED = "pref_contact_synced";
     public static String PREF_CALL_LOG_SYNCED = "pref_call_log_synced";
+    public static String PREF_SMS_SYNCED = "pref_sms_synced";
     public static String PREF_BLOCK_CONTACT_LIST = "pref_block_contact_list";
     public static String PREF_BLOCK_PROFILE = "pref_block_profile";
     public static String PREF_CALL_LOG_LIST = "pref_call_log_list";

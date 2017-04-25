@@ -319,7 +319,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                                     .currentTimeMillis() - 10000));
 //                        sendBroadCastToStartCallLogInsertion();
                             Utils.setBooleanPreference(getActivity(), AppConstants
-                                    .PREF_SYNC_CALL_LOG, true);
+                                    .PREF_CONTACT_SYNCED, true);
 
                             Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
                             LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
