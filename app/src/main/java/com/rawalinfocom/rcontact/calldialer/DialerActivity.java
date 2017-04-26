@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.calldialer;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -16,6 +17,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -342,6 +344,17 @@ public class DialerActivity extends Activity {
                     startActivity(smsIntent);
                 }
 
+            }
+        });
+
+        editTextNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                View view = this.getCurrentFocus();
+//                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(editTextNumber.getWindowToken(), 0);
+//                }
             }
         });
 
