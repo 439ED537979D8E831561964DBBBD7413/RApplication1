@@ -278,162 +278,320 @@ public class SmsFragment extends BaseFragment implements LoaderManager.LoaderCal
         makeData(smsDataTypeList);
         setAdapter();
     }
+
     private void makeData(ArrayList<SmsDataType> filteredList) {
-        if (filteredList != null && filteredList.size() > 0) {
-            for (int i = 0; i < filteredList.size(); i++) {
-                SmsDataType callLogType = filteredList.get(i);
-                long logDate1 = callLogType.getDataAndTime();
-                Date date1 = new Date(logDate1);
-                String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
-                Log.i("Call Log date", logDate);
+        try{
 
-                Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.DATE, -1);
-                Date yesDate;
-                yesDate = cal.getTime();
-                String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd").format(yesDate);
-                Log.i("Call yesterday date", yesterdayDate);
+            if (filteredList != null && filteredList.size() > 0) {
+                for (int i = 0; i < filteredList.size(); i++) {
+                    SmsDataType callLogType = filteredList.get(i);
+                    long logDate1 = callLogType.getDataAndTime();
+                    Date date1 = new Date(logDate1);
+                    String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
+                    Log.i("Call Log date", logDate);
 
-                Calendar c = Calendar.getInstance();
-                Date cDate = c.getTime();
-                String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
-                Log.i("Call Current date", currentDate);
-                String number = callLogType.getThreadId();
-                String finalDate;
-                if (logDate.equalsIgnoreCase(currentDate)) {
-                    finalDate = "Today";
-                    if (!arrayListObjectSmsLogs.contains(finalDate)) {
-                        arrayListCallLogHeader.add(finalDate);
-                        arrayListObjectSmsLogs.add(finalDate);
-                    }
-                    if (arrayListObjectSmsLogs.size() == 1) {
-                        arrayListObjectSmsLogs.add(callLogType);
-                    } else {
-                        boolean isNumberExists = false;
-                        for (int j = 0; j < arrayListObjectSmsLogs.size(); j++) {
-                            if (arrayListObjectSmsLogs.get(j) instanceof SmsDataType) {
-                                if (!(((SmsDataType) arrayListObjectSmsLogs.get(j)).getThreadId()
-                                        .equalsIgnoreCase(number))) {
-                                    isNumberExists = false;
-                                } else {
-                                    isNumberExists = true;
-                                    break;
+                    Calendar cal = Calendar.getInstance();
+                    cal.add(Calendar.DATE, -1);
+                    Date yesDate;
+                    yesDate = cal.getTime();
+                    String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd").format(yesDate);
+                    Log.i("Call yesterday date", yesterdayDate);
+
+                    Calendar c = Calendar.getInstance();
+                    Date cDate = c.getTime();
+                    String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
+                    Log.i("Call Current date", currentDate);
+                    String number = callLogType.getThreadId();
+                    String finalDate;
+                    if (logDate.equalsIgnoreCase(currentDate)) {
+                        finalDate = "Today";
+                        if (!arrayListObjectSmsLogs.contains(finalDate)) {
+                            arrayListCallLogHeader.add(finalDate);
+                            arrayListObjectSmsLogs.add(finalDate);
+                        }
+                        if (arrayListObjectSmsLogs.size() == 1) {
+                            arrayListObjectSmsLogs.add(callLogType);
+                        } else {
+                            boolean isNumberExists = false;
+                            for (int j = 0; j < arrayListObjectSmsLogs.size(); j++) {
+                                if (arrayListObjectSmsLogs.get(j) instanceof SmsDataType) {
+                                    if (!(((SmsDataType) arrayListObjectSmsLogs.get(j)).getThreadId()
+                                            .equalsIgnoreCase(number))) {
+                                        isNumberExists = false;
+                                    } else {
+                                        isNumberExists = true;
+                                        break;
+                                    }
                                 }
                             }
+                            if (!isNumberExists) {
+                                arrayListObjectSmsLogs.add(callLogType);
+                            }
                         }
-                        if (!isNumberExists) {
-                            arrayListObjectSmsLogs.add(callLogType);
-                        }
-                    }
-                    if(arrayListObjectSmsLogs.contains(finalDate)){
-                        if(arrayListObjectSmsLogs.get(1) instanceof SmsDataType){
 
-                        }else
-                        {
-                            arrayListObjectSmsLogs.remove(finalDate);
+                    } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
+                        finalDate = "Yesterday";
+                        if (!arrayListObjectSmsLogs.contains(finalDate)) {
+                            arrayListCallLogHeader.add(finalDate);
+                            arrayListObjectSmsLogs.add(finalDate);
                         }
-                    }
-
-                } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
-                    finalDate = "Yesterday";
-                    if (!arrayListObjectSmsLogs.contains(finalDate)) {
-                        arrayListCallLogHeader.add(finalDate);
-                        arrayListObjectSmsLogs.add(finalDate);
-                    }
 
 //                    String number = callLogType.getThreadId();
-                    if (arrayListObjectSmsLogs.size() == 1) {
-                        arrayListObjectSmsLogs.add(callLogType);
-                    } else {
-                        boolean isNumberExists = false;
-                        for (int j = 0; j < arrayListObjectSmsLogs.size(); j++) {
-                            if (arrayListObjectSmsLogs.get(j) instanceof SmsDataType) {
-                                long objDate = ((SmsDataType) arrayListObjectSmsLogs.get(j))
-                                        .getDataAndTime();
-                                Date objDate1 = new Date(objDate);
-                                String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format
-                                        (objDate1);
+                        if (arrayListObjectSmsLogs.size() == 1) {
+                            arrayListObjectSmsLogs.add(callLogType);
+                        } else {
+                            boolean isNumberExists = false;
+                            for (int j = 0; j < arrayListObjectSmsLogs.size(); j++) {
+                                if (arrayListObjectSmsLogs.get(j) instanceof SmsDataType) {
+                                    long objDate = ((SmsDataType) arrayListObjectSmsLogs.get(j))
+                                            .getDataAndTime();
+                                    Date objDate1 = new Date(objDate);
+                                    String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format
+                                            (objDate1);
 //                                if (arrayDate.equalsIgnoreCase(logDate)) {
-                                if (!(((SmsDataType) arrayListObjectSmsLogs.get(j))
-                                        .getThreadId().equalsIgnoreCase(number))) {
-                                    isNumberExists = false;
-                                } else {
-                                    isNumberExists = true;
-                                    break;
-                                }
+                                    if (!(((SmsDataType) arrayListObjectSmsLogs.get(j))
+                                            .getThreadId().equalsIgnoreCase(number))) {
+                                        isNumberExists = false;
+                                    } else {
+                                        isNumberExists = true;
+                                        break;
+                                    }
 //                                }
 
+                                }
+                            }
+                            if (!isNumberExists) {
+                                arrayListObjectSmsLogs.add(callLogType);
                             }
                         }
-                        if (!isNumberExists) {
-                            arrayListObjectSmsLogs.add(callLogType);
-                        }
-                    }
-                } else {
-                    finalDate = new SimpleDateFormat("dd/MM,EEE").format(date1);
+                    } else {
+                        finalDate = new SimpleDateFormat("dd/MM,EEE").format(date1);
 //                    String number = callLogType.getThreadId();
-                    if (!arrayListObjectSmsLogs.contains(finalDate)) {
-                        arrayListCallLogHeader.add(finalDate);
-                        arrayListObjectSmsLogs.add(finalDate);
-                    }
+                        if (!arrayListObjectSmsLogs.contains(finalDate)) {
+                            arrayListCallLogHeader.add(finalDate);
+                            arrayListObjectSmsLogs.add(finalDate);
+                        }
 
-                    if (arrayListObjectSmsLogs.size() == 1) {
-                        arrayListObjectSmsLogs.add(callLogType);
-                    } else {
-                        boolean isNumberExists = false;
-                        for (int j = 0; j < arrayListObjectSmsLogs.size(); j++) {
-                            if (arrayListObjectSmsLogs.get(j) instanceof SmsDataType) {
-                                long objDate = ((SmsDataType) arrayListObjectSmsLogs.get(j))
-                                        .getDataAndTime();
-                                Date objDate1 = new Date(objDate);
-                                String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format
-                                        (objDate1);
+                        if (arrayListObjectSmsLogs.size() == 1) {
+                            arrayListObjectSmsLogs.add(callLogType);
+                        } else {
+                            boolean isNumberExists = false;
+                            for (int j = 0; j < arrayListObjectSmsLogs.size(); j++) {
+                                if (arrayListObjectSmsLogs.get(j) instanceof SmsDataType) {
+                                    long objDate = ((SmsDataType) arrayListObjectSmsLogs.get(j))
+                                            .getDataAndTime();
+                                    Date objDate1 = new Date(objDate);
+                                    String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format
+                                            (objDate1);
 //                                if (arrayDate.equalsIgnoreCase(logDate)) {
-                                if (!(((SmsDataType) arrayListObjectSmsLogs.get(j))
-                                        .getThreadId().equalsIgnoreCase(number))) {
-                                    isNumberExists = false;
-                                } else {
-                                    isNumberExists = true;
-                                    break;
-                                }
+                                    if (!(((SmsDataType) arrayListObjectSmsLogs.get(j))
+                                            .getThreadId().equalsIgnoreCase(number))) {
+                                        isNumberExists = false;
+                                    } else {
+                                        isNumberExists = true;
+                                        break;
+                                    }
 //                                }
 
+                                }
+                            }
+                            if (!isNumberExists) {
+                                arrayListObjectSmsLogs.add(callLogType);
                             }
                         }
-                        if (!isNumberExists) {
-                            arrayListObjectSmsLogs.add(callLogType);
-                        }
-                    }
 
+                    }
                 }
-            }
 
-            rContactApplication.setArrayListObjectSmsLogs(arrayListObjectSmsLogs);
-            for(int j = 0; j < arrayListObjectSmsLogs.size(); j++){
-                if (arrayListObjectSmsLogs.get(j) instanceof String){
-                    String header = (String) arrayListObjectSmsLogs.get(j);
-                    int itemPosition = arrayListObjectSmsLogs.indexOf(header);
-                    Log.i("index", itemPosition+"");
-                    int diff =  itemPosition - previousIndex;
+                /*for(int j = 0; j < arrayListObjectSmsLogs.size(); j++){
+                    if (arrayListObjectSmsLogs.get(j) instanceof String){
+                        String header = (String) arrayListObjectSmsLogs.get(j);
+                        int itemPosition = arrayListObjectSmsLogs.indexOf(header);
+                        Log.i("index", itemPosition+"");
+                        int diff =  itemPosition - previousIndex;
 
-                    if(diff == 2){
-                        Log.i("Header to remove", itemPosition+" " + previousIndex+" ");
-                        arrayListObjectSmsLogs.remove(itemPosition-1);
+                        if(diff == 2){
+                            Log.i("Header to remove", itemPosition+" " + previousIndex+" ");
+                            arrayListObjectSmsLogs.remove(itemPosition-1);
 //                        arrayListObjectSmsLogs.remove(itemPosition);
+                        }else{
+                            if(diff > 2){
+                                arrayListObjectSmsLogs.remove(itemPosition - 1);
+                            }
+                        }
                     }else{
-                        if(diff > 2){
-                            arrayListObjectSmsLogs.remove(itemPosition - (diff-1));
+                        if(arrayListObjectSmsLogs.get(j) instanceof SmsDataType){
+                            previousIndex = j;
                         }
                     }
-                }else{
-                    if(arrayListObjectSmsLogs.get(j) instanceof SmsDataType){
-                        previousIndex = j;
-                    }
-                }
+                }*/
             }
+            rContactApplication.setArrayListObjectSmsLogs(arrayListObjectSmsLogs);
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
+
     }
+
+
+    /*private void makeData(ArrayList<SmsDataType> filteredList){
+        try{
+
+            if (filteredList != null && filteredList.size() > 0) {
+                for (int i = 0; i < filteredList.size(); i++) {
+                    SmsDataType callLogType = filteredList.get(i);
+                    long logDate1 = callLogType.getDataAndTime();
+                    Date date1 = new Date(logDate1);
+                    String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
+                    Log.i("Call Log date", logDate);
+
+                    Calendar cal = Calendar.getInstance();
+                    cal.add(Calendar.DATE, -1);
+                    Date yesDate;
+                    yesDate = cal.getTime();
+                    String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd").format(yesDate);
+                    Log.i("Call yesterday date", yesterdayDate);
+
+                    Calendar c = Calendar.getInstance();
+                    Date cDate = c.getTime();
+                    String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
+                    Log.i("Call Current date", currentDate);
+                    String number = callLogType.getThreadId();
+                    String finalDate;
+                    if (logDate.equalsIgnoreCase(currentDate)) {
+                        finalDate = "Today";
+                        if (arrayListObjectSmsLogs.size() == 0 ) {
+                            arrayListObjectSmsLogs.add(finalDate);
+                            arrayListObjectSmsLogs.add(callLogType);
+                        } else {
+                            boolean isNumberExists = false;
+                            for (int j = 0; j < arrayListObjectSmsLogs.size(); j++) {
+                                if (arrayListObjectSmsLogs.get(j) instanceof SmsDataType) {
+                                    if (!arrayListObjectSmsLogs.contains(finalDate)) {
+                                        arrayListCallLogHeader.add(finalDate);
+                                        arrayListObjectSmsLogs.add(finalDate);
+                                    }
+                                    if (!(((SmsDataType) arrayListObjectSmsLogs.get(j)).getThreadId()
+                                            .equalsIgnoreCase(number))) {
+                                        isNumberExists = false;
+                                    } else {
+                                        isNumberExists = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!isNumberExists) {
+                                arrayListObjectSmsLogs.add(callLogType);
+                            }
+                        }
+
+                    } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
+                        finalDate = "Yesterday";
+//                    String number = callLogType.getThreadId();
+                        if (arrayListObjectSmsLogs.size() == 0) {
+                            arrayListObjectSmsLogs.add(finalDate);
+                            arrayListObjectSmsLogs.add(callLogType);
+                        } else {
+                            boolean isNumberExists = false;
+                            for (int j = 0; j < arrayListObjectSmsLogs.size(); j++) {
+                                if (arrayListObjectSmsLogs.get(j) instanceof SmsDataType) {
+                                    if (!arrayListObjectSmsLogs.contains(finalDate)) {
+                                        arrayListCallLogHeader.add(finalDate);
+                                        arrayListObjectSmsLogs.add(finalDate);
+                                    }
+                                    long objDate = ((SmsDataType) arrayListObjectSmsLogs.get(j))
+                                            .getDataAndTime();
+                                    Date objDate1 = new Date(objDate);
+                                    String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format
+                                            (objDate1);
+//                                if (arrayDate.equalsIgnoreCase(logDate)) {
+                                    if (!(((SmsDataType) arrayListObjectSmsLogs.get(j))
+                                            .getThreadId().equalsIgnoreCase(number))) {
+                                        isNumberExists = false;
+                                    } else {
+                                        isNumberExists = true;
+                                        break;
+                                    }
+//                                }
+
+                                }
+                            }
+                            if (!isNumberExists) {
+                                arrayListObjectSmsLogs.add(callLogType);
+                            }
+                        }
+                    } else {
+                        finalDate = new SimpleDateFormat("dd/MM,EEE").format(date1);
+//                    String number = callLogType.getThreadId();
+                        if (arrayListObjectSmsLogs.size() == 0) {
+                            arrayListCallLogHeader.add(finalDate);
+                            arrayListObjectSmsLogs.add(callLogType);
+                        } else {
+                            boolean isNumberExists = false;
+                            for (int j = 0; j < arrayListObjectSmsLogs.size(); j++) {
+                                if (arrayListObjectSmsLogs.get(j) instanceof SmsDataType) {
+                                    if (!arrayListObjectSmsLogs.contains(finalDate)) {
+                                        arrayListCallLogHeader.add(finalDate);
+                                        arrayListObjectSmsLogs.add(finalDate);
+                                    }
+                                    long objDate = ((SmsDataType) arrayListObjectSmsLogs.get(j))
+                                            .getDataAndTime();
+                                    Date objDate1 = new Date(objDate);
+                                    String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format
+                                            (objDate1);
+
+//                                if (arrayDate.equalsIgnoreCase(logDate)) {
+                                    if (!(((SmsDataType) arrayListObjectSmsLogs.get(j))
+                                            .getThreadId().equalsIgnoreCase(number))) {
+                                        isNumberExists = false;
+                                    } else {
+                                        isNumberExists = true;
+                                        break;
+                                    }
+//                                }
+
+                                }
+                            }
+                            if (!isNumberExists) {
+                                arrayListObjectSmsLogs.add(callLogType);
+                            }
+                        }
+
+                    }
+                }
+
+                *//*for(int j = 0; j < arrayListObjectSmsLogs.size(); j++){
+                    if (arrayListObjectSmsLogs.get(j) instanceof String){
+                        String header = (String) arrayListObjectSmsLogs.get(j);
+                        int itemPosition = arrayListObjectSmsLogs.indexOf(header);
+                        Log.i("index", itemPosition+"");
+                        int diff =  itemPosition - previousIndex;
+
+                        if(diff == 2){
+                            Log.i("Header to remove", itemPosition+" " + previousIndex+" ");
+                            arrayListObjectSmsLogs.remove(itemPosition-1);
+//                        arrayListObjectSmsLogs.remove(itemPosition);
+                        }else{
+                            if(diff > 2){
+                                arrayListObjectSmsLogs.remove(itemPosition - 1);
+                            }
+                        }
+                    }else{
+                        if(arrayListObjectSmsLogs.get(j) instanceof SmsDataType){
+                            previousIndex = j;
+                        }
+                    }
+                }*//*
+            }
+            rContactApplication.setArrayListObjectSmsLogs(arrayListObjectSmsLogs);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }*/
+
 
     private void setAdapter() {
 //        progressBar.setVisibility(View.GONE);

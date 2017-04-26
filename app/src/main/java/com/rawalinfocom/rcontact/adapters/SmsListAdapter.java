@@ -42,6 +42,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Context context;
     private ArrayList<Object> arrayListCallLogs;
     private ArrayList<String> arrayListCallLogHeader;
+    private ArrayList<String> listOfDateToDisplay;
     private int previousPosition = 0;
     private String number = "";
     Activity mActivity;
@@ -62,6 +63,15 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.arrayListCallLogs = arrayListCallLogs;
         this.arrayListCallLogHeader = arrayListCallLogHeader;
         this.context = activity;
+        listOfDateToDisplay =  new ArrayList<>();
+        for(int i=0; i<arrayListCallLogs.size();i++){
+            if (arrayListCallLogs.get(i) instanceof SmsDataType) {
+                long objDate = ((SmsDataType) arrayListCallLogs.get(i))
+                        .getDataAndTime();
+                String finalDate = new SimpleDateFormat("dd/MM,EEE").format(objDate);
+                listOfDateToDisplay.add(finalDate);
+            }
+        }
     }
 
     public SmsDataType getSelectedSmsType() {
@@ -238,7 +248,14 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void configureHeaderViewHolder(CallLogHeaderViewHolder holder, int
             position) {
         String date = (String) arrayListCallLogs.get(position);
-        holder.textHeader.setText(date);
+
+        if(listOfDateToDisplay.contains(date) || date.equalsIgnoreCase("Today")|| date.equalsIgnoreCase("Yesterday")){
+            holder.textHeader.setVisibility(View.VISIBLE);
+            holder.textHeader.setText(date);
+        }else {
+            holder.textHeader.setVisibility(View.GONE);
+
+        }
     }
     //</editor-fold>
 
