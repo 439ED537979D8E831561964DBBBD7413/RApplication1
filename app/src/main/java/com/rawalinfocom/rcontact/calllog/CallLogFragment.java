@@ -352,7 +352,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 rContactApplication.setArrayListCallLogType(arrayListCallLogs);
                 ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
                 callLogTypeArrayList.add(callLogTypeReceiver);
-                if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_SYNC_CALL_LOG, false) &&
+                if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false) &&
                         Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED,
                                 false)) {
                     insertServiceCall(callLogTypeArrayList);
