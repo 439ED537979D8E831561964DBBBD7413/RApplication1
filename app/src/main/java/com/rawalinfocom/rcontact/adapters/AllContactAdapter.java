@@ -416,9 +416,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     contactNumberCursor.close();
                 }
 
-//                phoneNumbers.addAll(profileData.getOperation().get(0).getPbPhoneNumber());
                 ArrayList<ProfileDataOperationEmail> emailIds = new ArrayList<>();
-//                emailIds.addAll(profileData.getOperation().get(0).getPbEmailId());
 
                 Cursor contactEmailCursor = phoneBookContacts.getContactEmail(profileData
                         .getLocalPhoneBookId());

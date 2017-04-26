@@ -52,7 +52,7 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
     }
 
     @Override
-    public void onBindViewHolder(ContactDetailViewHolder holder, int position) {
+    public void onBindViewHolder(final ContactDetailViewHolder holder, int position) {
 
         holder.checkboxSelectContact.setTag(position);
 
@@ -111,6 +111,7 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
                         if (arrayListSelectedContacts.contains(buttonView.getTag())) {
                             arrayListSelectedContacts.remove((Integer) buttonView.getTag());
                         }
+
                     }
                 }
                 Log.i("onCheckedChanged", arrayListSelectedContacts.toString());
