@@ -69,7 +69,8 @@ public class CallLogType implements Serializable {
     int blockedType = 0;
 
 
-    @JsonProperty("flag")
+    //    @JsonProperty("flag")
+    @JsonIgnore
     private int flag = 0;
     @JsonProperty("local_pb_row_id")
     private String localPbRowId;
@@ -284,6 +285,7 @@ public class CallLogType implements Serializable {
     public void setHistoryDuration(int historyDuration) {
         this.historyDuration = historyDuration;
     }
+
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public int getHistoryType() {
         return historyType;

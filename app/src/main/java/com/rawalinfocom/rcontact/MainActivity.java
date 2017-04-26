@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact;
 
+import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
@@ -27,7 +28,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -99,9 +99,12 @@ public class MainActivity extends BaseActivity implements NavigationView
     NetworkConnectionReceiver networkConnectionReceiver;
 
     int LIST_PARTITION_COUNT = 10;
+    private ArrayList<String> listOfCallLogIds;
     private ArrayList<CallLogType> callLogTypeArrayListMain;
     ArrayList<CallLogType> callLogsListbyChunck;
     ArrayList<CallLogType> newList;
+    String callLogResponseRowId = "";
+    String callLogResponseDate = "";
     int logsSyncedCount = 10;
     MaterialDialog permissionConfirmationDialog;
     private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
@@ -116,18 +119,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         /*Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
         startService(contactIdFetchService);*/
 
-        callLogTypeArrayListMain = new ArrayList<>();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
-        } else {
-            AsyncTask.execute(new Runnable() {
-                @Override
-                public void run() {
-                    getCallLogsByRawId();
-                }
-            });
-        }
-        registerLocalBroadCastReceiver();
 
         if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()
                 .getInteger(R.integer.launch_mobile_registration)) == getResources().getInteger(R
@@ -152,11 +143,33 @@ public class MainActivity extends BaseActivity implements NavigationView
 //            }
         } else {
 
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+            callLogTypeArrayListMain = new ArrayList<>();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                checkPermissionToExecute();
+            } else {
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        getCallLogsByRawId();
+                    }
+                });
+            }
+            checkPermissionToExecute();
+           /* if (checkPermissionToExecute()) {
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        getCallLogsByRawId();
+                    }
+                });
+            }*/
+            registerLocalBroadCastReceiver();
+
+          /*  if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
                     .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
                 Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
                 startService(contactIdFetchService);
-            }
+            }*/
 
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
@@ -170,15 +183,38 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private void checkPermissionToExecute(String permissions[], int requestCode) {
+    private void checkPermissionToExecute() {
 
-        boolean contacts = ContextCompat.checkSelfPermission(MainActivity.this, permissions[0]) !=
+        /*int permissionReadContact = ContextCompat.checkSelfPermission(this, Manifest.permission
+                .READ_CONTACTS);
+        int permissionReadCallLog = ContextCompat.checkSelfPermission(this, Manifest.permission
+                .READ_CALL_LOG);
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+
+        if (permissionReadContact != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_CONTACTS);
+        }
+        if (permissionReadCallLog != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_CALL_LOG);
+        }
+
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new
+                    String[listPermissionsNeeded.size()]), AppConstants
+                    .MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+            return false;
+        }
+
+        return true;*/
+
+       /* boolean contacts = ContextCompat.checkSelfPermission(MainActivity.this,
+       requiredPermissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;*/
+        boolean logs = ContextCompat.checkSelfPermission(MainActivity.this,
+                requiredPermissions[1]) ==
                 PackageManager.PERMISSION_GRANTED;
-        boolean logs = ContextCompat.checkSelfPermission(MainActivity.this, permissions[1]) !=
-                PackageManager.PERMISSION_GRANTED;
-        if (contacts || logs) {
-            requestPermissions(permissions, requestCode);
-        } else {
+        if (logs) {
             Intent callLogIdFetchService = new Intent(this, CallLogIdFetchService.class);
             startService(callLogIdFetchService);
             AsyncTask.execute(new Runnable() {
@@ -194,6 +230,12 @@ public class MainActivity extends BaseActivity implements NavigationView
     protected void onPause() {
         super.onPause();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkPermissionToExecute();
     }
 
     @Override
@@ -214,12 +256,12 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         if (id == R.id.nav_share) {
             final String appPackageName = getPackageName();
-            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
 //                String shareBody = "Here is the share content body";
             String shareBody = AppConstants.PLAY_STORE_LINK + appPackageName;
 //                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Share Contact Via");
-            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
             startActivity(Intent.createChooser(sharingIntent, "Share App Via"));
         } else if (id == R.id.nav_invite) {
             startActivityIntent(MainActivity.this, ContactListingActivity.class, null);
@@ -296,7 +338,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 }
             }
             //</editor-fold>
-            else if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)) {
+            else if(serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)){
                 WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
                 if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase
                         (callLogInsertionResponse
@@ -314,15 +356,18 @@ public class MainActivity extends BaseActivity implements NavigationView
 
                     } else {
                         ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
-                        if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
+                        if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0)
+                        {
                             insertServiceCall(callLogTypeArrayList);
                             logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
-                        } else {
+                        }
+                        else {
 //                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
                             Utils.setBooleanPreference(this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, true);
                         }
-                        Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT, logsSyncedCount);
+                        Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
+                                logsSyncedCount);
                     }
                 } else {
                     if (callLogInsertionResponse != null) {
@@ -330,7 +375,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                     } else {
                         Log.e("onDeliveryResponse: ", "userProfileResponse null");
                         Log.e("onDeliveryResponse: ", getString(R.string.msg_try_later));
-//                        Toast.makeText(this,getString(R.string.msg_try_later),Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(this,getString(R.string.msg_try_later),Toast
+// .LENGTH_SHORT).show();
                     }
                 }
             } else {
@@ -338,6 +384,71 @@ public class MainActivity extends BaseActivity implements NavigationView
             }
 
         }
+    }
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.M)
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+/*        if (requestCode == AppConstants.READ_LOGS && permissions[0].equals(Manifest.permission
+                .READ_CONTACTS) && permissions[1].equals(Manifest.permission.READ_CALL_LOG)) {
+            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED && grantResults[1] ==
+                    PermissionChecker.PERMISSION_GRANTED) {
+
+                Intent callLogIdFetchService = new Intent(this, CallLogIdFetchService.class);
+                startService(callLogIdFetchService);
+
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        getCallLogsByRawId();
+                    }
+                });
+
+            } else {
+                showPermissionConfirmationDialog();
+            }
+        }*/
+
+       /* switch (requestCode) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                Map<String, Integer> perms = new HashMap<>();
+                perms.put(Manifest.permission.READ_CALL_LOG, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_CONTACTS, PackageManager.PERMISSION_GRANTED);
+
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < permissions.length; i++)
+                        perms.put(permissions[i], grantResults[i]);
+                    // Check for both permissions
+                   *//* if (perms.get(Manifest.permission.READ_CALL_LOG) != PackageManager
+                            .PERMISSION_GRANTED || perms.get(Manifest.permission.READ_CONTACTS)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        Log.d(TAG, "Some permissions are not granted ask again ");
+                    }*//*
+                    if (perms.get(Manifest.permission.READ_CONTACTS) != PackageManager
+                            .PERMISSION_GRANTED) {
+
+                    }
+                    if (perms.get(Manifest.permission.READ_CALL_LOG) != PackageManager
+                            .PERMISSION_GRANTED) {
+                        Intent callLogIdFetchService = new Intent(this, CallLogIdFetchService
+                                .class);
+                        startService(callLogIdFetchService);
+
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                getCallLogsByRawId();
+                            }
+                        });
+                    }
+                }
+
+            }
+        }*/
+
     }
 
     @Override
@@ -557,83 +668,22 @@ public class MainActivity extends BaseActivity implements NavigationView
     private void registerLocalBroadCastReceiver() {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance
                 (this);
-        IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
+        IntentFilter intentFilter = new IntentFilter(AppConstants
+                .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
         localBroadcastManager.registerReceiver(localBroadcastReceiverCallLogSync, intentFilter);
     }
 
     private void unRegisterLocalBroadCastReceiver() {
-        LocalBroadcastManager localBroadcastManagerProfileBlock = LocalBroadcastManager.getInstance(this);
+        LocalBroadcastManager localBroadcastManagerProfileBlock = LocalBroadcastManager
+                .getInstance(this);
         localBroadcastManagerProfileBlock.unregisterReceiver(localBroadcastReceiverCallLogSync);
 
     }
 
-
-    // =========================================== Call Logs ==================================================//
-
-
- /*   @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager
-                        .PERMISSION_GRANTED) {
-
-                    // Permission Granted
-                    Intent callLogIdFetchService =  new Intent(this, CallLogIdFetchService.class);
-                    startService(callLogIdFetchService);
-
-                    AsyncTask.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            getCallLogsByRawId();
-                        }
-                    });
-
-                } else {
-
-                    // Permission Denied
-//                    getActivity().onBackPressed();
-                    showPermissionConfirmationDialog();
-
-                }
-            }
-            break;
-        }
-    }*/
-
-    @Override
-    @TargetApi(Build.VERSION_CODES.M)
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == AppConstants.READ_LOGS && permissions[0].equals(Manifest.permission
-                .READ_CONTACTS) && permissions[1].equals(Manifest.permission.READ_CALL_LOG)) {
-            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED && grantResults[1] ==
-                    PermissionChecker.PERMISSION_GRANTED) {
-
-                Intent callLogIdFetchService = new Intent(this, CallLogIdFetchService.class);
-                startService(callLogIdFetchService);
-
-                AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        getCallLogsByRawId();
-                    }
-                });
-
-            } else {
-                showPermissionConfirmationDialog();
-            }
-        }
-    }
-
     private void getCallLogsByRawId() {
 
-        ArrayList<String> callLogsIdsList = Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET);
+        ArrayList<String> callLogsIdsList = Utils.getArrayListPreference(this, AppConstants
+                .PREF_CALL_LOGS_ID_SET);
         if (callLogsIdsList == null) {
             PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(this);
             callLogsIdsList = new ArrayList<>();
@@ -649,19 +699,20 @@ public class MainActivity extends BaseActivity implements NavigationView
         }
 
         if (callLogsIdsList != null && callLogsIdsList.size() > 0) {
-            int indexToBeginSync = Utils.getIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT, 0);
+            int indexToBeginSync = Utils.getIntegerPreference(this, AppConstants
+                    .PREF_CALL_LOG_SYNCED_COUNT, 0);
             ArrayList<String> tempIdsList = new ArrayList<>();
-            for (int i = indexToBeginSync; i < callLogsIdsList.size(); i++) {
-                String ids = callLogsIdsList.get(i);
-                tempIdsList.add(ids);
+            for(int i = indexToBeginSync; i<callLogsIdsList.size(); i++){
+                    String ids =  callLogsIdsList.get(i);
+                    tempIdsList.add(ids);
             }
 
-            if (tempIdsList.size() > LIST_PARTITION_COUNT) {
+            if(tempIdsList.size() > LIST_PARTITION_COUNT){
                 for (ArrayList<String> partition : chopped(tempIdsList, LIST_PARTITION_COUNT)) {
                     // do something with partition
                     fetchCallLogsFromIds(partition);
                 }
-            } else {
+            }else{
                 fetchCallLogsFromIds(tempIdsList);
             }
 
@@ -701,13 +752,16 @@ public class MainActivity extends BaseActivity implements NavigationView
                             log.setDate(cursor.getLong(date));
                             log.setUniqueContactId(cursor.getString(rowId));
                             String numberTypeLog = getPhoneNumberType(cursor.getInt(numberType));
-                            Log.i("Number Type", numberTypeLog + " of number " + cursor.getString(number));
-                            Log.i("Number Log Type", getLogType(cursor.getInt(type)) + " of number " +
+                            Log.i("Number Type", numberTypeLog + " of number " + cursor.getString
+                                    (number));
+                            Log.i("Number Log Type", getLogType(cursor.getInt(type)) + " of " +
+                                    "number " +
                                     cursor.getString(number));
                             log.setNumberType(numberTypeLog);
                             String userNumber = cursor.getString(number);
                             String uniquePhoneBookId = getStarredStatusFromNumber(userNumber);
-                            Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" + userNumber);
+                            Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" +
+                                    userNumber);
                             if (!TextUtils.isEmpty(uniquePhoneBookId))
                                 log.setLocalPbRowId(uniquePhoneBookId);
                             else
@@ -725,21 +779,25 @@ public class MainActivity extends BaseActivity implements NavigationView
                             ArrayList<CallLogType> arrayListHistoryCount = new ArrayList<>();
                             for (int j = 0; j < arrayListHistory.size(); j++) {
                                 CallLogType tempCallLogType = arrayListHistory.get(j);
-                                String simNumber = arrayListHistory.get(j).getHistoryCallSimNumber();
+                                String simNumber = arrayListHistory.get(j)
+                                        .getHistoryCallSimNumber();
                                 log.setCallSimNumber(simNumber);
                                 long tempdate = tempCallLogType.getHistoryDate();
                                 Date objDate1 = new Date(tempdate);
-                                String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format(objDate1);
+                                String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format
+                                        (objDate1);
                                 long callLogDate = log.getDate();
                                 Date intentDate1 = new Date(callLogDate);
-                                String intentDate = new SimpleDateFormat("yyyy-MM-dd").format(intentDate1);
+                                String intentDate = new SimpleDateFormat("yyyy-MM-dd").format
+                                        (intentDate1);
                                 if (intentDate.equalsIgnoreCase(arrayDate)) {
                                     arrayListHistoryCount.add(tempCallLogType);
                                 }
                             }
                             int logCount = arrayListHistoryCount.size();
                             log.setHistoryLogCount(logCount);
-                            Log.i("History size ", logCount + "" + " of " + cursor.getString(number));
+                            Log.i("History size ", logCount + "" + " of " + cursor.getString
+                                    (number));
                             Log.i("History", "----------------------------------");
                             callLogTypeArrayListMain.add(log);
 
@@ -749,7 +807,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 }
             }
             syncCallLogDataToServer(callLogTypeArrayListMain);
-        } catch (Exception e) {
+        }catch (Exception e){
             e.printStackTrace();
         }
 
@@ -780,10 +838,9 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         }
     }
-
     private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
 
-        if (Utils.isNetworkAvailable(MainActivity.this)) {
+        if(Utils.isNetworkAvailable(MainActivity.this)){
             WsRequestObject deviceDetailObject = new WsRequestObject();
             deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
             if (Utils.isNetworkAvailable(this)) {
@@ -807,7 +864,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         return parts;
     }
 
-    private ArrayList<ArrayList<CallLogType>> choppedCallLog(ArrayList<CallLogType> list, final int L) {
+    private ArrayList<ArrayList<CallLogType>> choppedCallLog(ArrayList<CallLogType> list, final
+    int L) {
         ArrayList<ArrayList<CallLogType>> parts = new ArrayList<ArrayList<CallLogType>>();
         final int N = list.size();
         for (int i = 0; i < N; i += L) {
@@ -821,7 +879,8 @@ public class MainActivity extends BaseActivity implements NavigationView
     private ArrayList<CallLogType> divideCallLogByChunck() {
         int size = callLogTypeArrayListMain.size();
         callLogsListbyChunck = new ArrayList<>();
-        for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayListMain, LIST_PARTITION_COUNT)) {
+        for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayListMain,
+                LIST_PARTITION_COUNT)) {
             // do something with partition
             Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
             callLogsListbyChunck.addAll(partition);
@@ -832,12 +891,13 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
     private ArrayList<CallLogType> divideCallLogByChunck(ArrayList<CallLogType> list) {
-        int size;
+        int size = 0;
         callLogsListbyChunck = new ArrayList<>();
         if (list != null && list.size() > 0) {
             size = list.size();
             if (size > LIST_PARTITION_COUNT) {
-                for (ArrayList<CallLogType> partition : choppedCallLog(list, LIST_PARTITION_COUNT)) {
+                for (ArrayList<CallLogType> partition : choppedCallLog(list,
+                        LIST_PARTITION_COUNT)) {
                     // do something with partition
                     Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
                     callLogsListbyChunck.addAll(partition);
