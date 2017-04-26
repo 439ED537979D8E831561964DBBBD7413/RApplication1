@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
-import android.util.Log;
 
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -29,10 +28,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Monal on 01/03/17.
@@ -102,15 +99,15 @@ public class OnlineDataSync {
 
     private void syncPhoneBookContactList() {
         currentStamp = String.valueOf(System.currentTimeMillis());
-        String lastStamp = Utils.getStringPreference(context, AppConstants.PREF_CONTACT_LAST_SYNC_TIME, currentStamp);
+        String lastStamp = Utils.getStringPreference(context, AppConstants
+                .PREF_CONTACT_LAST_SYNC_TIME, currentStamp);
 
         Cursor cursor = phoneBookContacts.getUpdatedContacts(lastStamp);
         arrayListUserContact = new ArrayList<>();
 //        Log.i("MAULIK", "currenstamp" + currentStamp);
 //        Log.i("MAULIK", "lastStamp" + lastStamp);
 
-        if (Utils.getArrayListPreference(context, AppConstants
-                .PREF_CONTACT_ID_SET) == null)
+        if (Utils.getArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET) == null)
             return;
         if (cursor != null) {
             if (cursor.getCount() == 0) {
@@ -128,11 +125,16 @@ public class OnlineDataSync {
             rawId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts
                     .LOOKUP_KEY));
 //            Log.i("MAULIK", "LOOKUP_KEY" + rawId);
-//            Log.i("MAULIK", "DISPLAY_NAME" + cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
-//            Log.i("MAULIK", "NUMBER" + cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
-//            Log.i("MAULIK", "RAW_CONTACT_ID" + cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
-//            Log.i("MAULIK", "CONTACT_ID" + cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
-//            Log.i("MAULIK", "Contacts._ID" + cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID)));
+//            Log.i("MAULIK", "DISPLAY_NAME" + cursor.getString(cursor.getColumnIndex
+// (ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+//            Log.i("MAULIK", "NUMBER" + cursor.getString(cursor.getColumnIndex(ContactsContract
+// .CommonDataKinds.Phone.NUMBER)));
+//            Log.i("MAULIK", "RAW_CONTACT_ID" + cursor.getString(cursor.getColumnIndex
+// (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
+//            Log.i("MAULIK", "CONTACT_ID" + cursor.getString(cursor.getColumnIndex
+// (ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
+//            Log.i("MAULIK", "Contacts._ID" + cursor.getString(cursor.getColumnIndex
+// (ContactsContract.Contacts._ID)));
             rawIdsUpdated.add(rawId);
         }
         cursor.close();
@@ -194,12 +196,15 @@ public class OnlineDataSync {
 //                    profileData.setOperation(arrayListOperations);
 //
 //                    arrayListDeletedUserContact.add(profileData);
-//                    Log.i("MAULIK", "arrayListDeletedUserContact" + arrayListDeletedUserContact.toString());
-//                    Log.i("MAULIK", "arrayListDeletedUserContact" + arrayListDeletedUserContact.size());
+//                    Log.i("MAULIK", "arrayListDeletedUserContact" + arrayListDeletedUserContact
+// .toString());
+//                    Log.i("MAULIK", "arrayListDeletedUserContact" + arrayListDeletedUserContact
+// .size());
 
 //                    deleteContact();
                 // Update
-//                    phoneBookOperations(deletedRawId, String.valueOf(context.getResources().getInteger(R
+//                    phoneBookOperations(deletedRawId, String.valueOf(context.getResources()
+// .getInteger(R
 //                            .integer.sync_delete)));
 //                }
 
