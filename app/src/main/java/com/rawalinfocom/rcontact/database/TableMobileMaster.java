@@ -31,7 +31,7 @@ public class TableMobileMaster {
 
     // Column Names
     private static final String COLUMN_MNM_ID = "mnm_id";
-    private static final String COLUMN_MNM_RECORD_INDEX_ID = "mnm_record_index_id";
+    static final String COLUMN_MNM_RECORD_INDEX_ID = "mnm_record_index_id";
     static final String COLUMN_MNM_MOBILE_NUMBER = "mnm_mobile_number";
     static final String COLUMN_MNM_NUMBER_TYPE = "mnm_number_type";
     static final String COLUMN_MNM_IS_PRIMARY = "mnm_is_primary";
@@ -55,7 +55,7 @@ public class TableMobileMaster {
             " " + COLUMN_MNM_MOBILE_NUMBER + " text NOT NULL," +
             " " + COLUMN_MNM_NUMBER_TYPE + " text," +
             " " + COLUMN_MNM_IS_PRIMARY + " integer," +
-            " " + COLUMN_MNM_NUMBER_PRIVACY + " integer DEFAULT 1," +
+            " " + COLUMN_MNM_NUMBER_PRIVACY + " integer DEFAULT 2," +
             " " + COLUMN_MNM_MOBILE_SERVICE_PROVIDER + " text," +
             " " + COLUMN_MNM_CIRCLE_OF_SERVICE + " text," +
             " " + COLUMN_MNM_SPAM_COUNT + " integer," +
@@ -350,5 +350,20 @@ public class TableMobileMaster {
         db.delete(TABLE_RC_MOBILE_NUMBER_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
                 new String[]{String.valueOf(rcpId)});
         db.close();
+    }
+
+    public int updatePrivacySettingToDefault(String cloudMongoId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_MNM_NUMBER_PRIVACY, 2);
+
+        // updating row
+        int isUpdated = db.update(TABLE_RC_MOBILE_NUMBER_MASTER, values, COLUMN_MNM_RECORD_INDEX_ID + " = ?",
+                new String[]{cloudMongoId});
+
+        db.close();
+
+        return isUpdated;
     }
 }

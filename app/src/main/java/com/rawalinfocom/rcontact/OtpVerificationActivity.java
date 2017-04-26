@@ -1,9 +1,12 @@
 package com.rawalinfocom.rcontact;
 
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Button;
@@ -69,7 +72,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
     Country selectedCountry;
 
     Intent otpServiceIntent;
-
+    BroadcastReceiver receiver;
     //<editor-fold desc="Override Methods">
 
     @Override
@@ -77,6 +80,22 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp_verification);
         ButterKnife.bind(this);
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equalsIgnoreCase("rawal_otp")) {
+                    final String message = intent.getStringExtra("message");
+                    if (StringUtils.length(message) == AppConstants.OTP_LENGTH)
+                        inputOtp.setText(message);
+                    verifyOtp(message);
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("rawal_otp");
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
 
         new AsyncGetDeviceToken(this).execute();
 
@@ -109,7 +128,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                 break;
 
             case R.id.ripple_submit:
-                verifyOtp();
+                verifyOtp(inputOtp.getText().toString());
                 break;
 
             case R.id.ripple_resend:
@@ -136,7 +155,6 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                     OtpLog otpLogResponse = otpDetailResponse.getOtpLog();
 
                     TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(databaseHandler);
-
                     if (tableOtpLogDetails.getOtpCount() > 0 && tableOtpLogDetails
                             .getLastOtpDetails().getOldOtp().equalsIgnoreCase
                                     (otpLogResponse.getOldOtp())) {
@@ -201,7 +219,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                                     .integer.launch_profile_registration));
 
                     stopService(new Intent(OtpVerificationActivity.this, OtpTimerService.class));
-
+                    LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
                   /*  if (StringUtils.equalsIgnoreCase(userProfile.getIsAlreadyVerified(),
                             String.valueOf(getResources().getInteger(R.integer
                                     .profile_already_verified)))) {
@@ -283,12 +301,12 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         startService(otpServiceIntent);
     }
 
-    private void verifyOtp() {
-        if (StringUtils.length(inputOtp.getText().toString()) == AppConstants.OTP_LENGTH) {
+    private void verifyOtp(String message) {
+        if (StringUtils.length(message) == AppConstants.OTP_LENGTH) {
             TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(databaseHandler);
             OtpLog otpLog = tableOtpLogDetails.getLastOtpDetails();
             if (otpLog.getOldValidityFlag().equalsIgnoreCase("1")) {
-                if (otpLog.getOldOtp().equals(inputOtp.getText().toString())) {
+                if (otpLog.getOldOtp().equals(message)) {
                     stopService(new Intent(OtpVerificationActivity.this, OtpTimerService.class));
                     otpConfirmed(otpLog);
                 } else {
@@ -346,7 +364,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         WsRequestObject otpObject = new WsRequestObject();
         otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
         otpObject.setMobileNumber(mobileNumber);
-
+        otpObject.setCmId(selectedCountry.getCountryId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,

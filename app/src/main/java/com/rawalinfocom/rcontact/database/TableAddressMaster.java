@@ -27,7 +27,7 @@ public class TableAddressMaster {
 
     // Column Names
     private static final String COLUMN_AM_ID = "am_id";
-    private static final String COLUMN_AM_RECORD_INDEX_ID = "am_record_index_id";
+    static final String COLUMN_AM_RECORD_INDEX_ID = "am_record_index_id";
     private static final String COLUMN_AM_CITY = "am_city";
     private static final String COLUMN_AM_COUNTRY = "am_country";
     static final String COLUMN_AM_FORMATTED_ADDRESS = "am_formatted_address";
@@ -61,7 +61,7 @@ public class TableAddressMaster {
             " " + COLUMN_AM_ADDRESS_TYPE + " text NOT NULL," +
             " " + COLUMN_AM_GOOGLE_LATITUDE + " text," +
             " " + COLUMN_AM_GOOGLE_LONGITUDE + " text," +
-            " " + COLUMN_AM_ADDRESS_PRIVACY + " integer DEFAULT 1," +
+            " " + COLUMN_AM_ADDRESS_PRIVACY + " integer DEFAULT 2," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
             ");";
 
@@ -182,6 +182,7 @@ public class TableAddressMaster {
                 COLUMN_AM_STATE + ", " +
                 COLUMN_AM_CITY + ", " +
                 COLUMN_AM_STREET + ", " +
+                COLUMN_AM_ADDRESS_PRIVACY + ", " +
                 COLUMN_AM_NEIGHBORHOOD + ", " +
                 COLUMN_AM_FORMATTED_ADDRESS + ", " +
                 COLUMN_AM_POST_CODE + ", " +
@@ -221,6 +222,8 @@ public class TableAddressMaster {
                         (COLUMN_AM_GOOGLE_LONGITUDE)));
                 address.setAmAddressType(cursor.getString(cursor.getColumnIndex
                         (COLUMN_AM_ADDRESS_TYPE)));
+                address.setAmAddressPrivacy(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_AM_ADDRESS_PRIVACY)));
                 address.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_RC_PROFILE_MASTER_PM_ID)));
                 // Adding address to list
@@ -343,5 +346,20 @@ public class TableAddressMaster {
         db.delete(TABLE_RC_ADDRESS_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
                 new String[]{String.valueOf(rcpId)});
         db.close();
+    }
+
+    public int updatePrivacySettingToDefault(String cloudMongoId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_AM_ADDRESS_PRIVACY, 2);
+
+        // updating row
+        int isUpdated = db.update(TABLE_RC_ADDRESS_MASTER, values, COLUMN_AM_RECORD_INDEX_ID + " = ?",
+                new String[]{cloudMongoId});
+
+        db.close();
+
+        return isUpdated;
     }
 }

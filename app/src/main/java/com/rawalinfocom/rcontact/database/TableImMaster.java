@@ -27,10 +27,10 @@ public class TableImMaster {
 
     // Column Names
     private static final String COLUMN_IM_ID = "im_id";
-    private static final String COLUMN_IM_RECORD_INDEX_ID = "im_record_index_id";
+    static final String COLUMN_IM_RECORD_INDEX_ID = "im_record_index_id";
     //    static final String COLUMN_IM_IM_TYPE = "im_im_type";
 //    private static final String COLUMN_IM_CUSTOM_TYPE = "im_custom_type";
-    private static final String COLUMN_IM_DETAIL = "im_detail";
+    static final String COLUMN_IM_DETAIL = "im_detail";
     static final String COLUMN_IM_PROTOCOL = "im_protocol";
     static final String COLUMN_IM_PRIVACY = "im_privacy";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
@@ -42,7 +42,7 @@ public class TableImMaster {
             " " + COLUMN_IM_RECORD_INDEX_ID + " text, " +
             " " + COLUMN_IM_DETAIL + " text," +
             " " + COLUMN_IM_PROTOCOL + " text NOT NULL," +
-            " " + COLUMN_IM_PRIVACY + " integer DEFAULT 1," +
+            " " + COLUMN_IM_PRIVACY + " integer DEFAULT 2," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
             ");";
 
@@ -246,5 +246,20 @@ public class TableImMaster {
         db.delete(TABLE_RC_IM_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
                 new String[]{String.valueOf(rcpId)});
         db.close();
+    }
+
+    public int updatePrivacySettingToDefault(String cloudMongoId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_IM_PRIVACY, 2);
+
+        // updating row
+        int isUpdated = db.update(TABLE_RC_IM_MASTER, values, COLUMN_IM_RECORD_INDEX_ID + " = ?",
+                new String[]{cloudMongoId});
+
+        db.close();
+
+        return isUpdated;
     }
 }

@@ -199,6 +199,9 @@
     <string name="privacy_dialog_title">Privacy Setting</string>
 
     <string name="dialer_text_add_to_contact">Add to Contacts</string>
+    <string name="permission_text">Please grant permission to access call-logs.\nNavigate to Setting>Apps>Permission</string>
+    <string name="permission_text_sms">Please grant permission to access sms-logs.\nNavigate to Setting>Apps>Permission</string>
+    <string name="no_sms_found">No SMS found.</string>
 
 
 </resources>
