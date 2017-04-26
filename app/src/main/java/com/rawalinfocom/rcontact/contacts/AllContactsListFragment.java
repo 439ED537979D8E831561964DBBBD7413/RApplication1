@@ -733,8 +733,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             if (name.equalsIgnoreCase("0")) {
                                 name = userProfiles.get(j).getPmRcpId();
                             } else {
-                                name = name + "," + userProfiles.get
-                                        (j).getPmRcpId();
+                                name = name + "," + userProfiles.get(j).getPmRcpId();
                             }
                         }
                     } else if (userProfiles.size() == 1) {
