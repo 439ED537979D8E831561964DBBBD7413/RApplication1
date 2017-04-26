@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linear_root_item_user_detail"
     android:layout_width="match_parent"
@@ -8,6 +9,7 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/view_own_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -50,8 +52,66 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="+911234567890" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/view_other_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="6">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="4"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/text_main1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
+                tools:text="+911234567890911234567890911234567890911234567890" />
+
+            <TextView
+                android:id="@+id/text_sub2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="+911234567890" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_weight="2"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/button_request"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Request"
+                android:textColor="@color/colorWhite"
+                android:visibility="gone"
+                app:backgroundTint="@color/dialogUserNameTextColor" />
+
+            <ImageView
+                android:id="@+id/image_view1"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:contentDescription="@string/str_content_description"
+                android:src="@drawable/ic_arrow_bottom"
+                android:visibility="visible" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-
-</LinearLayout>
+</FrameLayout>

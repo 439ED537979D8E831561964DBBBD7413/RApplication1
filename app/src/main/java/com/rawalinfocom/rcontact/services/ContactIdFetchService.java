@@ -10,7 +10,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
-import com.rawalinfocom.rcontact.helper.Utils;
 
 import java.util.ArrayList;
 
@@ -40,7 +39,7 @@ public class ContactIdFetchService extends Service {
 
         contactNameCursor.close();
 
-        Utils.setArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET, arrayListContactIds);
+//        Utils.setArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET, arrayListContactIds);
         sendMessage();
 
         return super.onStartCommand(intent, flags, startId);

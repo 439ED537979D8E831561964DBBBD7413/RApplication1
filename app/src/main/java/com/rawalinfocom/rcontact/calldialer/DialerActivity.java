@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.calldialer;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -16,6 +17,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -139,7 +141,7 @@ public class DialerActivity extends Activity {
         TransitionSet enterTransition = new TransitionSet();
 
         Transition slide = new Slide(Gravity.BOTTOM);
-        slide.setDuration(500);
+        slide.setDuration(300);
 
         slide.excludeTarget(getActionBarView(), true);
         slide.excludeTarget(android.R.id.navigationBarBackground, true);
@@ -158,7 +160,7 @@ public class DialerActivity extends Activity {
         TransitionSet enterTransition = new TransitionSet();
 
         Transition slide = new Slide(Gravity.BOTTOM);
-        slide.setDuration(500);
+        slide.setDuration(300);
 
         slide.excludeTarget(getActionBarView(), true);
         slide.excludeTarget(android.R.id.navigationBarBackground, true);
@@ -181,19 +183,20 @@ public class DialerActivity extends Activity {
     }
 
     private View getActionBarView() {
-        final int actionBarId = getResources().getIdentifier("action_bar_container", "id", "android");
+        final int actionBarId = getResources().getIdentifier("action_bar_container", "id",
+                "android");
         final View decor = getWindow().getDecorView();
         return decor.findViewById(actionBarId);
     }
 
-    private void initandClickEvents(){
+    private void initandClickEvents() {
 
 
         linearAddToContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String numberToSave =  editTextNumber.getText().toString();
-                Utils.addToContact(DialerActivity.this,numberToSave);
+                String numberToSave = editTextNumber.getText().toString();
+                Utils.addToContact(DialerActivity.this, numberToSave);
 
             }
         });
@@ -204,9 +207,9 @@ public class DialerActivity extends Activity {
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     finishAfterTransition();
-                }else{
+                } else {
                     finish();
-                    overridePendingTransition(R.anim.slide_in_up,R.anim.slide_down_animation);
+                    overridePendingTransition(R.anim.slide_in_up, R.anim.slide_down_animation);
                 }
 
             }
@@ -325,7 +328,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 String numberToCall = editTextNumber.getText().toString();
-                if(!TextUtils.isEmpty(numberToCall))
+                if (!TextUtils.isEmpty(numberToCall))
                     showCallConfirmationDialog(numberToCall);
             }
         });
@@ -333,8 +336,8 @@ public class DialerActivity extends Activity {
         imageBtnMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String numberToSendMessage =  editTextNumber.getText().toString();
-                if(!TextUtils.isEmpty(numberToSendMessage)){
+                String numberToSendMessage = editTextNumber.getText().toString();
+                if (!TextUtils.isEmpty(numberToSendMessage)) {
                     Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
                     smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
                     smsIntent.setType("vnd.android-dir/mms-sms");
@@ -342,6 +345,15 @@ public class DialerActivity extends Activity {
                     startActivity(smsIntent);
                 }
 
+            }
+        });
+
+        editTextNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context
+                        .INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(editTextNumber.getWindowToken(), 0);
             }
         });
 

@@ -38,13 +38,13 @@ public class TableProfileMobileMapping {
     }
 
     // Table Names
-    private static final String TABLE_PB_PROFILE_MOBILE_MAPPING = "pb_profile_mobile_mapping";
+    static final String TABLE_PB_PROFILE_MOBILE_MAPPING = "pb_profile_mobile_mapping";
 
     // Column Names
     private static final String COLUMN_MPM_ID = "mpm_id";
-    private static final String COLUMN_MPM_MOBILE_NUMBER = "mpm_mobile_number";
+    static final String COLUMN_MPM_MOBILE_NUMBER = "mpm_mobile_number";
     private static final String COLUMN_MPM_CLOUD_MNM_ID = "mpm_cloud_mnm_id";
-    private static final String COLUMN_MPM_CLOUD_PM_ID = "mpm_cloud_pm_id";
+    static final String COLUMN_MPM_CLOUD_PM_ID = "mpm_cloud_pm_id";
     private static final String COLUMN_MPM_IS_RCP = "mpm_is_rcp";
 
 

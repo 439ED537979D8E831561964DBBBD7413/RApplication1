@@ -31,7 +31,8 @@ public class ContactsFragment extends BaseFragment {
     @BindView(R.id.tab_contact)
     TabLayout tabContact;
 
-    AllContactsFragment allContactsFragment;
+    //    AllContactsFragment allContactsFragment;
+    AllContactsListFragment allContactsFragment;
     RContactsFragment rContactsFragment;
     FavoritesFragment favoritesFragment;
 
@@ -91,7 +92,8 @@ public class ContactsFragment extends BaseFragment {
 
     private void init() {
 
-        allContactsFragment = AllContactsFragment.newInstance();
+//        allContactsFragment = AllContactsFragment.newInstance();
+        allContactsFragment = AllContactsListFragment.newInstance();
         rContactsFragment = RContactsFragment.newInstance();
         favoritesFragment = FavoritesFragment.newInstance();
 

@@ -2,10 +2,8 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,13 +21,8 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
-import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
-import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
-import com.rawalinfocom.rcontact.model.UserProfile;
-
-import org.apache.commons.lang3.StringUtils;
+import com.rawalinfocom.rcontact.model.ProfileData;
 
 import java.util.ArrayList;
 
@@ -37,104 +30,63 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by user on 07/02/17.
+ * Created by user on 10/04/17.
  */
 
-class ExpandableContactListAdapter extends RecyclerView
-        .Adapter<ExpandableContactListAdapter.ExpandableContactListViewHolder> {
+public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
-    private Fragment fragment;
+    private ArrayList<ProfileData> arrayListUserContact;
+    private int previousPosition = 0;
+    private String phonebookId;
+
     private int colorBlack, colorPineGreen;
-    private String contactDisplayName, phonebookId;
-    private ArrayList<ProfileMobileMapping> arrayListDbMobileNumbers;
-    private ArrayList<ProfileEmailMapping> arrayListDbEmailIds;
 
-    private TableProfileMaster tableProfileMaster;
-
-    String displayNamePmId;
-
-    ExpandableContactListAdapter(Fragment fragment, ArrayList<ProfileMobileMapping>
-            arrayListDbMobileNumbers, ArrayList<ProfileEmailMapping> arrayListDbEmailIds, String
-                                         contactDisplayName, String phonebookId) {
-
-        this.fragment = fragment;
-        this.context = fragment.getActivity();
-        this.contactDisplayName = contactDisplayName;
+    public ContactListExpandAdapter(Context context, ArrayList<ProfileData> arrayListUserContact,
+                                    String phonebookId) {
+        this.context = context;
         this.phonebookId = phonebookId;
-
-        if (arrayListDbMobileNumbers != null) {
-            this.arrayListDbMobileNumbers = arrayListDbMobileNumbers;
-        } else {
-            this.arrayListDbEmailIds = arrayListDbEmailIds;
-        }
-
+        this.arrayListUserContact = arrayListUserContact;
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
-
-        tableProfileMaster = new TableProfileMaster(((BaseActivity) context).databaseHandler);
-
     }
 
     @Override
-    public ExpandableContactListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout
-                .list_item_all_contacts, parent, false);
-        return new ExpandableContactListViewHolder(v);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        RecyclerView.ViewHolder viewHolder = null;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View v2 = inflater.inflate(R.layout.list_item_all_contacts, parent, false);
+        viewHolder = new AllContactViewHolder(v2);
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ExpandableContactListViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        AllContactViewHolder contactViewHolder = (AllContactViewHolder) holder;
+        configureAllContactViewHolder(contactViewHolder, position);
+    }
 
-        if (arrayListDbMobileNumbers != null) {
-            ProfileMobileMapping profileMobileMapping = arrayListDbMobileNumbers.get(position);
-            holder.textContactNumber.setText(profileMobileMapping.getMpmMobileNumber());
-            displayNamePmId = profileMobileMapping.getMpmCloudPmId();
-//            holder.relativeRowAllContact.setTag(displayNamePmId);
-        } else {
-            ProfileEmailMapping profileEmailMapping = arrayListDbEmailIds.get(position);
-            holder.textContactNumber.setText(profileEmailMapping.getEpmEmailId());
-            displayNamePmId = profileEmailMapping.getEpmCloudEmId();
+    private void configureAllContactViewHolder(final AllContactViewHolder holder, int position) {
 
-        }
+        final ProfileData contact = arrayListUserContact.get(position);
+        holder.textContactName.setText(contact.getTempFirstName());
+        holder.textContactNumber.setText(contact.getTempNumber());
 
-//        holder.relativeRowAllContact.setTag(displayNamePmId);
-        holder.relativeRowAllContact.setTag(position);
 
-        holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
-                "[Unknown]");
+        holder.textCloudContactName.setVisibility(View.VISIBLE);
+        holder.textCloudContactName.setText(contact.getTempRcpName());
+       /* if (StringUtils.contains(contact.getRcpName(), ",")) {
+            holder.textRcpName.setText(String.valueOf(StringUtils.countMatches(contact
+                    .getRcpName(), ",") + 1));
+        }*/
 
-        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
-                .parseInt(displayNamePmId));
-
-        String rating = userProfile.getTotalProfileRateUser();
-        String totalRatingUser = userProfile.getProfileRating();
-
-        holder.textRatingUserCount.setText(rating);
-        holder.ratingUser.setRating(Float.parseFloat(totalRatingUser));
-
-        String displayName = ((userProfile.getPmFirstName().length() > 0 || userProfile
-                .getPmLastName().length() > 0) ? " (" + userProfile.getPmFirstName() + " " +
-                "" + userProfile.getPmLastName() + ")" : "");
-
-        if (StringUtils.equals(displayName, (" (" + contactDisplayName + ")"))) {
-            holder.textCloudContactName.setVisibility(View.GONE);
-            holder.textContactName.setTextColor(colorPineGreen);
-        } else {
-            holder.textCloudContactName.setVisibility(View.VISIBLE);
-            holder.textContactName.setTextColor(colorBlack);
-        }
-
-        //<editor-fold desc="imageSocialMedia Click">
         holder.imageSocialMedia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showBottomSheet();
             }
         });
-        //</editor-fold>
-
-        holder.textCloudContactName.setText(displayName);
 
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,9 +97,7 @@ class ExpandableContactListAdapter extends RecyclerView
                         .text_cloud_contact_name);
 
                 Bundle bundle = new Bundle();
-//                bundle.putString(AppConstants.EXTRA_PM_ID, displayNamePmId);
-                bundle.putString(AppConstants.EXTRA_PM_ID, arrayListDbMobileNumbers.get((Integer)
-                        view.getTag()).getMpmCloudPmId());
+                bundle.putString(AppConstants.EXTRA_PM_ID, contact.getTempRcpId());
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, phonebookId);
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
                 if (textCloudName.getVisibility() == View.VISIBLE) {
@@ -163,7 +113,7 @@ class ExpandableContactListAdapter extends RecyclerView
 
     @Override
     public int getItemCount() {
-        return arrayListDbMobileNumbers.size();
+        return arrayListUserContact.size();
     }
 
     private void showBottomSheet() {
@@ -189,9 +139,7 @@ class ExpandableContactListAdapter extends RecyclerView
 
     }
 
-    //<editor-fold desc="View Holders">
-
-    class ExpandableContactListViewHolder extends RecyclerView.ViewHolder {
+    public class AllContactViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
@@ -218,7 +166,7 @@ class ExpandableContactListAdapter extends RecyclerView
         @BindView(R.id.button_invite)
         Button buttonInvite;
 
-        ExpandableContactListViewHolder(View itemView) {
+        AllContactViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
@@ -234,9 +182,11 @@ class ExpandableContactListAdapter extends RecyclerView
             textContactNumber.setTextColor(colorPineGreen);
 
             recyclerViewMultipleRc.setVisibility(View.GONE);
+            linearRating.setVisibility(View.GONE);
             buttonInvite.setVisibility(View.GONE);
+            textContactName.setVisibility(View.GONE);
 
-            LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
+          /*  LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
             // Filled stars
             Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(context, R
                     .color.vivid_yellow));
@@ -245,14 +195,9 @@ class ExpandableContactListAdapter extends RecyclerView
                     android.R.color.darker_gray));
             // Empty stars
             Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(context,
-                    android.R.color.darker_gray));
-
-            relativeRowAllContact.setBackgroundColor(ContextCompat.getColor(context, R.color
-                    .colorLightGrayishCyan1));
+                    android.R.color.darker_gray));*/
 
         }
     }
-
-    //</editor-fold>
 
 }

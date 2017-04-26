@@ -1,11 +1,8 @@
 package com.rawalinfocom.rcontact.contacts;
 
 
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -103,10 +100,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ProgressWheel progressAllContact;
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
-    @BindView(R.id.scroller_all_contact)
+   /* @BindView(R.id.scroller_all_contact)
     VerticalRecyclerViewFastScroller scrollerAllContact;
     @BindView(R.id.title_indicator)
-    ColorGroupSectionTitleIndicator titleIndicator;
+    ColorGroupSectionTitleIndicator titleIndicator;*/
     @BindView(R.id.text_total_contacts)
     TextView textTotalContacts;
 
@@ -229,7 +226,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             rootView = inflater.inflate(R.layout.fragment_all_contacts, container, false);
             ButterKnife.bind(this, rootView);
 
-            // Connect the recycler to the scroller (to let the scroller scroll the list)
+          /*  // Connect the recycler to the scroller (to let the scroller scroll the list)
             scrollerAllContact.setRecyclerView(recyclerViewContactList);
 
             // Connect the scroller to the recycler (to let the recycler scroll the scroller's
@@ -237,7 +234,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             recyclerViewContactList.setOnScrollListener(scrollerAllContact.getOnScrollListener());
 
             // Connect the section indicator to the scroller
-            scrollerAllContact.setSectionIndicator(titleIndicator);
+            scrollerAllContact.setSectionIndicator(titleIndicator);*/
 
             setRecyclerViewLayoutManager(recyclerViewContactList);
 
@@ -267,6 +264,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         try {
             if (error == null && getActivity() != null) {
+
                 //<editor-fold desc="REQ_UPLOAD_CONTACTS">
 
                 if (serviceType.contains(WsConstants.REQ_UPLOAD_CONTACTS)) {
@@ -307,7 +305,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                  /* Call uploadContact api if there is more data to sync */
                         if (nextNumber < arrayListContactId.size()) {
-                            phoneBookOperations();
+//                            phoneBookOperations();
                             textTotalContacts.setText(previouslySyncedData + " Contacts");
                         } else {
                             textTotalContacts.setText(arrayListContactId.size() + " Contacts");
@@ -319,10 +317,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                                     .currentTimeMillis() - 10000));
 //                        sendBroadCastToStartCallLogInsertion();
                             Utils.setBooleanPreference(getActivity(), AppConstants
-                                    .PREF_SYNC_CALL_LOG, true);
+                                    .PREF_CONTACT_SYNCED, true);
 
-                            Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
-                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+                            Intent localBroadcastIntent = new Intent(AppConstants
+                                    .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
+                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                                    .getInstance(getActivity());
                             myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
                         }
 
@@ -417,7 +417,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     @Override
     public void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(cursorListReceiver);
+//        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(cursorListReceiver);
     }
 
     @Override
@@ -457,12 +457,12 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         initSwipe();
 
-        ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity(),
+      /*  ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity(),
                 AppConstants.PREF_CONTACT_ID_SET);
         if (arrayListContactIds != null) {
             arrayListContactId = new ArrayList<>(arrayListContactIds);
             if (rContactApplication.getArrayListAllPhoneBookContacts().size() <= 0) {
-                phoneBookOperations();
+//                phoneBookOperations();
             } else {
                 progressAllContact.setVisibility(View.GONE);
                 arrayListPhoneBookContacts = rContactApplication.getArrayListAllPhoneBookContacts();
@@ -475,7 +475,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             Intent contactIdFetchService = new Intent(getActivity(), com.rawalinfocom.rcontact
                     .services.ContactIdFetchService.class);
             getActivity().startService(contactIdFetchService);
-        }
+        }*/
 
     }
 
@@ -791,6 +791,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     ArrayList<ImAccount> imAccountsList = new ArrayList<>();
                     for (int j = 0; j < arrayListImAccount.size(); j++) {
                         ImAccount imAccount = new ImAccount();
+                        imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
                         imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
 //                    imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                         imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
@@ -1010,19 +1011,19 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     //</editor-fold>
 
     //<editor-fold desc="Local Broadcast Receiver">
-    private BroadcastReceiver cursorListReceiver = new BroadcastReceiver() {
+ /*   private BroadcastReceiver cursorListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String message = intent.getStringExtra(AppConstants.EXTRA_LOCAL_BROADCAST_MESSAGE);
             if (StringUtils.equals(message, WsConstants.RESPONSE_STATUS_TRUE)) {
-                /*HashSet<String> retrievedContactIdSet = (HashSet<String>) Utils
+                *//*HashSet<String> retrievedContactIdSet = (HashSet<String>) Utils
                         .getStringSetPreference(getActivity(), AppConstants
-                                .PREF_CONTACT_ID_SET);*/
+                                .PREF_CONTACT_ID_SET);*//*
                 ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity
                         (), AppConstants.PREF_CONTACT_ID_SET);
                 if (arrayListContactIds != null) {
                     arrayListContactId = new ArrayList<>(arrayListContactIds);
-                    phoneBookOperations();
+//                    phoneBookOperations();
                 } else {
                     Log.e("Local onReceive: ", "Error while Retriving Ids!");
                 }
@@ -1030,7 +1031,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                 Log.e("Local onReceive: ", "Error while Retriving Ids!");
             }
         }
-    };
+    };*/
     //</editor-fold>
 
     //<editor-fold desc="Phone book Data Cursor">
@@ -1177,9 +1178,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.TYPE))));
 //                    phoneNumber.setPhonePublic(1);
-                    profileData.setProfileUrl(getPhotoUrlFromRawId(Utils.getFormattedNumber(getActivity(),
-                            contactNumberCursor.getString(contactNumberCursor.getColumnIndex
-                                    (ContactsContract.CommonDataKinds.Phone.NUMBER)))));
+                    profileData.setProfileUrl(getPhotoUrlFromRawId(Utils.getFormattedNumber
+                            (getActivity(),
+                                    contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                            (ContactsContract.CommonDataKinds.Phone.NUMBER)))));
                     phoneNumber.setPhonePublic(getResources().getInteger(R.integer
                             .privacy_my_contact));
 

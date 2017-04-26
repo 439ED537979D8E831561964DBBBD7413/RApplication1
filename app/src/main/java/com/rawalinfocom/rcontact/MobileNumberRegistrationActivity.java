@@ -1,9 +1,15 @@
 package com.rawalinfocom.rcontact;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -63,6 +69,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
     RippleView rippleSubmit;
 
     Country selectedCountry;
+    private String[] requiredPermissions = {android.Manifest.permission.READ_SMS, Manifest
+            .permission.RECEIVE_SMS};
 
     //<editor-fold desc="Override Methods">
 
@@ -71,7 +79,6 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mobile_number_registration);
         ButterKnife.bind(this);
-
         // Hide the status bar.
         if (Utils.hasJellybean()) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager
@@ -103,27 +110,58 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
     @Override
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
-            case R.id.ripple_submit: {
-                if (selectedCountry == null) {
-                    selectedCountry = new Country();
-                    selectedCountry.setCountryId("1");
-                    selectedCountry.setCountryCode("IN");
-                    selectedCountry.setCountryCodeNumber("+91");
-                    selectedCountry.setCountryName("India");
-                    selectedCountry.setCountryNumberMaxDigits("10");
+            case R.id.ripple_submit:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
+                } else {
+                    prepareToReceiveOtp();
                 }
-                if (StringUtils.length(selectedCountry.getCountryNumberMaxDigits()) > 0) {
-                    if (inputNumber.getText().length() != Integer.parseInt(selectedCountry
-                            .getCountryNumberMaxDigits())) {
-                        Utils.showErrorSnackBar(MobileNumberRegistrationActivity.this,
-                                relativeRootMobileRegistration, getString(R.string
-                                        .error_invalid_number));
-                    } else {
-                        sendOtp();
-                    }
-                    break;
-                }
+                break;
+
+        }
+    }
+
+    private void prepareToReceiveOtp() {
+        if (selectedCountry == null) {
+            selectedCountry = new Country();
+            selectedCountry.setCountryId("1");
+            selectedCountry.setCountryCode("IN");
+            selectedCountry.setCountryCodeNumber("+91");
+            selectedCountry.setCountryName("India");
+            selectedCountry.setCountryNumberMaxDigits("10");
+        }
+        if (StringUtils.length(selectedCountry.getCountryNumberMaxDigits()) > 0) {
+            if (inputNumber.getText().length() != Integer.parseInt(selectedCountry
+                    .getCountryNumberMaxDigits())) {
+                Utils.showErrorSnackBar(MobileNumberRegistrationActivity.this,
+                        relativeRootMobileRegistration, getString(R.string
+                                .error_invalid_number));
+            } else {
+                sendOtp();
             }
+
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute(String[] permissions, int requestCode) {
+        boolean READ_SMS = ContextCompat.checkSelfPermission(MobileNumberRegistrationActivity.this, permissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;
+        boolean RECEIVE_SMS = ContextCompat.checkSelfPermission(MobileNumberRegistrationActivity.this, permissions[1]) !=
+                PackageManager.PERMISSION_GRANTED;
+        if (READ_SMS || RECEIVE_SMS) {
+            requestPermissions(permissions, requestCode);
+        } else {
+            prepareToReceiveOtp();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == AppConstants.READ_SMS && permissions[0].equals(Manifest.permission
+                .READ_SMS) && permissions[1].equals(Manifest.permission.RECEIVE_SMS)) {
+            prepareToReceiveOtp();
         }
     }
 

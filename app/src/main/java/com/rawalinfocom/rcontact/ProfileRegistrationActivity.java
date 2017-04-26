@@ -10,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
@@ -192,16 +191,27 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
         gpsTracker = new GPSTracker(this, null);
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+       /* if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
                 .ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission
                     .ACCESS_FINE_LOCATION}, AppConstants
                     .MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         } else {
             if (Utils.isLocationEnabled(this)) {
-               /* latitude = gpsTracker.getLatitude();
+               *//* latitude = gpsTracker.getLatitude();
                 longitude = gpsTracker.getLongitude();
-                getCityName();*/
+                getCityName();*//*
+                getLocationDetail();
+            } else {
+                gpsTracker.showSettingsAlert();
+            }
+        } */
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+                .ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (Utils.isLocationEnabled(this)) {
+                       /* latitude = gpsTracker.getLatitude();
+                        longitude = gpsTracker.getLongitude();
+                        getCityName();*/
                 getLocationDetail();
             } else {
                 gpsTracker.showSettingsAlert();
@@ -797,6 +807,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 address.setAmAddressType(arrayListAddress.get(j).getAddressType());
                 address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
                 address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
+                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
 //                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                 address.setRcProfileMasterPmId(userProfileRegistered.getPmId());
                 addressList.add(address);

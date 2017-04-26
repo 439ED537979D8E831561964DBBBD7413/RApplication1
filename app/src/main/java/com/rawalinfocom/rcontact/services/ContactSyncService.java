@@ -26,8 +26,8 @@ public class ContactSyncService extends Service implements WsResponseListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true,
-                new PhoneContentObserver(this, new Handler()));
+//        getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true,
+//                new PhoneContentObserver(this, new Handler()));
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -53,8 +53,7 @@ public class ContactSyncService extends Service implements WsResponseListener {
             //</editor-fold>
 
         } else {
-            if(error.getLocalizedMessage() != null)
-            {
+            if (error.getLocalizedMessage() != null) {
                 Log.e("Sync Service: ", error.getLocalizedMessage());
             }
         }

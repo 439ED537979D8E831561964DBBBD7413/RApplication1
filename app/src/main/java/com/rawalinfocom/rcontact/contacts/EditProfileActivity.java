@@ -1662,6 +1662,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             for (int j = 0; j < arrayListAddress.size(); j++) {
                 Address address = new Address();
                 address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
+                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
                 address.setAmState(arrayListAddress.get(j).getState());
                 address.setAmCity(arrayListAddress.get(j).getCity());
                 address.setAmCountry(arrayListAddress.get(j).getCountry());
@@ -1791,7 +1792,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                 email.setEmPublic(Integer.parseInt(textIsPublic.getText().toString()));
             } else {
-                email.setEmPublic(1);
+                email.setEmPublic(getResources().getInteger(R.integer.privacy_my_contact));
             }
 
             arrayListNewEmail.add(email);
@@ -1817,7 +1818,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                 phoneNumber.setPhonePublic(Integer.parseInt(textIsPublic.getText().toString()));
             } else {
-                phoneNumber.setPhonePublic(1);
+                phoneNumber.setPhonePublic(getResources().getInteger(R.integer.privacy_my_contact));
             }
 
 
@@ -1860,12 +1861,6 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     .checkbox_hide_year);
             RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
                     .id.relative_row_edit_profile);
-            if (eventDate.getText().toString().length() > 0) {
-                event.setEventDateTime(Utils.convertDateFormat(eventDate.getText()
-                        .toString(), EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
-                event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString(),
-                        EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
-            }
 //                    event.setEventDateTime(eventDate.getText().toString());
             event.setEventType((String) eventType.getSelectedItem());
             event.setIsYearHidden(checkboxHideYear.isChecked() ? 1 : 0);
@@ -1874,10 +1869,16 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                 event.setEventPublic(Integer.parseInt(textIsPublic.getText().toString()));
             } else {
-                event.setEventPublic(1);
+                event.setEventPublic(getResources().getInteger(R.integer.privacy_my_contact));
+            }
+            if (eventDate.getText().toString().length() > 0) {
+                event.setEventDateTime(Utils.convertDateFormat(eventDate.getText()
+                        .toString(), EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
+                event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString(),
+                        EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
+                arrayListNewEvent.add(event);
             }
 
-            arrayListNewEvent.add(event);
 
         }
 
@@ -1926,7 +1927,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                 imAccount.setIMAccountPublic(Integer.parseInt(textIsPublic.getText().toString()));
             } else {
-                imAccount.setIMAccountPublic(1);
+                imAccount.setIMAccountPublic(getResources().getInteger(R.integer.privacy_my_contact));
             }
 
             arrayListNewImAccount.add(imAccount);
@@ -1995,7 +1996,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                 address.setAddPublic(Integer.parseInt(textIsPublic.getText().toString()));
             } else {
-                address.setAddPublic(1);
+                address.setAddPublic(getResources().getInteger(R.integer.privacy_my_contact));
             }
 
             arrayListNewAddress.add(address);

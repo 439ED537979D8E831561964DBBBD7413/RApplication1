@@ -61,7 +61,7 @@ public class PhoneContentObserver extends ContentObserver {
     public void onChange(boolean selfChange, Uri uri) {
         super.onChange(selfChange, uri);
         Log.i("onChange", uri.toString());
-        if (ContactsContract.Contacts.CONTENT_URI.toString().contains(uri.toString())) {
+     /*   if (ContactsContract.Contacts.CONTENT_URI.toString().contains(uri.toString())) {
 
             Cursor cursor = phoneBookContacts.getUpdatedContacts(String.valueOf(System
                     .currentTimeMillis() - 10000));
@@ -153,13 +153,13 @@ public class PhoneContentObserver extends ContentObserver {
 
                 
 
-              /*  if (!arrayListContactIds.contains(rawId)) {
+              *//*  if (!arrayListContactIds.contains(rawId)) {
                     arrayListContactIds.add(rawId);
                     Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
                             arrayListContactIds);
                     phoneBookOperations(rawId, String.valueOf(context
                             .getResources().getInteger(R.integer.sync_insert)));
-                }*/
+                }*//*
             }
 
             RContactApplication rContactApplication = (RContactApplication) context
@@ -167,7 +167,7 @@ public class PhoneContentObserver extends ContentObserver {
             rContactApplication.setArrayListAllPhoneBookContacts(new ArrayList<>());
             rContactApplication.setArrayListFavPhoneBookContacts(new ArrayList<>());
 
-        }
+        }*/
 
     }
 
