@@ -50,6 +50,8 @@ public class WsRequestObject {
     @JsonProperty("reply")
     private String reply;
 
+    int flag;
+
 
     private List<PrivacyDataItem> data;
 
@@ -572,6 +574,15 @@ public class WsRequestObject {
 
     public void setArrayListProfileVisit(ArrayList<ProfileVisit> arrayListProfileVisit) {
         this.arrayListProfileVisit = arrayListProfileVisit;
+    }
+
+    @JsonProperty("flag")
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
     }
 
     @JsonProperty("call_log")

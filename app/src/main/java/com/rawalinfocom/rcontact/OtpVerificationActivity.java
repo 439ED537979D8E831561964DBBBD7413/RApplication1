@@ -88,7 +88,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                     final String message = intent.getStringExtra("message");
                     if (StringUtils.length(message) == AppConstants.OTP_LENGTH)
                         inputOtp.setText(message);
-                        verifyOtp(message);
+                    verifyOtp(message);
                 }
             }
         };
@@ -155,7 +155,6 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                     OtpLog otpLogResponse = otpDetailResponse.getOtpLog();
 
                     TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(databaseHandler);
-
                     if (tableOtpLogDetails.getOtpCount() > 0 && tableOtpLogDetails
                             .getLastOtpDetails().getOldOtp().equalsIgnoreCase
                                     (otpLogResponse.getOldOtp())) {
@@ -365,7 +364,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         WsRequestObject otpObject = new WsRequestObject();
         otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
         otpObject.setMobileNumber(mobileNumber);
-
+        otpObject.setCmId(selectedCountry.getCountryId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,

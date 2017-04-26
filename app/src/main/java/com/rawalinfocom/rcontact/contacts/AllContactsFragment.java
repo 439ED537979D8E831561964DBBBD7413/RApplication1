@@ -305,7 +305,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                  /* Call uploadContact api if there is more data to sync */
                         if (nextNumber < arrayListContactId.size()) {
-                            phoneBookOperations();
+//                            phoneBookOperations();
                             textTotalContacts.setText(previouslySyncedData + " Contacts");
                         } else {
                             textTotalContacts.setText(arrayListContactId.size() + " Contacts");
@@ -317,7 +317,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                                     .currentTimeMillis() - 10000));
 //                        sendBroadCastToStartCallLogInsertion();
                             Utils.setBooleanPreference(getActivity(), AppConstants
-                                    .PREF_SYNC_CALL_LOG, true);
+                                    .PREF_CONTACT_SYNCED, true);
 
                             Intent localBroadcastIntent = new Intent(AppConstants
                                     .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
@@ -462,7 +462,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
         if (arrayListContactIds != null) {
             arrayListContactId = new ArrayList<>(arrayListContactIds);
             if (rContactApplication.getArrayListAllPhoneBookContacts().size() <= 0) {
-                phoneBookOperations();
+//                phoneBookOperations();
             } else {
                 progressAllContact.setVisibility(View.GONE);
                 arrayListPhoneBookContacts = rContactApplication.getArrayListAllPhoneBookContacts();
@@ -1023,7 +1023,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         (), AppConstants.PREF_CONTACT_ID_SET);
                 if (arrayListContactIds != null) {
                     arrayListContactId = new ArrayList<>(arrayListContactIds);
-                    phoneBookOperations();
+//                    phoneBookOperations();
                 } else {
                     Log.e("Local onReceive: ", "Error while Retriving Ids!");
                 }
