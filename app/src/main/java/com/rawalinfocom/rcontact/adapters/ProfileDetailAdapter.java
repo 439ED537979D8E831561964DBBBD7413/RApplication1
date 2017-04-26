@@ -4,25 +4,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.PrivacySettingPopupDialog;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
+import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.PrivacyDataItem;
+import com.rawalinfocom.rcontact.model.PrivacyEntityItem;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,52 +46,47 @@ import butterknife.ButterKnife;
  */
 
 public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdapter
-        .ProfileDetailViewHolder> {
+        .ProfileDetailViewHolder> implements PrivacySettingPopupDialog.DialogCallback {
 
 
     private Context context;
     private ArrayList<Object> arrayList;
-
     private int profileDetailType;
 
     private int colorBlack, colorPineGreen;
-
+    private PrivacySettingPopupDialog.DialogCallback listner;
     private boolean isOwnProfile = false;
+    private String pmId;
 
     public ProfileDetailAdapter(Context context, ArrayList<Object> arrayList, int
-            profileDetailType, boolean isOwnProfile) {
+            profileDetailType, boolean isOwnProfile, String pmId) {
         this.context = context;
         this.profileDetailType = profileDetailType;
         this.arrayList = arrayList;
         this.isOwnProfile = isOwnProfile;
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
+        this.pmId = pmId;
+        listner = this;
 
     }
 
     @Override
     public ProfileDetailViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_profile_detail,
+        View v;
+        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_profile_detail,
                 parent, false);
         return new ProfileDetailViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ProfileDetailViewHolder holder, int position) {
+        holder.buttonPrivacy.setVisibility(View.GONE);
         if (isOwnProfile) {
-            holder.buttonPrivacy.setVisibility(View.VISIBLE);
+            holder.viewOtherProfile.setVisibility(View.GONE);
         } else {
-            holder.buttonPrivacy.setVisibility(View.GONE);
+            holder.viewOwnProfile.setVisibility(View.GONE);
         }
-        holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "Privacy Button Clicked", Toast.LENGTH_SHORT).show();
-                PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(context);
-                privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
-                privacySettingPopupDialog.showDialog();
-            }
-        });
         switch (profileDetailType) {
             case AppConstants.PHONE_NUMBER:
                 displayPhoneNumber(holder, position);
@@ -115,14 +120,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
     }
 
-    private void displayPhoneNumber(ProfileDetailViewHolder holder, int position) {
-        ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
+    private void displayPhoneNumber(ProfileDetailViewHolder holder, final int position) {
+        final ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                 arrayList.get(position);
         String number = phoneNumber.getPhoneNumber();
-        holder.textSub.setText(phoneNumber.getPhoneType());
-        holder.textSub.setVisibility(View.VISIBLE);
+        holder.getTextSub(isOwnProfile).setText(phoneNumber.getPhoneType());
+        holder.getTextSub(isOwnProfile).setVisibility(View.VISIBLE);
 
-        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(context, "Copied Number", ((TextView) view).getText()
@@ -136,36 +141,81 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         int pbRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(phoneNumber.getPbRcpType(),
                 String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_secondary))));
-
+        final ProfileDetailViewHolder viewHodler = holder;
         if (pbRcpType == context.getResources().getInteger(R.integer.rcp_type_primary)) {
-            holder.textMain.setText(number + " ◊");
-            holder.textMain.setTextColor(colorPineGreen);
+            holder.getTextMain(isOwnProfile).setText(number + " ◊");
+            holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
+            holder.buttonPrivacy.setVisibility(View.GONE);
         } else if (pbRcpType == context.getResources().getInteger(R.integer.rcp_type_secondary)) {
-            holder.textMain.setText(number);
-            holder.textMain.setTextColor(colorPineGreen);
+            holder.getTextMain(isOwnProfile).setText(number);
+            holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
+            if (isOwnProfile) {
+                switch (phoneNumber.getPhonePublic()) {
+                    case 1:
+                        //everyone
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
+                        break;
+                    case 2:
+                        //my contacts
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_my_contact);
+                        break;
+                    case 3:
+                        //only me
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_onlyme);
+                        break;
+
+                }
+                holder.buttonPrivacy.setVisibility(View.VISIBLE);
+
+            } else {
+                holder.buttonPrivacy.setVisibility(View.GONE);
+                if (phoneNumber.getPhonePublic() == context.getResources().getInteger(R.integer.privacy_private)) {
+                    holder.imageView2.setVisibility(View.GONE);
+                    holder.buttonRequest.setVisibility(View.VISIBLE);
+                    holder.getTextMain(isOwnProfile).setText(number.replaceAll("(?s).", "X"));
+                }
+            }
+            holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.PHONE_NUMBER,
+                            position, phoneNumber.getPhonePublic(), phoneNumber.getPhoneId());
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.showDialog();
+                }
+            });
+            holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(context, "requesting profile", Toast.LENGTH_SHORT).show();
+                    int pmTo = Integer.parseInt(pmId);
+                    // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
+                    sendAccessRequest(pmTo, "pb_phone_number", phoneNumber.getPhoneId());
+                }
+            });
         } else {
-            holder.textMain.setText(number);
-            holder.textMain.setTextColor(colorBlack);
+            holder.getTextMain(isOwnProfile).setText(number);
+            holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         }
 
     }
 
-    private void displayEmail(final ProfileDetailViewHolder holder, int position) {
-        ProfileDataOperationEmail email = (ProfileDataOperationEmail) arrayList.get(position);
+    private void displayEmail(final ProfileDetailViewHolder holder, final int position) {
+        final ProfileDataOperationEmail email = (ProfileDataOperationEmail) arrayList.get(position);
         String emailId = email.getEmEmailId();
-        holder.textSub.setText(email.getEmType());
-        holder.textSub.setVisibility(View.VISIBLE);
+        holder.getTextSub(isOwnProfile).setText(email.getEmType());
+        holder.getTextSub(isOwnProfile).setVisibility(View.VISIBLE);
 
-        holder.imageView.setOnClickListener(new View.OnClickListener() {
+        holder.imageView1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
-                        holder.textMain.getText()));
+                        holder.getTextMain(isOwnProfile).getText()));
                 context.startActivity(Intent.createChooser(emailIntent, "Send Email Via:"));
             }
         });
 
-        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(context, "Copied Email", ((TextView) view).getText()
@@ -178,28 +228,72 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         int emRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(email.getEmRcpType(), String
                 .valueOf(context.getResources().getInteger(R.integer.rcp_type_secondary))));
-
+        final ProfileDetailViewHolder viewHodler = holder;
         if (emRcpType == context.getResources().getInteger(R.integer.rcp_type_primary)) {
-            holder.textMain.setText(emailId + " ◊");
-            holder.textMain.setTextColor(colorPineGreen);
+            holder.getTextMain(isOwnProfile).setText(emailId + " ◊");
+            holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
+            holder.buttonPrivacy.setVisibility(View.GONE);
         } else if (emRcpType == context.getResources().getInteger(R.integer
                 .rcp_type_secondary)) {
-            holder.textMain.setText(emailId);
-            holder.textMain.setTextColor(colorPineGreen);
+            holder.getTextMain(isOwnProfile).setText(emailId);
+            holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
+            if (isOwnProfile) {
+                switch (email.getEmPublic()) {
+                    case 1:
+                        //everyone
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
+                        break;
+                    case 2:
+                        //my contacts
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_my_contact);
+                        break;
+                    case 3:
+                        //only me
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_onlyme);
+                        break;
+
+                }
+                holder.buttonPrivacy.setVisibility(View.VISIBLE);
+            } else {
+                holder.buttonPrivacy.setVisibility(View.GONE);
+                if (email.getEmPublic() == context.getResources().getInteger(R.integer.privacy_private)) {
+                    holder.imageView2.setVisibility(View.GONE);
+                    holder.buttonRequest.setVisibility(View.VISIBLE);
+                    holder.getTextMain(isOwnProfile).setText(emailId.replaceAll("(?s).", "X"));
+                }
+            }
+            holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.EMAIL,
+                            position, email.getEmPublic(), email.getEmId());
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.showDialog();
+                }
+            });
+            holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(context, "requesting profile", Toast.LENGTH_SHORT).show();
+                    int pmTo = Integer.parseInt(pmId);
+                    // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
+                    sendAccessRequest(pmTo, "pb_email_id", email.getEmId());
+                }
+            });
         } else {
-            holder.textMain.setText(emailId);
-            holder.textMain.setTextColor(colorBlack);
+            holder.getTextMain(isOwnProfile).setText(emailId);
+            holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         }
 
 
     }
 
-    private void displayWebsite(final ProfileDetailViewHolder holder, int position) {
+    private void displayWebsite(final ProfileDetailViewHolder holder, final int position) {
 //        String website = (String) arrayList.get(position);
         ProfileDataOperationWebAddress webAddress = (ProfileDataOperationWebAddress) arrayList
                 .get(position);
 
-        holder.textSub.setVisibility(View.GONE);
+        holder.getTextSub(isOwnProfile).setVisibility(View.GONE);
 /*
         if (website.contains(";")) {
             String[] websiteSplit = website.split(";");
@@ -207,13 +301,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             rcpType = Integer.parseInt(websiteSplit[1]);
         }*/
 
-        holder.textMain.setText(webAddress.getWebAddress());
+        holder.getTextMain(isOwnProfile).setText(webAddress.getWebAddress());
 
-        holder.imageView.setOnClickListener(new View.OnClickListener() {
+        holder.imageView1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                String url = holder.textMain.getText().toString();
+                String url = holder.getTextMain(isOwnProfile).getText().toString();
                 if (!StringUtils.startsWithIgnoreCase(url, "http://") && !StringUtils
                         .startsWithIgnoreCase(url, "https://")) {
                     url = "http://" + url;
@@ -223,7 +317,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(context, "Copied Website", ((TextView) view).getText()
@@ -237,31 +331,32 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         int rcpType = Integer.parseInt(StringUtils.defaultIfEmpty(webAddress.getWebRcpType(),
                 String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_secondary))));
-
         if (rcpType == context.getResources().getInteger(R.integer
                 .rcp_type_local_phone_book)) {
-            holder.textMain.setTextColor(colorBlack);
+            holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         } else {
-            holder.textMain.setTextColor(colorPineGreen);
+            holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
         }
+
+
     }
 
-    private void displayAddress(final ProfileDetailViewHolder holder, int position) {
-        ProfileDataOperationAddress address = (ProfileDataOperationAddress) arrayList.get(position);
-        holder.textMain.setText(address.getFormattedAddress());
-        holder.textSub.setText(address.getAddressType());
-        holder.textSub.setVisibility(View.VISIBLE);
+    private void displayAddress(final ProfileDetailViewHolder holder, final int position) {
+        final ProfileDataOperationAddress address = (ProfileDataOperationAddress) arrayList.get(position);
+        holder.getTextMain(isOwnProfile).setText(address.getFormattedAddress());
+        holder.getTextSub(isOwnProfile).setText(address.getAddressType());
+        holder.getTextSub(isOwnProfile).setVisibility(View.VISIBLE);
 
-        holder.imageView.setOnClickListener(new View.OnClickListener() {
+        holder.imageView1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("google.navigation:q=" + holder.textMain.getText()));
+                        Uri.parse("google.navigation:q=" + holder.getTextMain(isOwnProfile).getText()));
                 context.startActivity(intent);
             }
         });
 
-        holder.textMain.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 Utils.copyToClipboard(context, "Copied Address", ((TextView) view).getText()
@@ -275,35 +370,123 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         int addressRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(address.getRcpType(),
                 String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_secondary))));
-
+        final ProfileDetailViewHolder viewHodler = holder;
         if (addressRcpType == context.getResources().getInteger(R.integer
                 .rcp_type_local_phone_book)) {
-            holder.textMain.setTextColor(colorBlack);
+            holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         } else {
-            holder.textMain.setTextColor(colorPineGreen);
+            holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
+            if (isOwnProfile) {
+
+                switch (address.getAddPublic()) {
+                    case 1:
+                        //everyone
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
+                        break;
+                    case 2:
+                        //my contacts
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_my_contact);
+                        break;
+                    case 3:
+                        //only me
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_onlyme);
+                        break;
+                }
+                holder.buttonPrivacy.setVisibility(View.VISIBLE);
+            } else {
+                holder.buttonPrivacy.setVisibility(View.GONE);
+                if (address.getAddPublic() == context.getResources().getInteger(R.integer.privacy_private)) {
+                    holder.imageView2.setVisibility(View.GONE);
+                    holder.buttonRequest.setVisibility(View.VISIBLE);
+                    holder.getTextMain(isOwnProfile).setText(address.getFormattedAddress().replaceAll("(?s).", "X"));
+                }
+            }
+            holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.ADDRESS,
+                            position, address.getAddPublic(), address.getAddId());
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.showDialog();
+                }
+            });
+            holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(context, "requesting profile", Toast.LENGTH_SHORT).show();
+                    int pmTo = Integer.parseInt(pmId);
+                    // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
+                    sendAccessRequest(pmTo, "pb_address", address.getAddId());
+                }
+            });
         }
+
 
     }
 
-    private void displayImAccount(final ProfileDetailViewHolder holder, int position) {
+    private void displayImAccount(final ProfileDetailViewHolder holder, final int position) {
         final ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount) arrayList
                 .get(position);
-        holder.textMain.setText(imAccount.getIMAccountDetails());
-        holder.textSub.setText(imAccount.getIMAccountProtocol());
+        holder.getTextMain(isOwnProfile).setText(imAccount.getIMAccountDetails());
+        holder.getTextSub(isOwnProfile).setText(imAccount.getIMAccountProtocol());
 
-//        holder.textSub.setVisibility(View.GONE);
+//        holder.textSub1.setVisibility(View.GONE);
 
         int imRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(imAccount.getIMRcpType(),
                 String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_secondary))));
 
         if (imRcpType == context.getResources().getInteger(R.integer.rcp_type_local_phone_book)) {
-            holder.textMain.setTextColor(colorBlack);
+            holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         } else {
-            holder.textMain.setTextColor(colorPineGreen);
+            holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
+            final ProfileDetailViewHolder viewHodler = holder;
+            if (isOwnProfile) {
+                holder.buttonPrivacy.setVisibility(View.VISIBLE);
+                switch (imAccount.getIMAccountPublic()) {
+                    case 1:
+                        //everyone
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
+                        break;
+                    case 2:
+                        //my contacts
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_my_contact);
+                        break;
+                    case 3:
+                        //only me
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_onlyme);
+                        break;
+
+                }
+            } else {
+                holder.buttonPrivacy.setVisibility(View.GONE);
+                if (imAccount.getIMAccountPublic() == context.getResources().getInteger(R.integer.privacy_private)) {
+                    holder.imageView2.setVisibility(View.GONE);
+                    holder.buttonRequest.setVisibility(View.VISIBLE);
+                    holder.getTextMain(isOwnProfile).setText(imAccount.getIMAccountDetails().replaceAll("(?s).", "X"));
+                }
+            }
+            holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner,
+                            AppConstants.IM_ACCOUNT, position, imAccount.getIMAccountPublic(), imAccount.getIMId());
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.showDialog();
+                }
+            });
+            holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(context, "requesting profile", Toast.LENGTH_SHORT).show();
+                    int pmTo = Integer.parseInt(pmId);
+                    // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
+                    sendAccessRequest(pmTo, "pb_im_accounts", imAccount.getIMId());
+                }
+            });
         }
 
-        holder.imageView.setOnClickListener(new View.OnClickListener() {
+        holder.imageView1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
@@ -328,10 +511,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             }
         });
+
     }
 
-    private void displayEvent(ProfileDetailViewHolder holder, int position) {
-        ProfileDataOperationEvent event = (ProfileDataOperationEvent) arrayList
+    private void displayEvent(ProfileDetailViewHolder holder, final int position) {
+        final ProfileDataOperationEvent event = (ProfileDataOperationEvent) arrayList
                 .get(position);
 
         String convertedDate;
@@ -344,27 +528,72 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                             "MMM, yyyy");
         }
 
-        holder.textMain.setText(convertedDate);
-        holder.textSub.setText(event.getEventType());
-        holder.textSub.setVisibility(View.VISIBLE);
+        holder.getTextMain(isOwnProfile).setText(convertedDate);
+        holder.getTextSub(isOwnProfile).setText(event.getEventType());
+        holder.getTextSub(isOwnProfile).setVisibility(View.VISIBLE);
 
         int eventRcType = Integer.parseInt(StringUtils.defaultIfEmpty(event.getEventRcType(),
                 String.valueOf(context.getResources().getInteger(R.integer
                         .rcp_type_secondary))));
 
-        if (eventRcType == context.getResources().getInteger(R.integer.rcp_type_cloud_phone_book)) {
-            holder.textMain.setTextColor(colorPineGreen);
+        if (eventRcType == context.getResources().getInteger(R.integer.rcp_type_local_phone_book)) {
+
+            holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         } else {
-            holder.textMain.setTextColor(colorBlack);
+            holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
+            if (isOwnProfile) {
+                holder.buttonPrivacy.setVisibility(View.VISIBLE);
+                switch (event.getEventPublic()) {
+                    case 1:
+                        //everyone
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
+                        break;
+                    case 2:
+                        //my contacts
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_my_contact);
+                        break;
+                    case 3:
+                        //only me
+                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_onlyme);
+                        break;
+
+                }
+            } else {
+                holder.buttonPrivacy.setVisibility(View.GONE);
+                if (event.getEventPublic() == context.getResources().getInteger(R.integer.privacy_private)) {
+                    holder.imageView2.setVisibility(View.GONE);
+                    holder.buttonRequest.setVisibility(View.VISIBLE);
+                    holder.getTextMain(isOwnProfile).setText(convertedDate.replaceAll("(?s).", "X"));
+                }
+            }
+            final ProfileDetailViewHolder viewHodler = holder;
+            holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.EVENT, position,
+                            event.getEventPublic(), event.getEventId());
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.showDialog();
+                }
+            });
+            holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(context, "requesting profile", Toast.LENGTH_SHORT).show();
+                    int pmTo = Integer.parseInt(pmId);
+                    // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
+                    sendAccessRequest(pmTo, "pb_event", event.getEventId());
+                }
+            });
         }
+
     }
 
-    private void displayGender(ProfileDetailViewHolder holder, int position) {
+    private void displayGender(ProfileDetailViewHolder holder, final int position) {
         String gender = (String) arrayList.get(position);
-        holder.textMain.setText(gender);
-        holder.textSub.setVisibility(View.GONE);
-
-        holder.textMain.setTextColor(colorBlack);
+        holder.getTextMain(isOwnProfile).setText(gender);
+        holder.getTextSub(isOwnProfile).setVisibility(View.GONE);
+        holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
     }
 
     public ArrayList<Object> getDetailList() {
@@ -376,26 +605,137 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         return arrayList.size();
     }
 
+    @Override
+    public void onSettingSaved(ProfileDetailViewHolder viewHolder, int whichItem, int newPrivacy, int itemPosition, int oldPrivacy, String cloudId) {
+        switch (newPrivacy) {
+            case 0:
+                //everyone
+                viewHolder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
+                break;
+            case 1:
+                //my contacts
+                viewHolder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_my_contact);
+                break;
+            case 2:
+                //only me
+                viewHolder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_onlyme);
+                break;
+
+        }
+        int pmId = Integer.parseInt(((BaseActivity) context).getUserPmId());
+        ;
+        WsRequestObject wsRequestObject = new WsRequestObject();
+
+        PrivacyEntityItem privacyEntityItem = new PrivacyEntityItem();
+        privacyEntityItem.setId(cloudId);
+        privacyEntityItem.setValue(newPrivacy + 1);
+        ArrayList<PrivacyEntityItem> privacyEntityItems = new ArrayList<>();
+        privacyEntityItems.add(privacyEntityItem);
+        ArrayList<PrivacyDataItem> privacyItems = new ArrayList<>();
+        PrivacyDataItem privacyDataItem = new PrivacyDataItem();
+        switch (whichItem) {
+            case AppConstants.PHONE_NUMBER:
+                privacyDataItem.setPbPhoneNumber(privacyEntityItems);
+                break;
+
+            case AppConstants.EMAIL:
+                privacyDataItem.setPbEmailId(privacyEntityItems);
+                break;
+
+            case AppConstants.ADDRESS:
+                privacyDataItem.setPbAddress(privacyEntityItems);
+                break;
+
+            case AppConstants.IM_ACCOUNT:
+                privacyDataItem.setPbIMAccounts(privacyEntityItems);
+                break;
+
+            case AppConstants.EVENT:
+                privacyDataItem.setPbEvent(privacyEntityItems);
+                break;
+        }
+        privacyItems.add(privacyDataItem);
+        wsRequestObject.setData(privacyItems);
+        wsRequestObject.setPmId(pmId);
+        if (Utils.isNetworkAvailable(context)) {
+            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    wsRequestObject, null, WsResponseObject.class, WsConstants
+                    .REQ_SET_PRIVACY_SETTING, context.getResources().getString(R.string.msg_please_wait), true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_SET_PRIVACY_SETTING);
+        } else {
+            //show no toast
+            Toast.makeText(context, context.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void sendAccessRequest(int toPMId, String carFiledType, String recordIndexId) {
+
+        WsRequestObject requestObj = new WsRequestObject();
+        requestObj.setCarPmIdTo(toPMId);
+        requestObj.setCarFiledType(carFiledType);
+        requestObj.setCarStatus(0);
+        requestObj.setCarMongoDbRecordIndex(recordIndexId);
+
+        if (Utils.isNetworkAvailable(context)) {
+            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    requestObj, null, WsResponseObject.class, WsConstants
+                    .REQ_PROFILE_PRIVACY_REQUEST, context.getResources().getString(R.string.msg_please_wait), true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+        } else {
+            //show no net
+            Toast.makeText(context, context.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public class ProfileDetailViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.text_main)
-        public TextView textMain;
+        public TextView textMain1;
         @BindView(R.id.text_sub)
-        TextView textSub;
+        TextView textSub1;
         @BindView(R.id.image_view)
-        ImageView imageView;
+        ImageView imageView1;
         @BindView(R.id.button_privacy)
         ImageView buttonPrivacy;
+        @BindView(R.id.view_own_profile)
+        LinearLayout viewOwnProfile;
+        @BindView(R.id.text_main1)
+        TextView textMain2;
+        @BindView(R.id.text_sub2)
+        TextView textSub2;
+        @BindView(R.id.button_request)
+        AppCompatButton buttonRequest;
+        @BindView(R.id.image_view1)
+        ImageView imageView2;
+        @BindView(R.id.view_other_profile)
+        LinearLayout viewOtherProfile;
+
+        TextView getTextMain(boolean isOwnProfile) {
+            if (isOwnProfile) {
+                return textMain1;
+            } else {
+                return textMain2;
+            }
+        }
+
+        TextView getTextSub(boolean isOwnProfile) {
+            if (isOwnProfile) {
+                return textSub1;
+            } else {
+                return textSub2;
+            }
+        }
 
         ProfileDetailViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textMain.setTypeface(Utils.typefaceRegular(context));
-            textSub.setTypeface(Utils.typefaceRegular(context));
+            textMain1.setTypeface(Utils.typefaceRegular(context));
+            textSub1.setTypeface(Utils.typefaceRegular(context));
+            textMain2.setTypeface(Utils.typefaceRegular(context));
+            textSub2.setTypeface(Utils.typefaceRegular(context));
         }
 
     }
-
 
 }

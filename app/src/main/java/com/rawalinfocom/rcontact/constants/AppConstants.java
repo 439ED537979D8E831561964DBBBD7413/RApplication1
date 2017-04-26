@@ -47,7 +47,7 @@ public class AppConstants {
 
     public static final int OTP_VALIDITY_DURATION = 20;
     public static final int OTP_LENGTH = 6;
-    public static boolean isProgressShowing =  false;
+    public static boolean isProgressShowing = false;
     public static boolean isBackgroundProcessStopped = false;
 
     //</editor-fold>
@@ -110,7 +110,6 @@ public class AppConstants {
     public static String EXTRA_CONTACT_PROFILE_IMAGE = "extra_contact_profile_image";
 
 
-
     //</editor-fold>
 
     //<editor-fold desc="Intent Action">
@@ -124,11 +123,10 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_PROFILE = "action_local_broadcast_profile";
     public static String ACTION_LOCAL_BROADCAST_DELETE_LOGS = "action_local_broadcast_delete_logs";
     public static String ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS = "action_local_broadcast_remove_call_logs";
-    public static String ACTION_LOCAL_BROADCAST_PROFILE_BLOCK= "action_local_broadcast_profile_block";
+    public static String ACTION_LOCAL_BROADCAST_PROFILE_BLOCK = "action_local_broadcast_profile_block";
     public static String ACTION_LOCAL_BROADCAST_UNBLOCK = "action_local_broadcast_unblock";
     public static String ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY = "action_local_broadcast_call_history_activity";
     public static String ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC = "action_local_broadcast_call_log_sync";
-
 
 
     //</editor-fold>
@@ -163,7 +161,7 @@ public class AppConstants {
     public static String PREF_SYNC_CALL_LOG = "pref_sync_call_log";
     public static String PREF_CALL_LOG_SIZE_WITH_DIFF = "pref_call_log_size_with_diff";
     public static String PREF_CALL_LOG_SYNCED = "pref_call_log_synced";
-    public static String PREF_BLOCK_CONTACT_LIST= "pref_block_contact_list";
+    public static String PREF_BLOCK_CONTACT_LIST = "pref_block_contact_list";
     public static String PREF_BLOCK_PROFILE = "pref_block_profile";
     public static String PREF_CALL_LOG_LIST = "pref_call_log_list";
     public static String PREF_CONTACT_LAST_SYNC_TIME = "pref_contact_last_sync_time";
@@ -190,7 +188,7 @@ public class AppConstants {
         AppConstants.isDualSimPhone = isDualSimPhone;
     }
 
-    public static boolean isCallLogFragment =  false;
+    public static boolean isCallLogFragment = false;
 
     public static boolean isCallLogFragment() {
         return isCallLogFragment;
@@ -216,6 +214,7 @@ public class AppConstants {
 
     //<editor-fold desc="Call-log constants">
     public static final int READ_LOGS = 725;
+    public static final int READ_SMS = 785;
     public static final int INCOMING_CALLS = 672;
     public static final int OUTGOING_CALLS = 609;
     public static final int MISSED_CALLS = 874;
@@ -223,8 +222,8 @@ public class AppConstants {
     public static final int INCOMING = 1;
     public static final int OUTGOING = 2;
     public static final int MISSED = 3;
-    public static final int BLOCKED =  4;
-    public static final int UNBLOCK =  0;
+    public static final int BLOCKED = 4;
+    public static final int UNBLOCK = 0;
 
     //</editor-fold>
 
@@ -239,4 +238,13 @@ public class AppConstants {
     public static final int COMMENT_TYPE_RUPDATES = 5;
     //</editor-fold>
 
+    //<editor-fold desc="Otp constants">
+
+    // SMS provider identification
+    public static final String SMS_ORIGIN = "NOTICE";
+
+    // special character to prefix the otp.
+    public static final String OTP_DELIMITER = "is ";
+
+    //</editor-fold>
 }
