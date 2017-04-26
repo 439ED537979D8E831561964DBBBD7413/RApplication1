@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,6 +19,16 @@ public class ProfileData {
     private ArrayList<ProfileDataOperation> operation;
     private ArrayList<String> rcpPmId;
     private String profileUrl;
+    private String tempFirstName;
+    private String tempLastName;
+    private String tempSufix;
+    private String tempPrefix;
+    private String tempMiddleName;
+    private String tempNumber;
+    private String tempRcpName;
+    private String tempRcpId;
+    private boolean tempIsRcp;
+
 
     @JsonProperty("pb_local_phonebook_id")
     public String getLocalPhoneBookId() {
@@ -69,5 +80,86 @@ public class ProfileData {
 
     public void setProfileUrl(String profileUrl) {
         this.profileUrl = profileUrl;
+    }
+
+    @JsonIgnore
+    public String getTempFirstName() {
+        return tempFirstName;
+    }
+
+    public void setTempFirstName(String tempFirstName) {
+        this.tempFirstName = tempFirstName;
+    }
+
+    @JsonIgnore
+    public String getTempLastName() {
+        return tempLastName;
+    }
+
+    public void setTempLastName(String tempLastName) {
+        this.tempLastName = tempLastName;
+    }
+
+    @JsonIgnore
+    public String getTempNumber() {
+        return tempNumber;
+    }
+
+    public void setTempNumber(String tempNumber) {
+        this.tempNumber = tempNumber;
+    }
+
+    @JsonIgnore
+    public String getTempSufix() {
+        return tempSufix;
+    }
+
+    public void setTempSufix(String tempSufix) {
+        this.tempSufix = tempSufix;
+    }
+
+    @JsonIgnore
+    public String getTempPrefix() {
+        return tempPrefix;
+    }
+
+    public void setTempPrefix(String tempPrefix) {
+        this.tempPrefix = tempPrefix;
+    }
+
+    @JsonIgnore
+    public String getTempMiddleName() {
+        return tempMiddleName;
+    }
+
+    public void setTempMiddleName(String tempMiddleName) {
+        this.tempMiddleName = tempMiddleName;
+    }
+
+    @JsonIgnore
+    public boolean getTempIsRcp() {
+        return tempIsRcp;
+    }
+
+    public void setTempIsRcp(boolean tempIsRcp) {
+        this.tempIsRcp = tempIsRcp;
+    }
+
+    @JsonIgnore
+    public String getTempRcpName() {
+        return tempRcpName;
+    }
+
+    public void setTempRcpName(String tempRcpName) {
+        this.tempRcpName = tempRcpName;
+    }
+
+    @JsonIgnore
+    public String getTempRcpId() {
+        return tempRcpId;
+    }
+
+    public void setTempRcpId(String tempRcpId) {
+        this.tempRcpId = tempRcpId;
     }
 }
