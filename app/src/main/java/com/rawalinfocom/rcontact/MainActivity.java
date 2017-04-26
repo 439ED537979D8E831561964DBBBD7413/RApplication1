@@ -1,6 +1,5 @@
 package com.rawalinfocom.rcontact;
 
-import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
@@ -64,7 +63,6 @@ import com.rawalinfocom.rcontact.notifications.RatingHistory;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
 import com.rawalinfocom.rcontact.services.CallLogIdFetchService;
-import com.rawalinfocom.rcontact.services.ContactSyncService;
 import com.rawalinfocom.rcontact.sms.SmsFragment;
 
 import org.apache.commons.lang3.StringUtils;
@@ -338,7 +336,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 }
             }
             //</editor-fold>
-            else if(serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)){
+            else if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)) {
                 WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
                 if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase
                         (callLogInsertionResponse
@@ -356,12 +354,10 @@ public class MainActivity extends BaseActivity implements NavigationView
 
                     } else {
                         ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
-                        if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0)
-                        {
+                        if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
                             insertServiceCall(callLogTypeArrayList);
                             logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
-                        }
-                        else {
+                        } else {
 //                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
                             Utils.setBooleanPreference(this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, true);
@@ -702,17 +698,17 @@ public class MainActivity extends BaseActivity implements NavigationView
             int indexToBeginSync = Utils.getIntegerPreference(this, AppConstants
                     .PREF_CALL_LOG_SYNCED_COUNT, 0);
             ArrayList<String> tempIdsList = new ArrayList<>();
-            for(int i = indexToBeginSync; i<callLogsIdsList.size(); i++){
-                    String ids =  callLogsIdsList.get(i);
-                    tempIdsList.add(ids);
+            for (int i = indexToBeginSync; i < callLogsIdsList.size(); i++) {
+                String ids = callLogsIdsList.get(i);
+                tempIdsList.add(ids);
             }
 
-            if(tempIdsList.size() > LIST_PARTITION_COUNT){
+            if (tempIdsList.size() > LIST_PARTITION_COUNT) {
                 for (ArrayList<String> partition : chopped(tempIdsList, LIST_PARTITION_COUNT)) {
                     // do something with partition
                     fetchCallLogsFromIds(partition);
                 }
-            }else{
+            } else {
                 fetchCallLogsFromIds(tempIdsList);
             }
 
@@ -807,7 +803,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 }
             }
             syncCallLogDataToServer(callLogTypeArrayListMain);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -838,9 +834,10 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         }
     }
+
     private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
 
-        if(Utils.isNetworkAvailable(MainActivity.this)){
+        if (Utils.isNetworkAvailable(MainActivity.this)) {
             WsRequestObject deviceDetailObject = new WsRequestObject();
             deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
             if (Utils.isNetworkAvailable(this)) {
