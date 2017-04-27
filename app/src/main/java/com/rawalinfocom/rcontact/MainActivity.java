@@ -284,9 +284,9 @@ public class MainActivity extends BaseActivity implements NavigationView
             startActivityIntent(MainActivity.this, TimelineActivity.class, null);
         } else if (id == R.id.nav_user_events) {
             startActivityIntent(MainActivity.this, EventsActivity.class, null);
-        } else if (id == R.id.nav_blocked_contacts) {
+        } /*else if (id == R.id.nav_blocked_contacts) {
             startActivityIntent(this, BlockContactListActivity.class, new Bundle());
-        } else if (id == R.id.nav_user_rating_history) {
+        } */else if (id == R.id.nav_user_rating_history) {
             startActivityIntent(this, RatingHistory.class, new Bundle());
         }
 
@@ -741,6 +741,9 @@ public class MainActivity extends BaseActivity implements NavigationView
                 fetchCallLogsFromIds(tempIdsList);
             }
 
+        }else {
+            Utils.setBooleanPreference(this, AppConstants
+                    .PREF_CALL_LOG_SYNCED, true);
         }
     }
 

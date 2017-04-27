@@ -203,7 +203,9 @@ public class SmsFragment extends BaseFragment implements LoaderManager.LoaderCal
 
         @Override
         protected Void doInBackground(Void... params) {
-            loadData(cursorMain);
+            if(cursorMain.getCount() > 0){
+                loadData(cursorMain);
+            }
             return null;
         }
 
@@ -246,7 +248,10 @@ public class SmsFragment extends BaseFragment implements LoaderManager.LoaderCal
             arrayListCallLogHeader =  rContactApplication.getArrayListSmsLogsHeaders();
             if(arrayListCallLogHeader!=null && arrayListCallLogHeader.size()>0 &&
                     arrayListObjectSmsLogs!=null && arrayListObjectSmsLogs.size()>0){
+                textNoSmsFound.setVisibility(View.VISIBLE);
                 setAdapter();
+            }else{
+                textNoSmsFound.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -326,8 +331,6 @@ public class SmsFragment extends BaseFragment implements LoaderManager.LoaderCal
             }
             cursor.close();
 
-        } else {
-            Toast.makeText(getActivity(), "No message to show", Toast.LENGTH_SHORT).show();
         }
 
         makeData(smsDataTypeList);
