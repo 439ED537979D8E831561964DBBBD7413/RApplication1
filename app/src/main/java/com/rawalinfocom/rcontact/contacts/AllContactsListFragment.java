@@ -799,7 +799,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             switch (data.getString(mimeTypeIdx)) {
                 case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
-                    profileData.setTempNumber(data.getString(phoneIdx));
+                    profileData.setTempNumber(Utils.getFormattedNumber(getActivity(), data
+                            .getString(phoneIdx)));
                     break;
                 case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
                     profileData.setTempFirstName(data.getString(givenNameIdx));
