@@ -89,7 +89,6 @@ public class MainActivity extends BaseActivity implements NavigationView
     NavigationView navigationView;
 
     TabLayout tabMain;
-
     ContactsFragment contactsFragment;
     CallLogFragment callLogFragment;
     SmsFragment smsFragment;
@@ -107,6 +106,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     MaterialDialog permissionConfirmationDialog;
     private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
             .permission.READ_CALL_LOG};
+    boolean isCompaseIcon = false;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -457,6 +457,10 @@ public class MainActivity extends BaseActivity implements NavigationView
         unRegisterLocalBroadCastReceiver();
         Utils.setBooleanPreference(this, AppConstants
                 .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
+
+        Utils.setBooleanPreference(this, AppConstants
+                .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
+
     }
 
     //</editor-fold>
@@ -482,7 +486,11 @@ public class MainActivity extends BaseActivity implements NavigationView
             @Override
             public void onClick(View view) {
 //                Snackbar.make(view, "Dial Pad", Snackbar.LENGTH_SHORT).show();
-                openDialer();
+                if(!isCompaseIcon)
+                    openDialer();
+                else
+                    openSMSComposerPage();
+//                    Toast.makeText(MainActivity.this,"open compose sms page",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -527,6 +535,21 @@ public class MainActivity extends BaseActivity implements NavigationView
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    private void openSMSComposerPage(){
+
+        Intent intent = new Intent("android.intent.action.VIEW");
+
+        /** creates an sms uri */
+        Uri data = Uri.parse("sms:");
+
+        /** Setting sms uri to the intent */
+        intent.setData(data);
+
+        /** Initiates the SMS compose screen, because the activity contain ACTION_VIEW and sms uri */
+        startActivity(intent);
 
     }
 
@@ -628,14 +651,20 @@ public class MainActivity extends BaseActivity implements NavigationView
         switch (tabPosition) {
             case 0:
                 showAddToContact(false);
+                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_floating_dial_pad));
+                isCompaseIcon = false;
                 replaceFragment(contactsFragment);
                 break;
             case 1:
                 showAddToContact(true);
+                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_floating_dial_pad));
+                isCompaseIcon = false;
                 replaceFragment(callLogFragment);
                 break;
             case 2:
                 showAddToContact(false);
+                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_mode_edit));
+                isCompaseIcon = true;
                 replaceFragment(smsFragment);
                 break;
         }
