@@ -39,6 +39,7 @@ public class RContactApplication extends Application {
 
     ArrayList<SmsDataType> arrayListSmsLogType;
     ArrayList<Object> arrayListObjectSmsLogs;
+    ArrayList<String> arrayListSmsLogsHeaders;
 
 
     @Override
@@ -56,6 +57,9 @@ public class RContactApplication extends Application {
         arrayListcallLogsHeaders = new ArrayList<>();
         arrayListObjectCallLogs =  new ArrayList<>();
         arrayListCallLogType =  new ArrayList<>();
+
+        arrayListObjectSmsLogs = new ArrayList<>();
+        arrayListSmsLogsHeaders =  new ArrayList<>();
 
         // Facebook Initialization
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -184,5 +188,13 @@ public class RContactApplication extends Application {
 
     public void setArrayListObjectSmsLogs(ArrayList<Object> arrayListObjectSmsLogs) {
         this.arrayListObjectSmsLogs = arrayListObjectSmsLogs;
+    }
+
+    public ArrayList<String> getArrayListSmsLogsHeaders() {
+        return arrayListSmsLogsHeaders;
+    }
+
+    public void setArrayListSmsLogsHeaders(ArrayList<String> arrayListSmsLogsHeaders) {
+        this.arrayListSmsLogsHeaders = arrayListSmsLogsHeaders;
     }
 }
