@@ -31,8 +31,8 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.contacts.AllContactsFragment;
 import com.rawalinfocom.rcontact.contacts.AllContactsListFragment;
+import com.rawalinfocom.rcontact.contacts.FavoritesFragment;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
@@ -47,7 +47,6 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
-import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
@@ -160,7 +159,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 break;
             case FOOTER:
                 ContactFooterViewHolder contactFooterViewHolder = (ContactFooterViewHolder) holder;
-                configureFooterViewHolder(contactFooterViewHolder, position);
+                configureFooterViewHolder(contactFooterViewHolder);
                 break;
         }
 
@@ -281,21 +280,21 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.textCloudContactName.setVisibility(View.VISIBLE);
             holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
             holder.buttonInvite.setVisibility(View.GONE);
-            holder.imageSocialMedia.setVisibility(View.VISIBLE);
+//            holder.imageSocialMedia.setVisibility(View.VISIBLE);
             holder.relativeRowAllContact.setTag(profileData.getTempRcpId());
             if (StringUtils.contains(profileData.getTempRcpName(), ",")) {
                 holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
                 holder.textCloudContactName.setText(" (" + String.valueOf(StringUtils.countMatches
                         (profileData.getTempRcpName(), ",") + 1) + " RC)");
                 holder.buttonInvite.setVisibility(View.GONE);
-                holder.imageSocialMedia.setVisibility(View.GONE);
+//                holder.imageSocialMedia.setVisibility(View.GONE);
             }
         } else {
             holder.relativeRowAllContact.setTag("-1");
             holder.textCloudContactName.setVisibility(View.GONE);
             holder.textCloudContactName.setText("");
             holder.buttonInvite.setVisibility(View.VISIBLE);
-            holder.imageSocialMedia.setVisibility(View.GONE);
+//            holder.imageSocialMedia.setVisibility(View.GONE);
         }
 
         if (fragment instanceof AllContactsListFragment) {
@@ -339,7 +338,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         holder.recyclerViewMultipleRc.setLayoutManager(new LinearLayoutManager
                                 (context));
                         ContactListExpandAdapter adapter = new ContactListExpandAdapter(context,
-                                arrayList, profileData.getLocalPhoneBookId());
+                                arrayList, profileData.getLocalPhoneBookId(), holder
+                                .textContactName.getText().toString());
                         holder.recyclerViewMultipleRc.setAdapter(adapter);
                     } else if (StringUtils.equalsAnyIgnoreCase(String.valueOf(v.getTag()), "-1")) {
                         // Non Rcp
@@ -589,15 +589,23 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         holder.textHeader.setText(letter);
     }
 
-    private void configureFooterViewHolder(ContactFooterViewHolder holder, int position) {
+    private void configureFooterViewHolder(ContactFooterViewHolder holder) {
 //        String letter = (String) arrayListUserContact.get(position);
-        holder.textTotalContacts.setText(String.valueOf(arrayListUserContact.size()) + " Contacts");
+        if (fragment instanceof AllContactsListFragment) {
+            holder.textTotalContacts.setText((arrayListUserContact.size() - arrayListContactHeader
+                    .size() - 1) + " Contacts");
+        } else if (fragment instanceof FavoritesFragment) {
+            holder.textTotalContacts.setText((arrayListUserContact.size() -
+                    arrayListContactHeader
+                            .size()) + " Contacts");
+
+        }
     }
 
     private void displayNumber(AllContactViewHolder holder, ProfileData profileData, String
             contactDisplayName, int position) {
 
-        ArrayList<String> arrayListMobileNumbers = new ArrayList<>();
+       /* ArrayList<String> arrayListMobileNumbers = new ArrayList<>();
         for (int i = 0; i < profileData.getOperation().get(0).getPbPhoneNumber().size(); i++) {
             arrayListMobileNumbers.add(profileData.getOperation().get(0).getPbPhoneNumber().get
                     (i).getPhoneNumber());
@@ -713,7 +721,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (!isRcp && !Utils.isArraylistNullOrEmpty(profileData.getOperation().get(0)
                 .getPbEmailId())) {
             displayEmail(holder, profileData, displayNumber, contactDisplayName, position);
-        }
+        }*/
 
 
 
@@ -763,7 +771,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         /*TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping((
                 (BaseActivity) context).databaseHandler);*/
 
-        ArrayList<String> arrayListEmails = new ArrayList<>();
+       /* ArrayList<String> arrayListEmails = new ArrayList<>();
         for (int i = 0; i < profileData.getOperation().get(0).getPbEmailId().size(); i++) {
             arrayListEmails.add(profileData.getOperation().get(0).getPbEmailId().get
                     (i).getEmEmailId());
@@ -778,8 +786,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             boolean isRcp;
             if (arrayListDbEmailIds.size() > 0) {
                 displayEmailId = arrayListDbEmailIds.get(0).getEpmEmailId();
-              /*  String displayNamePmId = arrayListDbEmailIds.get(0).getEpmCloudPmId();
-                holder.relativeRowAllContact.setTag(displayNamePmId);*/
+              *//*  String displayNamePmId = arrayListDbEmailIds.get(0).getEpmCloudPmId();
+                holder.relativeRowAllContact.setTag(displayNamePmId);*//*
 
                 if (arrayListDbEmailIds.size() == 1) {
 
@@ -853,14 +861,14 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 displayName = "";
 //                holder.textContactNumber.setTextColor(colorBlack);
                 isRcp = false;
-            /* Display mobile number if Email Id is not rcp */
+            *//* Display mobile number if Email Id is not rcp *//*
                 if (displayNumber != null) {
                     displayEmailId = displayNumber;
                 }
 
             }
             holder.textCloudContactName.setText(displayName);
-             /*holder.textContactNumber.setText(displayEmailId);*/
+             *//*holder.textContactNumber.setText(displayEmailId);*//*
             if (displayNumber != null) {
                 holder.textContactNumber.setText(displayNumber);
             } else {
@@ -872,7 +880,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 holder.textContactNumber.setText(displayEmailId);
             }
 
-        }
+        }*/
 
     }
 
@@ -1036,6 +1044,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             recyclerViewMultipleRc.setVisibility(View.GONE);
             linearRating.setVisibility(View.GONE);
+            imageSocialMedia.setVisibility(View.GONE);
 
             LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
             // Filled stars

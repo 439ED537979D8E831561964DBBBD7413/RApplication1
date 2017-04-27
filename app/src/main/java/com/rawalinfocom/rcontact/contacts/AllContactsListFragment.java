@@ -13,7 +13,6 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
@@ -40,7 +39,6 @@ import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
-import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -96,7 +94,7 @@ import butterknife.ButterKnife;
 public class AllContactsListFragment extends BaseFragment implements LoaderManager
         .LoaderCallbacks<Cursor>, WsResponseListener {
 
-    private final int CONTACT_CHUNK = 5;
+    private final int CONTACT_CHUNK = 50;
 
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
@@ -363,6 +361,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         } else {
                             Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
                                     "All Contact Synced");
+                            Utils.setStringPreference(getActivity(), AppConstants
+                                    .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System
+                                    .currentTimeMillis() - 10000));
+                            Utils.setBooleanPreference(getActivity(), AppConstants
+                                    .PREF_CONTACT_SYNCED, true);
                             AsyncTask.execute(new Runnable() {
                                 @Override
                                 public void run() {
@@ -596,7 +599,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 syncContacts();
             }
         };
-        AsyncTask.execute(run);
+        if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
+            AsyncTask.execute(run);
+        }
+//        AsyncTask.execute(run);
     }
 
     @Override
@@ -709,8 +715,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
        /* AsyncTask.execute(new Runnable() {
             @Override
             public void run() {*/
-        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler
-                ());
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
         ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
         for (int i = 2; i < arrayListPhoneBookContacts.size(); i++) {
             if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
@@ -737,15 +742,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             }
                         }
                     } else if (userProfiles.size() == 1) {
-                        name = userProfiles.get(0).getPmFirstName() +
-                                " " + userProfiles.get(0)
+                        name = userProfiles.get(0).getPmFirstName() + " " + userProfiles.get(0)
                                 .getPmLastName();
                         rcpID = userProfiles.get(0).getPmRcpId();
                     }
-                    ((ProfileData) arrayListPhoneBookContacts.get(i))
-                            .setTempRcpName(name);
-                    ((ProfileData) arrayListPhoneBookContacts.get(i))
-                            .setTempRcpId(rcpID);
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
                 } else {
                     ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
                 }
@@ -1204,7 +1206,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 /* Disable swiping in headers */
-                if (viewHolder instanceof AllContactListAdapter.ContactHeaderViewHolder) {
+                if (viewHolder instanceof AllContactAdapter.ContactHeaderViewHolder || viewHolder
+                        instanceof AllContactAdapter.ContactFooterViewHolder) {
                     return 0;
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder);
@@ -1488,13 +1491,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         };
         //  String sortOrder = ContactsContract.Contacts.SORT_KEY_ALTERNATIVE;
         String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
-        Uri uri;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            uri = ContactsContract.Data.CONTENT_URI;
-        } else {
-            uri = ContactsContract.Data.CONTENT_URI;
-        }
+        Uri uri = ContactsContract.Data.CONTENT_URI;
 
         Cursor cursor = getActivity().getContentResolver().query(uri, projection, selection,
                 selectionArgs, sortOrder);

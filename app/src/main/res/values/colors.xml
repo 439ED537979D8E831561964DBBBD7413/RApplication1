@@ -49,4 +49,6 @@
     <color name="dialer_text_gray">#969696</color>
     <color name="dialer_background">#F0F0F0</color>
 
+    <color name="lightGrayishCyan">#CCE4E1</color>
+
 </resources>

@@ -289,6 +289,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     LinearLayoutManager mLinearLayoutManager;
     String profileThumbnail = "";
     MaterialDialog permissionConfirmationDialog;
+
     //<editor-fold desc="Override Methods">
 
     @Override
