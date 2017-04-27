@@ -17,7 +17,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -111,6 +110,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     RippleView rippleViewOldRecords;
     @BindView(R.id.text_grant_permission)
     TextView textGrantPermission;
+    TextView textNoCallsFound;
 
     private CallLogListAdapter callLogListAdapter;
 
@@ -480,6 +480,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
     }
 
 
@@ -566,6 +567,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     }
 
     private void init() {
+        textNoCallsFound =  (TextView) mainView.findViewById(R.id.text_no_logs_found);
         arrayListCallLogs = new ArrayList<>();
         arrayListCallLogHeader = new ArrayList<>();
         arrayListObjectCallLogs = new ArrayList<>();
@@ -595,11 +597,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                 int currentFirstVisible = mLinearLayoutManager.findFirstVisibleItemPosition();
 
-                if(currentFirstVisible > firstVisibleInListview)
+                if (currentFirstVisible > firstVisibleInListview)
                     Log.i("RecyclerView scrolled: ", "scroll up!");
-                else{
+                else {
                     Log.i("RecyclerView scrolled: ", "scroll down!");
-                    if (!isLastRecord && newState==0) {
+                    if (!isLastRecord && newState == 0) {
                         if (isFirstTime) {
                             progressBarLoadCallLogs.setVisibility(View.VISIBLE);
                             textLoadingLogs.setVisibility(View.VISIBLE);
@@ -739,7 +741,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     }*/
 
 
-
     private void makeBlockedNumberList() {
         if (Utils.getHashMapPreferenceForBlock(getActivity(), AppConstants
                 .PREF_BLOCK_CONTACT_LIST) != null) {
@@ -806,7 +807,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                    /* loadsCallLogsInBackgroundAsyncTask = new LoadsCallLogsInBackground();
                                     loadsCallLogsInBackgroundAsyncTask.execute();*/
                                 } else {
-                                    if(!value.equalsIgnoreCase(ALL_CALLS)){
+                                    if (!value.equalsIgnoreCase(ALL_CALLS)) {
                                         spinnerCount = spinnerCount + 1;
                                     }
                                     arrayListCallLogs = rContactApplication.getArrayListCallLogType();
@@ -816,20 +817,20 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 if (!isLastRecord) {
                                     arrayListCallLogs = rContactApplication.getArrayListCallLogType();
                                     if (arrayListCallLogs != null && arrayListCallLogs.size() > 0) {
-                                        if(!value.equalsIgnoreCase(ALL_CALLS)){
+                                        if (!value.equalsIgnoreCase(ALL_CALLS)) {
                                             spinnerCount = spinnerCount + 1;
                                         }
                                         makeDataToDisplay(selectedCallType, arrayListCallLogs);
                                         initSwipe();
                                     } else {
-                                    loadLogs(selectedCallType);
+                                        loadLogs(selectedCallType);
                                         /*loadsCallLogsInBackgroundAsyncTask = new LoadsCallLogsInBackground();
                                         loadsCallLogsInBackgroundAsyncTask.execute();*/
                                     }
                                 } else {
                                     arrayListCallLogs = rContactApplication.getArrayListCallLogType();
                                     if (arrayListCallLogs != null && arrayListCallLogs.size() > 0) {
-                                        if(!value.equalsIgnoreCase(ALL_CALLS)){
+                                        if (!value.equalsIgnoreCase(ALL_CALLS)) {
                                             spinnerCount = spinnerCount + 1;
                                         }
                                         makeDataToDisplay(selectedCallType, arrayListCallLogs);
@@ -940,6 +941,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         }
 
         if (listOfIds != null && listOfIds.size() > 0) {
+            textNoCallsFound.setVisibility(View.GONE);
             int indexToBeginSync = logsDisplayed;
             ArrayList<String> tempIdsList = new ArrayList<>();
             for (int i = indexToBeginSync; i < listOfIds.size(); i++) {
@@ -963,6 +965,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 fetchCallLogsFromIds(tempIdsList);
             }
 
+        } else {
+                textNoCallsFound.setVisibility(View.VISIBLE);
         }
         initSwipe();
 
@@ -1198,9 +1202,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         }
         progressBarLoadCallLogs.setVisibility(View.GONE);
         textLoadingLogs.setVisibility(View.GONE);
-        if (adapterSetCount > 0 && spinnerCount==0) {
+        if (adapterSetCount > 0 && spinnerCount == 0) {
             recyclerCallLogs.scrollToPosition(callLogListAdapter.getItemCount() - 1);
-        }else if(adapterSetCount == 0 && spinnerCount > 0){
+        } else if (adapterSetCount == 0 && spinnerCount > 0) {
 //            recyclerCallLogs.scrollToPosition(callLogListAdapter.getItemCount() - 1);
         }
 //        rippleViewOldRecords.setVisibility(View.VISIBLE);
@@ -1794,9 +1798,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             initSpinner();
             telephonyInit();
         } else {
-                textGrantPermission.setVisibility(View.VISIBLE);
-                spinnerCallFilter.setVisibility(View.GONE);
-                recyclerCallLogs.setVisibility(View.GONE);
+            textGrantPermission.setVisibility(View.VISIBLE);
+            spinnerCallFilter.setVisibility(View.GONE);
+            recyclerCallLogs.setVisibility(View.GONE);
         }
     }
 
