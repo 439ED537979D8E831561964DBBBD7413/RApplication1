@@ -24,6 +24,8 @@ import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileData;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -39,13 +41,15 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
     private ArrayList<ProfileData> arrayListUserContact;
     private int previousPosition = 0;
     private String phonebookId;
+    private String contactName;
 
     private int colorBlack, colorPineGreen;
 
     public ContactListExpandAdapter(Context context, ArrayList<ProfileData> arrayListUserContact,
-                                    String phonebookId) {
+                                    String phonebookId, String contactName) {
         this.context = context;
         this.phonebookId = phonebookId;
+        this.contactName = contactName;
         this.arrayListUserContact = arrayListUserContact;
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
@@ -70,16 +74,25 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
     private void configureAllContactViewHolder(final AllContactViewHolder holder, int position) {
 
         final ProfileData contact = arrayListUserContact.get(position);
-        holder.textContactName.setText(contact.getTempFirstName());
+        holder.textContactName.setText(contactName);
         holder.textContactNumber.setText(contact.getTempNumber());
 
 
-        holder.textCloudContactName.setVisibility(View.VISIBLE);
-        holder.textCloudContactName.setText(contact.getTempRcpName());
-       /* if (StringUtils.contains(contact.getRcpName(), ",")) {
-            holder.textRcpName.setText(String.valueOf(StringUtils.countMatches(contact
-                    .getRcpName(), ",") + 1));
+       /* holder.textCloudContactName.setVisibility(View.VISIBLE);
+        holder.textCloudContactName.setText(contact.getTempRcpName());*/
+        /*if (StringUtils.contains(contact.getTempRcpName(), ",")) {
+            holder.textCloudContactName.setText(String.valueOf(StringUtils.countMatches(contact
+                    .getTempRcpName(), ",") + 1));
         }*/
+        holder.textCloudContactName.setVisibility(View.VISIBLE);
+        holder.textCloudContactName.setText(" (" + contact.getTempRcpName() + ")");
+//        holder.imageSocialMedia.setVisibility(View.VISIBLE);
+        holder.relativeRowAllContact.setTag(contact.getTempRcpId());
+        if (StringUtils.contains(contact.getTempRcpName(), ",")) {
+            holder.relativeRowAllContact.setTag(contact.getTempRcpName());
+            holder.textCloudContactName.setText(" (" + String.valueOf(StringUtils.countMatches
+                    (contact.getTempRcpName(), ",") + 1) + " RC)");
+        }
 
         holder.imageSocialMedia.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,7 +197,8 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
             recyclerViewMultipleRc.setVisibility(View.GONE);
             linearRating.setVisibility(View.GONE);
             buttonInvite.setVisibility(View.GONE);
-            textContactName.setVisibility(View.GONE);
+            imageSocialMedia.setVisibility(View.GONE);
+//            textContactName.setVisibility(View.GONE);
 
           /*  LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
             // Filled stars

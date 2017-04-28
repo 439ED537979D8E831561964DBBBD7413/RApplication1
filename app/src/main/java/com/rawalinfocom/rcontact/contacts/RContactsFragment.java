@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.adapters.RContactListAdapter;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
@@ -49,16 +48,16 @@ public class RContactsFragment extends BaseFragment {
     ProgressWheel progressRContact;
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
-    @BindView(R.id.relative_scroller)
-    RelativeLayout relativeScroller;
+    /*@BindView(R.id.relative_scroller)
+    RelativeLayout relativeScroller;*/
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
     @BindView(R.id.text_total_contacts)
     TextView textTotalContacts;
-    @BindView(R.id.scroller_all_contact)
+    /*@BindView(R.id.scroller_all_contact)
     VerticalRecyclerViewFastScroller scrollerAllContact;
     @BindView(R.id.title_indicator)
-    ColorGroupSectionTitleIndicator titleIndicator;
+    ColorGroupSectionTitleIndicator titleIndicator;*/
 
     ArrayList<String> arrayListContactHeaders;
     ArrayList<Object> arrayListRContact;
@@ -122,8 +121,9 @@ public class RContactsFragment extends BaseFragment {
     private void init() {
 
         textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
+        textTotalContacts.setVisibility(View.GONE);
 
-        // Connect the recycler to the scroller (to let the scroller scroll the list)
+        /*// Connect the recycler to the scroller (to let the scroller scroll the list)
         scrollerAllContact.setRecyclerView(recyclerViewContactList);
 
         // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
@@ -145,7 +145,9 @@ public class RContactsFragment extends BaseFragment {
                     relativeScroller.setVisibility(View.VISIBLE);
                 }
             }
-        });
+        });*/
+
+        setRecyclerViewLayoutManager(recyclerViewContactList);
 
         initSwipe();
 
