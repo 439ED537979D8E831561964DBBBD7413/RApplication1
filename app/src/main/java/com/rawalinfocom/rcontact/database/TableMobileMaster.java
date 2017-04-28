@@ -5,8 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.MobileNumber;
 
@@ -253,8 +253,7 @@ public class TableMobileMaster {
         try {
 
             String pmId = Utils.getStringPreference(context, AppConstants.PREF_USER_PM_ID, "0");
-            String rcpType = String.valueOf(context.getResources().getInteger(R.integer
-                    .rcp_type_primary));
+            String rcpType = String.valueOf(IntegerConstants.RCP_TYPE_PRIMARY);
 
             String selectQuery = "SELECT * FROM " + TABLE_RC_MOBILE_NUMBER_MASTER + " WHERE " +
                     COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId + " AND " +
@@ -359,7 +358,8 @@ public class TableMobileMaster {
         values.put(COLUMN_MNM_NUMBER_PRIVACY, 2);
 
         // updating row
-        int isUpdated = db.update(TABLE_RC_MOBILE_NUMBER_MASTER, values, COLUMN_MNM_RECORD_INDEX_ID + " = ?",
+        int isUpdated = db.update(TABLE_RC_MOBILE_NUMBER_MASTER, values,
+                COLUMN_MNM_RECORD_INDEX_ID + " = ?",
                 new String[]{cloudMongoId});
 
         db.close();

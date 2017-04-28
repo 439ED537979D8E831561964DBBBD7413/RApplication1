@@ -52,6 +52,7 @@ import com.linkedin.platform.utils.Scope;
 import com.rawalinfocom.rcontact.asynctasks.AsyncReverseGeoCoding;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
@@ -263,10 +264,10 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (setLoginVia == getResources().getInteger(R.integer.registration_via_facebook)) {
+        if (setLoginVia == IntegerConstants.REGISTRATION_VIA_FACEBOOK) {
             // Facebook Callback
             callbackManager.onActivityResult(requestCode, resultCode, data);
-        } else if (setLoginVia == getResources().getInteger(R.integer.registration_via_lined_in)) {
+        } else if (setLoginVia == IntegerConstants.REGISTRATION_VIA_LINED_IN) {
             // LinkedIn Callback
             LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
                     requestCode, resultCode, data);
@@ -310,7 +311,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                             "First Name and Last Name");
                 } else {
                     profileRegistration(firstName, lastName, emailId, null, "", "",
-                            getResources().getInteger(R.integer.registration_via_email));
+                            IntegerConstants.REGISTRATION_VIA_EMAIL);
                 }
                 break;
             //</editor-fold>
@@ -318,7 +319,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             //<editor-fold desc="ripple_facebook">
             case R.id.ripple_facebook:
 
-                setLoginVia = getResources().getInteger(R.integer.registration_via_facebook);
+                setLoginVia = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
 
                 // Facebook Initialization
                 FacebookSdk.sdkInitialize(getApplicationContext());
@@ -335,7 +336,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             //<editor-fold desc="ripple_google">
             case R.id.ripple_google:
 
-                setLoginVia = getResources().getInteger(R.integer.registration_via_google);
+                setLoginVia = IntegerConstants.REGISTRATION_VIA_GOOGLE;
 
                 googleSignIn();
 
@@ -345,7 +346,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             // <editor-fold desc="ripple_linked_in">
             case R.id.ripple_linked_in:
 
-                setLoginVia = getResources().getInteger(R.integer.registration_via_lined_in);
+                setLoginVia = IntegerConstants.REGISTRATION_VIA_LINED_IN;
 
                 linkedInSignIn();
 
@@ -368,8 +369,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                     // set launch screen as MainActivity
                     Utils.setIntegerPreference(ProfileRegistrationActivity.this,
-                            AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
-                                    .integer.launch_main_activity));
+                            AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
+                                    .LAUNCH_MAIN_ACTIVITY);
 
                     if (userProfileRegistered != null) {
                         Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
@@ -542,15 +543,14 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     profileRegistration(facebookData.getString(FIRST_NAME), facebookData
                                     .getString(LAST_NAME), facebookData.getString(EMAIL_ID),
                             imageToBase64, facebookData.getString(SOCIAL_ID), loginResult
-                                    .getAccessToken().getToken(), getResources
-                                    ().getInteger(R.integer.registration_via_facebook));
+                                    .getAccessToken().getToken(), IntegerConstants
+                                    .REGISTRATION_VIA_FACEBOOK);
                 } else {
                     Log.e("onResourceReady: ", "There is some error in storing Image!");
                     profileRegistration(facebookData.getString(FIRST_NAME), facebookData
                                     .getString(LAST_NAME), facebookData.getString(EMAIL_ID),
                             null, facebookData.getString(SOCIAL_ID), loginResult.getAccessToken()
-                                    .getToken(), getResources
-                                    ().getInteger(R.integer.registration_via_facebook));
+                                    .getToken(), IntegerConstants.REGISTRATION_VIA_FACEBOOK);
                 }
             }
         };
@@ -578,7 +578,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             personPhotoUrl = StringUtils.defaultString(acct.getPhotoUrl().toString());
         } else {
             profileRegistration(firstName, lastName, email, null, personId, null,
-                    getResources().getInteger(R.integer.registration_via_google));
+                    IntegerConstants.REGISTRATION_VIA_GOOGLE);
         }
 
         SimpleTarget googleTarget = new SimpleTarget<Bitmap>() {
@@ -591,11 +591,11 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                             (fileUtils.getrContactDir().getAbsolutePath()));
 
                     profileRegistration(firstName, lastName, email, imageToBase64, personId, null,
-                            getResources().getInteger(R.integer.registration_via_google));
+                            IntegerConstants.REGISTRATION_VIA_GOOGLE);
                 } else {
                     Log.e("onResourceReady: ", "There is some error in storing Image!");
                     profileRegistration(firstName, lastName, email, null, personId, null,
-                            getResources().getInteger(R.integer.registration_via_google));
+                            IntegerConstants.REGISTRATION_VIA_GOOGLE);
                 }
             }
         };
@@ -642,16 +642,15 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                     // TODO: 09/02/17 social id
                     profileRegistration(finalFirstName, finalLastName, finalEmailAddress,
-                            imageToBase64, finalId, null, getResources().getInteger(R.integer
-                                    .registration_via_lined_in));
+                            imageToBase64, finalId, null, IntegerConstants
+                                    .REGISTRATION_VIA_LINED_IN);
 
                 } else {
 
                     // TODO: 09/02/17 social id
                     Log.e("onResourceReady: ", "There is some error in storing Image!");
                     profileRegistration(finalFirstName, finalLastName, finalEmailAddress, null,
-                            finalId, null, getResources().getInteger(R.integer
-                                    .registration_via_lined_in));
+                            finalId, null, IntegerConstants.REGISTRATION_VIA_LINED_IN);
 
                 }
             }
@@ -990,8 +989,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                                                         .getString(EMAIL_ID), null, facebookData
                                                         .getString(SOCIAL_ID), loginResult
                                                         .getAccessToken().getToken(),
-                                                getResources().getInteger(R.integer
-                                                        .registration_via_facebook));
+                                                IntegerConstants.REGISTRATION_VIA_FACEBOOK);
                                     }
                                 }
 

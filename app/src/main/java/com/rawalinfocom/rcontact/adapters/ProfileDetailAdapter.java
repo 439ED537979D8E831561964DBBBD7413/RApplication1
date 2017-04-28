@@ -18,6 +18,7 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.PrivacySettingPopupDialog;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
@@ -139,14 +140,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         });
 
         int pbRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(phoneNumber.getPbRcpType(),
-                String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_secondary))));
+                String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
         final ProfileDetailViewHolder viewHodler = holder;
-        if (pbRcpType == context.getResources().getInteger(R.integer.rcp_type_primary)) {
+        if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
             holder.getTextMain(isOwnProfile).setText(number + " ◊");
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
             holder.buttonPrivacy.setVisibility(View.GONE);
-        } else if (pbRcpType == context.getResources().getInteger(R.integer.rcp_type_secondary)) {
+        } else if (pbRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
             holder.getTextMain(isOwnProfile).setText(number);
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
             if (isOwnProfile) {
@@ -169,7 +169,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (phoneNumber.getPhonePublic() == context.getResources().getInteger(R.integer.privacy_private)) {
+                if (phoneNumber.getPhonePublic() == IntegerConstants.PRIVACY_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.getTextMain(isOwnProfile).setText(number.replaceAll("(?s).", "X"));
@@ -178,9 +178,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.PHONE_NUMBER,
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new
+                            PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants
+                            .PHONE_NUMBER,
                             position, phoneNumber.getPhonePublic(), phoneNumber.getPhoneId());
-                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R
+                            .string.privacy_dialog_title));
                     privacySettingPopupDialog.showDialog();
                 }
             });
@@ -227,14 +230,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         });
 
         int emRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(email.getEmRcpType(), String
-                .valueOf(context.getResources().getInteger(R.integer.rcp_type_secondary))));
+                .valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
         final ProfileDetailViewHolder viewHodler = holder;
-        if (emRcpType == context.getResources().getInteger(R.integer.rcp_type_primary)) {
+        if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
             holder.getTextMain(isOwnProfile).setText(emailId + " ◊");
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
             holder.buttonPrivacy.setVisibility(View.GONE);
-        } else if (emRcpType == context.getResources().getInteger(R.integer
-                .rcp_type_secondary)) {
+        } else if (emRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
             holder.getTextMain(isOwnProfile).setText(emailId);
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
             if (isOwnProfile) {
@@ -256,7 +258,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.buttonPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (email.getEmPublic() == context.getResources().getInteger(R.integer.privacy_private)) {
+                if (email.getEmPublic() == IntegerConstants.PRIVACY_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.getTextMain(isOwnProfile).setText(emailId.replaceAll("(?s).", "X"));
@@ -265,9 +267,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.EMAIL,
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new
+                            PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants
+                            .EMAIL,
                             position, email.getEmPublic(), email.getEmId());
-                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R
+                            .string.privacy_dialog_title));
                     privacySettingPopupDialog.showDialog();
                 }
             });
@@ -329,10 +334,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         });
 
         int rcpType = Integer.parseInt(StringUtils.defaultIfEmpty(webAddress.getWebRcpType(),
-                String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_secondary))));
-        if (rcpType == context.getResources().getInteger(R.integer
-                .rcp_type_local_phone_book)) {
+                String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
+        if (rcpType == IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK) {
             holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         } else {
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
@@ -342,7 +345,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     }
 
     private void displayAddress(final ProfileDetailViewHolder holder, final int position) {
-        final ProfileDataOperationAddress address = (ProfileDataOperationAddress) arrayList.get(position);
+        final ProfileDataOperationAddress address = (ProfileDataOperationAddress) arrayList.get
+                (position);
         holder.getTextMain(isOwnProfile).setText(address.getFormattedAddress());
         holder.getTextSub(isOwnProfile).setText(address.getAddressType());
         holder.getTextSub(isOwnProfile).setVisibility(View.VISIBLE);
@@ -351,7 +355,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("google.navigation:q=" + holder.getTextMain(isOwnProfile).getText()));
+                        Uri.parse("google.navigation:q=" + holder.getTextMain(isOwnProfile)
+                                .getText()));
                 context.startActivity(intent);
             }
         });
@@ -368,11 +373,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         });
 
         int addressRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(address.getRcpType(),
-                String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_secondary))));
+                String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
         final ProfileDetailViewHolder viewHodler = holder;
-        if (addressRcpType == context.getResources().getInteger(R.integer
-                .rcp_type_local_phone_book)) {
+        if (addressRcpType == IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK) {
             holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         } else {
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
@@ -395,18 +398,22 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.buttonPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (address.getAddPublic() == context.getResources().getInteger(R.integer.privacy_private)) {
+                if (address.getAddPublic() == IntegerConstants.PRIVACY_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.getTextMain(isOwnProfile).setText(address.getFormattedAddress().replaceAll("(?s).", "X"));
+                    holder.getTextMain(isOwnProfile).setText(address.getFormattedAddress()
+                            .replaceAll("(?s).", "X"));
                 }
             }
             holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.ADDRESS,
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new
+                            PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants
+                            .ADDRESS,
                             position, address.getAddPublic(), address.getAddId());
-                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R
+                            .string.privacy_dialog_title));
                     privacySettingPopupDialog.showDialog();
                 }
             });
@@ -433,10 +440,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //        holder.textSub1.setVisibility(View.GONE);
 
         int imRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(imAccount.getIMRcpType(),
-                String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_secondary))));
+                String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
 
-        if (imRcpType == context.getResources().getInteger(R.integer.rcp_type_local_phone_book)) {
+        if (imRcpType == IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK) {
             holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         } else {
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
@@ -460,18 +466,22 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (imAccount.getIMAccountPublic() == context.getResources().getInteger(R.integer.privacy_private)) {
+                if (imAccount.getIMAccountPublic() == IntegerConstants.PRIVACY_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.getTextMain(isOwnProfile).setText(imAccount.getIMAccountDetails().replaceAll("(?s).", "X"));
+                    holder.getTextMain(isOwnProfile).setText(imAccount.getIMAccountDetails()
+                            .replaceAll("(?s).", "X"));
                 }
             }
             holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner,
-                            AppConstants.IM_ACCOUNT, position, imAccount.getIMAccountPublic(), imAccount.getIMId());
-                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new
+                            PrivacySettingPopupDialog(viewHodler, context, listner,
+                            AppConstants.IM_ACCOUNT, position, imAccount.getIMAccountPublic(),
+                            imAccount.getIMId());
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R
+                            .string.privacy_dialog_title));
                     privacySettingPopupDialog.showDialog();
                 }
             });
@@ -533,10 +543,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.getTextSub(isOwnProfile).setVisibility(View.VISIBLE);
 
         int eventRcType = Integer.parseInt(StringUtils.defaultIfEmpty(event.getEventRcType(),
-                String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_secondary))));
+                String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
 
-        if (eventRcType == context.getResources().getInteger(R.integer.rcp_type_local_phone_book)) {
+        if (eventRcType == IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK) {
 
             holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         } else {
@@ -560,19 +569,23 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (event.getEventPublic() == context.getResources().getInteger(R.integer.privacy_private)) {
+                if (event.getEventPublic() == IntegerConstants.PRIVACY_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.getTextMain(isOwnProfile).setText(convertedDate.replaceAll("(?s).", "X"));
+                    holder.getTextMain(isOwnProfile).setText(convertedDate.replaceAll("(?s).",
+                            "X"));
                 }
             }
             final ProfileDetailViewHolder viewHodler = holder;
             holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PrivacySettingPopupDialog privacySettingPopupDialog = new PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants.EVENT, position,
+                    PrivacySettingPopupDialog privacySettingPopupDialog = new
+                            PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants
+                            .EVENT, position,
                             event.getEventPublic(), event.getEventId());
-                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R.string.privacy_dialog_title));
+                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R
+                            .string.privacy_dialog_title));
                     privacySettingPopupDialog.showDialog();
                 }
             });
@@ -606,7 +619,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     }
 
     @Override
-    public void onSettingSaved(ProfileDetailViewHolder viewHolder, int whichItem, int newPrivacy, int itemPosition, int oldPrivacy, String cloudId) {
+    public void onSettingSaved(ProfileDetailViewHolder viewHolder, int whichItem, int newPrivacy,
+                               int itemPosition, int oldPrivacy, String cloudId) {
         switch (newPrivacy) {
             case 0:
                 //everyone
@@ -660,11 +674,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         if (Utils.isNetworkAvailable(context)) {
             new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     wsRequestObject, null, WsResponseObject.class, WsConstants
-                    .REQ_SET_PRIVACY_SETTING, context.getResources().getString(R.string.msg_please_wait), true).execute
+                    .REQ_SET_PRIVACY_SETTING, context.getResources().getString(R.string
+                    .msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_SET_PRIVACY_SETTING);
         } else {
             //show no toast
-            Toast.makeText(context, context.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getResources().getString(R.string.msg_no_network),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -679,11 +695,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         if (Utils.isNetworkAvailable(context)) {
             new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     requestObj, null, WsResponseObject.class, WsConstants
-                    .REQ_PROFILE_PRIVACY_REQUEST, context.getResources().getString(R.string.msg_please_wait), true).execute
+                    .REQ_PROFILE_PRIVACY_REQUEST, context.getResources().getString(R.string
+                    .msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
         } else {
             //show no net
-            Toast.makeText(context, context.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getResources().getString(R.string.msg_no_network),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
