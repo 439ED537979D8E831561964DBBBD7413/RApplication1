@@ -69,8 +69,9 @@ public class CallLogType implements Serializable {
     int blockedType = 0;
 
 
-    //    @JsonProperty("flag")
-    @JsonIgnore
+//    @JsonIgnore
+
+    @JsonProperty("flag")
     private int flag = 0;
     @JsonProperty("local_pb_row_id")
     private String localPbRowId;
@@ -366,7 +367,12 @@ public class CallLogType implements Serializable {
         String point;
         int hours;
         float minutes;
+        float seconds;
+        String durHours;
+        String durMins;
+        String durSeconds;
         DecimalFormat formatter;
+        /*
         if (sum >= 0.0F && sum < 3600.0F) {
             result = String.valueOf(sum / 60.0F);
             decimal = result.substring(0, result.lastIndexOf("."));
@@ -374,10 +380,14 @@ public class CallLogType implements Serializable {
             hours = Integer.parseInt(decimal);
             minutes = Float.parseFloat(point) * 60.0F;
             formatter = new DecimalFormat("#");
-            if (hours < 10 || minutes < 10) {
-                duration = "0" + hours + ":" + "0" + formatter.format((double) minutes) + "";
+            if (hours < 10) {
+                duration = "0" + hours + ":" + "" + formatter.format((double) minutes) + "";
 
-            } else {
+            } else if(minutes < 10) {
+                duration = hours + ":" + "0" +formatter.format((double) minutes) + "";
+            }else if(hours<10 && minutes<10){
+                duration = "0" + hours + ":" + "0" + formatter.format((double) minutes) + "";
+            }else{
                 duration = hours + ":" + formatter.format((double) minutes) + "";
             }
         } else if (sum >= 3600.0F) {
@@ -387,15 +397,83 @@ public class CallLogType implements Serializable {
             hours = Integer.parseInt(decimal);
             minutes = Float.parseFloat(point) * 60.0F;
             formatter = new DecimalFormat("#");
-            if (hours < 10 || minutes < 10) {
+            *//*if (hours < 10 || minutes < 10) {
                 duration = "0" + hours + ":" + "0" + formatter.format((double) minutes) + "";
 
             } else {
                 duration = hours + ":" + formatter.format((double) minutes) + "";
+            }*//*
+            if (hours < 10) {
+                duration = "0" + hours + ":" + "" + formatter.format((double) minutes) + "";
+
+            } else if(minutes < 10) {
+                duration = hours + ":" + "0" +formatter.format((double) minutes) + "";
+            }else if(hours<10 && minutes<10){
+                duration = "0" + hours + ":" + "0" + formatter.format((double) minutes) + "";
+            }else{
+                duration = hours + ":" + formatter.format((double) minutes) + "";
             }
+        }*/
+
+
+        result = String.valueOf(sum / 60.0F);
+        decimal = result.substring(0, result.lastIndexOf("."));
+        point = "0" + result.substring(result.lastIndexOf("."));
+        minutes = Float.parseFloat(point) * 60.0F;
+        formatter = new DecimalFormat("#");
+
+        hours = (int) sum/3600;
+        if(hours < 10){
+            durHours = "0"+hours;
+        }else{
+            durHours = String.valueOf(hours);
         }
 
+        minutes =  (sum % 3600) / 60;
+        if(minutes <10){
+            durMins =  "0"+ formatter.format((double) minutes);
+        }else{
+            durMins =  String.valueOf(formatter.format((double) minutes));
+        }
+
+        seconds =  (sum % 3600) % 60;
+        if(seconds<10){
+            durSeconds = "0"+ formatter.format((double) seconds);
+        }else{
+            durSeconds =  String.valueOf(formatter.format((double) seconds));
+        }
+
+        duration =  durHours+":"+ durMins +":" +durSeconds;
+
         return duration;
+
+        /*String duration = "";
+        String result;
+        String decimal;
+        String point;
+        int hours;
+        float minutes;
+        DecimalFormat formatter;
+        if(sum >= 0.0F && sum < 3600.0F) {
+            result = String.valueOf(sum / 60.0F);
+            decimal = result.substring(0, result.lastIndexOf("."));
+            point = "0" + result.substring(result.lastIndexOf("."));
+            hours = Integer.parseInt(decimal);
+            minutes = Float.parseFloat(point) * 60.0F;
+            formatter = new DecimalFormat("#");
+            duration = hours + ":" + formatter.format((double)minutes) + "";
+        } else if(sum >= 3600.0F) {
+            result = String.valueOf(sum / 3600.0F);
+            decimal = result.substring(0, result.lastIndexOf("."));
+            point = "0" + result.substring(result.lastIndexOf("."));
+            hours = Integer.parseInt(decimal);
+            minutes = Float.parseFloat(point) * 60.0F;
+            formatter = new DecimalFormat("#");
+            duration = hours + ":" + formatter.format((double)minutes) + "";
+        }
+
+        return duration;*/
+
     }
 
     public int getBlockedType() {
