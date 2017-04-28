@@ -44,6 +44,7 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
@@ -1792,7 +1793,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                 email.setEmPublic(Integer.parseInt(textIsPublic.getText().toString()));
             } else {
-                email.setEmPublic(getResources().getInteger(R.integer.privacy_my_contact));
+                email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
             }
 
             arrayListNewEmail.add(email);
@@ -1818,7 +1819,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                 phoneNumber.setPhonePublic(Integer.parseInt(textIsPublic.getText().toString()));
             } else {
-                phoneNumber.setPhonePublic(getResources().getInteger(R.integer.privacy_my_contact));
+                phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_MY_CONTACT);
             }
 
 
@@ -1869,7 +1870,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                 event.setEventPublic(Integer.parseInt(textIsPublic.getText().toString()));
             } else {
-                event.setEventPublic(getResources().getInteger(R.integer.privacy_my_contact));
+                event.setEventPublic(IntegerConstants.PRIVACY_MY_CONTACT);
             }
             if (eventDate.getText().toString().length() > 0) {
                 event.setEventDateTime(Utils.convertDateFormat(eventDate.getText()
@@ -1927,7 +1928,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                 imAccount.setIMAccountPublic(Integer.parseInt(textIsPublic.getText().toString()));
             } else {
-                imAccount.setIMAccountPublic(getResources().getInteger(R.integer.privacy_my_contact));
+                imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
             }
 
             arrayListNewImAccount.add(imAccount);
@@ -1996,7 +1997,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                 address.setAddPublic(Integer.parseInt(textIsPublic.getText().toString()));
             } else {
-                address.setAddPublic(getResources().getInteger(R.integer.privacy_my_contact));
+                address.setAddPublic(IntegerConstants.PRIVACY_MY_CONTACT);
             }
 
             arrayListNewAddress.add(address);

@@ -23,6 +23,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,6 +42,7 @@ import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
@@ -373,7 +375,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                             TableProfileMaster(getDatabaseHandler());
                                     ArrayList<String> arrayListIds = tableProfileMaster
                                             .getAllRcpId();
-                                    for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
+                                    for (int i = 2; i < arrayListPhoneBookContacts.size(); i++) {
                                         if (arrayListPhoneBookContacts.get(i) instanceof
                                                 ProfileData) {
                                             if (arrayListIds.contains(((ProfileData)
@@ -430,6 +432,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     }
                                 }
                             });
+                            Intent localBroadcastIntent = new Intent(AppConstants
+                                    .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
+                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                                    .getInstance(getActivity());
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
                         }
                     } else {
                         if (uploadContactResponse != null) {
@@ -964,11 +971,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                     if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber(),
                             mobileNumber.getMnmMobileNumber())) {
-                        mobileNumber.setMnmIsPrimary(String.valueOf(getResources()
-                                .getInteger(R.integer.rcp_type_primary)));
+                        mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
+                                .RCP_TYPE_PRIMARY));
                     } else {
-                        mobileNumber.setMnmIsPrimary(String.valueOf(getResources()
-                                .getInteger(R.integer.rcp_type_secondary)));
+                        mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
+                                .RCP_TYPE_SECONDARY));
                     }
 //                arrayListPhoneNumber.get(j).
                     arrayListMobileNumber.add(mobileNumber);
@@ -1556,8 +1563,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                 (cursor.getInt(cursor.getColumnIndex
                                         (ContactsContract.CommonDataKinds.Phone.TYPE))));
-                        phoneNumber.setPhonePublic(getResources().getInteger(R.integer
-                                .privacy_my_contact));
+                        phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_MY_CONTACT);
 
                         phoneBookContact.addPhone(phoneNumber);
                         break;
@@ -1570,8 +1576,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 cursor.getInt
                                         (cursor.getColumnIndex(ContactsContract
                                                 .CommonDataKinds.Email.TYPE))));
-                        emailId.setEmPublic(getResources().getInteger(R.integer
-                                .privacy_my_contact));
+                        emailId.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
 
 
                         phoneBookContact.addEmail(emailId);
@@ -1585,8 +1590,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         webAddress.setWebType(phoneBookContacts.getWebsiteType(cursor, (cursor
                                 .getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds
                                         .Website.TYPE)))));
-                        webAddress.setWebPublic(getResources().getInteger(R.integer
-                                .privacy_everyone));
+                        webAddress.setWebPublic(IntegerConstants.PRIVACY_EVERYONE);
 
                         phoneBookContact.addWebsite(webAddress);
 
@@ -1613,8 +1617,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         organization.setOrgOfficeLocation(cursor.getString
                                 (cursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Organization.OFFICE_LOCATION)));
-                        organization.setOrgPublic(getResources().getInteger(R.integer
-                                .privacy_everyone));
+                        organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
                         phoneBookContact.addOrganization(organization);
                         break;
@@ -1645,8 +1648,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         address.setAddressType(phoneBookContacts.getAddressType(cursor, cursor
                                 .getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds
                                         .StructuredPostal.TYPE))));
-                        address.setAddPublic(getResources().getInteger(R.integer
-                                .privacy_my_contact));
+                        address.setAddPublic(IntegerConstants.PRIVACY_MY_CONTACT);
 
                         phoneBookContact.addAddress(address);
                         break;
@@ -1666,8 +1668,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 (cursor.getInt((cursor.getColumnIndex
                                         (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
-                        imAccount.setIMAccountPublic(getResources().getInteger(R.integer
-                                .privacy_my_contact));
+                        imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
 
 
                         phoneBookContact.addImAccount(imAccount);
@@ -1691,8 +1692,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                         event.setEventDateTime(eventDate);
 
-                        event.setEventPublic(getResources().getInteger(R.integer
-                                .privacy_my_contact));
+                        event.setEventPublic(IntegerConstants.PRIVACY_MY_CONTACT);
 
                         phoneBookContact.addEvent(event);
                         break;
@@ -1714,7 +1714,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             ProfileDataOperation operation = new ProfileDataOperation();
 
-            operation.setFlag(getResources().getInteger(R.integer.sync_insert));
+            operation.setFlag(IntegerConstants.SYNC_INSERT_CONTACT);
             operation.setIsFirst(1);
 
             operation.setPbNamePrefix(profileContact.getPbNamePrefix());

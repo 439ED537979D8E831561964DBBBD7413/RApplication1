@@ -7,6 +7,7 @@ import android.provider.ContactsContract;
 
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -154,8 +155,7 @@ public class OnlineDataSync {
             if (arrayListContactIds.contains(_rawId)) {
 //                Log.i("MAULIK", "update" + _rawId);
                 // Update
-                phoneBookOperations(_rawId, String.valueOf(context.getResources().getInteger(R
-                        .integer.sync_update)));
+                phoneBookOperations(_rawId, String.valueOf(IntegerConstants.SYNC_UPDATE_CONTACT));
 
             } else if (_rawId.equalsIgnoreCase("-1")) {
 //                Log.i("MAULIK", "delete" + _rawId);
@@ -212,8 +212,8 @@ public class OnlineDataSync {
                 // Insert
                 if (!arrayListContactIds.contains(_rawId)) {
 //                    Log.i("MAULIK", "insert" + _rawId);
-                    phoneBookOperations(_rawId, String.valueOf(context
-                            .getResources().getInteger(R.integer.sync_insert)));
+                    phoneBookOperations(_rawId, String.valueOf(IntegerConstants
+                            .SYNC_INSERT_CONTACT));
                 }
 
             }
