@@ -879,7 +879,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         if (Utils.isNetworkAvailable(MainActivity.this)) {
             WsRequestObject deviceDetailObject = new WsRequestObject();
             deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
-            deviceDetailObject.setFlag(7);
+            deviceDetailObject.setFlag(IntegerConstants.SYNC_INSERT_CALL_LOG);
             if (Utils.isNetworkAvailable(this)) {
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         deviceDetailObject, null, WsResponseObject.class, WsConstants

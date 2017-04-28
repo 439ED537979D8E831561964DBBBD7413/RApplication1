@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.CallLog;
 import android.provider.ContactsContract;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -68,10 +67,8 @@ public class CallLogType implements Serializable {
     @JsonIgnore
     int blockedType = 0;
 
-
+    //    @JsonProperty("flag")
 //    @JsonIgnore
-
-    @JsonProperty("flag")
     private int flag = 0;
     @JsonProperty("local_pb_row_id")
     private String localPbRowId;
@@ -333,15 +330,19 @@ public class CallLogType implements Serializable {
         String contactName = null;
         try {
             ContentResolver cr = context.getContentResolver();
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-            cursor = cr.query(uri, new String[]{"display_name"}, (String) null, new String[]{"display_name"}, (String) null);
-//            cursor = cr.query(CallLog.Calls.CONTENT_URI, null, CallLog.Calls.NUMBER + " =?", new String[]{number}, null);
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+            cursor = cr.query(uri, new String[]{"display_name"}, (String) null, new
+                    String[]{"display_name"}, (String) null);
+//            cursor = cr.query(CallLog.Calls.CONTENT_URI, null, CallLog.Calls.NUMBER + " =?",
+// new String[]{number}, null);
 
             if (cursor == null) {
                 return null;
             } else {
                 if (cursor.moveToFirst()) {
-//                    contactName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
+//                    contactName = cursor.getString(cursor.getColumnIndex(CallLog.Calls
+// .CACHED_NAME));
                     contactName = cursor.getString(cursor.getColumnIndex("display_name"));
 
                 }
@@ -422,28 +423,28 @@ public class CallLogType implements Serializable {
         minutes = Float.parseFloat(point) * 60.0F;
         formatter = new DecimalFormat("#");
 
-        hours = (int) sum/3600;
-        if(hours < 10){
-            durHours = "0"+hours;
-        }else{
+        hours = (int) sum / 3600;
+        if (hours < 10) {
+            durHours = "0" + hours;
+        } else {
             durHours = String.valueOf(hours);
         }
 
-        minutes =  (sum % 3600) / 60;
-        if(minutes <10){
-            durMins =  "0"+ formatter.format((double) minutes);
-        }else{
-            durMins =  String.valueOf(formatter.format((double) minutes));
+        minutes = (sum % 3600) / 60;
+        if (minutes < 10) {
+            durMins = "0" + formatter.format((double) minutes);
+        } else {
+            durMins = String.valueOf(formatter.format((double) minutes));
         }
 
-        seconds =  (sum % 3600) % 60;
-        if(seconds<10){
-            durSeconds = "0"+ formatter.format((double) seconds);
-        }else{
-            durSeconds =  String.valueOf(formatter.format((double) seconds));
+        seconds = (sum % 3600) % 60;
+        if (seconds < 10) {
+            durSeconds = "0" + formatter.format((double) seconds);
+        } else {
+            durSeconds = String.valueOf(formatter.format((double) seconds));
         }
 
-        duration =  durHours+":"+ durMins +":" +durSeconds;
+        duration = durHours + ":" + durMins + ":" + durSeconds;
 
         return duration;
 

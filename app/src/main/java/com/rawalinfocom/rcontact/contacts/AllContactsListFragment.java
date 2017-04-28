@@ -23,6 +23,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -95,7 +96,7 @@ import butterknife.ButterKnife;
 public class AllContactsListFragment extends BaseFragment implements LoaderManager
         .LoaderCallbacks<Cursor>, WsResponseListener {
 
-    private final int CONTACT_CHUNK = 2;
+    private final int CONTACT_CHUNK = 50;
 
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
@@ -431,6 +432,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     }
                                 }
                             });
+                            Intent localBroadcastIntent = new Intent(AppConstants
+                                    .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
+                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                                    .getInstance(getActivity());
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
                         }
                     } else {
                         if (uploadContactResponse != null) {
