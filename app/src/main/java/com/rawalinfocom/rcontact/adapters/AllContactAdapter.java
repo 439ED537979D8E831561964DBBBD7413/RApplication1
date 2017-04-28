@@ -293,7 +293,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.relativeRowAllContact.setTag("-1");
             holder.textCloudContactName.setVisibility(View.GONE);
             holder.textCloudContactName.setText("");
-            holder.buttonInvite.setVisibility(View.VISIBLE);
+            if (Utils.getBooleanPreference(context, AppConstants.PREF_CONTACT_SYNCED, false)) {
+                holder.buttonInvite.setVisibility(View.VISIBLE);
+            } else {
+                holder.buttonInvite.setVisibility(View.GONE);
+            }
 //            holder.imageSocialMedia.setVisibility(View.GONE);
         }
 
@@ -1045,6 +1049,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             recyclerViewMultipleRc.setVisibility(View.GONE);
             linearRating.setVisibility(View.GONE);
             imageSocialMedia.setVisibility(View.GONE);
+            buttonInvite.setVisibility(View.GONE);
 
             LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
             // Filled stars

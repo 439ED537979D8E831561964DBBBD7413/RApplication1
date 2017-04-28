@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 
@@ -50,11 +51,13 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
         holder.textMain.setText(organization.getOrgName());
         holder.textSub.setText(organization.getOrgJobTitle());
 
-        int orgRcpType = Integer.parseInt(StringUtils.defaultString(organization.getOrgRcpType()
+        /*int orgRcpType = Integer.parseInt(StringUtils.defaultString(organization.getOrgRcpType()
                 , String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_cloud_phone_book))));
+                        .rcp_type_cloud_phone_book))));*/
+        int orgRcpType = Integer.parseInt(StringUtils.defaultString(organization.getOrgRcpType()
+                , String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK)));
 
-        if (orgRcpType == context.getResources().getInteger(R.integer.rcp_type_local_phone_book)) {
+        if (orgRcpType == IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK) {
             holder.textSub.setTextColor(ContextCompat.getColor(context, R.color.colorBlack));
         } else {
             holder.textSub.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));

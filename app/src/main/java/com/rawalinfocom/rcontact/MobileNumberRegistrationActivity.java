@@ -26,6 +26,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableOtpLogDetails;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -145,9 +146,11 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
 
     @TargetApi(Build.VERSION_CODES.M)
     private void checkPermissionToExecute(String[] permissions, int requestCode) {
-        boolean READ_SMS = ContextCompat.checkSelfPermission(MobileNumberRegistrationActivity.this, permissions[0]) !=
+        boolean READ_SMS = ContextCompat.checkSelfPermission(MobileNumberRegistrationActivity
+                .this, permissions[0]) !=
                 PackageManager.PERMISSION_GRANTED;
-        boolean RECEIVE_SMS = ContextCompat.checkSelfPermission(MobileNumberRegistrationActivity.this, permissions[1]) !=
+        boolean RECEIVE_SMS = ContextCompat.checkSelfPermission(MobileNumberRegistrationActivity
+                .this, permissions[1]) !=
                 PackageManager.PERMISSION_GRANTED;
         if (READ_SMS || RECEIVE_SMS) {
             requestPermissions(permissions, requestCode);
@@ -157,7 +160,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == AppConstants.READ_SMS && permissions[0].equals(Manifest.permission
                 .READ_SMS) && permissions[1].equals(Manifest.permission.RECEIVE_SMS)) {
@@ -222,8 +226,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
 
                     // set launch screen as OtpVerificationActivity
                     Utils.setIntegerPreference(MobileNumberRegistrationActivity.this,
-                            AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
-                                    .integer.launch_otp_verification));
+                            AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
+                                    .LAUNCH_OTP_VERIFICATION);
 
                     // Redirect to OtpVerificationActivity
                     Bundle bundle = new Bundle();

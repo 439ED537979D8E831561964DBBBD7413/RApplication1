@@ -21,6 +21,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.rawalinfocom.rcontact.asynctasks.AsyncGetDeviceToken;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableOtpLogDetails;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -215,8 +216,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
                     // set launch screen as OtpVerificationActivity
                     Utils.setIntegerPreference(OtpVerificationActivity.this,
-                            AppConstants.PREF_LAUNCH_SCREEN_INT, getResources().getInteger(R
-                                    .integer.launch_profile_registration));
+                            AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
+                                    .LAUNCH_PROFILE_REGISTRATION);
 
                     stopService(new Intent(OtpVerificationActivity.this, OtpTimerService.class));
                     LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
