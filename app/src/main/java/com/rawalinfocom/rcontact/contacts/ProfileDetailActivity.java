@@ -289,6 +289,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     LinearLayoutManager mLinearLayoutManager;
     String profileThumbnail = "";
     MaterialDialog permissionConfirmationDialog;
+
     //<editor-fold desc="Override Methods">
 
     @Override
@@ -571,8 +572,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         if (!TextUtils.isEmpty(historyName)) {
                             ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
                                     /*this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
-                                    this.getString(R.string.call_reminder),*/
-                                    this.getString(R.string.unblock), this.getString(R.string.delete),
+                                    this.getString(R.string.call_reminder),
+                                    this.getString(R.string.unblock),*/ this.getString(R.string.delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, historyNumber,
                                     historyDate, isFromCallLogTab, arrayListHistory, historyName, "", hashMapKey);
@@ -583,7 +584,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
                                         this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
                                         this.getString(R.string.copy_phone_number),
-                                        /*this.getString(R.string.call_reminder),*/ this.getString(R.string.unblock),
+                                        /*this.getString(R.string.call_reminder), this.getString(R.string.unblock),*/
                                         this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, historyNumber,
                                         historyDate, isFromCallLogTab, arrayListHistory, "", uniqueContactId, hashMapKey);
@@ -594,8 +595,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         if (!TextUtils.isEmpty(historyName)) {
                             ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
                                     /*this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
-                                    this.getString(R.string.call_reminder),*/
-                                    this.getString(R.string.block), this.getString(R.string.delete),
+                                    this.getString(R.string.call_reminder),
+                                    this.getString(R.string.block),*/ this.getString(R.string.delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, historyNumber,
                                     historyDate, isFromCallLogTab, arrayListHistory, historyName, "", "");
@@ -606,7 +607,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
                                         this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
                                         this.getString(R.string.copy_phone_number),
-                                        /*this.getString(R.string.call_reminder), */this.getString(R.string.block),
+                                        /*this.getString(R.string.call_reminder), this.getString(R.string.block),*/
                                         this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, historyNumber,
                                         historyDate, isFromCallLogTab, arrayListHistory, "", uniqueContactId, "");

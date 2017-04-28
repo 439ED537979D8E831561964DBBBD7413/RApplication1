@@ -21,28 +21,26 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
+import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
-        .ColorGroupSectionTitleIndicator;
-import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical
-        .VerticalRecyclerViewFastScroller;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
+import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -56,24 +54,27 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
 
     @BindView(R.id.progress_favorite_contact)
     ProgressWheel progressFavoriteContact;
-    @BindView(R.id.relative_scroller)
-    RelativeLayout relativeScroller;
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
+    /*@BindView(R.id.relative_scroller)
+    RelativeLayout relativeScroller;
     @BindView(R.id.scroller_favorite_contact)
     VerticalRecyclerViewFastScroller scrollerFavoriteContact;
     @BindView(R.id.title_indicator)
-    ColorGroupSectionTitleIndicator titleIndicator;
-    @BindView(R.id.text_empty_view)
-    TextView textEmptyView;
+    ColorGroupSectionTitleIndicator titleIndicator;*/
     @BindView(R.id.text_total_contacts)
     TextView textTotalContacts;
     @BindView(R.id.relative_root_favourite)
     RelativeLayout relativeRootFavourite;
+    @BindView(R.id.layout_empty_view)
+    LinearLayout layoutEmptyView;
+
+    TextView textEmptyView;
 
     PhoneBookContacts phoneBookContacts;
 
-    AllContactListAdapter allContactListAdapter;
+    //    AllContactListAdapter allContactListAdapter;
+    AllContactAdapter allContactListAdapter;
     ArrayList<ProfileData> arrayListUserContact;
     ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> arrayListContactHeaders;
@@ -81,7 +82,7 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
     private View rootView;
     private boolean isReload = false;
     RContactApplication rContactApplication;
-    private  MaterialDialog callConfirmationDialog;
+    private MaterialDialog callConfirmationDialog;
 
     //<editor-fold desc="Constructors">
 
@@ -170,9 +171,12 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
 
     private void init() {
 
-        textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
+        textEmptyView = ButterKnife.findById(layoutEmptyView, R.id.text_empty_view);
 
-        // Connect the recycler to the scroller (to let the scroller scroll the list)
+        textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
+        textTotalContacts.setVisibility(View.GONE);
+
+       /* // Connect the recycler to the scroller (to let the scroller scroll the list)
         scrollerFavoriteContact.setRecyclerView(recyclerViewContactList);
 
         // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
@@ -195,7 +199,7 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
                     relativeScroller.setVisibility(View.VISIBLE);
                 }
             }
-        });
+        });*/
 
         initSwipe();
 
@@ -339,7 +343,6 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
 //                        (favouriteContactCursor.getColumnIndex(ContactsContract.Contacts._ID)));
 
             }
-
             favouriteContactCursor.close();
         }
 
@@ -359,13 +362,13 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
 
             //<editor-fold desc="Structured Name">
             Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);
-            ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
+//            ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
 
             if (contactStructuredNameCursor != null && contactStructuredNameCursor.getCount() > 0) {
 
                 while (contactStructuredNameCursor.moveToNext()) {
 
-                    operation.setPbNamePrefix(contactStructuredNameCursor.getString
+                  /*  operation.setPbNamePrefix(contactStructuredNameCursor.getString
                             (contactStructuredNameCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.StructuredName.PREFIX)));
                     operation.setPbNameFirst(contactStructuredNameCursor.getString
@@ -379,7 +382,22 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
                                     .CommonDataKinds.StructuredName.FAMILY_NAME)));
                     operation.setPbNameSuffix(contactStructuredNameCursor.getString
                             (contactStructuredNameCursor.getColumnIndex(ContactsContract
+                                    .CommonDataKinds.StructuredName.SUFFIX)));*/
+                    profileData.setTempFirstName(contactStructuredNameCursor.getString
+                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
+                                    .CommonDataKinds.StructuredName.GIVEN_NAME)));
+                    profileData.setTempLastName(contactStructuredNameCursor.getString
+                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
+                                    .CommonDataKinds.StructuredName.FAMILY_NAME)));
+                    profileData.setTempPrefix(contactStructuredNameCursor.getString
+                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
+                                    .CommonDataKinds.StructuredName.PREFIX)));
+                    profileData.setTempSufix(contactStructuredNameCursor.getString
+                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.StructuredName.SUFFIX)));
+                    profileData.setTempMiddleName(contactStructuredNameCursor.getString
+                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
+                                    .CommonDataKinds.StructuredName.MIDDLE_NAME)));
 
                 }
                 contactStructuredNameCursor.close();
@@ -389,28 +407,33 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
 
             //<editor-fold desc="Contact Number">
             Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(rawId);
-            ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
+//            ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
 
             if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
-                while (contactNumberCursor.moveToNext()) {
+                if (contactNumberCursor.moveToFirst()) {
+                    profileData.setTempNumber(Utils.getFormattedNumber(getActivity(),
+                            contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Phone.NUMBER))));
+                }
+//                while (contactNumberCursor.moveToNext()) {
 
-                    ProfileDataOperationPhoneNumber phoneNumber = new
+                    /*ProfileDataOperationPhoneNumber phoneNumber = new
                             ProfileDataOperationPhoneNumber();
 
                     phoneNumber.setPhoneNumber(Utils.getFormattedNumber(getActivity(),
                             contactNumberCursor.getString(contactNumberCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.NUMBER))));
 
-                    arrayListPhoneNumber.add(phoneNumber);
+                    arrayListPhoneNumber.add(phoneNumber);*/
 
-                }
+//                }
                 contactNumberCursor.close();
             }
-            operation.setPbPhoneNumber(arrayListPhoneNumber);
+//            operation.setPbPhoneNumber(arrayListPhoneNumber);
             //</editor-fold>
 
             //<editor-fold desc="Email Id">
-            Cursor contactEmailCursor = phoneBookContacts.getContactEmail(rawId);
+         /*   Cursor contactEmailCursor = phoneBookContacts.getContactEmail(rawId);
             ArrayList<ProfileDataOperationEmail> arrayListEmailId = new ArrayList<>();
 
             if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
@@ -427,145 +450,15 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
                 contactEmailCursor.close();
             }
             operation.setPbEmailId(arrayListEmailId);
-            //</editor-fold>
+            //</editor-fold>*/
 
-            //<editor-fold desc="Nick Name">
-         /*   Cursor contactNickNameCursor = phoneBookContacts.getContactNickName(rawId);
-
-            if (contactNickNameCursor != null && contactNickNameCursor.getCount() > 0) {
-                while (contactNickNameCursor.moveToNext()) {
-
-                    operation.setPbNickname(contactNickNameCursor.getString
-                            (contactNickNameCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.Nickname.DATA1)));
-
-                }
-                contactNickNameCursor.close();
-            }*/
-            //</editor-fold>
-
-            //<editor-fold desc="Note">
-            /*Cursor contactNoteCursor = phoneBookContacts.getContactNote(rawId);
-
-            if (contactNoteCursor != null && contactNoteCursor.getCount() > 0) {
-                while (contactNoteCursor.moveToNext()) {
-
-                    operation.setPbNote(contactNoteCursor.getString(contactNoteCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Note.DATA1)));
-
-                }
-                contactNoteCursor.close();
-            }*/
-            //</editor-fold>
-
-            //<editor-fold desc="Website">
-          /*  Cursor contactWebsiteCursor = phoneBookContacts.getContactWebsite(rawId);
-//            ArrayList<String> arrayListWebsite = new ArrayList<>();
-            ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = new ArrayList<>();
-
-            if (contactWebsiteCursor != null && contactWebsiteCursor.getCount() > 0) {
-                while (contactWebsiteCursor.moveToNext()) {
-
-                   *//* String website = contactWebsiteCursor.getString(contactWebsiteCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));
-
-                    arrayListWebsite.add(website);*//*
-
-                    ProfileDataOperationWebAddress webAddress = new
-                            ProfileDataOperationWebAddress();
-
-                    webAddress.setWebAddress(contactWebsiteCursor.getString(contactWebsiteCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
-
-                   *//* String website = contactWebsiteCursor.getString(contactWebsiteCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));*//*
-
-//                    arrayListWebsite.add(website);
-                    arrayListWebsite.add(webAddress);
-
-                }
-                contactWebsiteCursor.close();
-            }
-
-            operation.setPbWebAddress(arrayListWebsite);*/
-            //</editor-fold>
-
-            //<editor-fold desc="Organization">
-          /*  Cursor contactOrganizationCursor = phoneBookContacts.getContactOrganization(rawId);
-            ArrayList<ProfileDataOperationOrganization> arrayListOrganization = new ArrayList<>();
-
-            if (contactOrganizationCursor != null && contactOrganizationCursor.getCount() > 0) {
-                while (contactOrganizationCursor.moveToNext()) {
-
-                    ProfileDataOperationOrganization organization = new
-                            ProfileDataOperationOrganization();
-
-                    organization.setOrgName(contactOrganizationCursor.getString
-                            (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.Organization.COMPANY)));
-                    organization.setOrgJobTitle(contactOrganizationCursor.getString
-                            (contactOrganizationCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.Organization.TITLE)));
-
-                    arrayListOrganization.add(organization);
-
-                }
-                contactOrganizationCursor.close();
-            }
-
-            operation.setPbOrganization(arrayListOrganization);*/
-            //</editor-fold>
-
-            //<editor-fold desc="Address">
-         /*   Cursor contactAddressCursor = phoneBookContacts.getContactAddress(rawId);
-            ArrayList<ProfileDataOperationAddress> arrayListAddress = new ArrayList<>();
-
-            if (contactAddressCursor != null && contactAddressCursor.getCount() > 0) {
-                while (contactAddressCursor.moveToNext()) {
-
-                    ProfileDataOperationAddress address = new ProfileDataOperationAddress();
-
-                    address.setFormattedAddress(contactAddressCursor.getString
-                            (contactAddressCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS)));
-
-                    arrayListAddress.add(address);
-
-                }
-                contactAddressCursor.close();
-            }
-
-            operation.setPbAddress(arrayListAddress);*/
-            //</editor-fold>
-
-            //<editor-fold desc="IM Account">
-          /*  Cursor contactImCursor = phoneBookContacts.getContactIm(rawId);
-            ArrayList<ProfileDataOperationImAccount> arrayListImAccount = new ArrayList<>();
-
-            if (contactImCursor != null && contactImCursor.getCount() > 0) {
-                while (contactImCursor.moveToNext()) {
-
-                    ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
-
-                    imAccount.setIMAccountDetails(contactImCursor.getString(contactImCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Im.DATA1)));
-
-                    arrayListImAccount.add(imAccount);
-
-                }
-                contactImCursor.close();
-            }
-
-            operation.setPbIMAccounts(arrayListImAccount);*/
-            //</editor-fold>
-
-            arrayListOperation.add(operation);
-            profileData.setOperation(arrayListOperation);
+            /*arrayListOperation.add(operation);
+            profileData.setOperation(arrayListOperation);*/
 
             arrayListUserContact.add(profileData);
 
             String headerLetter = StringUtils.upperCase(StringUtils.substring
-                    (profileData.getOperation().get(0).getPbNameFirst(), 0, 1));
+                    (profileData.getTempFirstName(), 0, 1));
             headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
             if (!arrayListPhoneBookContacts.contains(headerLetter)) {
                 arrayListContactHeaders.add(headerLetter);
@@ -597,12 +490,69 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
     }
 
     private void populateRecyclerView() {
+        /*relativeRootFavourite.setVisibility(View.VISIBLE);
+        layoutEmptyView.setVisibility(View.GONE);*/
+        if (arrayListPhoneBookContacts.size() > 0) {
 
-        allContactListAdapter = new AllContactListAdapter(this,
-                arrayListPhoneBookContacts, arrayListContactHeaders);
-        recyclerViewContactList.setAdapter(allContactListAdapter);
+            /*allContactListAdapter = new AllContactListAdapter(this,
+                    arrayListPhoneBookContacts, arrayListContactHeaders);*/
+            allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts,
+                    arrayListContactHeaders);
+            recyclerViewContactList.setAdapter(allContactListAdapter);
 
-        setRecyclerViewLayoutManager(recyclerViewContactList);
+            setRecyclerViewLayoutManager(recyclerViewContactList);
+        } else {
+            relativeRootFavourite.setVisibility(View.GONE);
+            layoutEmptyView.setVisibility(View.VISIBLE);
+            textEmptyView.setText("No Favourites");
+        }
+
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+        ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
+        for (int i = 2; i < arrayListPhoneBookContacts.size(); i++) {
+            if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
+                if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
+                        (i)).getLocalPhoneBookId())) {
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
+                  /*  String name = tableProfileMaster.getNameFromRawId(((ProfileData)
+                            arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId());
+                    ((ProfileData) arrayListPhoneBookContacts.get(i))
+                            .setTempRcpName(name);*/
+                    ArrayList<UserProfile> userProfiles = new ArrayList<>();
+                    userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
+                            (ProfileData) arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId
+                            ()));
+                    String name = "0";
+                    String rcpID = "0";
+                    if (userProfiles.size() > 1) {
+                        for (int j = 0; j < userProfiles.size();
+                             j++) {
+                            if (name.equalsIgnoreCase("0")) {
+                                name = userProfiles.get(j).getPmRcpId();
+                            } else {
+                                name = name + "," + userProfiles.get(j).getPmRcpId();
+                            }
+                        }
+                    } else if (userProfiles.size() == 1) {
+                        name = userProfiles.get(0).getPmFirstName() + " " + userProfiles.get(0)
+                                .getPmLastName();
+                        rcpID = userProfiles.get(0).getPmRcpId();
+                    }
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
+                } else {
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
+                }
+                final int finalI = i;
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        allContactListAdapter.notifyItemChanged(finalI);
+                    }
+                });
+            }
+        }
 
     }
 
@@ -638,7 +588,11 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
 
     }
 
-    public AllContactListAdapter getAllContactListAdapter() {
+    /*public AllContactListAdapter getAllContactListAdapter() {
+        return allContactListAdapter;
+    }*/
+
+    public AllContactAdapter getAllContactListAdapter() {
         return allContactListAdapter;
     }
 

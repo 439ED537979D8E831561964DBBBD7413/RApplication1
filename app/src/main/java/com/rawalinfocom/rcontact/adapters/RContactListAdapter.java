@@ -39,7 +39,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private ArrayList<Object> arrayListUserProfile;
     private ArrayList<String> arrayListContactHeader;
 
-    private final int HEADER = 0, CONTACT = 1;
+    private final int HEADER = 0, CONTACT = 1, FOOTER = 2;
 
     private int previousPosition = 0;
 
@@ -69,6 +69,10 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 View v2 = inflater.inflate(R.layout.list_item_all_contacts, parent, false);
                 viewHolder = new RContactViewHolder(v2);
                 break;
+            case FOOTER:
+                View v3 = inflater.inflate(R.layout.footer_all_contacts, parent, false);
+                viewHolder = new ContactFooterViewHolder(v3);
+                break;
         }
         return viewHolder;
 
@@ -86,13 +90,19 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 RContactViewHolder contactViewHolder = (RContactViewHolder) holder;
                 configureRContactViewHolder(contactViewHolder, position);
                 break;
+            case FOOTER:
+                ContactFooterViewHolder contactFooterViewHolder = (ContactFooterViewHolder) holder;
+                configureFooterViewHolder(contactFooterViewHolder, position);
+                break;
         }
 
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (arrayListUserProfile.get(position) instanceof UserProfile) {
+        if (position == arrayListUserProfile.size()) {
+            return FOOTER;
+        } else if (arrayListUserProfile.get(position) instanceof UserProfile) {
             return CONTACT;
         } else if (arrayListUserProfile.get(position) instanceof String) {
             return HEADER;
@@ -102,7 +112,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return arrayListUserProfile.size();
+        return (arrayListUserProfile.size() + 1);
     }
 
     /**
@@ -195,13 +205,22 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.textHeader.setText(letter);
     }
 
+    private void configureFooterViewHolder(ContactFooterViewHolder holder, int position) {
+//        String letter = (String) arrayListUserContact.get(position);
+        holder.textTotalContacts.setText(arrayListUserProfile.size() - arrayListContactHeader
+                .size() + " Contacts");
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="View Holders">
+
     public class RContactViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
+        @BindView(R.id.image_social_media)
+        ImageView imageSocialMedia;
         @BindView(R.id.text_contact_name)
         TextView textContactName;
         @BindView(R.id.text_cloud_contact_name)
@@ -235,6 +254,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             textCloudContactName.setVisibility(View.GONE);
 
             buttonInvite.setVisibility(View.GONE);
+            imageSocialMedia.setVisibility(View.GONE);
 
         }
     }
@@ -252,6 +272,21 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         }
     }
+
+    public class ContactFooterViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.text_total_contacts)
+        TextView textTotalContacts;
+
+        ContactFooterViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+
+            textTotalContacts.setTypeface(Utils.typefaceSemiBold(context));
+
+        }
+    }
+
     //</editor-fold>
 
 }
