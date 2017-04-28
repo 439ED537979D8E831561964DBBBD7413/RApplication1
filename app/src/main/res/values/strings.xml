@@ -202,6 +202,5 @@
     <string name="permission_text">Please grant permission to access call-logs.\nNavigate to Setting>Apps>Permission</string>
     <string name="permission_text_sms">Please grant permission to access sms-logs.\nNavigate to Setting>Apps>Permission</string>
     <string name="no_sms_found">No SMS found.</string>
-
-
+    <string name="no_logs_found">No Calls found.</string>
 </resources>

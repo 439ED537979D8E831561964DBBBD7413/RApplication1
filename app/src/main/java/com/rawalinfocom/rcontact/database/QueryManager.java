@@ -167,11 +167,10 @@ public class QueryManager {
                                 .COLUMN_EM_EMAIL_PRIVACY)), "0")));
                 email.setEmId(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
                         .getColumnIndex(TableEmailMaster.COLUMN_EM_RECORD_INDEX_ID))));
-              /*  email.setEmRcpType(StringUtils.defaultString(emailIdCursor.getString
-                                (emailIdCursor.getColumnIndex(TableEmailMaster
-                                        .COLUMN_EM_IS_PRIMARY)),
+                email.setEmRcpType(StringUtils.defaultString(emailIdCursor.getString
+                        (emailIdCursor.getColumnIndex(TableEmailMaster.COLUMN_EM_IS_VERIFIED)),
                         String.valueOf(context.getResources().getInteger(R.integer
-                                .rcp_type_primary))));*/
+                                .rcp_type_primary))));
                 arrayListEmail.add(email);
             } while (emailIdCursor.moveToNext());
             emailIdCursor.close();
