@@ -59,6 +59,7 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calllog.CallHistoryDetailsActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
@@ -552,7 +553,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     String blockedNumber = "";
                     ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
                     HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
-                            Utils.getHashMapPreferenceForBlock(this, AppConstants.PREF_BLOCK_CONTACT_LIST);
+                            Utils.getHashMapPreferenceForBlock(this, AppConstants
+                                    .PREF_BLOCK_CONTACT_LIST);
 
                     if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
                         if (blockProfileHashMapList.containsKey(hashMapKey))
@@ -570,47 +572,73 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     }
                     if (!TextUtils.isEmpty(blockedNumber)) {
                         if (!TextUtils.isEmpty(historyName)) {
-                            ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
-                                    /*this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
+                            ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
+                                            .getString(R.string.edit),
+                                    /*this.getString(R.string.view_in_ac), this.getString(R
+                                    .string.view_in_rc),
                                     this.getString(R.string.call_reminder),
-                                    this.getString(R.string.unblock),*/ this.getString(R.string.delete),
+                                    this.getString(R.string.unblock),*/ this.getString(R.string
+                                            .delete),
                                     this.getString(R.string.clear_call_log)));
-                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, historyNumber,
-                                    historyDate, isFromCallLogTab, arrayListHistory, historyName, "", hashMapKey);
+                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
+                                    arrayListName, historyNumber,
+                                    historyDate, isFromCallLogTab, arrayListHistory, historyName,
+                                    "", hashMapKey);
                             profileMenuOptionDialog.showDialog();
 
                         } else {
                             if (!TextUtils.isEmpty(historyNumber)) {
-                                ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
-                                        this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
-                                        this.getString(R.string.copy_phone_number),
-                                        /*this.getString(R.string.call_reminder), this.getString(R.string.unblock),*/
-                                        this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
-                                profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, historyNumber,
-                                        historyDate, isFromCallLogTab, arrayListHistory, "", uniqueContactId, hashMapKey);
+                                ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
+                                        (this.getString(R.string.add_to_contact),
+                                                this.getString(R.string.add_to_existing_contact),
+                                                this
+                                                        .getString(R.string.view_profile),
+                                                this.getString(R.string.copy_phone_number),
+                                        /*this.getString(R.string.call_reminder), this.getString
+                                        (R.string.unblock),*/
+                                                this.getString(R.string.delete), this.getString(R
+                                                        .string
+                                                        .clear_call_log)));
+                                profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
+                                        arrayListNumber, historyNumber,
+                                        historyDate, isFromCallLogTab, arrayListHistory, "",
+                                        uniqueContactId, hashMapKey);
                                 profileMenuOptionDialog.showDialog();
                             }
                         }
                     } else {
                         if (!TextUtils.isEmpty(historyName)) {
-                            ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this.getString(R.string.edit),
-                                    /*this.getString(R.string.view_in_ac), this.getString(R.string.view_in_rc),
+                            ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
+                                            .getString(R.string.edit),
+                                    /*this.getString(R.string.view_in_ac), this.getString(R
+                                    .string.view_in_rc),
                                     this.getString(R.string.call_reminder),
-                                    this.getString(R.string.block),*/ this.getString(R.string.delete),
+                                    this.getString(R.string.block),*/ this.getString(R.string
+                                            .delete),
                                     this.getString(R.string.clear_call_log)));
-                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListName, historyNumber,
-                                    historyDate, isFromCallLogTab, arrayListHistory, historyName, "", "");
+                            profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
+                                    arrayListName, historyNumber,
+                                    historyDate, isFromCallLogTab, arrayListHistory, historyName,
+                                    "", "");
                             profileMenuOptionDialog.showDialog();
 
                         } else {
                             if (!TextUtils.isEmpty(historyNumber)) {
-                                ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList(this.getString(R.string.add_to_contact),
-                                        this.getString(R.string.add_to_existing_contact), this.getString(R.string.view_profile),
-                                        this.getString(R.string.copy_phone_number),
-                                        /*this.getString(R.string.call_reminder), this.getString(R.string.block),*/
-                                        this.getString(R.string.delete), this.getString(R.string.clear_call_log)));
-                                profileMenuOptionDialog = new ProfileMenuOptionDialog(this, arrayListNumber, historyNumber,
-                                        historyDate, isFromCallLogTab, arrayListHistory, "", uniqueContactId, "");
+                                ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
+                                        (this.getString(R.string.add_to_contact),
+                                                this.getString(R.string.add_to_existing_contact),
+                                                this
+                                                        .getString(R.string.view_profile),
+                                                this.getString(R.string.copy_phone_number),
+                                        /*this.getString(R.string.call_reminder), this.getString
+                                        (R.string.block),*/
+                                                this.getString(R.string.delete), this.getString(R
+                                                        .string
+                                                        .clear_call_log)));
+                                profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
+                                        arrayListNumber, historyNumber,
+                                        historyDate, isFromCallLogTab, arrayListHistory, "",
+                                        uniqueContactId, "");
                                 profileMenuOptionDialog.showDialog();
                             }
                         }
@@ -761,7 +789,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     Uri.encode(number));
 
             cursor = this.getContentResolver().query(Person, null,
-                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " =?", new String[]{number}, null);
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " =?", new
+                            String[]{number}, null);
 
             if (cursor != null && cursor.getCount() > 0) {
                 int number1 = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
@@ -896,8 +925,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         comment.setCrmType(TableCommentMaster.COMMENT_TYPE_RATING);
                         comment.setCrmCloudPrId(String.valueOf(responseRating.getPrId()));
                         comment.setCrmComment(responseRating.getPrComment());
-                        comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(responseRating.getCreatedAt()));
-                        comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(responseRating.getCreatedAt()));
+                        comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(responseRating
+                                .getCreatedAt()));
+                        comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(responseRating
+                                .getCreatedAt()));
 
                         TableCommentMaster tableCommentMaster = new TableCommentMaster
                                 (databaseHandler);
@@ -930,7 +961,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (callHistoryResponse != null && StringUtils.equalsIgnoreCase
                         (callHistoryResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    ArrayList<CallLogType> oldHistoryList = callHistoryResponse.getArrayListCallLogHistory();
+                    ArrayList<CallLogType> oldHistoryList = callHistoryResponse
+                            .getArrayListCallLogHistory();
                     if (oldHistoryList != null && oldHistoryList.size() > 0) {
                         rippleViewOldRecords.setVisibility(View.VISIBLE);
                         arrayListHistory.addAll(oldHistoryList);
@@ -939,7 +971,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         }
                     } else {
                         rippleViewOldRecords.setVisibility(View.GONE);
-                        Utils.showSuccessSnackBar(this, relativeRootProfileDetail, callHistoryResponse.getMessage());
+                        Utils.showSuccessSnackBar(this, relativeRootProfileDetail,
+                                callHistoryResponse.getMessage());
                     }
 
                 } else {
@@ -962,14 +995,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     ProfileDataOperation profileDetail = editProfileResponse.getProfileDetail();
                     savePrivacySettingToDb(profileDetail);
 
-                    Toast.makeText(ProfileDetailActivity.this, "Privacy Setting Updated Successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileDetailActivity.this, "Privacy Setting Updated " +
+                            "Successfully", Toast.LENGTH_SHORT).show();
                     Utils.hideProgressDialog();
                 } else {
                     if (editProfileResponse != null) {
                         Log.e("error response", editProfileResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
-                        Toast.makeText(ProfileDetailActivity.this, "Privacy Setting Update failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileDetailActivity.this, "Privacy Setting Update " +
+                                "failed", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -977,13 +1012,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 WsResponseObject editProfileResponse = (WsResponseObject) data;
                 if (editProfileResponse != null && StringUtils.equalsIgnoreCase
                         (editProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                    Toast.makeText(ProfileDetailActivity.this, editProfileResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileDetailActivity.this, editProfileResponse.getMessage(),
+                            Toast.LENGTH_SHORT).show();
                     Utils.hideProgressDialog();
                 } else {
                     if (editProfileResponse != null)
-                        Toast.makeText(ProfileDetailActivity.this, editProfileResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileDetailActivity.this, editProfileResponse.getMessage
+                                (), Toast.LENGTH_SHORT).show();
                     else
-                        Toast.makeText(ProfileDetailActivity.this, "Request sending failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileDetailActivity.this, "Request sending failed!",
+                                Toast.LENGTH_SHORT).show();
                     Utils.hideProgressDialog();
                 }
             }
@@ -1525,11 +1563,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             // From PhoneBook
-            Cursor contactOrganizationCursor = phoneBookContacts.getContactOrganization(phoneBookId);
+            Cursor contactOrganizationCursor = phoneBookContacts.getContactOrganization
+                    (phoneBookId);
             ArrayList<ProfileDataOperationOrganization> arrayListPhoneBookOrganization = new
                     ArrayList<>();
-            ArrayList<ProfileDataOperationOrganization> arrayListPhoneBookOrganizationOperation = new
-                    ArrayList<>();
+            ArrayList<ProfileDataOperationOrganization> arrayListPhoneBookOrganizationOperation =
+                    new
+                            ArrayList<>();
 
             if (contactOrganizationCursor != null && contactOrganizationCursor.getCount() > 0) {
                 while (contactOrganizationCursor.moveToNext()) {
@@ -1559,8 +1599,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     organization.setOrgOfficeLocation(contactOrganizationCursor.getString
                             (contactOrganizationCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.Organization.OFFICE_LOCATION)));
-                    organization.setOrgRcpType(String.valueOf(getResources().getInteger(R.integer
-                            .rcp_type_local_phone_book)));
+                    organization.setOrgRcpType(String.valueOf(IntegerConstants
+                            .RCP_TYPE_LOCAL_PHONE_BOOK));
 
                     organizationOperation.setOrgName(contactOrganizationCursor.getString
                             (contactOrganizationCursor.getColumnIndex(ContactsContract
@@ -1590,13 +1630,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     arrayListPhoneBookOrganizationOperation.add(organizationOperation);
                 }
                 contactOrganizationCursor.close();
-                profileDataOperationVcard.setPbOrganization(arrayListPhoneBookOrganizationOperation);
+                profileDataOperationVcard.setPbOrganization
+                        (arrayListPhoneBookOrganizationOperation);
             }
 
-            if (!Utils.isArraylistNullOrEmpty(arrayListOrganization) || !Utils.isArraylistNullOrEmpty
-                    (arrayListPhoneBookOrganization)) {
+            if (!Utils.isArraylistNullOrEmpty(arrayListOrganization) || !Utils
+                    .isArraylistNullOrEmpty
+                            (arrayListPhoneBookOrganization)) {
 
-                final ArrayList<ProfileDataOperationOrganization> tempOrganization = new ArrayList<>();
+                final ArrayList<ProfileDataOperationOrganization> tempOrganization = new
+                        ArrayList<>();
                 tempOrganization.addAll(arrayListOrganization);
                 tempOrganization.addAll(arrayListPhoneBookOrganization);
 
@@ -1637,8 +1680,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
             ArrayList<String> arrayListCloudNumber = new ArrayList<>();
 
-            if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbPhoneNumber
-                    ())) {
+            if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail
+                    .getPbPhoneNumber
+                            ())) {
                 arrayListPhoneNumber.addAll(profileDetail.getPbPhoneNumber());
                 for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
                     String number = Utils.getFormattedNumber(this, arrayListPhoneNumber.get(i)
@@ -1673,8 +1717,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     phoneNumberOperation.setPhoneType(phoneBookContacts.getPhoneNumberType
                             (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Phone.TYPE))));
-                    phoneNumber.setPbRcpType(String.valueOf(getResources().getInteger(R.integer
-                            .rcp_type_local_phone_book)));
+                    phoneNumber.setPbRcpType(String.valueOf(IntegerConstants
+                            .RCP_TYPE_LOCAL_PHONE_BOOK));
 
                     if (!arrayListCloudNumber.contains(phoneNumber.getPhoneNumber())) {
                         arrayListPhoneBookNumber.add(phoneNumber);
@@ -1707,7 +1751,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             // From Cloud
             ArrayList<ProfileDataOperationEmail> arrayListEmail = new ArrayList<>();
             ArrayList<String> arrayListCloudEmail = new ArrayList<>();
-            if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
+            if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId
+                    ())) {
                 arrayListEmail.addAll(profileDetail.getPbEmailId());
                 for (int i = 0; i < arrayListEmail.size(); i++) {
                     String email = arrayListEmail.get(i).getEmEmailId();
@@ -1718,7 +1763,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             // From PhoneBook
             Cursor contactEmailCursor = phoneBookContacts.getContactEmail(phoneBookId);
             ArrayList<ProfileDataOperationEmail> arrayListPhoneBookEmail = new ArrayList<>();
-            ArrayList<ProfileDataOperationEmail> arrayListPhoneBookEmailOperation = new ArrayList<>();
+            ArrayList<ProfileDataOperationEmail> arrayListPhoneBookEmailOperation = new
+                    ArrayList<>();
 
             if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
                 while (contactEmailCursor.moveToNext()) {
@@ -1732,8 +1778,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             contactEmailCursor.getInt
                                     (contactEmailCursor.getColumnIndex(ContactsContract
                                             .CommonDataKinds.Email.TYPE))));
-                    emailId.setEmRcpType(String.valueOf(getResources().getInteger(R.integer
-                            .rcp_type_local_phone_book)));
+                    emailId.setEmRcpType(String.valueOf(IntegerConstants
+                            .RCP_TYPE_LOCAL_PHONE_BOOK));
 
                     emailIdOperation.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
@@ -1793,14 +1839,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (contactWebsiteCursor != null && contactWebsiteCursor.getCount() > 0) {
                 while (contactWebsiteCursor.moveToNext()) {
 
-                    ProfileDataOperationWebAddress webAddress = new ProfileDataOperationWebAddress();
+                    ProfileDataOperationWebAddress webAddress = new
+                            ProfileDataOperationWebAddress();
                     ProfileDataOperationWebAddress webAddressOperation = new
                             ProfileDataOperationWebAddress();
 
                     webAddress.setWebAddress(contactWebsiteCursor.getString(contactWebsiteCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
-                    webAddress.setWebRcpType(String.valueOf(getResources().getInteger(R.integer
-                            .rcp_type_local_phone_book)));
+                    webAddress.setWebRcpType(String.valueOf(IntegerConstants
+                            .RCP_TYPE_LOCAL_PHONE_BOOK));
 
                     webAddressOperation.setWebAddress(contactWebsiteCursor.getString
                             (contactWebsiteCursor
@@ -1836,7 +1883,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             // From Cloud
             ArrayList<ProfileDataOperationAddress> arrayListAddress = new ArrayList<>();
             ArrayList<String> arrayListCloudAddress = new ArrayList<>();
-            if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
+            if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress
+                    ())) {
                 arrayListAddress.addAll(profileDetail.getPbAddress());
                 for (int i = 0; i < arrayListAddress.size(); i++) {
                     String address = arrayListAddress.get(i).getFormattedAddress();
@@ -1854,7 +1902,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 while (contactAddressCursor.moveToNext()) {
 
                     ProfileDataOperationAddress address = new ProfileDataOperationAddress();
-                    ProfileDataOperationAddress addressOperation = new ProfileDataOperationAddress();
+                    ProfileDataOperationAddress addressOperation = new
+                            ProfileDataOperationAddress();
 
                     address.setFormattedAddress(contactAddressCursor.getString
                             (contactAddressCursor.getColumnIndex(ContactsContract
@@ -1880,8 +1929,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     address.setAddressType(phoneBookContacts.getAddressType(contactAddressCursor,
                             contactAddressCursor.getInt(contactAddressCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.StructuredPostal.TYPE))));
-                    address.setRcpType(String.valueOf(getResources().getInteger(R.integer
-                            .rcp_type_local_phone_book)));
+                    address.setRcpType(String.valueOf(IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK));
 
                     addressOperation.setFormattedAddress(contactAddressCursor.getString
                             (contactAddressCursor.getColumnIndex(ContactsContract
@@ -1892,9 +1940,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     addressOperation.setCountry(contactAddressCursor.getString(contactAddressCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
                                     .COUNTRY)));
-                    addressOperation.setNeighborhood(contactAddressCursor.getString(contactAddressCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
-                                    .NEIGHBORHOOD)));
+                    addressOperation.setNeighborhood(contactAddressCursor.getString
+                            (contactAddressCursor
+                                    .getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal
+                                            .NEIGHBORHOOD)));
                     addressOperation.setPostCode(contactAddressCursor.getString(contactAddressCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
                                     .POSTCODE)));
@@ -1907,7 +1957,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     addressOperation.setAddressType(phoneBookContacts.getAddressType
                             (contactAddressCursor,
                                     contactAddressCursor.getInt(contactAddressCursor.getColumnIndex
-                                            (ContactsContract.CommonDataKinds.StructuredPostal.TYPE))));
+                                            (ContactsContract.CommonDataKinds.StructuredPostal
+                                                    .TYPE))));
 
                     if (!arrayListCloudAddress.contains(address.getFormattedAddress())) {
                         arrayListPhoneBookAddress.add(address);
@@ -1948,7 +1999,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             // From PhoneBook
             Cursor contactImAccountCursor = phoneBookContacts.getContactIm(phoneBookId);
-            ArrayList<ProfileDataOperationImAccount> arrayListPhoneBookImAccount = new ArrayList<>();
+            ArrayList<ProfileDataOperationImAccount> arrayListPhoneBookImAccount = new
+                    ArrayList<>();
 
             if (contactImAccountCursor != null && contactImAccountCursor.getCount() > 0) {
                 while (contactImAccountCursor.moveToNext()) {
@@ -1961,15 +2013,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                     imAccount.setIMAccountType(phoneBookContacts.getImAccountType
                             (contactImAccountCursor,
-                                    contactImAccountCursor.getInt(contactImAccountCursor.getColumnIndex
-                                            (ContactsContract.CommonDataKinds.Im.TYPE))));
+                                    contactImAccountCursor.getInt(contactImAccountCursor
+                                            .getColumnIndex
+                                                    (ContactsContract.CommonDataKinds.Im.TYPE))));
 
                     imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
                             (contactImAccountCursor.getInt((contactImAccountCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
-                    imAccount.setIMRcpType(String.valueOf(getResources().getInteger(R.integer
-                            .rcp_type_local_phone_book)));
+                    imAccount.setIMRcpType(String.valueOf(IntegerConstants
+                            .RCP_TYPE_LOCAL_PHONE_BOOK));
 
                     if (!arrayListCloudImAccount.contains(imAccount.getIMAccountProtocol())) {
                         arrayListPhoneBookImAccount.add(imAccount);
@@ -2011,14 +2064,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             // From Cloud
             ArrayList<ProfileDataOperationEvent> arrayListEvent = new ArrayList<>();
-            if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
+            if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent()
+            )) {
                 arrayListEvent.addAll(profileDetail.getPbEvent());
             }
 
             // From PhoneBook
             Cursor contactEventCursor = phoneBookContacts.getContactEvent(phoneBookId);
             ArrayList<ProfileDataOperationEvent> arrayListPhoneBookEvent = new ArrayList<>();
-            ArrayList<ProfileDataOperationEvent> arrayListPhoneBookEventOperation = new ArrayList<>();
+            ArrayList<ProfileDataOperationEvent> arrayListPhoneBookEventOperation = new
+                    ArrayList<>();
 
             if (contactEventCursor != null && contactEventCursor.getCount() > 0) {
                 while (contactEventCursor.moveToNext()) {
@@ -2035,8 +2090,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .getColumnIndex(ContactsContract.CommonDataKinds.Event
                                     .START_DATE)));
 
-                    event.setEventRcType(String.valueOf(getResources().getInteger(R.integer
-                            .rcp_type_local_phone_book)));
+                    event.setEventRcType(String.valueOf(IntegerConstants
+                            .RCP_TYPE_LOCAL_PHONE_BOOK));
 
                     eventOperation.setEventType(phoneBookContacts.getEventType(contactEventCursor,
                             contactEventCursor
@@ -2070,7 +2125,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
             //</editor-fold>
 
-            if (displayOwnProfile && StringUtils.length(StringUtils.defaultString(profileDetail != null ?
+            if (displayOwnProfile && StringUtils.length(StringUtils.defaultString(profileDetail
+                    != null ?
                     profileDetail.getPbGender() : null)) > 0) {
                 textGender.setText(profileDetail.getPbGender());
             } else {
@@ -2636,7 +2692,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         ratingObject.setPmId(Integer.parseInt(getUserPmId()));
         ratingObject.setPrComment(comment);
         ratingObject.setPrRatingStars(ratingStar);
-        ratingObject.setPrStatus(String.valueOf(getResources().getInteger(R.integer.rating_done)));
+        ratingObject.setPrStatus(String.valueOf(IntegerConstants.RATING_DONE));
         ratingObject.setPrToPmId(Integer.parseInt(pmId));
 
         if (Utils.isNetworkAvailable(this)) {
@@ -2653,8 +2709,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         WsRequestObject uploadContactObject = new WsRequestObject();
         uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
-        uploadContactObject.setSendProfileType(getResources().getInteger(R.integer
-                .send_profile_non_rcp_social));
+        uploadContactObject.setSendProfileType(IntegerConstants.SEND_PROFILE_NON_RCP_SOCIAL);
         uploadContactObject.setContactData(profileDataOperationVcard);
 
         if (Utils.isNetworkAvailable(this)) {

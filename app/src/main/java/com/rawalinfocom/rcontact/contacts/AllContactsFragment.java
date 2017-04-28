@@ -36,6 +36,7 @@ import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
@@ -53,10 +54,6 @@ import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.ColorBubble
-        .ColorGroupSectionTitleIndicator;
-import com.rawalinfocom.rcontact.helper.recyclerviewfastscroller.vertical
-        .VerticalRecyclerViewFastScroller;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.Email;
@@ -100,10 +97,10 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
     ProgressWheel progressAllContact;
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
-   /* @BindView(R.id.scroller_all_contact)
-    VerticalRecyclerViewFastScroller scrollerAllContact;
-    @BindView(R.id.title_indicator)
-    ColorGroupSectionTitleIndicator titleIndicator;*/
+    /* @BindView(R.id.scroller_all_contact)
+     VerticalRecyclerViewFastScroller scrollerAllContact;
+     @BindView(R.id.title_indicator)
+     ColorGroupSectionTitleIndicator titleIndicator;*/
     @BindView(R.id.text_total_contacts)
     TextView textTotalContacts;
 
@@ -641,11 +638,11 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                     if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber(),
                             mobileNumber.getMnmMobileNumber())) {
-                        mobileNumber.setMnmIsPrimary(String.valueOf(getActivity().getResources()
-                                .getInteger(R.integer.rcp_type_primary)));
+                        mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
+                                .RCP_TYPE_PRIMARY));
                     } else {
-                        mobileNumber.setMnmIsPrimary(String.valueOf(getActivity().getResources()
-                                .getInteger(R.integer.rcp_type_secondary)));
+                        mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
+                                .RCP_TYPE_SECONDARY));
                     }
 //                arrayListPhoneNumber.get(j).
                     arrayListMobileNumber.add(mobileNumber);
@@ -1102,7 +1099,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));*/
 
             ProfileDataOperation operation = new ProfileDataOperation();
-            operation.setFlag(getResources().getInteger(R.integer.sync_insert));
+            operation.setFlag(IntegerConstants.SYNC_INSERT_CONTACT);
 
             //<editor-fold desc="Structured Name">
             Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);
@@ -1182,8 +1179,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             (getActivity(),
                                     contactNumberCursor.getString(contactNumberCursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Phone.NUMBER)))));
-                    phoneNumber.setPhonePublic(getResources().getInteger(R.integer
-                            .privacy_my_contact));
+                    phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_MY_CONTACT);
 
                     arrayListPhoneNumber.add(phoneNumber);
 
@@ -1220,7 +1216,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             contactEmailCursor.getInt
                                     (contactEmailCursor.getColumnIndex(ContactsContract
                                             .CommonDataKinds.Email.TYPE))));
-                    emailId.setEmPublic(getResources().getInteger(R.integer.privacy_my_contact));
+                    emailId.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
 
                     arrayListEmailId.add(emailId);
                     arrayListContactEmails.add(emailId.getEmEmailId());
@@ -1280,7 +1276,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     webAddress.setWebType(phoneBookContacts.getWebsiteType(contactWebsiteCursor,
                             (contactWebsiteCursor.getInt(contactWebsiteCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Website.TYPE)))));
-                    webAddress.setWebPublic(getResources().getInteger(R.integer.privacy_everyone));
+                    webAddress.setWebPublic(IntegerConstants.PRIVACY_EVERYONE);
 
                    /* String website = contactWebsiteCursor.getString(contactWebsiteCursor
                             .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL));*/
@@ -1331,8 +1327,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             (contactOrganizationCursor.getColumnIndex(ContactsContract
                                     .CommonDataKinds.Organization.OFFICE_LOCATION)));
                     organization.setIsCurrent(1);
-                    organization.setOrgPublic(getResources().getInteger(R.integer
-                            .privacy_everyone));
+                    organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
                     arrayListOrganization.add(organization);
 
@@ -1378,7 +1373,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     address.setAddressType(phoneBookContacts.getAddressType(contactAddressCursor,
                             contactAddressCursor.getInt(contactAddressCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.StructuredPostal.TYPE))));
-                    address.setAddPublic(getResources().getInteger(R.integer.privacy_my_contact));
+                    address.setAddPublic(IntegerConstants.PRIVACY_MY_CONTACT);
 
                     arrayListAddress.add(address);
 
@@ -1412,8 +1407,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                             (contactImCursor.getInt((contactImCursor.getColumnIndex
                                     (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
-                    imAccount.setIMAccountPublic(getResources().getInteger(R.integer
-                            .privacy_my_contact));
+                    imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
 
 
                     arrayListImAccount.add(imAccount);
@@ -1454,7 +1448,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                                     .START_DATE)));*/
                     event.setEventDateTime(eventDate);
 
-                    event.setEventPublic(getResources().getInteger(R.integer.privacy_my_contact));
+                    event.setEventPublic(IntegerConstants.PRIVACY_MY_CONTACT);
 
                     arrayListEvent.add(event);
 

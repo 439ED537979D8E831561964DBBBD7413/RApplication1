@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -168,9 +168,9 @@ public class QueryManager {
                 email.setEmId(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
                         .getColumnIndex(TableEmailMaster.COLUMN_EM_RECORD_INDEX_ID))));
                 email.setEmRcpType(StringUtils.defaultString(emailIdCursor.getString
-                        (emailIdCursor.getColumnIndex(TableEmailMaster.COLUMN_EM_IS_VERIFIED)),
-                        String.valueOf(context.getResources().getInteger(R.integer
-                                .rcp_type_primary))));
+                                (emailIdCursor.getColumnIndex(TableEmailMaster
+                                        .COLUMN_EM_IS_VERIFIED)),
+                        String.valueOf(IntegerConstants.RCP_TYPE_PRIMARY)));
                 arrayListEmail.add(email);
             } while (emailIdCursor.moveToNext());
             emailIdCursor.close();
@@ -200,8 +200,8 @@ public class QueryManager {
                 organization.setOrgJobTitle(StringUtils.defaultString(organizationCursor
                         .getString(organizationCursor.getColumnIndex(TableOrganizationMaster
                                 .COLUMN_OM_ORGANIZATION_DESIGNATION))));
-                organization.setOrgRcpType(String.valueOf(context.getResources().getInteger(R
-                        .integer.rcp_type_cloud_phone_book)));
+                organization.setOrgRcpType(String.valueOf(IntegerConstants
+                        .RCP_TYPE_CLOUD_PHONE_BOOK));
                 arrayListOrganization.add(organization);
             } while (organizationCursor.moveToNext());
             organizationCursor.close();
@@ -234,8 +234,7 @@ public class QueryManager {
                 event.setEventPublic(Integer.parseInt(StringUtils.defaultString(eventCursor
                         .getString(eventCursor.getColumnIndex(TableEventMaster
                                 .COLUMN_EVM_EVENT_PRIVACY)), "0")));
-                event.setEventRcType(String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_cloud_phone_book)));
+                event.setEventRcType(String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK));
                 arrayListEvent.add(event);
             } while (eventCursor.moveToNext());
             eventCursor.close();
@@ -275,10 +274,9 @@ public class QueryManager {
                                 .COLUMN_IM_PROTOCOL))));
                 imAccount.setIMAccountPublic(Integer.parseInt(StringUtils.defaultString
                         (imAccountCursor
-                        .getString(imAccountCursor.getColumnIndex(TableImMaster
-                                .COLUMN_IM_PRIVACY)), "0")));
-                imAccount.setIMRcpType(String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_cloud_phone_book)));
+                                .getString(imAccountCursor.getColumnIndex(TableImMaster
+                                        .COLUMN_IM_PRIVACY)), "0")));
+                imAccount.setIMRcpType(String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK));
                 arrayListImAccount.add(imAccount);
             } while (imAccountCursor.moveToNext());
             imAccountCursor.close();
@@ -313,8 +311,7 @@ public class QueryManager {
                 address.setAddId(StringUtils.defaultString(addressCursor.getString
                         (addressCursor.getColumnIndex(TableAddressMaster
                                 .COLUMN_AM_RECORD_INDEX_ID))));
-                address.setRcpType(String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_cloud_phone_book)));
+                address.setRcpType(String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK));
                 arrayListAddress.add(address);
             } while (addressCursor.moveToNext());
             addressCursor.close();
@@ -336,8 +333,8 @@ public class QueryManager {
                 ProfileDataOperationWebAddress webAddress = new ProfileDataOperationWebAddress();
                 webAddress.setWebAddress(StringUtils.defaultString(websiteCursor.getString
                         (websiteCursor.getColumnIndex(TableWebsiteMaster.COLUMN_WM_WEBSITE_URL))));
-                webAddress.setWebRcpType(String.valueOf(context.getResources().getInteger(R.integer
-                        .rcp_type_cloud_phone_book)));
+                webAddress.setWebRcpType(String.valueOf(IntegerConstants
+                        .RCP_TYPE_CLOUD_PHONE_BOOK));
                /* arrayListWebsite.add(StringUtils.defaultString(websiteCursor.getString
                         (websiteCursor.getColumnIndex(TableWebsiteMaster.COLUMN_WM_WEBSITE_URL)))
                         );*/
