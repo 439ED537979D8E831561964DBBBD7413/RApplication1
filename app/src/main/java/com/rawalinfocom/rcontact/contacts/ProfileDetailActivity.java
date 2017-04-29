@@ -956,6 +956,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_SET_PRIVACY_SETTING)) {
 
                 WsResponseObject editProfileResponse = (WsResponseObject) data;
+
                 if (editProfileResponse != null && StringUtils.equalsIgnoreCase
                         (editProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
