@@ -46,6 +46,7 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
@@ -118,19 +119,19 @@ public class MainActivity extends BaseActivity implements NavigationView
         startService(contactIdFetchService);*/
 
 
-        if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT, getResources()
-                .getInteger(R.integer.launch_mobile_registration)) == getResources().getInteger(R
-                .integer.launch_mobile_registration)) {
+        if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT,
+                IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
+                .LAUNCH_MOBILE_REGISTRATION) {
             finish();
             startActivityIntent(this, MobileNumberRegistrationActivity.class, null);
         } else if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT,
-                getResources().getInteger(R.integer.launch_mobile_registration)) == getResources
-                ().getInteger(R.integer.launch_otp_verification)) {
+                IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
+                .LAUNCH_OTP_VERIFICATION) {
             finish();
             startActivityIntent(this, OtpVerificationActivity.class, null);
         } else if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT,
-                getResources().getInteger(R.integer.launch_mobile_registration)) == getResources
-                ().getInteger(R.integer.launch_profile_registration)) {
+                IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
+                .LAUNCH_PROFILE_REGISTRATION) {
             /*UserProfile userProfile = (UserProfile) Utils.getObjectPreference(this, AppConstants
                     .PREF_REGS_USER_OBJECT, UserProfile.class);
             if (userProfile != null && StringUtils.equalsIgnoreCase(userProfile
@@ -286,7 +287,7 @@ public class MainActivity extends BaseActivity implements NavigationView
             startActivityIntent(MainActivity.this, EventsActivity.class, null);
         } /*else if (id == R.id.nav_blocked_contacts) {
             startActivityIntent(this, BlockContactListActivity.class, new Bundle());
-        } */else if (id == R.id.nav_user_rating_history) {
+        } */ else if (id == R.id.nav_user_rating_history) {
             startActivityIntent(this, RatingHistory.class, new Bundle());
         }
 
@@ -326,7 +327,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                     //Toast.makeText(this, "Sync Successful", Toast.LENGTH_SHORT).show();
 
                     String currentTimeStamp = (StringUtils.split(serviceType, "_"))[1];
-                    Utils.setStringPreference(this, AppConstants.PREF_CONTACT_LAST_SYNC_TIME, currentTimeStamp);
+                    Utils.setStringPreference(this, AppConstants.PREF_CONTACT_LAST_SYNC_TIME,
+                            currentTimeStamp);
                 } else {
                     if (syncDeleteResponse != null) {
                         Log.e("error response", syncDeleteResponse.getMessage());
@@ -486,11 +488,12 @@ public class MainActivity extends BaseActivity implements NavigationView
             @Override
             public void onClick(View view) {
 //                Snackbar.make(view, "Dial Pad", Snackbar.LENGTH_SHORT).show();
-                if(!isCompaseIcon)
+                if (!isCompaseIcon)
                     openDialer();
                 else
                     openSMSComposerPage();
-//                    Toast.makeText(MainActivity.this,"open compose sms page",Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this,"open compose sms page",Toast
+// .LENGTH_SHORT).show();
             }
         });
 
@@ -538,7 +541,7 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     }
 
-    private void openSMSComposerPage(){
+    private void openSMSComposerPage() {
 
         Intent intent = new Intent("android.intent.action.VIEW");
 
@@ -548,7 +551,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         /** Setting sms uri to the intent */
         intent.setData(data);
 
-        /** Initiates the SMS compose screen, because the activity contain ACTION_VIEW and sms uri */
+        /** Initiates the SMS compose screen, because the activity contain ACTION_VIEW and sms
+         * uri */
         startActivity(intent);
 
     }
@@ -651,19 +655,22 @@ public class MainActivity extends BaseActivity implements NavigationView
         switch (tabPosition) {
             case 0:
                 showAddToContact(false);
-                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_floating_dial_pad));
+                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable
+                        .ic_floating_dial_pad));
                 isCompaseIcon = false;
                 replaceFragment(contactsFragment);
                 break;
             case 1:
                 showAddToContact(true);
-                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_floating_dial_pad));
+                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable
+                        .ic_floating_dial_pad));
                 isCompaseIcon = false;
                 replaceFragment(callLogFragment);
                 break;
             case 2:
                 showAddToContact(false);
-                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_mode_edit));
+                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable
+                        .ic_mode_edit));
                 isCompaseIcon = true;
                 replaceFragment(smsFragment);
                 break;
@@ -741,7 +748,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 fetchCallLogsFromIds(tempIdsList);
             }
 
-        }else {
+        } else {
             Utils.setBooleanPreference(this, AppConstants
                     .PREF_CALL_LOG_SYNCED, true);
         }
@@ -872,7 +879,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         if (Utils.isNetworkAvailable(MainActivity.this)) {
             WsRequestObject deviceDetailObject = new WsRequestObject();
             deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
-            deviceDetailObject.setFlag(7);
+            deviceDetailObject.setFlag(IntegerConstants.SYNC_INSERT_CALL_LOG);
             if (Utils.isNetworkAvailable(this)) {
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         deviceDetailObject, null, WsResponseObject.class, WsConstants

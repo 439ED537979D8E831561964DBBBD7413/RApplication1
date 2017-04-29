@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.adapters.PhoneBookContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -423,8 +424,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
         WsRequestObject uploadContactObject = new WsRequestObject();
         uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
-        uploadContactObject.setSendProfileType(getResources().getInteger(R.integer
-                .send_profile_rcp));
+        uploadContactObject.setSendProfileType(IntegerConstants.SEND_PROFILE_RCP);
         uploadContactObject.setPmIdWhose(Integer.parseInt(pmId));
         uploadContactObject.setReceiver(receiver);
 
@@ -444,8 +444,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
         WsRequestObject uploadContactObject = new WsRequestObject();
         uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
-        uploadContactObject.setSendProfileType(getResources().getInteger(R.integer
-                .send_profile_non_rcp));
+        uploadContactObject.setSendProfileType(IntegerConstants.SEND_PROFILE_NON_RCP);
         uploadContactObject.setReceiver(receiver);
         uploadContactObject.setContactData(profileDataOperationVcard);
 
