@@ -341,6 +341,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 EditText inputState = (EditText) linearView.findViewById(R.id.input_state);
                 EditText inputCity = (EditText) linearView.findViewById(R.id.input_city);
                 EditText inputStreet = (EditText) linearView.findViewById(R.id.input_street);
+                EditText inputNeighborhood = (EditText) linearView.findViewById(R.id.input_neighborhood);
                 EditText inputPinCode = (EditText) linearView.findViewById(R.id.input_pin_code);
                 TextView textLatitude = (TextView) linearView.findViewById(R.id.input_latitude);
                 TextView textLongitude = (TextView) linearView.findViewById(R.id.input_longitude);
@@ -361,16 +362,27 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     inputStreet.setText(objAddress.getAddressLine());
                     inputPinCode.setText(objAddress.getPostalCode());
                 } else if (resultCode == AppConstants.RESULT_CODE_MY_LOCATION_SELECTION) {
-                    inputCountry.setText(((ProfileDataOperationAddress) arrayListAddressObject.get
-                            (clickedPosition)).getCountry());
-                    inputState.setText(((ProfileDataOperationAddress) arrayListAddressObject.get
-                            (clickedPosition)).getState());
-                    inputCity.setText(((ProfileDataOperationAddress) arrayListAddressObject.get
-                            (clickedPosition)).getCity());
-                    inputStreet.setText(((ProfileDataOperationAddress) arrayListAddressObject.get
-                            (clickedPosition)).getStreet());
-                    inputPinCode.setText(((ProfileDataOperationAddress) arrayListAddressObject.get
-                            (clickedPosition)).getPostCode());
+                    if (arrayListAddressObject.size() > clickedPosition) {
+                        inputCountry.setText(((ProfileDataOperationAddress)
+                                arrayListAddressObject.get(clickedPosition)).getCountry());
+                        inputState.setText(((ProfileDataOperationAddress) arrayListAddressObject
+                                .get(clickedPosition)).getState());
+                        inputCity.setText(((ProfileDataOperationAddress) arrayListAddressObject
+                                .get(clickedPosition)).getCity());
+                        inputStreet.setText(((ProfileDataOperationAddress) arrayListAddressObject
+                                .get(clickedPosition)).getStreet());
+                        inputNeighborhood.setText(((ProfileDataOperationAddress)
+                                arrayListAddressObject.get(clickedPosition)).getNeighborhood());
+                        inputPinCode.setText(((ProfileDataOperationAddress)
+                                arrayListAddressObject.get(clickedPosition)).getPostCode());
+                    } else {
+                        inputCountry.setText("India");
+                        inputState.setText("Gujarat");
+                        inputCity.setText("Surat");
+                        inputStreet.setText("");
+                        inputPinCode.setText("");
+                        inputNeighborhood.setText("");
+                    }
                 }
             }
         }
@@ -1142,7 +1154,11 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     intent.putExtra(AppConstants.EXTRA_LONGITUDE, Double.parseDouble(StringUtils
                             .defaultIfEmpty(textLongitude.getText().toString(), "0")));
                 }
-                clickedPosition = position;
+                if (position == -1) {
+                    clickedPosition = 0;
+                } else {
+                    clickedPosition = position;
+                }
                 startActivityForResult(intent, AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
             }
