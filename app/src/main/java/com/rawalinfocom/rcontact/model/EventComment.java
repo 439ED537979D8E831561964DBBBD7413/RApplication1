@@ -71,10 +71,10 @@ public class EventComment {
     @JsonProperty("pr_id")
     private String prId;
 
-    @JsonProperty("created_date")
+    @JsonProperty("created_at")
     private String createdDate;
 
-    @JsonProperty("updated_date")
+    @JsonProperty("updated_at")
     private String updatedDate;
 
     @JsonProperty("reply")
