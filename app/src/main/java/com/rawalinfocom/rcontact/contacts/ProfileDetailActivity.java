@@ -440,11 +440,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 }
             }
         }
-       /* if (displayOwnProfile) {
+        if (displayOwnProfile) {
             ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
                     (this, pmId);
             setUpView(profileDataOperation);
-        }*/
+        }
     }
 
     @Override
@@ -546,11 +546,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     rContactApplication.setFavouriteModified(true);
 
                 } else if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_EDIT)) {
-                    /*startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
-                            null);*/
-                    Intent i = new Intent(ProfileDetailActivity.this, EditProfileActivity.class);
+                    startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
+                            null);
+                    /*Intent i = new Intent(ProfileDetailActivity.this, EditProfileActivity.class);
                     startActivityForResult(i, 1);
-                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);*/
                 }
                 break;
 
@@ -684,7 +684,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
     }
 
-    @Override
+/*    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
@@ -696,7 +696,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 }
             }
         }
-    }
+    }*/
 
     private void showPermissionConfirmationDialog() {
 
