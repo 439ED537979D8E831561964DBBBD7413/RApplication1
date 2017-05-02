@@ -151,19 +151,28 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         this.googleMap = googleMap;
-        googleMap.getUiSettings().setZoomControlsEnabled(true);
-        googleMap.setMyLocationEnabled(true);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (latitude == 0 || longitude == 0) {
-                    latitude = 21.1702;
-                    longitude = 72.8311;
+/*        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.setMyLocationEnabled(true);*/
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
+                    .ACCESS_FINE_LOCATION}, AppConstants
+                    .MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        } else {
+            googleMap.getUiSettings().setZoomControlsEnabled(true);
+            googleMap.setMyLocationEnabled(true);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (latitude == 0 || longitude == 0) {
+                        latitude = 21.1702;
+                        longitude = 72.8311;
+                    }
+                    addMapMarker();
                 }
-                addMapMarker();
-            }
-        }, 1000);
+            }, 1000);
+        }
 
         googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
@@ -268,10 +277,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                /* if (objAddress != null) {
                     showAddressDialog(objAddress.getAddress());
                 } else {*/
-                AsyncGeoCoding asyncGeoCodingFetch = new AsyncGeoCoding(this, true, WsConstants
-                        .REQ_GEO_CODING_ADDRESS + "_FALSE");
-                asyncGeoCodingFetch.execute(null, String.valueOf(latitude), String.valueOf
-                        (longitude));
+                if (latitude != 0 && longitude != 0) {
+                    AsyncGeoCoding asyncGeoCodingFetch = new AsyncGeoCoding(this, true, WsConstants
+                            .REQ_GEO_CODING_ADDRESS + "_FALSE");
+                    asyncGeoCodingFetch.execute(null, String.valueOf(latitude), String.valueOf
+                            (longitude));
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootMap, "Please search any location!");
+                }
 //                }
                 break;
 
@@ -321,6 +334,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                     // Permission Granted
 
                     if (Utils.isLocationEnabled(this)) {
+                        googleMap.getUiSettings().setZoomControlsEnabled(true);
+                        googleMap.setMyLocationEnabled(true);
                         gpsTracker = new GPSTracker(this, null);
                         latitude = gpsTracker.getLatitude();
                         longitude = gpsTracker.getLongitude();
@@ -356,20 +371,20 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
         rippleFetchAddress.setOnRippleCompleteListener(this);
 
         if (latitude == 0 || longitude == 0) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission
+        /*    if (ContextCompat.checkSelfPermission(this, Manifest.permission
                     .ACCESS_FINE_LOCATION) !=
                     PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
                         .ACCESS_FINE_LOCATION}, AppConstants
                         .MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
 
+            } else {*/
+            if (Utils.isLocationEnabled(this)) {
+                getLocationDetail();
             } else {
-                if (Utils.isLocationEnabled(this)) {
-                    getLocationDetail();
-                } else {
-                    gpsTracker.showSettingsAlert();
-                }
+                gpsTracker.showSettingsAlert();
             }
+//            }
         } else {
             AsyncReverseGeoCoding asyncReverseGeoCoding = new AsyncReverseGeoCoding(this,
                     WsConstants.REQ_REVERSE_GEO_CODING_ADDRESS, false);

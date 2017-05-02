@@ -21,6 +21,7 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
+import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileData;
 
@@ -42,6 +43,7 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
     private int previousPosition = 0;
     private String phonebookId;
     private String contactName;
+    PhoneBookContacts phoneBookContacts;
 
     private int colorBlack, colorPineGreen;
 
@@ -50,6 +52,7 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
         this.context = context;
         this.phonebookId = phonebookId;
         this.contactName = contactName;
+        phoneBookContacts = new PhoneBookContacts(context);
         this.arrayListUserContact = arrayListUserContact;
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
@@ -75,7 +78,15 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
 
         final ProfileData contact = arrayListUserContact.get(position);
         holder.textContactName.setText(contactName);
-        holder.textContactNumber.setText(contact.getTempNumber());
+        if (StringUtils.length(contact.getTempEmail()) > 0) {
+            if (phoneBookContacts.getIfContactNumbersExists(phonebookId, contact.getTempNumber())) {
+                holder.textContactNumber.setText(contact.getTempNumber());
+            } else {
+                holder.textContactNumber.setText(contact.getTempEmail());
+            }
+        } else {
+            holder.textContactNumber.setText(contact.getTempNumber());
+        }
 
 
        /* holder.textCloudContactName.setVisibility(View.VISIBLE);

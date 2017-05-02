@@ -183,7 +183,8 @@ public class QueryManager {
                 .COLUMN_OM_ORGANIZATION_COMPANY + ", org." + TableOrganizationMaster
                 .COLUMN_OM_ORGANIZATION_DESIGNATION + " from " + TableOrganizationMaster
                 .TABLE_RC_ORGANIZATION_MASTER + " org WHERE org." + TableOrganizationMaster
-                .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
+                .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ") ORDER BY org." +
+                TableOrganizationMaster.COLUMN_OM_ORGANIZATION_IS_CURRENT + " DESC";
 
         Cursor organizationCursor = db.rawQuery(organizationQuery, null);
 
@@ -357,11 +358,14 @@ public class QueryManager {
         String selectQuery = "SELECT DISTINCT " + TableProfileMaster.COLUMN_PM_RCP_ID + ", " +
                 TableProfileMaster.COLUMN_PM_FIRST_NAME + ", " + TableProfileMaster
                 .COLUMN_PM_LAST_NAME + ", " + TableProfileMobileMapping.COLUMN_MPM_MOBILE_NUMBER
-                + " FROM " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " INNER JOIN " +
+                + ", " + TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID + " FROM " +
+                TableProfileMaster.TABLE_RC_PROFILE_MASTER + " LEFT JOIN " +
                 TableProfileMobileMapping.TABLE_PB_PROFILE_MOBILE_MAPPING + " ON " +
                 TableProfileMaster.COLUMN_PM_RCP_ID + " = " + TableProfileMobileMapping
-                .COLUMN_MPM_CLOUD_PM_ID + " WHERE " + TableProfileMaster.COLUMN_PM_RCP_ID + " IN " +
-                "(" + cloudPmIds + ")";
+                .COLUMN_MPM_CLOUD_PM_ID + " LEFT JOIN " + TableProfileEmailMapping
+                .TABLE_PB_PROFILE_EMAIL_MAPPING + " ON " + TableProfileMaster.COLUMN_PM_RCP_ID +
+                " = " + TableProfileEmailMapping.COLUMN_EPM_CLOUD_PM_ID + " WHERE " +
+                TableProfileMaster.COLUMN_PM_RCP_ID + " IN (" + cloudPmIds + ")";
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -379,6 +383,8 @@ public class QueryManager {
                         (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_LAST_NAME)));
                 profileData.setTempNumber(cursor.getString(cursor.getColumnIndex
                         (TableProfileMobileMapping.COLUMN_MPM_MOBILE_NUMBER)));
+                profileData.setTempEmail(cursor.getString(cursor.getColumnIndex
+                        (TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID)));
                 profileData.setTempRcpId(cursor.getString(cursor.getColumnIndex
                         (TableProfileMaster.COLUMN_PM_RCP_ID)));
                 arrayListProfileData.add(profileData);
