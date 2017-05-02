@@ -282,6 +282,16 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("result", 1);
+        setResult(AppConstants.RESULT_CODE_EDIT_PROFILE, returnIntent);
+        finish();
+        overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -341,7 +351,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 EditText inputState = (EditText) linearView.findViewById(R.id.input_state);
                 EditText inputCity = (EditText) linearView.findViewById(R.id.input_city);
                 EditText inputStreet = (EditText) linearView.findViewById(R.id.input_street);
-                EditText inputNeighborhood = (EditText) linearView.findViewById(R.id.input_neighborhood);
+                EditText inputNeighborhood = (EditText) linearView.findViewById(R.id
+                        .input_neighborhood);
                 EditText inputPinCode = (EditText) linearView.findViewById(R.id.input_pin_code);
                 TextView textLatitude = (TextView) linearView.findViewById(R.id.input_latitude);
                 TextView textLongitude = (TextView) linearView.findViewById(R.id.input_longitude);
