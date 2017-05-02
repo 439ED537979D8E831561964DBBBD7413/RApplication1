@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Monal on 14/11/16.
@@ -392,6 +393,34 @@ public class TableProfileMaster {
         return count;
     }
 
+    public String getRawIdFromRcpId(int rcpId) {
+        String rawId = "";
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT " + COLUMN_PM_RAW_ID + " FROM " +
+                TABLE_RC_PROFILE_MASTER + " WHERE " + COLUMN_PM_RCP_ID + " = " + rcpId, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                rawId = cursor.getString(cursor.getColumnIndex(COLUMN_PM_RAW_ID));
+            }
+            cursor.close();
+        }
+        db.close();
+        return rawId;
+    }
+
+    public void updateRawIds(int rcpId, String rawId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PM_RAW_ID, rawId);
+
+        int isUpdated = db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
+                new String[]{String.valueOf(rcpId)});
+
+        db.close();
+
+    }
+
     public ArrayList<String> getAllRcpId() {
 
         ArrayList<String> arrayListRawId = new ArrayList<>();
@@ -413,7 +442,12 @@ public class TableProfileMaster {
                     userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex
                             (COLUMN_PM_LAST_NAME)));*/
                     // Adding user profile to list
-                    arrayListRawId.add(userProfile.getPmRawId());
+                    if (userProfile.getPmRawId().contains(",")) {
+                        String[] multipleRawIds = userProfile.getPmRawId().split(",");
+                        Collections.addAll(arrayListRawId, multipleRawIds);
+                    } else {
+                        arrayListRawId.add(userProfile.getPmRawId());
+                    }
                 } while (cursor.moveToNext());
             }
             cursor.close();

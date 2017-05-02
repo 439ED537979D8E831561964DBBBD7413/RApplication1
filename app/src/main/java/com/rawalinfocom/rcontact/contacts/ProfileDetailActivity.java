@@ -266,6 +266,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     boolean displayOwnProfile = false, isHideFavourite = false;
 
     PhoneBookContacts phoneBookContacts;
+    QueryManager queryManager;
     int listClickedPosition = -1;
 
     ProfileDetailAdapter phoneDetailAdapter;
@@ -303,6 +304,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         ButterKnife.bind(this);
 
         phoneBookContacts = new PhoneBookContacts(this);
+        queryManager = new QueryManager(databaseHandler);
         Intent intent = getIntent();
 
         if (intent != null) {
@@ -440,7 +442,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 }
             }
         }
-
+       /* if (displayOwnProfile) {
+            ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
+                    (this, pmId);
+            setUpView(profileDataOperation);
+        }*/
     }
 
     @Override
@@ -645,8 +651,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     rContactApplication.setFavouriteModified(true);
 
                 } else if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_EDIT)) {
-                    startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
-                            null);
+                    /*startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
+                            null);*/
+                    Intent i = new Intent(ProfileDetailActivity.this, EditProfileActivity.class);
+                    startActivityForResult(i, 1);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
                 }
                 break;
 
@@ -780,6 +789,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                if (displayOwnProfile) {
+                    ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
+                            (this, pmId);
+                    setUpView(profileDataOperation);
+                }
+            }
+        }
+    }
 
     private void showPermissionConfirmationDialog() {
 
@@ -1550,7 +1572,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                setUpView(profileDataOperation);
 //            } else {
 //                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-            QueryManager queryManager = new QueryManager(databaseHandler);
+//            QueryManager queryManager = new QueryManager(databaseHandler);
             ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
                     (this, pmId);
             setUpView(profileDataOperation);
@@ -1675,8 +1697,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             ArrayList<ProfileDataOperationOrganization> arrayListPhoneBookOrganization = new
                     ArrayList<>();
             ArrayList<ProfileDataOperationOrganization> arrayListPhoneBookOrganizationOperation =
-                    new
-                            ArrayList<>();
+                    new ArrayList<>();
 
             if (contactOrganizationCursor != null && contactOrganizationCursor.getCount() > 0) {
                 while (contactOrganizationCursor.moveToNext()) {

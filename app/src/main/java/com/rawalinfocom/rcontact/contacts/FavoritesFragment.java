@@ -509,7 +509,7 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
 
         TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
         ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
-        for (int i = 2; i < arrayListPhoneBookContacts.size(); i++) {
+        for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
             if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
                 if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
                         (i)).getLocalPhoneBookId())) {

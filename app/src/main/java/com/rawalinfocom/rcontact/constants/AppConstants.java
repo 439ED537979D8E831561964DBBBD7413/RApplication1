@@ -64,6 +64,7 @@ public class AppConstants {
 
     public static int RESULT_CODE_MAP_LOCATION_SELECTION = 3;
     public static int RESULT_CODE_MY_LOCATION_SELECTION = 4;
+    public static int RESULT_CODE_EDIT_PROFILE = 5;
 
     //</editor-fold>
 
