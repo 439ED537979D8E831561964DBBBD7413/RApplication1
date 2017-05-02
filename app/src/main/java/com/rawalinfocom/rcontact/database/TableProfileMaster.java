@@ -392,6 +392,34 @@ public class TableProfileMaster {
         return count;
     }
 
+    public String getRawIdFromRcpId(int rcpId) {
+        String rawId = "";
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT " + COLUMN_PM_RAW_ID + " FROM " +
+                TABLE_RC_PROFILE_MASTER + " WHERE " + COLUMN_PM_RCP_ID + " = " + rcpId, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                rawId = cursor.getString(cursor.getColumnIndex(COLUMN_PM_RAW_ID));
+            }
+            cursor.close();
+        }
+        db.close();
+        return rawId;
+    }
+
+    public void updateRawIds(int rcpId, String rawId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PM_RAW_ID, rawId);
+
+        int isUpdated = db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
+                new String[]{String.valueOf(rcpId)});
+
+        db.close();
+
+    }
+
     public ArrayList<String> getAllRcpId() {
 
         ArrayList<String> arrayListRawId = new ArrayList<>();
