@@ -15,32 +15,34 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.adapters.CallConfirmationListAdapter;
 import com.rawalinfocom.rcontact.adapters.CallLogDialogListAdapter;
+import com.rawalinfocom.rcontact.adapters.SmsDialogListAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 
 import java.util.ArrayList;
 
 /**
- * Created by Aniruddh on 27/03/17.
+ * Created by Aniruddh on 29/04/17.
  */
 
-public class CallConfirmationListDialog {
+public class SMSMenuOptionsDialog {
+
     RecyclerView recycleViewDialog;
     private Context context;
     private Dialog dialog;
-    private String dialogTag;
     private TextView tvDialogTitle;
     private ArrayList<String> stringArrayList;
     String dialogTitle;
+    String numberToCall;
     RecyclerView.Adapter callingAdapter;
-    boolean isFromCallLog;
+    String contactName;
 
-    public CallConfirmationListDialog(Context context, ArrayList<String> arrayList, boolean isFromCallLog) {
+
+    public SMSMenuOptionsDialog(Context context, ArrayList<String> arrayList, String number,String name) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_list_call_confirmation);
+        dialog.setContentView(R.layout.dialog_list_material);
 
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         layoutParams.copyFrom(dialog.getWindow().getAttributes());
@@ -54,24 +56,29 @@ public class CallConfirmationListDialog {
 
 
         stringArrayList = arrayList;
-        this.isFromCallLog = isFromCallLog;
+
+        numberToCall =  Utils.getFormattedNumber(context,number);
         dialogTitle = getDialogTitle();
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
 
+        contactName = name;
         setAdapter();
 
         LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(context);
-        IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);
+        IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG_SMS);
         localBroadcastManager.registerReceiver(localBroadcastReceiverDialog,intentFilter);
     }
 
 
 
     private void setAdapter() {
-            CallConfirmationListAdapter materialListAdapter = new CallConfirmationListAdapter(context, stringArrayList,isFromCallLog);
-            recycleViewDialog.setAdapter(materialListAdapter);
+        if(!TextUtils.isEmpty(numberToCall)){
+            SmsDialogListAdapter smsMenuOptionsDialog = new SmsDialogListAdapter(context, stringArrayList,
+                    numberToCall,contactName);
+            recycleViewDialog.setAdapter(smsMenuOptionsDialog);
             setRecyclerViewLayoutManager(recycleViewDialog);
+        }
 
     }
 
@@ -110,28 +117,8 @@ public class CallConfirmationListDialog {
         dialog.dismiss();
     }
 
-    public boolean isDialogShowing() {
-        return dialog.isShowing();
-    }
-
-    public String getDialogTag() {
-        return dialogTag;
-    }
-
-    public void setDialogTag(String dialogTag) {
-        this.dialogTag = dialogTag;
-    }
-
     public String getDialogTitle() {
         return dialogTitle;
-    }
-
-    public RecyclerView.Adapter getCallingAdapter() {
-        return callingAdapter;
-    }
-
-    public void setCallingAdapter(RecyclerView.Adapter callingAdapter) {
-        this.callingAdapter = callingAdapter;
     }
 
     private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {

@@ -79,7 +79,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private int previousPosition = 0;
 
     private final int HEADER = 0, CONTACT = 1, FOOTER = 2;
-
     private int colorBlack, colorPineGreen;
     private int listClickedPosition = -1;
 
