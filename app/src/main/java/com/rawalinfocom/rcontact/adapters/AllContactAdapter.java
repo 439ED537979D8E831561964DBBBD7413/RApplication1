@@ -311,10 +311,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 holder.textContactNumber.setTextColor(colorBlack);
                 holder.textCloudContactName.setVisibility(View.VISIBLE);
             }
-        } else {
-            holder.textContactName.setTextColor(colorBlack);
-            holder.textContactNumber.setTextColor(colorBlack);
-            holder.textCloudContactName.setVisibility(View.VISIBLE);
         }
 
         holder.textContactNumber.setText(profileData.getTempNumber());

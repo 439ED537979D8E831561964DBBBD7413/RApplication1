@@ -73,16 +73,21 @@ public class PhoneBookContacts {
     }
 
     public Cursor getStarredContacts() {
-        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+//        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = new String[]{
 //                ContactsContract.Contacts._ID,
-                ContactsContract.Contacts.LOOKUP_KEY,
 //                ContactsContract.Contacts.STARRED,
+
+//                ContactsContract.Contacts.LOOKUP_KEY,
+
+                ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY,
         };
 
         String selection = "starred = ?";
         String[] selectionArgs = new String[]{"1"};
-        String sortOrder = "UPPER(" + ContactsContract.Contacts.DISPLAY_NAME + ") ASC";
+//        String sortOrder = "UPPER(" + ContactsContract.Contacts.DISPLAY_NAME + ") ASC";
+        String sortOrder = "UPPER(" + ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME + ") ASC";
 
         return context.getContentResolver().query(uri, projection, selection,
                 selectionArgs, sortOrder);
