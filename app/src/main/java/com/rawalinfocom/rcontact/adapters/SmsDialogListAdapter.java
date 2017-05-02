@@ -1,13 +1,14 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.annotation.TargetApi;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.CallLog;
-import android.provider.Telephony;
+import android.provider.ContactsContract;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -25,67 +26,74 @@ import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialogClipboard;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.CallLogType;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by Aniruddh on 27/03/17.
+ * Created by Aniruddh on 29/04/17.
  */
 
-public class CallConfirmationListAdapter extends RecyclerView.Adapter<CallConfirmationListAdapter.MaterialViewHolder> {
+public class SmsDialogListAdapter  extends RecyclerView.Adapter<SmsDialogListAdapter.MaterialViewHolder>{
+
 
     private Context context;
     private ArrayList<String> arrayListString;
     MaterialDialog callConfirmationDialog;
-    boolean isFromCallLog;
+    String numberToCall;
+    String dialogName;
 
-    public CallConfirmationListAdapter(Context context, ArrayList<String> arrayList,boolean isFromCallLog) {
+    public SmsDialogListAdapter(Context context, ArrayList<String> arrayList, String number, String name) {
         this.context = context;
         this.arrayListString = arrayList;
-        this.isFromCallLog = isFromCallLog;
+        this.numberToCall = number;
+        this.dialogName = name;
     }
 
     @Override
-    public CallConfirmationListAdapter.MaterialViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SmsDialogListAdapter.MaterialViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_dialog_call_log,
                 parent, false);
-        return new CallConfirmationListAdapter.MaterialViewHolder(v);
+        return new SmsDialogListAdapter.MaterialViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(CallConfirmationListAdapter.MaterialViewHolder holder, final int position) {
+    public void onBindViewHolder(SmsDialogListAdapter.MaterialViewHolder holder, final int position) {
         final String value = arrayListString.get(position);
         holder.textItemValue.setText(value);
 
         holder.rippleRow.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
             public void onComplete(RippleView rippleView) {
-
-
-                if(isFromCallLog){
-                    showCallConfirmationDialog(value);
-
-                }else{
-                    if(!TextUtils.isEmpty(value)){
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", value, null));
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                            intent.setPackage(Telephony.Sms.getDefaultSmsPackage(context));
-                        }
-                        intent.putExtra("finishActivityOnSaveCompleted", true);
-                        context.startActivity(intent);
-                    }
-
+                if (position == 0) {
+                    if (!TextUtils.isEmpty(numberToCall))
+                        showCallConfirmationDialog(numberToCall);
                 }
 
-                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);
-                localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
-                        AppConstants.EXTRA_CALL_LOG_DELETED_VALUE);
+                if (value.equalsIgnoreCase(context.getString(R.string.add_to_contact))) {
+
+                    Utils.addToContact(context, numberToCall);
+
+                } else if (value.equalsIgnoreCase(context.getString(R.string.add_to_existing_contact))) {
+                    Utils.addToExistingContact(context, numberToCall);
+
+                }  else if (value.equalsIgnoreCase(context.getString(R.string.copy_phone_number))) {
+                    MaterialDialogClipboard materialDialogClipboard = new MaterialDialogClipboard(context, numberToCall);
+                    materialDialogClipboard.showDialog();
+
+                }else {
+
+//                    Toast.makeText(context, "Please select any one option", Toast.LENGTH_SHORT).show();
+                }
+
+                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG_SMS);
                 LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
@@ -152,6 +160,5 @@ public class CallConfirmationListAdapter extends RecyclerView.Adapter<CallConfir
         callConfirmationDialog.showDialog();
 
     }
-
 
 }

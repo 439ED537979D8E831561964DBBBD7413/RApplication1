@@ -134,6 +134,7 @@ public class AppConstants {
             "action_local_broadcast_call_history_activity";
     public static String ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC =
             "action_local_broadcast_call_log_sync";
+    public static String ACTION_LOCAL_BROADCAST_DIALOG_SMS = "action_local_broadcast_dialog_sms";
 
     //</editor-fold>
 
