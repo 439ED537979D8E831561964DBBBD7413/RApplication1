@@ -1823,7 +1823,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
             }
 
-            arrayListNewEmail.add(email);
+            if (StringUtils.length(email.getEmEmailId()) > 0) {
+                arrayListNewEmail.add(email);
+            }
 
         }
 
@@ -1849,8 +1851,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_MY_CONTACT);
             }
 
-
-            arrayListNewPhone.add(phoneNumber);
+            if (StringUtils.length(phoneNumber.getPhoneNumber()) > 0) {
+                arrayListNewPhone.add(phoneNumber);
+            }
 
         }
 
@@ -1859,6 +1862,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         // <editor-fold desc="Website">
         ArrayList<ProfileDataOperationWebAddress> arrayListNewWebAddress = new
                 ArrayList<>();
+
         for (int i = 0; i < linearWebsiteDetails.getChildCount(); i++) {
             ProfileDataOperationWebAddress webAddress = new
                     ProfileDataOperationWebAddress();
@@ -1871,7 +1875,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             webAddress.setWebType((String) websiteType.getSelectedItem());
             webAddress.setWebId((String) relativeRowEditProfile.getTag());
 
-            arrayListNewWebAddress.add(webAddress);
+            if (StringUtils.length(webAddress.getWebAddress()) > 0) {
+                arrayListNewWebAddress.add(webAddress);
+            }
 
         }
 
@@ -1932,7 +1938,10 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             organization.setOrgId((String) relativeRowEditProfile.getTag());
             organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
 
-            arrayListNewOrganization.add(organization);
+            if (StringUtils.length(organization.getOrgName()) > 0 && StringUtils.length
+                    (organization.getOrgJobTitle()) > 0) {
+                arrayListNewOrganization.add(organization);
+            }
 
         }
 
@@ -1958,7 +1967,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
             }
 
-            arrayListNewImAccount.add(imAccount);
+            if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
+                arrayListNewImAccount.add(imAccount);
+            }
 
         }
 
@@ -2027,7 +2038,11 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 address.setAddPublic(IntegerConstants.PRIVACY_MY_CONTACT);
             }
 
-            arrayListNewAddress.add(address);
+            if (StringUtils.length(address.getCountry()) > 0 && StringUtils.length(address
+                    .getState()) > 0 && StringUtils.length(address.getCity()) > 0 && StringUtils
+                    .length(address.getStreet()) > 0) {
+                arrayListNewAddress.add(address);
+            }
 
         }
 
