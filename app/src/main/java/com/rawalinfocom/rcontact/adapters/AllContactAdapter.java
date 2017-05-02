@@ -337,8 +337,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         QueryManager queryManager = new QueryManager(((BaseActivity) context)
                                 .databaseHandler);
                         ArrayList<ProfileData> arrayList = new ArrayList<>();
-                        arrayList.addAll(queryManager.getRcpNumberName(String.valueOf(v
-                                .getTag())));
+                        arrayList.addAll(queryManager.getRcpNumberName(String.valueOf(v.getTag())));
                         holder.recyclerViewMultipleRc.setLayoutManager(new LinearLayoutManager
                                 (context));
                         ContactListExpandAdapter adapter = new ContactListExpandAdapter(context,

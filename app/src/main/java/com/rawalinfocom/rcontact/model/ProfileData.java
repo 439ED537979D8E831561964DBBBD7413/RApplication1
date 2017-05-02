@@ -25,6 +25,7 @@ public class ProfileData {
     private String tempPrefix;
     private String tempMiddleName;
     private String tempNumber;
+    private String tempEmail;
     private String tempRcpName;
     private String tempRcpId;
     private boolean tempIsRcp;
@@ -161,5 +162,14 @@ public class ProfileData {
 
     public void setTempRcpId(String tempRcpId) {
         this.tempRcpId = tempRcpId;
+    }
+
+    @JsonIgnore
+    public String getTempEmail() {
+        return tempEmail;
+    }
+
+    public void setTempEmail(String tempEmail) {
+        this.tempEmail = tempEmail;
     }
 }
