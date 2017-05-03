@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:padding="10dp">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/llMain"
@@ -15,13 +15,16 @@
             android:layout_height="65dp"
             android:id="@+id/icon"
             android:src="@drawable/home_screen_profile"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/llContent"
             android:orientation="vertical"
+            android:layout_toRightOf="@+id/icon"
+            android:layout_toLeftOf="@+id/image_3dots_sms_log"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="5dp">
 
             <TextView
@@ -45,6 +48,19 @@
                 android:text="13 APR, 9:30 AM"/>
         </LinearLayout>
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/image_3dots_sms_log"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingBottom="@dimen/padding_5dp"
+            android:paddingTop="@dimen/padding_5dp"
+            android:paddingLeft="@dimen/padding_5dp"
+            android:src="@drawable/ic_action_more_vertical"
+            android:tint="@color/colorDarkGray"
+            android:visibility="visible"/>
+
+    </RelativeLayout>
 
 </RelativeLayout>
