@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -42,6 +44,7 @@ import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
@@ -145,6 +148,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return viewHolder;
     }
 
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
@@ -234,6 +238,19 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             position) {
 
         final ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
+        final String thumbnailUrl = profileData.getProfileUrl();
+        if (!TextUtils.isEmpty(thumbnailUrl)) {
+            Glide.with(context)
+                    .load(thumbnailUrl)
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .override(200, 200)
+                    .into(holder.imageProfile);
+
+        } else {
+            holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
+        }
 
         holder.textContactName.setTag(position);
         if (arrayListExpandedPositions.contains(position)) {
@@ -253,13 +270,17 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         if (StringUtils.length(prefix) > 0) {
             contactDisplayName = prefix + " ";
-        } if (StringUtils.length(firstName) > 0) {
+        }
+        if (StringUtils.length(firstName) > 0) {
             contactDisplayName = contactDisplayName + firstName + " ";
-        } if (StringUtils.length(middleName) > 0) {
+        }
+        if (StringUtils.length(middleName) > 0) {
             contactDisplayName = contactDisplayName + middleName + " ";
-        } if (StringUtils.length(lastName) > 0) {
+        }
+        if (StringUtils.length(lastName) > 0) {
             contactDisplayName = contactDisplayName + lastName + " ";
-        } if (StringUtils.length(suffix) > 0) {
+        }
+        if (StringUtils.length(suffix) > 0) {
             contactDisplayName = contactDisplayName + suffix;
         }
         contactDisplayName = StringUtils.trimToEmpty(contactDisplayName);
