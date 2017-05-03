@@ -299,14 +299,14 @@ public class TableProfileMobileMapping {
     public ArrayList<UserProfile> getRContactList() {
         ArrayList<UserProfile> arrayListRContact = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT " + TABLE_RC_PROFILE_MASTER + "." +
+        String selectQuery = "SELECT DISTINCT " + TABLE_RC_PROFILE_MASTER + "." +
                 COLUMN_PM_FIRST_NAME +
                 "," + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_LAST_NAME + "," +
                 TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RCP_ID + "," +
                 TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RAW_ID + "," +
                 TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATING + "," +
                 TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATE_USER + "," +
-                TABLE_PB_PROFILE_EMAIL_MAPPING + "." + COLUMN_EPM_EMAIL_ID + "," +
+//                TABLE_PB_PROFILE_EMAIL_MAPPING + "." + COLUMN_EPM_EMAIL_ID + "," +
                 TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_MOBILE_NUMBER + " FROM " +
                 TABLE_RC_PROFILE_MASTER + " LEFT JOIN " + TABLE_PB_PROFILE_MOBILE_MAPPING + " ON " +
                 "" + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RCP_ID + " = " +
@@ -337,8 +337,8 @@ public class TableProfileMobileMapping {
                         (TableProfileMaster.COLUMN_PM_PROFILE_RATING)));
                 userProfile.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex
                         (TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER)));
-                userProfile.setEmailId(cursor.getString(cursor.getColumnIndex
-                        (TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID)));
+               /* userProfile.setEmailId(cursor.getString(cursor.getColumnIndex
+                        (TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID)));*/
                 userProfile.setMobileNumber(cursor.getString(cursor.getColumnIndex
                         (TableProfileMobileMapping.COLUMN_MPM_MOBILE_NUMBER)));
                 // Adding profileMobileMapping to list
