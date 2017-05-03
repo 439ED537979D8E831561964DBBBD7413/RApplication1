@@ -1193,7 +1193,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 }
 
                 if(isFirstTime){
-                    LIST_PARTITION_COUNT = 10;
+                    LIST_PARTITION_COUNT = 7;
                 }else{
                     LIST_PARTITION_COUNT = 20;
                 }

@@ -96,7 +96,7 @@ import butterknife.ButterKnife;
 public class AllContactsListFragment extends BaseFragment implements LoaderManager
         .LoaderCallbacks<Cursor>, WsResponseListener {
 
-    private final int CONTACT_CHUNK = 2;
+    private final int CONTACT_CHUNK = 50;
 
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
@@ -386,7 +386,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             Utils.setBooleanPreference(getActivity(), AppConstants
                                     .PREF_CONTACT_SYNCED, true);
                             getRcpDetail();
-                        /*    AsyncTask.execute(new Runnable() {
+                          /*  AsyncTask.execute(new Runnable() {
                                 @Override
                                 public void run() {
                                     TableProfileMaster tableProfileMaster = new
@@ -733,12 +733,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     arrayListContactHeaders);
             recyclerViewContactList.setAdapter(allContactListAdapter);
 
-            /*rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
-            rContactApplication.setArrayListAllContactHeaders(arrayListContactHeaders);*/
+            rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
+            rContactApplication.setArrayListAllContactHeaders(arrayListContactHeaders);
         }
 
         getRcpDetail();
-      /*  AsyncTask.execute(new Runnable() {
+       /* AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler
@@ -795,59 +795,63 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     private void getRcpDetail() {
-        AsyncTask.execute(new Runnable() {
+        /*AsyncTask.execute(new Runnable() {
             @Override
-            public void run() {
-                TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler
-                        ());
-                ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
-                for (int i = 2; i < arrayListPhoneBookContacts.size(); i++) {
-                    if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
-                        if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
-                                (i)).getLocalPhoneBookId())) {
-                            ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
+            public void run() {*/
+        try {
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler
+                    ());
+            ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
+            for (int i = 2; i < arrayListPhoneBookContacts.size(); i++) {
+                if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
+                    if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
+                            (i)).getLocalPhoneBookId())) {
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
                   /*  String name = tableProfileMaster.getNameFromRawId(((ProfileData)
                             arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId());
                     ((ProfileData) arrayListPhoneBookContacts.get(i))
                             .setTempRcpName(name);*/
-                            ArrayList<UserProfile> userProfiles = new ArrayList<>();
-                            userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
-                                    (ProfileData) arrayListPhoneBookContacts.get(i))
-                                    .getLocalPhoneBookId()));
-                            String name = "0";
-                            String rcpID = "0";
-                            if (userProfiles.size() > 1) {
-                                for (int j = 0; j < userProfiles.size();
-                                     j++) {
-                                    if (name.equalsIgnoreCase("0")) {
-                                        name = userProfiles.get(j).getPmRcpId();
-                                    } else {
-                                        name = name + "," + userProfiles.get(j).getPmRcpId();
-                                    }
+                        ArrayList<UserProfile> userProfiles = new ArrayList<>();
+                        userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
+                                (ProfileData) arrayListPhoneBookContacts.get(i))
+                                .getLocalPhoneBookId()));
+                        String name = "0";
+                        String rcpID = "0";
+                        if (userProfiles.size() > 1) {
+                            for (int j = 0; j < userProfiles.size();
+                                 j++) {
+                                if (name.equalsIgnoreCase("0")) {
+                                    name = userProfiles.get(j).getPmRcpId();
+                                } else {
+                                    name = name + "," + userProfiles.get(j).getPmRcpId();
                                 }
-                            } else if (userProfiles.size() == 1) {
-                                name = userProfiles.get(0).getPmFirstName() + " " + userProfiles
-                                        .get(0)
-                                        .getPmLastName();
-                                rcpID = userProfiles.get(0).getPmRcpId();
                             }
-                            ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
-                            ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
-                        } else {
-                            ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
+                        } else if (userProfiles.size() == 1) {
+                            name = userProfiles.get(0).getPmFirstName() + " " + userProfiles
+                                    .get(0)
+                                    .getPmLastName();
+                            rcpID = userProfiles.get(0).getPmRcpId();
                         }
-                        final int finalI = i;
-                        getActivity().runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                allContactListAdapter.notifyItemChanged(finalI);
-                            }
-                        });
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
+                    } else {
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
                     }
+                    final int finalI = i;
+                    getActivity().runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            allContactListAdapter.notifyItemChanged(finalI);
+                        }
+                    });
                 }
             }
-        });
+        } catch (Exception ignore) {
+
+        }
+           /* }
+        });*/
     }
 
     private void getContactsFromPhonebook(Cursor data) {
