@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 
+import com.rawalinfocom.rcontact.helper.Utils;
+
+import java.util.ArrayList;
+
 /**
  * Created by user on 26/12/16.
  */
@@ -70,15 +74,22 @@ public class PhoneBookContacts {
 
     public Cursor getStarredContacts() {
         Uri uri = ContactsContract.Contacts.CONTENT_URI;
+//        Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = new String[]{
 //                ContactsContract.Contacts._ID,
-                ContactsContract.Contacts.LOOKUP_KEY,
 //                ContactsContract.Contacts.STARRED,
+
+                ContactsContract.Contacts.LOOKUP_KEY,
+
+//                ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY,
         };
 
         String selection = "starred = ?";
         String[] selectionArgs = new String[]{"1"};
-        String sortOrder = "UPPER(" + ContactsContract.Contacts.DISPLAY_NAME + ") ASC";
+//        String sortOrder = "UPPER(" + ContactsContract.Contacts.DISPLAY_NAME + ") ASC";
+        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+//        String sortOrder = "UPPER(" + ContactsContract.CommonDataKinds.StructuredName
+// .GIVEN_NAME + ") ASC";
 
         return context.getContentResolver().query(uri, projection, selection,
                 selectionArgs, sortOrder);
@@ -144,6 +155,35 @@ public class PhoneBookContacts {
 
         return context.getContentResolver().query(uri, projection, selection,
                 selectionArgs, null);
+    }
+
+    public boolean getIfContactNumbersExists(String contactId, String contactNumber) {
+        ArrayList<String> arrayListNumbers = new ArrayList<>();
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        String[] projection = new String[]{
+//                ContactsContract.CommonDataKinds.Phone._ID,
+                ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+        };
+
+//        String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
+        String selection = ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ?";
+        String[] selectionArgs = new String[]{contactId};
+
+        Cursor cursor = context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    arrayListNumbers.add(Utils.getFormattedNumber(context, cursor.getString
+                            (cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                            )));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+
+        return arrayListNumbers.contains(contactNumber);
     }
 
     public Cursor getContactNickName(String contactId) {

@@ -1,5 +1,7 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -27,25 +30,53 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import butterknife.BindView;
+
 /**
  * Created by Aniruddh on 21/04/17.
  */
 
-public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryViewHolder> {
+public class SmsListDateWiseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+        implements SectionIndexer {
 
 
+    private final int HEADER = 0, CALL_LOGS = 1;
     private Context context;
-    private ArrayList<SmsDataType> typeArrayList;
-    String address;
+    private ArrayList<Object> arrayListCallLogs;
+    private ArrayList<String> arrayListCallLogHeader;
+    private ArrayList<String> listOfDateToDisplay;
+    private int previousPosition = 0;
+    private String number = "";
+    Activity mActivity;
     SmsDataType selectedSmsType;
     int selectedPosition = -1;
+    private ArrayList<String> arrayListForKnownContact;
+    private ArrayList<String> arrayListForUnknownContact;
 
-    public SmsListAdapter(Context context, ArrayList<SmsDataType> SmsListAdapter) {
+    //<editor-fold desc="Constructor">
+    public SmsListDateWiseAdapter(Context context, ArrayList<Object> arrayListCallLogs,
+                                  ArrayList<String> arrayListCallLogHeader) {
         this.context = context;
-        this.typeArrayList = SmsListAdapter;
-
+        this.arrayListCallLogs = arrayListCallLogs;
+        this.arrayListCallLogHeader = arrayListCallLogHeader;
     }
 
+    public SmsListDateWiseAdapter(Activity activity, ArrayList<Object> arrayListCallLogs,
+                                  ArrayList<String> arrayListCallLogHeader) {
+        this.mActivity = activity;
+        this.arrayListCallLogs = arrayListCallLogs;
+        this.arrayListCallLogHeader = arrayListCallLogHeader;
+        this.context = activity;
+        listOfDateToDisplay = new ArrayList<>();
+        for (int i = 0; i < arrayListCallLogs.size(); i++) {
+            if (arrayListCallLogs.get(i) instanceof SmsDataType) {
+                long objDate = ((SmsDataType) arrayListCallLogs.get(i))
+                        .getDataAndTime();
+                String finalDate = new SimpleDateFormat("dd/MM,EEE").format(objDate);
+                listOfDateToDisplay.add(finalDate);
+            }
+        }
+    }
 
     public SmsDataType getSelectedSmsType() {
         return selectedSmsType;
@@ -63,18 +94,81 @@ public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryV
         this.selectedPosition = selectedPosition;
     }
 
+    //</editor-fold>
 
+    //<editor-fold desc="Override Methods">
     @Override
-    public CountryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_item_sms,
-                parent, false);
-        return new CountryViewHolder(v);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder = null;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+        switch (viewType) {
+            case HEADER:
+                View v1 = inflater.inflate(R.layout.list_item_call_log_header, parent, false);
+                viewHolder = new CallLogHeaderViewHolder(v1);
+                break;
+            case CALL_LOGS:
+                View v2 = inflater.inflate(R.layout.layout_item_sms, parent, false);
+                viewHolder = new AllCallLogViewHolder(v2);
+                break;
+        }
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(CountryViewHolder holder, final int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        switch (holder.getItemViewType()) {
+            case HEADER:
+                CallLogHeaderViewHolder contactHeaderViewHolder =
+                        (CallLogHeaderViewHolder) holder;
+                configureHeaderViewHolder(contactHeaderViewHolder, position);
+                break;
+            case CALL_LOGS:
+                AllCallLogViewHolder contactViewHolder = (AllCallLogViewHolder) holder;
+                configureAllContactViewHolder(contactViewHolder, position);
+                break;
+        }
+    }
 
-        final SmsDataType smsDataType = (SmsDataType) typeArrayList.get(position);
+    @Override
+    public int getItemViewType(int position) {
+        if (arrayListCallLogs.get(position) instanceof SmsDataType) {
+            return CALL_LOGS;
+        } else if (arrayListCallLogs.get(position) instanceof String) {
+            return HEADER;
+        }
+        return -1;
+    }
+
+    @Override
+    public int getItemCount() {
+
+        return arrayListCallLogs.size();
+    }
+
+    @Override
+    public Object[] getSections() {
+        return arrayListCallLogHeader.toArray(new String[arrayListCallLogHeader.size()]);
+    }
+
+    @Override
+    public int getPositionForSection(int sectionIndex) {
+        return 0;
+    }
+
+    @Override
+    public int getSectionForPosition(int position) {
+        return previousPosition;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Private Public Methods">
+    @SuppressLint("SimpleDateFormat")
+
+    private void configureAllContactViewHolder(final AllCallLogViewHolder holder, final int
+            position) {
+
+        final SmsDataType smsDataType = (SmsDataType) arrayListCallLogs.get(position);
         String isRead = smsDataType.getIsRead();
         Log.i("SMS Read", isRead);
         Log.i("SMS", " Number : " + smsDataType.getNumber() + " Thread ID " + smsDataType.getThreadId());
@@ -162,12 +256,22 @@ public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryV
 
     }
 
-    @Override
-    public int getItemCount() {
-        return typeArrayList.size();
-    }
+    private void configureHeaderViewHolder(CallLogHeaderViewHolder holder, int
+            position) {
+        String date = (String) arrayListCallLogs.get(position);
 
-    class CountryViewHolder extends RecyclerView.ViewHolder {
+        if (listOfDateToDisplay.contains(date) || date.equalsIgnoreCase("Today") || date.equalsIgnoreCase("Yesterday")) {
+            holder.textHeader.setVisibility(View.VISIBLE);
+            holder.textHeader.setText(date);
+        } else {
+            holder.textHeader.setVisibility(View.GONE);
+
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="View Holder">
+    public class AllCallLogViewHolder extends RecyclerView.ViewHolder {
 
         ImageView icon;
         TextView textNumber;
@@ -177,8 +281,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryV
         ImageView image3dotsSmsLog;
         RelativeLayout llMain;
 
-
-        CountryViewHolder(View itemView) {
+        AllCallLogViewHolder(View itemView) {
             super(itemView);
             icon = (ImageView) itemView.findViewById(R.id.icon);
             textBody = (TextView) itemView.findViewById(R.id.text_body);
@@ -190,4 +293,14 @@ public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryV
         }
     }
 
+    public class CallLogHeaderViewHolder extends RecyclerView.ViewHolder {
+
+        TextView textHeader;
+
+        CallLogHeaderViewHolder(View itemView) {
+            super(itemView);
+            textHeader = (TextView) itemView.findViewById(R.id.text_header);
+
+        }
+    }
 }

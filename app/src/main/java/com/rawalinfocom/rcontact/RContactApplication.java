@@ -55,11 +55,11 @@ public class RContactApplication extends Application {
         arrayListFavContactHeaders = new ArrayList<>();
 
         arrayListcallLogsHeaders = new ArrayList<>();
-        arrayListObjectCallLogs =  new ArrayList<>();
-        arrayListCallLogType =  new ArrayList<>();
+        arrayListObjectCallLogs = new ArrayList<>();
+        arrayListCallLogType = new ArrayList<>();
 
         arrayListObjectSmsLogs = new ArrayList<>();
-        arrayListSmsLogsHeaders =  new ArrayList<>();
+        arrayListSmsLogsHeaders = new ArrayList<>();
 
         // Facebook Initialization
         FacebookSdk.sdkInitialize(getApplicationContext());

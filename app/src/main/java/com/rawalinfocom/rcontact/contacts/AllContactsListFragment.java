@@ -361,6 +361,23 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         if (lastSyncedData < arrayListSyncUserContact.size()) {
                             backgroundSync(true, uploadContactResponse);
                         } else {
+                            if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+                                    .getArrayListUserRcProfile())) {
+
+                                /* Store Unique Contacts to ProfileMobileMapping */
+                                storeToMobileMapping(uploadContactResponse
+                                        .getArrayListUserRcProfile());
+
+                                /* Store Unique Emails to ProfileEmailMapping */
+                                storeToEmailMapping(uploadContactResponse
+                                        .getArrayListUserRcProfile());
+
+                                /* Store Profile Details to respective Table */
+                                storeProfileDataToDb(uploadContactResponse
+                                        .getArrayListUserRcProfile(), uploadContactResponse
+                                        .getArrayListMapping());
+                            }
+
                             Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
                                     "All Contact Synced");
                             Utils.setStringPreference(getActivity(), AppConstants
@@ -368,7 +385,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     .currentTimeMillis() - 10000));
                             Utils.setBooleanPreference(getActivity(), AppConstants
                                     .PREF_CONTACT_SYNCED, true);
-                            AsyncTask.execute(new Runnable() {
+                            getRcpDetail();
+                          /*  AsyncTask.execute(new Runnable() {
                                 @Override
                                 public void run() {
                                     TableProfileMaster tableProfileMaster = new
@@ -383,12 +401,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                                     .getLocalPhoneBookId())) {
                                                 ((ProfileData) arrayListPhoneBookContacts.get(i))
                                                         .setTempIsRcp(true);
-                                                /*String name = tableProfileMaster.getNameFromRawId
+                                                *//*String name = tableProfileMaster
+                                                * .getNameFromRawId
                                                         (((ProfileData)
                                                                 arrayListPhoneBookContacts.get(i)
                                                         ).getLocalPhoneBookId());
                                                 ((ProfileData) arrayListPhoneBookContacts.get(i))
-                                                        .setTempRcpName(name);*/
+                                                        .setTempRcpName(name);*//*
                                                 ArrayList<UserProfile> userProfiles = new
                                                         ArrayList<>();
                                                 userProfiles.addAll(tableProfileMaster
@@ -431,7 +450,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                         }
                                     }
                                 }
-                            });
+                            });*/
                             Intent localBroadcastIntent = new Intent(AppConstants
                                     .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
                             LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
@@ -559,7 +578,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         Set<String> set = new HashSet<>();
         set.add(ContactsContract.Data.MIMETYPE);
         set.add(ContactsContract.Data.CONTACT_ID);
-        set.add(ContactsContract.Data.PHOTO_ID);
         set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
 //        set.add(ContactsContract.CommonDataKinds.Phone.TYPE);
         set.add(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
@@ -593,12 +611,14 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
-        progressAllContact.setVisibility(View.GONE);
-
         getContactsFromPhonebook(data);
         data.close();
 
         setRecyclerViewLayoutManager();
+        initSwipe();
+
+        textTotalContacts.setVisibility(View.GONE);
+        progressAllContact.setVisibility(View.GONE);
 
         Runnable run = new Runnable() {
             @Override
@@ -629,8 +649,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     private void init() {
 
-        textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
-        textTotalContacts.setVisibility(View.GONE);
+        getLoaderManager().initLoader(0, null, this);
+
+//        textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
 
       /*  VerticalRecyclerViewFastScroller scrollerAllContact = new
                 VerticalRecyclerViewFastScroller(getActivity());
@@ -652,7 +673,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         setRecyclerViewLayoutManager();*/
 
-        initSwipe();
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerViewContactList.setLayoutManager(linearLayoutManager);
 
         /*ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(getActivity(),
                 AppConstants.PREF_CONTACT_ID_SET);
@@ -673,7 +695,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     .services.ContactIdFetchService.class);
             getActivity().startService(contactIdFetchService);
         }*/
-        getLoaderManager().initLoader(0, null, this);
+
 
     }
 
@@ -695,9 +717,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.scrollToPosition(scrollPosition);*/
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerViewContactList.setLayoutManager(linearLayoutManager);
-
         if (arrayListUserContact.size() > 0) {
             for (int i = 0; i < arrayListUserContact.size(); i++) {
                 String headerLetter = StringUtils.upperCase(StringUtils.substring
@@ -710,67 +729,129 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
             }
 
-            rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
-            rContactApplication.setArrayListAllContactHeaders(arrayListContactHeaders);
-
             allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts,
                     arrayListContactHeaders);
-
             recyclerViewContactList.setAdapter(allContactListAdapter);
+
+            rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
+            rContactApplication.setArrayListAllContactHeaders(arrayListContactHeaders);
         }
 
+        getRcpDetail();
        /* AsyncTask.execute(new Runnable() {
             @Override
+            public void run() {
+                TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler
+                        ());
+                ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
+                for (int i = 2; i < arrayListPhoneBookContacts.size(); i++) {
+                    if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
+                        if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
+                                (i)).getLocalPhoneBookId())) {
+                            ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
+                  *//*  String name = tableProfileMaster.getNameFromRawId(((ProfileData)
+                            arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId());
+                    ((ProfileData) arrayListPhoneBookContacts.get(i))
+                            .setTempRcpName(name);*//*
+                            ArrayList<UserProfile> userProfiles = new ArrayList<>();
+                            userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
+                                    (ProfileData) arrayListPhoneBookContacts.get(i))
+                                    .getLocalPhoneBookId()));
+                            String name = "0";
+                            String rcpID = "0";
+                            if (userProfiles.size() > 1) {
+                                for (int j = 0; j < userProfiles.size();
+                                     j++) {
+                                    if (name.equalsIgnoreCase("0")) {
+                                        name = userProfiles.get(j).getPmRcpId();
+                                    } else {
+                                        name = name + "," + userProfiles.get(j).getPmRcpId();
+                                    }
+                                }
+                            } else if (userProfiles.size() == 1) {
+                                name = userProfiles.get(0).getPmFirstName() + " " + userProfiles
+                                        .get(0)
+                                        .getPmLastName();
+                                rcpID = userProfiles.get(0).getPmRcpId();
+                            }
+                            ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
+                            ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
+                        } else {
+                            ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
+                        }
+                        final int finalI = i;
+                        getActivity().runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                allContactListAdapter.notifyItemChanged(finalI);
+                            }
+                        });
+                    }
+                }
+            }
+        });*/
+
+    }
+
+    private void getRcpDetail() {
+        /*AsyncTask.execute(new Runnable() {
+            @Override
             public void run() {*/
-        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
-        ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
-        for (int i = 2; i < arrayListPhoneBookContacts.size(); i++) {
-            if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
-                if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
-                        (i)).getLocalPhoneBookId())) {
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
+        try {
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler
+                    ());
+            ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
+            for (int i = 2; i < arrayListPhoneBookContacts.size(); i++) {
+                if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
+                    if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
+                            (i)).getLocalPhoneBookId())) {
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
                   /*  String name = tableProfileMaster.getNameFromRawId(((ProfileData)
                             arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId());
                     ((ProfileData) arrayListPhoneBookContacts.get(i))
                             .setTempRcpName(name);*/
-                    ArrayList<UserProfile> userProfiles = new ArrayList<>();
-                    userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
-                            (ProfileData) arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId
-                            ()));
-                    String name = "0";
-                    String rcpID = "0";
-                    if (userProfiles.size() > 1) {
-                        for (int j = 0; j < userProfiles.size();
-                             j++) {
-                            if (name.equalsIgnoreCase("0")) {
-                                name = userProfiles.get(j).getPmRcpId();
-                            } else {
-                                name = name + "," + userProfiles.get(j).getPmRcpId();
+                        ArrayList<UserProfile> userProfiles = new ArrayList<>();
+                        userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
+                                (ProfileData) arrayListPhoneBookContacts.get(i))
+                                .getLocalPhoneBookId()));
+                        String name = "0";
+                        String rcpID = "0";
+                        if (userProfiles.size() > 1) {
+                            for (int j = 0; j < userProfiles.size();
+                                 j++) {
+                                if (name.equalsIgnoreCase("0")) {
+                                    name = userProfiles.get(j).getPmRcpId();
+                                } else {
+                                    name = name + "," + userProfiles.get(j).getPmRcpId();
+                                }
                             }
+                        } else if (userProfiles.size() == 1) {
+                            name = userProfiles.get(0).getPmFirstName() + " " + userProfiles
+                                    .get(0)
+                                    .getPmLastName();
+                            rcpID = userProfiles.get(0).getPmRcpId();
                         }
-                    } else if (userProfiles.size() == 1) {
-                        name = userProfiles.get(0).getPmFirstName() + " " + userProfiles.get(0)
-                                .getPmLastName();
-                        rcpID = userProfiles.get(0).getPmRcpId();
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
+                    } else {
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
                     }
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
-                } else {
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
-                }
-                final int finalI = i;
-                getActivity().runOnUiThread(new Runnable() {
+                    final int finalI = i;
+                    getActivity().runOnUiThread(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        allContactListAdapter.notifyItemChanged(finalI);
-                    }
-                });
+                        @Override
+                        public void run() {
+                            allContactListAdapter.notifyItemChanged(finalI);
+                        }
+                    });
+                }
             }
+        } catch (Exception ignore) {
+
         }
            /* }
         });*/
-
     }
 
     private void getContactsFromPhonebook(Cursor data) {
@@ -950,7 +1031,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
             }
 
-            if (tableProfileMaster.getRcpIdCount(Integer.parseInt(userProfile.getPmRcpId())) <= 0) {
+//            if (tableProfileMaster.getRcpIdCount(Integer.parseInt(userProfile.getPmRcpId())) <=
+// 0) {
+            String existingRawId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt
+                    (userProfile.getPmRcpId()));
+            if (StringUtils.length(existingRawId) <= 0) {
 
                 arrayListUserProfile.add(userProfile);
                 tableProfileMaster.addArrayProfile(arrayListUserProfile);
@@ -1153,6 +1238,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     tableEventMaster.addArrayEvent(eventList);
                 }
                 //</editor-fold>
+            } else {
+                String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData.get(i)
+                        .getRcpPmId());
+                tableProfileMaster.updateRawIds(Integer.parseInt(userProfile.getPmRcpId()),
+                        newRawIds);
             }
         }
     }
