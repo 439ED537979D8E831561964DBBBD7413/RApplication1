@@ -2,44 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
+    android:layout_height="match_parent">
 
-   <!-- <ScrollView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_sms_logs"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/scrollView">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/rlMain">
--->
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_sms_logs"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/llLoading">
-            </android.support.v7.widget.RecyclerView>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/llLoading"
-                android:orientation="horizontal"
-                android:layout_alignParentBottom="true">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Loading ..."
-                    android:padding="@dimen/margin_10dp"
-                    android:gravity="center_horizontal"
-                    android:visibility="gone"/>
-            </LinearLayout>
-<!--
-        </RelativeLayout>
-
-    </ScrollView>-->
+        android:layout_height="wrap_content">
+    </android.support.v7.widget.RecyclerView>
 
     <ProgressBar
         android:id="@+id/progressBar"
