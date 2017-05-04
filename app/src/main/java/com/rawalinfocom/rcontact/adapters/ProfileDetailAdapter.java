@@ -621,6 +621,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     @Override
     public void onSettingSaved(ProfileDetailViewHolder viewHolder, int whichItem, int newPrivacy,
                                int itemPosition, int oldPrivacy, String cloudId) {
+        if (oldPrivacy == newPrivacy + 1) {
+            return;
+        }
         switch (newPrivacy) {
             case 0:
                 //everyone

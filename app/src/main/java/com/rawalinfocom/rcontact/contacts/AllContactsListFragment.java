@@ -87,8 +87,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -139,6 +137,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     boolean isFromSettings = false;
     int settingRequestPermission = 0;
     private String callNumber = "";
+    private SyncingTask syncingTask;
 
     //<editor-fold desc="Constructors">
 
@@ -157,7 +156,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
 //        phoneBookContacts = new PhoneBookContacts(getActivity());
 
@@ -210,6 +208,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             arrayListOperation.add(myOperation);
             myProfileData.setOperation(arrayListOperation);*/
             arrayListPhoneBookContacts.add(myProfileData);
+            arrayListPhoneBookContacts.add("My Contacts");
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
 
@@ -575,35 +574,49 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         arrayListPhoneBookContacts.add(myProfileData);*/
 
-        Set<String> set = new HashSet<>();
-        set.add(ContactsContract.Data.MIMETYPE);
-        set.add(ContactsContract.Data.CONTACT_ID);
-        set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
-//        set.add(ContactsContract.CommonDataKinds.Phone.TYPE);
-        set.add(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
-        set.add(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
-        set.add(ContactsContract.CommonDataKinds.StructuredName.PREFIX);
-        set.add(ContactsContract.CommonDataKinds.StructuredName.SUFFIX);
-        set.add(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME);
-        set.add(ContactsContract.Contacts.PHOTO_ID);
-        set.add(ContactsContract.Contacts.LOOKUP_KEY);
+//        Set<String> set = new HashSet<>();
+//        set.add(ContactsContract.Data.MIMETYPE);
+//        set.add(ContactsContract.Data.CONTACT_ID);
+//        set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
+////        set.add(ContactsContract.CommonDataKinds.Phone.TYPE);
+//        set.add(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+//        set.add(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
+//        set.add(ContactsContract.CommonDataKinds.StructuredName.PREFIX);
+//        set.add(ContactsContract.CommonDataKinds.StructuredName.SUFFIX);
+//        set.add(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME);
+//        set.add(ContactsContract.Contacts.PHOTO_ID);
+//        set.add(ContactsContract.Contacts.LOOKUP_KEY);
+//
+//        Uri uri = ContactsContract.Data.CONTENT_URI;
+//        String[] projection = set.toArray(new String[0]);
+//        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)";
+//        String[] selectionArgs = {
+//                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+//                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+//        };
+//        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+//
+//        // Starts the query
+//        return new CursorLoader(
+//                getActivity(),
+//                uri,
+//                projection,
+//                selection,
+//                selectionArgs,
+//                sortOrder);
 
-        Uri uri = ContactsContract.Data.CONTENT_URI;
-        String[] projection = set.toArray(new String[0]);
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)";
-        String[] selectionArgs = {
-                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
-                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
-        };
-        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
-
-        // Starts the query
+        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        String selection = ContactsContract.Contacts.HAS_PHONE_NUMBER;
+        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.Data.LOOKUP_KEY, ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone._ID,
+                ContactsContract.Contacts._ID};
         return new CursorLoader(
                 getActivity(),
                 uri,
                 projection,
                 selection,
-                selectionArgs,
+                null,
                 sortOrder);
 
     }
@@ -620,16 +633,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         textTotalContacts.setVisibility(View.GONE);
         progressAllContact.setVisibility(View.GONE);
 
-        Runnable run = new Runnable() {
-            @Override
-            public void run() {
-                syncContacts();
-            }
-        };
+
+//        Runnable run = new Runnable() {
+//            @Override
+//            public void run() {
+//                syncContacts();
+//            }
+//        };
         if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
-            AsyncTask.execute(run);
+            syncingTask = new SyncingTask();
+            syncingTask.execute();
         }
-//        AsyncTask.execute(run);
     }
 
     @Override
@@ -639,8 +653,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     @Override
     public void onDetach() {
-        super.onDetach();
+        if (syncingTask != null) {
+            syncingTask.cancel(true);
+        }
         allContactListAdapter = null;
+        super.onDetach();
     }
 
     //</editor-fold>
@@ -717,25 +734,25 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.scrollToPosition(scrollPosition);*/
 
-        if (arrayListUserContact.size() > 0) {
-            for (int i = 0; i < arrayListUserContact.size(); i++) {
-                String headerLetter = StringUtils.upperCase(StringUtils.substring
-                        (arrayListUserContact.get(i).getTempFirstName(), 0, 1));
-                headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
-                if (!arrayListPhoneBookContacts.contains(headerLetter)) {
-                    arrayListContactHeaders.add(headerLetter);
-                    arrayListPhoneBookContacts.add(headerLetter);
-                }
-                arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
-            }
+//        if (arrayListUserContact.size() > 0) {
+//            for (int i = 0; i < arrayListUserContact.size(); i++) {
+//                String headerLetter = StringUtils.upperCase(StringUtils.substring
+//                        (arrayListUserContact.get(i).getTempFirstName(), 0, 1));
+//                headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
+//                if (!arrayListPhoneBookContacts.contains(headerLetter)) {
+//                    arrayListContactHeaders.add(headerLetter);
+//                    arrayListPhoneBookContacts.add(headerLetter);
+//                }
+//                arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
+//            }
 
-            allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts,
-                    arrayListContactHeaders);
-            recyclerViewContactList.setAdapter(allContactListAdapter);
+        allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts,
+                arrayListContactHeaders);
+        recyclerViewContactList.setAdapter(allContactListAdapter);
 
-            rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
-            rContactApplication.setArrayListAllContactHeaders(arrayListContactHeaders);
-        }
+        rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
+        rContactApplication.setArrayListAllContactHeaders(arrayListContactHeaders);
+//        }
 
         getRcpDetail();
        /* AsyncTask.execute(new Runnable() {
@@ -791,7 +808,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 }
             }
         });*/
-
     }
 
     private void getRcpDetail() {
@@ -855,49 +871,67 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     private void getContactsFromPhonebook(Cursor data) {
-        final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
-        final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
+//        final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
+//        final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
+//        final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+////        final int phoneTypeIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
+//        final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+//                .StructuredName.GIVEN_NAME);
+//        final int familyNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+//                .StructuredName.FAMILY_NAME);
+//        final int middleNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+//                .StructuredName.MIDDLE_NAME);
+//        final int suffixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+//                .StructuredName.SUFFIX);
+//        final int prefixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+//                .StructuredName.PREFIX);
+//        final int photoIdIdx = data.getColumnIndex(ContactsContract.Data.PHOTO_ID);
+//        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-//        final int phoneTypeIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
         final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-                .StructuredName.GIVEN_NAME);
-        final int familyNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-                .StructuredName.FAMILY_NAME);
-        final int middleNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-                .StructuredName.MIDDLE_NAME);
-        final int suffixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-                .StructuredName.SUFFIX);
-        final int prefixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-                .StructuredName.PREFIX);
-        final int photoIdIdx = data.getColumnIndex(ContactsContract.Data.PHOTO_ID);
+                .Phone.DISPLAY_NAME);
+        final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
         final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
 
+//        while (data.moveToNext()) {
+//
+//            long id = data.getLong(idIdx);
+//            ProfileData profileData = array.get(id);
+//
+//            if (profileData == null) {
+//                profileData = new ProfileData();
+//                array.put(id, profileData);
+//                arrayListUserContact.add(profileData);
+//            }
+//
+//            profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+//
+//            switch (data.getString(mimeTypeIdx)) {
+//                case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
+////                    profileData.setTempNumber(Utils.getFormattedNumber(getActivity(), data
+////                            .getString(phoneIdx)));
+//                    profileData.setTempNumber(data
+//                            .getString(phoneIdx));
+//                    break;
+//                case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
+//                    profileData.setTempFirstName(data.getString(givenNameIdx));
+//                    profileData.setTempLastName(data.getString(familyNameIdx));
+//                    profileData.setTempPrefix(data.getString(prefixNameIdx));
+//                    profileData.setTempSufix(data.getString(suffixNameIdx));
+//                    profileData.setTempMiddleName(data.getString(middleNameIdx));
+//                    break;
+//            }
+//        }
         while (data.moveToNext()) {
 
-            long id = data.getLong(idIdx);
-            ProfileData profileData = array.get(id);
-
-            if (profileData == null) {
-                profileData = new ProfileData();
-                array.put(id, profileData);
-                arrayListUserContact.add(profileData);
-            }
-
+            ProfileData profileData;
+            profileData = new ProfileData();
+            profileData.setTempFirstName(data.getString(givenNameIdx));
+            profileData.setTempNumber(data.getString(phoneIdx));
+            profileData.setProfileUrl(data.getString(photoURIIdx));
             profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+            arrayListPhoneBookContacts.add(profileData);
 
-            switch (data.getString(mimeTypeIdx)) {
-                case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
-                    profileData.setTempNumber(Utils.getFormattedNumber(getActivity(), data
-                            .getString(phoneIdx)));
-                    break;
-                case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
-                    profileData.setTempFirstName(data.getString(givenNameIdx));
-                    profileData.setTempLastName(data.getString(familyNameIdx));
-                    profileData.setTempPrefix(data.getString(prefixNameIdx));
-                    profileData.setTempSufix(data.getString(suffixNameIdx));
-                    profileData.setTempMiddleName(data.getString(middleNameIdx));
-                    break;
-            }
         }
     }
 
@@ -1590,7 +1624,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         //  String sortOrder = ContactsContract.Contacts.SORT_KEY_ALTERNATIVE;
         String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
         Uri uri = ContactsContract.Data.CONTENT_URI;
-
+        if (syncingTask != null && syncingTask.isCancelled()) {
+            return;
+        }
         Cursor cursor = getActivity().getContentResolver().query(uri, projection, selection,
                 selectionArgs, sortOrder);
         //</editor-fold>
@@ -1601,6 +1637,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             final int idIdx = cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID);
 
             while (cursor.moveToNext()) {
+                if (syncingTask != null && syncingTask.isCancelled()) {
+                    return;
+                }
                 ProfileDataOperation operation = new ProfileDataOperation();
                 operation.setFlag(1);
                 long id = cursor.getLong(idIdx);
@@ -1794,6 +1833,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         //<editor-fold desc="Prepare Data">
         for (int i = 0; i < profileDetailSparseArray.size(); i++) {
+            if (syncingTask != null && syncingTask.isCancelled()) {
+                return;
+            }
 //            AddressBookContact bookContact = profileDetailSparseArray.valueAt(i);
             ProfileDataOperation profileContact = profileDetailSparseArray.valueAt(i);
 
@@ -1834,6 +1876,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         //</editor-fold>
 
         if (lastSyncedData < arrayListSyncUserContact.size()) {
+            if (syncingTask != null && syncingTask.isCancelled()) {
+                return;
+            }
             backgroundSync(false, null);
         }
 
@@ -1842,6 +1887,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     private void backgroundSync(final boolean addToDatabase, final WsResponseObject
             uploadContactResponse) {
+        if (syncingTask != null && syncingTask.isCancelled()) {
+            return;
+        }
         Runnable run = new Runnable() {
             @Override
             public void run() {
@@ -1886,7 +1934,14 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         AsyncTask.execute(run);
     }
 
+    public class SyncingTask extends AsyncTask<Void, Void, Void> {
 
+        @Override
+        protected Void doInBackground(Void... params) {
+            syncContacts();
+            return null;
+        }
+    }
     //</editor-fold>
 
     //<editor-fold desc="Web Service Call">
