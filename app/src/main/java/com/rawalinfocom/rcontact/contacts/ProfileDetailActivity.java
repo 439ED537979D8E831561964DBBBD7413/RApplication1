@@ -891,8 +891,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private void fetchOldRecordsServiceCall(ArrayList<CallLogHistoryType> callLogTypeArrayList) {
-
-
+        Log.i("HistoryServiceCalled","Service Started");
         WsRequestObject deviceDetailObject = new WsRequestObject();
         deviceDetailObject.setHistoryTypeArrayList(callLogTypeArrayList);
         if (Utils.isNetworkAvailable(this)) {
@@ -1083,6 +1082,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             // for call history
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST)) {
+                Log.i("HistoryServiceCalled","Call received");
                 WsResponseObject callHistoryResponse = (WsResponseObject) data;
                 progressBarLoadCallLogs.setVisibility(View.GONE);
                 if (callHistoryResponse != null && StringUtils.equalsIgnoreCase
@@ -1091,12 +1091,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     ArrayList<CallLogType> oldHistoryList = callHistoryResponse
                             .getArrayListCallLogHistory();
                     if (oldHistoryList != null && oldHistoryList.size() > 0) {
+                        Log.i("HistoryServiceCalled","Data Received");
                         rippleViewOldRecords.setVisibility(View.VISIBLE);
                         arrayListHistory.addAll(oldHistoryList);
                         if (callHistoryListAdapter != null) {
                             callHistoryListAdapter.notifyDataSetChanged();
                         }
                     } else {
+                        Log.i("HistoryServiceCalled","Message Received");
                         rippleViewOldRecords.setVisibility(View.GONE);
                         Utils.showSuccessSnackBar(this, relativeRootProfileDetail,
                                 callHistoryResponse.getMessage());
