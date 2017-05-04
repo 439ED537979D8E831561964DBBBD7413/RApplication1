@@ -1875,6 +1875,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             webAddress.setWebType((String) websiteType.getSelectedItem());
             webAddress.setWebId((String) relativeRowEditProfile.getTag());
 
+            webAddress.setWebPublic(IntegerConstants.PRIVACY_EVERYONE);
+
             if (StringUtils.length(webAddress.getWebAddress()) > 0) {
                 arrayListNewWebAddress.add(webAddress);
             }
@@ -1937,6 +1939,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             organization.setOrgJobTitle(inputDesignationName.getText().toString());
             organization.setOrgId((String) relativeRowEditProfile.getTag());
             organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
+
+            organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
             if (StringUtils.length(organization.getOrgName()) > 0 && StringUtils.length
                     (organization.getOrgJobTitle()) > 0) {

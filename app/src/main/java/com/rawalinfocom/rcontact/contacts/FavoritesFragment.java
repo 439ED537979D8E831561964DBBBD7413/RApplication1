@@ -257,7 +257,8 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 /* Disable swiping in headers */
-                if (viewHolder instanceof AllContactListAdapter.ContactHeaderViewHolder) {
+                if (viewHolder instanceof AllContactAdapter.ContactHeaderViewHolder ||
+                        viewHolder instanceof AllContactAdapter.ContactFooterViewHolder) {
                     return 0;
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder);
