@@ -333,7 +333,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         }
 
-        holder.textContactNumber.setText(profileData.getTempNumber());
+        holder.textContactNumber.setText(Utils.getFormattedNumber(context, profileData.getTempNumber()));
 
         //<editor-fold desc="relativeRowAllContact Click">
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
