@@ -84,7 +84,9 @@ public class MainActivity extends BaseActivity implements NavigationView
     @BindView(R.id.relative_root_contacts_main)
     RelativeLayout relativeRootContactsMain;
     Toolbar toolbar;
-    TextView textImageNotification;
+    ImageView imageNotification;
+    ImageView imageAddContact;
+//    TextView textImageNotification;
     FloatingActionButton fab;
     DrawerLayout drawer;
     NavigationView navigationView;
@@ -471,12 +473,18 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     private void init() {
 
-        textImageNotification = (TextView) toolbar.findViewById(R.id.text_image_notification);
-        textImageNotification.setTypeface(Utils.typefaceIcons(this));
-//        textImageNotification.setText(Html.fromHtml("&#xe966;"));
-//        textImageNotification.setText(Html.fromHtml("&#xe900;"));
-        textImageNotification.setText(Html.fromHtml(getResources().getString(R.string.im_bell)));
-        textImageNotification.setOnClickListener(new View.OnClickListener() {
+        imageNotification = (ImageView) toolbar.findViewById(R.id.image_notification);
+
+//        textImageNotification = (TextView) toolbar.findViewById(R.id.text_image_notification);
+//        textImageNotification.setTypeface(Utils.typefaceIcons(this));
+//        textImageNotification.setText(Html.fromHtml(getResources().getString(R.string.im_bell)));
+        /*textImageNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityIntent(MainActivity.this, NotificationsActivity.class, null);
+            }
+        });*/
+        imageNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivityIntent(MainActivity.this, NotificationsActivity.class, null);
@@ -654,7 +662,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     private void setCurrentTabFragment(int tabPosition) {
         switch (tabPosition) {
             case 0:
-                showAddToContact(false);
+                showAddToContact(true);
                 fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable
                         .ic_floating_dial_pad));
                 isCompaseIcon = false;

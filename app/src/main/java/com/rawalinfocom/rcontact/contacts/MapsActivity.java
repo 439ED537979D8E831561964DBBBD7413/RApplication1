@@ -423,7 +423,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 googleMap.addMarker(new MarkerOptions()
                         .position(latLng)
                         .draggable(true));
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 25.0f));
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
             }
         }, 1000);
     }

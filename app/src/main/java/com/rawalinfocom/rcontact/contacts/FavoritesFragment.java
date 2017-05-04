@@ -228,7 +228,7 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
-                String actionNumber = StringUtils.defaultString(((AllContactListAdapter
+                String actionNumber = StringUtils.defaultString(((AllContactAdapter
                         .AllContactViewHolder) viewHolder).textContactNumber.getText()
                         .toString());
                 if (direction == ItemTouchHelper.LEFT) {
