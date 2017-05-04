@@ -30,6 +30,7 @@ import com.rawalinfocom.rcontact.model.CallLogType;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -128,19 +129,49 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 
 
         final long date = callLogType.getDate();
+//        long logDate1 = callLogType.getDate();
+        Date date1 = new Date(date);
+        String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
+        Log.i("Call Log date", logDate);
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        Date yesDate;
+        yesDate = cal.getTime();
+        String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd").format(yesDate);
+        Log.i("Call yesterday date", yesterdayDate);
+
+        Calendar c = Calendar.getInstance();
+        Date cDate = c.getTime();
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
+        Log.i("Call Current date", currentDate);
         Date dateFromReceiver1 = callLogType.getCallReceiverDate();
         if (dateFromReceiver1 != null) {
             dateFromReceiver = dateFromReceiver1.getTime();
         }
-
+        String finalDate = "";
         if (date > 0) {
-            Date date1 = new Date(date);
-            String logDate = new SimpleDateFormat("hh:mm a").format(date1);
-            holder.textContactDate.setText(logDate);
+            Date dateCallLog = new Date(date);
+//            String logDateCallLog = new SimpleDateFormat("MMM dd, hh:mm a").format(date1);
+            if(logDate.equalsIgnoreCase(currentDate)){
+                finalDate =  "Today, " + new SimpleDateFormat("hh:mm a").format(dateCallLog);
+            }else if(logDate.equalsIgnoreCase(yesterdayDate)){
+                finalDate = "Yesterday, " + new SimpleDateFormat("hh:mm a").format(dateCallLog);
+            }else{
+                finalDate =  new SimpleDateFormat("MMM dd, hh:mm a").format(dateCallLog);
+            }
+            holder.textContactDate.setText(finalDate);
         } else {
             Date callDate = callLogType.getCallReceiverDate();
-            String callReceiverDate = new SimpleDateFormat("hh:mm a").format(callDate);
-            holder.textContactDate.setText(callReceiverDate);
+//            String callReceiverDate = new SimpleDateFormat("MMM dd, hh:mm a").format(callDate);
+            if(logDate.equalsIgnoreCase(currentDate)){
+                finalDate =  "Today, " + new SimpleDateFormat("hh:mm a").format(callDate);
+            }else if(logDate.equalsIgnoreCase(yesterdayDate)){
+                finalDate = "Yesterday, " + new SimpleDateFormat("hh:mm a").format(callDate);;
+            }else{
+                finalDate =  new SimpleDateFormat("MMM dd, hh:mm a").format(callDate);
+            }
+            holder.textContactDate.setText(finalDate);
         }
 
 

@@ -299,7 +299,7 @@ public class TableProfileMobileMapping {
     public ArrayList<UserProfile> getRContactList() {
         ArrayList<UserProfile> arrayListRContact = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT " + TABLE_RC_PROFILE_MASTER + "." +
+        String selectQuery = "SELECT DISTINCT " + TABLE_RC_PROFILE_MASTER + "." +
                 COLUMN_PM_FIRST_NAME +
                 "," + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_LAST_NAME + "," +
                 TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RCP_ID + "," +

@@ -36,7 +36,6 @@ public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryV
 
     private Context context;
     private ArrayList<SmsDataType> typeArrayList;
-    String address;
     SmsDataType selectedSmsType;
     int selectedPosition = -1;
 
@@ -74,11 +73,20 @@ public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryV
     @Override
     public void onBindViewHolder(CountryViewHolder holder, final int position) {
 
-        final SmsDataType smsDataType = (SmsDataType) typeArrayList.get(position);
+        final SmsDataType smsDataType = typeArrayList.get(position);
         String isRead = smsDataType.getIsRead();
-        Log.i("SMS Read", isRead);
-        Log.i("SMS", " Number : " + smsDataType.getNumber() + " Thread ID " + smsDataType.getThreadId());
+       /* Log.i("SMS Read", isRead);
+        Log.i("SMS", " Number : " + smsDataType.getNumber() + " Thread ID " + smsDataType.getThreadId());*/
+
+
         final String address = smsDataType.getAddress();
+        final String number = smsDataType.getNumber();
+        final String add;
+        if(!TextUtils.isEmpty(number)) {
+            add = number;
+        }else{
+            add =  address;
+        }
         if (!TextUtils.isEmpty(address)) {
             if (isRead.equalsIgnoreCase("0")) {
                 holder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
@@ -89,6 +97,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryV
             } else {
                 holder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
                         .colorBlack));
+                holder.textNumber.setTypeface(null, Typeface.NORMAL);
                 holder.textNumber.setText(address);
             }
         } else {
@@ -101,6 +110,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryV
                 holder.textBody.setText(body);
                 holder.textBody.setTypeface(null, Typeface.BOLD);
             } else {
+                holder.textBody.setTypeface(null, Typeface.NORMAL);
                 holder.textBody.setText(body);
             }
         } else {
@@ -116,6 +126,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryV
                 holder.textDateNTime.setText(logDate);
                 holder.textDateNTime.setTypeface(null, Typeface.BOLD);
             } else {
+                holder.textDateNTime.setTypeface(null, Typeface.NORMAL);
                 holder.textDateNTime.setText(logDate);
             }
         } else {
@@ -142,7 +153,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryV
 
                 setSelectedSmsType(smsDataType);
                 setSelectedPosition(position);
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", address, null));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", add, null));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     intent.setPackage(Telephony.Sms.getDefaultSmsPackage(context));
                 }
@@ -165,6 +176,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryV
     @Override
     public int getItemCount() {
         return typeArrayList.size();
+
     }
 
     class CountryViewHolder extends RecyclerView.ViewHolder {

@@ -84,7 +84,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CallLogFragment extends BaseFragment implements WsResponseListener, RippleView
-        .OnRippleCompleteListener, LoaderManager.LoaderCallbacks<Cursor> {
+        .OnRippleCompleteListener/*, LoaderManager.LoaderCallbacks<Cursor>*/ {
 
 
     private final String ALL_CALLS = "All";
@@ -132,20 +132,20 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     MaterialDialog callConfirmationDialog;
     String selectedCallType = "";
     View mainView;
-    boolean isFirstChuck = false;
 
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG, Manifest
             .permission.READ_PHONE_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
     public static CallLogType callLogTypeReceiver;
-    private int LIST_PARTITION_COUNT = 10;
     private static boolean startInsertion = false;
     private boolean isFirstTime;
+    boolean isFirstChuck = false;
+    private int LIST_PARTITION_COUNT = 10;
+    int count = 0;
+    int logsDisplayed = 0;
     RContactApplication rContactApplication;
     MaterialDialog permissionConfirmationDialog;
-    int logsDisplayed = 0;
     ArrayList<String> listOfIds;
     ArrayList<String> callLogIdsListByChunck;
-    int count = 0;
     int spinnerCount = 0;
     LinearLayoutManager mLinearLayoutManager;
     int adapterSetCount = 0;
@@ -368,6 +368,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         arrayListCallLogs.add(0, callLogTypeReceiver);
 //                        newCallLogListAdapter.notifyItemInserted(0);
                         simpleCallLogListAdapter.notifyItemInserted(0);
+//                        simpleCallLogListAdapter.notifyDataSetChanged();
                         recyclerCallLogs.scrollToPosition(0);
                         rContactApplication.setArrayListCallLogType(arrayListCallLogs);
                         ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
@@ -514,7 +515,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     }
 
 
-    @Override
+   /* @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String order = CallLog.Calls.DATE + " DESC";
         Uri uri = CallLog.Calls.CONTENT_URI;
@@ -549,13 +550,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 log.setDuration(cursor.getInt(duration));
                 log.setDate(cursor.getLong(date));
                 log.setUniqueContactId(cursor.getString(rowId));
-               /* String numberTypeLog = getPhoneNumberType(cursor.getInt(numberType));
+               *//* String numberTypeLog = getPhoneNumberType(cursor.getInt(numberType));
                 Log.i("Number Type", numberTypeLog + " of number " + cursor.getString
                         (number));
                 Log.i("Number Log Type", getLogType(cursor.getInt(type)) + " of " +
                         "number " +
                         cursor.getString(number));
-                log.setNumberType(numberTypeLog);*/
+                log.setNumberType(numberTypeLog);*//*
                 String userNumber = cursor.getString(number);
                 String uniquePhoneBookId = getStarredStatusFromNumber(userNumber);
                 Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" +
@@ -573,14 +574,14 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     log.setProfileImage("");
                 }
 //                ArrayList<CallLogType> arrayListHistory;
-                   /* if (!TextUtils.isEmpty(userName)) {
+                   *//* if (!TextUtils.isEmpty(userName)) {
                         arrayListHistory = callLogHistory(userName);
-                    } else {*/
-               /* arrayListHistory = callLogHistory(userNumber);
+                    } else {*//*
+               *//* arrayListHistory = callLogHistory(userNumber);
 //                    }
-                log.setArrayListCallHistory(arrayListHistory);*/
+                log.setArrayListCallHistory(arrayListHistory);*//*
 
-                /*ArrayList<CallLogType> arrayListHistoryCount = new ArrayList<>();
+                *//*ArrayList<CallLogType> arrayListHistoryCount = new ArrayList<>();
                 for (int j = 0; j < arrayListHistory.size(); j++) {
                     CallLogType tempCallLogType = arrayListHistory.get(j);
                     String simNumber = arrayListHistory.get(j)
@@ -602,7 +603,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 log.setHistoryLogCount(logCount);
                 Log.i("History size ", logCount + "" + " of " + cursor.getString
                         (number));
-                Log.i("History", "----------------------------------");*/
+                Log.i("History", "----------------------------------");*//*
                 callLogTypeArrayList.add(log);
                 arrayListCallLogs.add(log);
                 rContactApplication.setArrayListCallLogType(arrayListCallLogs);
@@ -620,7 +621,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     @Override
     public void onLoaderReset(Loader loader) {
 
-    }
+    }*/
 
 
     private void makeSimpleData(String callType, ArrayList<CallLogType> callLogs) {
@@ -862,7 +863,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                 if (dy > 0) //check for scroll down
                 {
-
                     int visibleItemCount = mLinearLayoutManager.getChildCount();
                     int totalItemCount = mLinearLayoutManager.getItemCount();
                     int pastVisiblesItems = mLinearLayoutManager.findFirstVisibleItemPosition();
@@ -1057,6 +1057,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                         initSwipe();
                                     } else {
 //                                        getLoaderManager().initLoader(0, null, CallLogFragment.this);
+
                                         loadLogs(selectedCallType);
                                         /*loadsCallLogsInBackgroundAsyncTask = new
                                         LoadsCallLogsInBackground();
@@ -1193,7 +1194,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 }
 
                 if(isFirstTime){
-                    LIST_PARTITION_COUNT = 10;
+                    LIST_PARTITION_COUNT = 7;
                 }else{
                     LIST_PARTITION_COUNT = 20;
                 }
@@ -1732,7 +1733,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                     (number));
                             Log.i("History", "----------------------------------");*/
                             callLogTypeArrayList.add(log);
-                            arrayListCallLogs.add(log);
                             arrayListCallLogs.add(log);
                             rContactApplication.setArrayListCallLogType(arrayListCallLogs);
                         }
