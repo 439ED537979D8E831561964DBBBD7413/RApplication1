@@ -82,6 +82,14 @@ public class SmsListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolde
         isLoading = false;
     }
 
+    public boolean isLoading() {
+        return isLoading;
+    }
+
+    public void setLoading(boolean loading) {
+        isLoading = loading;
+    }
+
     public SmsDataType getSelectedSmsType()
     {
         return selectedSmsType;
