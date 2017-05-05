@@ -121,7 +121,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         startService(contactIdFetchService);*/
 
 
-        if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT,
+        /*if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT,
                 IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
                 .LAUNCH_MOBILE_REGISTRATION) {
             finish();
@@ -134,15 +134,15 @@ public class MainActivity extends BaseActivity implements NavigationView
         } else if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT,
                 IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
                 .LAUNCH_PROFILE_REGISTRATION) {
-            /*UserProfile userProfile = (UserProfile) Utils.getObjectPreference(this, AppConstants
+            *//*UserProfile userProfile = (UserProfile) Utils.getObjectPreference(this, AppConstants
                     .PREF_REGS_USER_OBJECT, UserProfile.class);
             if (userProfile != null && StringUtils.equalsIgnoreCase(userProfile
                     .getIsAlreadyVerified(), String.valueOf(getResources().getInteger(R.integer
-                    .profile_not_verified)))) {*/
+                    .profile_not_verified)))) {*//*
             finish();
             startActivityIntent(this, ProfileRegistrationActivity.class, null);
 //            }
-        } else {
+        } else {*/
 
             callLogTypeArrayListMain = new ArrayList<>();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -156,21 +156,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                 });
             }
             checkPermissionToExecute();
-           /* if (checkPermissionToExecute()) {
-                AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        getCallLogsByRawId();
-                    }
-                });
-            }*/
-            registerLocalBroadCastReceiver();
 
-          /*  if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
-                    .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-                Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
-                startService(contactIdFetchService);
-            }*/
+            registerLocalBroadCastReceiver();
 
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
@@ -179,7 +166,7 @@ public class MainActivity extends BaseActivity implements NavigationView
 
             init();
             registerBroadcastReceiver();
-        }
+//        }
 
     }
 
