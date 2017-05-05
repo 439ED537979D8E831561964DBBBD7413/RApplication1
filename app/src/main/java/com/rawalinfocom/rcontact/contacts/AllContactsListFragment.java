@@ -858,7 +858,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                         @Override
                         public void run() {
-                            allContactListAdapter.notifyItemChanged(finalI);
+                            if (allContactListAdapter != null)
+                                allContactListAdapter.notifyItemChanged(finalI);
                         }
                     });
                 }
@@ -1335,7 +1336,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        allContactListAdapter.notifyDataSetChanged();
+                        if (allContactListAdapter != null)
+                            allContactListAdapter.notifyDataSetChanged();
                     }
                 }, 1500);
             }
