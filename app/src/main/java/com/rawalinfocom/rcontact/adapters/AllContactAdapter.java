@@ -199,10 +199,19 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         for (int i = 2, size = arrayListUserContact.size(); i < size; i++) {
             if (arrayListUserContact.get(i) instanceof ProfileData) {
                 String name = ((ProfileData) arrayListUserContact.get(i)).getTempFirstName();
-                String section = String.valueOf(name.charAt(0)).toUpperCase();
-                if (!sections.contains(section)) {
-                    sections.add(section);
-                    mSectionPositions.add(i);
+                String number = ((ProfileData) arrayListUserContact.get(i)).getTempNumber();
+                if (name.equals(number)) {
+                    String section = "#";
+                    if (!sections.contains(section)) {
+                        sections.add(section);
+                        mSectionPositions.add(i);
+                    }
+                } else {
+                    String section = String.valueOf(name.charAt(0)).toUpperCase();
+                    if (!sections.contains(section)) {
+                        sections.add(section);
+                        mSectionPositions.add(i);
+                    }
                 }
             }
         }

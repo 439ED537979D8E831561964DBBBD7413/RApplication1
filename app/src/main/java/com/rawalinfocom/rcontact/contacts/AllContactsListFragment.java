@@ -922,17 +922,22 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //                    break;
 //            }
 //        }
-        while (data.moveToNext()) {
+        ArrayList<Object> contactsWithNoName= new ArrayList<>();
 
+        while (data.moveToNext()) {
             ProfileData profileData;
             profileData = new ProfileData();
             profileData.setTempFirstName(data.getString(givenNameIdx));
             profileData.setTempNumber(data.getString(phoneIdx));
             profileData.setProfileUrl(data.getString(photoURIIdx));
             profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
-            arrayListPhoneBookContacts.add(profileData);
-
+            if (profileData.getTempFirstName().equals(profileData.getTempNumber())) {
+                contactsWithNoName.add(profileData);
+            } else {
+                arrayListPhoneBookContacts.add(profileData);
+            }
         }
+        arrayListPhoneBookContacts.addAll(contactsWithNoName);
     }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
