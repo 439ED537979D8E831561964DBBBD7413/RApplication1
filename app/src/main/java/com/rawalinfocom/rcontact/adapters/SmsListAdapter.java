@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Telephony;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,12 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+import com.rawalinfocom.rcontact.listener.OnLoadMoreListener;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 
 import java.text.SimpleDateFormat;
@@ -31,23 +34,64 @@ import java.util.Date;
  * Created by Aniruddh on 21/04/17.
  */
 
-public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryViewHolder> {
+public class SmsListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
 
     private Context context;
     private ArrayList<SmsDataType> typeArrayList;
-    String address;
     SmsDataType selectedSmsType;
     int selectedPosition = -1;
+    private final int VIEW_TYPE_ITEM = 0;
+    private final int VIEW_TYPE_LOADING = 1;
+    private RecyclerView recyclerViewSmsLogs;
 
-    public SmsListAdapter(Context context, ArrayList<SmsDataType> SmsListAdapter) {
+    private OnLoadMoreListener onLoadMoreListener;
+    private boolean isLoading;
+    private int visibleThreshold = 5;
+    private int lastVisibleItem, totalItemCount;
+
+    public SmsListAdapter(Context context, ArrayList<SmsDataType> SmsListAdapter, RecyclerView recyclerView) {
         this.context = context;
         this.typeArrayList = SmsListAdapter;
+        this.recyclerViewSmsLogs = recyclerView;
 
+        final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                totalItemCount = linearLayoutManager.getItemCount();
+                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+
+                if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                    if (onLoadMoreListener != null) {
+                        onLoadMoreListener.onLoadMore();
+                    }
+                    isLoading = true;
+                }
+            }
+        });
     }
 
+    public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
+        this.onLoadMoreListener = mOnLoadMoreListener;
+    }
 
-    public SmsDataType getSelectedSmsType() {
+    public void setLoaded() {
+        isLoading = false;
+    }
+
+    public boolean isLoading() {
+        return isLoading;
+    }
+
+    public void setLoading(boolean loading) {
+        isLoading = loading;
+    }
+
+    public SmsDataType getSelectedSmsType()
+    {
         return selectedSmsType;
     }
 
@@ -63,108 +107,137 @@ public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryV
         this.selectedPosition = selectedPosition;
     }
 
-
     @Override
-    public CountryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_item_sms,
-                parent, false);
-        return new CountryViewHolder(v);
+    public int getItemViewType(int position) {
+        return typeArrayList.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
+
     }
 
     @Override
-    public void onBindViewHolder(CountryViewHolder holder, final int position) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_ITEM) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_item_sms, parent, false);
+            return new CountryViewHolder(view);
+        } else if (viewType == VIEW_TYPE_LOADING) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_item_loading, parent, false);
+            return new LoadingViewHolder(view);
+        }
+        return null;
 
-        final SmsDataType smsDataType = (SmsDataType) typeArrayList.get(position);
-        String isRead = smsDataType.getIsRead();
-        Log.i("SMS Read", isRead);
-        Log.i("SMS", " Number : " + smsDataType.getNumber() + " Thread ID " + smsDataType.getThreadId());
-        final String address = smsDataType.getAddress();
-        if (!TextUtils.isEmpty(address)) {
-            if (isRead.equalsIgnoreCase("0")) {
-                holder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
-                        .colorBlack));
-                holder.textNumber.setTypeface(null, Typeface.BOLD);
-                holder.textNumber.setText(address);
+    }
 
-            } else {
-                holder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
-                        .colorBlack));
-                holder.textNumber.setText(address);
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+
+        if (holder instanceof CountryViewHolder) {
+            final SmsDataType smsDataType = typeArrayList.get(position);
+            CountryViewHolder userViewHolder = (CountryViewHolder) holder;
+            String isRead = smsDataType.getIsRead();
+       /* Log.i("SMS Read", isRead);
+        Log.i("SMS", " Number : " + smsDataType.getNumber() + " Thread ID " + smsDataType.getThreadId());*/
+
+            final String address = smsDataType.getAddress();
+            final String number = smsDataType.getNumber();
+            final String add;
+            if(!TextUtils.isEmpty(number)) {
+                add = number;
+            }else{
+                add =  address;
             }
-        } else {
-            holder.textNumber.setText(" ");
-        }
+            if (!TextUtils.isEmpty(address)) {
+                if (isRead.equalsIgnoreCase("0")) {
+                    userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
+                            .colorBlack));
+                    userViewHolder.textNumber.setTypeface(null, Typeface.BOLD);
+                    userViewHolder.textNumber.setText(address);
 
-        String body = smsDataType.getBody();
-        if (!TextUtils.isEmpty(body)) {
-            if (isRead.equalsIgnoreCase("0")) {
-                holder.textBody.setText(body);
-                holder.textBody.setTypeface(null, Typeface.BOLD);
-            } else {
-                holder.textBody.setText(body);
-            }
-        } else {
-            holder.textBody.setText(" ");
-
-        }
-
-        long date = smsDataType.getDataAndTime();
-        if (date > 0) {
-            Date date1 = new Date(date);
-            String logDate = new SimpleDateFormat("dd MMM,yy hh:mm:ss a").format(date1);
-            if (isRead.equalsIgnoreCase("0")) {
-                holder.textDateNTime.setText(logDate);
-                holder.textDateNTime.setTypeface(null, Typeface.BOLD);
-            } else {
-                holder.textDateNTime.setText(logDate);
-            }
-        } else {
-            holder.textDateNTime.setText(" ");
-        }
-
-
-        final String thumbnailUrl = smsDataType.getProfileImage();
-        if (!TextUtils.isEmpty(thumbnailUrl)) {
-            Glide.with(context)
-                    .load(thumbnailUrl)
-                    .placeholder(R.drawable.home_screen_profile)
-                    .error(R.drawable.home_screen_profile)
-                    .bitmapTransform(new CropCircleTransformation(context))
-                    .override(200, 200)
-                    .into(holder.icon);
-
-        } else {
-            holder.icon.setImageResource(R.drawable.home_screen_profile);
-        }
-        holder.llContent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                setSelectedSmsType(smsDataType);
-                setSelectedPosition(position);
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", address, null));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    intent.setPackage(Telephony.Sms.getDefaultSmsPackage(context));
+                } else {
+                    userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
+                            .colorBlack));
+                    userViewHolder.textNumber.setTypeface(null, Typeface.NORMAL);
+                    userViewHolder.textNumber.setText(address);
                 }
-                intent.putExtra("finishActivityOnSaveCompleted", true);
-                context.startActivity(intent);
+            } else {
+                userViewHolder.textNumber.setText(" ");
+            }
 
+            String body = smsDataType.getBody();
+            if (!TextUtils.isEmpty(body)) {
+                if (isRead.equalsIgnoreCase("0")) {
+                    userViewHolder.textBody.setText(body);
+                    userViewHolder.textBody.setTypeface(null, Typeface.BOLD);
+                } else {
+                    userViewHolder.textBody.setTypeface(null, Typeface.NORMAL);
+                    userViewHolder.textBody.setText(body);
+                }
+            } else {
+                userViewHolder.textBody.setText(" ");
 
             }
-        });
 
-        holder.image3dotsSmsLog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            long date = smsDataType.getDataAndTime();
+            if (date > 0) {
+                Date date1 = new Date(date);
+                String logDate = new SimpleDateFormat("dd MMM,yy hh:mm:ss a").format(date1);
+                if (isRead.equalsIgnoreCase("0")) {
+                    userViewHolder.textDateNTime.setText(logDate);
+                    userViewHolder.textDateNTime.setTypeface(null, Typeface.BOLD);
+                } else {
+                    userViewHolder.textDateNTime.setTypeface(null, Typeface.NORMAL);
+                    userViewHolder.textDateNTime.setText(logDate);
+                }
+            } else {
+                userViewHolder.textDateNTime.setText(" ");
+            }
+
+
+            final String thumbnailUrl = smsDataType.getProfileImage();
+            if (!TextUtils.isEmpty(thumbnailUrl)) {
+                Glide.with(context)
+                        .load(thumbnailUrl)
+                        .placeholder(R.drawable.home_screen_profile)
+                        .error(R.drawable.home_screen_profile)
+                        .bitmapTransform(new CropCircleTransformation(context))
+                        .override(200, 200)
+                        .into(userViewHolder.icon);
+
+            } else {
+                userViewHolder.icon.setImageResource(R.drawable.home_screen_profile);
+            }
+            userViewHolder.llContent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    setSelectedSmsType(smsDataType);
+                    setSelectedPosition(position);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", add, null));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        intent.setPackage(Telephony.Sms.getDefaultSmsPackage(context));
+                    }
+                    intent.putExtra("finishActivityOnSaveCompleted", true);
+                    context.startActivity(intent);
+
+
+                }
+            });
+
+            userViewHolder.image3dotsSmsLog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 //                arrayListForKnownContact =
-            }
-        });
+                }
+            });
 
+        } else if (holder instanceof LoadingViewHolder) {
+            LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
+            loadingViewHolder.progressBar.setIndeterminate(true);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return typeArrayList.size();
+//        return typeArrayList.size();
+        return typeArrayList == null ? 0 : typeArrayList.size();
     }
 
     class CountryViewHolder extends RecyclerView.ViewHolder {
@@ -187,6 +260,15 @@ public class SmsListAdapter extends RecyclerView.Adapter<SmsListAdapter.CountryV
             llContent = (LinearLayout) itemView.findViewById(R.id.llContent);
             llMain = (RelativeLayout) itemView.findViewById(R.id.llMain);
             image3dotsSmsLog =  (ImageView) itemView.findViewById(R.id.image_3dots_sms_log);
+        }
+    }
+
+    class LoadingViewHolder extends RecyclerView.ViewHolder {
+        public ProgressBar progressBar;
+
+        public LoadingViewHolder(View itemView) {
+            super(itemView);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
         }
     }
 

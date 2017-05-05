@@ -63,7 +63,6 @@ import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
 import com.rawalinfocom.rcontact.notifications.RatingHistory;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
-import com.rawalinfocom.rcontact.services.CallLogIdFetchService;
 import com.rawalinfocom.rcontact.sms.SmsFragment;
 
 import org.apache.commons.lang3.StringUtils;
@@ -110,6 +109,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
             .permission.READ_CALL_LOG};
     boolean isCompaseIcon = false;
+    private SyncCallLogAsyncTask syncCallLogAsyncTask;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -148,12 +148,17 @@ public class MainActivity extends BaseActivity implements NavigationView
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 checkPermissionToExecute();
             } else {
-                AsyncTask.execute(new Runnable() {
+               /* AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
                         getCallLogsByRawId();
                     }
-                });
+                });*/
+
+                if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                    syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                    syncCallLogAsyncTask.execute();
+                }
             }
             checkPermissionToExecute();
 
@@ -203,14 +208,19 @@ public class MainActivity extends BaseActivity implements NavigationView
                 requiredPermissions[1]) ==
                 PackageManager.PERMISSION_GRANTED;
         if (logs) {
-            Intent callLogIdFetchService = new Intent(this, CallLogIdFetchService.class);
-            startService(callLogIdFetchService);
-            AsyncTask.execute(new Runnable() {
+            /*Intent callLogIdFetchService = new Intent(this, CallLogIdFetchService.class);
+            startService(callLogIdFetchService);*/
+            /*AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
                     getCallLogsByRawId();
                 }
-            });
+            });*/
+            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                syncCallLogAsyncTask.execute();
+            }
+
         }
     }
 
@@ -223,7 +233,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     @Override
     protected void onResume() {
         super.onResume();
-        checkPermissionToExecute();
+//        checkPermissionToExecute();
     }
 
     @Override
@@ -440,7 +450,8 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        if (syncCallLogAsyncTask != null)
+            syncCallLogAsyncTask.cancel(true);
         if (networkConnectionReceiver != null) {
             unregisterBroadcastReceiver();
         }
@@ -452,6 +463,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         Utils.setBooleanPreference(this, AppConstants
                 .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
 
+        super.onDestroy();
     }
 
     //</editor-fold>
@@ -769,6 +781,10 @@ public class MainActivity extends BaseActivity implements NavigationView
                         int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
 
                         while (cursor.moveToNext()) {
+
+                            if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.isCancelled())
+                                return;
+
                             CallLogType log = new CallLogType(this);
                             log.setNumber(cursor.getString(number));
                             String userName = cursor.getString(name);
@@ -782,16 +798,9 @@ public class MainActivity extends BaseActivity implements NavigationView
                             log.setDate(cursor.getLong(date));
                             log.setUniqueContactId(cursor.getString(rowId));
                             String numberTypeLog = getPhoneNumberType(cursor.getInt(numberType));
-                            Log.i("Number Type", numberTypeLog + " of number " + cursor.getString
-                                    (number));
-                            Log.i("Number Log Type", getLogType(cursor.getInt(type)) + " of " +
-                                    "number " +
-                                    cursor.getString(number));
                             log.setNumberType(numberTypeLog);
                             String userNumber = cursor.getString(number);
                             String uniquePhoneBookId = getStarredStatusFromNumber(userNumber);
-                            Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" +
-                                    userNumber);
                             if (!TextUtils.isEmpty(uniquePhoneBookId))
                                 log.setLocalPbRowId(uniquePhoneBookId);
                             else
@@ -826,9 +835,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                             }
                             int logCount = arrayListHistoryCount.size();
                             log.setHistoryLogCount(logCount);
-                            Log.i("History size ", logCount + "" + " of " + cursor.getString
-                                    (number));
-                            Log.i("History", "----------------------------------");
                             callLogTypeArrayListMain.add(log);
 
                         }
@@ -852,6 +858,8 @@ public class MainActivity extends BaseActivity implements NavigationView
     };
 
     private void syncCallLogDataToServer(ArrayList<CallLogType> list) {
+        if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.isCancelled())
+            return;
         if (Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)) {
             if (!Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
                     false)) {
@@ -1222,4 +1230,16 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
     //</editor-fold>
+
+
+    private class SyncCallLogAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            getCallLogsByRawId();
+            return null;
+        }
+    }
+
+
 }
