@@ -858,7 +858,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                         @Override
                         public void run() {
-                            allContactListAdapter.notifyItemChanged(finalI);
+                            if (allContactListAdapter != null)
+                                allContactListAdapter.notifyItemChanged(finalI);
                         }
                     });
                 }
@@ -922,17 +923,22 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //                    break;
 //            }
 //        }
-        while (data.moveToNext()) {
+        ArrayList<Object> contactsWithNoName= new ArrayList<>();
 
+        while (data.moveToNext()) {
             ProfileData profileData;
             profileData = new ProfileData();
             profileData.setTempFirstName(data.getString(givenNameIdx));
             profileData.setTempNumber(data.getString(phoneIdx));
             profileData.setProfileUrl(data.getString(photoURIIdx));
             profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
-            arrayListPhoneBookContacts.add(profileData);
-
+            if (profileData.getTempFirstName().equals(profileData.getTempNumber())) {
+                contactsWithNoName.add(profileData);
+            } else {
+                arrayListPhoneBookContacts.add(profileData);
+            }
         }
+        arrayListPhoneBookContacts.addAll(contactsWithNoName);
     }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
@@ -1330,7 +1336,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        allContactListAdapter.notifyDataSetChanged();
+                        if (allContactListAdapter != null)
+                            allContactListAdapter.notifyDataSetChanged();
                     }
                 }, 1500);
             }
@@ -1895,6 +1902,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             public void run() {
                 if (addToDatabase) {
                     if (uploadContactResponse != null) {
+                        if (syncingTask != null && syncingTask.isCancelled()) {
+                            return;
+                        }
                         if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
                                 .getArrayListUserRcProfile())) {
 
@@ -1965,7 +1975,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     private void uploadContacts(int previouslySyncedData, ArrayList<ProfileData>
             arrayListUserContact) {
-
+        if (syncingTask != null && syncingTask.isCancelled()) {
+            return;
+        }
         WsRequestObject uploadContactObject = new WsRequestObject();
         uploadContactObject.setPmId(Integer.parseInt(((BaseActivity) getActivity()).getUserPmId()));
         uploadContactObject.setProfileData(arrayListUserContact);
