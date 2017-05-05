@@ -139,11 +139,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
         if (isFromSettings) {
             isFromSettings = false;
             if (Utils.isLocationEnabled(this)) {
-                gpsTracker = new GPSTracker(this, null);
+               /* gpsTracker = new GPSTracker(this, null);
                 latitude = gpsTracker.getLatitude();
                 longitude = gpsTracker.getLongitude();
 
-                addMapMarker();
+                addMapMarker();*/
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             }
         }
     }
