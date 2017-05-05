@@ -63,7 +63,6 @@ import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
 import com.rawalinfocom.rcontact.notifications.RatingHistory;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
-import com.rawalinfocom.rcontact.services.CallLogIdFetchService;
 import com.rawalinfocom.rcontact.sms.SmsFragment;
 
 import org.apache.commons.lang3.StringUtils;
@@ -153,8 +152,11 @@ public class MainActivity extends BaseActivity implements NavigationView
                         getCallLogsByRawId();
                     }
                 });*/
-                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                syncCallLogAsyncTask.execute();
+
+                if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                    syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                    syncCallLogAsyncTask.execute();
+                }
             }
             checkPermissionToExecute();
            /* if (checkPermissionToExecute()) {
@@ -225,8 +227,10 @@ public class MainActivity extends BaseActivity implements NavigationView
                     getCallLogsByRawId();
                 }
             });*/
-            syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-            syncCallLogAsyncTask.execute();
+            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                syncCallLogAsyncTask.execute();
+            }
 
         }
     }
@@ -799,16 +803,9 @@ public class MainActivity extends BaseActivity implements NavigationView
                             log.setDate(cursor.getLong(date));
                             log.setUniqueContactId(cursor.getString(rowId));
                             String numberTypeLog = getPhoneNumberType(cursor.getInt(numberType));
-                            Log.i("Number Type", numberTypeLog + " of number " + cursor.getString
-                                    (number));
-                            Log.i("Number Log Type", getLogType(cursor.getInt(type)) + " of " +
-                                    "number " +
-                                    cursor.getString(number));
                             log.setNumberType(numberTypeLog);
                             String userNumber = cursor.getString(number);
                             String uniquePhoneBookId = getStarredStatusFromNumber(userNumber);
-                            Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" +
-                                    userNumber);
                             if (!TextUtils.isEmpty(uniquePhoneBookId))
                                 log.setLocalPbRowId(uniquePhoneBookId);
                             else
@@ -843,9 +840,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                             }
                             int logCount = arrayListHistoryCount.size();
                             log.setHistoryLogCount(logCount);
-                            Log.i("History size ", logCount + "" + " of " + cursor.getString
-                                    (number));
-                            Log.i("History", "----------------------------------");
                             callLogTypeArrayListMain.add(log);
 
                         }

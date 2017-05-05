@@ -56,6 +56,7 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -92,6 +93,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private ArrayList<Integer> arrayListExpandedPositions;
 
     private PhoneBookContacts phoneBookContacts;
+    private ArrayList<Integer> mSectionPositions;
 
     //<editor-fold desc="Constructor">
     public AllContactAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
@@ -191,42 +193,39 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public Object[] getSections() {
-        return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
+        //return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
+        List<String> sections = new ArrayList<>();
+        mSectionPositions = new ArrayList<>();
+        for (int i = 2, size = arrayListUserContact.size(); i < size; i++) {
+            if (arrayListUserContact.get(i) instanceof ProfileData) {
+                String name = ((ProfileData) arrayListUserContact.get(i)).getTempFirstName();
+                String number = ((ProfileData) arrayListUserContact.get(i)).getTempNumber();
+                if (name.equals(number)) {
+                    String section = "#";
+                    if (!sections.contains(section)) {
+                        sections.add(section);
+                        mSectionPositions.add(i);
+                    }
+                } else {
+                    String section = String.valueOf(name.charAt(0)).toUpperCase();
+                    if (!sections.contains(section)) {
+                        sections.add(section);
+                        mSectionPositions.add(i);
+                    }
+                }
+            }
+        }
+        return sections.toArray(new String[0]);
     }
 
     @Override
     public int getPositionForSection(int sectionIndex) {
-        return 0;
+        return mSectionPositions.get(sectionIndex);
     }
 
     @Override
     public int getSectionForPosition(int position) {
-        if (position >= arrayListUserContact.size()) {
-            position = arrayListUserContact.size() - 1;
-        }
-
-        if (arrayListUserContact.get(position) instanceof String) {
-            String letter = (String) arrayListUserContact.get(position);
-            previousPosition = arrayListContactHeader.indexOf(letter);
-
-        } else {
-            /*for (int i = position; i < arrayListUserContact.size(); i++) {
-                if (arrayListUserContact.get(i) instanceof String) {
-                    String letter = (String) arrayListUserContact.get(i);
-                    previousPosition = arrayListContactHeader.indexOf(letter);
-                    break;
-                }
-            }*/
-            for (int i = position; i >= 0; i--) {
-                if (arrayListUserContact.get(i) instanceof String) {
-                    String letter = (String) arrayListUserContact.get(i);
-                    previousPosition = arrayListContactHeader.indexOf(letter);
-                    break;
-                }
-            }
-        }
-
-        return previousPosition;
+        return 0;
     }
 
     //</editor-fold>
