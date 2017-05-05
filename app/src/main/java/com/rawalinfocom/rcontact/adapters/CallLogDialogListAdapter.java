@@ -251,8 +251,9 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
             }
 
             String where = CallLog.Calls.NUMBER + " =?"
-                    + " AND " + android.provider.CallLog.Calls.DATE + " BETWEEN ? AND ?";
-            String[] selectionArguments = new String[]{number, String.valueOf(dateToCompare), String.valueOf(nextDate)};
+                    + " AND " + android.provider.CallLog.Calls.DATE + " BETWEEN ? AND ?"
+                    + " AND " + CallLog.Calls._ID + "=?";
+            String[] selectionArguments = new String[]{number, String.valueOf(dateToCompare), String.valueOf(nextDate),uniqueRowId};
 
             /*int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, CallLog.Calls.NUMBER + " =?"
                     + " AND " + dateToCompare + "=?", new String[]{number, dateToDelete});

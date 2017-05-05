@@ -794,43 +794,52 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     public void run() {
                         Log.e("haint", "Load More 2");
 
-                        //Remove loading item
-                        smsDataTypeArrayList.remove(smsDataTypeArrayList.size() - 1);
-                        smsListAdapter.notifyItemRemoved(smsDataTypeArrayList.size());
-
-                        //Load data
-                        if (!isLastRecord) {
-                            if (isFirstTime) {
+                        try{
+                            //Remove loading item
+                            if(smsDataTypeArrayList!=null && smsListAdapter!=null){
+                                smsDataTypeArrayList.remove(smsDataTypeArrayList.size() - 1);
+                                smsListAdapter.notifyItemRemoved(smsDataTypeArrayList.size());
+                            }
+                            //Load data
+                            if (!isLastRecord) {
+                                if (isFirstTime) {
 //                                llLoading.setVisibility(View.VISIBLE);
-                                ArrayList<String> callLogIdsArrayList = divideCallLogIdsByChunck();
-                                if (callLogIdsArrayList != null && callLogIdsArrayList.size() > 0) {
-                                    logsDisplayed = logsDisplayed + callLogIdsArrayList.size();
-                                    loadData();
-                                } else {
-                                    /*Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "Last" +
-                                            " log shown.");*/
-//                                    llLoading.setVisibility(View.GONE);
-                                    isLastRecord = true;
-                                }
-                            } else {
-                                if (!isLastRecord) {
-//                                    llLoading.setVisibility(View.VISIBLE);
                                     ArrayList<String> callLogIdsArrayList = divideCallLogIdsByChunck();
                                     if (callLogIdsArrayList != null && callLogIdsArrayList.size() > 0) {
                                         logsDisplayed = logsDisplayed + callLogIdsArrayList.size();
                                         loadData();
                                     } else {
+                                    /*Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "Last" +
+                                            " log shown.");*/
+//                                    llLoading.setVisibility(View.GONE);
+                                        isLastRecord = true;
+                                        smsListAdapter.setLoading(true);
+                                    }
+                                } else {
+                                    if (!isLastRecord) {
+//                                    llLoading.setVisibility(View.VISIBLE);
+                                        ArrayList<String> callLogIdsArrayList = divideCallLogIdsByChunck();
+                                        if (callLogIdsArrayList != null && callLogIdsArrayList.size() > 0) {
+                                            logsDisplayed = logsDisplayed + callLogIdsArrayList.size();
+                                            loadData();
+                                        } else {
                                         /*Utils.showSuccessSnackBar(getActivity(), linearCallLogMain,
                                                 "Last log shown.");*/
 //                                        llLoading.setVisibility(View.GONE);
-                                        isLastRecord = true;
+                                            isLastRecord = true;
+                                            smsListAdapter.setLoading(true);
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        smsListAdapter.notifyDataSetChanged();
-                        smsListAdapter.setLoaded();
+                            smsListAdapter.notifyDataSetChanged();
+                            if(!smsListAdapter.isLoading())
+                                smsListAdapter.setLoaded();
+
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
 
                     }
                 }, 5000);

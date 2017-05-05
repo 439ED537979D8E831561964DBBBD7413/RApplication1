@@ -163,15 +163,18 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             holder.textContactDate.setText(finalDate);
         } else {
             Date callDate = callLogType.getCallReceiverDate();
-//            String callReceiverDate = new SimpleDateFormat("MMM dd, hh:mm a").format(callDate);
-            if(logDate.equalsIgnoreCase(currentDate)){
-                finalDate =  "Today, " + new SimpleDateFormat("hh:mm a").format(callDate);
-            }else if(logDate.equalsIgnoreCase(yesterdayDate)){
-                finalDate = "Yesterday, " + new SimpleDateFormat("hh:mm a").format(callDate);;
-            }else{
-                finalDate =  new SimpleDateFormat("MMM dd, hh:mm a").format(callDate);
+            if(callDate!=null){
+                if(logDate.equalsIgnoreCase(currentDate)){
+                    finalDate =  "Today, " + new SimpleDateFormat("hh:mm a").format(callDate);
+                }else if(logDate.equalsIgnoreCase(yesterdayDate)){
+                    finalDate = "Yesterday, " + new SimpleDateFormat("hh:mm a").format(callDate);;
+                }else{
+                    finalDate =  new SimpleDateFormat("MMM dd, hh:mm a").format(callDate);
+                }
+                holder.textContactDate.setText(finalDate);
             }
-            holder.textContactDate.setText(finalDate);
+//            String callReceiverDate = new SimpleDateFormat("MMM dd, hh:mm a").format(callDate);
+
         }
 
 
@@ -294,7 +297,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                                     context.getString(R.string.call_reminder), context.getString(R.string.unblock)*/));
                         }
 
-                        materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date, name, "",
+                        materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date, name, uniqueRowID,
                                 key);
                         materialListDialog.setDialogTitle(name);
                         materialListDialog.showDialog();
@@ -330,7 +333,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                                     context.getString(R.string.call_reminder), context.getString(R.string.block)*/));
                         }
 
-                        materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date, name, "", "");
+                        materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date, name, uniqueRowID, "");
                         materialListDialog.setDialogTitle(name);
                         materialListDialog.showDialog();
 
