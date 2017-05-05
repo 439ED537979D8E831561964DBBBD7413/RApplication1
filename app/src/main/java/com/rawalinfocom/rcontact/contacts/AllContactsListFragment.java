@@ -1895,6 +1895,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             public void run() {
                 if (addToDatabase) {
                     if (uploadContactResponse != null) {
+                        if (syncingTask != null && syncingTask.isCancelled()) {
+                            return;
+                        }
                         if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
                                 .getArrayListUserRcProfile())) {
 
@@ -1965,7 +1968,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     private void uploadContacts(int previouslySyncedData, ArrayList<ProfileData>
             arrayListUserContact) {
-
+        if (syncingTask != null && syncingTask.isCancelled()) {
+            return;
+        }
         WsRequestObject uploadContactObject = new WsRequestObject();
         uploadContactObject.setPmId(Integer.parseInt(((BaseActivity) getActivity()).getUserPmId()));
         uploadContactObject.setProfileData(arrayListUserContact);
