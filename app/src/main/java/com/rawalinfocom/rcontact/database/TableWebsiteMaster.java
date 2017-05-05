@@ -42,7 +42,8 @@ public class TableWebsiteMaster {
             " " + COLUMN_WM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_WM_WEBSITE_URL + " text NOT NULL," +
             " " + COLUMN_WM_WEBSITE_TYPE + " text," +
-            " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
+            " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
+            " UNIQUE(" + COLUMN_WM_RECORD_INDEX_ID + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
             ");";
 
     // Adding new Website

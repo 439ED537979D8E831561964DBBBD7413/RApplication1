@@ -12,10 +12,10 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.ContactsContract;
@@ -477,6 +477,14 @@ public class Utils {
                 LocationManager.GPS_PROVIDER);
     }
     //</editor-fold>
+
+    public static void setRoundedCornerBackground(View view, int backgroundColor, int radius, int
+            strokeWidth, int strokeColor) {
+        GradientDrawable gd = (GradientDrawable) view.getBackground().getCurrent();
+        gd.setColor(backgroundColor);
+        gd.setCornerRadius(radius);
+        gd.setStroke(strokeWidth, strokeColor);
+    }
 
     public static String exportDB(Context context) {
         String inFileName = context.getDatabasePath(DatabaseHandler.DATABASE_NAME).getPath();

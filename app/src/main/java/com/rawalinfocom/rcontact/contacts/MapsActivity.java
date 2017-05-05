@@ -139,11 +139,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
         if (isFromSettings) {
             isFromSettings = false;
             if (Utils.isLocationEnabled(this)) {
-                gpsTracker = new GPSTracker(this, null);
+               /* gpsTracker = new GPSTracker(this, null);
                 latitude = gpsTracker.getLatitude();
                 longitude = gpsTracker.getLongitude();
 
-                addMapMarker();
+                addMapMarker();*/
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             }
         }
     }
@@ -423,7 +426,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 googleMap.addMarker(new MarkerOptions()
                         .position(latLng)
                         .draggable(true));
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 25.0f));
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
             }
         }, 1000);
     }

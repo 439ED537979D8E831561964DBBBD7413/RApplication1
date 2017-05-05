@@ -62,7 +62,8 @@ public class TableAddressMaster {
             " " + COLUMN_AM_GOOGLE_LATITUDE + " text," +
             " " + COLUMN_AM_GOOGLE_LONGITUDE + " text," +
             " " + COLUMN_AM_ADDRESS_PRIVACY + " integer DEFAULT 2," +
-            " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
+            " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
+            " UNIQUE(" + COLUMN_AM_RECORD_INDEX_ID + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
             ");";
 
     // Adding new Address

@@ -278,14 +278,16 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (profileData.getTempIsRcp()) {
             holder.textCloudContactName.setVisibility(View.VISIBLE);
             holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
-            holder.buttonInvite.setVisibility(View.GONE);
+//            holder.buttonInvite.setVisibility(View.GONE);
+            holder.rippleInvite.setVisibility(View.GONE);
 //            holder.imageSocialMedia.setVisibility(View.VISIBLE);
             holder.relativeRowAllContact.setTag(profileData.getTempRcpId());
             if (StringUtils.contains(profileData.getTempRcpName(), ",")) {
                 holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
                 holder.textCloudContactName.setText(" (" + String.valueOf(StringUtils.countMatches
                         (profileData.getTempRcpName(), ",") + 1) + " RC)");
-                holder.buttonInvite.setVisibility(View.GONE);
+//                holder.buttonInvite.setVisibility(View.GONE);
+                holder.rippleInvite.setVisibility(View.GONE);
 //                holder.imageSocialMedia.setVisibility(View.GONE);
             }
         } else {
@@ -293,9 +295,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.textCloudContactName.setVisibility(View.GONE);
             holder.textCloudContactName.setText("");
             if (Utils.getBooleanPreference(context, AppConstants.PREF_CONTACT_SYNCED, false)) {
-                holder.buttonInvite.setVisibility(View.VISIBLE);
+//                holder.buttonInvite.setVisibility(View.VISIBLE);
+                holder.rippleInvite.setVisibility(View.VISIBLE);
             } else {
-                holder.buttonInvite.setVisibility(View.GONE);
+//                holder.buttonInvite.setVisibility(View.GONE);
+                holder.rippleInvite.setVisibility(View.GONE);
             }
 //            holder.imageSocialMedia.setVisibility(View.GONE);
         }
@@ -388,7 +392,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         //</editor-fold>
 
         //<editor-fold desc="buttonInvite Click">
-        holder.buttonInvite.setOnClickListener(new View.OnClickListener() {
+      /*  holder.buttonInvite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -452,7 +456,73 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                 }
             }
+        });*/
+
+        holder.rippleInvite.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
+
+                Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(profileData
+                        .getLocalPhoneBookId());
+                if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
+                    while (contactNumberCursor.moveToNext()) {
+
+                        ProfileDataOperationPhoneNumber phoneNumber = new
+                                ProfileDataOperationPhoneNumber();
+                        phoneNumber.setPhoneNumber(Utils.getFormattedNumber(context,
+                                contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                        (ContactsContract.CommonDataKinds.Phone.NUMBER))));
+                        phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
+                                (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
+                                        (ContactsContract.CommonDataKinds.Phone.TYPE))));
+
+                        phoneNumbers.add(phoneNumber);
+
+                    }
+                    contactNumberCursor.close();
+                }
+
+                ArrayList<ProfileDataOperationEmail> emailIds = new ArrayList<>();
+
+                Cursor contactEmailCursor = phoneBookContacts.getContactEmail(profileData
+                        .getLocalPhoneBookId());
+                if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
+                    while (contactEmailCursor.moveToNext()) {
+
+                        ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
+                        emailId.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+                        emailId.setEmType(phoneBookContacts.getEmailType(contactEmailCursor,
+                                contactEmailCursor.getInt(contactEmailCursor.getColumnIndex
+                                        (ContactsContract.CommonDataKinds.Email.TYPE))));
+
+                        emailIds.add(emailId);
+
+                    }
+                    contactEmailCursor.close();
+                }
+
+                if (phoneNumbers.size() + emailIds.size() > 1) {
+                    selectContactDialog(profileData.getTempFirstName(), phoneNumbers, emailIds);
+                } else {
+                    if (phoneNumbers.size() > 0) {
+                        ArrayList<String> numbers = new ArrayList<>();
+                        for (int i = 0; i < phoneNumbers.size(); i++) {
+                            numbers.add(phoneNumbers.get(i).getPhoneNumber());
+                        }
+                        inviteContact(numbers, null);
+                    } else if (emailIds.size() > 0) {
+                        ArrayList<String> emails = new ArrayList<>();
+                        for (int i = 0; i < emailIds.size(); i++) {
+                            emails.add(emailIds.get(i).getEmEmailId());
+                        }
+                        inviteContact(null, emails);
+                    }
+                }
+            }
         });
+
         //</editor-fold>
 
        /* if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
@@ -1024,6 +1094,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         RecyclerView recyclerViewMultipleRc;
         @BindView(R.id.button_invite)
         Button buttonInvite;
+        @BindView(R.id.ripple_invite)
+        RippleView rippleInvite;
 
 
         AllContactViewHolder(View itemView) {
@@ -1043,7 +1115,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             recyclerViewMultipleRc.setVisibility(View.GONE);
             linearRating.setVisibility(View.GONE);
             imageSocialMedia.setVisibility(View.GONE);
-            buttonInvite.setVisibility(View.GONE);
+//            buttonInvite.setVisibility(View.GONE);
+
+            Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor(context, R
+                    .color.colorAccent), 5, 0, ContextCompat.getColor(context, R.color
+                    .colorAccent));
 
             LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
             // Filled stars

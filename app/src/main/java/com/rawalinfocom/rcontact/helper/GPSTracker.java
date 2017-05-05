@@ -393,6 +393,10 @@ public class GPSTracker extends Service implements LocationListener {
     public void onLocationChanged(Location location) {
 //        Log.e("-------------- lat:", location.getLatitude() + " :");
 //        Log.e("-------------- lang:", location.getLongitude() + " :");
+        /*if (location != null) {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        }*/
     }
 
     @Override
