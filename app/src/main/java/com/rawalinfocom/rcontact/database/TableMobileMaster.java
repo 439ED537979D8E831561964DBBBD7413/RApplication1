@@ -47,7 +47,7 @@ public class TableMobileMaster {
     //    private static final String COLUMN_MNM_IS_VERIFIED = "mnm_is_verified";
 
     // Table Create Statements
-    static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE " +
+  /*  static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE " +
             TABLE_RC_MOBILE_NUMBER_MASTER + " (" +
             " " + COLUMN_MNM_ID + " integer NOT NULL CONSTRAINT rc_mobile_number_master_pk " +
             "PRIMARY KEY AUTOINCREMENT," +
@@ -60,6 +60,22 @@ public class TableMobileMaster {
             " " + COLUMN_MNM_CIRCLE_OF_SERVICE + " text," +
             " " + COLUMN_MNM_SPAM_COUNT + " integer," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
+            ");";*/
+
+    static final String CREATE_TABLE_RC_MOBILE_NUMBER_MASTER = "CREATE TABLE " +
+            TABLE_RC_MOBILE_NUMBER_MASTER + " (" +
+            " " + COLUMN_MNM_ID + " integer NOT NULL CONSTRAINT rc_mobile_number_master_pk " +
+            "PRIMARY KEY AUTOINCREMENT," +
+            " " + COLUMN_MNM_RECORD_INDEX_ID + " text," +
+            " " + COLUMN_MNM_MOBILE_NUMBER + " text NOT NULL," +
+            " " + COLUMN_MNM_NUMBER_TYPE + " text," +
+            " " + COLUMN_MNM_IS_PRIMARY + " integer," +
+            " " + COLUMN_MNM_NUMBER_PRIVACY + " integer DEFAULT 2," +
+            " " + COLUMN_MNM_MOBILE_SERVICE_PROVIDER + " text," +
+            " " + COLUMN_MNM_CIRCLE_OF_SERVICE + " text," +
+            " " + COLUMN_MNM_SPAM_COUNT + " integer," +
+            " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
+            " UNIQUE(" + COLUMN_MNM_RECORD_INDEX_ID + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
             ");";
 
     // Adding new Mobile Number

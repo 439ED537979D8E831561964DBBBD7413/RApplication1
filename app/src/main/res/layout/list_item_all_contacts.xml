@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/relative_row_all_contact"
                 android:layout_width="match_parent"
@@ -38,19 +39,32 @@
                 android:contentDescription="@string/str_content_description"
                 android:src="@drawable/ic_arrow_bottom"/>
 
-            <Button
-                android:id="@+id/button_invite"
-                android:layout_width="wrap_content"
+            <com.rawalinfocom.rcontact.helper.RippleView
+                android:id="@+id/ripple_invite"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:background="@color/colorAccent"
-                android:minHeight="0dp"
-                android:minWidth="0dp"
-                android:padding="@dimen/margin_small"
-                android:text="@string/str_invite"
-                android:textAllCaps="false"
-                android:textColor="@color/colorWhite"/>
+                app:rv_alpha="@integer/alpha_ripple"
+                app:rv_color="@color/colorWhite"
+                app:rv_rippleDuration="@integer/duration_ripple">
+
+                <Button
+                    android:id="@+id/button_invite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_rounded_corner"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:paddingBottom="@dimen/margin_small"
+                    android:paddingLeft="@dimen/margin_medium"
+                    android:paddingRight="@dimen/margin_medium"
+                    android:paddingTop="@dimen/margin_small"
+                    android:text="@string/str_invite"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorWhite"/>
+
+            </com.rawalinfocom.rcontact.helper.RippleView>
 
         </FrameLayout>
 
