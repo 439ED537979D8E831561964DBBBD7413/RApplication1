@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.support.annotation.Nullable;
@@ -31,6 +32,7 @@ import com.rawalinfocom.rcontact.adapters.SmsListAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookSMSLogs;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.listener.OnLoadMoreListener;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 
 import java.text.SimpleDateFormat;
@@ -56,8 +58,6 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     Unbinder unbinder;
     @BindView(R.id.text_no_sms_found)
     TextView textNoSmsFound;
-    @BindView(R.id.llLoading)
-    LinearLayout llLoading;
     private String[] requiredPermissions = {Manifest.permission.READ_SMS};
     ArrayList<Object> arrayListObjectSmsLogs;
     ArrayList<String> arrayListCallLogHeader;
@@ -318,7 +318,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         Utils.setArrayListPreference(getActivity(), AppConstants.PREF_SMS_LOGS_ID_SET,
                 listOfIds);
 
-        recyclerSmsLogs.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        /*recyclerSmsLogs.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -337,8 +337,8 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                 logsDisplayed = logsDisplayed + callLogIdsArrayList.size();
                                 loadData();
                             } else {
-                                /*Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "Last" +
-                                        " log shown.");*/
+                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "Last" +
+                                        " log shown.");
                                 llLoading.setVisibility(View.GONE);
                                 isLastRecord = true;
                             }
@@ -350,8 +350,8 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                     logsDisplayed = logsDisplayed + callLogIdsArrayList.size();
                                     loadData();
                                 } else {
-                                    /*Utils.showSuccessSnackBar(getActivity(), linearCallLogMain,
-                                            "Last log shown.");*/
+                                    Utils.showSuccessSnackBar(getActivity(), linearCallLogMain,
+                                            "Last log shown.");
                                     llLoading.setVisibility(View.GONE);
                                     isLastRecord = true;
                                 }
@@ -383,8 +383,8 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                 logsDisplayed = logsDisplayed + callLogIdsArrayList.size();
                                 loadData();
                             } else {
-                              /*  Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "Last" +
-                                        " log shown.");*/
+                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "Last" +
+                                        " log shown.");
                                 llLoading.setVisibility(View.GONE);
                                 isLastRecord = true;
                             }
@@ -397,8 +397,8 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                     loadData();
                                 } else {
 
-                                   /* Utils.showSuccessSnackBar(getActivity(), linearCallLogMain,
-                                            "Last log shown.");*/
+                                    Utils.showSuccessSnackBar(getActivity(), linearCallLogMain,
+                                            "Last log shown.");
                                     llLoading.setVisibility(View.GONE);
                                     isLastRecord = true;
                                 }
@@ -409,7 +409,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 }
 
             }
-        });
+        });*/
 
     }
 
@@ -611,11 +611,11 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
             rContactApplication.setArrayListSmsLogType(smsDataTypeArrayList);
             if (smsListAdapter == null){
-                llLoading.setVisibility(View.GONE);
+//                llLoading.setVisibility(View.GONE);
                 setAdapter();
             }
             else {
-                llLoading.setVisibility(View.GONE);
+//                llLoading.setVisibility(View.GONE);
                 smsListAdapter.notifyDataSetChanged();
             }
 
@@ -776,10 +776,66 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
 //        progressBar.setVisibility(View.GONE);
         if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
-            smsListAdapter = new SmsListAdapter(getActivity(), smsDataTypeArrayList);
+            smsListAdapter = new SmsListAdapter(getActivity(), smsDataTypeArrayList,recyclerSmsLogs);
             recyclerSmsLogs.setAdapter(smsListAdapter);
             recyclerSmsLogs.setFocusable(false);
         }
+
+        smsListAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                Log.e("haint", "Load More");
+                smsDataTypeArrayList.add(null);
+                smsListAdapter.notifyItemInserted(smsDataTypeArrayList.size() - 1);
+
+                //Load more data for reyclerview
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("haint", "Load More 2");
+
+                        //Remove loading item
+                        smsDataTypeArrayList.remove(smsDataTypeArrayList.size() - 1);
+                        smsListAdapter.notifyItemRemoved(smsDataTypeArrayList.size());
+
+                        //Load data
+                        if (!isLastRecord) {
+                            if (isFirstTime) {
+//                                llLoading.setVisibility(View.VISIBLE);
+                                ArrayList<String> callLogIdsArrayList = divideCallLogIdsByChunck();
+                                if (callLogIdsArrayList != null && callLogIdsArrayList.size() > 0) {
+                                    logsDisplayed = logsDisplayed + callLogIdsArrayList.size();
+                                    loadData();
+                                } else {
+                                    /*Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "Last" +
+                                            " log shown.");*/
+//                                    llLoading.setVisibility(View.GONE);
+                                    isLastRecord = true;
+                                }
+                            } else {
+                                if (!isLastRecord) {
+//                                    llLoading.setVisibility(View.VISIBLE);
+                                    ArrayList<String> callLogIdsArrayList = divideCallLogIdsByChunck();
+                                    if (callLogIdsArrayList != null && callLogIdsArrayList.size() > 0) {
+                                        logsDisplayed = logsDisplayed + callLogIdsArrayList.size();
+                                        loadData();
+                                    } else {
+                                        /*Utils.showSuccessSnackBar(getActivity(), linearCallLogMain,
+                                                "Last log shown.");*/
+//                                        llLoading.setVisibility(View.GONE);
+                                        isLastRecord = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        smsListAdapter.notifyDataSetChanged();
+                        smsListAdapter.setLoaded();
+
+                    }
+                }, 5000);
+            }
+        });
 
 
     }
