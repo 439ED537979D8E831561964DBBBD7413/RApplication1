@@ -63,7 +63,6 @@ import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
 import com.rawalinfocom.rcontact.notifications.RatingHistory;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
-import com.rawalinfocom.rcontact.services.CallLogIdFetchService;
 import com.rawalinfocom.rcontact.sms.SmsFragment;
 
 import org.apache.commons.lang3.StringUtils;
@@ -153,8 +152,11 @@ public class MainActivity extends BaseActivity implements NavigationView
                         getCallLogsByRawId();
                     }
                 });*/
-                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                syncCallLogAsyncTask.execute();
+
+                if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                    syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                    syncCallLogAsyncTask.execute();
+                }
             }
             checkPermissionToExecute();
            /* if (checkPermissionToExecute()) {
@@ -225,8 +227,10 @@ public class MainActivity extends BaseActivity implements NavigationView
                     getCallLogsByRawId();
                 }
             });*/
-            syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-            syncCallLogAsyncTask.execute();
+            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                syncCallLogAsyncTask.execute();
+            }
 
         }
     }
