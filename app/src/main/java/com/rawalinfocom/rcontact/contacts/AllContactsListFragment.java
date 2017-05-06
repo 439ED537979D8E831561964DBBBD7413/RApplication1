@@ -608,8 +608,14 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
         Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         String selection = ContactsContract.Contacts.HAS_PHONE_NUMBER;
-        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.Data.LOOKUP_KEY, ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI,
-                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone._ID,
+       /* String selection = ContactsContract.Data.MIMETYPE + " in (?)";
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+        };*/
+        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.Data.LOOKUP_KEY, ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract
+                .CommonDataKinds.Phone._ID, ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
                 ContactsContract.Contacts._ID};
         return new CursorLoader(
                 getActivity(),
@@ -875,7 +881,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //        final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
 //        final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
 //        final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-////        final int phoneTypeIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
+////        final int phoneTypeIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
+/// .TYPE);
 //        final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
 //                .StructuredName.GIVEN_NAME);
 //        final int familyNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
@@ -891,8 +898,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
         final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
                 .Phone.DISPLAY_NAME);
-        final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
+        final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
+                .PHOTO_THUMBNAIL_URI);
         final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
+        final int rawIdIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
+                .RAW_CONTACT_ID);
+
 
 //        while (data.moveToNext()) {
 //
@@ -923,7 +934,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //                    break;
 //            }
 //        }
-        ArrayList<Object> contactsWithNoName= new ArrayList<>();
+        ArrayList contactsWithNoName = new ArrayList<>();
+        String lastDisplayName = "XXX", lastRawId = "XXX";
 
         while (data.moveToNext()) {
             ProfileData profileData;
@@ -932,10 +944,19 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             profileData.setTempNumber(data.getString(phoneIdx));
             profileData.setProfileUrl(data.getString(photoURIIdx));
             profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+            profileData.setTempRawId(data.getString(rawIdIdx));
+
             if (profileData.getTempFirstName().equals(profileData.getTempNumber())) {
                 contactsWithNoName.add(profileData);
             } else {
-                arrayListPhoneBookContacts.add(profileData);
+                if (lastDisplayName.equals(profileData.getTempFirstName()) && lastRawId.equals
+                        (profileData.getTempRawId())) {
+
+                } else {
+                    arrayListPhoneBookContacts.add(profileData);
+                    lastDisplayName = profileData.getTempFirstName();
+                    lastRawId = profileData.getTempRawId();
+                }
             }
         }
         arrayListPhoneBookContacts.addAll(contactsWithNoName);
