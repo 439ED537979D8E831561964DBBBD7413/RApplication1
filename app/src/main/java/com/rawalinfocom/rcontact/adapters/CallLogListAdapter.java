@@ -242,11 +242,11 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         if (date > 0) {
             Date date1 = new Date(date);
-            String logDate = new SimpleDateFormat("hh:mm a").format(date1);
+            String logDate = new SimpleDateFormat("dd MMM,yy hh:mm a").format(date1);
             holder.textContactDate.setText(logDate);
         } else {
             Date callDate = callLogType.getCallReceiverDate();
-            String callReceiverDate = new SimpleDateFormat("hh:mm a").format(callDate);
+            String callReceiverDate = new SimpleDateFormat("dd MMM,yy hh:mm a").format(callDate);
             holder.textContactDate.setText(callReceiverDate);
         }
 

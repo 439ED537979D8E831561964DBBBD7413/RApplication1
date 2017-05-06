@@ -44,7 +44,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
         //We listen to two intents.  The new outgoing call only tells us of an outgoing call.  We
         // use it to get the number.
-        AppConstants.isFromReceiver = true;
         try {
             if (intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")) {
                 savedNumber = intent.getExtras().getString("android.intent.extra.PHONE_NUMBER");
@@ -113,6 +112,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             case TelephonyManager.CALL_STATE_IDLE:
 
                 //Went to idle-  this is the end of a call.  What type depends on previous state(s)
+                AppConstants.isFromReceiver = true;
                 if (lastState == TelephonyManager.CALL_STATE_RINGING) {
                     //Ring but no pickup-  a miss
                     onMissedCall(context, savedNumber, callStartTime);

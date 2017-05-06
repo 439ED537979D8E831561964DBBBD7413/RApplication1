@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -42,6 +44,7 @@ import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
@@ -53,6 +56,7 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -89,6 +93,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private ArrayList<Integer> arrayListExpandedPositions;
 
     private PhoneBookContacts phoneBookContacts;
+    private ArrayList<Integer> mSectionPositions;
 
     //<editor-fold desc="Constructor">
     public AllContactAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
@@ -144,6 +149,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return viewHolder;
     }
 
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
@@ -187,42 +193,39 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public Object[] getSections() {
-        return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
+        //return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
+        List<String> sections = new ArrayList<>();
+        mSectionPositions = new ArrayList<>();
+        for (int i = 2, size = arrayListUserContact.size(); i < size; i++) {
+            if (arrayListUserContact.get(i) instanceof ProfileData) {
+                String name = ((ProfileData) arrayListUserContact.get(i)).getTempFirstName();
+                String number = ((ProfileData) arrayListUserContact.get(i)).getTempNumber();
+                if (name.equals(number)) {
+                    String section = "#";
+                    if (!sections.contains(section)) {
+                        sections.add(section);
+                        mSectionPositions.add(i);
+                    }
+                } else {
+                    String section = String.valueOf(name.charAt(0)).toUpperCase();
+                    if (!sections.contains(section)) {
+                        sections.add(section);
+                        mSectionPositions.add(i);
+                    }
+                }
+            }
+        }
+        return sections.toArray(new String[0]);
     }
 
     @Override
     public int getPositionForSection(int sectionIndex) {
-        return 0;
+        return mSectionPositions.get(sectionIndex);
     }
 
     @Override
     public int getSectionForPosition(int position) {
-        if (position >= arrayListUserContact.size()) {
-            position = arrayListUserContact.size() - 1;
-        }
-
-        if (arrayListUserContact.get(position) instanceof String) {
-            String letter = (String) arrayListUserContact.get(position);
-            previousPosition = arrayListContactHeader.indexOf(letter);
-
-        } else {
-            /*for (int i = position; i < arrayListUserContact.size(); i++) {
-                if (arrayListUserContact.get(i) instanceof String) {
-                    String letter = (String) arrayListUserContact.get(i);
-                    previousPosition = arrayListContactHeader.indexOf(letter);
-                    break;
-                }
-            }*/
-            for (int i = position; i >= 0; i--) {
-                if (arrayListUserContact.get(i) instanceof String) {
-                    String letter = (String) arrayListUserContact.get(i);
-                    previousPosition = arrayListContactHeader.indexOf(letter);
-                    break;
-                }
-            }
-        }
-
-        return previousPosition;
+        return 0;
     }
 
     //</editor-fold>
@@ -233,6 +236,19 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             position) {
 
         final ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
+        final String thumbnailUrl = profileData.getProfileUrl();
+        if (!TextUtils.isEmpty(thumbnailUrl)) {
+            Glide.with(context)
+                    .load(thumbnailUrl)
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .override(200, 200)
+                    .into(holder.imageProfile);
+
+        } else {
+            holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
+        }
 
         holder.textContactName.setTag(position);
         if (arrayListExpandedPositions.contains(position)) {
@@ -252,13 +268,17 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         if (StringUtils.length(prefix) > 0) {
             contactDisplayName = prefix + " ";
-        } if (StringUtils.length(firstName) > 0) {
+        }
+        if (StringUtils.length(firstName) > 0) {
             contactDisplayName = contactDisplayName + firstName + " ";
-        } if (StringUtils.length(middleName) > 0) {
+        }
+        if (StringUtils.length(middleName) > 0) {
             contactDisplayName = contactDisplayName + middleName + " ";
-        } if (StringUtils.length(lastName) > 0) {
+        }
+        if (StringUtils.length(lastName) > 0) {
             contactDisplayName = contactDisplayName + lastName + " ";
-        } if (StringUtils.length(suffix) > 0) {
+        }
+        if (StringUtils.length(suffix) > 0) {
             contactDisplayName = contactDisplayName + suffix;
         }
         contactDisplayName = StringUtils.trimToEmpty(contactDisplayName);
@@ -316,7 +336,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         }
 
-        holder.textContactNumber.setText(profileData.getTempNumber());
+        holder.textContactNumber.setText(Utils.getFormattedNumber(context, profileData.getTempNumber()));
 
         //<editor-fold desc="relativeRowAllContact Click">
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {

@@ -1762,7 +1762,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
 
     private void showCallConfirmationDialog(final String number) {
-
+        final String formattedNumber =  Utils.getFormattedNumber(this,number);
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
 
@@ -1776,7 +1776,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
                         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                number));
+                                formattedNumber));
                         startActivity(intent);
                         break;
                 }
@@ -1787,8 +1787,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText("Cancel");
         callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
-
+        callConfirmationDialog.setDialogBody("Call " + formattedNumber + "?");
         callConfirmationDialog.showDialog();
 
     }
@@ -1936,6 +1935,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
                 int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
                 int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
+                int name = cursor.getColumnIndexOrThrow(CallLog.Calls.CACHED_NAME);
                 int account = -1;
                 int account_id = -1;
                 int profileImage = -1;
@@ -1985,6 +1985,29 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     logObject.setHistoryId(histroyId);
                     logObject.setHistoryNumberType(numberTypeLog);
                     callDetails.add(logObject);
+
+
+                   /* ArrayList<CallLogType> callLogTypeArrayList =  new ArrayList<>();
+                    logObject.setNumber(phNum);
+                    String userName =  cursor.getString(name);
+                    if(!TextUtils.isEmpty(userName)){
+                        logObject.setName(userName);
+                    }else{
+                        logObject.setName("");
+                    }
+                    logObject.setUniqueContactId(cursor.getString(callLogId));
+                    logObject.setDate(dateOfCall);
+                    logObject.setDuration(Integer.parseInt(callDuration));
+                    logObject.setType(callType);
+                    String photoThumbNail = getPhotoUrlFromNumber(phNum);
+                    if (!TextUtils.isEmpty(photoThumbNail)) {
+                        logObject.setProfileImage(photoThumbNail);
+                    } else {
+                        logObject.setProfileImage("");
+                    }
+
+                    callLogTypeArrayList.add(logObject);
+                    rContactApplication.setArrayListCallLogType(callLogTypeArrayList);*/
                 }
             }
             cursor.close();
@@ -1994,6 +2017,41 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         }
 
         return callDetails;
+    }
+
+
+    private String getPhotoUrlFromNumber(String phoneNumber) {
+        String photoThumbUrl = "";
+        try {
+
+            photoThumbUrl = "";
+            ContentResolver contentResolver = getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    /*String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));*/
+                    photoThumbUrl = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.PHOTO_THUMBNAIL_URI));
+//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return photoThumbUrl;
     }
 
     private String getStarredStatusFromNumber(String phoneNumber) {

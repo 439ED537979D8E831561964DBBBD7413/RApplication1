@@ -57,13 +57,13 @@ public class OnlineDataSync {
                     //Add SMS boolean default shoiuld be false
                     // Start uodated contact sync after above 3 conditions are true
 
-                    AsyncTask.execute(new Runnable() {
-                        @Override
-                        public void run() {
-//                            Log.i("MAULIK", "Checking for updated contacts");
-                            syncPhoneBookContactList();
-                        }
-                    });
+//                    AsyncTask.execute(new Runnable() {
+//                        @Override
+//                        public void run() {
+////                            Log.i("MAULIK", "Checking for updated contacts");
+//                            syncPhoneBookContactList();
+//                        }
+//                    });
 
                 }
             }
