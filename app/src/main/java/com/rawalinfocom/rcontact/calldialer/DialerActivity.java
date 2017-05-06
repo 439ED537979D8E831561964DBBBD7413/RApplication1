@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.transition.Slide;
 import android.transition.Transition;
@@ -112,6 +113,7 @@ public class DialerActivity extends Activity {
     @BindView(R.id.number_pad)
     LinearLayout numberPad;
     MaterialDialog callConfirmationDialog;
+    boolean isCalledOnce = false;
 
     Animation slideDownAnimation;
 
@@ -126,7 +128,6 @@ public class DialerActivity extends Activity {
 
         editTextNumber.setCursorVisible(false);
         initandClickEvents();
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setEnterTransition(makeEnterTransition());
             getWindow().setReturnTransition(makeReturnTransition());
@@ -218,6 +219,7 @@ public class DialerActivity extends Activity {
         imageButtonClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isCalledOnce = false;
                 int length = editTextNumber.getText().length();
                 if (length > 0) {
                     editTextNumber.getText().delete(length - 1, length);
@@ -228,15 +230,18 @@ public class DialerActivity extends Activity {
         imageButtonClear.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                isCalledOnce = false;
                 editTextNumber.getText().clear();
                 return true;
             }
         });
+
         linear0.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
 
                 editTextNumber.setText(editTextNumber.getText().toString() + "+");
+                inputNumberValidation();
                 return true;
             }
         });
@@ -245,6 +250,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "0");
+                inputNumberValidation();
             }
         });
 
@@ -252,6 +258,8 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "1");
+                inputNumberValidation();
+
             }
         });
 
@@ -259,6 +267,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "2");
+                inputNumberValidation();
             }
         });
 
@@ -266,6 +275,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "3");
+                inputNumberValidation();
             }
         });
 
@@ -273,12 +283,15 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "4");
+                inputNumberValidation();
+
             }
         });
         linear5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "5");
+                inputNumberValidation();
             }
         });
 
@@ -286,6 +299,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "6");
+                inputNumberValidation();
             }
         });
 
@@ -293,6 +307,8 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "7");
+                inputNumberValidation();
+
             }
         });
 
@@ -300,6 +316,8 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "8");
+                inputNumberValidation();
+
             }
         });
 
@@ -307,6 +325,8 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "9");
+                inputNumberValidation();
+
             }
         });
 
@@ -314,6 +334,8 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "*");
+                inputNumberValidation();
+
             }
         });
 
@@ -321,6 +343,8 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "#");
+                inputNumberValidation();
+
             }
         });
 
@@ -357,6 +381,31 @@ public class DialerActivity extends Activity {
             }
         });
 
+
+    }
+
+
+    private void inputNumberValidation(){
+        if(!isCalledOnce){
+            isCalledOnce =  true;
+            if(editTextNumber!=null && editTextNumber.getText().toString().length()>0){
+                String  stringText = editTextNumber.getText().toString();
+                String firstChar =  stringText.substring(0,1);
+                if(firstChar.equalsIgnoreCase("0")){
+                    InputFilter[] FilterArray = new InputFilter[1];
+                    FilterArray[0] = new InputFilter.LengthFilter(11);
+                    editTextNumber.setFilters(FilterArray);
+                }else if(firstChar.equalsIgnoreCase("+")){
+                    InputFilter[] FilterArray = new InputFilter[1];
+                    FilterArray[0] = new InputFilter.LengthFilter(13);
+                    editTextNumber.setFilters(FilterArray);
+                }else{
+                    InputFilter[] FilterArray = new InputFilter[1];
+                    FilterArray[0] = new InputFilter.LengthFilter(10);
+                    editTextNumber.setFilters(FilterArray);
+                }
+            }
+        }
     }
 
     private void showCallConfirmationDialog(final String number) {
