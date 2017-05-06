@@ -178,6 +178,7 @@ public class AppConstants {
     public static String PREF_CALL_LOG_TO_FETCH_COUNT = "pref_call_log_to_fetch_count";
     public static String PREF_CONTACT_ID_SET = "pref_contact_id_set";
     public static String PREF_SMS_LOG_STARTS_FIRST_TIME = "pref_sms_log_start_first_time";
+    public static String PREF_SMS_LOGS_ID_SET = "pref_sms_logs_id_set";
 
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
