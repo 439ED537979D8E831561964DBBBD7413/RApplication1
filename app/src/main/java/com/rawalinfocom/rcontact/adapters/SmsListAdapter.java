@@ -47,6 +47,7 @@ public class SmsListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private OnLoadMoreListener onLoadMoreListener;
     private boolean isLoading;
+    private boolean isMoreData = false;
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
 
@@ -82,12 +83,12 @@ public class SmsListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolde
         isLoading = false;
     }
 
-    public boolean isLoading() {
-        return isLoading;
+    public boolean isMoreData() {
+        return isMoreData;
     }
 
-    public void setLoading(boolean loading) {
-        isLoading = loading;
+    public void setMoreData(boolean moreData) {
+        isMoreData = moreData;
     }
 
     public SmsDataType getSelectedSmsType()
