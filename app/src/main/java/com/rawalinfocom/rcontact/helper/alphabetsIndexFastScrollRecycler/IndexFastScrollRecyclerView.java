@@ -17,12 +17,12 @@ public class IndexFastScrollRecyclerView extends RecyclerView {
     private GestureDetector mGestureDetector = null;
 
     public static int setIndexTextSize = 12;
-    public static float mIndexbarWidth = 20;
-    public static float mIndexbarMargin = 5;
+    public static float mIndexbarWidth = 16;
+    public static float mIndexbarMargin = 0;
     public static int mPreviewPadding = 5;
-    public static int mIndexBarCornerRadius = 5;
+    public static int mIndexBarCornerRadius = 0;
     public static float mIndexBarTransparentValue = (float) 0.6;
-    public static String mIndexbarBackgroudColor = "#000000";
+    public static String mIndexbarBackgroudColor = "#003933";
     public static String mIndexbarTextColor = "#FFFFFF";
 
     public IndexFastScrollRecyclerView(Context context) {

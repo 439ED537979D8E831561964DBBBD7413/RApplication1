@@ -45,7 +45,8 @@ public class TableOrganizationMaster {
             " " + COLUMN_OM_ORGANIZATION_DESIGNATION + " text," +
             " " + COLUMN_OM_ORGANIZATION_IS_CURRENT + " integer," +
             " " + COLUMN_OM_ORGANIZATION_PRIVACY + " integer DEFAULT 1," +
-            " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
+            " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
+            " UNIQUE(" + COLUMN_OM_RECORD_INDEX_ID + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
             ");";
 
     // Adding new Org

@@ -43,7 +43,8 @@ public class TableImMaster {
             " " + COLUMN_IM_DETAIL + " text," +
             " " + COLUMN_IM_PROTOCOL + " text NOT NULL," +
             " " + COLUMN_IM_PRIVACY + " integer DEFAULT 2," +
-            " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer" +
+            " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
+            " UNIQUE(" + COLUMN_IM_RECORD_INDEX_ID + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
             ");";
 
     // Adding new ImAccount Account

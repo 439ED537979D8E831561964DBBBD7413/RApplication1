@@ -215,7 +215,8 @@ public class RContactsFragment extends BaseFragment {
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 /* Disable swiping in headers */
-                if (viewHolder instanceof RContactListAdapter.ContactHeaderViewHolder) {
+                if (viewHolder instanceof RContactListAdapter.ContactHeaderViewHolder|| viewHolder
+                        instanceof RContactListAdapter.ContactFooterViewHolder) {
                     return 0;
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder);
