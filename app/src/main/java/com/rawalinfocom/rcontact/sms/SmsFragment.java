@@ -813,7 +813,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                             " log shown.");*/
 //                                    llLoading.setVisibility(View.GONE);
                                         isLastRecord = true;
-                                        smsListAdapter.setLoading(true);
+//                                        smsListAdapter.setMoreData(true);
                                     }
                                 } else {
                                     if (!isLastRecord) {
@@ -827,14 +827,14 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                                 "Last log shown.");*/
 //                                        llLoading.setVisibility(View.GONE);
                                             isLastRecord = true;
-                                            smsListAdapter.setLoading(true);
+//                                            smsListAdapter.setMoreData(true);
                                         }
                                     }
                                 }
                             }
 
                             smsListAdapter.notifyDataSetChanged();
-                            if(!smsListAdapter.isLoading())
+                            if(!isLastRecord)
                                 smsListAdapter.setLoaded();
 
                         }catch (Exception e){
