@@ -31,6 +31,7 @@ public class TableEmailMaster {
     static final String COLUMN_EM_EMAIL_TYPE = "em_email_type";
     static final String COLUMN_EM_RECORD_INDEX_ID = "em_record_index_id";
     static final String COLUMN_EM_EMAIL_PRIVACY = "em_email_privacy";
+    static final String COLUMN_EM_IS_PRIVATE = "em_is_private";
     static final String COLUMN_EM_IS_VERIFIED = "em_is_verified";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 

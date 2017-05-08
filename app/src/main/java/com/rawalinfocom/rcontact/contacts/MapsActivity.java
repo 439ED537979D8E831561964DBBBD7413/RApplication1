@@ -382,11 +382,19 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                         .MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
 
             } else {*/
-            if (Utils.isLocationEnabled(this)) {
-                getLocationDetail();
+            if (StringUtils.length(defaultFormattedAddress) > 0 && !(StringUtils.equals
+                    (defaultFormattedAddress, "Surat, Gujarat, India"))) {
+                AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(this, true, WsConstants
+                        .REQ_GEO_CODING_ADDRESS + "_TRUE");
+                asyncGeoCoding.execute(StringUtils.trim(defaultFormattedAddress));
             } else {
-                gpsTracker.showSettingsAlert();
+                if (Utils.isLocationEnabled(this)) {
+                    getLocationDetail();
+                } else {
+                    gpsTracker.showSettingsAlert();
+                }
             }
+
 //            }
         } else {
             AsyncReverseGeoCoding asyncReverseGeoCoding = new AsyncReverseGeoCoding(this,

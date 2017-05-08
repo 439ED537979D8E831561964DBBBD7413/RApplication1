@@ -40,6 +40,7 @@ public class TableAddressMaster {
     private static final String COLUMN_AM_GOOGLE_LATITUDE = "am_google_latitude";
     private static final String COLUMN_AM_GOOGLE_LONGITUDE = "am_google_longitude";
     static final String COLUMN_AM_ADDRESS_PRIVACY = "am_address_privacy";
+    static final String COLUMN_AM_IS_PRIVATE = "am_is_private";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
     /*private static final String COLUMN_AM_CUSTOM_TYPE = "am_custom_type";
@@ -356,7 +357,8 @@ public class TableAddressMaster {
         values.put(COLUMN_AM_ADDRESS_PRIVACY, 2);
 
         // updating row
-        int isUpdated = db.update(TABLE_RC_ADDRESS_MASTER, values, COLUMN_AM_RECORD_INDEX_ID + " = ?",
+        int isUpdated = db.update(TABLE_RC_ADDRESS_MASTER, values, COLUMN_AM_RECORD_INDEX_ID + " " +
+                        "= ?",
                 new String[]{cloudMongoId});
 
         db.close();

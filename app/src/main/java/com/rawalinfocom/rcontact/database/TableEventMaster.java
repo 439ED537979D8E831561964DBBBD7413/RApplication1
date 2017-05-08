@@ -32,6 +32,7 @@ public class TableEventMaster {
     static final String COLUMN_EVM_EVENT_TYPE = "evm_event_type";
     static final String COLUMN_EVM_IS_YEAR_HIDDEN = "evm_is_year_hidden";
     static final String COLUMN_EVM_EVENT_PRIVACY = "evm_event_privacy";
+    static final String COLUMN_EVM_IS_PRIVATE = "evm_is_private";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
     //    private static final String COLUMN_EVM_CUSTOM_TYPE = "evm_custom_type";
@@ -352,7 +353,8 @@ public class TableEventMaster {
         values.put(COLUMN_EVM_EVENT_PRIVACY, 2);
 
         // updating row
-        int isUpdated = db.update(TABLE_RC_EVENT_MASTER, values, COLUMN_EVM_RECORD_INDEX_ID + " = ?",
+        int isUpdated = db.update(TABLE_RC_EVENT_MASTER, values, COLUMN_EVM_RECORD_INDEX_ID + " =" +
+                        " ?",
                 new String[]{cloudMongoId});
 
         db.close();

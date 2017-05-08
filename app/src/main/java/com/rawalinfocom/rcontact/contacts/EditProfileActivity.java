@@ -387,12 +387,18 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                         inputPinCode.setText(((ProfileDataOperationAddress)
                                 arrayListAddressObject.get(clickedPosition)).getPostCode());
                     } else {
-                        inputCountry.setText("India");
+                        /*inputCountry.setText("India");
                         inputState.setText("Gujarat");
                         inputCity.setText("Surat");
                         inputStreet.setText("");
                         inputPinCode.setText("");
-                        inputNeighborhood.setText("");
+                        inputNeighborhood.setText("");*/
+                        inputCountry.setText(inputCountry.getText().toString());
+                        inputState.setText(inputState.getText().toString());
+                        inputCity.setText(inputCity.getText().toString());
+                        inputStreet.setText(inputStreet.getText().toString());
+                        inputPinCode.setText(inputPinCode.getText().toString());
+                        inputNeighborhood.setText(inputNeighborhood.getText().toString());
                     }
                 }
             }
@@ -1145,11 +1151,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             public void onClick(View v) {
 //                startActivityIntent(EditProfileActivity.this, MapsActivity.class, null);
                 Intent intent = new Intent(EditProfileActivity.this, MapsActivity.class);
-                if (detailObject != null && position != -1) {
-                    intent.putExtra(AppConstants.EXTRA_FORMATTED_ADDRESS, (
-                            (ProfileDataOperationAddress) arrayListAddressObject.get(position))
-                            .getFormattedAddress());
-                }
+
                 if (position != -1) {
                   /*  mapLatitude = Double.parseDouble(((ProfileDataOperationAddress)
                             arrayListAddressObject.get(position)).getGoogleLatitude());
@@ -1160,10 +1162,34 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                     View view = linearAddressDetails.getChildAt(position);
                     TextView textLatitude = (TextView) view.findViewById(R.id.input_latitude);
                     TextView textLongitude = (TextView) view.findViewById(R.id.input_longitude);
+                    EditText country = (EditText) view.findViewById(R.id.input_country);
+                    EditText state = (EditText) view.findViewById(R.id.input_state);
+                    EditText city = (EditText) view.findViewById(R.id.input_city);
+                    EditText street = (EditText) view.findViewById(R.id.input_street);
+                    EditText neighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
+                    EditText pinCode = (EditText) view.findViewById(R.id.input_pin_code);
+
+                    String countryName = country.getText().toString();
+                    String stateName = state.getText().toString();
+                    String cityName = city.getText().toString();
+                    String streetName = street.getText().toString();
+                    String neighborhoodName = neighborhood.getText().toString();
+                    String pinCodeName = pinCode.getText().toString();
+
                     intent.putExtra(AppConstants.EXTRA_LATITUDE, Double.parseDouble(StringUtils
                             .defaultIfEmpty(textLatitude.getText().toString(), "0")));
                     intent.putExtra(AppConstants.EXTRA_LONGITUDE, Double.parseDouble(StringUtils
                             .defaultIfEmpty(textLongitude.getText().toString(), "0")));
+                    String formattedAddress = Utils.setFormattedAddress(streetName,
+                            neighborhoodName, cityName, stateName, countryName, pinCodeName);
+                    if (StringUtils.length(formattedAddress) > 0) {
+                        intent.putExtra(AppConstants.EXTRA_FORMATTED_ADDRESS, formattedAddress);
+                    }
+                }
+                if (detailObject != null && position != -1) {
+                    intent.putExtra(AppConstants.EXTRA_FORMATTED_ADDRESS, (
+                            (ProfileDataOperationAddress) arrayListAddressObject.get(position))
+                            .getFormattedAddress());
                 }
                 if (position == -1) {
                     clickedPosition = 0;
@@ -1804,6 +1830,8 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
     private void getUpdatedProfile() {
 
+        boolean isValid = true;
+
         //<editor-fold desc="Email">
         ArrayList<ProfileDataOperationEmail> arrayListNewEmail = new ArrayList<>();
         for (int i = 0; i < linearEmailDetails.getChildCount(); i++) {
@@ -1942,9 +1970,18 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
             organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
-            if (StringUtils.length(organization.getOrgName()) > 0 && StringUtils.length
+            /*if (StringUtils.length(organization.getOrgName()) > 0 && StringUtils.length
                     (organization.getOrgJobTitle()) > 0) {
                 arrayListNewOrganization.add(organization);
+            }*/
+            if (StringUtils.length(organization.getOrgName()) > 0) {
+                if (StringUtils.length(organization.getOrgJobTitle()) > 0) {
+                    arrayListNewOrganization.add(organization);
+                } else {
+                    isValid = false;
+                }
+            } else {
+                isValid = false;
             }
 
         }
@@ -2007,7 +2044,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             String neighborhoodName = neighborhood.getText().toString();
             String pinCodeName = pinCode.getText().toString();
 
-            String[] addressStrings = {streetName, neighborhoodName, cityName, stateName,
+            /*String[] addressStrings = {streetName, neighborhoodName, cityName, stateName,
                     countryName, pinCodeName};
 
             String formattedAddress = "";
@@ -2021,7 +2058,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 } else {
                     formattedAddress = formattedAddress + pinCodeName;
                 }
-            }
+            }*/
 
             address.setCountry(countryName);
             address.setState(stateName);
@@ -2029,7 +2066,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             address.setStreet(streetName);
             address.setNeighborhood(neighborhoodName);
             address.setPostCode(pinCodeName);
-            address.setFormattedAddress(StringUtils.removeEnd(formattedAddress, ", "));
+//            address.setFormattedAddress(StringUtils.removeEnd(formattedAddress, ", "));
+            address.setFormattedAddress(Utils.setFormattedAddress(streetName, neighborhoodName,
+                    cityName, stateName, countryName, pinCodeName));
             address.setAddressType((String) addressType.getSelectedItem());
             address.setGoogleAddress(textGoogleAddress.getText().toString());
             address.setGoogleLatitude(textLatitude.getText().toString());
@@ -2042,10 +2081,27 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 address.setAddPublic(IntegerConstants.PRIVACY_MY_CONTACT);
             }
 
-            if (StringUtils.length(address.getCountry()) > 0 && StringUtils.length(address
+            /*if (StringUtils.length(address.getCountry()) > 0 && StringUtils.length(address
                     .getState()) > 0 && StringUtils.length(address.getCity()) > 0 && StringUtils
                     .length(address.getStreet()) > 0) {
                 arrayListNewAddress.add(address);
+            }*/
+            if (StringUtils.length(address.getCountry()) > 0) {
+                if (StringUtils.length(address.getState()) > 0) {
+                    if (StringUtils.length(address.getCity()) > 0) {
+                        if (StringUtils.length(address.getStreet()) > 0) {
+                            arrayListNewAddress.add(address);
+                        } else {
+                            isValid = false;
+                        }
+                    } else {
+                        isValid = false;
+                    }
+                } else {
+                    isValid = false;
+                }
+            } else {
+                isValid = false;
             }
 
         }
@@ -2084,7 +2140,12 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         arrayList.add(profileDataOperation);
 //                arrayList.add(updatedAddress);
 
-        editProfile(arrayList);
+        if (isValid) {
+            editProfile(arrayList);
+        } else {
+            Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, "Please " +
+                    "fill all required fields!");
+        }
     }
 
     //</editor-fold>

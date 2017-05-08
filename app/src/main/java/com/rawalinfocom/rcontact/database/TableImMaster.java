@@ -33,6 +33,7 @@ public class TableImMaster {
     static final String COLUMN_IM_DETAIL = "im_detail";
     static final String COLUMN_IM_PROTOCOL = "im_protocol";
     static final String COLUMN_IM_PRIVACY = "im_privacy";
+    static final String COLUMN_IM_IS_PRIVATE = "im_is_private";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
 

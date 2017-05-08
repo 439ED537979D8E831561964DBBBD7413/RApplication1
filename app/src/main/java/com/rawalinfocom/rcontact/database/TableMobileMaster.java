@@ -36,6 +36,7 @@ public class TableMobileMaster {
     static final String COLUMN_MNM_NUMBER_TYPE = "mnm_number_type";
     static final String COLUMN_MNM_IS_PRIMARY = "mnm_is_primary";
     static final String COLUMN_MNM_NUMBER_PRIVACY = "mnm_number_privacy";
+    static final String COLUMN_MNM_IS_PRIVATE = "mnm_is_private";
     private static final String COLUMN_MNM_MOBILE_SERVICE_PROVIDER = "mnm_mobile_service_provider";
     private static final String COLUMN_MNM_CIRCLE_OF_SERVICE = "mnm_circle_of_service";
     private static final String COLUMN_MNM_SPAM_COUNT = "mnm_spam_count";
