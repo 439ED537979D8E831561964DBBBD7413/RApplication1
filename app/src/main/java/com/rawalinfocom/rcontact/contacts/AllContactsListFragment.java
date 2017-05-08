@@ -87,6 +87,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -605,8 +607,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //                selectionArgs,
 //                sortOrder);
 
+//        ----------------------
+
         String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
-        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+//        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI.buildUpon()
+                .appendQueryParameter(ContactsContract.REMOVE_DUPLICATE_ENTRIES, "1")
+                .build();
         String selection = ContactsContract.Contacts.HAS_PHONE_NUMBER;
        /* String selection = ContactsContract.Data.MIMETYPE + " in (?)";
         String[] selectionArgs = {
@@ -621,7 +628,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 getActivity(),
                 uri,
                 projection,
-                selection,
+                null,
                 null,
                 sortOrder);
 
