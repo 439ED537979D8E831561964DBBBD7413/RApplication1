@@ -87,6 +87,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -605,17 +607,28 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //                selectionArgs,
 //                sortOrder);
 
+//        ----------------------
+
         String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
-        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+//        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI.buildUpon()
+                .appendQueryParameter(ContactsContract.REMOVE_DUPLICATE_ENTRIES, "1")
+                .build();
         String selection = ContactsContract.Contacts.HAS_PHONE_NUMBER;
-        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.Data.LOOKUP_KEY, ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI,
-                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone._ID,
+       /* String selection = ContactsContract.Data.MIMETYPE + " in (?)";
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+        };*/
+        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.Data.LOOKUP_KEY, ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract
+                .CommonDataKinds.Phone._ID, ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
                 ContactsContract.Contacts._ID};
         return new CursorLoader(
                 getActivity(),
                 uri,
                 projection,
-                selection,
+                null,
                 null,
                 sortOrder);
 
@@ -875,7 +888,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //        final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
 //        final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
 //        final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-////        final int phoneTypeIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
+////        final int phoneTypeIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
+/// .TYPE);
 //        final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
 //                .StructuredName.GIVEN_NAME);
 //        final int familyNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
@@ -891,8 +905,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
         final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
                 .Phone.DISPLAY_NAME);
-        final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
+        final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
+                .PHOTO_THUMBNAIL_URI);
         final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
+        final int rawIdIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
+                .RAW_CONTACT_ID);
+
 
 //        while (data.moveToNext()) {
 //
@@ -923,7 +941,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //                    break;
 //            }
 //        }
-        ArrayList<Object> contactsWithNoName= new ArrayList<>();
+        ArrayList contactsWithNoName = new ArrayList<>();
+        String lastDisplayName = "XXX", lastRawId = "XXX";
 
         while (data.moveToNext()) {
             ProfileData profileData;
@@ -932,10 +951,19 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             profileData.setTempNumber(data.getString(phoneIdx));
             profileData.setProfileUrl(data.getString(photoURIIdx));
             profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+            profileData.setTempRawId(data.getString(rawIdIdx));
+
             if (profileData.getTempFirstName().equals(profileData.getTempNumber())) {
                 contactsWithNoName.add(profileData);
             } else {
-                arrayListPhoneBookContacts.add(profileData);
+                if (lastDisplayName.equals(profileData.getTempFirstName()) && lastRawId.equals
+                        (profileData.getTempRawId())) {
+
+                } else {
+                    arrayListPhoneBookContacts.add(profileData);
+                    lastDisplayName = profileData.getTempFirstName();
+                    lastRawId = profileData.getTempRawId();
+                }
             }
         }
         arrayListPhoneBookContacts.addAll(contactsWithNoName);
@@ -1082,19 +1110,21 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 //</editor-fold>
 
                 //<editor-fold desc="Mobile Master">
-                ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = profileData.get(i)
-                        .getPbPhoneNumber();
+                ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = profileData
+                        .get(i).getPbPhoneNumber();
                 ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
                 for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
 
                     MobileNumber mobileNumber = new MobileNumber();
                     mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
-                    mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(j).getPhoneNumber());
+                    mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(j)
+                            .getPhoneNumber());
                     mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                     mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
                             .getPhonePublic()));
                     mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                    if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber(),
+                    if (StringUtils.equalsIgnoreCase(profileData.get(i)
+                                    .getVerifiedMobileNumber(),
                             mobileNumber.getMnmMobileNumber())) {
                         mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
                                 .RCP_TYPE_PRIMARY));
@@ -1106,7 +1136,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     arrayListMobileNumber.add(mobileNumber);
                 }
 
-                TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
+                TableMobileMaster tableMobileMaster = new TableMobileMaster
+                        (getDatabaseHandler());
                 tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
                 //</editor-fold>
 
@@ -1145,19 +1176,22 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         arrayListEmail.add(email);
                     }
 
-                    TableEmailMaster tableEmailMaster = new TableEmailMaster(getDatabaseHandler());
+                    TableEmailMaster tableEmailMaster = new TableEmailMaster
+                            (getDatabaseHandler());
                     tableEmailMaster.addArrayEmail(arrayListEmail);
                 }
                 //</editor-fold>
 
                 //<editor-fold desc="Organization Master">
                 if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbOrganization())) {
-                    ArrayList<ProfileDataOperationOrganization> arrayListOrganization = profileData
-                            .get(i).getPbOrganization();
+                    ArrayList<ProfileDataOperationOrganization> arrayListOrganization =
+                            profileData
+                                    .get(i).getPbOrganization();
                     ArrayList<Organization> organizationList = new ArrayList<>();
                     for (int j = 0; j < arrayListOrganization.size(); j++) {
                         Organization organization = new Organization();
-                        organization.setOmRecordIndexId(arrayListOrganization.get(j).getOrgId());
+                        organization.setOmRecordIndexId(arrayListOrganization.get(j).getOrgId
+                                ());
                         organization.setOmOrganizationCompany(arrayListOrganization.get(j)
                                 .getOrgName
                                         ());
@@ -1178,7 +1212,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         organizationList.add(organization);
                     }
 
-                    TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
+                    TableOrganizationMaster tableOrganizationMaster = new
+                            TableOrganizationMaster
                             (getDatabaseHandler());
                     tableOrganizationMaster.addArrayOrganization(organizationList);
                 }
@@ -1187,7 +1222,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 // <editor-fold desc="Website Master">
                 if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbWebAddress())) {
 //                ArrayList<String> arrayListWebsite = profileData.get(i).getPbWebAddress();
-                    ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileData.get(i)
+                    ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileData
+                            .get(i)
                             .getPbWebAddress();
                     ArrayList<Website> websiteList = new ArrayList<>();
                     for (int j = 0; j < arrayListWebsite.size(); j++) {
@@ -1215,15 +1251,18 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                         address.setAmCity(arrayListAddress.get(j).getCity());
                         address.setAmCountry(arrayListAddress.get(j).getCountry());
-                        address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress
-                                ());
+                        address.setAmFormattedAddress(arrayListAddress.get(j)
+                                .getFormattedAddress
+                                        ());
                         address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
                         address.setAmPostCode(arrayListAddress.get(j).getPostCode());
                         address.setAmPoBox(arrayListAddress.get(j).getPoBox());
                         address.setAmStreet(arrayListAddress.get(j).getStreet());
                         address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-                        address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
-                        address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
+                        address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude
+                                ());
+                        address.setAmGoogleLongitude(arrayListAddress.get(j)
+                                .getGoogleLongitude());
 //                    address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                         address.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j)
@@ -1239,14 +1278,16 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                 // <editor-fold desc="Im Account Master">
                 if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbIMAccounts())) {
-                    ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileData.get(i)
+                    ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileData
+                            .get(i)
                             .getPbIMAccounts();
                     ArrayList<ImAccount> imAccountsList = new ArrayList<>();
                     for (int j = 0; j < arrayListImAccount.size(); j++) {
                         ImAccount imAccount = new ImAccount();
                         imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
 //                    imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
-                        imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
+                        imAccount.setImImProtocol(arrayListImAccount.get(j)
+                                .getIMAccountProtocol());
                         imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
                                 .getIMAccountPublic()));
                         imAccount.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -1268,16 +1309,19 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
                         event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                         event.setEvmEventType(arrayListEvent.get(j).getEventType());
-                        event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic
-                                ()));
+                        event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j)
+                                .getEventPublic
+                                        ()));
                         event.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         eventList.add(event);
                     }
 
-                    TableEventMaster tableEventMaster = new TableEventMaster(getDatabaseHandler());
+                    TableEventMaster tableEventMaster = new TableEventMaster
+                            (getDatabaseHandler());
                     tableEventMaster.addArrayEvent(eventList);
                 }
                 //</editor-fold>
+
             } else {
                 String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData.get(i)
                         .getRcpPmId());
@@ -1699,7 +1743,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                 (cursor.getInt(cursor.getColumnIndex
                                         (ContactsContract.CommonDataKinds.Phone.TYPE))));
-                        phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                        phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_EVERYONE);
 
                         phoneBookContact.addPhone(phoneNumber);
                         break;
@@ -1712,7 +1756,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 cursor.getInt
                                         (cursor.getColumnIndex(ContactsContract
                                                 .CommonDataKinds.Email.TYPE))));
-                        emailId.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                        emailId.setEmPublic(IntegerConstants.PRIVACY_EVERYONE);
 
 
                         phoneBookContact.addEmail(emailId);
@@ -1784,7 +1828,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         address.setAddressType(phoneBookContacts.getAddressType(cursor, cursor
                                 .getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds
                                         .StructuredPostal.TYPE))));
-                        address.setAddPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                        address.setAddPublic(IntegerConstants.PRIVACY_EVERYONE);
 
                         phoneBookContact.addAddress(address);
                         break;
@@ -1804,7 +1848,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 (cursor.getInt((cursor.getColumnIndex
                                         (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
 
-                        imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                        imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_EVERYONE);
 
 
                         phoneBookContact.addImAccount(imAccount);
@@ -1828,7 +1872,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                         event.setEventDateTime(eventDate);
 
-                        event.setEventPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                        event.setEventPublic(IntegerConstants.PRIVACY_EVERYONE);
 
                         phoneBookContact.addEvent(event);
                         break;

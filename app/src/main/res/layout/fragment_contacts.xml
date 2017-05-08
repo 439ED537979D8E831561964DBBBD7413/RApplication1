@@ -50,7 +50,7 @@
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_contact"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="43dp"
         app:tabBackground="@drawable/selector_tab_button"
         app:tabGravity="fill"
         app:tabIndicatorHeight="0dp"

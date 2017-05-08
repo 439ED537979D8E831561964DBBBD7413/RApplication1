@@ -211,6 +211,9 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
             imageSocialMedia.setVisibility(View.GONE);
 //            textContactName.setVisibility(View.GONE);
 
+            relativeRowAllContact.setBackgroundColor(ContextCompat.getColor(context, R.color
+                    .colorLightGrayishCyan1));
+
           /*  LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
             // Filled stars
             Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(context, R

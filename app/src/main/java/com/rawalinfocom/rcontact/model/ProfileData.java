@@ -29,6 +29,7 @@ public class ProfileData {
     private String tempRcpName;
     private String tempRcpId;
     private boolean tempIsRcp;
+    private String tempRawId;
 
 
     @JsonProperty("pb_local_phonebook_id")
@@ -171,5 +172,14 @@ public class ProfileData {
 
     public void setTempEmail(String tempEmail) {
         this.tempEmail = tempEmail;
+    }
+
+    @JsonIgnore
+    public String getTempRawId() {
+        return tempRawId;
+    }
+
+    public void setTempRawId(String tempRawId) {
+        this.tempRawId = tempRawId;
     }
 }

@@ -156,8 +156,25 @@ public class TableProfileMaster {
                     .getPmSignupSocialMediaType());
             values.put(COLUMN_PM_JOINING_DATE, arrayListUserProfile.get(i).getPmJoiningDate());
 
-            // Inserting Row
-            db.insert(TABLE_RC_PROFILE_MASTER, null, values);
+            int count = 0;
+            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_PROFILE_MASTER + " " +
+                    "WHERE " + COLUMN_PM_RCP_ID + " = " + arrayListUserProfile.get(i).getPmRcpId
+                    (), null);
+            if (mCount != null) {
+                mCount.moveToFirst();
+                count = mCount.getInt(0);
+                mCount.close();
+            }
+
+            if (count > 0) {
+                // Update if already exists
+                db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
+                        new String[]{String.valueOf(arrayListUserProfile.get(i).getPmRcpId())});
+            } else {
+                // Inserting Row
+                db.insert(TABLE_RC_PROFILE_MASTER, null, values);
+            }
+
         }
         // insertWithOnConflict
         db.close(); // Closing database connection

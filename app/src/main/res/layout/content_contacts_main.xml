@@ -19,7 +19,7 @@
         app:tabIndicatorColor="@color/colorWhite"
         app:tabMode="fixed"
         app:tabSelectedTextColor="@color/colorWhite"
-        app:tabTextColor="@color/colorWhite"/>
+        app:tabTextColor="#99FFFFFF"/>
 
     <FrameLayout
         android:id="@+id/frame_container_main_tab"

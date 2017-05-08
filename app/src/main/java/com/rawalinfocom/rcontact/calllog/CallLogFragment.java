@@ -150,6 +150,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     int adapterSetCount = 0;
     boolean isLastRecord = false;
     private static int firstVisibleInListview;
+    boolean isIdsFetchedFirstTime = false;
 //    LoadsCallLogsInBackground loadsCallLogsInBackgroundAsyncTask = new
 // LoadsCallLogsInBackground();
     //<editor-fold desc="Constructors">
@@ -793,6 +794,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerCallLogs.setLayoutManager(mLinearLayoutManager);
         firstVisibleInListview = mLinearLayoutManager.findFirstVisibleItemPosition();
+        listOfIds =  new ArrayList<>();
         /*buttonViewOldRecords.setTypeface(Utils.typefaceRegular(getActivity()));
         rippleViewOldRecords.setVisibility(View.GONE);
         rippleViewOldRecords.setOnRippleCompleteListener(this);*/
@@ -800,7 +802,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         rContactApplication = (RContactApplication)
                 getActivity().getApplicationContext();
         makeBlockedNumberList();
-        listOfIds = Utils.getArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOGS_ID_SET);
+//        listOfIds = Utils.getArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOGS_ID_SET);
 
         // Checking for permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -1010,6 +1012,23 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         spinnerArray.add(OUTGOING_CALLS);
         spinnerArray.add(MISSED_CALLS);
 
+        if(!isIdsFetchedFirstTime){
+            isIdsFetchedFirstTime = true;
+            PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(getActivity());
+//            listOfIds = new ArrayList<>();
+            Cursor cursor = phoneBookCallLogs.getAllCallLogId();
+            if (cursor != null) {
+                int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
+                while (cursor.moveToNext()) {
+                    listOfIds.add(cursor.getString(rowId));
+                }
+            }
+            cursor.close();
+            Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOGS_ID_SET,
+                    listOfIds);
+        }
+
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout
                 .simple_spinner_item, spinnerArray);
 
@@ -1097,23 +1116,25 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
 
     private ArrayList<String> divideCallLogIdsByChunck() {
-        int size = listOfIds.size();
-        callLogIdsListByChunck = new ArrayList<>();
-        if (isFirstChuck) {
+        if(listOfIds!=null && listOfIds.size()>0){
+            int size = listOfIds.size();
+            callLogIdsListByChunck = new ArrayList<>();
+            if (isFirstChuck) {
+                for (ArrayList<String> partition : chopped(listOfIds, LIST_PARTITION_COUNT)) {
+                    // do something with partition
+                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+                    listOfIds.removeAll(partition);
+                    break;
+                }
+            }
+
             for (ArrayList<String> partition : chopped(listOfIds, LIST_PARTITION_COUNT)) {
                 // do something with partition
                 Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+                callLogIdsListByChunck.addAll(partition);
                 listOfIds.removeAll(partition);
                 break;
             }
-        }
-
-        for (ArrayList<String> partition : chopped(listOfIds, LIST_PARTITION_COUNT)) {
-            // do something with partition
-            Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
-            callLogIdsListByChunck.addAll(partition);
-            listOfIds.removeAll(partition);
-            break;
         }
         return callLogIdsListByChunck;
     }
