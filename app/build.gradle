@@ -20,12 +20,12 @@ repositories {
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "com.rawalinfocom.rcontact"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 6
+        versionCode 7
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -59,7 +59,7 @@ android {
     }
 }
 
-final SUPPORT_LIBRARY_VERSION = '25.1.0'
+final SUPPORT_LIBRARY_VERSION = '25.3.1'
 final PLAY_SERVICES_VERSION = '10.0.1'
 final JACKSON_CORE_VERSION = '2.8.3'
 final BUTTER_KNIFE_VERSION = '8.4.0'
