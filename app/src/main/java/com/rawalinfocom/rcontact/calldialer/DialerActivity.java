@@ -1,13 +1,26 @@
 package com.rawalinfocom.rcontact.calldialer;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
+import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.transition.Slide;
 import android.transition.Transition;
 import android.transition.TransitionSet;
@@ -20,15 +33,19 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.calldialer.transition.ScaleTransition;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -112,8 +129,28 @@ public class DialerActivity extends Activity {
     @BindView(R.id.number_pad)
     LinearLayout numberPad;
     MaterialDialog callConfirmationDialog;
+    boolean isCalledOnce = false;
 
     Animation slideDownAnimation;
+    @BindView(R.id.image_profile)
+    ImageView imageProfile;
+    @BindView(R.id.text_temp_number)
+    TextView textTempNumber;
+    @BindView(R.id.text_contact_name)
+    TextView textContactName;
+    @BindView(R.id.text_cloud_contact_name)
+    TextView textCloudContactName;
+    @BindView(R.id.text_contact_number)
+    TextView textContactNumber;
+    @BindView(R.id.linear_content_main)
+    LinearLayout linearContentMain;
+    @BindView(R.id.relative_contact)
+    RelativeLayout relativeContact;
+
+    String numberToCall;
+    private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG};
+    MaterialDialog permissionConfirmationDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,14 +162,45 @@ public class DialerActivity extends Activity {
                 R.anim.slide_down_animation);
 
         editTextNumber.setCursorVisible(false);
-        initandClickEvents();
+        editTextNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
 
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                // TODO Auto-generated method stub
+                    if(s.length()==11){
+                        String number =  s.toString();
+                        if(!TextUtils.isEmpty(number))
+                            showContactDetail(number);
+                    }else if(s.length() == 13){
+                        String number =  s.toString();
+                        if(!TextUtils.isEmpty(number))
+                            showContactDetail(number);
+                    }else if(s.length() == 10){
+                        String number =  s.toString();
+                        if(!TextUtils.isEmpty(number))
+                            showContactDetail(number);
+                    }else if(s.length()==0){
+                        showContactDetail(s.toString());
+                    }
+
+            }
+        });
+        initandClickEvents();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setEnterTransition(makeEnterTransition());
             getWindow().setReturnTransition(makeReturnTransition());
         }
-
-
     }
 
     @SuppressLint("NewApi")
@@ -218,6 +286,7 @@ public class DialerActivity extends Activity {
         imageButtonClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isCalledOnce = false;
                 int length = editTextNumber.getText().length();
                 if (length > 0) {
                     editTextNumber.getText().delete(length - 1, length);
@@ -228,15 +297,18 @@ public class DialerActivity extends Activity {
         imageButtonClear.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                isCalledOnce = false;
                 editTextNumber.getText().clear();
                 return true;
             }
         });
+
         linear0.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
 
                 editTextNumber.setText(editTextNumber.getText().toString() + "+");
+                inputNumberValidation();
                 return true;
             }
         });
@@ -245,6 +317,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "0");
+                inputNumberValidation();
             }
         });
 
@@ -252,6 +325,8 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "1");
+                inputNumberValidation();
+
             }
         });
 
@@ -259,6 +334,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "2");
+                inputNumberValidation();
             }
         });
 
@@ -266,6 +342,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "3");
+                inputNumberValidation();
             }
         });
 
@@ -273,12 +350,15 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "4");
+                inputNumberValidation();
+
             }
         });
         linear5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "5");
+                inputNumberValidation();
             }
         });
 
@@ -286,6 +366,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "6");
+                inputNumberValidation();
             }
         });
 
@@ -293,6 +374,8 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "7");
+                inputNumberValidation();
+
             }
         });
 
@@ -300,6 +383,8 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "8");
+                inputNumberValidation();
+
             }
         });
 
@@ -307,6 +392,8 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "9");
+                inputNumberValidation();
+
             }
         });
 
@@ -314,6 +401,8 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "*");
+                inputNumberValidation();
+
             }
         });
 
@@ -321,6 +410,8 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "#");
+                inputNumberValidation();
+
             }
         });
 
@@ -359,6 +450,140 @@ public class DialerActivity extends Activity {
 
     }
 
+    private void inputNumberValidation() {
+        if (!isCalledOnce) {
+            isCalledOnce = true;
+            if (editTextNumber != null && editTextNumber.getText().toString().length() > 0) {
+                String stringText = editTextNumber.getText().toString();
+                String firstChar = stringText.substring(0, 1);
+                if (firstChar.equalsIgnoreCase("0")) {
+                    InputFilter[] FilterArray = new InputFilter[1];
+                    FilterArray[0] = new InputFilter.LengthFilter(11);
+                    editTextNumber.setFilters(FilterArray);
+                } else if (firstChar.equalsIgnoreCase("+")) {
+                    InputFilter[] FilterArray = new InputFilter[1];
+                    FilterArray[0] = new InputFilter.LengthFilter(13);
+                    editTextNumber.setFilters(FilterArray);
+                } else {
+                    InputFilter[] FilterArray = new InputFilter[1];
+                    FilterArray[0] = new InputFilter.LengthFilter(10);
+                    editTextNumber.setFilters(FilterArray);
+                }
+            }
+        }
+    }
+
+    private void showContactDetail(final String number) {
+            if(!TextUtils.isEmpty(number)){
+                String name = getNameFromNumber(number);
+                if(!TextUtils.isEmpty(name)){
+                    relativeContact.setVisibility(View.VISIBLE);
+                    linearAddToContact.setVisibility(View.GONE);
+                    textContactName.setText(name);
+                    textContactNumber.setText(number);
+                    String imageUrl =  getPhotoUrlFromNumber(number);
+                    if(!TextUtils.isEmpty(imageUrl)){
+                        Glide.with(this)
+                                .load(imageUrl)
+                                .placeholder(R.drawable.home_screen_profile)
+                                .error(R.drawable.home_screen_profile)
+                                .bitmapTransform(new CropCircleTransformation(this))
+                                .override(200, 200)
+                                .into(imageProfile);
+
+                    }else{
+                        imageProfile.setImageResource(R.drawable.home_screen_profile);
+                    }
+                    relativeContact.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS, number);
+                            }else{
+                                showCallConfirmationDialog(number);
+                            }
+                        }
+                    });
+
+                }else{
+                    relativeContact.setVisibility(View.GONE);
+                    linearAddToContact.setVisibility(View.VISIBLE);
+                }
+            }else{
+                relativeContact.setVisibility(View.GONE);
+                linearAddToContact.setVisibility(View.VISIBLE);
+            }
+
+    }
+
+
+    // A method to check if a permission is granted then execute tasks depending on that
+    // particular permission
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute(String permissions[], int requestCode,String number) {
+
+        boolean logs = ContextCompat.checkSelfPermission(this, permissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;
+        if (logs) {
+            numberToCall =  number;
+            requestPermissions(permissions, requestCode);
+        } else {
+            showCallConfirmationDialog(number);
+        }
+    }
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.M)
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == AppConstants.READ_LOGS && permissions[0].equals(Manifest.permission
+                .READ_CALL_LOG)) {
+            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED ) {
+                if(!TextUtils.isEmpty(numberToCall))
+                    showCallConfirmationDialog(numberToCall);
+            } else {
+                showPermissionConfirmationDialog();
+            }
+        }
+    }
+
+    private void showPermissionConfirmationDialog() {
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        permissionConfirmationDialog.dismissDialog();
+                        finish();
+                        break;
+
+                    case R.id.rippleRight:
+                        permissionConfirmationDialog.dismissDialog();
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", getPackageName(), null));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        permissionConfirmationDialog = new MaterialDialog(DialerActivity.this, cancelListener);
+        permissionConfirmationDialog.setTitleVisibility(View.GONE);
+        permissionConfirmationDialog.setLeftButtonText("Cancel");
+        permissionConfirmationDialog.setRightButtonText("OK");
+        permissionConfirmationDialog.setDialogBody("Call log permission is required. Do you want " +
+                "to try again?");
+
+        permissionConfirmationDialog.showDialog();
+
+    }
+
     private void showCallConfirmationDialog(final String number) {
         final String formattedNumber = Utils.getFormattedNumber(DialerActivity.this, number);
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
@@ -389,4 +614,71 @@ public class DialerActivity extends Activity {
         callConfirmationDialog.showDialog();
 
     }
+
+    private String getPhotoUrlFromNumber(String phoneNumber) {
+        String photoThumbUrl = "";
+        try {
+
+            photoThumbUrl = "";
+            ContentResolver contentResolver = this.getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    /*String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));*/
+                    photoThumbUrl = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.PHOTO_THUMBNAIL_URI));
+//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return photoThumbUrl;
+    }
+
+    private String getNameFromNumber(String phoneNumber) {
+        String contactName = "";
+        try {
+
+            contactName = "";
+            ContentResolver contentResolver = this.getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return contactName;
+    }
+
 }

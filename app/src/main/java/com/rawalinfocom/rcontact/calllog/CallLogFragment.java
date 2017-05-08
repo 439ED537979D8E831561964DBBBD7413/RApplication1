@@ -361,10 +361,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 break;
                             }
                         }
-
-                        listOfIds.add(0, id);
-                        Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOGS_ID_SET,
-                                listOfIds);
+                        if(!TextUtils.isEmpty(id)){
+                            listOfIds.add(0, id);
+                            Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOGS_ID_SET,
+                                    listOfIds);
+                        }
                         arrayListCallLogs.add(0, callLogTypeReceiver);
                         rContactApplication.setArrayListCallLogType(arrayListCallLogs);
                         tempList.add(0,callLogTypeReceiver);
