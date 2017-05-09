@@ -6,6 +6,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -36,26 +37,23 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
     private NotiRContactsFragment notiRContactsFragment;
     private NotiRatingFragment notiRatingFragment;
     private NotiCommentsFragment notiCommentsFragment;
+    int currentTabIndex;
 
+    public  boolean firstTime = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications_detail);
         ButterKnife.bind(this);
-        init();
+
         Intent intent = getIntent();
         if (intent != null) {
-            int tabIndex = intent.getIntExtra("TAB_INDEX", 0);
-            selectTab(tabIndex);
+            currentTabIndex = intent.getIntExtra("TAB_INDEX", -1);
+            init();
         }
 
 
     }
-
-    private void selectTab(int tabIndex) {
-        tabNotifications.getTabAt(tabIndex).select();
-    }
-
 
     public void init() {
         textToolbarTitle.setText("Notifications");
@@ -69,7 +67,14 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
         tabNotifications.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                setCurrentTabFragment(tab.getPosition());
+
+                if (firstTime && currentTabIndex != 0) {
+                    firstTime = false;
+                } else {
+                    Log.i("MAULIK","onTabSelected"+tab.getPosition());
+                    setCurrentTabFragment(tab.getPosition());
+                    firstTime = false;
+                }
             }
 
             @Override
@@ -90,10 +95,11 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
         notiCommentsFragment = NotiCommentsFragment.newInstance();
         notiRContactsFragment = NotiRContactsFragment.newInstance();
 
-        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_profile)), true);
+        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_profile)));
         tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_rating)));
         tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_comments)));
         tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_rcontact)));
+        tabNotifications.getTabAt(currentTabIndex).select();
     }
 
     private void setCurrentTabFragment(int tabPosition) {
