@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Telephony;
+import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
@@ -97,7 +98,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 isIncoming = true;
                 callStartTime = new Date();
                 savedNumber = number;
-                blockCall(context,savedNumber);
+//                blockCall(context,savedNumber);
                 onIncomingCallStarted(context, number, callStartTime);
                 break;
             case TelephonyManager.CALL_STATE_OFFHOOK:
@@ -145,6 +146,13 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
 
                 }
+
+                Intent localBroadcastIntent = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_CALLS);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                        .getInstance(context);
+                myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
                 break;
         }
         lastState = state;

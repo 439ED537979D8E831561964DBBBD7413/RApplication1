@@ -135,7 +135,10 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC =
             "action_local_broadcast_call_log_sync";
     public static String ACTION_LOCAL_BROADCAST_DIALOG_SMS = "action_local_broadcast_dialog_sms";
-
+    public static String ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_CALLS =
+            "action_local_broadcast_recent_calls";
+    public static String ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_CALLS_CALL_LOGS =
+            "action_local_broadcast_recent_calls_call_logs";
     //</editor-fold>
 
     //<editor-fold desc="Fragment Tags">
@@ -179,6 +182,8 @@ public class AppConstants {
     public static String PREF_CONTACT_ID_SET = "pref_contact_id_set";
     public static String PREF_SMS_LOG_STARTS_FIRST_TIME = "pref_sms_log_start_first_time";
     public static String PREF_SMS_LOGS_ID_SET = "pref_sms_logs_id_set";
+    public static String PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE = "pref_recent_calls_broadcast_receiver_main_instance";
+
 
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,

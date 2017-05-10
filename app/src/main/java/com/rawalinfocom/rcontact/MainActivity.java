@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Settings;
@@ -96,6 +97,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     SmsFragment smsFragment;
 
     NetworkConnectionReceiver networkConnectionReceiver;
+    RContactApplication rContactApplication;
 
     int LIST_PARTITION_COUNT = 10;
     private ArrayList<String> listOfCallLogIds;
@@ -110,6 +112,8 @@ public class MainActivity extends BaseActivity implements NavigationView
             .permission.READ_CALL_LOG};
     boolean isCompaseIcon = false;
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
+    public static CallLogType callLogTypeReceiverMain;
+    boolean isRecentBroadCastForCallLogsMainInstance = false;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -143,8 +147,10 @@ public class MainActivity extends BaseActivity implements NavigationView
             startActivityIntent(this, ProfileRegistrationActivity.class, null);
 //            }
         } else {*/
-
+            rContactApplication = (RContactApplication) getApplicationContext();
             callLogTypeArrayListMain = new ArrayList<>();
+            callLogTypeReceiverMain =  new CallLogType();
+            CallLogFragment.callLogTypeReceiver =  new CallLogType();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 checkPermissionToExecute();
             } else {
@@ -710,12 +716,24 @@ public class MainActivity extends BaseActivity implements NavigationView
         IntentFilter intentFilter = new IntentFilter(AppConstants
                 .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
         localBroadcastManager.registerReceiver(localBroadcastReceiverCallLogSync, intentFilter);
+
+        LocalBroadcastManager localBroadcastManagerReceiveRecentCalls = LocalBroadcastManager
+                .getInstance(MainActivity.this);
+        IntentFilter intentFilter5 = new IntentFilter(AppConstants
+                .ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_CALLS);
+        localBroadcastManagerReceiveRecentCalls.registerReceiver(localBroadcastReceiverRecentCalls, intentFilter5);
+
+
     }
 
     private void unRegisterLocalBroadCastReceiver() {
         LocalBroadcastManager localBroadcastManagerProfileBlock = LocalBroadcastManager
                 .getInstance(this);
         localBroadcastManagerProfileBlock.unregisterReceiver(localBroadcastReceiverCallLogSync);
+
+        LocalBroadcastManager localBroadcastManagerReceiveRecentCalls = LocalBroadcastManager
+                .getInstance(MainActivity.this);
+        localBroadcastManagerReceiveRecentCalls.unregisterReceiver(localBroadcastReceiverRecentCalls);
 
     }
 
@@ -1241,5 +1259,68 @@ public class MainActivity extends BaseActivity implements NavigationView
         }
     }
 
+
+
+    private BroadcastReceiver localBroadcastReceiverRecentCalls = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+                try {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if(Utils.getBooleanPreference(MainActivity.this,
+                                    AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,false)){
+                               Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,false);
+                                Utils.setBooleanPreference(MainActivity.this, AppConstants
+                                        .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
+                                AppConstants.isFromReceiver = false;
+                            }
+                        }
+                    }, 100);
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+    };
+
+    private String getPhotoUrlFromNumber(String phoneNumber) {
+        String photoThumbUrl = "";
+        try {
+
+            photoThumbUrl = "";
+            ContentResolver contentResolver = getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    /*String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));*/
+                    photoThumbUrl = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.PHOTO_THUMBNAIL_URI));
+//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return photoThumbUrl;
+    }
 
 }
