@@ -30,7 +30,7 @@ public class TableEventMaster {
     static final String COLUMN_EVM_RECORD_INDEX_ID = "evm_record_index_id";
     static final String COLUMN_EVM_START_DATE = "evm_start_date";
     static final String COLUMN_EVM_EVENT_TYPE = "evm_event_type";
-    static final String COLUMN_EVM_IS_YEAR_HIDDEN = "evm_is_year_hidden";
+    static final String COLUMN_EVM_IS_YEAR_HIDDEN = "evm_is_year_hidden";  //0 not hidden , 1 hidden
     static final String COLUMN_EVM_EVENT_PRIVACY = "evm_event_privacy";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
@@ -254,7 +254,7 @@ public class TableEventMaster {
 
 
         String selectQuery = "SELECT DISTINCT " + COLUMN_EVM_RECORD_INDEX_ID + ", " +
-                COLUMN_EVM_START_DATE + ", " + COLUMN_EVM_EVENT_TYPE + ", " +
+                COLUMN_EVM_START_DATE + ", " + COLUMN_EVM_EVENT_TYPE + ", " + COLUMN_EVM_EVENT_PRIVACY + ", " + COLUMN_EVM_IS_YEAR_HIDDEN + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " + TABLE_RC_EVENT_MASTER +
                 " WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " !=" + loggedInUserPMID + " and " +
                 "strftime('%m-%d'," + COLUMN_EVM_START_DATE + ") between '" + fromDate + "' and '" +
@@ -273,10 +273,10 @@ public class TableEventMaster {
                         (COLUMN_EVM_START_DATE)));
                 event.setEvmEventType(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EVM_EVENT_TYPE)));
-//                event.setEvmCustomType(cursor.getString(cursor.getColumnIndex
-//                        (COLUMN_EVM_CUSTOM_TYPE)));
-//                event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
-//                        (COLUMN_EVM_EVENT_PRIVACY)));
+                event.setEvmIsYearHidden(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_EVM_IS_YEAR_HIDDEN)));
+                event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_EVENT_PRIVACY)));
                 event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_RC_PROFILE_MASTER_PM_ID)));
                 // Adding event to list
