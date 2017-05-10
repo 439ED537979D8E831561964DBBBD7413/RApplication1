@@ -162,7 +162,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //        phoneBookContacts = new PhoneBookContacts(getActivity());
 
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
-
+        Utils.setBooleanPreference(getActivity(),AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,true);
         lastSyncedData = Utils.getIntegerPreference(getActivity(), AppConstants
                 .PREF_SYNCED_CONTACTS, 0);
 
@@ -673,6 +673,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         super.onDetach();
     }
 
+    @Override
+    public void onPause() {
+
+        Log.i("OnDestory", "called");
+        super.onPause();
+
+    }
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
