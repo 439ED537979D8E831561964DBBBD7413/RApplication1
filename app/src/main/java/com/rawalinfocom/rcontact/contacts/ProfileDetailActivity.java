@@ -51,6 +51,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.ContactListingActivity;
+import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.CallHistoryListAdapter;
@@ -294,6 +295,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     String profileThumbnail = "";
     MaterialDialog permissionConfirmationDialog;
     ArrayList<Object> tempPhoneNumber;
+    boolean isFromReceiver =  false;
     //<editor-fold desc="Override Methods">
 
     @Override
@@ -432,6 +434,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (profileActivityCallInstance) {
 //            fetchCallLogHistoryDateWise(historyNumber);
             fetchAllCallLogHistory(historyNumber);
+            if(isFromReceiver){
+                isFromReceiver = false;
+                Utils.setBooleanPreference(ProfileDetailActivity.this, AppConstants
+                        .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
+                AppConstants.isFromReceiver = false;
+            }
 
         } else {
             if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
@@ -606,6 +614,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 if (StringUtils.equals(imageRightCenter.getTag().toString(), TAG_IMAGE_CALL)) {
                     showCallConfirmationDialog(historyNumber);
+                    isFromReceiver = true;
 
                 } else {
                     if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
