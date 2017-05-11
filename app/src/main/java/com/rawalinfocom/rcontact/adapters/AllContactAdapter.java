@@ -243,7 +243,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     .placeholder(R.drawable.home_screen_profile)
                     .error(R.drawable.home_screen_profile)
                     .bitmapTransform(new CropCircleTransformation(context))
-                    .override(200, 200)
+                    .override(500, 500)
                     .into(holder.imageProfile);
 
         } else {
@@ -258,6 +258,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
 //        holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
+
+        boolean showPineGreen;
 
         String contactDisplayName = "";
         String prefix = profileData.getTempPrefix();
@@ -297,31 +299,32 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         if (profileData.getTempIsRcp()) {
             holder.textCloudContactName.setVisibility(View.VISIBLE);
-            holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
-//            holder.buttonInvite.setVisibility(View.GONE);
+            if (contactDisplayName.equalsIgnoreCase(profileData.getTempRcpName())) {
+                holder.textCloudContactName.setVisibility(View.GONE);
+                showPineGreen = true;
+            } else {
+                holder.textCloudContactName.setVisibility(View.VISIBLE);
+                holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
+                showPineGreen = false;
+            }
             holder.rippleInvite.setVisibility(View.GONE);
-//            holder.imageSocialMedia.setVisibility(View.VISIBLE);
             holder.relativeRowAllContact.setTag(profileData.getTempRcpId());
             if (StringUtils.contains(profileData.getTempRcpName(), ",")) {
                 holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
                 holder.textCloudContactName.setText(" (" + String.valueOf(StringUtils.countMatches
                         (profileData.getTempRcpName(), ",") + 1) + " RC)");
-//                holder.buttonInvite.setVisibility(View.GONE);
                 holder.rippleInvite.setVisibility(View.GONE);
-//                holder.imageSocialMedia.setVisibility(View.GONE);
             }
         } else {
+            showPineGreen = false;
             holder.relativeRowAllContact.setTag("-1");
             holder.textCloudContactName.setVisibility(View.GONE);
             holder.textCloudContactName.setText("");
             if (Utils.getBooleanPreference(context, AppConstants.PREF_CONTACT_SYNCED, false)) {
-//                holder.buttonInvite.setVisibility(View.VISIBLE);
                 holder.rippleInvite.setVisibility(View.VISIBLE);
             } else {
-//                holder.buttonInvite.setVisibility(View.GONE);
                 holder.rippleInvite.setVisibility(View.GONE);
             }
-//            holder.imageSocialMedia.setVisibility(View.GONE);
         }
 
         if (fragment instanceof AllContactsListFragment) {
@@ -330,7 +333,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 holder.textContactNumber.setTextColor(colorPineGreen);
                 holder.textCloudContactName.setVisibility(View.GONE);
             } else {
-                holder.textContactName.setTextColor(colorBlack);
+                if (showPineGreen) {
+                    holder.textContactName.setTextColor(colorPineGreen);
+                } else {
+                    holder.textContactName.setTextColor(colorBlack);
+                }
                 holder.textContactNumber.setTextColor(colorBlack);
                 holder.textCloudContactName.setVisibility(View.VISIBLE);
             }
@@ -387,6 +394,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                         bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText()
                                 .toString());
+                        bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
                         listClickedPosition = (int) textName.getTag();
                         if (textCloudName.getVisibility() == View.VISIBLE) {
                             bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textCloudName

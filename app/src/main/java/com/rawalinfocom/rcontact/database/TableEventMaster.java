@@ -32,6 +32,7 @@ public class TableEventMaster {
     static final String COLUMN_EVM_EVENT_TYPE = "evm_event_type";
     static final String COLUMN_EVM_IS_YEAR_HIDDEN = "evm_is_year_hidden";  //0 not hidden , 1 hidden
     static final String COLUMN_EVM_EVENT_PRIVACY = "evm_event_privacy";
+    static final String COLUMN_EVM_IS_PRIVATE = "evm_is_private";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
     //    private static final String COLUMN_EVM_CUSTOM_TYPE = "evm_custom_type";
@@ -44,6 +45,7 @@ public class TableEventMaster {
             " " + COLUMN_EVM_START_DATE + " text NOT NULL," +
             " " + COLUMN_EVM_EVENT_TYPE + " text NOT NULL," +
             " " + COLUMN_EVM_IS_YEAR_HIDDEN + " integer," +
+            " " + COLUMN_EVM_IS_PRIVATE + " integer," +
             " " + COLUMN_EVM_EVENT_PRIVACY + " integer DEFAULT 2," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
             " UNIQUE(" + COLUMN_EVM_RECORD_INDEX_ID + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
@@ -60,6 +62,7 @@ public class TableEventMaster {
         values.put(COLUMN_EVM_EVENT_TYPE, event.getEvmEventType());
         values.put(COLUMN_EVM_IS_YEAR_HIDDEN, event.getEvmIsYearHidden());
         values.put(COLUMN_EVM_EVENT_PRIVACY, event.getEvmEventPrivacy());
+        values.put(COLUMN_EVM_IS_PRIVATE, event.getEvmIsPrivate());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, event.getRcProfileMasterPmId());
 
         // Inserting Row
@@ -81,6 +84,7 @@ public class TableEventMaster {
             values.put(COLUMN_EVM_EVENT_TYPE, arrayListEvent.get(i).getEvmEventType());
             values.put(COLUMN_EVM_IS_YEAR_HIDDEN, arrayListEvent.get(i).getEvmIsYearHidden());
             values.put(COLUMN_EVM_EVENT_PRIVACY, arrayListEvent.get(i).getEvmEventPrivacy());
+            values.put(COLUMN_EVM_IS_PRIVATE, arrayListEvent.get(i).getEvmIsPrivate());
             values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListEvent.get(i)
                     .getRcProfileMasterPmId());
 
@@ -96,7 +100,7 @@ public class TableEventMaster {
 
         Cursor cursor = db.query(TABLE_RC_EVENT_MASTER, new String[]{COLUMN_EVM_ID,
                         COLUMN_EVM_RECORD_INDEX_ID, COLUMN_EVM_START_DATE, COLUMN_EVM_EVENT_TYPE,
-                        COLUMN_EVM_IS_YEAR_HIDDEN, COLUMN_EVM_EVENT_PRIVACY,
+                        COLUMN_EVM_IS_YEAR_HIDDEN, COLUMN_EVM_EVENT_PRIVACY, COLUMN_EVM_IS_PRIVATE,
                         COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_EVM_ID
                         + "=?",
                 new String[]{String.valueOf(evmId)}, null, null, null, null);
@@ -112,6 +116,8 @@ public class TableEventMaster {
                     (COLUMN_EVM_IS_YEAR_HIDDEN)));
             event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
                     (COLUMN_EVM_EVENT_PRIVACY)));
+            event.setEvmIsPrivate(cursor.getInt(cursor.getColumnIndex
+                    (COLUMN_EVM_IS_PRIVATE)));
             event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                     (COLUMN_RC_PROFILE_MASTER_PM_ID)));
 
@@ -129,7 +135,7 @@ public class TableEventMaster {
 
         Cursor cursor = db.query(TABLE_RC_EVENT_MASTER, new String[]{COLUMN_EVM_ID,
                         COLUMN_EVM_RECORD_INDEX_ID, COLUMN_EVM_START_DATE, COLUMN_EVM_EVENT_TYPE,
-                        COLUMN_EVM_IS_YEAR_HIDDEN, COLUMN_EVM_EVENT_PRIVACY,
+                        COLUMN_EVM_IS_YEAR_HIDDEN, COLUMN_EVM_EVENT_PRIVACY, COLUMN_EVM_IS_PRIVATE,
                         COLUMN_RC_PROFILE_MASTER_PM_ID},
                 COLUMN_EVM_RECORD_INDEX_ID + "=?", new String[]{evmRecordIndexId
                 }, null, null, null, null);
@@ -145,6 +151,8 @@ public class TableEventMaster {
                     (COLUMN_EVM_IS_YEAR_HIDDEN)));
             event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
                     (COLUMN_EVM_EVENT_PRIVACY)));
+            event.setEvmIsPrivate(cursor.getInt(cursor.getColumnIndex
+                    (COLUMN_EVM_IS_PRIVATE)));
             event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                     (COLUMN_RC_PROFILE_MASTER_PM_ID)));
 
@@ -165,6 +173,7 @@ public class TableEventMaster {
                 COLUMN_EVM_START_DATE + ", " +
                 COLUMN_EVM_EVENT_TYPE + ", " +
                 COLUMN_EVM_EVENT_PRIVACY + ", " +
+                COLUMN_EVM_IS_PRIVATE + ", " +
                 COLUMN_EVM_IS_YEAR_HIDDEN + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
                 TABLE_RC_EVENT_MASTER + " WHERE " +
@@ -183,6 +192,8 @@ public class TableEventMaster {
                         (COLUMN_EVM_START_DATE)));
                 event.setEvmEventType(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EVM_EVENT_TYPE)));
+                event.setEvmIsPrivate(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_EVM_IS_PRIVATE)));
                 event.setEvmIsYearHidden(cursor.getInt(cursor.getColumnIndex
                         (COLUMN_EVM_IS_YEAR_HIDDEN)));
                 event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
@@ -225,6 +236,8 @@ public class TableEventMaster {
                         (COLUMN_EVM_EVENT_TYPE)));
                 event.setEvmIsYearHidden(cursor.getInt(cursor.getColumnIndex
                         (COLUMN_EVM_IS_YEAR_HIDDEN)));
+                event.setEvmIsPrivate(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_EVM_IS_PRIVATE)));
                 event.setEvmEventPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EVM_EVENT_PRIVACY)));
                 event.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
@@ -318,6 +331,7 @@ public class TableEventMaster {
         values.put(COLUMN_EVM_EVENT_TYPE, event.getEvmEventType());
         values.put(COLUMN_EVM_IS_YEAR_HIDDEN, event.getEvmIsYearHidden());
         values.put(COLUMN_EVM_EVENT_PRIVACY, event.getEvmEventPrivacy());
+        values.put(COLUMN_EVM_IS_PRIVATE, event.getEvmIsPrivate());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, event.getRcProfileMasterPmId());
 
         // updating row
@@ -352,7 +366,8 @@ public class TableEventMaster {
         values.put(COLUMN_EVM_EVENT_PRIVACY, 2);
 
         // updating row
-        int isUpdated = db.update(TABLE_RC_EVENT_MASTER, values, COLUMN_EVM_RECORD_INDEX_ID + " = ?",
+        int isUpdated = db.update(TABLE_RC_EVENT_MASTER, values, COLUMN_EVM_RECORD_INDEX_ID + " =" +
+                        " ?",
                 new String[]{cloudMongoId});
 
         db.close();

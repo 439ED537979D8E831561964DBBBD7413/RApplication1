@@ -17,6 +17,7 @@ public class ProfileDataOperationImAccount implements Serializable {
     private String IMAccountDetails;
     private String IMAccountProtocol;
     private int IMAccountPublic;
+    private int IMAccountIsPrivate;
 
     //    private int IMRcpType;
     private String IMRcpType;
@@ -80,5 +81,14 @@ public class ProfileDataOperationImAccount implements Serializable {
 
     public void setIMRcpType(String IMRcpType) {
         this.IMRcpType = IMRcpType;
+    }
+
+    @JsonProperty("is_private")
+    public int getIMAccountIsPrivate() {
+        return IMAccountIsPrivate;
+    }
+
+    public void setIMAccountIsPrivate(int IMAccountIsPrivate) {
+        this.IMAccountIsPrivate = IMAccountIsPrivate;
     }
 }
