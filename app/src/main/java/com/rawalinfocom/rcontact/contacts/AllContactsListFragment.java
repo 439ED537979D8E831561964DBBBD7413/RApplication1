@@ -1158,7 +1158,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         email.setEmEmailType(arrayListEmailId.get(j).getEmType());
                         email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j)
                                 .getEmPublic()));
-                        email.setEmIsVerified(arrayListEmailId.get(j).getEmIsVerified());
+                        email.setEmIsVerified(arrayListEmailId.get(j).getEmRcpType());
                         email.setEmIsPrivate(arrayListEmailId.get(j).getEmIsPrivate());
 
                         email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
