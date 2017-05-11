@@ -56,7 +56,8 @@ public class ProfileDataOperationPhoneNumber implements Serializable {
         this.phoneId = phoneId;
     }
 
-    @JsonProperty("pb_rcp_type")
+//    @JsonProperty("pb_rcp_type")
+    @JsonProperty("is_verified")
     public String getPbRcpType() {
         return pbRcpType;
     }
