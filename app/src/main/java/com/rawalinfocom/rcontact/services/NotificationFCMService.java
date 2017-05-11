@@ -35,60 +35,53 @@ public class NotificationFCMService extends FirebaseMessagingService {
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
-
+        Log.d(TAG, "Message data payload: " + remoteMessage.getData());
         // Check if message contains a data payload.
+
         if (remoteMessage.getData().size() > 0) {
             Map<String, String> m = remoteMessage.getData();
+
             String api = m.get("API");
+            if (api == null) {
+                return;
+            }
+            TableCommentMaster  tableCommentMaster = new TableCommentMaster(new DatabaseHandler(this));
+            Comment comment = new Comment();
+            switch (api) {
+                case "profileRatingComment":
+                    comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
+                    comment.setCrmType(getResources().getString(R.string.text_rating));
+                    comment.setCrmCloudPrId(m.get("pr_id"));
+                    comment.setCrmRating(m.get("pr_rating_stars"));
+                    comment.setRcProfileMasterPmId(Integer.parseInt(m.get("pr_from_pm_id")));
+                    comment.setCrmComment(m.get("pr_comment"));
+                    comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_at")));
+                    comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
+                    tableCommentMaster.addComment(comment);
+                    break;
+                case "profileRatingReply":
+                    tableCommentMaster.addReply(m.get("pr_id"), m.get("pr_reply"),
+                            Utils.getLocalTimeFromUTCTime(m.get("reply_at")), Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
+                    break;
+                case "eventComment":
+                    comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
+                    comment.setCrmType(m.get("type"));
+                    comment.setCrmCloudPrId(m.get("id"));
+                    comment.setRcProfileMasterPmId(Integer.parseInt(m.get("from_pm_id")));
+                    comment.setCrmComment(m.get("comment"));
+                    comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_date")));
+                    comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("updated_date")));
+                    comment.setEvmRecordIndexId(m.get("event_record_index_id"));
+                    tableCommentMaster.addComment(comment);
+                    break;
+                case "eventReply":
+                    tableCommentMaster.addReply(m.get("id"), m.get("reply"),
+                            Utils.getLocalTimeFromUTCTime(m.get("reply_date")), Utils.getLocalTimeFromUTCTime(m.get("updated_date")));
+                    break;
+            }
 
-            String pr_status = m.get("pr_status");
-            String pr_from_pm_id = m.get("pr_from_pm_id");
-            String pr_to_pm_id = m.get("pr_to_pm_id");
-            String pr_comment = m.get("pr_comment");
-            String pr_reply = m.get("pr_reply");
-            String profile_rating = m.get("profile_rating");
-            String updated_at = m.get("updated_at");
-            String pr_id = m.get("pr_id");
-            String created_at = m.get("created_at");
-            String reply_at = m.get("reply_at");
-            String pr_rating_stars = m.get("pr_rating_stars");
-            String total_profile_rate_user = m.get("total_profile_rate_user");
-
-//            Log.d(TAG, "api: " + api);
-//            Log.d(TAG, "pr_status: " + pr_status);
-//            Log.d(TAG, "pr_from_pm_id: " + pr_from_pm_id);
-//            Log.d(TAG, "pr_to_pm_id: " + pr_to_pm_id);
-//            Log.d(TAG, "pr_comment: " + pr_comment);
-//            Log.d(TAG, "pr_reply: " + pr_reply);
-//            Log.d(TAG, "profile_rating: " + profile_rating);
-//            Log.d(TAG, "updated_at: " + updated_at);
-//            Log.d(TAG, "pr_id: " + pr_id);
-//            Log.d(TAG, "created_at: " + created_at);
-//            Log.d(TAG, "reply_at: " + reply_at);
-//            Log.d(TAG, "pr_rating_stars: " + pr_rating_stars);
-//            Log.d(TAG, "total_profile_rate_user: " + total_profile_rate_user);
-//
-//            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
             final String x = "Message data payload: " + remoteMessage.getData();
 
-
-            Comment comment = new Comment();
-            comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
-            comment.setCrmType(getResources().getString(R.string.text_rating));
-            comment.setCrmCloudPrId(pr_id);
-            comment.setCrmRating(pr_rating_stars);
-            comment.setRcProfileMasterPmId(Integer.parseInt(pr_from_pm_id));
-            comment.setCrmComment(pr_comment);
-            comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(created_at));
-            comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(updated_at));
-            TableCommentMaster  tableCommentMaster = new TableCommentMaster(new DatabaseHandler(this));
-            if (api.equalsIgnoreCase("profileRatingComment")) {
-                tableCommentMaster.addComment(comment);
-            }
-            if (api.equalsIgnoreCase("profileRatingReply")) {
-                tableCommentMaster.addReply(pr_id, pr_reply,
-                        Utils.getLocalTimeFromUTCTime(reply_at), Utils.getLocalTimeFromUTCTime(updated_at));
-            }
             handler.post(new Runnable() {
                 public void run() {
                     Toast.makeText(getApplicationContext(), "Notification Received\n" + x, Toast.LENGTH_SHORT).show();
