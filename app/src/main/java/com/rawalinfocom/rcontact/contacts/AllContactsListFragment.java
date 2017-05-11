@@ -1339,6 +1339,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                         event.setEvmEventType(arrayListEvent.get(j).getEventType());
                         event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
+                        event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
                         event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j)
                                 .getEventPublic()));
                         event.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());

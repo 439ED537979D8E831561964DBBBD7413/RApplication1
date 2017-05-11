@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -169,10 +170,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (phoneNumber.getPhonePublic() == IntegerConstants.PRIVACY_PRIVATE) {
+                if (phoneNumber.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.getTextMain(isOwnProfile).setText(number.replaceAll("(?s).", "X"));
                 }
             }
             holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -258,10 +258,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.buttonPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (email.getEmPublic() == IntegerConstants.PRIVACY_PRIVATE) {
+                if (email.getEmIsPrivate() == IntegerConstants.IS_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.getTextMain(isOwnProfile).setText(emailId.replaceAll("(?s).", "X"));
                 }
             }
             holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -398,11 +397,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.buttonPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (address.getAddPublic() == IntegerConstants.PRIVACY_PRIVATE) {
+                if (address.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.getTextMain(isOwnProfile).setText(address.getFormattedAddress()
-                            .replaceAll("(?s).", "X"));
                 }
             }
             holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -466,11 +463,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (imAccount.getIMAccountPublic() == IntegerConstants.PRIVACY_PRIVATE) {
+                if (imAccount.getIMAccountIsPrivate() == IntegerConstants.IS_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.getTextMain(isOwnProfile).setText(imAccount.getIMAccountDetails()
-                            .replaceAll("(?s).", "X"));
                 }
             }
             holder.buttonPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -537,7 +532,15 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     "dd'th' " +
                             "MMM, yyyy");
         }
-
+        if (event.getIsYearHidden() == IntegerConstants.IS_YEAR_HIDDEN) {
+            Log.i("MAULIK", "we are at right place");
+            convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "MM-dd",
+                    "dd'th' " +
+                            "MMM");
+        }
+        if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
+            convertedDate = event.getEventDateTime();
+        }
         holder.getTextMain(isOwnProfile).setText(convertedDate);
         holder.getTextSub(isOwnProfile).setText(event.getEventType());
         holder.getTextSub(isOwnProfile).setVisibility(View.VISIBLE);
@@ -569,11 +572,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (event.getEventPublic() == IntegerConstants.PRIVACY_PRIVATE) {
+                if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.getTextMain(isOwnProfile).setText(convertedDate.replaceAll("(?s).",
-                            "X"));
                 }
             }
             final ProfileDetailViewHolder viewHodler = holder;

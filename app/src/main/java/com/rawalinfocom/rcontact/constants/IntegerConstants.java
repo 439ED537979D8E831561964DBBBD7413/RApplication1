@@ -50,5 +50,7 @@ public class IntegerConstants {
     public static int PRIVACY_EVERYONE = 1;
     public static int PRIVACY_MY_CONTACT = 2;
     public static int PRIVACY_PRIVATE = 3;
+    public static int IS_PRIVATE = 1;
+    public static int IS_YEAR_HIDDEN = 1;
 
 }
