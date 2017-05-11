@@ -16,6 +16,7 @@ public class ProfileDataOperationWebAddress implements Serializable {
     private String webId;
     private String webType;
     private int webPublic;
+    private int webIsPrivate;
 
     private String webRcpType;
 
@@ -61,5 +62,14 @@ public class ProfileDataOperationWebAddress implements Serializable {
 
     public void setWebRcpType(String webRcpType) {
         this.webRcpType = webRcpType;
+    }
+
+    @JsonProperty("is_private")
+    public int getWebIsPrivate() {
+        return webIsPrivate;
+    }
+
+    public void setWebIsPrivate(int webIsPrivate) {
+        this.webIsPrivate = webIsPrivate;
     }
 }

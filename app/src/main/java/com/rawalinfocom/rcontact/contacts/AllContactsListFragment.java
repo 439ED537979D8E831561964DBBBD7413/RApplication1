@@ -87,8 +87,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -1129,10 +1127,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                     mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
                             .getPhonePublic()));
+                    mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(j).getIsPrivate());
                     mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                    if (StringUtils.equalsIgnoreCase(profileData.get(i)
-                                    .getVerifiedMobileNumber(),
-                            mobileNumber.getMnmMobileNumber())) {
+                    if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber()
+                            , mobileNumber.getMnmMobileNumber())) {
                         mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
                                 .RCP_TYPE_PRIMARY));
                     } else {
@@ -1160,6 +1158,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         email.setEmEmailType(arrayListEmailId.get(j).getEmType());
                         email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j)
                                 .getEmPublic()));
+                        email.setEmIsVerified(arrayListEmailId.get(j).getEmIsVerified());
+                        email.setEmIsPrivate(arrayListEmailId.get(j).getEmIsPrivate());
 
                         email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
 
@@ -1272,6 +1272,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 .getGoogleLongitude());
 //                    address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                         address.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                        address.setAmIsPrivate(arrayListAddress.get(j).getIsPrivate());
                         address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j)
                                 .getAddPublic()));
                         addressList.add(address);
@@ -1295,6 +1296,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //                    imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                         imAccount.setImImProtocol(arrayListImAccount.get(j)
                                 .getIMAccountProtocol());
+                        imAccount.setImIsPrivate(arrayListImAccount.get(j)
+                                .getIMAccountIsPrivate());
                         imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
                                 .getIMAccountPublic()));
                         imAccount.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -1316,9 +1319,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
                         event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                         event.setEvmEventType(arrayListEvent.get(j).getEventType());
+                        event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
                         event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j)
-                                .getEventPublic
-                                        ()));
+                                .getEventPublic()));
                         event.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         eventList.add(event);
                     }

@@ -18,6 +18,7 @@ public class ProfileDataOperationPhoneNumber implements Serializable {
     private int phonePublic;
     private String phoneId;
     private String pbRcpType;
+    private int isPrivate;
 
     @JsonProperty("ph_type")
     public String getPhoneType() {
@@ -62,5 +63,14 @@ public class ProfileDataOperationPhoneNumber implements Serializable {
 
     public void setPbRcpType(String pbRcpType) {
         this.pbRcpType = pbRcpType;
+    }
+
+    @JsonProperty("is_private")
+    public int getIsPrivate() {
+        return isPrivate;
+    }
+
+    public void setIsPrivate(int isPrivate) {
+        this.isPrivate = isPrivate;
     }
 }

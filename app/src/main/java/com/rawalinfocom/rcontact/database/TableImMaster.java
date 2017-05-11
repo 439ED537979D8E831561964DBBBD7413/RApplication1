@@ -33,6 +33,7 @@ public class TableImMaster {
     static final String COLUMN_IM_DETAIL = "im_detail";
     static final String COLUMN_IM_PROTOCOL = "im_protocol";
     static final String COLUMN_IM_PRIVACY = "im_privacy";
+    static final String COLUMN_IM_IS_PRIVATE = "im_is_private";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
 
@@ -43,6 +44,7 @@ public class TableImMaster {
             " " + COLUMN_IM_DETAIL + " text," +
             " " + COLUMN_IM_PROTOCOL + " text NOT NULL," +
             " " + COLUMN_IM_PRIVACY + " integer DEFAULT 2," +
+            " " + COLUMN_IM_IS_PRIVATE + " integer," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
             " UNIQUE(" + COLUMN_IM_RECORD_INDEX_ID + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
             ");";
@@ -57,6 +59,7 @@ public class TableImMaster {
         values.put(COLUMN_IM_DETAIL, imAccount.getImImDetail());
         values.put(COLUMN_IM_PROTOCOL, imAccount.getImImProtocol());
         values.put(COLUMN_IM_PRIVACY, imAccount.getImImPrivacy());
+        values.put(COLUMN_IM_IS_PRIVATE, imAccount.getImIsPrivate());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, imAccount.getRcProfileMasterPmId());
 
         // Inserting Row
@@ -77,6 +80,7 @@ public class TableImMaster {
             values.put(COLUMN_IM_DETAIL, arrayListImAccount.get(i).getImImDetail());
             values.put(COLUMN_IM_PROTOCOL, arrayListImAccount.get(i).getImImProtocol());
             values.put(COLUMN_IM_PRIVACY, arrayListImAccount.get(i).getImImPrivacy());
+            values.put(COLUMN_IM_IS_PRIVATE, arrayListImAccount.get(i).getImIsPrivate());
             values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListImAccount.get(i)
                     .getRcProfileMasterPmId());
 
@@ -95,6 +99,7 @@ public class TableImMaster {
                 COLUMN_IM_DETAIL + ", " +
                 COLUMN_IM_PROTOCOL + ", " +
                 COLUMN_IM_PRIVACY + ", " +
+                COLUMN_IM_IS_PRIVATE + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
                 TABLE_RC_IM_MASTER + " WHERE " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
@@ -113,6 +118,8 @@ public class TableImMaster {
                         (COLUMN_IM_PROTOCOL)));
                 imAccount.setImImPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_IM_PRIVACY)));
+                imAccount.setImIsPrivate(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_IM_IS_PRIVATE)));
                 imAccount.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_RC_PROFILE_MASTER_PM_ID)));
                 // Adding Im Account to list
@@ -134,7 +141,7 @@ public class TableImMaster {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RC_IM_MASTER, new String[]{COLUMN_IM_ID,
-                COLUMN_IM_RECORD_INDEX_ID, COLUMN_IM_DETAIL, COLUMN_IM_PROTOCOL,
+                COLUMN_IM_RECORD_INDEX_ID, COLUMN_IM_DETAIL, COLUMN_IM_PROTOCOL, COLUMN_IM_IS_PRIVATE,
                 COLUMN_IM_PRIVACY, COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_IM_ID + "=?", new
                 String[]{String.valueOf(imId)}, null, null, null, null);
         if (cursor != null)
@@ -149,6 +156,7 @@ public class TableImMaster {
             imAccount.setImImProtocol(cursor.getString(cursor.getColumnIndex
                     (COLUMN_IM_PROTOCOL)));
             imAccount.setImImPrivacy(cursor.getString(cursor.getColumnIndex(COLUMN_IM_PRIVACY)));
+            imAccount.setImIsPrivate(cursor.getInt(cursor.getColumnIndex(COLUMN_IM_IS_PRIVATE)));
             imAccount.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                     (COLUMN_RC_PROFILE_MASTER_PM_ID)));
 
@@ -182,6 +190,8 @@ public class TableImMaster {
                         (COLUMN_IM_PROTOCOL)));
                 imAccount.setImImPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_IM_PRIVACY)));
+                imAccount.setImIsPrivate(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_IM_IS_PRIVATE)));
                 imAccount.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_RC_PROFILE_MASTER_PM_ID)));
                 // Adding Im Account to list
@@ -222,6 +232,7 @@ public class TableImMaster {
         values.put(COLUMN_IM_DETAIL, imAccount.getImImDetail());
         values.put(COLUMN_IM_PROTOCOL, imAccount.getImImProtocol());
         values.put(COLUMN_IM_PRIVACY, imAccount.getImImPrivacy());
+        values.put(COLUMN_IM_IS_PRIVATE, imAccount.getImIsPrivate());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, imAccount.getRcProfileMasterPmId());
 
         // updating row
