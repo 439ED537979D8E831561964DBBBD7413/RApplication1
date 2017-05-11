@@ -504,7 +504,10 @@ public class MainActivity extends BaseActivity implements NavigationView
                 if (!isCompaseIcon)
                     openDialer();
                 else
+                {
+                    AppConstants.isComposingSMS =  true;
                     openSMSComposerPage();
+                }
 //                    Toast.makeText(MainActivity.this,"open compose sms page",Toast
 // .LENGTH_SHORT).show();
             }
@@ -724,6 +727,12 @@ public class MainActivity extends BaseActivity implements NavigationView
         localBroadcastManagerReceiveRecentCalls.registerReceiver(localBroadcastReceiverRecentCalls, intentFilter5);
 
 
+        LocalBroadcastManager localBroadcastManagerReceiveRecentSms = LocalBroadcastManager
+                .getInstance(MainActivity.this);
+        IntentFilter intentFilter2 = new IntentFilter(AppConstants
+                .ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_SMS);
+        localBroadcastManagerReceiveRecentSms.registerReceiver(localBroadCastReciverRecentSMS, intentFilter2);
+
     }
 
     private void unRegisterLocalBroadCastReceiver() {
@@ -735,6 +744,9 @@ public class MainActivity extends BaseActivity implements NavigationView
                 .getInstance(MainActivity.this);
         localBroadcastManagerReceiveRecentCalls.unregisterReceiver(localBroadcastReceiverRecentCalls);
 
+        LocalBroadcastManager localBroadcastManagerReceiveRecentSMS = LocalBroadcastManager
+                .getInstance(MainActivity.this);
+        localBroadcastManagerReceiveRecentSMS.unregisterReceiver(localBroadCastReciverRecentSMS);
     }
 
     private void getCallLogsByRawId() {
@@ -1281,12 +1293,30 @@ public class MainActivity extends BaseActivity implements NavigationView
                         }
                     }, 100);
 
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+    };
 
+    private BroadcastReceiver localBroadCastReciverRecentSMS =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            try {
+
+                if(Utils.getBooleanPreference(MainActivity.this,
+                        AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE,false)){
+                    Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE,false);
+                    Utils.setBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
     };
 
     private String getPhotoUrlFromNumber(String phoneNumber) {
