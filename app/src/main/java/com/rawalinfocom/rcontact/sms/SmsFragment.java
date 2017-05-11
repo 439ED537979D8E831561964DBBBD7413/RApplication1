@@ -480,7 +480,13 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                         break;
                     }
                 } else {
-                    fetchSMSDataById(tempIdsList);
+//                    fetchSMSDataById(tempIdsList);
+                    if(tempIdsList.size()<=0)
+                        fetchSMSDataById(listOfIds);
+                    else{
+                        fetchSMSDataById(tempIdsList);
+
+                    }
                 }
 
             } else {
