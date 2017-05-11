@@ -478,6 +478,26 @@ public class Utils {
     }
     //</editor-fold>
 
+    public static String setFormattedAddress(String streetName, String neighborhoodName, String
+            cityName, String stateName, String countryName, String pinCodeName) {
+        String[] addressStrings = {streetName, neighborhoodName, cityName, stateName,
+                countryName, pinCodeName};
+
+        String formattedAddress = "";
+
+        for (int j = 0; j < addressStrings.length; j++) {
+            if (j != addressStrings.length - 1) {
+                if (StringUtils.length(addressStrings[j]) > 0) {
+                    formattedAddress = formattedAddress + StringUtils.appendIfMissing
+                            (addressStrings[j], ", ");
+                }
+            } else {
+                formattedAddress = formattedAddress + pinCodeName;
+            }
+        }
+        return StringUtils.removeEnd(formattedAddress, ", ");
+    }
+
     public static void setRoundedCornerBackground(View view, int backgroundColor, int radius, int
             strokeWidth, int strokeColor) {
         GradientDrawable gd = (GradientDrawable) view.getBackground().getCurrent();

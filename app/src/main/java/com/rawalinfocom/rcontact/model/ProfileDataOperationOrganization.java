@@ -21,6 +21,7 @@ public class ProfileDataOperationOrganization implements Serializable {
     private String orgOfficeLocation;
     private int isCurrent;
     private int orgPublic;
+    private int isPrivate;
 
     //    private int orgRcpType;
     private String orgRcpType;
@@ -112,5 +113,14 @@ public class ProfileDataOperationOrganization implements Serializable {
 
     public void setOrgRcpType(String orgRcpType) {
         this.orgRcpType = orgRcpType;
+    }
+
+    @JsonProperty("is_private")
+    public int getIsPrivate() {
+        return isPrivate;
+    }
+
+    public void setIsPrivate(int isPrivate) {
+        this.isPrivate = isPrivate;
     }
 }

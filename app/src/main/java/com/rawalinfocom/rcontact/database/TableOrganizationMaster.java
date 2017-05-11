@@ -31,6 +31,7 @@ public class TableOrganizationMaster {
     static final String COLUMN_OM_ORGANIZATION_COMPANY = "om_organization_company";
     static final String COLUMN_OM_ORGANIZATION_DESIGNATION = "om_organization_designation";
     private static final String COLUMN_OM_ORGANIZATION_PRIVACY = "om_organization_privacy";
+    private static final String COLUMN_OM_ORGANIZATION_IS_PRIVATE = "om_organization_is_private";
     static final String COLUMN_OM_ORGANIZATION_IS_CURRENT = "om_organization_is_current";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
@@ -44,6 +45,7 @@ public class TableOrganizationMaster {
             " " + COLUMN_OM_ORGANIZATION_COMPANY + " text NOT NULL," +
             " " + COLUMN_OM_ORGANIZATION_DESIGNATION + " text," +
             " " + COLUMN_OM_ORGANIZATION_IS_CURRENT + " integer," +
+            " " + COLUMN_OM_ORGANIZATION_IS_PRIVATE + " integer," +
             " " + COLUMN_OM_ORGANIZATION_PRIVACY + " integer DEFAULT 1," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
             " UNIQUE(" + COLUMN_OM_RECORD_INDEX_ID + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
@@ -59,6 +61,7 @@ public class TableOrganizationMaster {
         values.put(COLUMN_OM_ORGANIZATION_COMPANY, organization.getOmOrganizationCompany());
         values.put(COLUMN_OM_ORGANIZATION_DESIGNATION, organization.getOmOrganizationDesignation());
         values.put(COLUMN_OM_ORGANIZATION_IS_CURRENT, organization.getOmIsCurrent());
+        values.put(COLUMN_OM_ORGANIZATION_IS_PRIVATE, organization.getOmIsPrivate());
         values.put(COLUMN_OM_ORGANIZATION_PRIVACY, organization.getOmOrganizationPrivacy());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, organization.getRcProfileMasterPmId());
 
@@ -84,6 +87,8 @@ public class TableOrganizationMaster {
                     .getOmOrganizationDesignation());
             values.put(COLUMN_OM_ORGANIZATION_IS_CURRENT, arrayListOrganization.get(i)
                     .getOmIsCurrent());
+            values.put(COLUMN_OM_ORGANIZATION_IS_PRIVATE, arrayListOrganization.get(i)
+                    .getOmIsPrivate());
             values.put(COLUMN_OM_ORGANIZATION_PRIVACY, arrayListOrganization.get(i)
                     .getOmOrganizationPrivacy());
             values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListOrganization.get(i)
@@ -102,8 +107,9 @@ public class TableOrganizationMaster {
         Cursor cursor = db.query(TABLE_RC_ORGANIZATION_MASTER, new String[]{COLUMN_OM_ID,
                 COLUMN_OM_RECORD_INDEX_ID, COLUMN_OM_ORGANIZATION_COMPANY,
                 COLUMN_OM_ORGANIZATION_DESIGNATION, COLUMN_OM_ORGANIZATION_IS_CURRENT,
-                COLUMN_OM_ORGANIZATION_PRIVACY, COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_OM_ID +
-                "=?", new String[]{String.valueOf(omId)}, null, null, null, null);
+                COLUMN_OM_ORGANIZATION_IS_PRIVATE, COLUMN_OM_ORGANIZATION_PRIVACY,
+                COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_OM_ID + "=?", new String[]{String.valueOf
+                (omId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -118,6 +124,8 @@ public class TableOrganizationMaster {
                     (COLUMN_OM_ORGANIZATION_DESIGNATION)));
             organization.setOmIsCurrent(cursor.getString(cursor.getColumnIndex
                     (COLUMN_OM_ORGANIZATION_IS_CURRENT)));
+            organization.setOmIsPrivate(cursor.getInt(cursor.getColumnIndex
+                    (COLUMN_OM_ORGANIZATION_IS_PRIVATE)));
             organization.setOmOrganizationPrivacy(cursor.getString(cursor.getColumnIndex
                     (COLUMN_OM_ORGANIZATION_PRIVACY)));
             organization.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
@@ -140,6 +148,7 @@ public class TableOrganizationMaster {
                 COLUMN_OM_ORGANIZATION_COMPANY + ", " +
                 COLUMN_OM_ORGANIZATION_DESIGNATION + ", " +
                 COLUMN_OM_ORGANIZATION_IS_CURRENT + ", " +
+                COLUMN_OM_ORGANIZATION_IS_PRIVATE + ", " +
                 COLUMN_OM_ORGANIZATION_PRIVACY + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
                 TABLE_RC_ORGANIZATION_MASTER + " WHERE " +
@@ -160,6 +169,8 @@ public class TableOrganizationMaster {
                         (COLUMN_OM_ORGANIZATION_DESIGNATION)));
                 organization.setOmIsCurrent(cursor.getString(cursor.getColumnIndex
                         (COLUMN_OM_ORGANIZATION_IS_CURRENT)));
+                organization.setOmIsPrivate(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_IS_PRIVATE)));
                 organization.setOmOrganizationPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_OM_ORGANIZATION_PRIVACY)));
                 organization.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
@@ -200,6 +211,8 @@ public class TableOrganizationMaster {
                         (COLUMN_OM_ORGANIZATION_DESIGNATION)));
                 organization.setOmIsCurrent(cursor.getString(cursor.getColumnIndex
                         (COLUMN_OM_ORGANIZATION_IS_CURRENT)));
+                organization.setOmIsPrivate(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_OM_ORGANIZATION_IS_PRIVATE)));
                 organization.setOmOrganizationPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_OM_ORGANIZATION_PRIVACY)));
                 organization.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
@@ -242,6 +255,7 @@ public class TableOrganizationMaster {
         values.put(COLUMN_OM_ORGANIZATION_COMPANY, organization.getOmOrganizationCompany());
         values.put(COLUMN_OM_ORGANIZATION_DESIGNATION, organization.getOmOrganizationDesignation());
         values.put(COLUMN_OM_ORGANIZATION_IS_CURRENT, organization.getOmIsCurrent());
+        values.put(COLUMN_OM_ORGANIZATION_IS_PRIVATE, organization.getOmIsPrivate());
         values.put(COLUMN_OM_ORGANIZATION_PRIVACY, organization.getOmOrganizationPrivacy());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, organization.getRcProfileMasterPmId());
 

@@ -31,6 +31,7 @@ public class TableEmailMaster {
     static final String COLUMN_EM_EMAIL_TYPE = "em_email_type";
     static final String COLUMN_EM_RECORD_INDEX_ID = "em_record_index_id";
     static final String COLUMN_EM_EMAIL_PRIVACY = "em_email_privacy";
+    static final String COLUMN_EM_IS_PRIVATE = "em_is_private";
     static final String COLUMN_EM_IS_VERIFIED = "em_is_verified";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
@@ -49,6 +50,7 @@ public class TableEmailMaster {
             " " + COLUMN_EM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_EM_EMAIL_PRIVACY + " integer DEFAULT 2," +
             " " + COLUMN_EM_IS_VERIFIED + " integer," +
+            " " + COLUMN_EM_IS_PRIVATE + " integer," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
             " UNIQUE(" + COLUMN_EM_EMAIL_ADDRESS + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
             ");";
@@ -64,6 +66,7 @@ public class TableEmailMaster {
         values.put(COLUMN_EM_RECORD_INDEX_ID, email.getEmRecordIndexId());
         values.put(COLUMN_EM_EMAIL_PRIVACY, email.getEmEmailPrivacy());
         values.put(COLUMN_EM_IS_VERIFIED, email.getEmIsVerified());
+        values.put(COLUMN_EM_IS_PRIVATE, email.getEmIsPrivate());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, email.getRcProfileMasterPmId());
 
         // Inserting Row
@@ -85,6 +88,7 @@ public class TableEmailMaster {
             values.put(COLUMN_EM_RECORD_INDEX_ID, arrayListEmail.get(i).getEmRecordIndexId());
             values.put(COLUMN_EM_EMAIL_PRIVACY, arrayListEmail.get(i).getEmEmailPrivacy());
             values.put(COLUMN_EM_IS_VERIFIED, arrayListEmail.get(i).getEmIsVerified());
+            values.put(COLUMN_EM_IS_PRIVATE, arrayListEmail.get(i).getEmIsPrivate());
             values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListEmail.get(i)
                     .getRcProfileMasterPmId());
 
@@ -100,7 +104,7 @@ public class TableEmailMaster {
 
         Cursor cursor = db.query(TABLE_RC_EMAIL_MASTER, new String[]{COLUMN_EM_ID,
                         COLUMN_EM_EMAIL_ADDRESS, COLUMN_EM_EMAIL_TYPE, COLUMN_EM_RECORD_INDEX_ID,
-                        COLUMN_EM_EMAIL_PRIVACY, COLUMN_EM_IS_VERIFIED,
+                        COLUMN_EM_EMAIL_PRIVACY, COLUMN_EM_IS_VERIFIED,COLUMN_EM_IS_PRIVATE,
                         COLUMN_RC_PROFILE_MASTER_PM_ID},
                 COLUMN_EM_ID + "=?", new String[]{String.valueOf(emId)}, null, null, null, null);
         if (cursor != null)
@@ -117,6 +121,7 @@ public class TableEmailMaster {
             email.setEmEmailPrivacy(cursor.getString(cursor.getColumnIndex
                     (COLUMN_EM_EMAIL_PRIVACY)));
             email.setEmIsVerified(cursor.getString(cursor.getColumnIndex(COLUMN_EM_IS_VERIFIED)));
+            email.setEmIsPrivate(cursor.getInt(cursor.getColumnIndex(COLUMN_EM_IS_PRIVATE)));
             email.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                     (COLUMN_RC_PROFILE_MASTER_PM_ID)));
 
@@ -152,6 +157,8 @@ public class TableEmailMaster {
                         (COLUMN_EM_EMAIL_PRIVACY)));
                 email.setEmIsVerified(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EM_IS_VERIFIED)));
+                email.setEmIsPrivate(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_EM_IS_PRIVATE)));
                 email.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_RC_PROFILE_MASTER_PM_ID)));
                 // Adding email to list
@@ -236,6 +243,7 @@ public class TableEmailMaster {
         values.put(COLUMN_EM_RECORD_INDEX_ID, email.getEmRecordIndexId());
         values.put(COLUMN_EM_EMAIL_PRIVACY, email.getEmEmailPrivacy());
         values.put(COLUMN_EM_IS_VERIFIED, email.getEmIsVerified());
+        values.put(COLUMN_EM_IS_PRIVATE, email.getEmIsPrivate());
         values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, email.getRcProfileMasterPmId());
 
         // updating row

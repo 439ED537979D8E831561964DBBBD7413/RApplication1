@@ -11,6 +11,7 @@ public class Event {
     private String evmStartDate;
     private String evmEventType;
     private String evmEventPrivacy;
+    private int evmIsPrivate;
     private int evmIsYearHidden;
     private String rcProfileMasterPmId;
 
@@ -70,5 +71,13 @@ public class Event {
 
     public void setEvmIsYearHidden(int evmIsYearHidden) {
         this.evmIsYearHidden = evmIsYearHidden;
+    }
+
+    public int getEvmIsPrivate() {
+        return evmIsPrivate;
+    }
+
+    public void setEvmIsPrivate(int evmIsPrivate) {
+        this.evmIsPrivate = evmIsPrivate;
     }
 }
