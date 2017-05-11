@@ -11,6 +11,7 @@ public class Organization {
     private String omOrganizationCompany;
     private String omOrganizationDesignation;
     private String omIsCurrent;
+    private int omIsPrivate;
     private String omOrganizationPrivacy;
     private String rcProfileMasterPmId;
 
@@ -75,5 +76,13 @@ public class Organization {
 
     public void setOmIsCurrent(String omIsCurrent) {
         this.omIsCurrent = omIsCurrent;
+    }
+
+    public int getOmIsPrivate() {
+        return omIsPrivate;
+    }
+
+    public void setOmIsPrivate(int omIsPrivate) {
+        this.omIsPrivate = omIsPrivate;
     }
 }

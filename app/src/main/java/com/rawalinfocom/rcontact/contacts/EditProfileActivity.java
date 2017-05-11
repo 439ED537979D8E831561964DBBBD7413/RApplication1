@@ -1079,6 +1079,14 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
                 .relative_row_edit_profile);
 
+        inputCountry.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        inputState.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        inputCity.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        inputStreet.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        inputNeighborhood.setInputType(InputType.TYPE_CLASS_TEXT | InputType
+                .TYPE_TEXT_FLAG_CAP_WORDS);
+        inputPinCode.setInputType(InputType.TYPE_CLASS_NUMBER);
+
         textImageCross.setTypeface(Utils.typefaceIcons(this));
         textImageMapMarker.setTypeface(Utils.typefaceIcons(this));
         inputCountry.setTypeface(Utils.typefaceRegular(this));
@@ -1218,6 +1226,9 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
         final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
                 .relative_row_edit_profile);
+
+        inputCompanyName.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        inputDesignationName.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
 
         textImageCross.setTypeface(Utils.typefaceIcons(this));
         inputCompanyName.setTypeface(Utils.typefaceRegular(this));
@@ -1831,6 +1842,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     private void getUpdatedProfile() {
 
         boolean isValid = true;
+        String message = "";
 
         //<editor-fold desc="Email">
         ArrayList<ProfileDataOperationEmail> arrayListNewEmail = new ArrayList<>();
@@ -1970,19 +1982,22 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
             organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
-            /*if (StringUtils.length(organization.getOrgName()) > 0 && StringUtils.length
-                    (organization.getOrgJobTitle()) > 0) {
-                arrayListNewOrganization.add(organization);
-            }*/
-            if (StringUtils.length(organization.getOrgName()) > 0) {
-                if (StringUtils.length(organization.getOrgJobTitle()) > 0) {
-                    arrayListNewOrganization.add(organization);
+            if (isValid && (StringUtils.length(organization.getOrgName()) > 0 || StringUtils.length
+                    (organization.getOrgJobTitle()) > 0)) {
+//                arrayListNewOrganization.add(organization);
+                if (StringUtils.length(organization.getOrgName()) > 0) {
+                    if (StringUtils.length(organization.getOrgJobTitle()) > 0) {
+                        arrayListNewOrganization.add(organization);
+                    } else {
+                        isValid = false;
+                        message = "Designation in organization is required!";
+                    }
                 } else {
                     isValid = false;
+                    message = "Company name in organization is required!";
                 }
-            } else {
-                isValid = false;
             }
+
 
         }
 
@@ -2081,28 +2096,33 @@ public class EditProfileActivity extends BaseActivity implements RippleView
                 address.setAddPublic(IntegerConstants.PRIVACY_MY_CONTACT);
             }
 
-            /*if (StringUtils.length(address.getCountry()) > 0 && StringUtils.length(address
-                    .getState()) > 0 && StringUtils.length(address.getCity()) > 0 && StringUtils
-                    .length(address.getStreet()) > 0) {
-                arrayListNewAddress.add(address);
-            }*/
-            if (StringUtils.length(address.getCountry()) > 0) {
-                if (StringUtils.length(address.getState()) > 0) {
-                    if (StringUtils.length(address.getCity()) > 0) {
-                        if (StringUtils.length(address.getStreet()) > 0) {
-                            arrayListNewAddress.add(address);
+            if (isValid && (StringUtils.length(address.getCountry()) > 0 || StringUtils.length
+                    (address.getState()) > 0 || StringUtils.length(address.getCity()) > 0 ||
+                    StringUtils.length(address.getStreet()) > 0)) {
+//                arrayListNewAddress.add(address);
+                if (StringUtils.length(address.getCountry()) > 0) {
+                    if (StringUtils.length(address.getState()) > 0) {
+                        if (StringUtils.length(address.getCity()) > 0) {
+                            if (StringUtils.length(address.getStreet()) > 0) {
+                                arrayListNewAddress.add(address);
+                            } else {
+                                isValid = false;
+                                message = "Street in address is required!";
+                            }
                         } else {
                             isValid = false;
+                            message = "City in address is required!";
                         }
                     } else {
                         isValid = false;
+                        message = "State in address is required!";
                     }
                 } else {
                     isValid = false;
+                    message = "Country in address is required!";
                 }
-            } else {
-                isValid = false;
             }
+
 
         }
 
@@ -2143,8 +2163,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         if (isValid) {
             editProfile(arrayList);
         } else {
-            Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, "Please " +
-                    "fill all required fields!");
+            Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile, message);
         }
     }
 
