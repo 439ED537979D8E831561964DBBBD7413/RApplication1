@@ -43,15 +43,15 @@ public class SplashActivity extends BaseActivity {
                                 .PREF_LAUNCH_SCREEN_INT,
                         IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
                         .LAUNCH_MOBILE_REGISTRATION) {
-                    finish();
                     startActivityIntent(SplashActivity.this, MobileNumberRegistrationActivity
                             .class, null);
+                    finish();
                 } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
                                 .PREF_LAUNCH_SCREEN_INT,
                         IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
                         .LAUNCH_OTP_VERIFICATION) {
-                    finish();
                     startActivityIntent(SplashActivity.this, OtpVerificationActivity.class, null);
+                    finish();
                 } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
                                 .PREF_LAUNCH_SCREEN_INT,
                         IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
@@ -62,13 +62,13 @@ public class SplashActivity extends BaseActivity {
             if (userProfile != null && StringUtils.equalsIgnoreCase(userProfile
                     .getIsAlreadyVerified(), String.valueOf(getResources().getInteger(R.integer
                     .profile_not_verified)))) {*/
-                    finish();
                     startActivityIntent(SplashActivity.this, ProfileRegistrationActivity.class,
                             null);
+                    finish();
 //            }
                 } else {
-                    finish();
                     startActivityIntent(SplashActivity.this, MainActivity.class, null);
+                    finish();
                 }
 
             }

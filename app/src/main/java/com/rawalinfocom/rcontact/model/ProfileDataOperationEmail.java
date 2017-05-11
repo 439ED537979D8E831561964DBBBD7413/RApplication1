@@ -56,7 +56,8 @@ public class ProfileDataOperationEmail implements Serializable {
         this.emPublic = emPublic;
     }
 
-    @JsonProperty("em_rcp_type")
+//    @JsonProperty("em_rcp_type")
+    @JsonProperty("is_verified")
     public String getEmRcpType() {
         return emRcpType;
     }
@@ -65,14 +66,14 @@ public class ProfileDataOperationEmail implements Serializable {
         this.emRcpType = emRcpType;
     }
 
-    @JsonProperty("is_verified")
+    /*@JsonProperty("is_verified")
     public String getEmIsVerified() {
         return emIsVerified;
     }
 
     public void setEmIsVerified(String emIsVerified) {
         this.emIsVerified = emIsVerified;
-    }
+    }*/
 
     @JsonProperty("is_private")
     public int getEmIsPrivate() {
