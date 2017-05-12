@@ -1315,6 +1315,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //                    imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                         imAccount.setImImProtocol(arrayListImAccount.get(j)
                                 .getIMAccountProtocol());
+                        imAccount.setImImDetail(arrayListImAccount.get(j)
+                                .getIMAccountDetails());
                         imAccount.setImIsPrivate(arrayListImAccount.get(j)
                                 .getIMAccountIsPrivate());
                         imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
