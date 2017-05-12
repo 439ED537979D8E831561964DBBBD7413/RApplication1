@@ -26,6 +26,7 @@ public class ProfileDataOperationAddress implements Serializable {
     private String googleLatitude;
     private String formattedAddress;
     private int addPublic;
+    private int isPrivate;
 
     private String rcpType;
 
@@ -161,5 +162,14 @@ public class ProfileDataOperationAddress implements Serializable {
 
     public void setRcpType(String rcpType) {
         this.rcpType = rcpType;
+    }
+
+    @JsonProperty("is_private")
+    public int getIsPrivate() {
+        return isPrivate;
+    }
+
+    public void setIsPrivate(int isPrivate) {
+        this.isPrivate = isPrivate;
     }
 }

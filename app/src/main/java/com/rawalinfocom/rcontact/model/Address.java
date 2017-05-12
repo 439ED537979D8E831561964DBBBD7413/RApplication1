@@ -18,6 +18,7 @@ public class Address {
     private String amPoBox;
     private String amState;
     private String amStreet;
+    private int amIsPrivate;
     private String amAddressType;
     private String amGoogleLatitude;
     private String amGoogleLongitude;
@@ -145,5 +146,13 @@ public class Address {
 
     public void setAmRecordIndexId(String amRecordIndexId) {
         this.amRecordIndexId = amRecordIndexId;
+    }
+
+    public int getAmIsPrivate() {
+        return amIsPrivate;
+    }
+
+    public void setAmIsPrivate(int amIsPrivate) {
+        this.amIsPrivate = amIsPrivate;
     }
 }

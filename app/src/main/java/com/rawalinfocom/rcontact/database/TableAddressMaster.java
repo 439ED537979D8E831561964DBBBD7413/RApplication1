@@ -40,6 +40,7 @@ public class TableAddressMaster {
     private static final String COLUMN_AM_GOOGLE_LATITUDE = "am_google_latitude";
     private static final String COLUMN_AM_GOOGLE_LONGITUDE = "am_google_longitude";
     static final String COLUMN_AM_ADDRESS_PRIVACY = "am_address_privacy";
+    static final String COLUMN_AM_IS_PRIVATE = "am_is_private";
     static final String COLUMN_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
     /*private static final String COLUMN_AM_CUSTOM_TYPE = "am_custom_type";
@@ -62,6 +63,7 @@ public class TableAddressMaster {
             " " + COLUMN_AM_GOOGLE_LATITUDE + " text," +
             " " + COLUMN_AM_GOOGLE_LONGITUDE + " text," +
             " " + COLUMN_AM_ADDRESS_PRIVACY + " integer DEFAULT 2," +
+            " " + COLUMN_AM_IS_PRIVATE + " integer," +
             " " + COLUMN_RC_PROFILE_MASTER_PM_ID + " integer," +
             " UNIQUE(" + COLUMN_AM_RECORD_INDEX_ID + ", " + COLUMN_RC_PROFILE_MASTER_PM_ID + ")" +
             ");";
@@ -78,6 +80,7 @@ public class TableAddressMaster {
         values.put(COLUMN_AM_FORMATTED_ADDRESS, address.getAmFormattedAddress());
         values.put(COLUMN_AM_NEIGHBORHOOD, address.getAmNeighborhood());
         values.put(COLUMN_AM_POST_CODE, address.getAmPostCode());
+        values.put(COLUMN_AM_IS_PRIVATE, address.getAmIsPrivate());
         values.put(COLUMN_AM_PO_BOX, address.getAmPoBox());
         values.put(COLUMN_AM_STATE, address.getAmState());
         values.put(COLUMN_AM_STREET, address.getAmStreet());
@@ -111,6 +114,7 @@ public class TableAddressMaster {
             values.put(COLUMN_AM_PO_BOX, arrayListAddress.get(i).getAmPoBox());
             values.put(COLUMN_AM_STATE, arrayListAddress.get(i).getAmState());
             values.put(COLUMN_AM_STREET, arrayListAddress.get(i).getAmStreet());
+            values.put(COLUMN_AM_IS_PRIVATE, arrayListAddress.get(i).getAmIsPrivate());
             values.put(COLUMN_AM_ADDRESS_TYPE, arrayListAddress.get(i).getAmAddressType());
             values.put(COLUMN_AM_GOOGLE_LATITUDE, arrayListAddress.get(i).getAmGoogleLatitude());
             values.put(COLUMN_AM_GOOGLE_LONGITUDE, arrayListAddress.get(i).getAmGoogleLongitude());
@@ -131,10 +135,10 @@ public class TableAddressMaster {
         Cursor cursor = db.query(TABLE_RC_ADDRESS_MASTER, new String[]{COLUMN_AM_ID,
                 COLUMN_AM_RECORD_INDEX_ID, COLUMN_AM_CITY, COLUMN_AM_COUNTRY,
                 COLUMN_AM_FORMATTED_ADDRESS, COLUMN_AM_NEIGHBORHOOD, COLUMN_AM_POST_CODE,
-                COLUMN_AM_PO_BOX, COLUMN_AM_STATE, COLUMN_AM_STREET, COLUMN_AM_ADDRESS_TYPE,
-                COLUMN_AM_GOOGLE_LATITUDE, COLUMN_AM_GOOGLE_LONGITUDE, COLUMN_AM_ADDRESS_PRIVACY,
-                COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_AM_ID + "=?", new String[]{String.valueOf
-                (amId)}, null, null, null, null);
+                COLUMN_AM_PO_BOX, COLUMN_AM_STATE, COLUMN_AM_STREET, COLUMN_AM_IS_PRIVATE,
+                COLUMN_AM_ADDRESS_TYPE, COLUMN_AM_GOOGLE_LATITUDE, COLUMN_AM_GOOGLE_LONGITUDE,
+                COLUMN_AM_ADDRESS_PRIVACY, COLUMN_RC_PROFILE_MASTER_PM_ID}, COLUMN_AM_ID + "=?",
+                new String[]{String.valueOf(amId)}, null, null, null, null);
 
         if (cursor != null)
             cursor.moveToFirst();
@@ -154,6 +158,7 @@ public class TableAddressMaster {
             address.setAmPoBox(cursor.getString(cursor.getColumnIndex(COLUMN_AM_PO_BOX)));
             address.setAmState(cursor.getString(cursor.getColumnIndex(COLUMN_AM_STATE)));
             address.setAmStreet(cursor.getString(cursor.getColumnIndex(COLUMN_AM_STREET)));
+            address.setAmIsPrivate(cursor.getInt(cursor.getColumnIndex(COLUMN_AM_IS_PRIVATE)));
             address.setAmAddressType(cursor.getString(cursor.getColumnIndex
                     (COLUMN_AM_ADDRESS_TYPE)));
             address.setAmGoogleLatitude(cursor.getString(cursor.getColumnIndex
@@ -188,6 +193,7 @@ public class TableAddressMaster {
                 COLUMN_AM_FORMATTED_ADDRESS + ", " +
                 COLUMN_AM_POST_CODE + ", " +
                 COLUMN_AM_ADDRESS_TYPE + ", " +
+                COLUMN_AM_IS_PRIVATE + ", " +
                 COLUMN_AM_GOOGLE_LATITUDE + ", " +
                 COLUMN_AM_GOOGLE_LONGITUDE + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
@@ -211,6 +217,8 @@ public class TableAddressMaster {
                         (COLUMN_AM_CITY)));
                 address.setAmStreet(cursor.getString(cursor.getColumnIndex
                         (COLUMN_AM_STREET)));
+                address.setAmIsPrivate(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_AM_IS_PRIVATE)));
                 address.setAmNeighborhood(cursor.getString(cursor.getColumnIndex
                         (COLUMN_AM_NEIGHBORHOOD)));
                 address.setAmFormattedAddress(cursor.getString(cursor.getColumnIndex
@@ -267,6 +275,7 @@ public class TableAddressMaster {
                 address.setAmPoBox(cursor.getString(cursor.getColumnIndex(COLUMN_AM_PO_BOX)));
                 address.setAmState(cursor.getString(cursor.getColumnIndex(COLUMN_AM_STATE)));
                 address.setAmStreet(cursor.getString(cursor.getColumnIndex(COLUMN_AM_STREET)));
+                address.setAmIsPrivate(cursor.getInt(cursor.getColumnIndex(COLUMN_AM_IS_PRIVATE)));
                 address.setAmAddressType(cursor.getString(cursor.getColumnIndex
                         (COLUMN_AM_ADDRESS_TYPE)));
                 address.setAmGoogleLatitude(cursor.getString(cursor.getColumnIndex
@@ -318,6 +327,7 @@ public class TableAddressMaster {
         values.put(COLUMN_AM_PO_BOX, address.getAmPoBox());
         values.put(COLUMN_AM_STATE, address.getAmState());
         values.put(COLUMN_AM_STREET, address.getAmStreet());
+        values.put(COLUMN_AM_IS_PRIVATE, address.getAmIsPrivate());
         values.put(COLUMN_AM_ADDRESS_TYPE, address.getAmAddressType());
         values.put(COLUMN_AM_GOOGLE_LATITUDE, address.getAmGoogleLatitude());
         values.put(COLUMN_AM_GOOGLE_LONGITUDE, address.getAmGoogleLongitude());
@@ -356,7 +366,8 @@ public class TableAddressMaster {
         values.put(COLUMN_AM_ADDRESS_PRIVACY, 2);
 
         // updating row
-        int isUpdated = db.update(TABLE_RC_ADDRESS_MASTER, values, COLUMN_AM_RECORD_INDEX_ID + " = ?",
+        int isUpdated = db.update(TABLE_RC_ADDRESS_MASTER, values, COLUMN_AM_RECORD_INDEX_ID + " " +
+                        "= ?",
                 new String[]{cloudMongoId});
 
         db.close();

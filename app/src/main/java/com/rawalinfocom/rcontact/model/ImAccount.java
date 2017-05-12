@@ -11,6 +11,7 @@ public class ImAccount {
     private String imImDetail;
     private String imImProtocol;
     private String imImPrivacy;
+    private int imIsPrivate;
     private String rcProfileMasterPmId;
 
     public String getImId() {
@@ -59,5 +60,13 @@ public class ImAccount {
 
     public void setImRecordIndexId(String imRecordIndexId) {
         this.imRecordIndexId = imRecordIndexId;
+    }
+
+    public int getImIsPrivate() {
+        return imIsPrivate;
+    }
+
+    public void setImIsPrivate(int imIsPrivate) {
+        this.imIsPrivate = imIsPrivate;
     }
 }

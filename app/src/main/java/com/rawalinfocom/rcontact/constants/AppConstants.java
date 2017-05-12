@@ -81,6 +81,7 @@ public class AppConstants {
     public static String EXTRA_IS_FROM_MOBILE_REGIS = "extra_is_from_mobile_regis";
     public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
     public static String EXTRA_CONTACT_NAME = "contact_name";
+    public static String EXTRA_PROFILE_IMAGE_URL = "profile_image_url";
     public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
     public static String EXTRA_CONTACT_POSITION = "contact_position";
     public static String EXTRA_OBJECT_CONTACT = "extra_object_contact";
