@@ -533,7 +533,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                             "MMM, yyyy");
         }
         if (event.getIsYearHidden() == IntegerConstants.IS_YEAR_HIDDEN) {
-            Log.i("MAULIK", "we are at right place");
             convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "MM-dd",
                     "dd'th' " +
                             "MMM");

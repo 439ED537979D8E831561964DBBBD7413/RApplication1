@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.rawalinfocom.rcontact.model.ContactRequestData;
 import com.rawalinfocom.rcontact.model.Event;
 
 import java.util.ArrayList;
@@ -359,12 +360,13 @@ public class TableEventMaster {
         db.close();
     }
 
-    public int updatePrivacySettingToDefault(String cloudMongoId) {
+    public int updatePrivacySetting(ContactRequestData obj, String cloudMongoId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_EVM_EVENT_PRIVACY, 2);
-
+        values.put(COLUMN_EVM_IS_PRIVATE, 0);
+        values.put(COLUMN_EVM_START_DATE, obj.getEventDatetime());
+        values.put(COLUMN_EVM_IS_YEAR_HIDDEN, obj.getIsYearHidden());
         // updating row
         int isUpdated = db.update(TABLE_RC_EVENT_MASTER, values, COLUMN_EVM_RECORD_INDEX_ID + " =" +
                         " ?",

@@ -61,6 +61,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Monal on 10/10/16.
@@ -74,7 +75,11 @@ public class Utils {
 
     static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private final static AtomicInteger c = new AtomicInteger(0);
 
+    public static int getID() {
+        return c.incrementAndGet();
+    }
 
     //<editor-fold desc="Check Android OS Version">
 

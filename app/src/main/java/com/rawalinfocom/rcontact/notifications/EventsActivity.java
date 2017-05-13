@@ -18,6 +18,7 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.EventAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
@@ -299,7 +300,7 @@ public class EventsActivity extends BaseActivity implements RippleView
             String eventName = e.getEvmEventType();
             int eventType = -1;
             TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-            if (/*!e.getEvmEventPrivacy().equalsIgnoreCase(String.valueOf(3)) &&*/ e.getRcProfileMasterPmId() != null && e.getRcProfileMasterPmId().length() > 0) {
+            if (e.getEvmIsPrivate() != IntegerConstants.IS_PRIVATE && e.getRcProfileMasterPmId() != null && e.getRcProfileMasterPmId().length() > 0) {
                 int pmId = Integer
                         .parseInt(e.getRcProfileMasterPmId());
 

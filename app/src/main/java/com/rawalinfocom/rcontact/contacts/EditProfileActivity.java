@@ -720,6 +720,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
             event.setEventDateTime(formattedDate);
             event.setEventType(arrayListEvent.get(i).getEvmEventType());
             event.setEventId(arrayListEvent.get(i).getEvmRecordIndexId());
+            event.setIsYearHidden(arrayListEvent.get(i).getEvmIsYearHidden());
             event.setEventPublic(Integer.parseInt(arrayListEvent.get(i).getEvmEventPrivacy()));
             arrayListEventObject.add(event);
         }
