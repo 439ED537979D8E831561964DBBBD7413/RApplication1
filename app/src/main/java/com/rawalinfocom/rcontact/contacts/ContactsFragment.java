@@ -57,9 +57,10 @@ public class ContactsFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-      /*  if (currentTabPosition == FAVOURITE_FRAGMENT && favoritesFragment != null) {
+        /*if (currentTabPosition == FAVOURITE_FRAGMENT && favoritesFragment != null) {
             if (favoritesFragment.getAllContactListAdapter() != null) {
-                favoritesFragment.getFavouriteContacts();
+//                favoritesFragment.getFavouriteContacts();
+                getLoaderManager().initLoader(0, null, favoritesFragment);
              *//*   int clickedPosition = favoritesFragment.getAllContactListAdapter()
                         .getListClickedPosition();
                 Log.i("onResume", String.valueOf(favoritesFragment.getAllContactListAdapter()

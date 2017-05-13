@@ -304,6 +304,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     ArrayList<Object> tempEmail;
 
     boolean isFromReceiver = false;
+
     //<editor-fold desc="Override Methods">
 
     @Override
@@ -503,7 +504,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 break;
 
             case R.id.ripple_invite:
-                // TODO: 09/05/17
                 ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
                 for (int i = 0; i < tempPhoneNumber.size(); i++) {
                     ProfileDataOperationPhoneNumber phoneNumber = new
@@ -698,6 +698,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 }
                 break;
 
+            // Favourites
             case R.id.ripple_action_right_left:
                 if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_FAVOURITE)
                         || StringUtils.equals(imageRightLeft.getTag().toString(),
@@ -725,7 +726,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     arrayListFavourites.add(favouriteStatus);
                     setFavouriteStatus(arrayListFavourites);
 
-                    rContactApplication.setFavouriteModified(true);
+//                    rContactApplication.setFavouriteModified(true);
+                    if (favStatus == PhoneBookContacts.STATUS_FAVOURITE) {
+                        rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_ADDED);
+                    } else {
+                        rContactApplication.setFavouriteStatus(RContactApplication
+                                .FAVOURITE_REMOVED);
+                    }
 
                 } else if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_EDIT)) {
                     startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,

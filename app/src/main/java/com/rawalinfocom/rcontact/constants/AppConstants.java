@@ -84,6 +84,7 @@ public class AppConstants {
     public static String EXTRA_PROFILE_IMAGE_URL = "profile_image_url";
     public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
     public static String EXTRA_CONTACT_POSITION = "contact_position";
+    public static String EXTRA_FAVOURITE_POSITION = "extra_favourite_position";
     public static String EXTRA_OBJECT_CONTACT = "extra_object_contact";
     public static String EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE = "extra_call_instance";
     public static String EXTRA_CALL_HISTORY_NAME = "extra_call_history_name";
@@ -183,8 +184,8 @@ public class AppConstants {
     public static String PREF_CONTACT_ID_SET = "pref_contact_id_set";
     public static String PREF_SMS_LOG_STARTS_FIRST_TIME = "pref_sms_log_start_first_time";
     public static String PREF_SMS_LOGS_ID_SET = "pref_sms_logs_id_set";
-    public static String PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE = "pref_recent_calls_broadcast_receiver_main_instance";
-
+    public static String PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE =
+            "pref_recent_calls_broadcast_receiver_main_instance";
 
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,

@@ -108,7 +108,6 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         if (arrayListPhoneBookContacts == null) {
             arrayListContactHeaders = new ArrayList<>();
             arrayListPhoneBookContacts = new ArrayList<>();
-            arrayListContactHeaders = new ArrayList<>();
         } else {
             isReload = true;
         }
@@ -126,7 +125,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
         ButterKnife.bind(this, view);
         return view;*/
-        if (rootView == null) {
+        if (rootView == null || rContactApplication.getFavouriteStatus() != RContactApplication
+                .FAVOURITE_UNMODIFIED) {
             rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
             ButterKnife.bind(this, rootView);
         }
@@ -134,9 +134,24 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (rContactApplication.getFavouriteStatus() == RContactApplication.FAVOURITE_REMOVED) {
+            if (allContactListAdapter.getListClickedPosition() != -1) {
+                arrayListPhoneBookContacts.remove(allContactListAdapter.getListClickedPosition());
+                allContactListAdapter.notifyItemRemoved(allContactListAdapter
+                        .getListClickedPosition());
+                rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_UNMODIFIED);
+            }
+        }
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (!isReload || rContactApplication.isFavouriteModified()) {
+        if (!isReload || rContactApplication.getFavouriteStatus() != RContactApplication
+                .FAVOURITE_UNMODIFIED) {
+//        if (!isReload || rContactApplication.isFavouriteModified()) {
             init();
         }
     }
@@ -153,7 +168,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
         String selection = "starred = ?";
         String[] selectionArgs = new String[]{"1"};
-        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+//        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"; ;
 
         return new CursorLoader(
                 getActivity(),
@@ -167,8 +183,12 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
+        arrayListPhoneBookContacts = new ArrayList<>();
         getFavouritesFromPhonebook(data);
-        data.close();
+//        data.close();
+
+//        rContactApplication.setFavouriteModified(false);
+        rContactApplication.setFavouriteStatus(0);
 
         populateRecyclerView();
         initSwipe();
@@ -178,6 +198,13 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i("onPause", "called");
+        getLoaderManager().destroyLoader(0);
     }
 
     @Override
@@ -254,7 +281,12 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
         if (rContactApplication.getArrayListFavPhoneBookContacts().size() <= 0) {
 //            getFavouriteContacts();
-            getLoaderManager().initLoader(0, null, this);
+            if (getLoaderManager().getLoader(0) == null) {
+                getLoaderManager().initLoader(0, null, this);
+            } else {
+                getLoaderManager().restartLoader(0, null, this);
+            }
+//            getLoaderManager().initLoader(0, null, this);
         } else {
             arrayListPhoneBookContacts = rContactApplication.getArrayListFavPhoneBookContacts();
             arrayListContactHeaders = rContactApplication.getArrayListFavContactHeaders();
@@ -579,7 +611,6 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
       /*  rContactApplication.setArrayListFavPhoneBookContacts(arrayListPhoneBookContacts);
         rContactApplication.setArrayListFavContactHeaders(arrayListContactHeaders);*/
-        rContactApplication.setFavouriteModified(false);
 
         populateRecyclerView();
 
