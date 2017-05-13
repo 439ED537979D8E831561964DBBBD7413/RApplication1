@@ -13,7 +13,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -29,7 +32,6 @@ import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
-import com.rawalinfocom.rcontact.adapters.AllContactListAdapter;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
@@ -50,7 +52,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FavoritesFragment extends BaseFragment implements WsResponseListener {
+public class FavoritesFragment extends BaseFragment implements LoaderManager
+        .LoaderCallbacks<Cursor>, WsResponseListener {
 
     @BindView(R.id.progress_favorite_contact)
     ProgressWheel progressFavoriteContact;
@@ -104,6 +107,8 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
         if (arrayListPhoneBookContacts == null) {
             arrayListContactHeaders = new ArrayList<>();
+            arrayListPhoneBookContacts = new ArrayList<>();
+            arrayListContactHeaders = new ArrayList<>();
         } else {
             isReload = true;
         }
@@ -134,6 +139,45 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
         if (!isReload || rContactApplication.isFavouriteModified()) {
             init();
         }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+
+        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.Data.LOOKUP_KEY, ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract
+                .CommonDataKinds.Phone._ID, ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
+                ContactsContract.Contacts._ID};
+
+        String selection = "starred = ?";
+        String[] selectionArgs = new String[]{"1"};
+        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+
+        return new CursorLoader(
+                getActivity(),
+                uri,
+                projection,
+                selection,
+                selectionArgs,
+                sortOrder);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        getFavouritesFromPhonebook(data);
+        data.close();
+
+        populateRecyclerView();
+        initSwipe();
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 
     @Override
@@ -201,12 +245,16 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
             }
         });*/
 
-        initSwipe();
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerViewContactList.setLayoutManager(linearLayoutManager);
+
+//        initSwipe();
 
         progressFavoriteContact.setVisibility(View.GONE);
 
         if (rContactApplication.getArrayListFavPhoneBookContacts().size() <= 0) {
-            getFavouriteContacts();
+//            getFavouriteContacts();
+            getLoaderManager().initLoader(0, null, this);
         } else {
             arrayListPhoneBookContacts = rContactApplication.getArrayListFavPhoneBookContacts();
             arrayListContactHeaders = rContactApplication.getArrayListFavContactHeaders();
@@ -326,6 +374,55 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
 
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.scrollToPosition(scrollPosition);
+    }
+
+    private void getRcpDetail() {
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+        ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
+        for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
+            if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
+                if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
+                        (i)).getLocalPhoneBookId())) {
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
+                   /*  String name = tableProfileMaster.getNameFromRawId(((ProfileData)
+                    arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId());
+                    ((ProfileData) arrayListPhoneBookContacts.get(i))
+                            .setTempRcpName(name);*/
+                    ArrayList<UserProfile> userProfiles = new ArrayList<>();
+                    userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
+                            (ProfileData) arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId
+                            ()));
+                    String name = "0";
+                    String rcpID = "0";
+                    if (userProfiles.size() > 1) {
+                        for (int j = 0; j < userProfiles.size();
+                             j++) {
+                            if (name.equalsIgnoreCase("0")) {
+                                name = userProfiles.get(j).getPmRcpId();
+                            } else {
+                                name = name + "," + userProfiles.get(j).getPmRcpId();
+                            }
+                        }
+                    } else if (userProfiles.size() == 1) {
+                        name = userProfiles.get(0).getPmFirstName() + " " + userProfiles.get(0)
+                                .getPmLastName();
+                        rcpID = userProfiles.get(0).getPmRcpId();
+                    }
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
+                } else {
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
+                }
+                final int finalI = i;
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        allContactListAdapter.notifyItemChanged(finalI);
+                    }
+                });
+            }
+        }
     }
 
     public void getFavouriteContacts() {
@@ -490,6 +587,44 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
 
     }
 
+    private void getFavouritesFromPhonebook(Cursor data) {
+
+        final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+                .Phone.DISPLAY_NAME);
+        final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
+                .PHOTO_THUMBNAIL_URI);
+        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
+        final int rawIdIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
+                .RAW_CONTACT_ID);
+
+        ArrayList contactsWithNoName = new ArrayList<>();
+        String lastDisplayName = "XXX", lastRawId = "XXX";
+
+        while (data.moveToNext()) {
+            ProfileData profileData;
+            profileData = new ProfileData();
+            profileData.setTempFirstName(data.getString(givenNameIdx));
+            profileData.setTempNumber(data.getString(phoneIdx));
+            profileData.setProfileUrl(data.getString(photoURIIdx));
+            profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+            profileData.setTempRawId(data.getString(rawIdIdx));
+
+            if (profileData.getTempFirstName().equals(profileData.getTempNumber())) {
+                contactsWithNoName.add(profileData);
+            } else {
+                if (lastDisplayName.equals(profileData.getTempFirstName()) && lastRawId.equals
+                        (profileData.getTempRawId())) {
+                } else {
+                    arrayListPhoneBookContacts.add(profileData);
+                    lastDisplayName = profileData.getTempFirstName();
+                    lastRawId = profileData.getTempRawId();
+                }
+            }
+        }
+        arrayListPhoneBookContacts.addAll(contactsWithNoName);
+    }
+
     private void populateRecyclerView() {
         /*relativeRootFavourite.setVisibility(View.VISIBLE);
         layoutEmptyView.setVisibility(View.GONE);*/
@@ -501,24 +636,25 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
                     arrayListContactHeaders);
             recyclerViewContactList.setAdapter(allContactListAdapter);
 
-            setRecyclerViewLayoutManager(recyclerViewContactList);
+//            setRecyclerViewLayoutManager(recyclerViewContactList);
         } else {
             relativeRootFavourite.setVisibility(View.GONE);
             layoutEmptyView.setVisibility(View.VISIBLE);
             textEmptyView.setText("No Favourites");
         }
 
-        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+        getRcpDetail();
+        /*TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
         ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
         for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
             if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
                 if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
                         (i)).getLocalPhoneBookId())) {
                     ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
-                  /*  String name = tableProfileMaster.getNameFromRawId(((ProfileData)
+                  *//*  String name = tableProfileMaster.getNameFromRawId(((ProfileData)
                             arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId());
                     ((ProfileData) arrayListPhoneBookContacts.get(i))
-                            .setTempRcpName(name);*/
+                            .setTempRcpName(name);*//*
                     ArrayList<UserProfile> userProfiles = new ArrayList<>();
                     userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
                             (ProfileData) arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId
@@ -553,7 +689,7 @@ public class FavoritesFragment extends BaseFragment implements WsResponseListene
                     }
                 });
             }
-        }
+        }*/
 
     }
 

@@ -327,7 +327,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         }
 
-        if (fragment instanceof AllContactsListFragment) {
+        /*if (fragment instanceof AllContactsListFragment) {
             if (position == 1) {
                 holder.textContactName.setTextColor(colorPineGreen);
                 holder.textContactNumber.setTextColor(colorPineGreen);
@@ -341,7 +341,22 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 holder.textContactNumber.setTextColor(colorBlack);
                 holder.textCloudContactName.setVisibility(View.VISIBLE);
             }
+        }*/
+        if (fragment instanceof AllContactsListFragment && position == 1) {
+//            if (position == 1) {
+            holder.textContactName.setTextColor(colorPineGreen);
+            holder.textContactNumber.setTextColor(colorPineGreen);
+            holder.textCloudContactName.setVisibility(View.GONE);
+        } else {
+            if (showPineGreen) {
+                holder.textContactName.setTextColor(colorPineGreen);
+            } else {
+                holder.textContactName.setTextColor(colorBlack);
+            }
+            holder.textContactNumber.setTextColor(colorBlack);
+            holder.textCloudContactName.setVisibility(View.VISIBLE);
         }
+//        }
 
         holder.textContactNumber.setText(Utils.getFormattedNumber(context, profileData
                 .getTempNumber()));

@@ -212,11 +212,12 @@ public class QueryManager {
 
         // <editor-fold desc="Event">
         String eventQuery = "SELECT event." + TableEventMaster.COLUMN_EVM_START_DATE + ",event."
-                + TableEventMaster.COLUMN_EVM_EVENT_TYPE + ",event."
-                + TableEventMaster.COLUMN_EVM_RECORD_INDEX_ID + ",event." + TableEventMaster
-                .COLUMN_EVM_EVENT_PRIVACY + " FROM " + TableEventMaster.TABLE_RC_EVENT_MASTER + "" +
-                " event WHERE event." + TableEventMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " IN ("
-                + rcpId + ")";
+                + TableEventMaster.COLUMN_EVM_EVENT_TYPE + ",event." + TableEventMaster
+                .COLUMN_EVM_IS_YEAR_HIDDEN + ",event." + TableEventMaster.COLUMN_EVM_IS_PRIVATE +
+                ",event." + TableEventMaster.COLUMN_EVM_RECORD_INDEX_ID + ",event." +
+                TableEventMaster.COLUMN_EVM_EVENT_PRIVACY + " FROM " + TableEventMaster
+                .TABLE_RC_EVENT_MASTER + " event WHERE event." + TableEventMaster
+                .COLUMN_RC_PROFILE_MASTER_PM_ID + " IN (" + rcpId + ")";
 
         Cursor eventCursor = db.rawQuery(eventQuery, null);
 
@@ -235,6 +236,12 @@ public class QueryManager {
                 event.setEventPublic(Integer.parseInt(StringUtils.defaultString(eventCursor
                         .getString(eventCursor.getColumnIndex(TableEventMaster
                                 .COLUMN_EVM_EVENT_PRIVACY)), "0")));
+                event.setIsPrivate(Integer.parseInt(StringUtils.defaultString(eventCursor
+                        .getString(eventCursor.getColumnIndex(TableEventMaster
+                                .COLUMN_EVM_IS_PRIVATE)), "0")));
+                event.setIsYearHidden(Integer.parseInt(StringUtils.defaultString(eventCursor
+                        .getString(eventCursor.getColumnIndex(TableEventMaster
+                                .COLUMN_EVM_IS_YEAR_HIDDEN)), "0")));
                 event.setEventRcType(String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK));
                 arrayListEvent.add(event);
             } while (eventCursor.moveToNext());
