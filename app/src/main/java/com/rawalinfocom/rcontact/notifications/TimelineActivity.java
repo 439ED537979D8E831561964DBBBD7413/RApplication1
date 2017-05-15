@@ -112,7 +112,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
         init();
         tableCommentMaster = new TableCommentMaster(databaseHandler);
         initData();
-        getAllEventComment(TimelineActivity.this);
+       // getAllEventComment(TimelineActivity.this);
     }
 
     private void init() {
@@ -311,11 +311,13 @@ public class TimelineActivity extends BaseActivity implements RippleView
             TimelineItem item = new TimelineItem();
             TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
             TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
-            Event event = tableEventMaster.getEventByEvmRecordIndexId(comment.getEvmRecordIndexId());
+            if(comment.getEvmRecordIndexId()!=null) {
+                Event event = tableEventMaster.getEventByEvmRecordIndexId(comment.getEvmRecordIndexId());
+                item.setEventDetail(getResources().getString(R.string.text_wishes_on_your) + event.getEvmEventType());
+            }
             int pmId = comment.getRcProfileMasterPmId();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
             item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
-            item.setEventDetail(getResources().getString(R.string.text_wishes_on_your) + event.getEvmEventType());
             item.setWisherComment(comment.getCrmComment());
             item.setWisherCommentTime(comment.getCrmCreatedAt());
             item.setCrmCloudPrId(comment.getCrmCloudPrId());

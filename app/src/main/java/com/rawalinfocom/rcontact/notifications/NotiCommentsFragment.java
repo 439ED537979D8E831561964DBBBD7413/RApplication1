@@ -133,7 +133,7 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
 
         tableCommentMaster = new TableCommentMaster(getDatabaseHandler());
         initData();
-        getAllEventComment(this);
+        //getAllEventComment(this);
 
     }
 

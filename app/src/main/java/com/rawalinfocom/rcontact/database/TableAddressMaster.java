@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.rawalinfocom.rcontact.model.Address;
+import com.rawalinfocom.rcontact.model.ContactRequestData;
 
 import java.util.ArrayList;
 
@@ -359,12 +360,21 @@ public class TableAddressMaster {
         db.close();
     }
 
-    public int updatePrivacySettingToDefault(String cloudMongoId) {
+    public int updatePrivacySetting(ContactRequestData obj, String cloudMongoId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_AM_ADDRESS_PRIVACY, 2);
-
+        values.put(COLUMN_AM_IS_PRIVATE, 0);
+        values.put(COLUMN_AM_CITY, obj.getCity());
+        values.put(COLUMN_AM_COUNTRY, obj.getCountry());
+        values.put(COLUMN_AM_FORMATTED_ADDRESS, obj.getFormattedAddress());
+        values.put(COLUMN_AM_NEIGHBORHOOD, obj.getNeighborhood());
+        values.put(COLUMN_AM_POST_CODE, obj.getPostCode());
+        values.put(COLUMN_AM_PO_BOX, obj.getPoBox());
+        values.put(COLUMN_AM_STATE, obj.getState());
+        values.put(COLUMN_AM_STREET, obj.getStreet());
+        values.put(COLUMN_AM_GOOGLE_LATITUDE, obj.getGoogleLat());
+        values.put(COLUMN_AM_GOOGLE_LONGITUDE, obj.getGoogleLng());
         // updating row
         int isUpdated = db.update(TABLE_RC_ADDRESS_MASTER, values, COLUMN_AM_RECORD_INDEX_ID + " " +
                         "= ?",

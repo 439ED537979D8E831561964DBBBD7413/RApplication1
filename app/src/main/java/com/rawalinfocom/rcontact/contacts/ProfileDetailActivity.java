@@ -51,7 +51,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.ContactListingActivity;
-import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.CallHistoryListAdapter;
@@ -304,7 +303,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     ArrayList<Object> tempPhoneNumber;
     ArrayList<Object> tempEmail;
 
-    boolean isFromReceiver =  false;
+    boolean isFromReceiver = false;
+
     //<editor-fold desc="Override Methods">
 
     @Override
@@ -449,7 +449,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (profileActivityCallInstance) {
 //            fetchCallLogHistoryDateWise(historyNumber);
             fetchAllCallLogHistory(historyNumber);
-            if(isFromReceiver){
+            if (isFromReceiver) {
                 isFromReceiver = false;
                 Utils.setBooleanPreference(ProfileDetailActivity.this, AppConstants
                         .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
@@ -504,7 +504,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 break;
 
             case R.id.ripple_invite:
-                // TODO: 09/05/17
                 ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
                 for (int i = 0; i < tempPhoneNumber.size(); i++) {
                     ProfileDataOperationPhoneNumber phoneNumber = new
@@ -529,6 +528,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                 if (phoneNumbers.size() + emails.size() > 1) {
                     selectContactDialog(phoneNumbers, emails);
+                } else {
+                    if (phoneNumbers.size() > 0) {
+                        ArrayList<String> numbers = new ArrayList<>();
+                        for (int i = 0; i < phoneNumbers.size(); i++) {
+                            numbers.add(phoneNumbers.get(i).getPhoneNumber());
+                        }
+                        inviteContact(numbers, null);
+                    } else if (emails.size() > 0) {
+                        ArrayList<String> aryEmails = new ArrayList<>();
+                        for (int i = 0; i < emails.size(); i++) {
+                            aryEmails.add(emails.get(i).getEmEmailId());
+                        }
+                        inviteContact(null, aryEmails);
+                    }
                 }
 
                 break;
@@ -685,6 +698,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 }
                 break;
 
+            // Favourites
             case R.id.ripple_action_right_left:
                 if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_FAVOURITE)
                         || StringUtils.equals(imageRightLeft.getTag().toString(),
@@ -712,7 +726,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     arrayListFavourites.add(favouriteStatus);
                     setFavouriteStatus(arrayListFavourites);
 
-                    rContactApplication.setFavouriteModified(true);
+//                    rContactApplication.setFavouriteModified(true);
+                    if (favStatus == PhoneBookContacts.STATUS_FAVOURITE) {
+                        rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_ADDED);
+                    } else {
+                        rContactApplication.setFavouriteStatus(RContactApplication
+                                .FAVOURITE_REMOVED);
+                    }
 
                 } else if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_EDIT)) {
                     startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
@@ -1316,7 +1336,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             // <editor-fold desc="REQ_SEND_INVITATION">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_SEND_INVITATION)) {
-                // TODO: 09/05/17
+                WsResponseObject inviteContactResponse = (WsResponseObject) data;
+                if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
+                        (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail,
+                            "Invitation sent successfully");
+                } else {
+                    if (inviteContactResponse != null) {
+                        Log.e("error response", inviteContactResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "inviteContactResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                getString(R.string.msg_try_later));
+                    }
+                }
             }
             //</editor-fold>
 
@@ -2112,9 +2145,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 profileDataOperationVcard.setPbPhoneNumber(arrayListPhoneBookNumberOperation);
             }
 
+            tempPhoneNumber = new ArrayList<>();
             if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber) || !Utils.isArraylistNullOrEmpty
                     (arrayListPhoneBookNumber)) {
-                tempPhoneNumber = new ArrayList<>();
                 tempPhoneNumber.addAll(arrayListPhoneNumber);
                 tempPhoneNumber.addAll(arrayListPhoneBookNumber);
 
@@ -2178,9 +2211,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 profileDataOperationVcard.setPbEmailId(arrayListPhoneBookEmailOperation);
             }
 
+            tempEmail = new ArrayList<>();
             if (!Utils.isArraylistNullOrEmpty(arrayListEmail) || !Utils.isArraylistNullOrEmpty
                     (arrayListPhoneBookEmail)) {
-                tempEmail = new ArrayList<>();
                 tempEmail.addAll(arrayListEmail);
                 tempEmail.addAll(arrayListPhoneBookEmail);
                 linearEmail.setVisibility(View.VISIBLE);
