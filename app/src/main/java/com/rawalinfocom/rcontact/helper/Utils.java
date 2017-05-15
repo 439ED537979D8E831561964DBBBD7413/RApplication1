@@ -560,23 +560,27 @@ public class Utils {
     }
 
     public static String getFormattedNumber(Context context, String phoneNumber) {
-        Country country = (Country) Utils.getObjectPreference(context, AppConstants
-                .PREF_SELECTED_COUNTRY_OBJECT, Country.class);
-        String defaultCountryCode = "+91";
-        if (country != null) {
-            defaultCountryCode = country.getCountryCodeNumber();
-        }
-        if (!StringUtils.startsWith(phoneNumber, "+")) {
-            if (StringUtils.startsWith(phoneNumber, "0")) {
-                phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber, 1);
-            } else {
-                phoneNumber = defaultCountryCode + phoneNumber;
+        if (StringUtils.length(phoneNumber) > 0) {
+            Country country = (Country) Utils.getObjectPreference(context, AppConstants
+                    .PREF_SELECTED_COUNTRY_OBJECT, Country.class);
+            String defaultCountryCode = "+91";
+            if (country != null) {
+                defaultCountryCode = country.getCountryCodeNumber();
             }
-        }
+            if (!StringUtils.startsWith(phoneNumber, "+")) {
+                if (StringUtils.startsWith(phoneNumber, "0")) {
+                    phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber, 1);
+                } else {
+                    phoneNumber = defaultCountryCode + phoneNumber;
+                }
+            }
 
         /* remove special characters from number */
-        return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
-                "[\\D]", "");
+            return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
+                    "[\\D]", "");
+        } else {
+            return "";
+        }
     }
 
     public static boolean isLastItemDisplaying(RecyclerView recyclerView) {

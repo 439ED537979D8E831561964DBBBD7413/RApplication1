@@ -84,6 +84,7 @@ public class AppConstants {
     public static String EXTRA_PROFILE_IMAGE_URL = "profile_image_url";
     public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
     public static String EXTRA_CONTACT_POSITION = "contact_position";
+    public static String EXTRA_FAVOURITE_POSITION = "extra_favourite_position";
     public static String EXTRA_OBJECT_CONTACT = "extra_object_contact";
     public static String EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE = "extra_call_instance";
     public static String EXTRA_CALL_HISTORY_NAME = "extra_call_history_name";
@@ -143,6 +144,7 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_SMS_RECEIVER = "action_local_broadcast_sms_receiver";
     public static String ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_SMS =
             "action_local_broadcast_recent_sms";
+    public static String ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER = "action_local_broadcast_delete_sms_receiver";
 
     //</editor-fold>
 
@@ -189,6 +191,7 @@ public class AppConstants {
     public static String PREF_SMS_LOGS_ID_SET = "pref_sms_logs_id_set";
     public static String PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE = "pref_recent_calls_broadcast_receiver_main_instance";
     public static String PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE = "pref_recent_sms_broadcast_receiver_main_instance";
+    public static String PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB = "pref_recent_calls_broadcast_receiver_main_instance_call_log_tab";
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,

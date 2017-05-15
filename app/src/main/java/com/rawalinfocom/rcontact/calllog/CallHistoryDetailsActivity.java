@@ -657,8 +657,13 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     favouriteStatus.setIsFavourite(String.valueOf(favStatus));
                     arrayListFavourites.add(favouriteStatus);
                     setFavouriteStatus(arrayListFavourites);
-                    rContactApplication.setFavouriteModified(true);
-
+//                    rContactApplication.setFavouriteModified(true);
+                    if (favStatus == PhoneBookContacts.STATUS_FAVOURITE) {
+                        rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_ADDED);
+                    } else {
+                        rContactApplication.setFavouriteStatus(RContactApplication
+                                .FAVOURITE_REMOVED);
+                    }
                 }
                 break;
 
