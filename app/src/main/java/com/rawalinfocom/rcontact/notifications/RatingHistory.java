@@ -126,7 +126,7 @@ public class RatingHistory extends BaseActivity implements RippleView
         init();
         tableCommentMaster = new TableCommentMaster(databaseHandler);
         initData();
-        getAllEventRatingReceived(RatingHistory.this);
+       // getAllEventRatingReceived(RatingHistory.this);
     }
 
     private void getAllEventRatingReceived(Context context) {

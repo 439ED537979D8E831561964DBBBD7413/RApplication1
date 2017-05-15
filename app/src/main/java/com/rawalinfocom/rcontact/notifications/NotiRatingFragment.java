@@ -127,7 +127,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         init();
         tableCommentMaster = new TableCommentMaster(getDatabaseHandler());
         initData();
-        getAllRatingComment(this);
+       // getAllRatingComment(this);
 
     }
 
