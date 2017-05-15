@@ -15,7 +15,6 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.adapters.CallLogDialogListAdapter;
 import com.rawalinfocom.rcontact.adapters.SmsDialogListAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 
@@ -36,9 +35,10 @@ public class SMSMenuOptionsDialog {
     String numberToCall;
     RecyclerView.Adapter callingAdapter;
     String contactName;
+    String smsThreadId= "";
 
 
-    public SMSMenuOptionsDialog(Context context, ArrayList<String> arrayList, String number,String name) {
+    public SMSMenuOptionsDialog(Context context, ArrayList<String> arrayList, String number,String name,String threadId) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -56,13 +56,17 @@ public class SMSMenuOptionsDialog {
 
 
         stringArrayList = arrayList;
-
-        numberToCall =  Utils.getFormattedNumber(context,number);
+        if(number.length()>=10){
+            numberToCall =  Utils.getFormattedNumber(context,number);
+        }else{
+            numberToCall =  name;
+        }
         dialogTitle = getDialogTitle();
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
 
         contactName = name;
+        smsThreadId =  threadId;
         setAdapter();
 
         LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(context);
@@ -75,7 +79,7 @@ public class SMSMenuOptionsDialog {
     private void setAdapter() {
         if(!TextUtils.isEmpty(numberToCall)){
             SmsDialogListAdapter smsMenuOptionsDialog = new SmsDialogListAdapter(context, stringArrayList,
-                    numberToCall,contactName);
+                    numberToCall,contactName,smsThreadId);
             recycleViewDialog.setAdapter(smsMenuOptionsDialog);
             setRecyclerViewLayoutManager(recycleViewDialog);
         }

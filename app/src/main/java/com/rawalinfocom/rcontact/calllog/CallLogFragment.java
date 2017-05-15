@@ -186,6 +186,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         Utils.setBooleanPreference(getActivity(),AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,false);
         Utils.setBooleanPreference(getActivity(), AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE,true);
+        Utils.setBooleanPreference(getActivity(),AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,true);
 
         isCallLogFragment = true;
     }
@@ -280,7 +281,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 //                        callLogType.setHistoryLogCount(count);
                         String receiverDate = "Today";
 
+
                 /*if (!arrayListObjectCallLogs.contains(receiverDate)) {
+
                     arrayListCallLogHeader.add(0, receiverDate);
                     arrayListObjectCallLogs.add(0, receiverDate);
                     callLogListAdapter.notifyItemInserted(0);
@@ -1216,7 +1219,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         ArrayList<String> listOfIds = Utils.getArrayListPreference(getActivity(), AppConstants
                 .PREF_CALL_LOGS_ID_SET);
-        if (listOfIds == null) {
+        if (listOfIds == null && listOfIds.size()==1) {
             PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(getActivity());
             listOfIds = new ArrayList<>();
             Cursor cursor = phoneBookCallLogs.getAllCallLogId();
