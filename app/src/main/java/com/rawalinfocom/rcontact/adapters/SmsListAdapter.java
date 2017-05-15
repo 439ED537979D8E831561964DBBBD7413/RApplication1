@@ -22,13 +22,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.helper.SMSMenuOptionsDialog;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.listener.OnLoadMoreListener;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Aniruddh on 21/04/17.
@@ -50,6 +54,8 @@ public class SmsListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolde
     private boolean isMoreData = false;
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
+    ArrayList<String> arrayListForKnownContact;
+
 
     public SmsListAdapter(Context context, ArrayList<SmsDataType> SmsListAdapter, RecyclerView recyclerView) {
         this.context = context;
@@ -136,6 +142,7 @@ public class SmsListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolde
             String isRead = smsDataType.getIsRead();
        /* Log.i("SMS Read", isRead);
         Log.i("SMS", " Number : " + smsDataType.getNumber() + " Thread ID " + smsDataType.getThreadId());*/
+            final String threadID =  smsDataType.getThreadId();
 
             final String address = smsDataType.getAddress();
             final String number = smsDataType.getNumber();
@@ -225,7 +232,26 @@ public class SmsListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolde
             userViewHolder.image3dotsSmsLog.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                arrayListForKnownContact =
+
+                    setSelectedSmsType(smsDataType);
+                    setSelectedPosition(position);
+
+                    Pattern numberPat = Pattern.compile("\\d+");
+                    Matcher matcher1 = numberPat.matcher(address);
+                    if (matcher1.find()) {
+                        arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + address, context.getString(R.string.add_to_contact),
+                                context.getString(R.string.add_to_existing_contact),
+                                context.getString(R.string.copy_phone_number) , context.getString(R.string.delete)));
+                    }else{
+                        arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + address,
+                                context.getString(R.string.copy_phone_number) , context.getString(R.string.delete)));
+                    }
+
+                    SMSMenuOptionsDialog smsMenuOptionsDialog =  new SMSMenuOptionsDialog(context,arrayListForKnownContact,
+                            add,address,threadID);
+                    smsMenuOptionsDialog.setDialogTitle(address);
+                    smsMenuOptionsDialog.showDialog();
+
                 }
             });
 
