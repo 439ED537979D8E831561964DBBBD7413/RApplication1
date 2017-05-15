@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
@@ -187,8 +188,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
                 bundle.putString(AppConstants.EXTRA_PM_ID, userProfile.getPmId());
-                bundle.putString(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, holder
-                        .textContactNumber.getText().toString());
+                bundle.putString(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, userProfile
+                        .getPmRawId());
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
 //                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, userProfile.getPmRawId());
                 TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
@@ -237,6 +238,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         RatingBar ratingUser;
         @BindView(R.id.button_invite)
         Button buttonInvite;
+        @BindView(R.id.linear_rating)
+        LinearLayout linearRating;
 
         RContactViewHolder(View itemView) {
             super(itemView);
@@ -255,6 +258,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             buttonInvite.setVisibility(View.GONE);
             imageSocialMedia.setVisibility(View.GONE);
+//            linearRating.setVisibility(View.GONE);
 
         }
     }

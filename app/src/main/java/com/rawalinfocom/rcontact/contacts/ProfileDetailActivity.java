@@ -1751,15 +1751,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (isHideFavourite) {
                 rippleActionRightLeft.setEnabled(false);
-                if (checkNumberFavourite != null && arrayListFavouriteContacts.contains
-                        (checkNumberFavourite)) {
-                    imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
+                /*if (checkNumberFavourite != null && arrayListFavouriteContacts.contains
+                        (checkNumberFavourite)) {*/
+                if (checkNumberFavourite != null) {
+                    if (phoneBookContacts.getStarredStatusFromRawId(checkNumberFavourite)) {
+                        imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
+                    } else {
+                        imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
+                    }
                 } else {
                     imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
                 }
             }
-
         }
+
     }
 
     private void init() {

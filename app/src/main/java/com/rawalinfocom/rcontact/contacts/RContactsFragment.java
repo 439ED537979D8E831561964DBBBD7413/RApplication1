@@ -154,7 +154,7 @@ public class RContactsFragment extends BaseFragment {
                 .getRContactList();
         arrayListRContact = new ArrayList<>();
         if (arrayListDisplayProfile.size() > 0) {
-            for (int i = 0; i < arrayListDisplayProfile.size(); i++) {
+            /*for (int i = 0; i < arrayListDisplayProfile.size(); i++) {
                 String headerLetter = StringUtils.upperCase(StringUtils.substring
                         (arrayListDisplayProfile.get(i).getPmFirstName(), 0, 1));
                 if (!arrayListRContact.contains(headerLetter)) {
@@ -162,14 +162,13 @@ public class RContactsFragment extends BaseFragment {
                     arrayListContactHeaders.add(headerLetter);
                 }
                 arrayListRContact.add(arrayListDisplayProfile.get(i));
-            }
+            }*/
+            arrayListRContact.addAll(arrayListDisplayProfile);
             rContactListAdapter = new RContactListAdapter(getActivity(), arrayListRContact,
                     arrayListContactHeaders);
             recyclerViewContactList.setAdapter(rContactListAdapter);
 
         }
-
-        textTotalContacts.setText(arrayListDisplayProfile.size() + " Contacts");
 
     }
 
@@ -215,7 +214,7 @@ public class RContactsFragment extends BaseFragment {
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 /* Disable swiping in headers */
-                if (viewHolder instanceof RContactListAdapter.ContactHeaderViewHolder|| viewHolder
+                if (viewHolder instanceof RContactListAdapter.ContactHeaderViewHolder || viewHolder
                         instanceof RContactListAdapter.ContactFooterViewHolder) {
                     return 0;
                 }
