@@ -185,6 +185,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             AppConstants.setIsFirstTime(true);
 
         Utils.setBooleanPreference(getActivity(),AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,false);
+        Utils.setBooleanPreference(getActivity(), AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE,true);
 
         isCallLogFragment = true;
     }
