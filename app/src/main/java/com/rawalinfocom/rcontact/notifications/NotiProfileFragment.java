@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,7 +128,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
         ButterKnife.bind(this, view);
         init();
         initData();
-        getAllProfileRequestAndResponse(this);
+//        getAllProfileRequestAndResponse(this);
     }
 
     private void getAllProfileRequestAndResponse(NotiProfileFragment fragment) {
@@ -476,7 +475,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                         data.getPpmParticular(),
                         Utils.getLocalTimeFromUTCTime(data.getCreatedAt()),
                         Utils.getLocalTimeFromUTCTime(data.getUpdatedAt()));
-                updatePrivacySetting(data.getPpmTag(),data.getCarMongodbRecordIndex());
+               // updatePrivacySetting(data.getPpmTag(),data.getCarMongodbRecordIndex());
             }
 
         }
@@ -507,30 +506,30 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
         updateHeight();
     }
 
-    private String updatePrivacySetting(String ppmTag, String cloudMongoId) {
-        switch (ppmTag) {
-            case "pb_phone_number":
-                TableMobileMaster tableMobileMaster= new TableMobileMaster(getDatabaseHandler());
-                tableMobileMaster.updatePrivacySettingToDefault(cloudMongoId);
-                break;
-            case "pb_email_id":
-                TableEmailMaster tableEmailMaster= new TableEmailMaster(getDatabaseHandler());
-                tableEmailMaster.updatePrivacySettingToDefault(cloudMongoId);
-                break;
-            case "pb_address":
-                TableAddressMaster tableAddressMaster= new TableAddressMaster(getDatabaseHandler());
-                tableAddressMaster.updatePrivacySettingToDefault(cloudMongoId);
-                break;
-            case "pb_im_accounts":
-                TableImMaster tableImMaster=new TableImMaster(getDatabaseHandler());
-                tableImMaster.updatePrivacySettingToDefault(cloudMongoId);
-                break;
-            case "pb_event":
-                TableEventMaster tableEventMaster= new TableEventMaster(getDatabaseHandler());
-                tableEventMaster.updatePrivacySettingToDefault(cloudMongoId);
-                break;
-        }
-        return "";
-
-    }
+//    private String updatePrivacySetting(String ppmTag, String cloudMongoId) {
+//        switch (ppmTag) {
+//            case "pb_phone_number":
+//                TableMobileMaster tableMobileMaster= new TableMobileMaster(getDatabaseHandler());
+//                tableMobileMaster.updatePrivacySetting(cloudMongoId);
+//                break;
+//            case "pb_email_id":
+//                TableEmailMaster tableEmailMaster= new TableEmailMaster(getDatabaseHandler());
+//                tableEmailMaster.updatePrivacySetting(cloudMongoId);
+//                break;
+//            case "pb_address":
+//                TableAddressMaster tableAddressMaster= new TableAddressMaster(getDatabaseHandler());
+//                tableAddressMaster.updatePrivacySetting(cloudMongoId);
+//                break;
+//            case "pb_im_accounts":
+//                TableImMaster tableImMaster=new TableImMaster(getDatabaseHandler());
+//                tableImMaster.updatePrivacySetting(cloudMongoId);
+//                break;
+//            case "pb_event":
+//                TableEventMaster tableEventMaster= new TableEventMaster(getDatabaseHandler());
+//                tableEventMaster.updatePrivacySetting(cloudMongoId);
+//                break;
+//        }
+//        return "";
+//
+//    }
 }

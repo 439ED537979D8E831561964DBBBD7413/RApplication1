@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.ContactRequestData;
 import com.rawalinfocom.rcontact.model.MobileNumber;
 
 import java.util.ArrayList;
@@ -383,11 +384,12 @@ public class TableMobileMaster {
         db.close();
     }
 
-    public int updatePrivacySettingToDefault(String cloudMongoId) {
+    public int updatePrivacySetting(ContactRequestData obj, String cloudMongoId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_MNM_NUMBER_PRIVACY, 2);
+        values.put(COLUMN_MNM_IS_PRIVATE, 0);
+        values.put(COLUMN_MNM_MOBILE_NUMBER, obj.getPhNo());
 
         // updating row
         int isUpdated = db.update(TABLE_RC_MOBILE_NUMBER_MASTER, values,

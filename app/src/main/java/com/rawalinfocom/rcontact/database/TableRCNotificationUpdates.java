@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.rawalinfocom.rcontact.model.NotificationData;
 import com.rawalinfocom.rcontact.model.RcontactUpdatesData;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.NotiRContactsItem;
@@ -44,7 +45,7 @@ public class TableRCNotificationUpdates {
             " UNIQUE(" + COLUMN_NU_CLOUD_ID + ")" +
             ");";
 
-    public void addUpdate(RcontactUpdatesData rconUpdate) {
+    public void addUpdate(NotificationData rconUpdate) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
