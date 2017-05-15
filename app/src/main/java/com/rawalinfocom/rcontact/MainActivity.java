@@ -1289,6 +1289,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 Utils.setBooleanPreference(MainActivity.this, AppConstants
                                         .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
                                 AppConstants.isFromReceiver = false;
+                                CallLogFragment.isIdsFetchedFirstTime = false;
+//                                rContactApplication.setArrayListCallLogType(null);
                             }else{
                                 /*if(Utils.getBooleanPreference(MainActivity.this,
                                         AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false)){

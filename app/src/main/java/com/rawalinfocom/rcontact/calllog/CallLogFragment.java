@@ -151,7 +151,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     int adapterSetCount = 0;
     boolean isLastRecord = false;
     private static int firstVisibleInListview;
-    boolean isIdsFetchedFirstTime = false;
+    public static  boolean isIdsFetchedFirstTime = false;
     boolean noOfIdsToFetch = false;
     boolean isCallLogFragment = false;
 
@@ -1050,6 +1050,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             cursor.close();
             Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOGS_ID_SET,
                     listOfIds);
+            isFirstChuck = false;
+            count =0;
         }
 
 
@@ -1219,7 +1221,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         ArrayList<String> listOfIds = Utils.getArrayListPreference(getActivity(), AppConstants
                 .PREF_CALL_LOGS_ID_SET);
-        if (listOfIds == null && listOfIds.size()==1) {
+        if (listOfIds == null ||  listOfIds.size()==1) {
             PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(getActivity());
             listOfIds = new ArrayList<>();
             Cursor cursor = phoneBookCallLogs.getAllCallLogId();
