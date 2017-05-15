@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.rawalinfocom.rcontact.model.ContactRequestData;
 import com.rawalinfocom.rcontact.model.ImAccount;
 
 import java.util.ArrayList;
@@ -260,11 +261,12 @@ public class TableImMaster {
         db.close();
     }
 
-    public int updatePrivacySettingToDefault(String cloudMongoId) {
+    public int updatePrivacySetting(ContactRequestData obj, String cloudMongoId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_IM_PRIVACY, 2);
+        values.put(COLUMN_IM_IS_PRIVATE, 0);
+        values.put(COLUMN_IM_DETAIL, obj.getImAccountDetails());
 
         // updating row
         int isUpdated = db.update(TABLE_RC_IM_MASTER, values, COLUMN_IM_RECORD_INDEX_ID + " = ?",

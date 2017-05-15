@@ -10,11 +10,7 @@
         android:id="@+id/text_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/margin_tiny"
-        android:paddingLeft="@dimen/activity_half_horizontal_margin"
-        android:paddingRight="@dimen/activity_half_horizontal_margin"
-        android:paddingTop="@dimen/margin_tiny"
-        android:textAppearance="?android:textAppearanceMedium"
+        android:padding="@dimen/activity_half_horizontal_margin"
         tools:text="A"/>
 
     <!--<View

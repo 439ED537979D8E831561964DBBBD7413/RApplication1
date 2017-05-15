@@ -1,3 +1,4 @@
+
 package com.rawalinfocom.rcontact.notifications;
 
 import android.os.Bundle;
@@ -65,7 +66,7 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
         tableRCNotificationUpdates = new TableRCNotificationUpdates(getDatabaseHandler());
         init();
         initData();
-        getAllRContactUpdates(this);
+//        getAllRContactUpdates(this);
     }
 
     private void initData() {
@@ -102,7 +103,7 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
                 if (wsResponseObject != null) {
                     ArrayList<RcontactUpdatesData> updatesData = wsResponseObject.getRcontactUpdate();
-                    saveUpdatesToDb(updatesData);
+//                    saveUpdatesToDb(updatesData);
                 }
                 Utils.hideProgressDialog();
 
@@ -113,18 +114,18 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
         }
     }
 
-    private void saveUpdatesToDb(ArrayList<RcontactUpdatesData> updatesData) {
-        {
-            if (updatesData == null) {
-                return;
-            }
-            for (RcontactUpdatesData rconUpdate : updatesData) {
-                tableRCNotificationUpdates.addUpdate(rconUpdate);
-                refreshAllList();
-            }
-        }
-
-    }
+//    private void saveUpdatesToDb(ArrayList<RcontactUpdatesData> updatesData) {
+//        {
+//            if (updatesData == null) {
+//                return;
+//            }
+//            for (RcontactUpdatesData rconUpdate : updatesData) {
+//                tableRCNotificationUpdates.addUpdate(rconUpdate);
+//                refreshAllList();
+//            }
+//        }
+//
+//    }
 
     private void refreshAllList() {
         ArrayList<NotiRContactsItem> updates = tableRCNotificationUpdates.getAllUpdatesFromDB();

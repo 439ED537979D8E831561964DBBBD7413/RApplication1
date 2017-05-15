@@ -7,15 +7,12 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
 
-import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 
 import java.util.ArrayList;
-
-import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by Monal on 20/10/16.
@@ -25,13 +22,18 @@ import io.fabric.sdk.android.Fabric;
 
 public class RContactApplication extends Application {
 
+    public static final int FAVOURITE_UNMODIFIED = 0;
+    public static final int FAVOURITE_ADDED = 1;
+    public static final int FAVOURITE_REMOVED = 2;
+
+
     ArrayList<Object> arrayListAllPhoneBookContacts;
     ArrayList<String> arrayListAllContactHeaders;
 
     ArrayList<Object> arrayListFavPhoneBookContacts;
     ArrayList<String> arrayListFavContactHeaders;
 
-    boolean isFavouriteModified;
+    int favouriteStatus;
 
     ArrayList<Object> arrayListObjectCallLogs;
     ArrayList<String> arrayListcallLogsHeaders;
@@ -142,12 +144,20 @@ public class RContactApplication extends Application {
         this.arrayListFavContactHeaders = arrayListFavContactHeaders;
     }
 
-    public boolean isFavouriteModified() {
+ /*   public boolean isFavouriteModified() {
         return isFavouriteModified;
     }
 
     public void setFavouriteModified(boolean favouriteModified) {
         isFavouriteModified = favouriteModified;
+    }*/
+
+    public int getFavouriteStatus() {
+        return favouriteStatus;
+    }
+
+    public void setFavouriteStatus(int favouriteStatus) {
+        this.favouriteStatus = favouriteStatus;
     }
 
     public ArrayList<Object> getArrayListObjectCallLogs() {

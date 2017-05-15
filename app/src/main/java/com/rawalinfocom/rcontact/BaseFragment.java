@@ -71,6 +71,9 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public String getUserPmId() {
+        if (getActivity() == null) {
+            return null;
+        }
         return ((BaseActivity) getActivity()).getUserPmId();
     }
 }

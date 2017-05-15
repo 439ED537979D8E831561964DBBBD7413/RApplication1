@@ -55,13 +55,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         holder.textEventCommentTime.setText(Utils.formatDateTime(item.getCommentTime(), "dd-MM hh:mm a"));
         int notiType = item.getEventType();
         String on = context.getResources().getString(R.string.text_on);
+        String eventDetail = "";
+        if (item.getEventDetail().length() != 0) {
+            eventDetail = item.getEventDetail() + ", ";
+        }
         if (notiType == AppConstants.COMMENT_TYPE_BIRTHDAY) {
-            if (recyclerPosition == 0)
-                holder.textEventDetailInfo.setText(item.getEventDetail() + ", " + item.getEventName());
-            else
-                holder.textEventDetailInfo.setText(item.getEventDetail() + ", " + item.getEventName() + on + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
+            holder.textEventDetailInfo.setText(eventDetail + item.getEventName() + on + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
         } else if (notiType == AppConstants.COMMENT_TYPE_ANNIVERSARY) {
-            holder.textEventDetailInfo.setText(item.getEventDetail() + on + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
+            holder.textEventDetailInfo.setText(eventDetail + item.getEventName() + on + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
         } else {
             holder.textEventDetailInfo.setText(item.getEventName() + on + Utils.formatDateTime(item.getEventDate(), "dd MMM"));
         }
