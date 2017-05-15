@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.rawalinfocom.rcontact">
+    package="com.rawalinfocom.rcontact">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
-    <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
-    <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.camera.autofocus"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.camera.flash"
-        android:required="false"/>
+        android:required="false" />
 
     <!-- Creating Permission to receive Google Maps -->
     <permission
         android:name="com.app.loople.permission.MAPS_RECEIVE"
-        android:protectionLevel="signature"/>
+        android:protectionLevel="signature" />
 
     <!-- Permission to receive Google Maps -->
-    <uses-permission android:name="com.app.loople.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="com.app.loople.permission.MAPS_RECEIVE" />
 
     <permission
         android:name="com.rawalinfocom.rcontact.permission.C2D_MESSAGE"
-        android:protectionLevel="signature"/>
+        android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.rawalinfocom.rcontact.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="com.rawalinfocom.rcontact.permission.C2D_MESSAGE" />
 
     <application
         android:name=".RContactApplication"
@@ -51,32 +51,42 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
+   See README(https://goo.gl/l4GJaQ) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
+            android:value="@string/facebook_app_id" />
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7"/>
+            android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7" />
 
         <!-- The API key for  Google Maps-based APIs. -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key"/>
+            android:value="@string/google_maps_key" />
 
-        <activity android:name=".MobileNumberRegistrationActivity"/>
+        <activity android:name=".MobileNumberRegistrationActivity" />
         <activity
             android:name=".CountryListActivity"
-            android:windowSoftInputMode="stateHidden"/>
-        <activity android:name=".OtpVerificationActivity"/>
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".OtpVerificationActivity" />
 
         <receiver android:name=".receivers.OtpReceiver">
             <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
 
-        <activity android:name=".BaseActivity"/>
-        <activity android:name=".ProfileRegistrationActivity"/>
+        <activity android:name=".BaseActivity" />
+        <activity android:name=".ProfileRegistrationActivity" />
         <activity android:name=".MainActivity">
             <!-- <intent-filter>
                  <action android:name="android.intent.action.MAIN"/>
@@ -88,7 +98,7 @@
         <service
             android:name=".services.ContactIdFetchService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
 
         <activity android:name=".contacts.ProfileDetailActivity">
 
@@ -100,16 +110,28 @@
              </intent-filter>
             -->
         </activity>
-        <activity android:name=".ContactListingActivity"/>
+        <activity android:name=".ContactListingActivity" />
 
         <receiver android:name=".receivers.PhoneCallReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE"/>
+                <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".services.NotificationFCMService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service android:name=".services.FCMNotificationInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
 
         <receiver android:name=".receivers.SmsReceiver">
             <intent-filter>
@@ -117,48 +139,39 @@
             </intent-filter>
         </receiver>
 
-        <!--
-        <receiver android:name=".calllog.CallLogFragment$CallLogReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.CallLogBroadcastReceiver" />
-            </intent-filter>
-        </receiver>
-        -->
-
         <service
             android:name=".services.ContactSyncService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
 
-        <activity android:name=".notifications.TimelineActivity"/>
-        <activity android:name=".notifications.EventsActivity"/>
-        <activity android:name=".notifications.NotificationsActivity"/>
+        <activity android:name=".notifications.TimelineActivity" />
+        <activity android:name=".notifications.EventsActivity" />
+        <activity android:name=".notifications.NotificationsActivity" />
         <activity
             android:name=".notifications.NotificationsDetailActivity"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".contacts.EditProfileActivity"
-            android:windowSoftInputMode="stateHidden"/>
-        <activity android:name=".contacts.MapsActivity"/>
-        <activity android:name=".calllog.CallLogDeleteActivity"/>
-        <activity android:name=".calllog.CallHistoryDetailsActivity"/>
-        <activity android:name=".BlockContactListActivity"/>
-        <activity android:name=".calldialer.DialerActivity"/>
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".contacts.MapsActivity" />
+        <activity android:name=".calllog.CallLogDeleteActivity" />
+        <activity android:name=".calllog.CallHistoryDetailsActivity" />
+        <activity android:name=".BlockContactListActivity" />
+        <activity android:name=".calldialer.DialerActivity" />
 
         <service
             android:name=".services.CallLogIdFetchService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
 
         <activity
             android:name=".notifications.RatingHistory"
-            android:windowSoftInputMode="adjustResize"/>
-        <activity
-            android:name=".SplashActivity">
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".SplashActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
