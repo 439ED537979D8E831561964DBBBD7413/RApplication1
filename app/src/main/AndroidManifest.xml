@@ -120,6 +120,7 @@
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
+
         <service android:name=".services.NotificationFCMService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -131,19 +132,12 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
         <receiver android:name=".receivers.SmsReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
-
-        <!--
-        <receiver android:name=".calllog.CallLogFragment$CallLogReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.CallLogBroadcastReceiver" />
-            </intent-filter>
-        </receiver>
-        -->
 
         <service
             android:name=".services.ContactSyncService"
