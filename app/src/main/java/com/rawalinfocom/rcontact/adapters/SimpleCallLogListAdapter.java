@@ -62,6 +62,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
     CallLogType selectedCallLogData;
     long selectedLogDate = 0;
     long dateFromReceiver;
+    String formattedNumber ="";
 
     public int getSelectedPosition() {
         return selectedPosition;
@@ -95,10 +96,13 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         final CallLogType callLogType = (CallLogType) arrayListCallLogs.get(position);
         final String name = callLogType.getName();
         final String number = callLogType.getNumber();
+        if(!TextUtils.isEmpty(number)){
+            formattedNumber = Utils.getFormattedNumber(context, number);
+        }
         final String uniqueRowID = callLogType.getUniqueContactId();
 
         if (!TextUtils.isEmpty(number)) {
-            holder.textTempNumber.setText(number);
+            holder.textTempNumber.setText(formattedNumber);
         }
         if (!TextUtils.isEmpty(name)) {
             holder.textContactName.setTypeface(Utils.typefaceBold(context));
@@ -110,8 +114,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             if (matcher1.find()) {
                 holder.textContactNumber.setText("Unsaved,");
             } else {
-//                String formattedNumber = Utils.getFormattedNumber(context, number);
-                holder.textContactNumber.setText(number + ",");
+                holder.textContactNumber.setText(formattedNumber + ",");
             }
 
         } else {
@@ -119,8 +122,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                 holder.textContactName.setTypeface(Utils.typefaceBold(context));
                 holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                         .colorBlack));
-//                String formattedNumber = Utils.getFormattedNumber(context, number);
-                holder.textContactName.setText(number);
+                holder.textContactName.setText(formattedNumber);
                 holder.textContactNumber.setText("Unsaved,");
             } else {
                 holder.textContactName.setText(" ");

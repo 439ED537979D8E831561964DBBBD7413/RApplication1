@@ -1724,8 +1724,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                         while (cursor.moveToNext()) {
                             CallLogType log = new CallLogType(getActivity());
-                            String formattedNumber = Utils.getFormattedNumber(getActivity(), cursor.getString(number));
-                            log.setNumber(formattedNumber);
+//                            String formattedNumber = Utils.getFormattedNumber(getActivity(), cursor.getString(number));
+                            String numberToSave =  cursor.getString(number);
+                            log.setNumber(numberToSave);
                             String userName = cursor.getString(name);
                             if (!TextUtils.isEmpty(userName))
                                 log.setName(userName);

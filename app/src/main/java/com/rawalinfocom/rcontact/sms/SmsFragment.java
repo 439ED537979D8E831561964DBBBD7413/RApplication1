@@ -125,6 +125,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     public void onPause() {
         super.onPause();
         isFirstTime = false;
+//        AppConstants.isComposingSMS = true;
     }
 
     @Override
@@ -290,6 +291,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 smsDataTypeArrayList = null;
                 logsDisplayed = 0;
                 smsListAdapter = null;
+                count =0;
+                Utils.setBooleanPreference(getActivity(), AppConstants
+                        .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
                 AppConstants.setIsFirstTime(true);
                 loadData();
 
