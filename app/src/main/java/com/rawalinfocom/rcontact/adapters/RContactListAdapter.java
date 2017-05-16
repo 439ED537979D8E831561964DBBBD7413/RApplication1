@@ -25,6 +25,7 @@ import com.rawalinfocom.rcontact.model.UserProfile;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,6 +44,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final int HEADER = 0, CONTACT = 1, FOOTER = 2;
 
     private int previousPosition = 0;
+
+    private ArrayList<Integer> mSectionPositions;
 
     //<editor-fold desc="Constructor">
     public RContactListAdapter(Context context, ArrayList<Object> arrayListUserProfile,
@@ -122,17 +125,38 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public Object[] getSections() {
-        return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
+//        return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
+        List<String> sections = new ArrayList<>();
+        mSectionPositions = new ArrayList<>();
+        for (int i = 0, size = arrayListUserProfile.size(); i < size; i++) {
+            if (arrayListUserProfile.get(i) instanceof UserProfile) {
+                String name = ((UserProfile) arrayListUserProfile.get(i)).getPmFirstName();
+                if (name == null) {
+                    String section = "#";
+                    if (!sections.contains(section)) {
+                        sections.add(section);
+                        mSectionPositions.add(i);
+                    }
+                } else {
+                    String section = String.valueOf(name.charAt(0)).toUpperCase();
+                    if (!sections.contains(section)) {
+                        sections.add(section);
+                        mSectionPositions.add(i);
+                    }
+                }
+            }
+        }
+        return sections.toArray(new String[0]);
     }
 
     @Override
     public int getPositionForSection(int sectionIndex) {
-        return 0;
+        return mSectionPositions.get(sectionIndex);
     }
 
     @Override
     public int getSectionForPosition(int position) {
-        if (position >= arrayListUserProfile.size()) {
+        /*if (position >= arrayListUserProfile.size()) {
             position = arrayListUserProfile.size() - 1;
         }
 
@@ -149,7 +173,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
 
-        return previousPosition;
+        return previousPosition;*/
+        return 0;
     }
 
     //</editor-fold>

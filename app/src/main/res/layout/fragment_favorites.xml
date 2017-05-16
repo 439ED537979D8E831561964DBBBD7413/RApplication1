@@ -28,11 +28,17 @@
             wheel:matProg_barColor="@color/colorAccent"
             wheel:matProg_progressIndeterminate="true"/>
 
-        <android.support.v7.widget.RecyclerView
+   <!--     <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view_contact_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_total_contacts"/>
+            android:layout_below="@id/text_total_contacts"/>-->
+        <com.rawalinfocom.rcontact.helper.alphabetsIndexFastScrollRecycler.IndexFastScrollRecyclerView
+            android:id="@+id/recycler_view_contact_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_total_contacts"
+            tools:listitem="@layout/list_item_all_contacts" />
 
         <!-- <RelativeLayout
              android:id="@+id/relative_scroller"
