@@ -37,7 +37,6 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
-import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
@@ -163,8 +162,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //        phoneBookContacts = new PhoneBookContacts(getActivity());
 
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
-        Utils.setBooleanPreference(getActivity(),AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,true);
-        Utils.setBooleanPreference(getActivity(), AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE,true);
+        Utils.setBooleanPreference(getActivity(), AppConstants
+                .PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, true);
+        Utils.setBooleanPreference(getActivity(), AppConstants
+                .PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, true);
+        Utils.setBooleanPreference(getActivity(), AppConstants
+                .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB, false);
+
 
         lastSyncedData = Utils.getIntegerPreference(getActivity(), AppConstants
                 .PREF_SYNCED_CONTACTS, 0);
@@ -589,6 +593,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         set.add(ContactsContract.CommonDataKinds.StructuredName.PREFIX);
         set.add(ContactsContract.CommonDataKinds.StructuredName.SUFFIX);
         set.add(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME);
+        set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
         set.add(ContactsContract.Contacts.PHOTO_ID);
         set.add(ContactsContract.Contacts.LOOKUP_KEY);
 
@@ -599,7 +604,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
         };
-        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+//        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
 
         // Starts the query
         return new CursorLoader(
@@ -623,7 +629,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
 //        };*/
 //        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER,
-//                ContactsContract.Data.LOOKUP_KEY, ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI,
+//                ContactsContract.Data.LOOKUP_KEY, ContactsContract.PhoneLookup
+// .PHOTO_THUMBNAIL_URI,
 //                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract
 //                .CommonDataKinds.Phone._ID, ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
 //                ContactsContract.Contacts._ID};
@@ -956,8 +963,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
 //                    profileData.setTempNumber(Utils.getFormattedNumber(getActivity(), data
 //                            .getString(phoneIdx)));
-                    profileData.setTempNumber(data
-                            .getString(phoneIdx));
+                    profileData.setTempNumber(data.getString(phoneIdx));
+                    profileData.setProfileUrl(data.getString(photoURIIdx));
                     break;
                 case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
                     profileData.setTempFirstName(data.getString(givenNameIdx));

@@ -110,6 +110,8 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             AppConstants.setIsFirstTime(true);
 
         Utils.setBooleanPreference(getActivity(), AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE,false);
+        Utils.setBooleanPreference(getActivity(),AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false);
+
         registerLocalBroadcast();
         smsDataTypeReceiver =  new SmsDataType();
     }
@@ -123,6 +125,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     public void onPause() {
         super.onPause();
         isFirstTime = false;
+//        AppConstants.isComposingSMS = true;
     }
 
     @Override
@@ -288,6 +291,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 smsDataTypeArrayList = null;
                 logsDisplayed = 0;
                 smsListAdapter = null;
+                count =0;
+              /*  Utils.setBooleanPreference(getActivity(), AppConstants
+                        .PREF_SMS_LOG_STARTS_FIRST_TIME, true);*/
                 AppConstants.setIsFirstTime(true);
                 loadData();
 
@@ -341,7 +347,10 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_SMS_RECEIVER);
         localBroadcastManager.registerReceiver(localBroadcastSmsReceiver, intentFilter);
 
-
+        LocalBroadcastManager localBroadcastManagerDeleteSMS = LocalBroadcastManager.getInstance
+                (getActivity());
+        IntentFilter intentFilter1 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER);
+        localBroadcastManagerDeleteSMS.registerReceiver(localBroadcastReceiverDeleteSMS, intentFilter1);
     }
 
     private void unRegisterLocalBroadcast(){
@@ -349,6 +358,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 (getActivity());
         localBroadcastManager.unregisterReceiver(localBroadcastSmsReceiver);
 
+        LocalBroadcastManager localBroadcastManagerDeleteSMS = LocalBroadcastManager.getInstance
+                (getActivity());
+        localBroadcastManagerDeleteSMS.unregisterReceiver(localBroadcastReceiverDeleteSMS);
     }
 
     private void init() {
@@ -1022,6 +1034,38 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             }
         }
 
+    };
+
+
+    private BroadcastReceiver localBroadcastReceiverDeleteSMS = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("SmsFragment", "onReceive() of LocalBroadcast");
+            try{
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                            if (smsListAdapter != null) {
+                                int itemIndexToRemove = smsListAdapter.getSelectedPosition();
+                                SmsDataType smsDataToUpdate = smsListAdapter
+                                        .getSelectedSmsType();
+                                smsDataTypeArrayList.remove(smsDataToUpdate);
+                                rContactApplication.setArrayListSmsLogType(smsDataTypeArrayList);
+                                String idToRemove = smsDataToUpdate.getUniqueRowId();
+                                listOfIds.remove(idToRemove);
+                                Utils.setArrayListPreference(getActivity(), AppConstants.PREF_SMS_LOGS_ID_SET,
+                                        listOfIds);
+                                smsListAdapter.notifyItemRemoved(itemIndexToRemove);
+                        }
+                    }
+                }, 1000);
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
     };
 
 }

@@ -428,14 +428,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         init();
 
-       /* if (!TextUtils.isEmpty(historyName)) {
-            fetchCallLogHistory(historyName);
+        if (!TextUtils.isEmpty(historyName)) {
+            fetchAllCallLogHistory(historyName);
 
-        } else {*/
+        } else {
 //        fetchCallLogHistoryDateWise(historyNumber);
         fetchAllCallLogHistory(historyNumber);
 
-//        }
+        }
 
     }
 
@@ -448,7 +448,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         if (profileActivityCallInstance) {
 //            fetchCallLogHistoryDateWise(historyNumber);
-            fetchAllCallLogHistory(historyNumber);
+//            fetchAllCallLogHistory(historyNumber);
+            if (!TextUtils.isEmpty(historyName)) {
+                fetchAllCallLogHistory(historyName);
+
+            } else {
+//        fetchCallLogHistoryDateWise(historyNumber);
+                fetchAllCallLogHistory(historyNumber);
+
+            }
             if (isFromReceiver) {
                 isFromReceiver = false;
                 Utils.setBooleanPreference(ProfileDetailActivity.this, AppConstants
@@ -1751,15 +1759,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (isHideFavourite) {
                 rippleActionRightLeft.setEnabled(false);
-                if (checkNumberFavourite != null && arrayListFavouriteContacts.contains
-                        (checkNumberFavourite)) {
-                    imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
+                /*if (checkNumberFavourite != null && arrayListFavouriteContacts.contains
+                        (checkNumberFavourite)) {*/
+                if (checkNumberFavourite != null) {
+                    if (phoneBookContacts.getStarredStatusFromRawId(checkNumberFavourite)) {
+                        imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
+                    } else {
+                        imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
+                    }
                 } else {
                     imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
                 }
             }
-
         }
+
     }
 
     private void init() {
