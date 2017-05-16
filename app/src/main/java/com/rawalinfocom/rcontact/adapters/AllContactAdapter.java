@@ -196,7 +196,13 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         //return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
         List<String> sections = new ArrayList<>();
         mSectionPositions = new ArrayList<>();
-        for (int i = 2, size = arrayListUserContact.size(); i < size; i++) {
+        int startPosition;
+        if (fragment instanceof AllContactsListFragment) {
+            startPosition = 2;
+        } else {
+            startPosition = 0;
+        }
+        for (int i = startPosition, size = arrayListUserContact.size(); i < size; i++) {
             if (arrayListUserContact.get(i) instanceof ProfileData) {
                 String contactDisplayName = "";
                 ProfileData profileData = (ProfileData) arrayListUserContact.get(i);
