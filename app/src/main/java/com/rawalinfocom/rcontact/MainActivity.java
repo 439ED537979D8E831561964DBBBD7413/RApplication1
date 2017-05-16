@@ -731,7 +731,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 .getInstance(MainActivity.this);
         IntentFilter intentFilter2 = new IntentFilter(AppConstants
                 .ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_SMS);
-        localBroadcastManagerReceiveRecentSms.registerReceiver(localBroadCastReciverRecentSMS, intentFilter2);
+        localBroadcastManagerReceiveRecentSms.registerReceiver(localBroadCastReceiverRecentSMS, intentFilter2);
 
     }
 
@@ -746,7 +746,7 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         LocalBroadcastManager localBroadcastManagerReceiveRecentSMS = LocalBroadcastManager
                 .getInstance(MainActivity.this);
-        localBroadcastManagerReceiveRecentSMS.unregisterReceiver(localBroadCastReciverRecentSMS);
+        localBroadcastManagerReceiveRecentSMS.unregisterReceiver(localBroadCastReceiverRecentSMS);
     }
 
     private void getCallLogsByRawId() {
@@ -1289,6 +1289,16 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 Utils.setBooleanPreference(MainActivity.this, AppConstants
                                         .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
                                 AppConstants.isFromReceiver = false;
+                                CallLogFragment.isIdsFetchedFirstTime = false;
+//                                rContactApplication.setArrayListCallLogType(null);
+                            }else{
+                                /*if(Utils.getBooleanPreference(MainActivity.this,
+                                        AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false)){
+                                    Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false);
+                                    Utils.setBooleanPreference(MainActivity.this, AppConstants
+                                            .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
+                                    AppConstants.isFromReceiver = false;
+                                }*/
                             }
                         }
                     }, 100);
@@ -1299,7 +1309,7 @@ public class MainActivity extends BaseActivity implements NavigationView
             }
     };
 
-    private BroadcastReceiver localBroadCastReciverRecentSMS =  new BroadcastReceiver() {
+    private BroadcastReceiver localBroadCastReceiverRecentSMS =  new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 

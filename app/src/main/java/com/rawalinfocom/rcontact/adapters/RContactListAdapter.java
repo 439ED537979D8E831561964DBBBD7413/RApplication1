@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
@@ -24,6 +25,7 @@ import com.rawalinfocom.rcontact.model.UserProfile;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,6 +44,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final int HEADER = 0, CONTACT = 1, FOOTER = 2;
 
     private int previousPosition = 0;
+
+    private ArrayList<Integer> mSectionPositions;
 
     //<editor-fold desc="Constructor">
     public RContactListAdapter(Context context, ArrayList<Object> arrayListUserProfile,
@@ -121,17 +125,38 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public Object[] getSections() {
-        return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
+//        return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
+        List<String> sections = new ArrayList<>();
+        mSectionPositions = new ArrayList<>();
+        for (int i = 0, size = arrayListUserProfile.size(); i < size; i++) {
+            if (arrayListUserProfile.get(i) instanceof UserProfile) {
+                String name = ((UserProfile) arrayListUserProfile.get(i)).getPmFirstName();
+                if (name == null) {
+                    String section = "#";
+                    if (!sections.contains(section)) {
+                        sections.add(section);
+                        mSectionPositions.add(i);
+                    }
+                } else {
+                    String section = String.valueOf(name.charAt(0)).toUpperCase();
+                    if (!sections.contains(section)) {
+                        sections.add(section);
+                        mSectionPositions.add(i);
+                    }
+                }
+            }
+        }
+        return sections.toArray(new String[0]);
     }
 
     @Override
     public int getPositionForSection(int sectionIndex) {
-        return 0;
+        return mSectionPositions.get(sectionIndex);
     }
 
     @Override
     public int getSectionForPosition(int position) {
-        if (position >= arrayListUserProfile.size()) {
+        /*if (position >= arrayListUserProfile.size()) {
             position = arrayListUserProfile.size() - 1;
         }
 
@@ -148,7 +173,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
 
-        return previousPosition;
+        return previousPosition;*/
+        return 0;
     }
 
     //</editor-fold>
@@ -187,8 +213,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
                 bundle.putString(AppConstants.EXTRA_PM_ID, userProfile.getPmId());
-                bundle.putString(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, holder
-                        .textContactNumber.getText().toString());
+                bundle.putString(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, userProfile
+                        .getPmRawId());
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
 //                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, userProfile.getPmRawId());
                 TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
@@ -237,6 +263,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         RatingBar ratingUser;
         @BindView(R.id.button_invite)
         Button buttonInvite;
+        @BindView(R.id.linear_rating)
+        LinearLayout linearRating;
 
         RContactViewHolder(View itemView) {
             super(itemView);
@@ -255,6 +283,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             buttonInvite.setVisibility(View.GONE);
             imageSocialMedia.setVisibility(View.GONE);
+//            linearRating.setVisibility(View.GONE);
 
         }
     }

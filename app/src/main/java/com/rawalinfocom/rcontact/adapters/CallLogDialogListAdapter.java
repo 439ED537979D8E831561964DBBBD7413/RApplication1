@@ -254,12 +254,21 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                     + " AND " + android.provider.CallLog.Calls.DATE + " BETWEEN ? AND ?"
                     + " AND " + CallLog.Calls._ID + "=?";
             String[] selectionArguments = new String[]{number, String.valueOf(dateToCompare), String.valueOf(nextDate),uniqueRowId};
+            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI,where, selectionArguments);
 
             /*int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, CallLog.Calls.NUMBER + " =?"
                     + " AND " + dateToCompare + "=?", new String[]{number, dateToDelete});
             Log.i("Delete Query value", value + "");*/
 
-            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where, selectionArguments);
+            /*String where = CallLog.Calls.NUMBER + " =?"
+                    + " AND " + android.provider.CallLog.Calls.DATE + " BETWEEN ? AND ?";
+            String[] selectionArguments = new String[]{number, String.valueOf(dateToCompare), String.valueOf(nextDate)};
+            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where, selectionArguments);*/
+
+           /* String where = CallLog.Calls.NUMBER + " =?" + " AND " + CallLog.Calls.DATE + " =?";
+            String[] selectionArguments = new String[]{number, String.valueOf(callLogDateToDelete)};
+            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where, selectionArguments);*/
+
             if (value > 0) {
                 Log.i("Delete Query value", value + "");
                 Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();

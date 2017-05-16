@@ -59,7 +59,8 @@ public class MaterialListDialog {
 
         stringArrayList = arrayList;
 
-        numberToCall =  Utils.getFormattedNumber(context,number);
+//        numberToCall =  Utils.getFormattedNumber(context,number);
+        numberToCall = number;
         callLogDateToDelete =  date;
         dialogTitle = getDialogTitle();
         if (!TextUtils.isEmpty(dialogTitle))

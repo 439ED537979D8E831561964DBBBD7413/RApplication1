@@ -59,17 +59,24 @@ public class PhoneBookContacts {
                 selectionArgs, null);
     }
 
-    public Cursor getStarredStatusFromNumber(String phoneNumber) {
-        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+    public boolean getStarredStatusFromRawId(String rawId) {
+        int count = 0;
+        Uri uri = ContactsContract.Contacts.CONTENT_URI;
         String[] projection = new String[]{
                 ContactsContract.Contacts.STARRED,
         };
 
-        String selection = ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER + " = ?";
-        String[] selectionArgs = new String[]{phoneNumber};
+        String selection = ContactsContract.Contacts.LOOKUP_KEY + " IN (?) AND starred = ?";
+        String[] selectionArgs = new String[]{rawId, "1"};
 
-        return context.getContentResolver().query(uri, projection, selection,
+        Cursor cursor = context.getContentResolver().query(uri, projection, selection,
                 selectionArgs, null);
+        if (cursor != null) {
+            count = cursor.getCount();
+            cursor.close();
+        }
+        return count > 0;
+
     }
 
     public Cursor getStarredContacts() {

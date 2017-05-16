@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
+import android.provider.Telephony;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -49,12 +50,14 @@ public class SmsDialogListAdapter  extends RecyclerView.Adapter<SmsDialogListAda
     MaterialDialog callConfirmationDialog;
     String numberToCall;
     String dialogName;
+    String smsThreadId;
 
-    public SmsDialogListAdapter(Context context, ArrayList<String> arrayList, String number, String name) {
+    public SmsDialogListAdapter(Context context, ArrayList<String> arrayList, String number, String name,String threadId) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
         this.dialogName = name;
+        this.smsThreadId =  threadId;
     }
 
     @Override
@@ -88,9 +91,13 @@ public class SmsDialogListAdapter  extends RecyclerView.Adapter<SmsDialogListAda
                     MaterialDialogClipboard materialDialogClipboard = new MaterialDialogClipboard(context, numberToCall);
                     materialDialogClipboard.showDialog();
 
-                }else {
+                }else if(value.equalsIgnoreCase(context.getString(R.string.delete))){
+                    if(!TextUtils.isEmpty(smsThreadId))
+                        deleteMessageThreadWise(smsThreadId);
 
+                }else{
 //                    Toast.makeText(context, "Please select any one option", Toast.LENGTH_SHORT).show();
+
                 }
 
                 Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG_SMS);
@@ -102,6 +109,44 @@ public class SmsDialogListAdapter  extends RecyclerView.Adapter<SmsDialogListAda
 
     }
 
+
+    private void deleteMessageThreadWise(String threadId){
+        try {
+            String where =  Telephony.Sms.THREAD_ID + "=?";
+            String[] selectionArguments = new String[]{threadId};
+            int value = context.getContentResolver().delete(Telephony.Sms.CONTENT_URI,where,selectionArguments);
+//            int value = context.getContentResolver().delete(Uri.parse("content://sms/conversations/" + threadId), null, null);
+            if(value>0){
+                Toast.makeText(context, value + " message deleted." , Toast.LENGTH_SHORT);
+
+                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+            }
+
+            /*Uri deleteUri = Uri.parse("content://sms");
+            int count = 0;
+            Cursor c = context.getContentResolver().query(deleteUri, null, null,
+                    null, null);
+            while (c.moveToNext()) {
+                try {
+                    // Delete the SMS
+                    String pid = c.getString(0); // Get id;
+                    String uri = "content://sms/" + pid;
+                    count = context.getContentResolver().delete(Uri.parse(uri),
+                            null, null);
+                } catch (Exception e) {
+                }
+            }
+            if(count>0){
+
+            }*/
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
 
     @Override
     public int getItemCount() {
