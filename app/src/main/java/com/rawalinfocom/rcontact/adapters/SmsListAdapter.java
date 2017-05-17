@@ -241,10 +241,10 @@ public class SmsListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolde
                     if (matcher1.find()) {
                         arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + address, context.getString(R.string.add_to_contact),
                                 context.getString(R.string.add_to_existing_contact),
-                                context.getString(R.string.copy_phone_number) , context.getString(R.string.delete)));
+                                context.getString(R.string.copy_phone_number) /*,context.getString(R.string.delete)*/));
                     }else{
                         arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + address,
-                                context.getString(R.string.copy_phone_number) , context.getString(R.string.delete)));
+                                context.getString(R.string.copy_phone_number) /*, context.getString(R.string.delete)*/));
                     }
 
                     SMSMenuOptionsDialog smsMenuOptionsDialog =  new SMSMenuOptionsDialog(context,arrayListForKnownContact,
@@ -290,7 +290,7 @@ public class SmsListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    class LoadingViewHolder extends RecyclerView.ViewHolder {
+    private class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
 
         public LoadingViewHolder(View itemView) {
