@@ -1095,6 +1095,19 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 if (!isLastRecord) {
                                     arrayListCallLogs = rContactApplication
                                             .getArrayListCallLogType();
+                                    if(listOfIds.size()==0){
+                                        PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(getActivity());
+                                        Cursor cursor = phoneBookCallLogs.getAllCallLogId();
+                                        if (cursor != null) {
+                                            int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
+                                            while (cursor.moveToNext()) {
+                                                listOfIds.add(cursor.getString(rowId));
+                                            }
+                                        }
+                                        cursor.close();
+                                        Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOGS_ID_SET,
+                                                listOfIds);
+                                    }
                                     if(arrayListCallLogs!=null && arrayListCallLogs.size()==1){
                                         arrayListCallLogs =  new ArrayList<CallLogType>();
                                     }
