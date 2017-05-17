@@ -1752,7 +1752,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 linearCallSms.setVisibility(View.GONE);
                 imageRightLeft.setImageResource(R.drawable.ic_action_edit);
                 imageRightLeft.setTag(TAG_IMAGE_EDIT);
+                imageRightLeft.setVisibility(View.GONE);
+
             } else {
+
                 textToolbarTitle.setText("Profile Detail");
                 linearCallSms.setVisibility(View.VISIBLE);
             }

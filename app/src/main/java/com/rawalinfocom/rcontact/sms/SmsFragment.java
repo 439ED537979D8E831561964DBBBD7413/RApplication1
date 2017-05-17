@@ -129,6 +129,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     }
 
     @Override
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -807,7 +808,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                                 "Last log shown.");*/
 //                                        llLoading.setVisibility(View.GONE);
                                             isLastRecord = true;
-//                                            smsListAdapter.setMoreData(true);
+//                                          smsListAdapter.setMoreData(true);
                                         }
                                     }
                                 }
@@ -822,7 +823,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                         }
 
                     }
-                }, 5000);
+                }, 2000);
             }
         });
 
