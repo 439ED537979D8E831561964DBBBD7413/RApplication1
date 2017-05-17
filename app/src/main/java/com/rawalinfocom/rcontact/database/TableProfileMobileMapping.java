@@ -11,12 +11,12 @@ import com.rawalinfocom.rcontact.model.UserProfile;
 import java.util.ArrayList;
 
 import static com.rawalinfocom.rcontact.database.TableProfileEmailMapping.COLUMN_EPM_CLOUD_PM_ID;
-import static com.rawalinfocom.rcontact.database.TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID;
 import static com.rawalinfocom.rcontact.database.TableProfileEmailMapping.COLUMN_EPM_IS_RCP;
 import static com.rawalinfocom.rcontact.database.TableProfileEmailMapping
         .TABLE_PB_PROFILE_EMAIL_MAPPING;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_FIRST_NAME;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_LAST_NAME;
+import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_PROFILE_IMAGE;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_PROFILE_RATING;
 import static com.rawalinfocom.rcontact.database.TableProfileMaster.COLUMN_PM_RAW_ID;
@@ -306,6 +306,7 @@ public class TableProfileMobileMapping {
                 TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RAW_ID + "," +
                 TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATING + "," +
                 TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATE_USER + "," +
+                TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_IMAGE + "," +
 //                TABLE_PB_PROFILE_EMAIL_MAPPING + "." + COLUMN_EPM_EMAIL_ID + "," +
                 TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_MOBILE_NUMBER + " FROM " +
                 TABLE_RC_PROFILE_MASTER + " LEFT JOIN " + TABLE_PB_PROFILE_MOBILE_MAPPING + " ON " +
@@ -337,6 +338,8 @@ public class TableProfileMobileMapping {
                         (TableProfileMaster.COLUMN_PM_PROFILE_RATING)));
                 userProfile.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex
                         (TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER)));
+                userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
+                        (TableProfileMaster.COLUMN_PM_PROFILE_IMAGE)));
                /* userProfile.setEmailId(cursor.getString(cursor.getColumnIndex
                         (TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID)));*/
                 userProfile.setMobileNumber(cursor.getString(cursor.getColumnIndex

@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -532,10 +531,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     "dd'th' " +
                             "MMM, yyyy");
         }
-        if (event.getIsYearHidden() == IntegerConstants.IS_YEAR_HIDDEN) {
-            convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "MM-dd",
-                    "dd'th' " +
-                            "MMM");
+        if (!isOwnProfile) {
+            if (event.getIsYearHidden() == IntegerConstants.IS_YEAR_HIDDEN) {
+                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "MM-dd",
+                        "dd'th' " +
+                                "MMM");
+            }
         }
         if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
             convertedDate = event.getEventDateTime();
