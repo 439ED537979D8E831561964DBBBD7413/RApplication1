@@ -15,11 +15,13 @@ import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -196,6 +198,19 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.textContactNumber.setText(userProfile.getEmailId());
         }
 
+        if (StringUtils.length(userProfile.getPmProfileImage()) > 0) {
+            Glide.with(context)
+                    .load(userProfile.getPmProfileImage())
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .override(500, 500)
+                    .into(holder.imageProfile);
+
+        } else {
+            holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
+        }
+
         holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
         holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
 
@@ -219,6 +234,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 //                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, userProfile.getPmRawId());
                 TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
+                bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, userProfile.getPmProfileImage());
                 ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
                         .class, bundle);
             }

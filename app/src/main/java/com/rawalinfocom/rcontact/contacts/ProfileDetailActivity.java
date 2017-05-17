@@ -433,7 +433,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         } else {
 //        fetchCallLogHistoryDateWise(historyNumber);
-        fetchAllCallLogHistory(historyNumber);
+            fetchAllCallLogHistory(historyNumber);
 
         }
 
@@ -1753,9 +1753,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imageRightLeft.setImageResource(R.drawable.ic_action_edit);
                 imageRightLeft.setTag(TAG_IMAGE_EDIT);
                 imageRightLeft.setVisibility(View.GONE);
-
             } else {
-
                 textToolbarTitle.setText("Profile Detail");
                 linearCallSms.setVisibility(View.VISIBLE);
             }
