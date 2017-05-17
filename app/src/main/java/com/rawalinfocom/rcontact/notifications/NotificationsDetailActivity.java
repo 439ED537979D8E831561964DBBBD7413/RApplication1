@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -39,7 +41,8 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
     private NotiCommentsFragment notiCommentsFragment;
     int currentTabIndex;
 
-    public  boolean firstTime = true;
+    public boolean firstTime = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +74,7 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
                 if (firstTime && currentTabIndex != 0) {
                     firstTime = false;
                 } else {
-                    Log.i("MAULIK","onTabSelected"+tab.getPosition());
+                    Log.i("MAULIK", "onTabSelected" + tab.getPosition());
                     setCurrentTabFragment(tab.getPosition());
                     firstTime = false;
                 }
@@ -99,7 +102,22 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
         tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_rating)));
         tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_comments)));
         tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_rcontact)));
+        for (int i = 0; i < tabNotifications.getTabCount(); i++) {
+            TabLayout.Tab tab = tabNotifications.getTabAt(i);
+            tab.setCustomView(getTabView(i));
+        }
         tabNotifications.getTabAt(currentTabIndex).select();
+    }
+
+    private String tabTitles[] = new String[]{"Profile", "Rating", "Comment", "RContact"};
+
+    private View getTabView(int position) {
+        View v = LayoutInflater.from(NotificationsDetailActivity.this).inflate(R.layout.custom_tab, null);
+        TextView tv = (TextView) v.findViewById(R.id.text_toolbar_title);
+        tv.setText(tabTitles[position]);
+        TextView img = (TextView) v.findViewById(R.id.text_notifications_count);
+        img.setText(""+100);
+        return v;
     }
 
     private void setCurrentTabFragment(int tabPosition) {

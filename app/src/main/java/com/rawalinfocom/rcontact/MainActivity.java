@@ -32,13 +32,13 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -86,7 +86,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     Toolbar toolbar;
     ImageView imageNotification;
     ImageView imageAddContact;
-//    TextView textImageNotification;
+    //    TextView textImageNotification;
     FloatingActionButton fab;
     DrawerLayout drawer;
     NavigationView navigationView;
@@ -147,13 +147,13 @@ public class MainActivity extends BaseActivity implements NavigationView
             startActivityIntent(this, ProfileRegistrationActivity.class, null);
 //            }
         } else {*/
-            rContactApplication = (RContactApplication) getApplicationContext();
-            callLogTypeArrayListMain = new ArrayList<>();
-            callLogTypeReceiverMain =  new CallLogType();
-            CallLogFragment.callLogTypeReceiver =  new CallLogType();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                checkPermissionToExecute();
-            } else {
+        rContactApplication = (RContactApplication) getApplicationContext();
+        callLogTypeArrayListMain = new ArrayList<>();
+        callLogTypeReceiverMain = new CallLogType();
+        CallLogFragment.callLogTypeReceiver = new CallLogType();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkPermissionToExecute();
+        } else {
                /* AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -161,22 +161,22 @@ public class MainActivity extends BaseActivity implements NavigationView
                     }
                 });*/
 
-                if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
-                    syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                    syncCallLogAsyncTask.execute();
-                }
+            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                syncCallLogAsyncTask.execute();
             }
-            checkPermissionToExecute();
+        }
+        checkPermissionToExecute();
 
-            registerLocalBroadCastReceiver();
+        registerLocalBroadCastReceiver();
 
-            toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-            networkConnectionReceiver = new NetworkConnectionReceiver();
+        networkConnectionReceiver = new NetworkConnectionReceiver();
 
-            init();
-            registerBroadcastReceiver();
+        init();
+        registerBroadcastReceiver();
 //        }
 
     }
@@ -503,9 +503,8 @@ public class MainActivity extends BaseActivity implements NavigationView
 //                Snackbar.make(view, "Dial Pad", Snackbar.LENGTH_SHORT).show();
                 if (!isCompaseIcon)
                     openDialer();
-                else
-                {
-                    AppConstants.isComposingSMS =  true;
+                else {
+                    AppConstants.isComposingSMS = true;
                     openSMSComposerPage();
                 }
 //                    Toast.makeText(MainActivity.this,"open compose sms page",Toast
@@ -527,6 +526,11 @@ public class MainActivity extends BaseActivity implements NavigationView
             Menu menu = navigationView.getMenu();
             menu.findItem(R.id.nav_db_export).setVisible(true);
         }
+        int count = 999;
+
+        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id.nav_user_timeline).getActionView();
+        TextView textView=(TextView)view.findViewById(R.id.badge_count) ;
+        textView.setText(count > 0 ? String.valueOf(count) : null);
 
         tabMain = (TabLayout) findViewById(R.id.tab_main);
 
@@ -1272,26 +1276,25 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
 
-
     private BroadcastReceiver localBroadcastReceiverRecentCalls = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
-                try {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+            try {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                            if(Utils.getBooleanPreference(MainActivity.this,
-                                    AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,false)){
-                               Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,false);
-                                Utils.setBooleanPreference(MainActivity.this, AppConstants
-                                        .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
-                                AppConstants.isFromReceiver = false;
-                                CallLogFragment.isIdsFetchedFirstTime = false;
+                        if (Utils.getBooleanPreference(MainActivity.this,
+                                AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, false)) {
+                            Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
+                            Utils.setBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
+                            AppConstants.isFromReceiver = false;
+                            CallLogFragment.isIdsFetchedFirstTime = false;
 //                                rContactApplication.setArrayListCallLogType(null);
-                            }else{
+                        } else {
                                 /*if(Utils.getBooleanPreference(MainActivity.this,
                                         AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false)){
                                     Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false);
@@ -1299,30 +1302,30 @@ public class MainActivity extends BaseActivity implements NavigationView
                                             .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
                                     AppConstants.isFromReceiver = false;
                                 }*/
-                            }
                         }
-                    }, 100);
+                    }
+                }, 100);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        }
     };
 
-    private BroadcastReceiver localBroadCastReceiverRecentSMS =  new BroadcastReceiver() {
+    private BroadcastReceiver localBroadCastReceiverRecentSMS = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
             try {
 
-                if(Utils.getBooleanPreference(MainActivity.this,
-                        AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE,false)){
-                    Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE,false);
+                if (Utils.getBooleanPreference(MainActivity.this,
+                        AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false)) {
+                    Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
                     Utils.setBooleanPreference(MainActivity.this, AppConstants
                             .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
                 }
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
