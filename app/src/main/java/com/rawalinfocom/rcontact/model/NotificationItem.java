@@ -8,14 +8,12 @@ public class NotificationItem {
 
     private String notificationItemTitle;
     private int notificationItemCount;
-    private String[] notificationDetail;
     private int notificationItemType;
 
-    public NotificationItem(String notificationItemTitle, int notificationItemCount,
-                            String[] notificationDetail, int notificationItemType) {
+    public NotificationItem(String notificationItemTitle, int notificationItemCount
+            , int notificationItemType) {
         this.notificationItemTitle = notificationItemTitle;
         this.notificationItemCount = notificationItemCount;
-        this.notificationDetail = notificationDetail;
         this.notificationItemType = notificationItemType;
     }
 
@@ -25,10 +23,6 @@ public class NotificationItem {
 
     public int getNotificationItemCount() {
         return notificationItemCount;
-    }
-
-    public String[] getNotificationDetail() {
-        return notificationDetail;
     }
 
     public int getNotificationItemType() {

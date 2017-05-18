@@ -2,6 +2,7 @@
 package com.rawalinfocom.rcontact.notifications;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.Comment;
 import com.rawalinfocom.rcontact.model.RcontactUpdatesData;
 import com.rawalinfocom.rcontact.adapters.NotiRContactsAdapter;
@@ -75,6 +77,12 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
         updtaesAdapter = new NotiRContactsAdapter(getActivity(), updates);
         recyclerRContactsNoti.setAdapter(updtaesAdapter);
         recyclerRContactsNoti.setLayoutManager(new LinearLayoutManager(getActivity()));
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_RUPDATE);
+            }
+        }, 800);
     }
 
     private void init() {

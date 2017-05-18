@@ -48,10 +48,10 @@
             android:id="@+id/text_notification_detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
             android:layout_toLeftOf="@id/button_view_more"
-            android:paddingLeft="@dimen/activity_half_horizontal_margin"
-            android:paddingRight="@dimen/activity_half_horizontal_margin"
-            tools:text="Paras Savaliya and 6 friends wishes birthday on your birthday" />
+            tools:text="You have no unread notification" />
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/button_view_more"

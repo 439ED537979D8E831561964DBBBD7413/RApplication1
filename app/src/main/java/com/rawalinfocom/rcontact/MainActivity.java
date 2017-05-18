@@ -50,7 +50,9 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
+import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
+import com.rawalinfocom.rcontact.database.TableNotificationStateMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
@@ -86,6 +88,8 @@ public class MainActivity extends BaseActivity implements NavigationView
     Toolbar toolbar;
     ImageView imageNotification;
     ImageView imageAddContact;
+    LinearLayout badgeLayout;
+    TextView badgeTextView;
     //    TextView textImageNotification;
     FloatingActionButton fab;
     DrawerLayout drawer;
@@ -240,6 +244,26 @@ public class MainActivity extends BaseActivity implements NavigationView
     protected void onResume() {
         super.onResume();
 //        checkPermissionToExecute();
+        updateNotificationCount();
+
+    }
+
+    private void updateNotificationCount() {
+        int count = getNotificationCount(databaseHandler);
+        if (count > 0) {
+            badgeLayout.setVisibility(View.VISIBLE);
+            badgeTextView.setText(String.valueOf(count));
+        } else {
+            badgeLayout.setVisibility(View.GONE);
+        }
+        count = getTimeLineNotificationCount(databaseHandler);
+        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id.nav_user_timeline).getActionView();
+        TextView textView = (TextView) view.findViewById(R.id.badge_count);
+        if (count > 0) {
+            textView.setText(String.valueOf(count));
+        } else {
+            view.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -479,6 +503,15 @@ public class MainActivity extends BaseActivity implements NavigationView
     private void init() {
 
         imageNotification = (ImageView) toolbar.findViewById(R.id.image_notification);
+        badgeLayout = (LinearLayout) toolbar.findViewById(R.id.badge_layout);
+        badgeTextView = (TextView) toolbar.findViewById(R.id.badge_count);
+//        int count = getNotificationCount(databaseHandler);
+//        if (count > 0) {
+//            badgeLayout.setVisibility(View.VISIBLE);
+//            badgeTextView.setText(String.valueOf(count));
+//        } else {
+//            badgeLayout.setVisibility(View.GONE);
+//        }
 
 //        textImageNotification = (TextView) toolbar.findViewById(R.id.text_image_notification);
 //        textImageNotification.setTypeface(Utils.typefaceIcons(this));
@@ -526,11 +559,6 @@ public class MainActivity extends BaseActivity implements NavigationView
             Menu menu = navigationView.getMenu();
             menu.findItem(R.id.nav_db_export).setVisible(true);
         }
-        int count = 999;
-
-        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id.nav_user_timeline).getActionView();
-        TextView textView=(TextView)view.findViewById(R.id.badge_count) ;
-        textView.setText(count > 0 ? String.valueOf(count) : null);
 
         tabMain = (TabLayout) findViewById(R.id.tab_main);
 
@@ -540,6 +568,7 @@ public class MainActivity extends BaseActivity implements NavigationView
 
 
     }
+
 
     private void openDialer() {
         try {
@@ -737,20 +766,21 @@ public class MainActivity extends BaseActivity implements NavigationView
                 .ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_SMS);
         localBroadcastManagerReceiveRecentSms.registerReceiver(localBroadCastReceiverRecentSMS, intentFilter2);
 
+        LocalBroadcastManager localBroadcastManagerUpdateNotificationCount = LocalBroadcastManager
+                .getInstance(MainActivity.this);
+        IntentFilter intentFilterUpdateCount = new IntentFilter(AppConstants
+                .ACTION_LOCAL_BROADCAST_UPDATE_NOTIFICATION_COUNT);
+        localBroadcastManagerUpdateNotificationCount.registerReceiver(localBroadCastReceiverUpdateCount, intentFilterUpdateCount);
+
     }
 
     private void unRegisterLocalBroadCastReceiver() {
-        LocalBroadcastManager localBroadcastManagerProfileBlock = LocalBroadcastManager
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager
                 .getInstance(this);
-        localBroadcastManagerProfileBlock.unregisterReceiver(localBroadcastReceiverCallLogSync);
-
-        LocalBroadcastManager localBroadcastManagerReceiveRecentCalls = LocalBroadcastManager
-                .getInstance(MainActivity.this);
-        localBroadcastManagerReceiveRecentCalls.unregisterReceiver(localBroadcastReceiverRecentCalls);
-
-        LocalBroadcastManager localBroadcastManagerReceiveRecentSMS = LocalBroadcastManager
-                .getInstance(MainActivity.this);
-        localBroadcastManagerReceiveRecentSMS.unregisterReceiver(localBroadCastReceiverRecentSMS);
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiverCallLogSync);
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiverRecentCalls);
+        localBroadcastManager.unregisterReceiver(localBroadCastReceiverRecentSMS);
+        localBroadcastManager.unregisterReceiver(localBroadCastReceiverUpdateCount);
     }
 
     private void getCallLogsByRawId() {
@@ -1312,6 +1342,21 @@ public class MainActivity extends BaseActivity implements NavigationView
         }
     };
 
+    private BroadcastReceiver localBroadCastReceiverUpdateCount = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            try {
+
+                updateNotificationCount();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    };
+
     private BroadcastReceiver localBroadCastReceiverRecentSMS = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1366,4 +1411,15 @@ public class MainActivity extends BaseActivity implements NavigationView
         return photoThumbUrl;
     }
 
+    private int getNotificationCount(DatabaseHandler databaseHandler) {
+        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster(databaseHandler);
+        return notificationStateMaster.getTotalUnreadCount();
+
+    }
+
+    private int getTimeLineNotificationCount(DatabaseHandler databaseHandler) {
+
+        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster(databaseHandler);
+        return notificationStateMaster.getTotalUnreadCountByType(AppConstants.NOTIFICATION_TYPE_TIMELINE);
+    }
 }

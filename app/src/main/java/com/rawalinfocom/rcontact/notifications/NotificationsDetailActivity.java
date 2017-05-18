@@ -1,11 +1,15 @@
 package com.rawalinfocom.rcontact.notifications;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +18,14 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.database.DatabaseHandler;
+import com.rawalinfocom.rcontact.database.TableNotificationStateMaster;
 import com.rawalinfocom.rcontact.helper.RippleView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class NotificationsDetailActivity extends BaseActivity implements RippleView.OnRippleCompleteListener {
 
@@ -42,6 +50,10 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
     int currentTabIndex;
 
     public boolean firstTime = true;
+    int profileCount;
+    int ratingCount;
+    int commentsCount;
+    int rContactsCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +72,12 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
 
     public void init() {
         textToolbarTitle.setText("Notifications");
+        int profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
+        int profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
+        profileCount = profileRequestCount + profileResponseCount;
+        ratingCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RATE);
+        commentsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_COMMENTS);
+        rContactsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RUPDATE);
         rippleActionBack.setOnRippleCompleteListener(this);
         bindWidgetsWithAnEvent();
         setupTabLayout();
@@ -109,14 +127,39 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
         tabNotifications.getTabAt(currentTabIndex).select();
     }
 
-    private String tabTitles[] = new String[]{"Profile", "Rating", "Comment", "RContact"};
-
     private View getTabView(int position) {
         View v = LayoutInflater.from(NotificationsDetailActivity.this).inflate(R.layout.custom_tab, null);
-        TextView tv = (TextView) v.findViewById(R.id.text_toolbar_title);
-        tv.setText(tabTitles[position]);
-        TextView img = (TextView) v.findViewById(R.id.text_notifications_count);
-        img.setText(""+100);
+        TextView titleText = (TextView) v.findViewById(R.id.text_toolbar_title);
+        TextView countText = (TextView) v.findViewById(R.id.text_notifications_count);
+        String title = "";
+        int count = 0;
+        switch (position) {
+            case 0:
+                title = "Profile";
+                count = profileCount;
+                break;
+            case 1:
+                title = "Rating";
+                count = ratingCount;
+                break;
+            case 2:
+                title = "Comment";
+                count = commentsCount;
+                break;
+            case 3:
+                title = "RContact";
+                count = rContactsCount;
+                break;
+
+        }
+
+        titleText.setText(title);
+        if (count > 0) {
+            countText.setText(String.valueOf(count));
+        } else {
+            countText.setVisibility(View.GONE);
+        }
+
         return v;
     }
 
@@ -154,4 +197,196 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
                 break;
         }
     }
+
+    private int getNotificationCountByType(DatabaseHandler databaseHandler, int type) {
+
+        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster(databaseHandler);
+        return notificationStateMaster.getTotalUnreadCountByType(type);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerLocalBroadCastReceiver();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unRegisterLocalBroadCastReceiver();
+    }
+
+    public void updateNotificationCount(int type) {
+        TableNotificationStateMaster tableNotificationStateMaster = new TableNotificationStateMaster(databaseHandler);
+        tableNotificationStateMaster.makeAllNotificationsAsReadByType(type);
+        int profileRequestCount;
+        int profileResponseCount;
+
+
+        switch (type) {
+            case AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST:
+                profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
+                profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                profileCount = profileRequestCount + profileResponseCount;
+                TabLayout.Tab tab = tabNotifications.getTabAt(0);
+                View view = tab.getCustomView();
+                TextView countText = (TextView)
+                        view.findViewById(R.id.text_notifications_count);
+                if (profileCount > 0) {
+                    countText.setText(String.valueOf(profileCount));
+                } else {
+                    countText.setVisibility(View.GONE);
+                }
+                break;
+            case AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE:
+                profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
+                profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                profileCount = profileRequestCount + profileResponseCount;
+                tab = tabNotifications.getTabAt(0);
+                view = tab.getCustomView();
+                countText = (TextView)
+                        view.findViewById(R.id.text_notifications_count);
+                if (profileCount > 0) {
+                    countText.setText(String.valueOf(profileCount));
+                } else {
+                    countText.setVisibility(View.GONE);
+                }
+                break;
+            case AppConstants.NOTIFICATION_TYPE_RATE:
+                ratingCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RATE);
+                tab = tabNotifications.getTabAt(1);
+                view = tab.getCustomView();
+                countText = (TextView)
+                        view.findViewById(R.id.text_notifications_count);
+                if (ratingCount > 0) {
+                    countText.setText(String.valueOf(ratingCount));
+                } else {
+                    countText.setVisibility(View.GONE);
+                }
+                break;
+            case AppConstants.NOTIFICATION_TYPE_COMMENTS:
+                commentsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_COMMENTS);
+                tab = tabNotifications.getTabAt(2);
+                view = tab.getCustomView();
+                countText = (TextView)
+                        view.findViewById(R.id.text_notifications_count);
+                if (commentsCount > 0) {
+                    countText.setText(String.valueOf(commentsCount));
+                } else {
+                    countText.setVisibility(View.GONE);
+                }
+                break;
+            case AppConstants.NOTIFICATION_TYPE_RUPDATE:
+                rContactsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RUPDATE);
+                tab = tabNotifications.getTabAt(3);
+                view = tab.getCustomView();
+                countText = (TextView)
+                        view.findViewById(R.id.text_notifications_count);
+                if (rContactsCount > 0) {
+                    countText.setText(String.valueOf(rContactsCount));
+                } else {
+                    countText.setVisibility(View.GONE);
+                }
+                break;
+        }
+        int badgeCount = tableNotificationStateMaster.getTotalUnreadCount();
+        ShortcutBadger.applyCount(getApplicationContext(), badgeCount);
+    }
+
+    private void registerLocalBroadCastReceiver() {
+        LocalBroadcastManager localBroadcastManagerUpdateNotificationCount = LocalBroadcastManager
+                .getInstance(NotificationsDetailActivity.this);
+        IntentFilter intentFilterUpdateCount = new IntentFilter(AppConstants
+                .ACTION_LOCAL_BROADCAST_UPDATE_NOTIFICATION_COUNT);
+        localBroadcastManagerUpdateNotificationCount.registerReceiver(localBroadCastReceiverUpdateCount, intentFilterUpdateCount);
+    }
+
+    private void unRegisterLocalBroadCastReceiver() {
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager
+                .getInstance(this);
+        localBroadcastManager.unregisterReceiver(localBroadCastReceiverUpdateCount);
+    }
+
+    private BroadcastReceiver localBroadCastReceiverUpdateCount = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            try {
+
+                updateNotificationCount();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    };
+
+    private void updateNotificationCount() {
+        int profileRequestCount;
+        int profileResponseCount;
+
+
+        profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
+        profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
+        profileCount = profileRequestCount + profileResponseCount;
+        TabLayout.Tab tab = tabNotifications.getTabAt(0);
+        View view = tab.getCustomView();
+        TextView countText = (TextView)
+                view.findViewById(R.id.text_notifications_count);
+        if (profileCount > 0) {
+            countText.setText(String.valueOf(profileCount));
+        } else {
+            countText.setVisibility(View.GONE);
+        }
+
+        profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
+        profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
+        profileCount = profileRequestCount + profileResponseCount;
+        tab = tabNotifications.getTabAt(0);
+        view = tab.getCustomView();
+        countText = (TextView)
+                view.findViewById(R.id.text_notifications_count);
+        if (profileCount > 0) {
+            countText.setText(String.valueOf(profileCount));
+        } else {
+            countText.setVisibility(View.GONE);
+        }
+
+        ratingCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RATE);
+        tab = tabNotifications.getTabAt(1);
+        view = tab.getCustomView();
+        countText = (TextView)
+                view.findViewById(R.id.text_notifications_count);
+        if (ratingCount > 0) {
+            countText.setText(String.valueOf(ratingCount));
+        } else {
+            countText.setVisibility(View.GONE);
+        }
+
+        commentsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_COMMENTS);
+        tab = tabNotifications.getTabAt(2);
+        view = tab.getCustomView();
+        countText = (TextView)
+                view.findViewById(R.id.text_notifications_count);
+        if (commentsCount > 0) {
+            countText.setText(String.valueOf(commentsCount));
+        } else {
+            countText.setVisibility(View.GONE);
+        }
+
+        rContactsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RUPDATE);
+        tab = tabNotifications.getTabAt(3);
+        view = tab.getCustomView();
+        countText = (TextView)
+                view.findViewById(R.id.text_notifications_count);
+        if (rContactsCount > 0) {
+            countText.setText(String.valueOf(rContactsCount));
+        } else {
+            countText.setVisibility(View.GONE);
+        }
+
+
+    }
+
 }

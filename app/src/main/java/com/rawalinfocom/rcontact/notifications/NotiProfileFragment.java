@@ -109,6 +109,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
     String dayBeforeYesterday;
     String pastday6thDay;
     TableRCContactRequest tableRCContactRequest;
+    boolean isFirstTime = true;
 
     public static NotiProfileFragment newInstance() {
         return new NotiProfileFragment();
@@ -187,12 +188,22 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                         pastProfileAdapter.updateList(listPastRequest);
                         updateHeight();
                     }
+
                 } else {
                     if (todayProfileAdapter != null)
                         todayProfileAdapter.updateList(listTodayResponse);
                     if (pastProfileAdapter != null) {
                         pastProfileAdapter.updateList(listPastResponse);
                         updateHeight();
+                        if (isFirstTime) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                                }
+                            }, 800);
+                            isFirstTime = false;
+                        }
                     }
                 }
 
@@ -334,6 +345,12 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
 
         updateHeight();
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
+            }
+        }, 800);
         recyclerPastProfile.setVisibility(View.GONE);
     }
 
@@ -475,7 +492,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                         data.getPpmParticular(),
                         Utils.getLocalTimeFromUTCTime(data.getCreatedAt()),
                         Utils.getLocalTimeFromUTCTime(data.getUpdatedAt()));
-               // updatePrivacySetting(data.getPpmTag(),data.getCarMongodbRecordIndex());
+                // updatePrivacySetting(data.getPpmTag(),data.getCarMongodbRecordIndex());
             }
 
         }

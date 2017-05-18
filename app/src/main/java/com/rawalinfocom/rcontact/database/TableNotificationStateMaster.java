@@ -1,8 +1,10 @@
 package com.rawalinfocom.rcontact.database;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.ContactRequestData;
 import com.rawalinfocom.rcontact.model.NotificationStateData;
 
@@ -34,6 +36,7 @@ public class TableNotificationStateMaster {
     private static final String COLUMN_NS_CLOUD_NOTIFICATION_ID = "ns_cloud_notification_id";
     private static final String COLUMN_NS_CREATED_AT = "ns_created_at";
     private static final String COLUMN_NS_UPDATED_AT = "ns_updated_at";
+    private static final String COLUMN_NS_MASTER_ID = "ns_master_id";
 
     // Table Create Statements
     static final String CREATE_TABLE_NOTIFICATION_STATE_MASTER = "CREATE TABLE " + TABLE_NOTIFICATION_STATE_MASTER +
@@ -43,7 +46,8 @@ public class TableNotificationStateMaster {
             " " + COLUMN_NS_TYPE + " integer NOT NULL," +
             " " + COLUMN_NS_CLOUD_NOTIFICATION_ID + " text NOT NULL," +
             " " + COLUMN_NS_CREATED_AT + " datetime NOT NULL," +
-            " " + COLUMN_NS_UPDATED_AT + " datetime NOT NULL" +
+            " " + COLUMN_NS_UPDATED_AT + " datetime NOT NULL," +
+            " " + COLUMN_NS_MASTER_ID + " text NOT NULL" +
             ");";
 
     // Adding new Event
@@ -56,6 +60,7 @@ public class TableNotificationStateMaster {
         values.put(COLUMN_NS_CLOUD_NOTIFICATION_ID, notification.getCloudNotificationId());
         values.put(COLUMN_NS_CREATED_AT, notification.getCreatedAt());
         values.put(COLUMN_NS_UPDATED_AT, notification.getUpdatedAt());
+        values.put(COLUMN_NS_MASTER_ID, notification.getNotificationMasterId());
 
         db.insert(TABLE_NOTIFICATION_STATE_MASTER, null, values);
         db.close(); // Closing database connection
@@ -73,7 +78,36 @@ public class TableNotificationStateMaster {
                 new String[]{cloudMongoId});
 
         db.close();
+        return isUpdated;
+    }
 
+    public int getTotalUnreadCount() {
+        String countQuery = "SELECT  * FROM " + TABLE_NOTIFICATION_STATE_MASTER + " WHERE " + COLUMN_NS_STATE + " =1";
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
+        return count;
+    }
+
+    public int getTotalUnreadCountByType(int type) {
+        String countQuery = "SELECT  * FROM " + TABLE_NOTIFICATION_STATE_MASTER + " WHERE " + COLUMN_NS_STATE + " =1 AND " + COLUMN_NS_TYPE + " =" + type;
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
+        return count;
+    }
+
+    public int makeAllNotificationsAsReadByType(int type) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NS_STATE, 2);
+        int isUpdated = db.update(TABLE_NOTIFICATION_STATE_MASTER, values, COLUMN_NS_TYPE + " =" + type + " AND " + COLUMN_NS_STATE + " =1", null);
+        db.close();
         return isUpdated;
     }
 }

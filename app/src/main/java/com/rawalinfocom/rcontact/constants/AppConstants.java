@@ -145,6 +145,7 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_SMS =
             "action_local_broadcast_recent_sms";
     public static String ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER = "action_local_broadcast_delete_sms_receiver";
+    public static String ACTION_LOCAL_BROADCAST_UPDATE_NOTIFICATION_COUNT = "action_local_broadcast_update_notification_count";
 
     //</editor-fold>
 
@@ -234,7 +235,7 @@ public class AppConstants {
 
 
     public static boolean isFromReceiver = false;
-    public static boolean isSMSFromReceiver =  false;
+    public static boolean isSMSFromReceiver = false;
     public static boolean isComposingSMS = false;
 
     //<editor-fold desc="Call-log constants">
@@ -271,5 +272,15 @@ public class AppConstants {
     // special character to prefix the otp.
     public static final String OTP_DELIMITER = "is ";
 
+    //<editor-fold desc="Notification constants">
+
+    public static final int NOTIFICATION_TYPE_TIMELINE = 1;
+    public static final int NOTIFICATION_TYPE_RATE = 2;
+    public static final int NOTIFICATION_TYPE_COMMENTS = 3;
+    public static final int NOTIFICATION_TYPE_PROFILE_REQUEST = 4;
+    public static final int NOTIFICATION_TYPE_PROFILE_RESPONSE = 5;
+    public static final int NOTIFICATION_TYPE_RUPDATE = 6;
+
     //</editor-fold>
+
 }

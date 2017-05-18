@@ -47,10 +47,12 @@
                 android:src="@drawable/ic_action_notification" />
 
             <LinearLayout
+                android:id="@+id/badge_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="-15dp"
+                android:visibility="gone"
                 android:layout_gravity="center_vertical|top"
+                android:layout_marginLeft="-15dp"
                 android:gravity="center_vertical|top">
 
                 <TextView
@@ -60,9 +62,9 @@
                     android:layout_gravity="center"
                     android:background="@drawable/bg_circle_red"
                     android:gravity="center"
+                    android:text="9"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                    android:textColor="@color/colorWhite"
-                    android:text="9" />
+                    android:textColor="@color/colorWhite" />
 
             </LinearLayout>
 

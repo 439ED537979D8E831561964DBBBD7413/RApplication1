@@ -24,6 +24,7 @@ import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.NotiRatingAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
@@ -188,6 +189,12 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         setRecyclerViewHeight(recyclerTodayRating, height);
         setRecyclerViewHeight(recyclerYesterDayRating, height);
         setRecyclerViewHeight(recyclerPastDayRating, height);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_RATE);
+            }
+        }, 800);
     }
 
     private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
