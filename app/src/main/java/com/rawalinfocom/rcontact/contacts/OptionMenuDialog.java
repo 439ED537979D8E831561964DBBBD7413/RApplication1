@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,16 +15,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.OptionMenuAdapter;
-import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
-import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
-import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.model.PrivacyDataItem;
-import com.rawalinfocom.rcontact.model.WsRequestObject;
-import com.rawalinfocom.rcontact.model.WsResponseObject;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -194,6 +193,7 @@ public class OptionMenuDialog {
 
     private void menuRContactRcp(View view, int position) {
         switch (position) {
+
             //<editor-fold desc="Edit">
             case 0:
                 break;
@@ -201,6 +201,28 @@ public class OptionMenuDialog {
 
             // <editor-fold desc="View in AC">
             case 1:
+                PhoneBookContacts phoneBookContacts = new PhoneBookContacts(context);
+                String phonebookName = phoneBookContacts.getStructuredName((
+                        (ProfileDetailActivity) context).checkNumberFavourite);
+                String cloudName = ((ProfileDetailActivity) context).contactName;
+                Bundle bundle = new Bundle();
+                if (StringUtils.equals(phonebookName, cloudName)) {
+                    bundle.putString(AppConstants.EXTRA_CONTACT_NAME, ((ProfileDetailActivity)
+                            context).contactName);
+                } else {
+                    bundle.putString(AppConstants.EXTRA_CONTACT_NAME, phonebookName);
+                    bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, " (" + (
+                            (ProfileDetailActivity) context).contactName + ")");
+                }
+                bundle.putString(AppConstants.EXTRA_PM_ID, ((ProfileDetailActivity) context).pmId);
+                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, ((ProfileDetailActivity)
+                        context).checkNumberFavourite);
+                bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, ((ProfileDetailActivity)
+                        context).thumbnailUrl);
+                bundle.putString(AppConstants.EXTRA_CONTACT_POSITION, ((ProfileDetailActivity)
+                        context).listClickedPosition + "");
+                ((BaseActivity) context).startActivityIntent(context,
+                        ProfileDetailActivity.class, bundle);
                 break;
             //</editor-fold>
 
