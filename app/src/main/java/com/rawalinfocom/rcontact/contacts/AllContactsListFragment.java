@@ -972,6 +972,45 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     profileData.setTempPrefix(data.getString(prefixNameIdx));
                     profileData.setTempSufix(data.getString(suffixNameIdx));
                     profileData.setTempMiddleName(data.getString(middleNameIdx));
+                    /*profileData.setName(data.getString(prefixNameIdx) + data.getString(givenNameIdx) + data.getString(middleNameIdx)
+                            + data.getString(familyNameIdx) + data.getString(suffixNameIdx));*/
+                    profileData.setName(data.getString(givenNameIdx) + data.getString(familyNameIdx));
+                    /*if(data.getString(prefixNameIdx)!=null && data.getString(givenNameIdx) != null
+                            && data.getString(middleNameIdx) != null && data.getString(familyNameIdx)!=null
+                            && data.getString(suffixNameIdx)!=null){
+                        profileData.setName(data.getString(prefixNameIdx) + data.getString(givenNameIdx) + data.getString(middleNameIdx)
+                                + data.getString(familyNameIdx) + data.getString(suffixNameIdx));
+                    }else if(data.getString(prefixNameIdx)==null && data.getString(givenNameIdx) != null
+                        && data.getString(middleNameIdx) != null && data.getString(familyNameIdx)!=null
+                        && data.getString(suffixNameIdx)!=null){
+                        profileData.setName(data.getString(givenNameIdx) + data.getString(middleNameIdx)
+                                + data.getString(familyNameIdx) + data.getString(suffixNameIdx));
+                    }else if(data.getString(prefixNameIdx)!=null && data.getString(givenNameIdx) == null
+                            && data.getString(middleNameIdx) != null && data.getString(familyNameIdx)!=null
+                            && data.getString(suffixNameIdx)!=null){
+                        profileData.setName(data.getString(prefixNameIdx) + data.getString(middleNameIdx)
+                                + data.getString(familyNameIdx) + data.getString(suffixNameIdx));
+                    }else if(data.getString(prefixNameIdx)!=null && data.getString(givenNameIdx) != null
+                            && data.getString(middleNameIdx) == null && data.getString(familyNameIdx)!=null
+                            && data.getString(suffixNameIdx)!=null){
+                        profileData.setName(data.getString(prefixNameIdx) + data.getString(givenNameIdx)
+                                + data.getString(familyNameIdx) + data.getString(suffixNameIdx));
+                    } else if(data.getString(prefixNameIdx)!=null && data.getString(givenNameIdx) != null
+                            && data.getString(middleNameIdx) != null && data.getString(familyNameIdx)==null
+                            && data.getString(suffixNameIdx)!=null){
+                        profileData.setName(data.getString(prefixNameIdx) + data.getString(givenNameIdx) + data.getString(middleNameIdx)
+                                + data.getString(suffixNameIdx));
+                    }else if(data.getString(prefixNameIdx)!=null && data.getString(givenNameIdx) != null
+                            && data.getString(middleNameIdx) != null && data.getString(familyNameIdx)!=null
+                            && data.getString(suffixNameIdx) ==null){
+                        profileData.setName(data.getString(prefixNameIdx) + data.getString(givenNameIdx) + data.getString(middleNameIdx)
+                                + data.getString(familyNameIdx));
+                    }else if(data.getString(prefixNameIdx) == null && data.getString(givenNameIdx) == null
+                            && data.getString(middleNameIdx) == null && data.getString(familyNameIdx)==null
+                            && data.getString(suffixNameIdx)== null){
+                        profileData.setName("");
+                    }*/
+
                     break;
             }
         }

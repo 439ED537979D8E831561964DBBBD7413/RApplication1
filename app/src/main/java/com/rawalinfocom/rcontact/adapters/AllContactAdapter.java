@@ -57,6 +57,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -94,6 +97,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private PhoneBookContacts phoneBookContacts;
     private ArrayList<Integer> mSectionPositions;
+    private ArrayList<Object> arraylist;
+    private int searchCount;
 
     //<editor-fold desc="Constructor">
     public AllContactAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
@@ -122,9 +127,44 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         phoneBookContacts = new PhoneBookContacts(context);
     }
+
+    public AllContactAdapter(Activity activity, ArrayList<Object> arrayListUserContact) {
+        this.context = activity;
+        this.fragment = fragment;
+//        this.arrayListUserContact = arrayListUserContact;
+        this.arrayListUserContact = new ArrayList<>();
+        this.arrayListUserContact.addAll(arrayListUserContact);
+        /*this.arrayListContactHeader = new ArrayList<>();
+        this.arrayListContactHeader.add("#");
+        this.arrayListContactHeader.addAll(arrayListContactHeader);*/
+        this.arraylist = new ArrayList<Object>();
+        this.arraylist.addAll(arrayListUserContact);
+
+        arrayListExpandedPositions = new ArrayList<>();
+
+        colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
+        colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
+
+        tableProfileMaster = new TableProfileMaster(((BaseActivity) context).databaseHandler);
+        tableProfileMobileMapping = new TableProfileMobileMapping(((BaseActivity) context)
+                .databaseHandler);
+        tableProfileEmailMapping = new TableProfileEmailMapping(((BaseActivity) context)
+                .databaseHandler);
+
+        phoneBookContacts = new PhoneBookContacts(context);
+    }
     //</editor-fold>
 
     //<editor-fold desc="Override Methods">
+
+
+    public int getSearchCount() {
+        return searchCount;
+    }
+
+    public void setSearchCount(int searchCount) {
+        this.searchCount = searchCount;
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -196,12 +236,15 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         //return arrayListContactHeader.toArray(new String[arrayListContactHeader.size()]);
         List<String> sections = new ArrayList<>();
         mSectionPositions = new ArrayList<>();
-        int startPosition;
-        if (fragment instanceof AllContactsListFragment) {
-            startPosition = 2;
-        } else {
-            startPosition = 0;
+        int startPosition = 0;
+        if(fragment != null){
+            if (fragment instanceof AllContactsListFragment) {
+                startPosition = 2;
+            } else {
+                startPosition = 0;
+            }
         }
+
         for (int i = startPosition, size = arrayListUserContact.size(); i < size; i++) {
             if (arrayListUserContact.get(i) instanceof ProfileData) {
                 String contactDisplayName = "";
@@ -734,15 +777,17 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void configureFooterViewHolder(ContactFooterViewHolder holder) {
 //        String letter = (String) arrayListUserContact.get(position);
-        if (fragment instanceof AllContactsListFragment) {
-            holder.textTotalContacts.setText((arrayListUserContact.size() - arrayListContactHeader
-                    .size() - 1) + " Contacts");
-        } else if (fragment instanceof FavoritesFragment) {
-            holder.textTotalContacts.setText((arrayListUserContact.size() -
-                    arrayListContactHeader
-                            .size()) + " Contacts");
-
+        if(fragment != null){
+            if (fragment instanceof AllContactsListFragment) {
+                holder.textTotalContacts.setText((arrayListUserContact.size() - arrayListContactHeader
+                        .size() - 1) + " Contacts");
+            } else if (fragment instanceof FavoritesFragment) {
+                holder.textTotalContacts.setText((arrayListUserContact.size() -
+                        arrayListContactHeader
+                                .size()) + " Contacts");
+            }
         }
+
     }
 
     private void displayNumber(AllContactViewHolder holder, ProfileData profileData, String
@@ -1264,6 +1309,54 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
                     .getString(R.string.msg_no_network));
         }*/
+    }
+
+
+    // Filter Class
+    public void filter(String charText) {
+        Pattern numberPat = Pattern.compile("\\d+");
+        Matcher matcher1 = numberPat.matcher(charText);
+        if (matcher1.find()){
+            arrayListUserContact.clear();
+            if (charText.length() == 0) {
+                arrayListUserContact.addAll(arraylist);
+            } else {
+                for(int i=0; i<arraylist.size(); i++){
+                    if(arraylist.get(i) instanceof ProfileData){
+                        ProfileData profileData = (ProfileData) arraylist.get(i);
+                        if(!TextUtils.isEmpty(profileData.getTempNumber())){
+                            if (profileData.getTempNumber().contains(charText)) {
+                                arrayListUserContact.add(profileData);
+                            }
+                        }
+
+                    }
+                }
+            }
+
+        }else{
+            charText = charText.toLowerCase(Locale.getDefault());
+            arrayListUserContact.clear();
+            if (charText.length() == 0) {
+                arrayListUserContact.addAll(arraylist);
+            } else {
+
+                for(int i=0; i<arraylist.size(); i++){
+                    if(arraylist.get(i) instanceof ProfileData){
+                        ProfileData profileData = (ProfileData) arraylist.get(i);
+                        if(!TextUtils.isEmpty(profileData.getName())){
+                            if (profileData.getName().toLowerCase(Locale.getDefault()).contains(charText)) {
+                                arrayListUserContact.add(profileData);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        setSearchCount(arrayListUserContact.size());
+        notifyDataSetChanged();
     }
 
     //</editor-fold>
