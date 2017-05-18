@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 
 public class PrivacyDataItem {
+
     @JsonProperty("pb_phone_number")
     private ArrayList<PrivacyEntityItem> pbPhoneNumber;
     @JsonProperty("pb_event")
@@ -20,6 +21,9 @@ public class PrivacyDataItem {
     private ArrayList<PrivacyEntityItem> pbIMAccounts;
     @JsonProperty("pb_address")
     private ArrayList<PrivacyEntityItem> pbAddress;
+    @JsonProperty("is_hide")
+    private int isHide;
+
 
     public ArrayList<PrivacyEntityItem> getPbPhoneNumber() {
         return pbPhoneNumber;
@@ -59,5 +63,13 @@ public class PrivacyDataItem {
 
     public void setPbAddress(ArrayList<PrivacyEntityItem> pbAddress) {
         this.pbAddress = pbAddress;
+    }
+
+    public int getIsHide() {
+        return isHide;
+    }
+
+    public void setIsHide(int isHide) {
+        this.isHide = isHide;
     }
 }

@@ -54,6 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:padding="@dimen/margin_small"
             android:orientation="horizontal">
 
             <com.rawalinfocom.rcontact.helper.RippleView

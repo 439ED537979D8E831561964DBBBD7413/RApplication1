@@ -138,6 +138,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RippleView rippleActionRightRight;
     ImageView imageRightLeft;
     ImageView imageRightCenter;
+    ImageView imageRightRight;
 
     /* @BindView(R.id.text_joining_date)
      TextView textJoiningDate;*/
@@ -318,7 +319,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         queryManager = new QueryManager(databaseHandler);
         Intent intent = getIntent();
 
-        if (intent != null) {
+        getIntentDetails(intent);
+
+        /*if (intent != null) {
 
             if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER)) {
                 historyNumber = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER);
@@ -413,7 +416,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (intent.hasExtra(AppConstants.EXTRA_CONTACT_POSITION)) {
                 listClickedPosition = intent.getIntExtra(AppConstants.EXTRA_CONTACT_POSITION, -1);
             }
-        }
+        }*/
 
         if (pmId.equalsIgnoreCase(getUserPmId())) {
             displayOwnProfile = true;
@@ -491,6 +494,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Override
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
+
+            //<editor-fold desc="View More">
             case R.id.ripple_view_more:
                 if (relativeSectionViewMore.getVisibility() == View.VISIBLE) {
                     relativeSectionViewMore.setVisibility(View.GONE);
@@ -500,17 +505,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     buttonViewMore.setText("View Less");
                 }
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="Back">
             case R.id.ripple_action_back:
                 onBackPressed();
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="View Old Records">
             case R.id.ripple_view_old_records:
                 progressBarLoadCallLogs.setVisibility(View.VISIBLE);
                 rippleViewOldRecords.setVisibility(View.GONE);
                 getOldCallHistory();
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="Invite">
             case R.id.ripple_invite:
                 ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
                 for (int i = 0; i < tempPhoneNumber.size(); i++) {
@@ -551,9 +562,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         inviteContact(null, aryEmails);
                     }
                 }
-
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="Call Log">
             case R.id.ripple_call_log:
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -570,7 +582,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     openCallLogHistoryDetailsActivity();
                 }
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="SMS">
             case R.id.ripple_sms:
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -684,9 +698,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
 
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="Right Center">
             case R.id.ripple_action_right_center:
-
 
                 if (StringUtils.equals(imageRightCenter.getTag().toString(), TAG_IMAGE_CALL)) {
                     showCallConfirmationDialog(historyNumber);
@@ -705,8 +720,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     }
                 }
                 break;
+            //</editor-fold>
 
-            // Favourites
+            //<editor-fold desc="Favourites">
             case R.id.ripple_action_right_left:
                 if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_FAVOURITE)
                         || StringUtils.equals(imageRightLeft.getTag().toString(),
@@ -750,11 +766,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     overridePendingTransition(R.anim.enter, R.anim.exit);*/
                 }
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="3 Dot option Menu">
             case R.id.ripple_action_right_right:
-                ProfileMenuOptionDialog profileMenuOptionDialog;
-                boolean isFromCallLogTab = false;
                 if (profileActivityCallInstance) {
+                    ProfileMenuOptionDialog profileMenuOptionDialog;
+                    boolean isFromCallLogTab = false;
                     isFromCallLogTab = true;
                     String blockedNumber = "";
                     ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
@@ -849,13 +867,32 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             }
                         }
                     }
+                } else {
+//                    openOptionsMenu();
+                    int menuType;
 
+                    if (!displayOwnProfile) {
+                        if (isHideFavourite) {
+                            // RCP Contact from RCP tab
+                            menuType = OptionMenuDialog.R_CONTACT_RCP;
+                        } else if (StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+                            // PB Contact 
+                            menuType = OptionMenuDialog.ALL_CONTACT_NON_RCP;
+                        } else {
+                            // RCP Contact
+                            menuType = OptionMenuDialog.ALL_CONTACT_RCP;
+                        }
 
+                        OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
+                                .this, phoneBookId, menuType);
+
+                        optionMenu.showDialog();
+                    }
                 }
                 break;
+            //</editor-fold>
         }
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -1698,6 +1735,105 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     }
 
+    private void getIntentDetails(Intent intent) {
+        if (intent != null) {
+
+            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER)) {
+                historyNumber = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NAME)) {
+                historyName = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NAME);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE)) {
+                profileActivityCallInstance = intent.getBooleanExtra(AppConstants
+                        .EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, false);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_DATE)) {
+                historyDate = intent.getLongExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, 0);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CALL_UNIQUE_ID)) {
+                hashMapKey = intent.getStringExtra(AppConstants.EXTRA_CALL_UNIQUE_ID);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID)) {
+                uniqueContactId = intent.getStringExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE)) {
+                profileThumbnail = intent.getStringExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
+                pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
+                if (!pmId.equalsIgnoreCase("-1") && !pmId.equalsIgnoreCase(getUserPmId())) {
+                    if (Utils.isNetworkAvailable(this)) {
+                        ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
+                        ProfileVisit profileVisit = new ProfileVisit();
+                        profileVisit.setVisitorPmId(Integer.parseInt(pmId));
+                        profileVisit.setVisitCount(1);
+                        profileVisits.add(profileVisit);
+                        profileVisit(profileVisits);
+                    } else {
+                        HashMap<String, String> mapProfileViews = new HashMap<>();
+                        if (Utils.getHashMapPreference(this, AppConstants
+                                .PREF_PROFILE_VIEWS) != null) {
+                            mapProfileViews.putAll(Utils.getHashMapPreference(this, AppConstants
+                                    .PREF_PROFILE_VIEWS));
+                        }
+                        if (mapProfileViews.containsKey(pmId)) {
+                            int count = Integer.parseInt(mapProfileViews.get(pmId));
+                            mapProfileViews.put(pmId, String.valueOf(++count));
+                        } else {
+                            mapProfileViews.put(pmId, "1");
+                        }
+                        Utils.setHashMapPreference(this, AppConstants.PREF_PROFILE_VIEWS,
+                                mapProfileViews);
+                    }
+                }
+            } else {
+                pmId = "-1";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_PHONE_BOOK_ID)) {
+                phoneBookId = intent.getStringExtra(AppConstants.EXTRA_PHONE_BOOK_ID);
+            } else {
+                phoneBookId = "-1";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NAME)) {
+                contactName = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NAME);
+            } else {
+                contactName = "";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL)) {
+                thumbnailUrl = intent.getStringExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL);
+            } else {
+                thumbnailUrl = "";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
+                cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
+                cloudContactName = StringUtils.substring(cloudContactName, 2, cloudContactName
+                        .length() - 1);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE)) {
+                isHideFavourite = true;
+                checkNumberFavourite = intent.getStringExtra(AppConstants
+                        .EXTRA_CHECK_NUMBER_FAVOURITE);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_POSITION)) {
+                listClickedPosition = intent.getIntExtra(AppConstants.EXTRA_CONTACT_POSITION, -1);
+            }
+        }
+    }
+
     private void layoutVisibility() {
         if (profileActivityCallInstance) {
             relativeContactDetails.setVisibility(View.GONE);
@@ -1751,8 +1887,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 textToolbarTitle.setText(getString(R.string.title_my_profile));
                 linearCallSms.setVisibility(View.GONE);
                 imageRightLeft.setImageResource(R.drawable.ic_action_edit);
+                rippleActionRightRight.setVisibility(View.GONE);
                 imageRightLeft.setTag(TAG_IMAGE_EDIT);
-                imageRightLeft.setVisibility(View.GONE);
             } else {
                 textToolbarTitle.setText("Profile Detail");
                 linearCallSms.setVisibility(View.VISIBLE);
@@ -1781,6 +1917,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
         imageRightLeft = ButterKnife.findById(includeToolbar, R.id.image_right_left);
         imageRightCenter = ButterKnife.findById(includeToolbar, R.id.image_right_center);
+        imageRightRight = ButterKnife.findById(includeToolbar, R.id.image_right_right);
         rippleActionRightLeft = ButterKnife.findById(includeToolbar, R.id.ripple_action_right_left);
         rippleActionRightCenter = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_center);
