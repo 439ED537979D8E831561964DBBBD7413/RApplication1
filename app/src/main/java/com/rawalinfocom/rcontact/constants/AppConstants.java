@@ -145,6 +145,7 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_SMS =
             "action_local_broadcast_recent_sms";
     public static String ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER = "action_local_broadcast_delete_sms_receiver";
+    public static String ACTION_LOCAL_BROADCAST_SYNC_SMS = "action_local_broadcast_sync_sms";
 
     //</editor-fold>
 
@@ -192,6 +193,8 @@ public class AppConstants {
     public static String PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE = "pref_recent_calls_broadcast_receiver_main_instance";
     public static String PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE = "pref_recent_sms_broadcast_receiver_main_instance";
     public static String PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB = "pref_recent_calls_broadcast_receiver_main_instance_call_log_tab";
+    public static String PREF_SMS_LOG_SYNCED_COUNT = "pref_sms_log_synced_count";
+    public static String PREF_SMS_LOG_SYNCED = "pref_sms_log_synced";
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,

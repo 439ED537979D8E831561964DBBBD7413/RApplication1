@@ -43,7 +43,6 @@ public class SearchActivity extends BaseActivity {
     ArrayList<Object> objectArrayListContact;
     RContactApplication rContactApplication;
     AllContactAdapter allContactAdapter;
-    int count =0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +73,6 @@ public class SearchActivity extends BaseActivity {
                     search.clearFocus();
                     search.setText("");
                 }else{
-                    count =1;
                     finish();
                     if (!isTaskRoot()) {
                         overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
