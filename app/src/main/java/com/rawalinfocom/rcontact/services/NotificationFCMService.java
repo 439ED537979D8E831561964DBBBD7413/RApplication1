@@ -54,7 +54,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
             Map<String, String> m = remoteMessage.getData();
             DatabaseHandler databaseHandler = new DatabaseHandler(this);
             String notiData = m.get("default");
-            if (notiData != null) {
+            /*if (notiData != null) {
                 try {
                     ObjectMapper mapper = new ObjectMapper();
                     NotificationData obj = mapper.readValue(notiData, NotificationData.class);
@@ -76,7 +76,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
+            }*/
             String api = m.get("API");
             if (api == null) {
                 return;
