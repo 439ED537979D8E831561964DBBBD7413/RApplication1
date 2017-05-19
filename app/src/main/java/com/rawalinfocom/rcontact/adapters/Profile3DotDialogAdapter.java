@@ -101,6 +101,15 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                     Utils.addToContact(context, numberToCall);
 
+                } else if (value.equalsIgnoreCase(context.getString(R.string.edit))) {
+                    Intent intent = new Intent(Intent.ACTION_EDIT);
+                    Uri lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
+                            .CONTENT_LOOKUP_URI, key);
+                    Uri res = ContactsContract.Contacts.lookupContact(context.getContentResolver(),
+                            lookupUri);
+                    intent.setData(res);
+                    context.startActivity(intent);
+                    ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
                 } else if (value.equalsIgnoreCase(context.getString(R.string
                         .add_to_existing_contact))) {
                     Utils.addToExistingContact(context, numberToCall);
@@ -112,10 +121,6 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                             (context, numberToCall);
                     materialDialogClipboard.showDialog();
                 } else if (value.equalsIgnoreCase("View in AC")) {
-                    // TODO: 18/05/17
-                    Log.i("extra_phone_book_id", key);
-                    Log.i("extra_contact_name", dialogName);
-                    Log.i("extra_profile_image", profileUrl);
 
                     Bundle bundle = new Bundle();
                     bundle.putString(AppConstants.EXTRA_CONTACT_NAME, dialogName);

@@ -31,12 +31,12 @@ import java.util.Arrays;
  * Created by Monal on 24/12/16.
  */
 
-public class OptionMenuDialog {
+class OptionMenuDialog {
 
     public static final int ALL_CONTACT_MY_PROFILE = 0;
-    public static final int ALL_CONTACT_NON_RCP = 1;
-    public static final int ALL_CONTACT_RCP = 2;
-    public static final int R_CONTACT_RCP = 3;
+    static final int ALL_CONTACT_NON_RCP = 1;
+    static final int ALL_CONTACT_RCP = 2;
+    static final int R_CONTACT_RCP = 3;
 
     private Context context;
     private Dialog dialog;
@@ -44,10 +44,8 @@ public class OptionMenuDialog {
     private String dialogTag;
     private String rawId;
 
-    private RecyclerView recyclerViewOptionMenu;
-
     //<editor-fold desc="Constructor">
-    public OptionMenuDialog(final Context context, String rawId, final int menuType) {
+    OptionMenuDialog(final Context context, String rawId, final int menuType) {
         this.context = context;
         this.rawId = rawId;
 
@@ -59,11 +57,12 @@ public class OptionMenuDialog {
         layoutParams.copyFrom(dialog.getWindow().getAttributes());
         layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.60);
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        dialog.getWindow().setGravity(Gravity.TOP | Gravity.RIGHT);
+        dialog.getWindow().setGravity(Gravity.TOP | Gravity.END);
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        recyclerViewOptionMenu = (RecyclerView) dialog.findViewById(R.id.recycler_view_option_menu);
+        RecyclerView recyclerViewOptionMenu = (RecyclerView) dialog.findViewById(R.id
+                .recycler_view_option_menu);
 
         String[] menus = new String[0];
         switch (menuType) {
@@ -150,6 +149,9 @@ public class OptionMenuDialog {
                 res = ContactsContract.Contacts.lookupContact(context.getContentResolver
                         (), lookupUri);
                 intent.setData(res);
+                if (context instanceof ProfileDetailActivity) {
+                    ((ProfileDetailActivity) context).isContactEdited = true;
+                }
                 context.startActivity(intent);
                 ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
@@ -176,6 +178,9 @@ public class OptionMenuDialog {
                 res = ContactsContract.Contacts.lookupContact(context.getContentResolver
                         (), lookupUri);
                 intent.setData(res);
+                if (context instanceof ProfileDetailActivity) {
+                    ((ProfileDetailActivity) context).isContactEdited = true;
+                }
                 context.startActivity(intent);
                 ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
@@ -228,8 +233,8 @@ public class OptionMenuDialog {
                 intent = new Intent(Intent.ACTION_EDIT);
                 lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
                         .CONTENT_LOOKUP_URI, rawId);
-                res = ContactsContract.Contacts.lookupContact(context.getContentResolver
-                        (), lookupUri);
+                res = ContactsContract.Contacts.lookupContact(context.getContentResolver(),
+                        lookupUri);
                 intent.setData(res);
                 context.startActivity(intent);
                 ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);

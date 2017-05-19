@@ -305,6 +305,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     ArrayList<Object> tempEmail;
 
     boolean isFromReceiver = false;
+    boolean isContactEdited = false;
 
     //<editor-fold desc="Override Methods">
 
@@ -343,6 +344,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         }
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (isContactEdited) {
+            isContactEdited = false;
+            recreate();
+        }
     }
 
     @Override
@@ -828,20 +838,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             break;
         }
     }
-
-/*    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                if (displayOwnProfile) {
-                    ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
-                            (this, pmId);
-                    setUpView(profileDataOperation);
-                }
-            }
-        }
-    }*/
 
     private void showPermissionConfirmationDialog() {
 
