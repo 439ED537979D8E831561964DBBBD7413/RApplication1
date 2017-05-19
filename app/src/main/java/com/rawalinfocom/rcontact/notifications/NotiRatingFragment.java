@@ -128,7 +128,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         init();
         tableCommentMaster = new TableCommentMaster(getDatabaseHandler());
         initData();
-       // getAllRatingComment(this);
+        // getAllRatingComment(this);
 
     }
 
@@ -192,7 +192,8 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_RATE);
+                if (getActivity() != null)
+                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_RATE);
             }
         }, 800);
     }

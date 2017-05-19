@@ -104,6 +104,7 @@ public class NotificationsActivity extends BaseActivity implements RippleView
         int totalCount = timeLineCount + profileCount + ratingCount + commentsCount + rContactsCount;
         if (totalCount > 0) {
             textNotificationsCount.setText(String.valueOf(totalCount));
+            textNotificationsCount.setVisibility(View.VISIBLE);
         } else {
             textNotificationsCount.setVisibility(View.GONE);
         }

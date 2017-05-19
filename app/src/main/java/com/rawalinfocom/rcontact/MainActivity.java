@@ -260,6 +260,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id.nav_user_timeline).getActionView();
         TextView textView = (TextView) view.findViewById(R.id.badge_count);
         if (count > 0) {
+            view.setVisibility(View.VISIBLE);
             textView.setText(String.valueOf(count));
         } else {
             view.setVisibility(View.GONE);

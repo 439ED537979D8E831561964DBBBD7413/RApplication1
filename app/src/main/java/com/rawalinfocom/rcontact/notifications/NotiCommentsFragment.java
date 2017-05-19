@@ -198,7 +198,8 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_COMMENTS);
+                if (getActivity() != null)
+                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_COMMENTS);
             }
         }, 800);
     }

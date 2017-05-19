@@ -80,7 +80,8 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_RUPDATE);
+                if (getActivity() != null)
+                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_RUPDATE);
             }
         }, 800);
     }

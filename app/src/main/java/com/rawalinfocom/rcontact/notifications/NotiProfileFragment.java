@@ -199,7 +199,8 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                                    if (getActivity() != null)
+                                        ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
                                 }
                             }, 800);
                             isFirstTime = false;
@@ -348,7 +349,8 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
+                if (getActivity() != null)
+                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
             }
         }, 800);
         recyclerPastProfile.setVisibility(View.GONE);
