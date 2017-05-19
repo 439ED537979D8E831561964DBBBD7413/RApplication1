@@ -678,7 +678,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     boolean isFromCallLogTab = false;
                     isFromCallLogTab = true;
                     String blockedNumber = "";
-                    ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+                    ArrayList<CallLogType> callLogTypeList = new ArrayList<>();
                     HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
                             Utils.getHashMapPreferenceForBlock(this, AppConstants
                                     .PREF_BLOCK_CONTACT_LIST);
@@ -700,7 +700,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     if (!TextUtils.isEmpty(blockedNumber)) {
                         if (!TextUtils.isEmpty(historyName)) {
                             ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
-                                            .getString(R.string.edit),
+                                            .getString(R.string.edit), "View in AC",
                                     /*this.getString(R.string.view_in_ac), this.getString(R
                                     .string.view_in_rc),
                                     this.getString(R.string.call_reminder),
@@ -708,9 +708,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                             .delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                    arrayListName, historyNumber,
-                                    historyDate, isFromCallLogTab, arrayListHistory, historyName,
-                                    "", hashMapKey);
+                                    arrayListName, historyNumber, historyDate, isFromCallLogTab,
+                                    arrayListHistory, historyName, "", hashMapKey,
+                                    profileThumbnail);
                             profileMenuOptionDialog.showDialog();
 
                         } else {
@@ -727,9 +727,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                                         .string
                                                         .clear_call_log)));
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                        arrayListNumber, historyNumber,
-                                        historyDate, isFromCallLogTab, arrayListHistory, "",
-                                        uniqueContactId, hashMapKey);
+                                        arrayListNumber, historyNumber, historyDate,
+                                        isFromCallLogTab, arrayListHistory, "", uniqueContactId,
+                                        hashMapKey, profileThumbnail);
                                 profileMenuOptionDialog.showDialog();
                             }
                         }
@@ -737,6 +737,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         if (!TextUtils.isEmpty(historyName)) {
                             ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
                                             .getString(R.string.edit),
+                                    "View in AC",
                                     /*this.getString(R.string.view_in_ac), this.getString(R
                                     .string.view_in_rc),
                                     this.getString(R.string.call_reminder),
@@ -744,9 +745,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                             .delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                    arrayListName, historyNumber,
-                                    historyDate, isFromCallLogTab, arrayListHistory, historyName,
-                                    "", "");
+                                    arrayListName, historyNumber, historyDate, isFromCallLogTab,
+                                    arrayListHistory, historyName, "", hashMapKey,
+                                    profileThumbnail);
                             profileMenuOptionDialog.showDialog();
 
                         } else {
@@ -763,9 +764,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                                         .string
                                                         .clear_call_log)));
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                        arrayListNumber, historyNumber,
-                                        historyDate, isFromCallLogTab, arrayListHistory, "",
-                                        uniqueContactId, "");
+                                        arrayListNumber, historyNumber, historyDate,
+                                        isFromCallLogTab, arrayListHistory, "", uniqueContactId,
+                                        "", profileThumbnail);
                                 profileMenuOptionDialog.showDialog();
                             }
                         }
@@ -786,8 +787,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             menuType = OptionMenuDialog.ALL_CONTACT_RCP;
                         }
 
+                        String rawId;
+                        if (checkNumberFavourite == null) {
+                            rawId = phoneBookId;
+                        } else {
+                            rawId = checkNumberFavourite;
+                        }
+
                         OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
-                                .this, phoneBookId, menuType);
+                                .this, rawId, menuType);
 
                         optionMenu.showDialog();
                     }

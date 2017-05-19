@@ -136,9 +136,22 @@ public class OptionMenuDialog {
     //<editor-fold desc="Menu Item Click listener">
 
     private void menuAllContactNonRcp(View view, int position) {
+
+        Intent intent;
+        Uri lookupUri, res;
+
         switch (position) {
+
             //<editor-fold desc="Edit">
             case 0:
+                intent = new Intent(Intent.ACTION_EDIT);
+                lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
+                        .CONTENT_LOOKUP_URI, rawId);
+                res = ContactsContract.Contacts.lookupContact(context.getContentResolver
+                        (), lookupUri);
+                intent.setData(res);
+                context.startActivity(intent);
+                ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
             //</editor-fold>
 
@@ -150,9 +163,21 @@ public class OptionMenuDialog {
     }
 
     private void menuAllContactRcp(View view, int position) {
+        Intent intent;
+        Uri lookupUri, res;
+
         switch (position) {
+
             //<editor-fold desc="Edit">
             case 0:
+                intent = new Intent(Intent.ACTION_EDIT);
+                lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
+                        .CONTENT_LOOKUP_URI, rawId);
+                res = ContactsContract.Contacts.lookupContact(context.getContentResolver
+                        (), lookupUri);
+                intent.setData(res);
+                context.startActivity(intent);
+                ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
             //</editor-fold>
 
@@ -160,10 +185,10 @@ public class OptionMenuDialog {
             case 1:
                 // In Case of invalid lookup key
                 try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    Uri lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
+                    intent = new Intent(Intent.ACTION_VIEW);
+                    lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
                             .CONTENT_LOOKUP_URI, rawId);
-                    Uri res = ContactsContract.Contacts.lookupContact(context.getContentResolver
+                    res = ContactsContract.Contacts.lookupContact(context.getContentResolver
                             (), lookupUri);
                     intent.setData(res);
                     context.startActivity(intent);
@@ -192,10 +217,22 @@ public class OptionMenuDialog {
     }
 
     private void menuRContactRcp(View view, int position) {
+
+        Intent intent;
+        Uri lookupUri, res;
+
         switch (position) {
 
             //<editor-fold desc="Edit">
             case 0:
+                intent = new Intent(Intent.ACTION_EDIT);
+                lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
+                        .CONTENT_LOOKUP_URI, rawId);
+                res = ContactsContract.Contacts.lookupContact(context.getContentResolver
+                        (), lookupUri);
+                intent.setData(res);
+                context.startActivity(intent);
+                ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
             //</editor-fold>
 

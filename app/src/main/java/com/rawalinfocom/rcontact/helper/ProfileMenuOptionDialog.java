@@ -17,7 +17,6 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.adapters.CallLogDialogListAdapter;
 import com.rawalinfocom.rcontact.adapters.Profile3DotDialogAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.CallLogType;
@@ -33,24 +32,26 @@ import java.util.regex.Pattern;
 public class ProfileMenuOptionDialog {
 
 
-    RecyclerView recycleViewDialog;
+    private RecyclerView recycleViewDialog;
     private Context context;
     private Dialog dialog;
     private String dialogTag;
     private TextView tvDialogTitle;
     private ArrayList<String> stringArrayList;
-    String dialogTitle;
-    String numberToCall;
-    RecyclerView.Adapter callingAdapter;
-    long callLogDateToDelete;
-    boolean isFromCallLogFragment = false;
-    ArrayList<CallLogType> arrayListCallLogType;
-    String name ="";
-    String uniqueID = "";
-    String key;
-    public ProfileMenuOptionDialog(Context context, ArrayList<String> arrayList, String number, long date,
-                                   boolean isFromCallTab , ArrayList<CallLogType> list, String name, String uniqueRowId,
-                                   String key) {
+    private String dialogTitle;
+    private String numberToCall;
+    private RecyclerView.Adapter callingAdapter;
+    private long callLogDateToDelete;
+    private boolean isFromCallLogFragment = false;
+    private ArrayList<CallLogType> arrayListCallLogType;
+    private String name = "";
+    private String uniqueID = "";
+    private String key;
+    private String profileUrl;
+
+    public ProfileMenuOptionDialog(Context context, ArrayList<String> arrayList, String number,
+                                   long date, boolean isFromCallTab, ArrayList<CallLogType> list,
+                                   String name, String uniqueRowId, String key, String profileUrl) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -62,9 +63,11 @@ public class ProfileMenuOptionDialog {
         Pattern numberPat = Pattern.compile("\\d+");
         Matcher matcher1 = numberPat.matcher(number);
         if (matcher1.find()) {
-            layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.80);
+            layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels *
+                    0.80);
         } else {
-            layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.60);
+            layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels *
+                    0.60);
         }
 
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -76,36 +79,37 @@ public class ProfileMenuOptionDialog {
         recycleViewDialog = (RecyclerView) dialog.findViewById(R.id.recycle_view_dialog);
 
         stringArrayList = arrayList;
-        numberToCall =  number;
-        callLogDateToDelete =  date;
+        numberToCall = number;
+        callLogDateToDelete = date;
         dialogTitle = getDialogTitle();
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
 
-        isFromCallLogFragment =  isFromCallTab;
-        arrayListCallLogType =  list;
-        this.name =  name;
+        isFromCallLogFragment = isFromCallTab;
+        arrayListCallLogType = list;
+        this.name = name;
         this.key = key;
-        this.uniqueID =  uniqueRowId;
+        this.uniqueID = uniqueRowId;
+        this.profileUrl = profileUrl;
 
         setAdapter();
-        LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(context);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);
-        localBroadcastManager.registerReceiver(localBroadcastReceiverDialog,intentFilter);
+        localBroadcastManager.registerReceiver(localBroadcastReceiverDialog, intentFilter);
     }
 
 
-
     private void setAdapter() {
-        if(!TextUtils.isEmpty(numberToCall)){
-            Profile3DotDialogAdapter profile3DotDialogAdapter = new Profile3DotDialogAdapter(context, stringArrayList, numberToCall,
-                    callLogDateToDelete,isFromCallLogFragment,arrayListCallLogType,name,uniqueID,key);
+        if (!TextUtils.isEmpty(numberToCall)) {
+            Profile3DotDialogAdapter profile3DotDialogAdapter = new Profile3DotDialogAdapter
+                    (context, stringArrayList, numberToCall, callLogDateToDelete,
+                            isFromCallLogFragment, arrayListCallLogType, name, uniqueID, key,
+                            profileUrl);
             recycleViewDialog.setAdapter(profile3DotDialogAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
         }
 
     }
-
 
 
     /**
@@ -176,7 +180,7 @@ public class ProfileMenuOptionDialog {
     private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment","onReceive() of LocalBroadcast");
+            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
             dismissDialog();
         }
     };
