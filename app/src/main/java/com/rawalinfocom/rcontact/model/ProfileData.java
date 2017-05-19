@@ -30,6 +30,7 @@ public class ProfileData {
     private String tempRcpId;
     private boolean tempIsRcp;
     private String tempRawId;
+    private String name;
 
 
     @JsonProperty("pb_local_phonebook_id")
@@ -181,5 +182,13 @@ public class ProfileData {
 
     public void setTempRawId(String tempRawId) {
         this.tempRawId = tempRawId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

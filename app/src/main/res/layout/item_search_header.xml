@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/veryVeryLightGray"
+    android:orientation="horizontal"
+    android:paddingRight="@dimen/padding_5dp">
+
+    <TextView
+        android:id="@+id/text_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/padding_10dp"
+        android:paddingLeft="@dimen/padding_10dp"
+        android:paddingRight="@dimen/padding_10dp"
+        android:paddingTop="@dimen/padding_10dp"
+        android:textAppearance="?android:textAppearanceMedium"
+        tools:text="Phone Book"/>
+
+
+    <TextView
+        android:id="@+id/text_search_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/padding_10dp"
+        android:paddingLeft="@dimen/padding_10dp"
+        android:paddingRight="@dimen/padding_10dp"
+        android:paddingTop="@dimen/padding_10dp"
+        android:textAppearance="?android:textAppearanceMedium"
+        tools:text="1234"
+        android:layout_alignParentRight="true"/>
+
+</RelativeLayout>
