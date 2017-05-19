@@ -1,15 +1,11 @@
 package com.rawalinfocom.rcontact.notifications;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -204,18 +200,6 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
         return notificationStateMaster.getTotalUnreadCountByType(type);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        registerLocalBroadCastReceiver();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unRegisterLocalBroadCastReceiver();
-    }
-
     public void updateNotificationCount(int type) {
         TableNotificationStateMaster tableNotificationStateMaster = new TableNotificationStateMaster(databaseHandler);
         tableNotificationStateMaster.makeAllNotificationsAsReadByType(type);
@@ -293,100 +277,5 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
         ShortcutBadger.applyCount(getApplicationContext(), badgeCount);
     }
 
-    private void registerLocalBroadCastReceiver() {
-        LocalBroadcastManager localBroadcastManagerUpdateNotificationCount = LocalBroadcastManager
-                .getInstance(NotificationsDetailActivity.this);
-        IntentFilter intentFilterUpdateCount = new IntentFilter(AppConstants
-                .ACTION_LOCAL_BROADCAST_UPDATE_NOTIFICATION_COUNT);
-        localBroadcastManagerUpdateNotificationCount.registerReceiver(localBroadCastReceiverUpdateCount, intentFilterUpdateCount);
-    }
-
-    private void unRegisterLocalBroadCastReceiver() {
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager
-                .getInstance(this);
-        localBroadcastManager.unregisterReceiver(localBroadCastReceiverUpdateCount);
-    }
-
-    private BroadcastReceiver localBroadCastReceiverUpdateCount = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            try {
-
-                updateNotificationCount();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-    };
-
-    private void updateNotificationCount() {
-        int profileRequestCount;
-        int profileResponseCount;
-
-
-        profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
-        profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
-        profileCount = profileRequestCount + profileResponseCount;
-        TabLayout.Tab tab = tabNotifications.getTabAt(0);
-        View view = tab.getCustomView();
-        TextView countText = (TextView)
-                view.findViewById(R.id.text_notifications_count);
-        if (profileCount > 0) {
-            countText.setText(String.valueOf(profileCount));
-        } else {
-            countText.setVisibility(View.GONE);
-        }
-
-        profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
-        profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
-        profileCount = profileRequestCount + profileResponseCount;
-        tab = tabNotifications.getTabAt(0);
-        view = tab.getCustomView();
-        countText = (TextView)
-                view.findViewById(R.id.text_notifications_count);
-        if (profileCount > 0) {
-            countText.setText(String.valueOf(profileCount));
-        } else {
-            countText.setVisibility(View.GONE);
-        }
-
-        ratingCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RATE);
-        tab = tabNotifications.getTabAt(1);
-        view = tab.getCustomView();
-        countText = (TextView)
-                view.findViewById(R.id.text_notifications_count);
-        if (ratingCount > 0) {
-            countText.setText(String.valueOf(ratingCount));
-        } else {
-            countText.setVisibility(View.GONE);
-        }
-
-        commentsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_COMMENTS);
-        tab = tabNotifications.getTabAt(2);
-        view = tab.getCustomView();
-        countText = (TextView)
-                view.findViewById(R.id.text_notifications_count);
-        if (commentsCount > 0) {
-            countText.setText(String.valueOf(commentsCount));
-        } else {
-            countText.setVisibility(View.GONE);
-        }
-
-        rContactsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RUPDATE);
-        tab = tabNotifications.getTabAt(3);
-        view = tab.getCustomView();
-        countText = (TextView)
-                view.findViewById(R.id.text_notifications_count);
-        if (rContactsCount > 0) {
-            countText.setText(String.valueOf(rContactsCount));
-        } else {
-            countText.setVisibility(View.GONE);
-        }
-
-
-    }
 
 }
