@@ -118,6 +118,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
     public static CallLogType callLogTypeReceiverMain;
     boolean isRecentBroadCastForCallLogsMainInstance = false;
+    private ImageView imageViewSearch;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -504,15 +505,9 @@ public class MainActivity extends BaseActivity implements NavigationView
     private void init() {
 
         imageNotification = (ImageView) toolbar.findViewById(R.id.image_notification);
+        imageViewSearch = (ImageView) toolbar.findViewById(R.id.image_search);
         badgeLayout = (LinearLayout) toolbar.findViewById(R.id.badge_layout);
         badgeTextView = (TextView) toolbar.findViewById(R.id.badge_count);
-//        int count = getNotificationCount(databaseHandler);
-//        if (count > 0) {
-//            badgeLayout.setVisibility(View.VISIBLE);
-//            badgeTextView.setText(String.valueOf(count));
-//        } else {
-//            badgeLayout.setVisibility(View.GONE);
-//        }
 
 //        textImageNotification = (TextView) toolbar.findViewById(R.id.text_image_notification);
 //        textImageNotification.setTypeface(Utils.typefaceIcons(this));
@@ -527,6 +522,15 @@ public class MainActivity extends BaseActivity implements NavigationView
             @Override
             public void onClick(View v) {
                 startActivityIntent(MainActivity.this, NotificationsActivity.class, null);
+            }
+        });
+
+        imageViewSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(MainActivity.this,"Open Search Activity",Toast.LENGTH_SHORT).show();
+                startActivityIntent(MainActivity.this, SearchActivity.class,null);
+
             }
         });
 

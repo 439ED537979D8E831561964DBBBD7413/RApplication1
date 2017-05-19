@@ -541,7 +541,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 }
                             }
                         }else{
-                            if(tempPhoneNumber.size()==1){
+                            if(tempPhoneNumber !=null && tempPhoneNumber.size()==1){
                                 ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
                                 if(phoneNumber!=null){
                                     historyNumber =  phoneNumber.getPhoneNumber();
@@ -582,7 +582,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             }
                         }
                     }else{
-                        if(tempPhoneNumber.size()==1){
+                        if(tempPhoneNumber !=null && tempPhoneNumber.size()==1){
                             ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
                             if(phoneNumber!=null){
                                 historyNumber =  phoneNumber.getPhoneNumber();

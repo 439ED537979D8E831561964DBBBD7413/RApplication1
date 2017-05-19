@@ -972,6 +972,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     profileData.setTempPrefix(data.getString(prefixNameIdx));
                     profileData.setTempSufix(data.getString(suffixNameIdx));
                     profileData.setTempMiddleName(data.getString(middleNameIdx));
+                    /*profileData.setName(data.getString(prefixNameIdx) + data.getString(givenNameIdx) + data.getString(middleNameIdx)
+                            + data.getString(familyNameIdx) + data.getString(suffixNameIdx));*/
+                    profileData.setName(data.getString(givenNameIdx) + data.getString(familyNameIdx));
                     break;
             }
         }
