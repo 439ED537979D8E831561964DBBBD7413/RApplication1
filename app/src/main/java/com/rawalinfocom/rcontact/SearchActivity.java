@@ -43,6 +43,7 @@ public class SearchActivity extends BaseActivity {
     ArrayList<Object> objectArrayListContact;
     RContactApplication rContactApplication;
     AllContactAdapter allContactAdapter;
+    int count =0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +70,15 @@ public class SearchActivity extends BaseActivity {
         ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                search.clearFocus();
-                finish();
-                if (!isTaskRoot()) {
-                    overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
+                if(search.getText().toString().length()>0){
+                    search.clearFocus();
+                    search.setText("");
+                }else{
+                    count =1;
+                    finish();
+                    if (!isTaskRoot()) {
+                        overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
+                    }
                 }
             }
         });
@@ -82,6 +88,7 @@ public class SearchActivity extends BaseActivity {
         if(objectArrayListContact!=null && objectArrayListContact.size()>0){
             allContactAdapter =  new AllContactAdapter(SearchActivity.this,objectArrayListContact);
         }
+
 
         search.addTextChangedListener(new TextWatcher() {
 
