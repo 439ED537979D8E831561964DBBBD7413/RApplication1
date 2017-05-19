@@ -41,8 +41,7 @@ public class TableRCNotificationUpdates {
             " " + COLUMN_NU_TITLE + " text," +
             " " + COLUMN_NU_DETAILS + " text," +
             " " + COLUMN_NU_CLOUD_ID + " text," +
-            " " + COLUMN_CREATED_AT + " datetime," +
-            " UNIQUE(" + COLUMN_NU_CLOUD_ID + ")" +
+            " " + COLUMN_CREATED_AT + " datetime" +
             ");";
 
     public int addUpdate(NotificationData rconUpdate) {

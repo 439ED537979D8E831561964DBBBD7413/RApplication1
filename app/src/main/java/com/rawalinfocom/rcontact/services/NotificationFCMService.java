@@ -30,7 +30,8 @@ import com.rawalinfocom.rcontact.model.Comment;
 import com.rawalinfocom.rcontact.model.ContactRequestData;
 import com.rawalinfocom.rcontact.model.NotificationData;
 import com.rawalinfocom.rcontact.model.NotificationStateData;
-import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
+import com.rawalinfocom.rcontact.notifications.NotificationsDetailActivity;
+import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 
 import java.io.IOException;
 import java.util.Map;
@@ -72,7 +73,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         notificationStateData.setNotificationType(AppConstants.NOTIFICATION_TYPE_RUPDATE);
                         notificationStateData.setNotificationMasterId(obj.getId());
                         notificationStateMaster.addNotificationState(notificationStateData);
-                        sendNotification(obj.getDetails());
+                        sendNotification(obj.getDetails(), AppConstants.NOTIFICATION_TYPE_RUPDATE);
                         updateNotificationCount(databaseHandler);
 //                        int badgeCount = 1;
 //                        ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
@@ -112,7 +113,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     if (id != -1) {
                         notificationStateData.setNotificationMasterId(m.get("pr_id"));
                         notificationStateMaster.addNotificationState(notificationStateData);
-                        sendNotification(msg);
+                        sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
 //                        int badgeCount = 1;
 //                        ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
                     }
@@ -127,7 +128,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     if (isUpdated > 0) {
                         notificationStateData.setNotificationMasterId(m.get("pr_id"));
                         notificationStateMaster.addNotificationState(notificationStateData);
-                        sendNotification(msg);
+                        sendNotification(msg, AppConstants.NOTIFICATION_TYPE_RATE);
 //                        int badgeCount = 1;
 //                        ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
                     }
@@ -149,7 +150,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         notificationStateData.setNotificationMasterId(m.get("id"));
 
                         notificationStateMaster.addNotificationState(notificationStateData);
-                        sendNotification(msg);
+                        sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
 //                        int badgeCount = 1;
 //                        ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
 
@@ -165,7 +166,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         notificationStateData.setNotificationMasterId(m.get("id"));
 
                         notificationStateMaster.addNotificationState(notificationStateData);
-                        sendNotification(msg);
+                        sendNotification(msg, AppConstants.NOTIFICATION_TYPE_COMMENTS);
 //                        int badgeCount = 1;
 //                        ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
                     }
@@ -188,7 +189,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                             notificationStateData.setNotificationMasterId(m.get("car_id"));
 
                             notificationStateMaster.addNotificationState(notificationStateData);
-                            sendNotification(msg);
+                            sendNotification(msg, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
 //                            int badgeCount = 1;
 //                            ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
                         }
@@ -217,7 +218,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                             try {
                                 ContactRequestData obj = mapper.readValue(data, ContactRequestData.class);
                                 updatePrivacySetting(m.get("car_ppm_particular"), m.get("car_mongodb_record_index"), obj, databaseHandler);
-                                sendNotification(msg);
+                                sendNotification(msg, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
 //                                int badgeCount = 1;
 //                                ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
                             } catch (IOException e) {
@@ -264,8 +265,37 @@ public class NotificationFCMService extends FirebaseMessagingService {
         }
     }
 
-    private void sendNotification(String messageBody) {
-        Intent intent = new Intent(this, NotificationsActivity.class);
+    private void sendNotification(String messageBody, int type) {
+        Class aClass = null;
+        int tabIndex = -1;
+        switch (type) {
+            case AppConstants.NOTIFICATION_TYPE_TIMELINE:
+                aClass = TimelineActivity.class;
+                break;
+            case AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST:
+                aClass = NotificationsDetailActivity.class;
+                tabIndex = NotificationsDetailActivity.TAB_REQUEST;
+                break;
+            case AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE:
+                aClass = NotificationsDetailActivity.class;
+                tabIndex = NotificationsDetailActivity.TAB_REQUEST;
+                break;
+            case AppConstants.NOTIFICATION_TYPE_RATE:
+                aClass = NotificationsDetailActivity.class;
+                tabIndex = NotificationsDetailActivity.TAB_RATING;
+                break;
+            case AppConstants.NOTIFICATION_TYPE_COMMENTS:
+                aClass = NotificationsDetailActivity.class;
+                tabIndex = NotificationsDetailActivity.TAB_COMMENTS;
+                break;
+            case AppConstants.NOTIFICATION_TYPE_RUPDATE:
+                aClass = NotificationsDetailActivity.class;
+                tabIndex = NotificationsDetailActivity.TAB_RCONTACTS;
+                break;
+
+        }
+        Intent intent = new Intent(this, aClass);
+        intent.putExtra("TAB_INDEX", tabIndex);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
