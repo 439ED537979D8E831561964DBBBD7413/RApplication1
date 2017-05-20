@@ -396,7 +396,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 false) &&
                                 Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED,
                                         false)) {
-                            insertServiceCall(callLogTypeArrayList);
+                            if(!TextUtils.isEmpty(callLogTypeReceiver.getNumber()))
+                                insertServiceCall(callLogTypeArrayList);
                         }
                     }
 

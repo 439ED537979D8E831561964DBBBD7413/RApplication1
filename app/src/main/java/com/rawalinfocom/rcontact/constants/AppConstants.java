@@ -239,6 +239,7 @@ public class AppConstants {
     public static boolean isFromReceiver = false;
     public static boolean isSMSFromReceiver =  false;
     public static boolean isComposingSMS = false;
+    public static  boolean isFromSearchActivity = false;
 
     //<editor-fold desc="Call-log constants">
     public static final int READ_LOGS = 725;

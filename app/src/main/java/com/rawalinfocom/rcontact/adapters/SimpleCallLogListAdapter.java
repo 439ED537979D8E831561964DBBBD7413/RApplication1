@@ -26,6 +26,7 @@ import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.CallLogType;
+import com.rawalinfocom.rcontact.model.ProfileData;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,6 +65,9 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
     long selectedLogDate = 0;
     long dateFromReceiver;
     String formattedNumber ="";
+    ArrayList<CallLogType> arrayList;
+    private int searchCount;
+
 
     public int getSelectedPosition() {
         return selectedPosition;
@@ -76,10 +81,19 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         return selectedLogDate;
     }
 
+    public int getSearchCount() {
+        return searchCount;
+    }
+
+    public void setSearchCount(int searchCount) {
+        this.searchCount = searchCount;
+    }
 
     public SimpleCallLogListAdapter(Context context, ArrayList<CallLogType> SmsListAdapter) {
         this.context = context;
         this.arrayListCallLogs = SmsListAdapter;
+        this.arrayList = new ArrayList<>();
+        this.arrayList.addAll(arrayListCallLogs);
 
     }
 
@@ -445,6 +459,58 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             super(itemView);
             ButterKnife.bind(this, itemView);
             textSimType.setVisibility(View.GONE);
+            if(AppConstants.isFromSearchActivity){
+                image3dotsCallLog.setVisibility(View.GONE);
+            }else{
+                image3dotsCallLog.setVisibility(View.VISIBLE);
+            }
         }
+    }
+
+    // Filter Class
+    public void filter(String charText) {
+        Pattern numberPat = Pattern.compile("\\d+");
+        Matcher matcher1 = numberPat.matcher(charText);
+        if (matcher1.find()){
+            arrayListCallLogs.clear();
+            if (charText.length() == 0) {
+                arrayListCallLogs.addAll(arrayList);
+            } else {
+                for(int i=0; i<arrayList.size(); i++){
+                    if(arrayList.get(i) instanceof CallLogType){
+                        CallLogType profileData = (CallLogType) arrayList.get(i);
+                        if(!TextUtils.isEmpty(profileData.getNumber())){
+                            if (profileData.getNumber().contains(charText)) {
+                                arrayListCallLogs.add(profileData);
+                            }
+                        }
+
+                    }
+                }
+            }
+
+        }/*else{
+            charText = charText.toLowerCase(Locale.getDefault());
+            arrayListCallLogs.clear();
+            if (charText.length() == 0) {
+                arrayListCallLogs.addAll(arrayList);
+            } else {
+
+                for(int i=0; i<arrayList.size(); i++){
+                    if(arrayList.get(i) instanceof CallLogType){
+                        ProfileData profileData = (CallLogType) arrayList.get(i);
+                        if(!TextUtils.isEmpty(profileData.getName())){
+                            if (profileData.getName().toLowerCase(Locale.getDefault()).contains(charText)) {
+                                arrayListCallLogs.add(profileData);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }*/
+
+        setSearchCount(arrayListCallLogs.size());
+        notifyDataSetChanged();
     }
 }
