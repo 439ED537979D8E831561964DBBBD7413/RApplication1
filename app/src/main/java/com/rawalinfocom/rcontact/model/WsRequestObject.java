@@ -223,6 +223,7 @@ public class WsRequestObject {
     private ArrayList<ProfileDataOperation> profileEdit;
 
     private ArrayList<CallLogHistoryType> historyTypeArrayList;
+    private ArrayList<SmsDataType> arrayListSmsDataType;
 
     @JsonProperty("pr_reply")
     private String prReply;
@@ -619,5 +620,14 @@ public class WsRequestObject {
 
     public void setHistoryTypeArrayList(ArrayList<CallLogHistoryType> historyTypeArrayList) {
         this.historyTypeArrayList = historyTypeArrayList;
+    }
+
+    @JsonProperty("sms_log")
+    public ArrayList<SmsDataType> getArrayListSmsDataType() {
+        return arrayListSmsDataType;
+    }
+
+    public void setArrayListSmsDataType(ArrayList<SmsDataType> arrayListSmsDataType) {
+        this.arrayListSmsDataType = arrayListSmsDataType;
     }
 }

@@ -1,24 +1,43 @@
 package com.rawalinfocom.rcontact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
 /**
  * Created by Aniruddh on 21/04/17.
  */
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SmsDataType implements Serializable {
 
+    @JsonIgnore
     String number;
+    @JsonIgnore
     String name;
-    String body;
-    long dataAndTime;
+    @JsonIgnore
     String profileImage;
-    String isRead;
-    String threadId;
-    String typeOfMessage;
-    String uniqueRowId ;
+    @JsonIgnore
     int flag;
+
+    @JsonProperty("sms_row_id")
+    String uniqueRowId ;
+    @JsonProperty("sms_thread_id")
+    String threadId;
+    @JsonProperty("sms_address")
     String address;
+    @JsonProperty("sms_body")
+    String body;
+    @JsonProperty("sms_date")
+    long dataAndTime;
+    @JsonProperty("sms_is_read")
+    String isRead;
+    @JsonProperty("sms_type")
+    String typeOfMessage;
 
     public String getNumber() {
         return number;
