@@ -44,6 +44,7 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
     private NotiRatingFragment notiRatingFragment;
     private NotiCommentsFragment notiCommentsFragment;
     int currentTabIndex;
+    int subTabIndex;
 
     public boolean firstTime = true;
     int profileCount;
@@ -60,6 +61,7 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
         Intent intent = getIntent();
         if (intent != null) {
             currentTabIndex = intent.getIntExtra("TAB_INDEX", -1);
+            subTabIndex = intent.getIntExtra("SUB_TAB_INDEX", 0);
             init();
         }
 
@@ -88,7 +90,6 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
                 if (firstTime && currentTabIndex != 0) {
                     firstTime = false;
                 } else {
-                    Log.i("MAULIK", "onTabSelected" + tab.getPosition());
                     setCurrentTabFragment(tab.getPosition());
                     firstTime = false;
                 }
@@ -108,6 +109,9 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
 
     private void setupTabLayout() {
         notiProfileFragment = NotiProfileFragment.newInstance();
+        Bundle args = new Bundle();
+        args.putInt("SUB_TAB_INDEX", subTabIndex);
+        notiProfileFragment.setArguments(args);
         notiRatingFragment = NotiRatingFragment.newInstance();
         notiCommentsFragment = NotiCommentsFragment.newInstance();
         notiRContactsFragment = NotiRContactsFragment.newInstance();

@@ -268,6 +268,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
     private void sendNotification(String messageBody, int type) {
         Class aClass = null;
         int tabIndex = -1;
+        int subTabIndex = -1;
         switch (type) {
             case AppConstants.NOTIFICATION_TYPE_TIMELINE:
                 aClass = TimelineActivity.class;
@@ -275,10 +276,12 @@ public class NotificationFCMService extends FirebaseMessagingService {
             case AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST:
                 aClass = NotificationsDetailActivity.class;
                 tabIndex = NotificationsDetailActivity.TAB_REQUEST;
+                subTabIndex=0;
                 break;
             case AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE:
                 aClass = NotificationsDetailActivity.class;
                 tabIndex = NotificationsDetailActivity.TAB_REQUEST;
+                subTabIndex=1;
                 break;
             case AppConstants.NOTIFICATION_TYPE_RATE:
                 aClass = NotificationsDetailActivity.class;
@@ -296,6 +299,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
         }
         Intent intent = new Intent(this, aClass);
         intent.putExtra("TAB_INDEX", tabIndex);
+        intent.putExtra("SUB_TAB_INDEX", subTabIndex);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
