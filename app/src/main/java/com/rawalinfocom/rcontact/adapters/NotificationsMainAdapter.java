@@ -93,7 +93,6 @@ public class NotificationsMainAdapter extends RecyclerView.Adapter<Notifications
             }
         });
         //  holder.buttonViewMore.setBackgroundColor(Color.parseColor("#003933"));
-        Log.i("MAULIK", "position" + position);
 
     }
 
