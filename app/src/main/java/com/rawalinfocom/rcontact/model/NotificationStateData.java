@@ -11,6 +11,15 @@ public class NotificationStateData {
     private String cloudNotificationId;
     private String createdAt;
     private String updatedAt;
+    private String notificationMasterId;
+
+    public String getNotificationMasterId() {
+        return notificationMasterId;
+    }
+
+    public void setNotificationMasterId(String notificationMasterId) {
+        this.notificationMasterId = notificationMasterId;
+    }
 
     public int getNotificationState() {
         return notificationState;

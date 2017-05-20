@@ -41,11 +41,10 @@ public class TableRCNotificationUpdates {
             " " + COLUMN_NU_TITLE + " text," +
             " " + COLUMN_NU_DETAILS + " text," +
             " " + COLUMN_NU_CLOUD_ID + " text," +
-            " " + COLUMN_CREATED_AT + " datetime," +
-            " UNIQUE(" + COLUMN_NU_CLOUD_ID + ")" +
+            " " + COLUMN_CREATED_AT + " datetime" +
             ");";
 
-    public void addUpdate(NotificationData rconUpdate) {
+    public int addUpdate(NotificationData rconUpdate) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -54,11 +53,13 @@ public class TableRCNotificationUpdates {
         values.put(COLUMN_NU_CLOUD_ID, rconUpdate.getId());
         values.put(COLUMN_CREATED_AT, Utils.getLocalTimeFromUTCTime(rconUpdate.getCreatedAt()));
         try {
-            db.insert(TABLE_RC_NOTIFICATION_UPDATES, null, values);
+            int id = (int) db.insert(TABLE_RC_NOTIFICATION_UPDATES, null, values);
 
             db.close();
+            return id;
         } catch (Exception E) {
             Log.i("MAULIK", "error duplicate entry");
+            return -1;
         }
     }
 

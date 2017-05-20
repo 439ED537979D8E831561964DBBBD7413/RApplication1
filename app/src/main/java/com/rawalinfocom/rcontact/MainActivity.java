@@ -33,13 +33,13 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,8 +51,10 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
+import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.PhoneBookSMSLogs;
+import com.rawalinfocom.rcontact.database.TableNotificationStateMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
@@ -89,7 +91,9 @@ public class MainActivity extends BaseActivity implements NavigationView
     Toolbar toolbar;
     ImageView imageNotification;
     ImageView imageAddContact;
-//    TextView textImageNotification;
+    LinearLayout badgeLayout;
+    TextView badgeTextView;
+    //    TextView textImageNotification;
     FloatingActionButton fab;
     DrawerLayout drawer;
     NavigationView navigationView;
@@ -113,7 +117,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     int logsSyncedCount = 10;
     MaterialDialog permissionConfirmationDialog;
     private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
-            .permission.READ_CALL_LOG,  Manifest.permission.READ_SMS};
+            .permission.READ_CALL_LOG, Manifest.permission.READ_SMS};
     boolean isCompaseIcon = false;
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
     public static CallLogType callLogTypeReceiverMain;
@@ -122,6 +126,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
     private ArrayList<SmsDataType> smsLogTypeArrayListMain;
     ArrayList<SmsDataType> smsLogsListbyChunck;
+
     //<editor-fold desc="Override Methods">
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,14 +159,14 @@ public class MainActivity extends BaseActivity implements NavigationView
             startActivityIntent(this, ProfileRegistrationActivity.class, null);
 //            }
         } else {*/
-            rContactApplication = (RContactApplication) getApplicationContext();
-            callLogTypeArrayListMain = new ArrayList<>();
-            smsLogTypeArrayListMain =  new ArrayList<>();
-            callLogTypeReceiverMain =  new CallLogType();
-            CallLogFragment.callLogTypeReceiver =  new CallLogType();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                checkPermissionToExecute();
-            } else {
+        rContactApplication = (RContactApplication) getApplicationContext();
+        callLogTypeArrayListMain = new ArrayList<>();
+        smsLogTypeArrayListMain = new ArrayList<>();
+        callLogTypeReceiverMain = new CallLogType();
+        CallLogFragment.callLogTypeReceiver = new CallLogType();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkPermissionToExecute();
+        } else {
                /* AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -169,29 +174,29 @@ public class MainActivity extends BaseActivity implements NavigationView
                     }
                 });*/
 
-                if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
-                    syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                    syncCallLogAsyncTask.execute();
-                }
-
-                if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                        && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
-                    syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                    syncSmsLogAsyncTask.execute();
-                }
-
+            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                syncCallLogAsyncTask.execute();
             }
-            checkPermissionToExecute();
 
-            registerLocalBroadCastReceiver();
+            if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+                    && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
+                syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                syncSmsLogAsyncTask.execute();
+            }
 
-            toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
+        }
+        checkPermissionToExecute();
 
-            networkConnectionReceiver = new NetworkConnectionReceiver();
+        registerLocalBroadCastReceiver();
 
-            init();
-            registerBroadcastReceiver();
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        networkConnectionReceiver = new NetworkConnectionReceiver();
+
+        init();
+        registerBroadcastReceiver();
 //        }
 
     }
@@ -247,7 +252,7 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         }
 
-        if(smsLogs){
+        if (smsLogs) {
             if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
                     && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
@@ -267,6 +272,27 @@ public class MainActivity extends BaseActivity implements NavigationView
     protected void onResume() {
         super.onResume();
 //        checkPermissionToExecute();
+        updateNotificationCount();
+
+    }
+
+    private void updateNotificationCount() {
+        int count = getNotificationCount(databaseHandler);
+        if (count > 0) {
+            badgeLayout.setVisibility(View.VISIBLE);
+            badgeTextView.setText(String.valueOf(count));
+        } else {
+            badgeLayout.setVisibility(View.GONE);
+        }
+        count = getTimeLineNotificationCount(databaseHandler);
+        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id.nav_user_timeline).getActionView();
+        TextView textView = (TextView) view.findViewById(R.id.badge_count);
+        if (count > 0) {
+            view.setVisibility(View.VISIBLE);
+            textView.setText(String.valueOf(count));
+        } else {
+            view.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -417,7 +443,7 @@ public class MainActivity extends BaseActivity implements NavigationView
 // .LENGTH_SHORT).show();
                     }
                 }
-            } else if(serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_SMS_LOGS)){
+            } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_SMS_LOGS)) {
 
                 WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
                 if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase
@@ -427,7 +453,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                     if (Utils.getBooleanPreference(this, AppConstants
                             .PREF_SMS_SYNCED, false)) {
                         ArrayList<SmsDataType> temp = divideSmsLogByChunck(newSmsList);
-                        LIST_PARTITION_COUNT =20;
+                        LIST_PARTITION_COUNT = 20;
                         if (temp.size() >= LIST_PARTITION_COUNT) {
                             if (temp != null && temp.size() > 0)
                                 insertSMSLogServiceCall(newSmsList);
@@ -460,7 +486,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 }
 
 
-            } else{
+            } else {
                 Toast.makeText(this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
 
@@ -536,7 +562,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     protected void onDestroy() {
         if (syncCallLogAsyncTask != null)
             syncCallLogAsyncTask.cancel(true);
-        if(syncSmsLogAsyncTask !=null)
+        if (syncSmsLogAsyncTask != null)
             syncSmsLogAsyncTask.cancel(true);
         if (networkConnectionReceiver != null) {
             unregisterBroadcastReceiver();
@@ -560,6 +586,8 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         imageNotification = (ImageView) toolbar.findViewById(R.id.image_notification);
         imageViewSearch = (ImageView) toolbar.findViewById(R.id.image_search);
+        badgeLayout = (LinearLayout) toolbar.findViewById(R.id.badge_layout);
+        badgeTextView = (TextView) toolbar.findViewById(R.id.badge_count);
 
 //        textImageNotification = (TextView) toolbar.findViewById(R.id.text_image_notification);
 //        textImageNotification.setTypeface(Utils.typefaceIcons(this));
@@ -581,7 +609,7 @@ public class MainActivity extends BaseActivity implements NavigationView
             @Override
             public void onClick(View v) {
 //                Toast.makeText(MainActivity.this,"Open Search Activity",Toast.LENGTH_SHORT).show();
-                startActivityIntent(MainActivity.this, SearchActivity.class,null);
+                startActivityIntent(MainActivity.this, SearchActivity.class, null);
 
             }
         });
@@ -593,9 +621,8 @@ public class MainActivity extends BaseActivity implements NavigationView
 //                Snackbar.make(view, "Dial Pad", Snackbar.LENGTH_SHORT).show();
                 if (!isCompaseIcon)
                     openDialer();
-                else
-                {
-                    AppConstants.isComposingSMS =  true;
+                else {
+                    AppConstants.isComposingSMS = true;
                     openSMSComposerPage();
                 }
 //                    Toast.makeText(MainActivity.this,"open compose sms page",Toast
@@ -823,29 +850,27 @@ public class MainActivity extends BaseActivity implements NavigationView
                 .ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_SMS);
         localBroadcastManagerReceiveRecentSms.registerReceiver(localBroadCastReceiverRecentSMS, intentFilter2);
 
-        LocalBroadcastManager localBroadcastManagerSyncSmsLogs =  LocalBroadcastManager.getInstance(this);
-        IntentFilter intentFilter1 =  new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_SYNC_SMS);
+        LocalBroadcastManager localBroadcastManagerSyncSmsLogs = LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter1 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_SYNC_SMS);
         localBroadcastManagerSyncSmsLogs.registerReceiver(localBroadcastReceiverSmsLogSync, intentFilter1);
+
+        LocalBroadcastManager localBroadcastManagerUpdateNotificationCount = LocalBroadcastManager
+                .getInstance(MainActivity.this);
+        IntentFilter intentFilterUpdateCount = new IntentFilter(AppConstants
+                .ACTION_LOCAL_BROADCAST_UPDATE_NOTIFICATION_COUNT);
+        localBroadcastManagerUpdateNotificationCount.registerReceiver(localBroadCastReceiverUpdateCount, intentFilterUpdateCount);
 
     }
 
     private void unRegisterLocalBroadCastReceiver() {
-        LocalBroadcastManager localBroadcastManagerProfileBlock = LocalBroadcastManager
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager
                 .getInstance(this);
-        localBroadcastManagerProfileBlock.unregisterReceiver(localBroadcastReceiverCallLogSync);
 
-        LocalBroadcastManager localBroadcastManagerReceiveRecentCalls = LocalBroadcastManager
-                .getInstance(MainActivity.this);
-        localBroadcastManagerReceiveRecentCalls.unregisterReceiver(localBroadcastReceiverRecentCalls);
-
-        LocalBroadcastManager localBroadcastManagerReceiveRecentSMS = LocalBroadcastManager
-                .getInstance(MainActivity.this);
-        localBroadcastManagerReceiveRecentSMS.unregisterReceiver(localBroadCastReceiverRecentSMS);
-
-        LocalBroadcastManager localBroadcastManagerSyncSmsLogs = LocalBroadcastManager
-                .getInstance(MainActivity.this);
-        localBroadcastManagerSyncSmsLogs.unregisterReceiver(localBroadcastReceiverSmsLogSync);
-
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiverCallLogSync);
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiverRecentCalls);
+        localBroadcastManager.unregisterReceiver(localBroadCastReceiverRecentSMS);
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiverSmsLogSync);
+        localBroadcastManager.unregisterReceiver(localBroadCastReceiverUpdateCount);
     }
 
     private void getCallLogsByRawId() {
@@ -1433,7 +1458,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         }
     }
 
-    private class SyncSmsLogAsyncTask extends AsyncTask<Void, Void, Void>{
+    private class SyncSmsLogAsyncTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -1442,7 +1467,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         }
     }
 
-    private void getSmsLogsByRawIds(){
+    private void getSmsLogsByRawIds() {
         PhoneBookSMSLogs phoneBookSmsLogs = new PhoneBookSMSLogs(MainActivity.this);
         ArrayList<String> listOfIds = new ArrayList<>();
         Cursor cursor = phoneBookSmsLogs.getAllSMSLogId();
@@ -1471,9 +1496,9 @@ public class MainActivity extends BaseActivity implements NavigationView
                 }
             } else {
 //                    fetchSMSDataById(tempIdsList);
-                if(tempIdsList.size()<=0)
+                if (tempIdsList.size() <= 0)
                     fetchSMSDataById(listOfIds);
-                else{
+                else {
                     fetchSMSDataById(tempIdsList);
 
                 }
@@ -1694,26 +1719,25 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
 
-
     private BroadcastReceiver localBroadcastReceiverRecentCalls = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
-                try {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+            try {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                            if(Utils.getBooleanPreference(MainActivity.this,
-                                    AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,false)){
-                               Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,false);
-                                Utils.setBooleanPreference(MainActivity.this, AppConstants
-                                        .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
-                                AppConstants.isFromReceiver = false;
-                                CallLogFragment.isIdsFetchedFirstTime = false;
+                        if (Utils.getBooleanPreference(MainActivity.this,
+                                AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, false)) {
+                            Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
+                            Utils.setBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
+                            AppConstants.isFromReceiver = false;
+                            CallLogFragment.isIdsFetchedFirstTime = false;
 //                                rContactApplication.setArrayListCallLogType(null);
-                            }else{
+                        } else {
                                 /*if(Utils.getBooleanPreference(MainActivity.this,
                                         AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false)){
                                     Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false);
@@ -1721,30 +1745,45 @@ public class MainActivity extends BaseActivity implements NavigationView
                                             .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
                                     AppConstants.isFromReceiver = false;
                                 }*/
-                            }
                         }
-                    }, 100);
+                    }
+                }, 100);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        }
     };
 
-    private BroadcastReceiver localBroadCastReceiverRecentSMS =  new BroadcastReceiver() {
+    private BroadcastReceiver localBroadCastReceiverUpdateCount = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
             try {
 
-                if(Utils.getBooleanPreference(MainActivity.this,
-                        AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE,false)){
-                    Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE,false);
+                updateNotificationCount();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    };
+
+    private BroadcastReceiver localBroadCastReceiverRecentSMS = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            try {
+
+                if (Utils.getBooleanPreference(MainActivity.this,
+                        AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false)) {
+                    Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
                     Utils.setBooleanPreference(MainActivity.this, AppConstants
                             .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
                 }
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -1785,4 +1824,15 @@ public class MainActivity extends BaseActivity implements NavigationView
         return photoThumbUrl;
     }
 
+    private int getNotificationCount(DatabaseHandler databaseHandler) {
+        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster(databaseHandler);
+        return notificationStateMaster.getTotalUnreadCount();
+
+    }
+
+    private int getTimeLineNotificationCount(DatabaseHandler databaseHandler) {
+
+        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster(databaseHandler);
+        return notificationStateMaster.getTotalUnreadCountByType(AppConstants.NOTIFICATION_TYPE_TIMELINE);
+    }
 }

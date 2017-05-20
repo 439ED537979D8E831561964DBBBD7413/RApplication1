@@ -3,7 +3,6 @@ package com.rawalinfocom.rcontact.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.Comment;
@@ -63,8 +62,7 @@ public class TableCommentMaster {
             " UNIQUE(" + COLUMN_CRM_CLOUD_COMMENT_ID + ")" +
             ");";
 
-    // Adding new Event
-    public void addComment(Comment comment) {
+    public int addComment(Comment comment) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -80,9 +78,11 @@ public class TableCommentMaster {
         values.put(COLUMN_CRM_UPDATED_AT, comment.getCrmUpdatedAt());
         values.put(COLUMN_EVM_RECORD_INDEX_ID, comment.getEvmRecordIndexId());
         try {
-            db.insert(TABLE_RC_COMMENT_MASTER, null, values);
+            int id = (int) db.insert(TABLE_RC_COMMENT_MASTER, null, values);
             db.close();
+            return id;
         } catch (Exception e) {
+            return -1;
         }
     }
 
