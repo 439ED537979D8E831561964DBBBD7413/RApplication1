@@ -816,6 +816,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     @Override
+    public void onBackPressed() {
+        Intent backIntent = getIntent();
+        setResult(RESULT_OK, backIntent);
+        finish();
+        overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

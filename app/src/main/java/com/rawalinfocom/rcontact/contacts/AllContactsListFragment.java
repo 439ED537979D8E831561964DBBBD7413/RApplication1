@@ -93,6 +93,8 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.app.Activity.RESULT_OK;
+
 public class AllContactsListFragment extends BaseFragment implements LoaderManager
         .LoaderCallbacks<Cursor>, WsResponseListener {
 
@@ -690,6 +692,32 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         super.onPause();
 
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+//            super.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == AppConstants.REQUEST_CODE_PROFILE_DETAIL && resultCode ==
+                    RESULT_OK) {
+                if (OptionMenuDialog.IS_CONTACT_DELETED) {
+                    OptionMenuDialog.IS_CONTACT_DELETED = false;
+                    arrayListPhoneBookContacts.remove(allContactListAdapter
+                            .getListClickedPosition());
+                    allContactListAdapter.notifyItemRemoved(allContactListAdapter
+                            .getListClickedPosition());
+                    rContactApplication.setArrayListAllPhoneBookContacts
+                            (arrayListPhoneBookContacts);
+
+                }
+                /*Toast.makeText(getActivity(), "Called: " + allContactListAdapter
+                        .getListClickedPosition(), Toast.LENGTH_SHORT).show();*/
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">

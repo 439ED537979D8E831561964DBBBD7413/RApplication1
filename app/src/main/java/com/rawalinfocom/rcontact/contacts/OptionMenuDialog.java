@@ -37,6 +37,7 @@ class OptionMenuDialog {
     static final int ALL_CONTACT_NON_RCP = 1;
     static final int ALL_CONTACT_RCP = 2;
     static final int R_CONTACT_RCP = 3;
+    static boolean IS_CONTACT_DELETED = false;
 
     private Context context;
     private Dialog dialog;
@@ -159,6 +160,12 @@ class OptionMenuDialog {
 
             // <editor-fold desc="Delete">
             case 1:
+                PhoneBookContacts phoneBookContacts = new PhoneBookContacts(context);
+                phoneBookContacts.deleteContact(rawId);
+                IS_CONTACT_DELETED = true;
+                if (context instanceof ProfileDetailActivity) {
+                    ((ProfileDetailActivity) context).onBackPressed();
+                }
                 break;
             //</editor-fold>
         }
