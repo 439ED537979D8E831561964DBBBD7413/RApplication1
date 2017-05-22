@@ -20,6 +20,8 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.OptionMenuAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
+import com.rawalinfocom.rcontact.database.QueryManager;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 
 import org.apache.commons.lang3.StringUtils;
@@ -172,6 +174,9 @@ class OptionMenuDialog {
     }
 
     private void menuAllContactRcp(View view, int position) {
+
+        PhoneBookContacts phoneBookContacts = new PhoneBookContacts(context);
+        QueryManager queryManager = new QueryManager(((BaseActivity) context).databaseHandler);
         Intent intent;
         Uri lookupUri, res;
 
@@ -223,6 +228,26 @@ class OptionMenuDialog {
 
             // <editor-fold desc="Delete">
             case 3:
+                TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
+                        context).databaseHandler);
+                String rawIdFromRcpId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt(
+                        ((ProfileDetailActivity) context).pmId));
+                if (StringUtils.contains(rawIdFromRcpId, ",")) {
+                    /* Multiple Contacts with single pm_id */
+                    String rawIds[] = rawIdFromRcpId.split(",");
+                    ArrayList<String> arrayListRawIds = new ArrayList<>(Arrays.asList(rawIds));
+                    arrayListRawIds.remove(rawId);
+                    tableProfileMaster.updateRawIds(Integer.parseInt(((ProfileDetailActivity)
+                            context).pmId), StringUtils.join(arrayListRawIds, ","));
+                } else {
+                    /* Single Contact with single pm_id */
+                    queryManager.deleteRcProfileDetail(((ProfileDetailActivity) context).pmId);
+                }
+                phoneBookContacts.deleteContact(rawId);
+                if (context instanceof ProfileDetailActivity) {
+                    ((ProfileDetailActivity) context).onBackPressed();
+                }
+                IS_CONTACT_DELETED = true;
                 break;
             //</editor-fold>
         }
@@ -230,8 +255,14 @@ class OptionMenuDialog {
 
     private void menuRContactRcp(View view, int position) {
 
+        PhoneBookContacts phoneBookContacts = new PhoneBookContacts(context);
+        QueryManager queryManager = new QueryManager(((BaseActivity) context).databaseHandler);
         Intent intent;
         Uri lookupUri, res;
+        String rcpRawId = ((ProfileDetailActivity) context).checkNumberFavourite;
+        if (StringUtils.contains(rcpRawId, ",")) {
+            rcpRawId = rcpRawId.split(",")[0];
+        }
 
         switch (position) {
 
@@ -250,9 +281,7 @@ class OptionMenuDialog {
 
             // <editor-fold desc="View in AC">
             case 1:
-                PhoneBookContacts phoneBookContacts = new PhoneBookContacts(context);
-                String phonebookName = phoneBookContacts.getStructuredName((
-                        (ProfileDetailActivity) context).checkNumberFavourite);
+                String phonebookName = phoneBookContacts.getStructuredName(rcpRawId);
                 String cloudName = ((ProfileDetailActivity) context).contactName;
                 Bundle bundle = new Bundle();
                 if (StringUtils.equals(phonebookName, cloudName)) {
@@ -264,8 +293,7 @@ class OptionMenuDialog {
                             (ProfileDetailActivity) context).contactName + ")");
                 }
                 bundle.putString(AppConstants.EXTRA_PM_ID, ((ProfileDetailActivity) context).pmId);
-                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, ((ProfileDetailActivity)
-                        context).checkNumberFavourite);
+                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, rcpRawId);
                 bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, ((ProfileDetailActivity)
                         context).thumbnailUrl);
                 bundle.putString(AppConstants.EXTRA_CONTACT_POSITION, ((ProfileDetailActivity)
@@ -285,6 +313,22 @@ class OptionMenuDialog {
 
             // <editor-fold desc="Delete">
             case 3:
+                TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
+                        context).databaseHandler);
+                String rawIdFromRcpId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt(
+                        ((ProfileDetailActivity) context).pmId));
+                if (StringUtils.contains(rawIdFromRcpId, ",")) {
+                    /* Multiple Contacts with single pm_id */
+                    String rawIds[] = rawIdFromRcpId.split(",");
+                    ArrayList<String> arrayListRawIds = new ArrayList<>(Arrays.asList(rawIds));
+                    arrayListRawIds.remove(rcpRawId);
+                    tableProfileMaster.updateRawIds(Integer.parseInt(((ProfileDetailActivity)
+                            context).pmId), StringUtils.join(arrayListRawIds, ","));
+                } else {
+                    /* Single Contact with single pm_id */
+                    queryManager.deleteRcProfileDetail(((ProfileDetailActivity) context).pmId);
+                }
+                phoneBookContacts.deleteContact(rcpRawId);
                 break;
             //</editor-fold>
         }

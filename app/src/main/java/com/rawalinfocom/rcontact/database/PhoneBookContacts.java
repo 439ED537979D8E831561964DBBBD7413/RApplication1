@@ -138,7 +138,7 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE + "' AND " +
 //                ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID
                 ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY
-                + " = ?";
+                + " IN (?)";
         String[] selectionArgs = new String[]{contactId};
 
         Cursor cursor = context.getContentResolver().query(uri, projection, selection,

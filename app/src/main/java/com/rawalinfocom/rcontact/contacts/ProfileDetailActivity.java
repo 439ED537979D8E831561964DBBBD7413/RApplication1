@@ -782,7 +782,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         }
                     }
                 } else {
-//                    openOptionsMenu();
                     int menuType;
 
                     if (!displayOwnProfile) {

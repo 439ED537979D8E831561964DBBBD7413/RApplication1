@@ -681,16 +681,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (syncingTask != null) {
             syncingTask.cancel(true);
         }
-        allContactListAdapter = null;
+//        allContactListAdapter = null;
         super.onDetach();
-    }
-
-    @Override
-    public void onPause() {
-
-        Log.i("OnDestory", "called");
-        super.onPause();
-
     }
 
     @Override
