@@ -700,7 +700,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             .getListClickedPosition());
                     rContactApplication.setArrayListAllPhoneBookContacts
                             (arrayListPhoneBookContacts);
-
+                    RContactsFragment.arrayListRContact = null;
                 }
                 /*Toast.makeText(getActivity(), "Called: " + allContactListAdapter
                         .getListClickedPosition(), Toast.LENGTH_SHORT).show();*/
@@ -1115,7 +1115,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 String phonebookRawId;
                 if (mapLocalRcpId.containsKey(mapping.get(i).getRcpPmId().get(j))) {
                     phonebookRawId = mapLocalRcpId.get(mapping.get(i).getRcpPmId().get(j)) +
-                            ", " + mapping.get(i).getLocalPhoneBookId();
+                            "," + mapping.get(i).getLocalPhoneBookId();
                 } else {
                     phonebookRawId = mapping.get(i).getLocalPhoneBookId();
                 }

@@ -27,11 +27,13 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
@@ -50,6 +52,8 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.app.Activity.RESULT_OK;
 
 public class FavoritesFragment extends BaseFragment implements LoaderManager
         .LoaderCallbacks<Cursor>, WsResponseListener {
@@ -187,7 +191,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 //        data.close();
 
 //        rContactApplication.setFavouriteModified(false);
-        rContactApplication.setFavouriteStatus(0);
+        rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_UNMODIFIED);
 
         populateRecyclerView();
         initSwipe();
@@ -204,6 +208,31 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         super.onPause();
         Log.i("onPause", "called");
         getLoaderManager().destroyLoader(0);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+//            super.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == AppConstants.REQUEST_CODE_PROFILE_DETAIL && resultCode ==
+                    RESULT_OK) {
+                if (OptionMenuDialog.IS_CONTACT_DELETED) {
+                    OptionMenuDialog.IS_CONTACT_DELETED = false;
+                    /*arrayListPhoneBookContacts.remove(allContactListAdapter
+                            .getListClickedPosition());
+                    allContactListAdapter.notifyItemRemoved(allContactListAdapter
+                            .getListClickedPosition());
+                    rContactApplication.setArrayListAllPhoneBookContacts
+                            (arrayListPhoneBookContacts);
+                    RContactsFragment.arrayListRContact = null;*/
+                }
+               /* Toast.makeText(getActivity(), "Called: " + allContactListAdapter
+                        .getListClickedPosition(), Toast.LENGTH_SHORT).show();*/
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override

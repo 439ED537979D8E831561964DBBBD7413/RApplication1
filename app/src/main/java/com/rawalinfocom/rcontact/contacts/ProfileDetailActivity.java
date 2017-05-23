@@ -271,6 +271,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     String pmId, phoneBookId, contactName = "", cloudContactName = null, checkNumberFavourite =
             null, thumbnailUrl = "";
     boolean displayOwnProfile = false, isHideFavourite = false;
+    int isFavourite = 0;
 
     PhoneBookContacts phoneBookContacts;
     QueryManager queryManager;
@@ -666,9 +667,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                    rContactApplication.setFavouriteModified(true);
                     if (favStatus == PhoneBookContacts.STATUS_FAVOURITE) {
                         rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_ADDED);
+                        isFavourite = 1;
                     } else {
                         rContactApplication.setFavouriteStatus(RContactApplication
                                 .FAVOURITE_REMOVED);
+                        isFavourite = 0;
                     }
 
                 } else if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_EDIT)) {
@@ -804,7 +807,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         }
 
                         OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
-                                .this, rawId, menuType);
+                                .this, rawId, menuType, isFavourite == 1);
 
                         optionMenu.showDialog();
                     }
@@ -970,8 +973,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("Profile Activity ", "onReceive() of LocalBroadcast");
-
             arrayListHistory.clear();
             recyclerCallHistory.setVisibility(View.GONE);
             setHistoryAdapter();
@@ -1996,7 +1997,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (!displayOwnProfile && !isHideFavourite) {
 
-                int isFavourite = 0;
                 Cursor contactFavouriteCursor = phoneBookContacts.getStarredStatus(phoneBookId);
 
                 if (contactFavouriteCursor != null && contactFavouriteCursor.getCount() > 0) {
@@ -2605,8 +2605,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             //</editor-fold>
 
             if (displayOwnProfile && StringUtils.length(StringUtils.defaultString(profileDetail
-                    != null ?
-                    profileDetail.getPbGender() : null)) > 0) {
+                    != null ? profileDetail.getPbGender() : null)) > 0) {
                 textGender.setText(profileDetail.getPbGender());
             } else {
                 linearGender.setVisibility(View.GONE);

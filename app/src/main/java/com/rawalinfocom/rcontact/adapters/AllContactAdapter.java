@@ -102,9 +102,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                              ArrayList<String> arrayListContactHeader) {
         this.context = fragment.getActivity();
         this.fragment = fragment;
-//        this.arrayListUserContact = arrayListUserContact;
-        this.arrayListUserContact = new ArrayList<>();
-        this.arrayListUserContact.addAll(arrayListUserContact);
+        this.arrayListUserContact = arrayListUserContact;
         this.arrayListContactHeader = arrayListContactHeader;
         /*this.arrayListContactHeader = new ArrayList<>();
         this.arrayListContactHeader.add("#");
@@ -447,17 +445,17 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                     .getText().toString());
                         }
 //                        bundle.putString(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileImage);
-                        if (fragment instanceof AllContactsListFragment) {
-                            Intent intent = new Intent(context, ProfileDetailActivity.class);
-                            intent.putExtras(bundle);
-                            fragment.startActivityForResult(intent, AppConstants
-                                    .REQUEST_CODE_PROFILE_DETAIL);
-                            ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
-                                    .anim.exit);
-                        } else {
+//                        if (fragment instanceof AllContactsListFragment) {
+                        Intent intent = new Intent(context, ProfileDetailActivity.class);
+                        intent.putExtras(bundle);
+                        fragment.startActivityForResult(intent, AppConstants
+                                .REQUEST_CODE_PROFILE_DETAIL);
+                        ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
+                                .anim.exit);
+                       /* } else {
                             ((BaseActivity) context).startActivityIntent(context,
                                     ProfileDetailActivity.class, bundle);
-                        }
+                        }*/
                     }
                 } else {
                     holder.recyclerViewMultipleRc.setVisibility(View.GONE);
