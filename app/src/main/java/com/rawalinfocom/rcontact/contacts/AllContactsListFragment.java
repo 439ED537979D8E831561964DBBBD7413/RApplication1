@@ -93,6 +93,8 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.app.Activity.RESULT_OK;
+
 public class AllContactsListFragment extends BaseFragment implements LoaderManager
         .LoaderCallbacks<Cursor>, WsResponseListener {
 
@@ -113,7 +115,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @BindView(R.id.text_total_contacts)
     TextView textTotalContacts;
 
-    ArrayList<Object> arrayListPhoneBookContacts;
+    public static ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> arrayListContactHeaders;
     ArrayList<ProfileData> arrayListUserContact = new ArrayList<>();
     ArrayList<ProfileData> arrayListSyncUserContact = new ArrayList<>();
@@ -220,6 +222,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             arrayListPhoneBookContacts.add("My Contacts");
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
+
+            isReload = false;
 
         } else {
             isReload = true;
@@ -679,17 +683,35 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (syncingTask != null) {
             syncingTask.cancel(true);
         }
-        allContactListAdapter = null;
+//        allContactListAdapter = null;
         super.onDetach();
     }
 
     @Override
-    public void onPause() {
-
-        Log.i("OnDestory", "called");
-        super.onPause();
-
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+//            super.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == AppConstants.REQUEST_CODE_PROFILE_DETAIL && resultCode ==
+                    RESULT_OK) {
+                if (OptionMenuDialog.IS_CONTACT_DELETED) {
+                    OptionMenuDialog.IS_CONTACT_DELETED = false;
+                    arrayListPhoneBookContacts.remove(allContactListAdapter
+                            .getListClickedPosition());
+                    allContactListAdapter.notifyItemRemoved(allContactListAdapter
+                            .getListClickedPosition());
+                    rContactApplication.setArrayListAllPhoneBookContacts
+                            (arrayListPhoneBookContacts);
+                    RContactsFragment.arrayListRContact = null;
+                }
+                /*Toast.makeText(getActivity(), "Called: " + allContactListAdapter
+                        .getListClickedPosition(), Toast.LENGTH_SHORT).show();*/
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
@@ -1095,7 +1117,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 String phonebookRawId;
                 if (mapLocalRcpId.containsKey(mapping.get(i).getRcpPmId().get(j))) {
                     phonebookRawId = mapLocalRcpId.get(mapping.get(i).getRcpPmId().get(j)) +
-                            ", " + mapping.get(i).getLocalPhoneBookId();
+                            "," + mapping.get(i).getLocalPhoneBookId();
                 } else {
                     phonebookRawId = mapping.get(i).getLocalPhoneBookId();
                 }

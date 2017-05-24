@@ -1101,14 +1101,15 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             ProfileDataOperation operation = new ProfileDataOperation();
             operation.setFlag(IntegerConstants.SYNC_INSERT_CONTACT);
 
-            //<editor-fold desc="Structured Name">
-            Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);
             ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
+            //<editor-fold desc="Structured Name">
+          /*  Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);
+
 
             if (contactStructuredNameCursor != null && contactStructuredNameCursor.getCount() > 0) {
 
-                /*   operation.setIsFavourite(contactNameCursor.getString(contactNameCursor
-                .getColumnIndex(ContactsContract.Contacts.STARRED)));*/
+                *//*   operation.setIsFavourite(contactNameCursor.getString(contactNameCursor
+                .getColumnIndex(ContactsContract.Contacts.STARRED)));*//*
                 while (contactStructuredNameCursor.moveToNext()) {
 
                     operation.setPbNamePrefix(contactStructuredNameCursor.getString
@@ -1138,7 +1139,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
                 }
                 contactStructuredNameCursor.close();
-            }
+            }*/
 //                arrayListOperation.add(operation);
             //</editor-fold>
 

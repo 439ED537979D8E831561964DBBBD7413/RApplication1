@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.adapters;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
@@ -68,6 +69,7 @@ import butterknife.ButterKnife;
 public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements SectionIndexer {
 
+
     /**
      * relativeRowAllContact tag :
      * rcp Contact: pm id
@@ -100,9 +102,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                              ArrayList<String> arrayListContactHeader) {
         this.context = fragment.getActivity();
         this.fragment = fragment;
-//        this.arrayListUserContact = arrayListUserContact;
-        this.arrayListUserContact = new ArrayList<>();
-        this.arrayListUserContact.addAll(arrayListUserContact);
+        this.arrayListUserContact = arrayListUserContact;
         this.arrayListContactHeader = arrayListContactHeader;
         /*this.arrayListContactHeader = new ArrayList<>();
         this.arrayListContactHeader.add("#");
@@ -438,17 +438,29 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText()
                                 .toString());
                         bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
-                        if (fragment instanceof FavoritesFragment) {
-                            listClickedPosition = (int) textName.getTag();
-                        }
+                        listClickedPosition = (int) textName.getTag();
                         bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
                         if (textCloudName.getVisibility() == View.VISIBLE) {
                             bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textCloudName
                                     .getText().toString());
                         }
 //                        bundle.putString(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileImage);
-                        ((BaseActivity) context).startActivityIntent(context,
-                                ProfileDetailActivity.class, bundle);
+                        if (fragment instanceof AllContactsListFragment) {
+                            Intent intent = new Intent(context, ProfileDetailActivity.class);
+                            intent.putExtras(bundle);
+                            fragment.startActivityForResult(intent, AppConstants
+                                    .REQUEST_CODE_PROFILE_DETAIL);
+                            ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
+                                    .anim.exit);
+                        } else {
+                            Intent intent = new Intent(context, ProfileDetailActivity.class);
+                            bundle.putBoolean(AppConstants.EXTRA_IS_FROM_FAVOURITE, true);
+                            intent.putExtras(bundle);
+                            fragment.startActivityForResult(intent, AppConstants
+                                    .REQUEST_CODE_PROFILE_DETAIL);
+                            ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
+                                    .anim.exit);
+                        }
                     }
                 } else {
                     holder.recyclerViewMultipleRc.setVisibility(View.GONE);
@@ -736,7 +748,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 //        String letter = (String) arrayListUserContact.get(position);
         if (fragment instanceof AllContactsListFragment) {
             holder.textTotalContacts.setText((arrayListUserContact.size() - arrayListContactHeader
-                    .size() - 1) + " Contacts");
+                    .size() - 2) + " Contacts");
         } else if (fragment instanceof FavoritesFragment) {
             holder.textTotalContacts.setText((arrayListUserContact.size() -
                     arrayListContactHeader

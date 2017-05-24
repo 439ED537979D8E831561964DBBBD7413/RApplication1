@@ -21,6 +21,7 @@
     <color name="colorVeryLightGray">#EFEFEF</color>
     <color name="colorDarkGray">#949494</color>
     <color name="grayishMagenta">#D0CFD0</color>
+    <color name="regularFontColor">#757575</color>
     <color name="vividRed">#DA1F31</color>
 
     <!--swipe call SMS-->
