@@ -780,7 +780,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if(fragment != null){
             if (fragment instanceof AllContactsListFragment) {
                 holder.textTotalContacts.setText((arrayListUserContact.size() - arrayListContactHeader
-                        .size() - 1) + " Contacts");
+                        .size() - 2) + " Contacts");
             } else if (fragment instanceof FavoritesFragment) {
                 holder.textTotalContacts.setText((arrayListUserContact.size() -
                         arrayListContactHeader
