@@ -54,7 +54,7 @@ public class TableRCContactRequest {
             " UNIQUE(" + COLUMN_CAR_CLOUD_REQUEST_ID + ")" +
             ");";
 
-    public void addRequest(int status, String carId, String carMongodbRecordIndex, int carPmIdFrom, String requestType, String createdAt, String updatedAt) {
+    public int addRequest(int status, String carId, String carMongodbRecordIndex, int carPmIdFrom, String requestType, String createdAt, String updatedAt) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -66,9 +66,11 @@ public class TableRCContactRequest {
         values.put(COLUMN_CAR_CREATED_AT, createdAt);
         values.put(COLUMN_CAR_UPDATED_AT, updatedAt);
         try {
-            db.insert(TABLE_RC_CONTACT_ACCESS_REQUEST, null, values);
+            int id = (int) db.insert(TABLE_RC_CONTACT_ACCESS_REQUEST, null, values);
             db.close();
+            return id;
         } catch (Exception e) {
+            return -1;
         }
     }
 

@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +27,6 @@ import com.rawalinfocom.rcontact.adapters.NotiProfileAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.database.TableAddressMaster;
-import com.rawalinfocom.rcontact.database.TableEmailMaster;
-import com.rawalinfocom.rcontact.database.TableEventMaster;
-import com.rawalinfocom.rcontact.database.TableImMaster;
-import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableRCContactRequest;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -106,12 +102,22 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
     SoftKeyboard softKeyboard;
     String today;
     String yesterDay;
-    String dayBeforeYesterday;
     String pastday6thDay;
     TableRCContactRequest tableRCContactRequest;
+    boolean isFirstTime = true;
+    boolean isFirst = true;
+    int tab = 0;
 
     public static NotiProfileFragment newInstance() {
         return new NotiProfileFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle arguments = getArguments();
+        tab = arguments.getInt("SUB_TAB_INDEX");
+//        args.putInt("SUB_TAB_INDEX", subTabIndex);
     }
 
     @Override
@@ -128,7 +134,70 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
         ButterKnife.bind(this, view);
         init();
         initData();
+        bindWidgetsWithAnEvent();
+        setUpTabLayout();
 //        getAllProfileRequestAndResponse(this);
+    }
+
+    private void setUpTabLayout() {
+        tabProfile.addTab(tabProfile.newTab().setText(getResources().getString(R.string.text_tab_request)), true);
+        tabProfile.addTab(tabProfile.newTab().setText(getResources().getString(R.string.text_tab_response)));
+        tabProfile.getTabAt(tab).select();
+        tabIndex = tab;
+    }
+
+    private void bindWidgetsWithAnEvent() {
+        tabProfile.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                tabIndex = tab.getPosition();
+                if (tabIndex == 0) {
+                    if (todayProfileAdapter != null)
+                        todayProfileAdapter.updateList(listTodayRequest);
+                    if (pastProfileAdapter != null) {
+                        pastProfileAdapter.updateList(listPastRequest);
+                        updateHeight();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (getActivity() != null)
+                                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
+                            }
+                        }, 800);
+                    }
+
+                } else {
+                    if (todayProfileAdapter != null)
+                        todayProfileAdapter.updateList(listTodayResponse);
+                    if (pastProfileAdapter != null) {
+                        pastProfileAdapter.updateList(listPastResponse);
+                        updateHeight();
+
+                        if (isFirstTime) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (getActivity() != null)
+                                        ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                                }
+                            }, 800);
+                            isFirstTime = false;
+                        }
+                    }
+                }
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     private void getAllProfileRequestAndResponse(NotiProfileFragment fragment) {
@@ -174,40 +243,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                 });
             }
         });
-        tabProfile.addTab(tabProfile.newTab().setText(getResources().getString(R.string.text_tab_request)), true);
-        tabProfile.addTab(tabProfile.newTab().setText(getResources().getString(R.string.text_tab_response)));
-        tabProfile.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                tabIndex = tab.getPosition();
-                if (tabIndex == 0) {
-                    if (todayProfileAdapter != null)
-                        todayProfileAdapter.updateList(listTodayRequest);
-                    if (pastProfileAdapter != null) {
-                        pastProfileAdapter.updateList(listPastRequest);
-                        updateHeight();
-                    }
-                } else {
-                    if (todayProfileAdapter != null)
-                        todayProfileAdapter.updateList(listTodayResponse);
-                    if (pastProfileAdapter != null) {
-                        pastProfileAdapter.updateList(listPastResponse);
-                        updateHeight();
-                    }
-                }
 
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
         textTodayTitle.setTypeface(Utils.typefaceRegular(getActivity()));
         textPastTitle.setTypeface(Utils.typefaceRegular(getActivity()));
         textViewMore.setTypeface(Utils.typefaceRegular(getActivity()));
@@ -475,7 +511,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                         data.getPpmParticular(),
                         Utils.getLocalTimeFromUTCTime(data.getCreatedAt()),
                         Utils.getLocalTimeFromUTCTime(data.getUpdatedAt()));
-               // updatePrivacySetting(data.getPpmTag(),data.getCarMongodbRecordIndex());
+                // updatePrivacySetting(data.getPpmTag(),data.getCarMongodbRecordIndex());
             }
 
         }

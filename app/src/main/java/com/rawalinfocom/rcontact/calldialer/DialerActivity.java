@@ -585,7 +585,7 @@ public class DialerActivity extends Activity {
     }
 
     private void showCallConfirmationDialog(final String number) {
-        final String formattedNumber = Utils.getFormattedNumber(DialerActivity.this, number);
+//        final String formattedNumber = Utils.getFormattedNumber(DialerActivity.this, number);
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
 
@@ -610,7 +610,7 @@ public class DialerActivity extends Activity {
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText("Cancel");
         callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + formattedNumber + "?");
+        callConfirmationDialog.setDialogBody("Call " + number + " ?");
         callConfirmationDialog.showDialog();
 
     }
