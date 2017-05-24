@@ -203,4 +203,8 @@
     <string name="permission_text_sms">Please grant permission to access sms-logs.</string>
     <string name="no_sms_found">No SMS found.</string>
     <string name="no_logs_found">No Calls found.</string>
+
+    <!--Search-->
+    <string name="title_phonebook">Phone Book</string>
+    <string name="search_hint">Search by name or number</string>
 </resources>

@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -25,6 +24,7 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
+import com.rawalinfocom.rcontact.database.TableNotificationStateMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
@@ -47,6 +47,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class TimelineActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
@@ -91,6 +92,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
     private TimelineAdapter past5daysTimelineAdapter;
 
     TableCommentMaster tableCommentMaster;
+    TableNotificationStateMaster tableNotificationStateMaster;
     public static int selectedRecycler = -1;
     public static int selectedRecyclerItem = -1;
 
@@ -111,8 +113,14 @@ public class TimelineActivity extends BaseActivity implements RippleView
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         init();
         tableCommentMaster = new TableCommentMaster(databaseHandler);
+        tableNotificationStateMaster = new TableNotificationStateMaster(databaseHandler);
         initData();
-       // getAllEventComment(TimelineActivity.this);
+        // getAllEventComment(TimelineActivity.this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void init() {
@@ -262,6 +270,9 @@ public class TimelineActivity extends BaseActivity implements RippleView
         recyclerViewPast5day.setAdapter(past5daysTimelineAdapter);
 
         updateHeight();
+        tableNotificationStateMaster.makeAllNotificationsAsReadByType(AppConstants.NOTIFICATION_TYPE_TIMELINE);
+        int badgeCount = tableNotificationStateMaster.getTotalUnreadCount();
+        ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
     }
 
     private void updateHeight() {
@@ -311,7 +322,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
             TimelineItem item = new TimelineItem();
             TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
             TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
-            if(comment.getEvmRecordIndexId()!=null) {
+            if (comment.getEvmRecordIndexId() != null) {
                 Event event = tableEventMaster.getEventByEvmRecordIndexId(comment.getEvmRecordIndexId());
                 item.setEventDetail(getResources().getString(R.string.text_wishes_on_your) + event.getEvmEventType());
             }

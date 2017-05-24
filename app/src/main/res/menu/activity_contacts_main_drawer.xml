@@ -1,4 +1,5 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!--<group android:checkableBehavior="single">-->
     <item
@@ -14,7 +15,8 @@
         <item
             android:id="@+id/nav_user_timeline"
             android:icon="@drawable/ic_menu_user_circle"
-            android:title="@string/nav_text_timeline" />
+            android:title="@string/nav_text_timeline"
+            app:actionLayout="@layout/menu_counter" />
         <item
             android:id="@+id/nav_user_events"
             android:icon="@drawable/ic_menu_user_circle"
