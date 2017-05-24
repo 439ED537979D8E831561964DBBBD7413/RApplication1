@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rawalinfocom.rcontact.SearchActivity">
+
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_toolbar_search"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rl_title"
+        android:background="@color/colorVeryLightGray"
+        android:layout_below="@+id/include_toolbar">
+
+        <TextView
+            android:id="@+id/text_pb_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/padding_10dp"
+            android:paddingLeft="@dimen/padding_10dp"
+            android:paddingRight="@dimen/padding_10dp"
+            android:paddingTop="@dimen/padding_10dp"
+            android:text="@string/title_phonebook"/>
+
+
+        <TextView
+            android:id="@+id/text_search_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/padding_10dp"
+            android:paddingLeft="@dimen/padding_10dp"
+            android:paddingRight="@dimen/padding_10dp"
+            android:paddingTop="@dimen/padding_10dp"
+            tools:text="1234"
+            android:layout_alignParentRight="true"/>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycle_view_pb_contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rl_title"
+        android:visibility="visible"
+        android:scrollbars="vertical">
+
+    </android.support.v7.widget.RecyclerView>
+
+
+</RelativeLayout>

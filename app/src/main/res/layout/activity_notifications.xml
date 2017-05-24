@@ -9,7 +9,7 @@
 
     <include
         android:id="@+id/include_toolbar"
-        layout="@layout/layout_toolbar_timeline"
+        layout="@layout/layout_toolbar_notification"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize" />
 

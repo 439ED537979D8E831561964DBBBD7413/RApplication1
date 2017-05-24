@@ -105,6 +105,7 @@ dependencies {
     compile 'com.flipkart.zjsonpatch:zjsonpatch:0.3.0'
     testCompile 'junit:junit:4.12'
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
+    compile "me.leolin:ShortcutBadger:1.1.16@aar"
 }
 
 apply plugin: 'com.google.gms.google-services'

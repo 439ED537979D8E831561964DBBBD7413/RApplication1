@@ -543,12 +543,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                     showCallConfirmationDialog(profileContactNumber);
                                 }
                             }
-                        } else {
-                            if (tempPhoneNumber.size() == 1) {
-                                ProfileDataOperationPhoneNumber phoneNumber =
-                                        (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
-                                if (phoneNumber != null) {
-                                    historyNumber = phoneNumber.getPhoneNumber();
+                        }else{
+                            if(tempPhoneNumber !=null && tempPhoneNumber.size()==1){
+                                ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
+                                if(phoneNumber!=null){
+                                    historyNumber =  phoneNumber.getPhoneNumber();
                                 }
                             }
                             if (!TextUtils.isEmpty(historyNumber)) {
@@ -588,12 +587,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 showCallConfirmationDialog(profileContactNumber);
                             }
                         }
-                    } else {
-                        if (tempPhoneNumber.size() == 1) {
-                            ProfileDataOperationPhoneNumber phoneNumber =
-                                    (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
-                            if (phoneNumber != null) {
-                                historyNumber = phoneNumber.getPhoneNumber();
+                    }else{
+                        if(tempPhoneNumber !=null && tempPhoneNumber.size()==1){
+                            ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
+                            if(phoneNumber!=null){
+                                historyNumber =  phoneNumber.getPhoneNumber();
                             }
                         }
                         if (!TextUtils.isEmpty(historyNumber)) {

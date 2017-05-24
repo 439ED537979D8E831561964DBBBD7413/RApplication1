@@ -24,6 +24,7 @@ import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.NotiCommentsAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
@@ -194,7 +195,13 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
         setRecyclerViewHeight(recyclerTodayComments, height);
         setRecyclerViewHeight(recyclerYesterDayComments, height);
         setRecyclerViewHeight(recyclerPastDayComments, height);
-
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null)
+                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_COMMENTS);
+            }
+        }, 800);
     }
 
     private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
