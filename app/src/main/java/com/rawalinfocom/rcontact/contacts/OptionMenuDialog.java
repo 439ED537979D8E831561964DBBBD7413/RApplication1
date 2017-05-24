@@ -22,7 +22,6 @@ import com.rawalinfocom.rcontact.adapters.OptionMenuAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
-import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +42,7 @@ class OptionMenuDialog {
     static boolean IS_CONTACT_DELETED = false;
 
     private boolean isFavourite;
+    private boolean isFromFavourite;
 
     private Context context;
     private Dialog dialog;
@@ -50,13 +50,15 @@ class OptionMenuDialog {
     private String dialogTag;
     private String rawId;
 
-    RContactApplication rContactApplication;
+    private RContactApplication rContactApplication;
 
     //<editor-fold desc="Constructor">
-    OptionMenuDialog(final Context context, String rawId, final int menuType, boolean isFavourite) {
+    OptionMenuDialog(final Context context, String rawId, final int menuType, boolean
+            isFavourite, boolean isFromFavourite) {
         this.context = context;
         this.rawId = rawId;
         this.isFavourite = isFavourite;
+        this.isFromFavourite = isFromFavourite;
 
         rContactApplication = (RContactApplication) context.getApplicationContext();
 
@@ -179,6 +181,10 @@ class OptionMenuDialog {
                 if (isFavourite) {
                     rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_REMOVED);
                 }
+                if (isFromFavourite) {
+                    AllContactsListFragment.arrayListPhoneBookContacts = null;
+//                    rContactApplication.setArrayListAllPhoneBookContacts(new ArrayList<>());
+                }
                 break;
             //</editor-fold>
         }
@@ -239,12 +245,14 @@ class OptionMenuDialog {
 
             // <editor-fold desc="Delete">
             case 3:
-                TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
+                queryManager.updateRcProfileDetail(context, Integer.parseInt(
+                        ((ProfileDetailActivity) context).pmId), rawId);
+                /*TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
                         context).databaseHandler);
                 String rawIdFromRcpId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt(
                         ((ProfileDetailActivity) context).pmId));
                 if (StringUtils.contains(rawIdFromRcpId, ",")) {
-                    /* Multiple Contacts with single pm_id */
+                    *//* Multiple Contacts with single pm_id *//*
                     String rawIds[] = rawIdFromRcpId.split(",");
                     ArrayList<String> arrayListRawIds = new ArrayList<>(Arrays.asList(rawIds));
                     arrayListRawIds.remove(rawId);
@@ -253,14 +261,14 @@ class OptionMenuDialog {
                 } else {
                     if ((((ProfileDetailActivity) context).pmId).equalsIgnoreCase(((BaseActivity)
                             context).getUserPmId())) {
-                        /* Single Contact with self registered pm_id */
+                        *//* Single Contact with self registered pm_id *//*
                         tableProfileMaster.updateRawIds(Integer.parseInt(((ProfileDetailActivity)
                                 context).pmId), "");
                     } else {
-                        /* Single Contact with single pm_id */
+                        *//* Single Contact with single pm_id *//*
                         queryManager.deleteRcProfileDetail(((ProfileDetailActivity) context).pmId);
                     }
-                }
+                }*/
                 phoneBookContacts.deleteContact(rawId);
                 if (context instanceof ProfileDetailActivity) {
                     ((ProfileDetailActivity) context).onBackPressed();
@@ -268,6 +276,10 @@ class OptionMenuDialog {
                 IS_CONTACT_DELETED = true;
                 if (isFavourite) {
                     rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_REMOVED);
+                }
+                if (isFromFavourite) {
+                    AllContactsListFragment.arrayListPhoneBookContacts = null;
+//                    rContactApplication.setArrayListAllPhoneBookContacts(new ArrayList<>());
                 }
                 break;
             //</editor-fold>
@@ -334,12 +346,14 @@ class OptionMenuDialog {
 
             // <editor-fold desc="Delete">
             case 3:
-                TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
+                queryManager.updateRcProfileDetail(context, Integer.parseInt(
+                        ((ProfileDetailActivity) context).pmId), rcpRawId);
+                /*TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
                         context).databaseHandler);
                 String rawIdFromRcpId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt(
                         ((ProfileDetailActivity) context).pmId));
                 if (StringUtils.contains(rawIdFromRcpId, ",")) {
-                    /* Multiple Contacts with single pm_id */
+                    *//* Multiple Contacts with single pm_id *//*
                     String rawIds[] = rawIdFromRcpId.split(",");
                     ArrayList<String> arrayListRawIds = new ArrayList<>(Arrays.asList(rawIds));
                     arrayListRawIds.remove(rcpRawId);
@@ -348,14 +362,14 @@ class OptionMenuDialog {
                 } else {
                     if ((((ProfileDetailActivity) context).pmId).equalsIgnoreCase(((BaseActivity)
                             context).getUserPmId())) {
-                        /* Single Contact with self registered pm_id */
+                        *//* Single Contact with self registered pm_id *//*
                         tableProfileMaster.updateRawIds(Integer.parseInt(((ProfileDetailActivity)
                                 context).pmId), "");
                     } else {
-                        /* Single Contact with single pm_id */
+                        *//* Single Contact with single pm_id *//*
                         queryManager.deleteRcProfileDetail(((ProfileDetailActivity) context).pmId);
                     }
-                }
+                }*/
                 phoneBookContacts.deleteContact(rcpRawId);
                 if (context instanceof ProfileDetailActivity) {
                     ((ProfileDetailActivity) context).onBackPressed();
@@ -364,6 +378,8 @@ class OptionMenuDialog {
                 if (isFavourite) {
                     rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_REMOVED);
                 }
+                AllContactsListFragment.arrayListPhoneBookContacts = null;
+//                rContactApplication.setArrayListAllPhoneBookContacts(new ArrayList<>());
                 break;
             //</editor-fold>
         }

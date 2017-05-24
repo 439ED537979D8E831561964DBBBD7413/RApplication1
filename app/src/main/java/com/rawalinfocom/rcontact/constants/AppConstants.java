@@ -114,6 +114,7 @@ public class AppConstants {
     public static String EXTRA_LATITUDE = "extra_latitude";
     public static String EXTRA_LONGITUDE = "extra_longitude";
     public static String EXTRA_CONTACT_PROFILE_IMAGE = "extra_contact_profile_image";
+    public static String EXTRA_IS_FROM_FAVOURITE = "extra_is_from_favourite";
 
 
     //</editor-fold>

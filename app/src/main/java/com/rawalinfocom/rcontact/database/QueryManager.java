@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
@@ -18,6 +19,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by user on 11/01/17.
@@ -376,7 +378,7 @@ public class QueryManager {
         return profileDataOperation;
     }
 
-    public void deleteRcProfileDetail(String rcpId) {
+    private void deleteRcProfileDetail(String rcpId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         //<editor-fold desc="TABLE_PB_PROFILE_EMAIL_MAPPING">
@@ -445,6 +447,26 @@ public class QueryManager {
 
         db.close();
 
+    }
+
+    public void updateRcProfileDetail(Context context, int rcpId, String rawId) {
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+        String rawIdFromRcpId = tableProfileMaster.getRawIdFromRcpId(rcpId);
+        if (StringUtils.contains(rawIdFromRcpId, ",")) {
+            /* Multiple Contacts with single pm_id */
+            String rawIds[] = rawIdFromRcpId.split(",");
+            ArrayList<String> arrayListRawIds = new ArrayList<>(Arrays.asList(rawIds));
+            arrayListRawIds.remove(rawId);
+            tableProfileMaster.updateRawIds(rcpId, StringUtils.join(arrayListRawIds, ","));
+        } else {
+            if (String.valueOf(rcpId).equalsIgnoreCase(((BaseActivity) context).getUserPmId())) {
+                /* Single Contact with self registered pm_id */
+                tableProfileMaster.updateRawIds(rcpId, "");
+            } else {
+                /* Single Contact with single pm_id */
+                deleteRcProfileDetail(String.valueOf(rcpId));
+            }
+        }
     }
 
     public ArrayList<ProfileData> getRcpNumberName(String cloudPmIds) {

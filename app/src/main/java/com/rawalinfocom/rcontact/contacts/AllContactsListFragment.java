@@ -115,7 +115,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @BindView(R.id.text_total_contacts)
     TextView textTotalContacts;
 
-    ArrayList<Object> arrayListPhoneBookContacts;
+    public static ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> arrayListContactHeaders;
     ArrayList<ProfileData> arrayListUserContact = new ArrayList<>();
     ArrayList<ProfileData> arrayListSyncUserContact = new ArrayList<>();
@@ -222,6 +222,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             arrayListPhoneBookContacts.add("My Contacts");
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
+
+            isReload = false;
 
         } else {
             isReload = true;

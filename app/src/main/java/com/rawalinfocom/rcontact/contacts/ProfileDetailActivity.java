@@ -270,7 +270,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     String pmId, phoneBookId, contactName = "", cloudContactName = null, checkNumberFavourite =
             null, thumbnailUrl = "";
-    boolean displayOwnProfile = false, isHideFavourite = false;
+    boolean displayOwnProfile = false, isHideFavourite = false, isFromFavourite = false;
     int isFavourite = 0;
 
     PhoneBookContacts phoneBookContacts;
@@ -807,7 +807,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         }
 
                         OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
-                                .this, rawId, menuType, isFavourite == 1);
+                                .this, rawId, menuType, isFavourite == 1, isFromFavourite);
 
                         optionMenu.showDialog();
                     }
@@ -1717,6 +1717,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 phoneBookId = intent.getStringExtra(AppConstants.EXTRA_PHONE_BOOK_ID);
             } else {
                 phoneBookId = "-1";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_IS_FROM_FAVOURITE)) {
+                isFromFavourite = intent.getBooleanExtra(AppConstants.EXTRA_IS_FROM_FAVOURITE,
+                        false);
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NAME)) {
