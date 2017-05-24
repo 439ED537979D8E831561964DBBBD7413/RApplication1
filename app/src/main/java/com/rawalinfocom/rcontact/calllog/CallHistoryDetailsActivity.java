@@ -518,21 +518,24 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
                     } else {
 
-                        if(tempPhoneNumber !=null && tempPhoneNumber.size()>1){
+                        if (tempPhoneNumber != null && tempPhoneNumber.size() > 1) {
                             if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
                                 int count = tempPhoneNumber.size();
                                 ArrayList<String> listPhoneNumber = new ArrayList<>();
                                 if (count > 1) {
                                     for (int i = 0; i < tempPhoneNumber.size(); i++) {
                                         ProfileDataOperationPhoneNumber phoneNumber =
-                                                (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(i);
+                                                (ProfileDataOperationPhoneNumber) tempPhoneNumber
+                                                        .get(i);
                                         String number = phoneNumber.getPhoneNumber();
                                         listPhoneNumber.add(number);
                                     }
 
                                     CallConfirmationListDialog callConfirmationListDialog = new
-                                            CallConfirmationListDialog(this, listPhoneNumber,false);
-                                    callConfirmationListDialog.setDialogTitle("Please select a number to " +
+                                            CallConfirmationListDialog(this, listPhoneNumber,
+                                            false);
+                                    callConfirmationListDialog.setDialogTitle("Please select a " +
+                                            "number to " +
                                             "view sms-log");
                                     callConfirmationListDialog.showDialog();
 
@@ -547,8 +550,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                     historyNumber =  phoneNumber.getPhoneNumber();
                                 }
                             }
-                            if(!TextUtils.isEmpty(historyNumber)){
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", historyNumber, null));
+                            if (!TextUtils.isEmpty(historyNumber)) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts
+                                        ("sms", historyNumber, null));
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                                     intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
                                 }
@@ -558,22 +562,24 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         }
 
                     }
-                }else{
-                    if(tempPhoneNumber !=null && tempPhoneNumber.size()>1){
+                } else {
+                    if (tempPhoneNumber != null && tempPhoneNumber.size() > 1) {
                         if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
                             int count = tempPhoneNumber.size();
                             ArrayList<String> listPhoneNumber = new ArrayList<>();
                             if (count > 1) {
                                 for (int i = 0; i < tempPhoneNumber.size(); i++) {
                                     ProfileDataOperationPhoneNumber phoneNumber =
-                                            (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(i);
+                                            (ProfileDataOperationPhoneNumber) tempPhoneNumber.get
+                                                    (i);
                                     String number = phoneNumber.getPhoneNumber();
                                     listPhoneNumber.add(number);
                                 }
 
                                 CallConfirmationListDialog callConfirmationListDialog = new
-                                        CallConfirmationListDialog(this, listPhoneNumber,false);
-                                callConfirmationListDialog.setDialogTitle("Please select a number to " +
+                                        CallConfirmationListDialog(this, listPhoneNumber, false);
+                                callConfirmationListDialog.setDialogTitle("Please select a number" +
+                                        " to " +
                                         "view sms-log");
                                 callConfirmationListDialog.showDialog();
 
@@ -588,8 +594,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 historyNumber =  phoneNumber.getPhoneNumber();
                             }
                         }
-                        if(!TextUtils.isEmpty(historyNumber)){
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", historyNumber, null));
+                        if (!TextUtils.isEmpty(historyNumber)) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms",
+                                    historyNumber, null));
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                                 intent.setPackage(Telephony.Sms.getDefaultSmsPackage(this));
                             }
@@ -616,7 +623,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             }
 
                             CallConfirmationListDialog callConfirmationListDialog = new
-                                    CallConfirmationListDialog(this, listPhoneNumber,true);
+                                    CallConfirmationListDialog(this, listPhoneNumber, true);
                             callConfirmationListDialog.setDialogTitle("Please select a number to " +
                                     "call");
                             callConfirmationListDialog.showDialog();
@@ -672,7 +679,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 ProfileMenuOptionDialog profileMenuOptionDialog;
                 boolean isFromCallLogTab = false;
                 String blockedNumber = "";
-                ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+                ArrayList<CallLogType> callLogTypeList = new ArrayList<>();
                 HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
                         Utils.getHashMapPreferenceForBlock(this, AppConstants
                                 .PREF_BLOCK_CONTACT_LIST);
@@ -714,8 +721,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 this.getString(R.string.unblock),*/ this.getString(R.string.delete),
                                 this.getString(R.string.clear_call_log)));
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                arrayListName, contactName,
-                                0, isFromCallLogTab, arrayListHistory, contactName, "", hashMapKey);
+                                arrayListName, contactName, 0, isFromCallLogTab,
+                                arrayListHistory, contactName, "", hashMapKey, profileThumbnail);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -730,9 +737,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                             this.getString(R.string.delete), this.getString(R.string
                                                     .clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                    arrayListNumber, profileContactNumber,
-                                    0, isFromCallLogTab, arrayListHistory, "", uniqueContactId,
-                                    hashMapKey);
+                                    arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
+                                    arrayListHistory, "", uniqueContactId, hashMapKey,
+                                    profileThumbnail);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -740,15 +747,15 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase
                     ("[Unknown]")*/) {
                         ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
-                                        .getString(R.string.edit),
+                                        .getString(R.string.edit), "View in AC",
                                 /*this.getString(R.string.view_in_ac), this.getString(R.string
                                 .view_in_rc),
                                 this.getString(R.string.call_reminder),
                                 this.getString(R.string.block),*/ this.getString(R.string.delete),
                                 this.getString(R.string.clear_call_log)));
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                arrayListName, contactName,
-                                0, isFromCallLogTab, arrayListHistory, contactName, "", "");
+                                arrayListName, contactName, 0, isFromCallLogTab,
+                                arrayListHistory, contactName, "", phoneBookId, profileThumbnail);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -763,8 +770,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                             this.getString(R.string.delete), this.getString(R.string
                                                     .clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                    arrayListNumber, profileContactNumber,
-                                    0, isFromCallLogTab, arrayListHistory, "", uniqueContactId, "");
+                                    arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
+                                    arrayListHistory, "", uniqueContactId, "", profileThumbnail);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -1767,7 +1774,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
 
     private void showCallConfirmationDialog(final String number) {
-        final String formattedNumber =  Utils.getFormattedNumber(this,number);
+        final String formattedNumber = Utils.getFormattedNumber(this, number);
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
 

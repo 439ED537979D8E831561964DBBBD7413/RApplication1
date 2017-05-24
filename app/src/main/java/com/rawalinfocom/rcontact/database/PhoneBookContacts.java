@@ -8,6 +8,8 @@ import android.provider.ContactsContract;
 
 import com.rawalinfocom.rcontact.helper.Utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 
 /**
@@ -119,31 +121,64 @@ public class PhoneBookContacts {
         return context.getContentResolver().query(uri, projection, null, null, sortOrder);
     }
 
-    public Cursor getStructuredName(String contactId) {
+    public String getStructuredName(String contactId) {
+        String contactDisplayName = "";
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = new String[]{
 //                ContactsContract.CommonDataKinds.StructuredName._ID,
                 ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY,
                 ContactsContract.CommonDataKinds.StructuredName.PREFIX,
                 ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.SUFFIX,
                 ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.SUFFIX,
                 ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.PHONETIC_GIVEN_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.PHONETIC_MIDDLE_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.PHONETIC_FAMILY_NAME,
         };
 
         String selection = ContactsContract.Data.MIMETYPE + " = '" +
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE + "' AND " +
 //                ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID
                 ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY
-                + " = ?";
+                + " IN (?)";
         String[] selectionArgs = new String[]{contactId};
 
-        return context.getContentResolver().query(uri, projection, selection,
+        Cursor cursor = context.getContentResolver().query(uri, projection, selection,
                 selectionArgs, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                String prefix = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.PREFIX));
+                String firstName = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.GIVEN_NAME));
+                String lastName = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.FAMILY_NAME));
+                String middleName = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.MIDDLE_NAME));
+                String suffix = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.SUFFIX));
+
+                if (StringUtils.length(prefix) > 0) {
+                    contactDisplayName = prefix + " ";
+                }
+                if (StringUtils.length(firstName) > 0) {
+                    contactDisplayName = contactDisplayName + firstName + " ";
+                }
+                if (StringUtils.length(middleName) > 0) {
+                    contactDisplayName = contactDisplayName + middleName + " ";
+                }
+                if (StringUtils.length(lastName) > 0) {
+                    contactDisplayName = contactDisplayName + lastName + " ";
+                }
+                if (StringUtils.length(suffix) > 0) {
+                    contactDisplayName = contactDisplayName + suffix;
+                }
+                contactDisplayName = StringUtils.trimToEmpty(contactDisplayName);
+
+            }
+            cursor.close();
+        }
+      /*  return context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, null);*/
+        return contactDisplayName;
     }
 
     public Cursor getContactNumbers(String contactId) {
@@ -381,6 +416,22 @@ public class PhoneBookContacts {
         String[] selectionArgs = new String[]{lastUpdate};
 
         return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+    }
+
+    public void deleteContact(String contactId) {
+        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                Uri lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
+                        .CONTENT_LOOKUP_URI, contactId);
+
+                context.getContentResolver().delete(lookupUri, null, null);
+
+            }
+            cursor.close();
+        }
     }
 
     //</editor-fold>

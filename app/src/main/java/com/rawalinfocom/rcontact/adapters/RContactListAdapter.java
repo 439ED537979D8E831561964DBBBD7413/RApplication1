@@ -1,7 +1,9 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -40,6 +42,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         SectionIndexer {
 
     private Context context;
+    private Fragment fragment;
     private ArrayList<Object> arrayListUserProfile;
     private ArrayList<String> arrayListContactHeader;
 
@@ -50,9 +53,10 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private ArrayList<Integer> mSectionPositions;
 
     //<editor-fold desc="Constructor">
-    public RContactListAdapter(Context context, ArrayList<Object> arrayListUserProfile,
+    public RContactListAdapter(Fragment fragment, ArrayList<Object> arrayListUserProfile,
                                ArrayList<String> arrayListContactHeader) {
-        this.context = context;
+        this.fragment = fragment;
+        this.context = fragment.getActivity();
         this.arrayListUserProfile = arrayListUserProfile;
         this.arrayListContactHeader = arrayListContactHeader;
     }
@@ -234,9 +238,16 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 //                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, userProfile.getPmRawId());
                 TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
-                bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, userProfile.getPmProfileImage());
-                ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
-                        .class, bundle);
+                bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, userProfile
+                        .getPmProfileImage());
+               /* ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
+                        .class, bundle);*/
+                Intent intent = new Intent(context, ProfileDetailActivity.class);
+                intent.putExtras(bundle);
+                fragment.startActivityForResult(intent, AppConstants
+                        .REQUEST_CODE_PROFILE_DETAIL);
+                ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
+                        .anim.exit);
             }
         });
 
