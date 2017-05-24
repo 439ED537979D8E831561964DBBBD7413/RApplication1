@@ -53,15 +53,15 @@ public class WsRequestObject {
     int flag;
 
 
-    private List<PrivacyDataItem> data;
+    private List<PrivacyDataItem> privacyData;
 
     @JsonProperty("privacy_data")
-    public List<PrivacyDataItem> getData() {
-        return data;
+    public List<PrivacyDataItem> getPrivacyData() {
+        return privacyData;
     }
 
-    public void setData(List<PrivacyDataItem> data) {
-        this.data = data;
+    public void setPrivacyData(List<PrivacyDataItem> privacyData) {
+        this.privacyData = privacyData;
     }
 
     public int getCarPmIdTo() {

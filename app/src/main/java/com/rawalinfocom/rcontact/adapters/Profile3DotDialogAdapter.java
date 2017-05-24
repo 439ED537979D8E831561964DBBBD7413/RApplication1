@@ -22,9 +22,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.calllog.CallLogDeleteActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialogClipboard;
 import com.rawalinfocom.rcontact.helper.RippleView;
@@ -33,7 +35,6 @@ import com.rawalinfocom.rcontact.model.CallLogType;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -46,41 +47,49 @@ import butterknife.ButterKnife;
  * Created by Aniruddh on 20/03/17.
  */
 
-public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDialogAdapter.MaterialViewHolder>  {
+public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDialogAdapter
+        .MaterialViewHolder> {
+
     private Context context;
     private ArrayList<String> arrayListString;
-    MaterialDialog callConfirmationDialog;
-    String numberToCall;
-    long callLogDateToDelete;
-    boolean isFromCallLogFragment = false;
-    ArrayList<CallLogType> arrayListCallLogType;
-    String dialogName;
-    String uniqueRowId;
-    String key;
+    private MaterialDialog callConfirmationDialog;
+    private String numberToCall;
+    private long callLogDateToDelete;
+    private boolean isFromCallLogFragment = false;
+    private ArrayList<CallLogType> arrayListCallLogType;
+    private String dialogName;
+    private String uniqueRowId;
+    private String key;
+    private String profileUrl;
 
-    public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number, long date,
-                                    boolean isFromCallLogs, ArrayList<CallLogType> list, String name, String uniqueRowId,
-                                    String key) {
+    public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number,
+                                    long date, boolean isFromCallLogs, ArrayList<CallLogType>
+                                            list, String name, String uniqueRowId, String key,
+                                    String profileUrl) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
         this.callLogDateToDelete = date;
-        this.isFromCallLogFragment =  isFromCallLogs;
-        this.arrayListCallLogType =  list;
-        this.dialogName =  name;
-        this.uniqueRowId =  uniqueRowId;
-        this.key =  key;
+        this.isFromCallLogFragment = isFromCallLogs;
+        this.arrayListCallLogType = list;
+        this.dialogName = name;
+        this.profileUrl = profileUrl;
+        this.uniqueRowId = uniqueRowId;
+        this.key = key;
     }
 
     @Override
-    public Profile3DotDialogAdapter.MaterialViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_dialog_call_log,
+    public Profile3DotDialogAdapter.MaterialViewHolder onCreateViewHolder(ViewGroup parent, int
+            viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout
+                        .list_item_dialog_call_log,
                 parent, false);
         return new Profile3DotDialogAdapter.MaterialViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(Profile3DotDialogAdapter.MaterialViewHolder holder, final int position) {
+    public void onBindViewHolder(Profile3DotDialogAdapter.MaterialViewHolder holder, final int
+            position) {
         final String value = arrayListString.get(position);
         holder.textItemValue.setText(value);
 
@@ -92,25 +101,45 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                     Utils.addToContact(context, numberToCall);
 
-                } else if (value.equalsIgnoreCase(context.getString(R.string.add_to_existing_contact))) {
+                } else if (value.equalsIgnoreCase(context.getString(R.string.edit))) {
+                    Intent intent = new Intent(Intent.ACTION_EDIT);
+                    Uri lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
+                            .CONTENT_LOOKUP_URI, key);
+                    Uri res = ContactsContract.Contacts.lookupContact(context.getContentResolver(),
+                            lookupUri);
+                    intent.setData(res);
+                    context.startActivity(intent);
+                    ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
+                } else if (value.equalsIgnoreCase(context.getString(R.string
+                        .add_to_existing_contact))) {
                     Utils.addToExistingContact(context, numberToCall);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.view_profile))) {
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.copy_phone_number))) {
-                    MaterialDialogClipboard materialDialogClipboard = new MaterialDialogClipboard(context, numberToCall);
+                    MaterialDialogClipboard materialDialogClipboard = new MaterialDialogClipboard
+                            (context, numberToCall);
                     materialDialogClipboard.showDialog();
+                } else if (value.equalsIgnoreCase("View in AC")) {
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString(AppConstants.EXTRA_CONTACT_NAME, dialogName);
+                    bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, key);
+                    bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, profileUrl);
+                    ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
+                            .class, bundle);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.block))) {
 
                     ArrayList<CallLogType> listToBlock = new ArrayList<CallLogType>();
-                    HashMap<String,ArrayList<CallLogType>> listHashMap =  new HashMap<String, ArrayList<CallLogType>>();
+                    HashMap<String, ArrayList<CallLogType>> listHashMap = new HashMap<String,
+                            ArrayList<CallLogType>>();
                     String uniqueContactId = "";
                     if (!TextUtils.isEmpty(dialogName)) {
                         listToBlock = getNumbersFromName(dialogName);
                         Log.i("block list size =", listToBlock.size() + "");
-                        for (int i=0; i<listToBlock.size();i++){
-                            CallLogType callLogType =  listToBlock.get(i);
+                        for (int i = 0; i < listToBlock.size(); i++) {
+                            CallLogType callLogType = listToBlock.get(i);
                             uniqueContactId = callLogType.getUniqueContactId();
                         }
 
@@ -138,18 +167,21 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     Utils.setHashMapPreference(context, AppConstants.PREF_BLOCK_CONTACT_LIST,
                             listHashMap);
 
-                    Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE_BLOCK);
+                    Intent localBroadcastIntent = new Intent(AppConstants
+                            .ACTION_LOCAL_BROADCAST_PROFILE_BLOCK);
                     localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_BLOCK,
                             true);
-                    LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                    LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                            .getInstance(context);
                     myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
-                } else if(value.equalsIgnoreCase(context.getString(R.string.unblock))){
+                } else if (value.equalsIgnoreCase(context.getString(R.string.unblock))) {
 
                     if (Utils.getHashMapPreferenceForBlock(context, AppConstants
                             .PREF_BLOCK_CONTACT_LIST) != null) {
                         HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
-                                Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
+                                Utils.getHashMapPreferenceForBlock(context, AppConstants
+                                        .PREF_BLOCK_CONTACT_LIST);
                         ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
                         String blockedNumber = "";
                         if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
@@ -160,8 +192,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                         if (callLogTypeList != null) {
                             for (int j = 0; j < callLogTypeList.size(); j++) {
                                 String tempNumber = callLogTypeList.get(j).getNumber();
-                                String blockContactName =  callLogTypeList.get(j).getName();
-                                if(!TextUtils.isEmpty(numberToCall)){
+                                String blockContactName = callLogTypeList.get(j).getName();
+                                if (!TextUtils.isEmpty(numberToCall)) {
                                     Pattern numberPat = Pattern.compile("\\d+");
                                     Matcher matcher1 = numberPat.matcher(numberToCall);
                                     if (matcher1.find()) {
@@ -177,44 +209,51 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                             }
                         }
 
-                        if(!TextUtils.isEmpty(blockedNumber)){
+                        if (!TextUtils.isEmpty(blockedNumber)) {
                             blockProfileHashMapList.remove(key);
-                            Utils.setHashMapPreference(context, AppConstants.PREF_BLOCK_CONTACT_LIST,
+                            Utils.setHashMapPreference(context, AppConstants
+                                            .PREF_BLOCK_CONTACT_LIST,
                                     blockProfileHashMapList);
                         }
                     }
 
-                    Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE_BLOCK);
+                    Intent localBroadcastIntent = new Intent(AppConstants
+                            .ACTION_LOCAL_BROADCAST_PROFILE_BLOCK);
                     localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_BLOCK,
                             false);
-                    LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                    LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                            .getInstance(context);
                     myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
 
-                }else if(value.equalsIgnoreCase(context.getString(R.string.unblock_All))){
+                } else if (value.equalsIgnoreCase(context.getString(R.string.unblock_All))) {
 
                     if (Utils.getHashMapPreferenceForBlock(context, AppConstants
                             .PREF_BLOCK_CONTACT_LIST) != null) {
                         HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
-                                Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
+                                Utils.getHashMapPreferenceForBlock(context, AppConstants
+                                        .PREF_BLOCK_CONTACT_LIST);
                         if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
                             blockProfileHashMapList.clear();
-                            Utils.setHashMapPreference(context, AppConstants.PREF_BLOCK_CONTACT_LIST,
+                            Utils.setHashMapPreference(context, AppConstants
+                                            .PREF_BLOCK_CONTACT_LIST,
                                     blockProfileHashMapList);
                         }
-                        Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_UNBLOCK);
-                        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                        Intent localBroadcastIntent = new Intent(AppConstants
+                                .ACTION_LOCAL_BROADCAST_UNBLOCK);
+                        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                                .getInstance(context);
                         myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
                     }
-                }else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
+                } else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.clear_call_log))) {
 
-                    if(isFromCallLogFragment){
+                    if (isFromCallLogFragment) {
 
                         deleteCallLogByNumber(numberToCall);
 
-                    }else{
+                    } else {
 
                         Pattern numberPat = Pattern.compile("\\d+");
                         Matcher matcher1 = numberPat.matcher(numberToCall);
@@ -229,8 +268,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 } else if (value.equalsIgnoreCase(context.getString(R.string.delete))) {
 
                     Intent intent = new Intent(context, CallLogDeleteActivity.class);
-                    Bundle b =  new Bundle();
-                    b.putSerializable(AppConstants.EXTRA_CALL_ARRAY_LIST,arrayListCallLogType);
+                    Bundle b = new Bundle();
+                    b.putSerializable(AppConstants.EXTRA_CALL_ARRAY_LIST, arrayListCallLogType);
                     intent.putExtras(b);
                     context.startActivity(intent);
                     ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
@@ -243,13 +282,16 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                 } else {
 
-                    Toast.makeText(context, "Please select any one option", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Please select any one option", Toast.LENGTH_SHORT)
+                            .show();
                 }
 
-                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);
+                Intent localBroadcastIntent = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_DIALOG);
                 localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
                         AppConstants.EXTRA_CALL_LOG_DELETED_VALUE);
-                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                        (context);
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
             }
@@ -258,7 +300,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     }
 
 
-//    @TargetApi(Build.VERSION_CODES.M)
+    //    @TargetApi(Build.VERSION_CODES.M)
     private ArrayList<CallLogType> getNumbersFromName(String number) {
         Cursor cursor = null;
         ArrayList<CallLogType> listNumber = new ArrayList<>();
@@ -268,7 +310,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     Uri.encode(number));
 
             cursor = context.getContentResolver().query(Person, null,
-                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " =?", new String[]{number}, null);
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " =?", new
+                            String[]{number}, null);
 
             if (cursor != null && cursor.getCount() > 0) {
                 int number1 = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
@@ -299,7 +342,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
             numberId = "";
             ContentResolver contentResolver = context.getContentResolver();
 
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
 
             String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
                     ContactsContract.PhoneLookup.LOOKUP_KEY};
@@ -328,7 +372,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     private void deleteCallLogByNumber(String number) {
         try {
 
-            long dateToCompare =0;
+            long dateToCompare = 0;
             long nextDate = 0;
             Date objDate1 = new Date(callLogDateToDelete);
             String dateToDelete = new SimpleDateFormat("dd/MM/yyyy").format(objDate1);
@@ -339,8 +383,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
             TomoDate = cal.getTime();
             String tomorrowDate = new SimpleDateFormat("dd/MM/yyyy").format(TomoDate);*/
 
-            Date date1=new Date(callLogDateToDelete + (1000 * 60 * 60 * 24));
-            SimpleDateFormat sdf1=new SimpleDateFormat("dd/MM/yyyy");
+            Date date1 = new Date(callLogDateToDelete + (1000 * 60 * 60 * 24));
+            SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
             String tomorrowDate = sdf1.format(date1);
 
 
@@ -348,7 +392,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
             Date date = new Date(callLogDate);
             String dateToCompare1 = new SimpleDateFormat("dd/MM/yyyy").format(date);
 
-            try{
+            try {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 Date startDate = sdf.parse(dateToDelete);
                 dateToCompare = startDate.getTime();
@@ -356,41 +400,48 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 Date tomdate = sdf.parse(tomorrowDate);
                 nextDate = tomdate.getTime();
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
             // Date wise deletion
             /*String  where =   CallLog.Calls.NUMBER + " =?"
                     + " AND " + android.provider.CallLog.Calls.DATE + " BETWEEN ? AND ?";
-            String[] selectionArguments = new String[]{number,String.valueOf(dateToCompare),String.valueOf(nextDate)};
-            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI,where, selectionArguments);*/
+            String[] selectionArguments = new String[]{number,String.valueOf(dateToCompare),
+            String.valueOf(nextDate)};
+            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI,where,
+            selectionArguments);*/
 
             // Delete call records for selected number
-            String  where =   CallLog.Calls.NUMBER + " =?";
+            String where = CallLog.Calls.NUMBER + " =?";
             String[] selectionArguments = new String[]{number};
-            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI,where, selectionArguments);
+            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
+                    selectionArguments);
 
-            /*int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, CallLog.Calls.NUMBER + " =?"
+            /*int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, CallLog
+            .Calls.NUMBER + " =?"
                     + " AND " + dateToCompare + "=?", new String[]{number, dateToDelete});
             Log.i("Delete Query value", value + "");*/
 
-            if(value > 0){
+            if (value > 0) {
                 Log.i("Delete Query value", value + "");
                 Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
 
-                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
+                Intent localBroadcastIntent = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_PROFILE);
                 localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
                         AppConstants.EXTRA_CALL_LOG_DELETED_VALUE);
-                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                        (context);
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                 Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
-                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS,true);
-                LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS, true);
+                LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager
+                        .getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 
-            }else{
+            } else {
 
             }
 
@@ -400,66 +451,80 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
     }
 
-    private void deleteCallHistoryByName(String name){
-        try{
-            String  where =   CallLog.Calls.CACHED_NAME + " =?";
+    private void deleteCallHistoryByName(String name) {
+        try {
+            String where = CallLog.Calls.CACHED_NAME + " =?";
             String[] selectionArguments = new String[]{name};
-            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI,where, selectionArguments);
-            if(value > 0){
+            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
+                    selectionArguments);
+            if (value > 0) {
                 Log.i("Delete Query value", value + "");
                 Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
 
-                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
+                Intent localBroadcastIntent = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_PROFILE);
                 localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
                         AppConstants.EXTRA_CALL_LOG_DELETED_VALUE);
-                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                        (context);
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                 Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
-                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS,true);
-                LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS,
+                        true);
+                LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager
+                        .getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 
-                Intent localBroadcastIntent2 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
-                LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager.getInstance(context);
+                Intent localBroadcastIntent2 = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
+                LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager
+                        .getInstance(context);
                 myLocalBroadcastManager2.sendBroadcast(localBroadcastIntent2);
 
             }
 
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void deleteCallHistoryByNumber(String number){
-        try{
-            String  where =   CallLog.Calls.NUMBER + " =?";
+    private void deleteCallHistoryByNumber(String number) {
+        try {
+            String where = CallLog.Calls.NUMBER + " =?";
             String[] selectionArguments = new String[]{number};
-            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI,where, selectionArguments);
-            if(value > 0){
+            int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
+                    selectionArguments);
+            if (value > 0) {
                 Log.i("Delete Query value", value + "");
                 Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
 
-                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_PROFILE);
+                Intent localBroadcastIntent = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_PROFILE);
                 localBroadcastIntent.putExtra(AppConstants.EXTRA_CALL_LOG_DELETED_KEY,
                         AppConstants.EXTRA_CALL_LOG_DELETED_VALUE);
-                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                        (context);
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                 Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST);
-                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS,true);
-                LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager.getInstance(context);
+                localBroadcastIntent1.putExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS,
+                        true);
+                LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager
+                        .getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
 
-                Intent localBroadcastIntent2 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
-                LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager.getInstance(context);
+                Intent localBroadcastIntent2 = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
+                LocalBroadcastManager myLocalBroadcastManager2 = LocalBroadcastManager
+                        .getInstance(context);
                 myLocalBroadcastManager2.sendBroadcast(localBroadcastIntent2);
 
 
             }
 
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             e.printStackTrace();
         }
     }

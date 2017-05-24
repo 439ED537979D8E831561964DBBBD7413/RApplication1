@@ -27,11 +27,13 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
@@ -41,7 +43,6 @@ import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ProfileData;
-import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
@@ -51,6 +52,8 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.app.Activity.RESULT_OK;
 
 public class FavoritesFragment extends BaseFragment implements LoaderManager
         .LoaderCallbacks<Cursor>, WsResponseListener {
@@ -188,7 +191,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 //        data.close();
 
 //        rContactApplication.setFavouriteModified(false);
-        rContactApplication.setFavouriteStatus(0);
+        rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_UNMODIFIED);
 
         populateRecyclerView();
         initSwipe();
@@ -205,6 +208,31 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         super.onPause();
         Log.i("onPause", "called");
         getLoaderManager().destroyLoader(0);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+//            super.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == AppConstants.REQUEST_CODE_PROFILE_DETAIL && resultCode ==
+                    RESULT_OK) {
+                if (OptionMenuDialog.IS_CONTACT_DELETED) {
+                    OptionMenuDialog.IS_CONTACT_DELETED = false;
+                    /*arrayListPhoneBookContacts.remove(allContactListAdapter
+                            .getListClickedPosition());
+                    allContactListAdapter.notifyItemRemoved(allContactListAdapter
+                            .getListClickedPosition());
+                    rContactApplication.setArrayListAllPhoneBookContacts
+                            (arrayListPhoneBookContacts);
+                    RContactsFragment.arrayListRContact = null;*/
+                }
+               /* Toast.makeText(getActivity(), "Called: " + allContactListAdapter
+                        .getListClickedPosition(), Toast.LENGTH_SHORT).show();*/
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -455,167 +483,6 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 });
             }
         }
-    }
-
-    public void getFavouriteContacts() {
-        phoneBookContacts = new PhoneBookContacts(getActivity());
-        Cursor favouriteContactCursor = phoneBookContacts.getStarredContacts();
-
-        ArrayList<String> arrayListFavouriteRawId = new ArrayList<>();
-
-        if (favouriteContactCursor != null && favouriteContactCursor.getCount() > 0) {
-
-            while (favouriteContactCursor.moveToNext()) {
-
-                arrayListFavouriteRawId.add(favouriteContactCursor.getString
-                        (favouriteContactCursor.getColumnIndex(ContactsContract.Contacts
-                                .LOOKUP_KEY)));
-//                        (favouriteContactCursor.getColumnIndex(ContactsContract.Contacts._ID)));
-
-            }
-            favouriteContactCursor.close();
-        }
-
-        arrayListUserContact = new ArrayList<>();
-        arrayListPhoneBookContacts = new ArrayList<>();
-        arrayListContactHeaders = new ArrayList<>();
-
-        for (int i = 0; i < arrayListFavouriteRawId.size(); i++) {
-
-            ProfileData profileData = new ProfileData();
-
-            String rawId = arrayListFavouriteRawId.get(i);
-
-            profileData.setLocalPhoneBookId(rawId);
-
-            ProfileDataOperation operation = new ProfileDataOperation();
-
-            //<editor-fold desc="Structured Name">
-            Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);
-//            ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
-
-            if (contactStructuredNameCursor != null && contactStructuredNameCursor.getCount() > 0) {
-
-                while (contactStructuredNameCursor.moveToNext()) {
-
-                  /*  operation.setPbNamePrefix(contactStructuredNameCursor.getString
-                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.StructuredName.PREFIX)));
-                    operation.setPbNameFirst(contactStructuredNameCursor.getString
-                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.StructuredName.GIVEN_NAME)));
-                    operation.setPbNameMiddle(contactStructuredNameCursor.getString
-                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.StructuredName.MIDDLE_NAME)));
-                    operation.setPbNameLast(contactStructuredNameCursor.getString
-                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.StructuredName.FAMILY_NAME)));
-                    operation.setPbNameSuffix(contactStructuredNameCursor.getString
-                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.StructuredName.SUFFIX)));*/
-                    profileData.setTempFirstName(contactStructuredNameCursor.getString
-                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.StructuredName.GIVEN_NAME)));
-                    profileData.setTempLastName(contactStructuredNameCursor.getString
-                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.StructuredName.FAMILY_NAME)));
-                    profileData.setTempPrefix(contactStructuredNameCursor.getString
-                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.StructuredName.PREFIX)));
-                    profileData.setTempSufix(contactStructuredNameCursor.getString
-                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.StructuredName.SUFFIX)));
-                    profileData.setTempMiddleName(contactStructuredNameCursor.getString
-                            (contactStructuredNameCursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.StructuredName.MIDDLE_NAME)));
-
-                }
-                contactStructuredNameCursor.close();
-            }
-//                arrayListOperation.add(operation);
-            //</editor-fold>
-
-            //<editor-fold desc="Contact Number">
-            Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(rawId);
-//            ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = new ArrayList<>();
-
-            if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
-                if (contactNumberCursor.moveToFirst()) {
-                    profileData.setTempNumber(Utils.getFormattedNumber(getActivity(),
-                            contactNumberCursor.getString(contactNumberCursor.getColumnIndex
-                                    (ContactsContract.CommonDataKinds.Phone.NUMBER))));
-                }
-//                while (contactNumberCursor.moveToNext()) {
-
-                    /*ProfileDataOperationPhoneNumber phoneNumber = new
-                            ProfileDataOperationPhoneNumber();
-
-                    phoneNumber.setPhoneNumber(Utils.getFormattedNumber(getActivity(),
-                            contactNumberCursor.getString(contactNumberCursor.getColumnIndex
-                                    (ContactsContract.CommonDataKinds.Phone.NUMBER))));
-
-                    arrayListPhoneNumber.add(phoneNumber);*/
-
-//                }
-                contactNumberCursor.close();
-            }
-//            operation.setPbPhoneNumber(arrayListPhoneNumber);
-            //</editor-fold>
-
-            //<editor-fold desc="Email Id">
-         /*   Cursor contactEmailCursor = phoneBookContacts.getContactEmail(rawId);
-            ArrayList<ProfileDataOperationEmail> arrayListEmailId = new ArrayList<>();
-
-            if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
-                while (contactEmailCursor.moveToNext()) {
-
-                    ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
-
-                    emailId.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
-
-                    arrayListEmailId.add(emailId);
-
-                }
-                contactEmailCursor.close();
-            }
-            operation.setPbEmailId(arrayListEmailId);
-            //</editor-fold>*/
-
-            /*arrayListOperation.add(operation);
-            profileData.setOperation(arrayListOperation);*/
-
-            arrayListUserContact.add(profileData);
-
-            String headerLetter = StringUtils.upperCase(StringUtils.substring
-                    (profileData.getTempFirstName(), 0, 1));
-            headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
-            if (!arrayListPhoneBookContacts.contains(headerLetter)) {
-                arrayListContactHeaders.add(headerLetter);
-                arrayListPhoneBookContacts.add(headerLetter);
-            }
-            arrayListPhoneBookContacts.add(profileData);
-
-        }
-
-      /*  for (int i = 0; i < arrayListUserContact.size(); i++) {
-            String headerLetter = StringUtils.upperCase(StringUtils.substring
-                    (arrayListUserContact.get(i).getOperation().get(0).getPbNameFirst(), 0, 1));
-            headerLetter = StringUtils.length(headerLetter) > 0 ? headerLetter : "#";
-            if (!arrayListPhoneBookContacts.contains(headerLetter)) {
-                arrayListContactHeaders.add(headerLetter);
-                arrayListPhoneBookContacts.add(headerLetter);
-            }
-            arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
-        }*/
-
-      /*  rContactApplication.setArrayListFavPhoneBookContacts(arrayListPhoneBookContacts);
-        rContactApplication.setArrayListFavContactHeaders(arrayListContactHeaders);*/
-
-        populateRecyclerView();
-
-        textTotalContacts.setText(arrayListUserContact.size() + " Contacts");
-
     }
 
     private void getFavouritesFromPhonebook(Cursor data) {
