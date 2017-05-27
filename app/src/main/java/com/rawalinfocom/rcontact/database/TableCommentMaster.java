@@ -35,7 +35,7 @@ public class TableCommentMaster {
     private static final String COLUMN_CRM_TYPE = "crm_type"; // "eventName" "birthday" ,
     // "anniversary" , "become father"
     private static final String COLUMN_CRM_CLOUD_COMMENT_ID = "crm_cloud_comment_id";
-    private static final String COLUMN_CRM_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
+    static final String COLUMN_CRM_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
     private static final String COLUMN_CRM_COMMENT = "crm_comment";
     private static final String COLUMN_CRM_REPLY = "crm_reply";
     private static final String COLUMN_CRM_CREATED_AT = "crm_created_at";
