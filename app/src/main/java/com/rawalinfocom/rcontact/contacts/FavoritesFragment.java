@@ -172,7 +172,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         String selection = "starred = ?";
         String[] selectionArgs = new String[]{"1"};
 //        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
-        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"; ;
+        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
 
         return new CursorLoader(
                 getActivity(),
@@ -442,7 +442,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
             if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
                 if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
-                        (i)).getLocalPhoneBookId())) {
+                        (i)).getRawContactId())) {
                     ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
                    /*  String name = tableProfileMaster.getNameFromRawId(((ProfileData)
                     arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId());
@@ -450,7 +450,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                             .setTempRcpName(name);*/
                     ArrayList<UserProfile> userProfiles = new ArrayList<>();
                     userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
-                            (ProfileData) arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId
+                            (ProfileData) arrayListPhoneBookContacts.get(i)).getRawContactId
                             ()));
                     String name = "0";
                     String rcpID = "0";
@@ -506,6 +506,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
             profileData.setTempNumber(data.getString(phoneIdx));
             profileData.setProfileUrl(data.getString(photoURIIdx));
             profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+            profileData.setRawContactId(data.getString(rawIdIdx));
             profileData.setTempRawId(data.getString(rawIdIdx));
 
             if (profileData.getTempFirstName().equals(profileData.getTempNumber())) {

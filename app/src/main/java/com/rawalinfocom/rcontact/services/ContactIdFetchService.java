@@ -25,22 +25,22 @@ public class ContactIdFetchService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        PhoneBookContacts phoneBookContacts = new PhoneBookContacts(this);
-
-        Cursor contactNameCursor = phoneBookContacts.getAllContactId();
-
-        ArrayList<String> arrayListContactIds = new ArrayList<>();
-
-        while (contactNameCursor.moveToNext()) {
-            arrayListContactIds.add(contactNameCursor.getString(contactNameCursor
-                    .getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
-//                    .getColumnIndex(ContactsContract.Contacts._ID)));
-        }
-
-        contactNameCursor.close();
-
-//        Utils.setArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET, arrayListContactIds);
-        sendMessage();
+//        PhoneBookContacts phoneBookContacts = new PhoneBookContacts(this);
+//
+//        Cursor contactNameCursor = phoneBookContacts.getAllContactId();
+//
+//        ArrayList<String> arrayListContactIds = new ArrayList<>();
+//
+//        while (contactNameCursor.moveToNext()) {
+//            arrayListContactIds.add(contactNameCursor.getString(contactNameCursor
+//                    .getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
+////                    .getColumnIndex(ContactsContract.Contacts._ID)));
+//        }
+//
+//        contactNameCursor.close();
+//
+////        Utils.setArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET, arrayListContactIds);
+//        sendMessage();
 
         return super.onStartCommand(intent, flags, startId);
     }

@@ -104,10 +104,10 @@
             -->
         </activity>
 
-        <service
-            android:name=".services.ContactIdFetchService"
-            android:enabled="true"
-            android:exported="true" />
+        <!--<service-->
+            <!--android:name=".services.ContactIdFetchService"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="true" />-->
 
         <activity android:name=".contacts.ProfileDetailActivity">
 

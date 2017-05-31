@@ -6,11 +6,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by user on 26/12/16.
@@ -729,6 +732,73 @@ public class PhoneBookContacts {
                         (contactRawId)});
 //                ContactsContract.Contacts._ID + "= ?", new String[]{String.valueOf
 // (contactRawId)});
+    }
+
+    public Cursor getUpdatedRawId(String lastStamp) {
+        String[] projection = {
+                ContactsContract.Data.MIMETYPE,
+                ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
+        };
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " + ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP + ">=?";
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
+                lastStamp,
+        };
+        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+        Uri uri;
+
+        uri = ContactsContract.Data.CONTENT_URI;
+
+        return context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, sortOrder);
+    }
+
+    public Cursor getAllContactRawId() {
+        String[] projection = {
+                ContactsContract.Data.MIMETYPE,
+                ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
+
+        };
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?)";
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
+        };
+        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+        Uri uri;
+
+        uri = ContactsContract.Data.CONTENT_URI;
+
+        return context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, sortOrder);
+    }
+
+    public void saveRawIdsToPref() {
+            ArrayList<String> arrayListNewContactId = new ArrayList<>();
+            Cursor contactNameCursor = getAllContactRawId();
+            while (contactNameCursor.moveToNext()) {
+                arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
+            }
+
+            contactNameCursor.close();
+            Set<String> newContactIds = new HashSet<>(arrayListNewContactId);
+            ArrayList<String> firstTimeList = new ArrayList<>(newContactIds);
+            Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
+                    firstTimeList);
     }
 
 }

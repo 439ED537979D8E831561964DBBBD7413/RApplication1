@@ -1,12 +1,15 @@
 package com.rawalinfocom.rcontact;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -169,6 +172,13 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     private GoogleApiClient googleApiClient;
     private double latitude, longitude;
 
+    private static final int FACEBOOK_LOGIN_PERMISSION = 21;
+    private static final int GOOGLE_LOGIN_PERMISSION = 22;
+    private static final int LINKEDIN_LOGIN_PERMISSION = 23;
+
+    private String[] requiredPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest
+            .permission.WRITE_EXTERNAL_STORAGE};
+
     //<editor-fold desc="Override Methods">
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -318,7 +328,67 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
             //<editor-fold desc="ripple_facebook">
             case R.id.ripple_facebook:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkPermissionToExecute(requiredPermissions, FACEBOOK_LOGIN_PERMISSION);
+                } else {
+                    setLoginVia = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
 
+                    // Facebook Initialization
+                    FacebookSdk.sdkInitialize(getApplicationContext());
+                    callbackManager = CallbackManager.Factory.create();
+
+                    // Callback registration
+                    registerFacebookCallback();
+
+                    LoginManager.getInstance().logInWithReadPermissions(ProfileRegistrationActivity
+                            .this, Arrays.asList("public_profile", "email"));
+
+                }
+                break;
+            //</editor-fold>
+
+            //<editor-fold desc="ripple_google">
+            case R.id.ripple_google:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkPermissionToExecute(requiredPermissions, GOOGLE_LOGIN_PERMISSION);
+                } else {
+                    setLoginVia = IntegerConstants.REGISTRATION_VIA_GOOGLE;
+                    googleSignIn();
+                }
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="ripple_linked_in">
+            case R.id.ripple_linked_in:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkPermissionToExecute(requiredPermissions, LINKEDIN_LOGIN_PERMISSION);
+                } else {
+                    setLoginVia = IntegerConstants.REGISTRATION_VIA_LINED_IN;
+                    linkedInSignIn();
+                }
+                break;
+            //</editor-fold>
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute(String[] permissions, int requestCode) {
+        boolean READ_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission(ProfileRegistrationActivity
+                .this, permissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;
+        boolean WRITE_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission(ProfileRegistrationActivity
+                .this, permissions[1]) !=
+                PackageManager.PERMISSION_GRANTED;
+        if (READ_EXTERNAL_STORAGE || WRITE_EXTERNAL_STORAGE) {
+            requestPermissions(permissions, requestCode);
+        } else {
+            prepareToLoginUsingSocialMedia(requestCode);
+        }
+    }
+
+    private void prepareToLoginUsingSocialMedia(int requestCode) {
+        switch (requestCode) {
+            case FACEBOOK_LOGIN_PERMISSION:
                 setLoginVia = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
 
                 // Facebook Initialization
@@ -331,29 +401,17 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 LoginManager.getInstance().logInWithReadPermissions(ProfileRegistrationActivity
                         .this, Arrays.asList("public_profile", "email"));
                 break;
-            //</editor-fold>
-
-            //<editor-fold desc="ripple_google">
-            case R.id.ripple_google:
-
+            case GOOGLE_LOGIN_PERMISSION:
                 setLoginVia = IntegerConstants.REGISTRATION_VIA_GOOGLE;
-
                 googleSignIn();
-
                 break;
-            //</editor-fold>
-
-            // <editor-fold desc="ripple_linked_in">
-            case R.id.ripple_linked_in:
-
+            case LINKEDIN_LOGIN_PERMISSION:
                 setLoginVia = IntegerConstants.REGISTRATION_VIA_LINED_IN;
-
                 linkedInSignIn();
-
                 break;
-            //</editor-fold>
         }
     }
+
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
@@ -492,6 +550,15 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 }
             }
             break;
+            case FACEBOOK_LOGIN_PERMISSION:
+            case GOOGLE_LOGIN_PERMISSION:
+            case LINKEDIN_LOGIN_PERMISSION:
+                if (permissions[0].equals(Manifest.permission
+                        .READ_EXTERNAL_STORAGE) && permissions[1].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    prepareToLoginUsingSocialMedia(requestCode);
+                }
+                break;
+
         }
     }
 
@@ -679,6 +746,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         userProfile.setPmPhoneticFirstName(profileDetail.getPbPhoneticNameFirst());
         userProfile.setPmPhoneticMiddleName(profileDetail.getPbPhoneticNameMiddle());
         userProfile.setPmPhoneticLastName(profileDetail.getPbPhoneticNameLast());
+        userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
         userProfile.setPmNotes(profileDetail.getPbNote());
         userProfile.setProfileRating(profileDetail.getProfileRating());
         userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
@@ -906,9 +974,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         profileRegistrationObject.setEmailId(emailId);
         profileRegistrationObject.setPmId(Integer.parseInt(userProfile.getPmId()));
         profileRegistrationObject.setPbSocialId(socialMediaId);
-        profileRegistrationObject.setProfileImage(null);
-        // TODO: 09/02/17 uncomment
-//        profileRegistrationObject.setProfileImage(profileImage);
+        profileRegistrationObject.setProfileImage(profileImage);
         profileRegistrationObject.setType(String.valueOf(type));
         profileRegistrationObject.setSocialMediaTokenId(socialMediaToken);
         profileRegistrationObject.setDeviceId(getDeviceTokenId());
