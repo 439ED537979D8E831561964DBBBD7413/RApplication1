@@ -315,10 +315,13 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 String firstName = inputFirstName.getText().toString();
                 String lastName = inputLastName.getText().toString();
                 String emailId = inputEmailId.getText().toString();
+                String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
                 if (firstName.equalsIgnoreCase("") || lastName.equalsIgnoreCase("")) {
                     Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "Please add " +
                             "First Name and Last Name");
+                } else if (emailId.length() > 0 && !emailId.matches(emailPattern)) {
+                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "Please enter valid email");
                 } else {
                     profileRegistration(firstName, lastName, emailId, null, "", "",
                             IntegerConstants.REGISTRATION_VIA_EMAIL);
