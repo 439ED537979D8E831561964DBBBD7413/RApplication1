@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -88,9 +87,10 @@ public class BlockContactListActivity extends BaseActivity implements RippleView
                 break;
 
             case R.id.ripple_action_right_right:
-                ArrayList<String> arrayList =  new ArrayList<>(Arrays.asList(getString(R.string.unblock_All)));
+                ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(getString(R.string
+                        .unblock_All)));
                 ProfileMenuOptionDialog profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                        arrayList," ",0,false,listOfBlockContact,"","","");
+                        arrayList, " ", 0, false, listOfBlockContact, "", "", "", "");
                 profileMenuOptionDialog.showDialog();
 
                 break;
@@ -98,7 +98,7 @@ public class BlockContactListActivity extends BaseActivity implements RippleView
         }
     }
 
-    private void registerReceiver(){
+    private void registerReceiver() {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_UNBLOCK
 
@@ -106,10 +106,11 @@ public class BlockContactListActivity extends BaseActivity implements RippleView
         localBroadcastManager.registerReceiver(localBroadcastReceiverUnBlock, intentFilter);
     }
 
-    private void unRegisterReceiver(){
+    private void unRegisterReceiver() {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.unregisterReceiver(localBroadcastReceiverUnBlock);
     }
+
     private void setToolBarText() {
         textToolbarTitle.setText(getResources().getString(R.string.block_action_title));
     }
@@ -157,7 +158,7 @@ public class BlockContactListActivity extends BaseActivity implements RippleView
                 }
             }
 
-            if(listOfBlockContact!=null && listOfBlockContact.size()>0){
+            if (listOfBlockContact != null && listOfBlockContact.size() > 0) {
                 int count = listOfBlockContact.size();
                 textTotalContacts.setVisibility(View.VISIBLE);
                 textTotalContacts.setText(count + " Contacts");
@@ -194,7 +195,8 @@ public class BlockContactListActivity extends BaseActivity implements RippleView
             /*if (Utils.getHashMapPreferenceForBlock(context, AppConstants
                     .PREF_BLOCK_CONTACT_LIST) != null) {
                 HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
-                        Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
+                        Utils.getHashMapPreferenceForBlock(context, AppConstants
+                        .PREF_BLOCK_CONTACT_LIST);
                 String hashKey = "";
                 if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
                     for (String key : blockProfileHashMapList.keySet()) {

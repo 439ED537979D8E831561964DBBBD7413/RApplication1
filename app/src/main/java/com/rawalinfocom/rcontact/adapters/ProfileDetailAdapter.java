@@ -673,7 +673,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 break;
         }
         privacyItems.add(privacyDataItem);
-        wsRequestObject.setData(privacyItems);
+        wsRequestObject.setPrivacyData(privacyItems);
         wsRequestObject.setPmId(pmId);
         if (Utils.isNetworkAvailable(context)) {
             new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),

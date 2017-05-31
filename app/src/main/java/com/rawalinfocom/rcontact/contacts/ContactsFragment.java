@@ -66,7 +66,8 @@ public class ContactsFragment extends BaseFragment {
                 Log.i("onResume", String.valueOf(favoritesFragment.getAllContactListAdapter()
                         .getListClickedPosition()));
                 favoritesFragment.getArrayListPhoneBookContacts().remove(clickedPosition);
-                 favoritesFragment.getAllContactListAdapter().notifyItemRemoved(clickedPosition);*//*
+                 favoritesFragment.getAllContactListAdapter().notifyItemRemoved(clickedPosition);
+                 *//*
             }
         }*/
     }
@@ -89,6 +90,13 @@ public class ContactsFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         init();
         replaceFragment(allContactsFragment, AppConstants.TAG_FRAGMENT_ALL_CONTACTS);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        RContactsFragment.arrayListRContact = null;
+        AllContactsListFragment.arrayListPhoneBookContacts = null;
     }
 
     private void init() {

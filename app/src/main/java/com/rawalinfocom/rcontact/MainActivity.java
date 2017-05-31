@@ -41,7 +41,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -52,6 +51,7 @@ import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
+import com.rawalinfocom.rcontact.contacts.RContactsFragment;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.PhoneBookSMSLogs;
@@ -278,7 +278,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                     getCallLogsByRawId();
                 }
             });*/
-            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants
+                    .PREF_CALL_LOG_SYNCED, false)) {
                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                 syncCallLogAsyncTask.execute();
             }
@@ -1315,14 +1316,16 @@ public class MainActivity extends BaseActivity implements NavigationView
                 .getInstance(MainActivity.this);
         IntentFilter intentFilter5 = new IntentFilter(AppConstants
                 .ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_CALLS);
-        localBroadcastManagerReceiveRecentCalls.registerReceiver(localBroadcastReceiverRecentCalls, intentFilter5);
+        localBroadcastManagerReceiveRecentCalls.registerReceiver
+                (localBroadcastReceiverRecentCalls, intentFilter5);
 
 
         LocalBroadcastManager localBroadcastManagerReceiveRecentSms = LocalBroadcastManager
                 .getInstance(MainActivity.this);
         IntentFilter intentFilter2 = new IntentFilter(AppConstants
                 .ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_SMS);
-        localBroadcastManagerReceiveRecentSms.registerReceiver(localBroadCastReceiverRecentSMS, intentFilter2);
+        localBroadcastManagerReceiveRecentSms.registerReceiver(localBroadCastReceiverRecentSMS,
+                intentFilter2);
 
         LocalBroadcastManager localBroadcastManagerSyncSmsLogs = LocalBroadcastManager.getInstance(this);
         IntentFilter intentFilter1 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_SYNC_SMS);
@@ -2192,7 +2195,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         return "Other";
     }
 
-
     private BroadcastReceiver localBroadcastReceiverRecentCalls = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -2213,8 +2215,10 @@ public class MainActivity extends BaseActivity implements NavigationView
 //                                rContactApplication.setArrayListCallLogType(null);
                         } else {
                                 /*if(Utils.getBooleanPreference(MainActivity.this,
-                                        AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false)){
-                                    Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false);
+                                        AppConstants
+                                        .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false)){
+                                    Utils.setBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false);
                                     Utils.setBooleanPreference(MainActivity.this, AppConstants
                                             .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
                                     AppConstants.isFromReceiver = false;

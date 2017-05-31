@@ -57,6 +57,7 @@ public class AppConstants {
 
     public static int REQUEST_CODE_COUNTRY_REGISTRATION = 2;
     public static int REQUEST_CODE_MAP_LOCATION_SELECTION = 3;
+    public static int REQUEST_CODE_PROFILE_DETAIL = 4;
 
     //</editor-fold>
 
@@ -113,6 +114,7 @@ public class AppConstants {
     public static String EXTRA_LATITUDE = "extra_latitude";
     public static String EXTRA_LONGITUDE = "extra_longitude";
     public static String EXTRA_CONTACT_PROFILE_IMAGE = "extra_contact_profile_image";
+    public static String EXTRA_IS_FROM_FAVOURITE = "extra_is_from_favourite";
 
 
     //</editor-fold>
@@ -141,7 +143,8 @@ public class AppConstants {
             "action_local_broadcast_recent_calls";
     public static String ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_CALLS_CALL_LOGS =
             "action_local_broadcast_recent_calls_call_logs";
-    public static String ACTION_LOCAL_BROADCAST_SMS_RECEIVER = "action_local_broadcast_sms_receiver";
+    public static String ACTION_LOCAL_BROADCAST_SMS_RECEIVER =
+            "action_local_broadcast_sms_receiver";
     public static String ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_SMS =
             "action_local_broadcast_recent_sms";
     public static String ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER = "action_local_broadcast_delete_sms_receiver";
@@ -285,5 +288,4 @@ public class AppConstants {
     public static final int NOTIFICATION_TYPE_RUPDATE = 6;
 
     //</editor-fold>
-
 }
