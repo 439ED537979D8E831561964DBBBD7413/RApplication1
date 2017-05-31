@@ -727,7 +727,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         }
     }
 
-
     private void setSimpleListAdapter() {
 //        progressBarLoadCallLogs.setVisibility(View.GONE);
 //        textLoading.setVisibility(View.GONE);

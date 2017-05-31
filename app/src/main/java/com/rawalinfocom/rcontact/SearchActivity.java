@@ -135,7 +135,6 @@ public class SearchActivity extends BaseActivity {
                             recycleViewPbContact.setAdapter(allContactAdapter);
                         }
 
-
                     } else {
                         String text = arg0.toString().toLowerCase(Locale.getDefault());
                         allContactAdapter.filter(text);
@@ -155,11 +154,23 @@ public class SearchActivity extends BaseActivity {
                                         int countOfCallLogs =  simpleCallLogListAdapter.getSearchCount();
                                         if(countOfCallLogs>0)
                                             textSearchCount.setText(countOfCallLogs + "");
-                                    }
+                                        ArrayList<CallLogType> tempList =  simpleCallLogListAdapter.getArrayList();
+                                        if(tempList!=null && tempList.size()>0){
+                                            AppConstants.isFromSearchActivity =  true;
+                                            simpleCallLogListAdapter =  new SimpleCallLogListAdapter(SearchActivity.this,
+                                                    tempList);
+                                            simpleCallLogListAdapter.filter(arg0.toString());
+                                            rlTitle.setVisibility(View.VISIBLE);
+                                            recycleViewPbContact.setAdapter(simpleCallLogListAdapter);
+                                        }
 
+                                    }else{
+                                        textSearchCount.setText("");
+                                    }
                                 }
                             }else{
                                 if(allContactAdapter.getSearchCount() == 0){
+                                    textSearchCount.setText("");
                                     return;
                                 }
                             }

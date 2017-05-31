@@ -232,7 +232,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_profile);
+        setContentView(R.layout.activity_edit_profile_temp);
         ButterKnife.bind(this);
         arrayListProfile = new ArrayList<>();
         init();
@@ -2174,7 +2174,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
 
     private void editProfile(ArrayList<ProfileDataOperation> editProfile) {
 
-        WsRequestObject editProfileObject = new WsRequestObject();
+        /*WsRequestObject editProfileObject = new WsRequestObject();
         editProfileObject.setProfileEdit(editProfile);
 
         if (Utils.isNetworkAvailable(this)) {
@@ -2185,7 +2185,7 @@ public class EditProfileActivity extends BaseActivity implements RippleView
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
                     .getString(R.string.msg_no_network));
-        }
+        }*/
     }
 
     //</editor-fold>

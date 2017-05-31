@@ -89,6 +89,14 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         this.searchCount = searchCount;
     }
 
+    public ArrayList<CallLogType> getArrayList() {
+        return arrayList;
+    }
+
+    public void setArrayList(ArrayList<CallLogType> arrayList) {
+        this.arrayList = arrayList;
+    }
+
     public SimpleCallLogListAdapter(Context context, ArrayList<CallLogType> SmsListAdapter) {
         this.context = context;
         this.arrayListCallLogs = SmsListAdapter;
@@ -484,7 +492,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                                 arrayListCallLogs.add(profileData);
                             }
                         }
-
+                        setArrayList(arrayList);
                     }
                 }
             }
@@ -510,7 +518,10 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             }
         }*/
 
-        setSearchCount(arrayListCallLogs.size());
+        if(arrayListCallLogs.size()>0)
+            setSearchCount(arrayListCallLogs.size());
+        else
+            setSearchCount(arrayList.size());
         notifyDataSetChanged();
     }
 }

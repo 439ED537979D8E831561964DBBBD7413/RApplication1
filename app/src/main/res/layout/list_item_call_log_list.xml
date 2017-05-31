@@ -136,6 +136,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_5dp"
                     tools:text="+917788951230"
+                    android:singleLine="true"
                     android:textSize="@dimen/text_size_12sp" />
 
                 <TextView

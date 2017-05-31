@@ -46,6 +46,8 @@
             android:layout_toRightOf="@id/ripple_action_back"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/colorWhite"
+            android:singleLine="true"
+            android:ellipsize="end"
             tools:text="Title"/>
 
         <LinearLayout
