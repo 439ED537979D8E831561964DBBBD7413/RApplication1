@@ -194,6 +194,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             myProfileData.setTempFirstName(userProfile.getPmFirstName());
             myProfileData.setTempLastName(userProfile.getPmLastName());
+            myProfileData.setProfileUrl(userProfile.getPmProfileImage());
             myProfileData.setTempNumber(mobileNumber.getMnmMobileNumber());
             myProfileData.setTempIsRcp(true);
             myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
