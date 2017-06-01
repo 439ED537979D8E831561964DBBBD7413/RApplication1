@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_root_edit_profile"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rawalinfocom.rcontact.contacts.EditProfileTempActivity">
+
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_toolbar_edit_profile"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/include_toolbar"
+
+        android:scrollbars="none">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_small">
+
+            <LinearLayout
+                android:id="@+id/linear_section_top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/linear_section_left"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_small"
+                    android:layout_marginRight="@dimen/margin_small"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_label_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/str_name"
+                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textColor="@color/colorBlack"/>
+
+                    <EditText
+                        android:id="@+id/input_first_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/str_first"
+                        android:inputType="textPersonName|textCapWords"
+                        android:textColor="@color/colorAccent"
+                        android:textColorHint="@color/darkCyan"
+                        android:textSize="16sp"
+                        tools:text="Monal"/>
+
+                    <EditText
+                        android:id="@+id/input_last_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/str_last"
+                        android:inputType="textPersonName|textCapWords"
+                        android:textColor="@color/colorAccent"
+                        android:textColorHint="@color/darkCyan"
+                        android:textSize="16sp"
+                        tools:text="Godiwala"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/image_profile"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/margin_small"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/str_content_description"
+                    android:src="@mipmap/ic_launcher"/>
+
+            </LinearLayout>
+
+            <!--<RelativeLayout
+                android:id="@+id/relative_organization_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_section_top"
+                android:layout_marginTop="@dimen/margin_small">
+
+                <ImageView
+                    android:id="@+id/image_add_organization"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/str_content_description"
+                    android:src="@drawable/ic_action_add"/>
+
+                <TextView
+                    android:id="@+id/text_label_organization"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/image_add_organization"
+                    android:layout_toStartOf="@id/image_add_organization"
+                    android:text="@string/str_organization"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/colorBlack"/>
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_organization_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relative_organization_details"
+                android:layout_margin="@dimen/margin_tiny"
+                android:orientation="vertical"/>-->
+
+            <RelativeLayout
+                android:id="@+id/relative_contact_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_section_top"
+                android:layout_marginTop="@dimen/margin_small">
+
+                <ImageView
+                    android:id="@+id/image_add_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/str_content_description"
+                    android:src="@drawable/ic_action_add"/>
+
+                <TextView
+                    android:id="@+id/text_label_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/image_add_phone"
+                    android:layout_toStartOf="@id/image_add_phone"
+                    android:text="@string/str_phone"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/colorBlack"/>
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_phone_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relative_contact_details"
+                android:layout_margin="@dimen/margin_tiny"
+                android:orientation="vertical"/>
+
+
+            <RelativeLayout
+                android:id="@+id/relative_email_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_phone_details"
+                android:layout_marginTop="@dimen/margin_small">
+
+                <ImageView
+                    android:id="@+id/image_add_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/str_content_description"
+                    android:src="@drawable/ic_action_add"/>
+
+                <TextView
+                    android:id="@+id/text_label_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/image_add_email"
+                    android:layout_toStartOf="@id/image_add_email"
+                    android:text="@string/str_email"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/colorBlack"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_email_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relative_email_details"
+                android:layout_margin="@dimen/margin_tiny"
+                android:orientation="vertical"/>
+
+            <RelativeLayout
+                android:id="@+id/relative_organization_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_email_details"
+                android:layout_marginTop="@dimen/margin_small">
+
+                <ImageView
+                    android:id="@+id/image_add_organization"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/str_content_description"
+                    android:src="@drawable/ic_action_add"/>
+
+                <TextView
+                    android:id="@+id/text_label_organization"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/image_add_organization"
+                    android:layout_toStartOf="@id/image_add_organization"
+                    android:text="@string/str_organization"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/colorBlack"/>
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_organization_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relative_organization_details"
+                android:layout_margin="@dimen/margin_tiny"
+                android:orientation="vertical"/>
+
+            <RelativeLayout
+                android:id="@+id/relative_website_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_organization_detail"
+                android:layout_marginTop="@dimen/margin_small">
+
+                <ImageView
+                    android:id="@+id/image_add_website"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/str_content_description"
+                    android:src="@drawable/ic_action_add"/>
+
+                <TextView
+                    android:id="@+id/text_label_website"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/image_add_website"
+                    android:layout_toStartOf="@id/image_add_website"
+                    android:text="@string/str_website"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/colorBlack"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_website_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relative_website_details"
+                android:layout_margin="@dimen/margin_tiny"
+                android:orientation="vertical"/>
+
+
+            <RelativeLayout
+                android:id="@+id/relative_address_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_website_details"
+                android:layout_marginTop="@dimen/margin_small">
+
+                <ImageView
+                    android:id="@+id/image_add_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/str_content_description"
+                    android:src="@drawable/ic_action_add"/>
+
+                <TextView
+                    android:id="@+id/text_label_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/image_add_address"
+                    android:layout_toStartOf="@id/image_add_address"
+                    android:text="@string/str_address"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/colorBlack"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_address_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relative_address_details"
+                android:layout_margin="@dimen/margin_tiny"
+                android:orientation="vertical"/>
+
+
+            <RelativeLayout
+                android:id="@+id/relative_social_contact_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_address_details"
+                android:layout_marginTop="@dimen/margin_small">
+
+                <ImageView
+                    android:id="@+id/image_add_social_contact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/str_content_description"
+                    android:src="@drawable/ic_action_add"/>
+
+                <TextView
+                    android:id="@+id/text_label_social_contact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/image_add_social_contact"
+                    android:layout_toStartOf="@id/image_add_social_contact"
+                    android:text="@string/str_social_contact"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/colorBlack"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_social_contact_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relative_social_contact_details"
+                android:layout_margin="@dimen/margin_tiny"
+                android:orientation="vertical"/>
+
+            <RelativeLayout
+                android:id="@+id/relative_event_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_social_contact_details"
+                android:layout_marginTop="@dimen/margin_small">
+
+                <ImageView
+                    android:id="@+id/image_add_event"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/str_content_description"
+                    android:src="@drawable/ic_action_add"/>
+
+                <TextView
+                    android:id="@+id/text_label_event"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/image_add_event"
+                    android:layout_toStartOf="@id/image_add_event"
+                    android:text="@string/str_event"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/colorBlack"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_event_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relative_event_details"
+                android:layout_margin="@dimen/margin_tiny"
+                android:orientation="vertical"/>
+
+            <TextView
+                android:id="@+id/text_label_gender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_event_details"
+                android:layout_marginTop="@dimen/margin_small"
+                android:text="@string/str_gender"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/colorBlack"/>
+
+            <RadioGroup
+                android:id="@+id/radio_group_gender"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_label_gender"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/radio_male"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_tiny"
+                    android:layout_marginRight="@dimen/margin_tiny"
+                    android:checked="true"
+                    android:text="@string/str_male"
+                    android:textColor="@color/colorAccent"/>
+
+                <RadioButton
+                    android:id="@+id/radio_female"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_tiny"
+                    android:layout_marginStart="@dimen/margin_tiny"
+                    android:checked="false"
+                    android:text="@string/str_female"
+                    android:textColor="@color/colorAccent"/>
+
+            </RadioGroup>
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>
