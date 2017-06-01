@@ -760,6 +760,39 @@ public class PhoneBookContacts {
                 selectionArgs, sortOrder);
     }
 
+    public String getLookupKeyFromRawId(String rawId) {
+        String[] projection = {
+                ContactsContract.Data.MIMETYPE,
+                ContactsContract.Contacts.LOOKUP_KEY,
+                ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
+        };
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " + ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID + "=?";
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
+                rawId,
+        };
+      //  String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+        Uri uri;
+
+        uri = ContactsContract.Data.CONTENT_URI;
+
+        Cursor cursor = context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                return cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY));
+            }
+        }
+        return "";
+    }
+
     public Cursor getAllContactRawId() {
         String[] projection = {
                 ContactsContract.Data.MIMETYPE,
@@ -787,18 +820,18 @@ public class PhoneBookContacts {
     }
 
     public void saveRawIdsToPref() {
-            ArrayList<String> arrayListNewContactId = new ArrayList<>();
-            Cursor contactNameCursor = getAllContactRawId();
-            while (contactNameCursor.moveToNext()) {
-                arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
-                        .getColumnIndex(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
-            }
+        ArrayList<String> arrayListNewContactId = new ArrayList<>();
+        Cursor contactNameCursor = getAllContactRawId();
+        while (contactNameCursor.moveToNext()) {
+            arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
+                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
+        }
 
-            contactNameCursor.close();
-            Set<String> newContactIds = new HashSet<>(arrayListNewContactId);
-            ArrayList<String> firstTimeList = new ArrayList<>(newContactIds);
-            Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
-                    firstTimeList);
+        contactNameCursor.close();
+        Set<String> newContactIds = new HashSet<>(arrayListNewContactId);
+        ArrayList<String> firstTimeList = new ArrayList<>(newContactIds);
+        Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
+                firstTimeList);
     }
 
 }
