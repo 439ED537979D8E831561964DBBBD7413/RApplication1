@@ -6,9 +6,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by user on 26/12/16.
@@ -119,31 +124,64 @@ public class PhoneBookContacts {
         return context.getContentResolver().query(uri, projection, null, null, sortOrder);
     }
 
-    public Cursor getStructuredName(String contactId) {
+    public String getStructuredName(String contactId) {
+        String contactDisplayName = "";
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = new String[]{
 //                ContactsContract.CommonDataKinds.StructuredName._ID,
                 ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY,
                 ContactsContract.CommonDataKinds.StructuredName.PREFIX,
                 ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.SUFFIX,
                 ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.SUFFIX,
                 ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.PHONETIC_GIVEN_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.PHONETIC_MIDDLE_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.PHONETIC_FAMILY_NAME,
         };
 
         String selection = ContactsContract.Data.MIMETYPE + " = '" +
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE + "' AND " +
 //                ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID
                 ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY
-                + " = ?";
+                + " IN (?)";
         String[] selectionArgs = new String[]{contactId};
 
-        return context.getContentResolver().query(uri, projection, selection,
+        Cursor cursor = context.getContentResolver().query(uri, projection, selection,
                 selectionArgs, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                String prefix = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.PREFIX));
+                String firstName = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.GIVEN_NAME));
+                String lastName = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.FAMILY_NAME));
+                String middleName = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.MIDDLE_NAME));
+                String suffix = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.SUFFIX));
+
+                if (StringUtils.length(prefix) > 0) {
+                    contactDisplayName = prefix + " ";
+                }
+                if (StringUtils.length(firstName) > 0) {
+                    contactDisplayName = contactDisplayName + firstName + " ";
+                }
+                if (StringUtils.length(middleName) > 0) {
+                    contactDisplayName = contactDisplayName + middleName + " ";
+                }
+                if (StringUtils.length(lastName) > 0) {
+                    contactDisplayName = contactDisplayName + lastName + " ";
+                }
+                if (StringUtils.length(suffix) > 0) {
+                    contactDisplayName = contactDisplayName + suffix;
+                }
+                contactDisplayName = StringUtils.trimToEmpty(contactDisplayName);
+
+            }
+            cursor.close();
+        }
+      /*  return context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, null);*/
+        return contactDisplayName;
     }
 
     public Cursor getContactNumbers(String contactId) {
@@ -381,6 +419,22 @@ public class PhoneBookContacts {
         String[] selectionArgs = new String[]{lastUpdate};
 
         return context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+    }
+
+    public void deleteContact(String contactId) {
+        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                Uri lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
+                        .CONTENT_LOOKUP_URI, contactId);
+
+                context.getContentResolver().delete(lookupUri, null, null);
+
+            }
+            cursor.close();
+        }
     }
 
     //</editor-fold>
@@ -678,6 +732,73 @@ public class PhoneBookContacts {
                         (contactRawId)});
 //                ContactsContract.Contacts._ID + "= ?", new String[]{String.valueOf
 // (contactRawId)});
+    }
+
+    public Cursor getUpdatedRawId(String lastStamp) {
+        String[] projection = {
+                ContactsContract.Data.MIMETYPE,
+                ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
+        };
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " + ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP + ">=?";
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
+                lastStamp,
+        };
+        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+        Uri uri;
+
+        uri = ContactsContract.Data.CONTENT_URI;
+
+        return context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, sortOrder);
+    }
+
+    public Cursor getAllContactRawId() {
+        String[] projection = {
+                ContactsContract.Data.MIMETYPE,
+                ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
+
+        };
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?)";
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
+        };
+        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+        Uri uri;
+
+        uri = ContactsContract.Data.CONTENT_URI;
+
+        return context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, sortOrder);
+    }
+
+    public void saveRawIdsToPref() {
+            ArrayList<String> arrayListNewContactId = new ArrayList<>();
+            Cursor contactNameCursor = getAllContactRawId();
+            while (contactNameCursor.moveToNext()) {
+                arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
+            }
+
+            contactNameCursor.close();
+            Set<String> newContactIds = new HashSet<>(arrayListNewContactId);
+            ArrayList<String> firstTimeList = new ArrayList<>(newContactIds);
+            Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
+                    firstTimeList);
     }
 
 }

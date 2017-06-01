@@ -135,6 +135,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RippleView rippleActionRightRight;
     ImageView imageRightLeft;
     ImageView imageRightCenter;
+    ImageView imageRightRight;
 
     /* @BindView(R.id.text_joining_date)
      TextView textJoiningDate;*/
@@ -266,7 +267,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     String pmId, phoneBookId, contactName = "", cloudContactName = null, checkNumberFavourite =
             null, thumbnailUrl = "";
-    boolean displayOwnProfile = false, isHideFavourite = false;
+    boolean displayOwnProfile = false, isHideFavourite = false, isFromFavourite = false;
+    int isFavourite = 0;
 
     PhoneBookContacts phoneBookContacts;
     QueryManager queryManager;
@@ -301,6 +303,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     ArrayList<Object> tempEmail;
 
     boolean isFromReceiver = false;
+    boolean isContactEdited = false;
 
     //<editor-fold desc="Override Methods">
 
@@ -315,102 +318,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         queryManager = new QueryManager(databaseHandler);
         Intent intent = getIntent();
 
-        if (intent != null) {
-
-            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER)) {
-                historyNumber = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NAME)) {
-                historyName = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NAME);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE)) {
-                profileActivityCallInstance = intent.getBooleanExtra(AppConstants
-                        .EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, false);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_DATE)) {
-                historyDate = intent.getLongExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, 0);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CALL_UNIQUE_ID)) {
-                hashMapKey = intent.getStringExtra(AppConstants.EXTRA_CALL_UNIQUE_ID);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID)) {
-                uniqueContactId = intent.getStringExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE)) {
-                profileThumbnail = intent.getStringExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
-                pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
-                if (!pmId.equalsIgnoreCase("-1") && !pmId.equalsIgnoreCase(getUserPmId())) {
-                    if (Utils.isNetworkAvailable(this)) {
-                        ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
-                        ProfileVisit profileVisit = new ProfileVisit();
-                        profileVisit.setVisitorPmId(Integer.parseInt(pmId));
-                        profileVisit.setVisitCount(1);
-                        profileVisits.add(profileVisit);
-                        profileVisit(profileVisits);
-                    } else {
-                        HashMap<String, String> mapProfileViews = new HashMap<>();
-                        if (Utils.getHashMapPreference(this, AppConstants
-                                .PREF_PROFILE_VIEWS) != null) {
-                            mapProfileViews.putAll(Utils.getHashMapPreference(this, AppConstants
-                                    .PREF_PROFILE_VIEWS));
-                        }
-                        if (mapProfileViews.containsKey(pmId)) {
-                            int count = Integer.parseInt(mapProfileViews.get(pmId));
-                            mapProfileViews.put(pmId, String.valueOf(++count));
-                        } else {
-                            mapProfileViews.put(pmId, "1");
-                        }
-                        Utils.setHashMapPreference(this, AppConstants.PREF_PROFILE_VIEWS,
-                                mapProfileViews);
-                    }
-                }
-            } else {
-                pmId = "-1";
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_PHONE_BOOK_ID)) {
-                phoneBookId = intent.getStringExtra(AppConstants.EXTRA_PHONE_BOOK_ID);
-            } else {
-                phoneBookId = "-1";
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NAME)) {
-                contactName = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NAME);
-            } else {
-                contactName = "";
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL)) {
-                thumbnailUrl = intent.getStringExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL);
-            } else {
-                thumbnailUrl = "";
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
-                cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
-                cloudContactName = StringUtils.substring(cloudContactName, 2, cloudContactName
-                        .length() - 1);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE)) {
-                isHideFavourite = true;
-                checkNumberFavourite = intent.getStringExtra(AppConstants
-                        .EXTRA_CHECK_NUMBER_FAVOURITE);
-            }
-
-            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_POSITION)) {
-                listClickedPosition = intent.getIntExtra(AppConstants.EXTRA_CONTACT_POSITION, -1);
-            }
-        }
+        getIntentDetails(intent);
 
         if (pmId.equalsIgnoreCase(getUserPmId())) {
             displayOwnProfile = true;
@@ -434,6 +342,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         }
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (isContactEdited) {
+            isContactEdited = false;
+            recreate();
+        }
     }
 
     @Override
@@ -488,6 +405,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Override
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
+
+            //<editor-fold desc="View More">
             case R.id.ripple_view_more:
                 if (relativeSectionViewMore.getVisibility() == View.VISIBLE) {
                     relativeSectionViewMore.setVisibility(View.GONE);
@@ -497,17 +416,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     buttonViewMore.setText("View Less");
                 }
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="Back">
             case R.id.ripple_action_back:
                 onBackPressed();
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="View Old Records">
             case R.id.ripple_view_old_records:
                 progressBarLoadCallLogs.setVisibility(View.VISIBLE);
                 rippleViewOldRecords.setVisibility(View.GONE);
                 getOldCallHistory();
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="Invite">
             case R.id.ripple_invite:
                 ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
                 for (int i = 0; i < tempPhoneNumber.size(); i++) {
@@ -548,9 +473,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         inviteContact(null, aryEmails);
                     }
                 }
-
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="Call Log">
             case R.id.ripple_call_log:
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -567,7 +493,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     openCallLogHistoryDetailsActivity();
                 }
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="SMS">
             case R.id.ripple_sms:
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -681,9 +609,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
 
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="Right Center">
             case R.id.ripple_action_right_center:
-
 
                 if (StringUtils.equals(imageRightCenter.getTag().toString(), TAG_IMAGE_CALL)) {
                     showCallConfirmationDialog(historyNumber);
@@ -702,8 +631,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     }
                 }
                 break;
+            //</editor-fold>
 
-            // Favourites
+            //<editor-fold desc="Favourites">
             case R.id.ripple_action_right_left:
                 if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_FAVOURITE)
                         || StringUtils.equals(imageRightLeft.getTag().toString(),
@@ -734,9 +664,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                    rContactApplication.setFavouriteModified(true);
                     if (favStatus == PhoneBookContacts.STATUS_FAVOURITE) {
                         rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_ADDED);
+                        isFavourite = 1;
                     } else {
                         rContactApplication.setFavouriteStatus(RContactApplication
                                 .FAVOURITE_REMOVED);
+                        isFavourite = 0;
                     }
 
                 } else if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_EDIT)) {
@@ -748,14 +680,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     overridePendingTransition(R.anim.enter, R.anim.exit);*/
                 }
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="3 Dot option Menu">
             case R.id.ripple_action_right_right:
-                ProfileMenuOptionDialog profileMenuOptionDialog;
-                boolean isFromCallLogTab = false;
                 if (profileActivityCallInstance) {
+                    ProfileMenuOptionDialog profileMenuOptionDialog;
+                    boolean isFromCallLogTab = false;
                     isFromCallLogTab = true;
                     String blockedNumber = "";
-                    ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+                    ArrayList<CallLogType> callLogTypeList = new ArrayList<>();
                     HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
                             Utils.getHashMapPreferenceForBlock(this, AppConstants
                                     .PREF_BLOCK_CONTACT_LIST);
@@ -777,7 +711,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     if (!TextUtils.isEmpty(blockedNumber)) {
                         if (!TextUtils.isEmpty(historyName)) {
                             ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
-                                            .getString(R.string.edit),
+                                            .getString(R.string.edit), "View in AC",
                                     /*this.getString(R.string.view_in_ac), this.getString(R
                                     .string.view_in_rc),
                                     this.getString(R.string.call_reminder),
@@ -785,9 +719,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                             .delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                    arrayListName, historyNumber,
-                                    historyDate, isFromCallLogTab, arrayListHistory, historyName,
-                                    "", hashMapKey);
+                                    arrayListName, historyNumber, historyDate, isFromCallLogTab,
+                                    arrayListHistory, historyName, "", hashMapKey,
+                                    profileThumbnail);
                             profileMenuOptionDialog.showDialog();
 
                         } else {
@@ -804,9 +738,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                                         .string
                                                         .clear_call_log)));
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                        arrayListNumber, historyNumber,
-                                        historyDate, isFromCallLogTab, arrayListHistory, "",
-                                        uniqueContactId, hashMapKey);
+                                        arrayListNumber, historyNumber, historyDate,
+                                        isFromCallLogTab, arrayListHistory, "", uniqueContactId,
+                                        hashMapKey, profileThumbnail);
                                 profileMenuOptionDialog.showDialog();
                             }
                         }
@@ -814,6 +748,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         if (!TextUtils.isEmpty(historyName)) {
                             ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
                                             .getString(R.string.edit),
+                                    "View in AC",
                                     /*this.getString(R.string.view_in_ac), this.getString(R
                                     .string.view_in_rc),
                                     this.getString(R.string.call_reminder),
@@ -821,9 +756,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                             .delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                    arrayListName, historyNumber,
-                                    historyDate, isFromCallLogTab, arrayListHistory, historyName,
-                                    "", "");
+                                    arrayListName, historyNumber, historyDate, isFromCallLogTab,
+                                    arrayListHistory, historyName, "", hashMapKey,
+                                    profileThumbnail);
                             profileMenuOptionDialog.showDialog();
 
                         } else {
@@ -840,20 +775,53 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                                         .string
                                                         .clear_call_log)));
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                        arrayListNumber, historyNumber,
-                                        historyDate, isFromCallLogTab, arrayListHistory, "",
-                                        uniqueContactId, "");
+                                        arrayListNumber, historyNumber, historyDate,
+                                        isFromCallLogTab, arrayListHistory, "", uniqueContactId,
+                                        "", profileThumbnail);
                                 profileMenuOptionDialog.showDialog();
                             }
                         }
                     }
+                } else {
+                    int menuType;
 
+                    if (!displayOwnProfile) {
+                        if (isHideFavourite) {
+                            // RCP Contact from RCP tab
+                            menuType = OptionMenuDialog.R_CONTACT_RCP;
+                        } else if (StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+                            // PB Contact
+                            menuType = OptionMenuDialog.ALL_CONTACT_NON_RCP;
+                        } else {
+                            // RCP Contact
+                            menuType = OptionMenuDialog.ALL_CONTACT_RCP;
+                        }
 
+                        String rawId;
+                        if (checkNumberFavourite == null) {
+                            rawId = phoneBookId;
+                        } else {
+                            rawId = checkNumberFavourite;
+                        }
+
+                        OptionMenuDialog optionMenu = new OptionMenuDialog(ProfileDetailActivity
+                                .this, rawId, menuType, isFavourite == 1, isFromFavourite);
+
+                        optionMenu.showDialog();
+                    }
                 }
                 break;
+            //</editor-fold>
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent backIntent = getIntent();
+        setResult(RESULT_OK, backIntent);
+        finish();
+        overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -878,20 +846,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             break;
         }
     }
-
-/*    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                if (displayOwnProfile) {
-                    ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
-                            (this, pmId);
-                    setUpView(profileDataOperation);
-                }
-            }
-        }
-    }*/
 
     private void showPermissionConfirmationDialog() {
 
@@ -1017,8 +971,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("Profile Activity ", "onReceive() of LocalBroadcast");
-
             arrayListHistory.clear();
             recyclerCallHistory.setVisibility(View.GONE);
             setHistoryAdapter();
@@ -1696,6 +1648,110 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     }
 
+    private void getIntentDetails(Intent intent) {
+        if (intent != null) {
+
+            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER)) {
+                historyNumber = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NAME)) {
+                historyName = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NAME);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE)) {
+                profileActivityCallInstance = intent.getBooleanExtra(AppConstants
+                        .EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, false);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_DATE)) {
+                historyDate = intent.getLongExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, 0);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CALL_UNIQUE_ID)) {
+                hashMapKey = intent.getStringExtra(AppConstants.EXTRA_CALL_UNIQUE_ID);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID)) {
+                uniqueContactId = intent.getStringExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE)) {
+                profileThumbnail = intent.getStringExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
+                pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
+                if (!pmId.equalsIgnoreCase("-1") && !pmId.equalsIgnoreCase(getUserPmId())) {
+                    if (Utils.isNetworkAvailable(this)) {
+                        ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
+                        ProfileVisit profileVisit = new ProfileVisit();
+                        profileVisit.setVisitorPmId(Integer.parseInt(pmId));
+                        profileVisit.setVisitCount(1);
+                        profileVisits.add(profileVisit);
+                        profileVisit(profileVisits);
+                    } else {
+                        HashMap<String, String> mapProfileViews = new HashMap<>();
+                        if (Utils.getHashMapPreference(this, AppConstants
+                                .PREF_PROFILE_VIEWS) != null) {
+                            mapProfileViews.putAll(Utils.getHashMapPreference(this, AppConstants
+                                    .PREF_PROFILE_VIEWS));
+                        }
+                        if (mapProfileViews.containsKey(pmId)) {
+                            int count = Integer.parseInt(mapProfileViews.get(pmId));
+                            mapProfileViews.put(pmId, String.valueOf(++count));
+                        } else {
+                            mapProfileViews.put(pmId, "1");
+                        }
+                        Utils.setHashMapPreference(this, AppConstants.PREF_PROFILE_VIEWS,
+                                mapProfileViews);
+                    }
+                }
+            } else {
+                pmId = "-1";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_PHONE_BOOK_ID)) {
+                phoneBookId = intent.getStringExtra(AppConstants.EXTRA_PHONE_BOOK_ID);
+            } else {
+                phoneBookId = "-1";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_IS_FROM_FAVOURITE)) {
+                isFromFavourite = intent.getBooleanExtra(AppConstants.EXTRA_IS_FROM_FAVOURITE,
+                        false);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_NAME)) {
+                contactName = intent.getStringExtra(AppConstants.EXTRA_CONTACT_NAME);
+            } else {
+                contactName = "";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL)) {
+                thumbnailUrl = intent.getStringExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL);
+            } else {
+                thumbnailUrl = "";
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
+                cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
+                cloudContactName = StringUtils.substring(cloudContactName, 2, cloudContactName
+                        .length() - 1);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE)) {
+                isHideFavourite = true;
+                checkNumberFavourite = intent.getStringExtra(AppConstants
+                        .EXTRA_CHECK_NUMBER_FAVOURITE);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_CONTACT_POSITION)) {
+                listClickedPosition = intent.getIntExtra(AppConstants.EXTRA_CONTACT_POSITION, -1);
+            }
+        }
+    }
+
     private void layoutVisibility() {
         if (profileActivityCallInstance) {
             relativeContactDetails.setVisibility(View.GONE);
@@ -1749,6 +1805,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 textToolbarTitle.setText(getString(R.string.title_my_profile));
                 linearCallSms.setVisibility(View.GONE);
                 imageRightLeft.setImageResource(R.drawable.ic_action_edit);
+                rippleActionRightRight.setVisibility(View.GONE);
                 imageRightLeft.setTag(TAG_IMAGE_EDIT);
                 imageRightLeft.setVisibility(View.VISIBLE);
             } else {
@@ -1779,6 +1836,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
         imageRightLeft = ButterKnife.findById(includeToolbar, R.id.image_right_left);
         imageRightCenter = ButterKnife.findById(includeToolbar, R.id.image_right_center);
+        imageRightRight = ButterKnife.findById(includeToolbar, R.id.image_right_right);
         rippleActionRightLeft = ButterKnife.findById(includeToolbar, R.id.ripple_action_right_left);
         rippleActionRightCenter = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_center);
@@ -1943,7 +2001,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (!displayOwnProfile && !isHideFavourite) {
 
-                int isFavourite = 0;
                 Cursor contactFavouriteCursor = phoneBookContacts.getStarredStatus(phoneBookId);
 
                 if (contactFavouriteCursor != null && contactFavouriteCursor.getCount() > 0) {
@@ -2552,8 +2609,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             //</editor-fold>
 
             if (displayOwnProfile && StringUtils.length(StringUtils.defaultString(profileDetail
-                    != null ?
-                    profileDetail.getPbGender() : null)) > 0) {
+                    != null ? profileDetail.getPbGender() : null)) > 0) {
                 textGender.setText(profileDetail.getPbGender());
             } else {
                 linearGender.setVisibility(View.GONE);

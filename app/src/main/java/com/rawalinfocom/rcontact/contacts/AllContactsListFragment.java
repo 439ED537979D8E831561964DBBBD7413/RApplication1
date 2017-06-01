@@ -93,6 +93,8 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.app.Activity.RESULT_OK;
+
 public class AllContactsListFragment extends BaseFragment implements LoaderManager
         .LoaderCallbacks<Cursor>, WsResponseListener {
 
@@ -113,7 +115,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @BindView(R.id.text_total_contacts)
     TextView textTotalContacts;
 
-    ArrayList<Object> arrayListPhoneBookContacts;
+    public static ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> arrayListContactHeaders;
     ArrayList<ProfileData> arrayListUserContact = new ArrayList<>();
     ArrayList<ProfileData> arrayListSyncUserContact = new ArrayList<>();
@@ -159,7 +161,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        phoneBookContacts = new PhoneBookContacts(getActivity());
+        phoneBookContacts = new PhoneBookContacts(getActivity());
 
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
         Utils.setBooleanPreference(getActivity(), AppConstants
@@ -194,6 +196,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             myProfileData.setTempFirstName(userProfile.getPmFirstName());
             myProfileData.setTempLastName(userProfile.getPmLastName());
+            myProfileData.setProfileUrl(userProfile.getPmProfileImage());
             myProfileData.setTempNumber(mobileNumber.getMnmMobileNumber());
             myProfileData.setTempIsRcp(true);
             myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
@@ -220,6 +223,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             arrayListPhoneBookContacts.add("My Contacts");
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
+
+            isReload = false;
 
         } else {
             isReload = true;
@@ -394,6 +399,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             Utils.setBooleanPreference(getActivity(), AppConstants
                                     .PREF_CONTACT_SYNCED, true);
                             getRcpDetail();
+                            phoneBookContacts.saveRawIdsToPref();
                           /*  AsyncTask.execute(new Runnable() {
                                 @Override
                                 public void run() {
@@ -596,6 +602,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
         set.add(ContactsContract.Contacts.PHOTO_ID);
         set.add(ContactsContract.Contacts.LOOKUP_KEY);
+        set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
 
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = set.toArray(new String[0]);
@@ -679,17 +686,35 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (syncingTask != null) {
             syncingTask.cancel(true);
         }
-        allContactListAdapter = null;
+//        allContactListAdapter = null;
         super.onDetach();
     }
 
     @Override
-    public void onPause() {
-
-        Log.i("OnDestory", "called");
-        super.onPause();
-
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+//            super.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == AppConstants.REQUEST_CODE_PROFILE_DETAIL && resultCode ==
+                    RESULT_OK) {
+                if (OptionMenuDialog.IS_CONTACT_DELETED) {
+                    OptionMenuDialog.IS_CONTACT_DELETED = false;
+                    arrayListPhoneBookContacts.remove(allContactListAdapter
+                            .getListClickedPosition());
+                    allContactListAdapter.notifyItemRemoved(allContactListAdapter
+                            .getListClickedPosition());
+                    rContactApplication.setArrayListAllPhoneBookContacts
+                            (arrayListPhoneBookContacts);
+                    RContactsFragment.arrayListRContact = null;
+                }
+                /*Toast.makeText(getActivity(), "Called: " + allContactListAdapter
+                        .getListClickedPosition(), Toast.LENGTH_SHORT).show();*/
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
@@ -869,7 +894,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             for (int i = 2; i < arrayListPhoneBookContacts.size(); i++) {
                 if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
                     if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
-                            (i)).getLocalPhoneBookId())) {
+                            (i)).getRawContactId())) {
                         ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
                   /*  String name = tableProfileMaster.getNameFromRawId(((ProfileData)
                             arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId());
@@ -878,7 +903,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         ArrayList<UserProfile> userProfiles = new ArrayList<>();
                         userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
                                 (ProfileData) arrayListPhoneBookContacts.get(i))
-                                .getLocalPhoneBookId()));
+                                .getRawContactId()));
                         String name = "0";
                         String rcpID = "0";
                         if (userProfiles.size() > 1) {
@@ -923,7 +948,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
         final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-//        final int phoneTypeIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
+
         final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
                 .StructuredName.GIVEN_NAME);
         final int familyNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
@@ -934,14 +959,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 .StructuredName.SUFFIX);
         final int prefixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
                 .StructuredName.PREFIX);
-        final int photoIdIdx = data.getColumnIndex(ContactsContract.Data.PHOTO_ID);
         final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
-//        final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-//        final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-//                .Phone.DISPLAY_NAME);
         final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
                 .PHOTO_THUMBNAIL_URI);
-//        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
+
         final int rawIdIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
                 .RAW_CONTACT_ID);
 
@@ -958,11 +979,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             }
 
             profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+            profileData.setRawContactId(data.getString(rawIdIdx));
 
             switch (data.getString(mimeTypeIdx)) {
                 case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
-//                    profileData.setTempNumber(Utils.getFormattedNumber(getActivity(), data
-//                            .getString(phoneIdx)));
                     profileData.setTempNumber(data.getString(phoneIdx));
                     profileData.setProfileUrl(data.getString(photoURIIdx));
                     break;
@@ -972,8 +992,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     profileData.setTempPrefix(data.getString(prefixNameIdx));
                     profileData.setTempSufix(data.getString(suffixNameIdx));
                     profileData.setTempMiddleName(data.getString(middleNameIdx));
-                    /*profileData.setName(data.getString(prefixNameIdx) + data.getString(givenNameIdx) + data.getString(middleNameIdx)
-                            + data.getString(familyNameIdx) + data.getString(suffixNameIdx));*/
                     profileData.setName(data.getString(givenNameIdx) + data.getString(familyNameIdx));
                     break;
             }
@@ -1098,7 +1116,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 String phonebookRawId;
                 if (mapLocalRcpId.containsKey(mapping.get(i).getRcpPmId().get(j))) {
                     phonebookRawId = mapLocalRcpId.get(mapping.get(i).getRcpPmId().get(j)) +
-                            ", " + mapping.get(i).getLocalPhoneBookId();
+                            "," + mapping.get(i).getLocalPhoneBookId();
                 } else {
                     phonebookRawId = mapping.get(i).getLocalPhoneBookId();
                 }
@@ -1662,7 +1680,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         String[] projection = {
                 ContactsContract.Data.MIMETYPE,
                 ContactsContract.Data.CONTACT_ID,
-                ContactsContract.Data.LOOKUP_KEY,
                 ContactsContract.Contacts.STARRED,
 
                 ContactsContract.CommonDataKinds.StructuredName.PREFIX,
@@ -1676,6 +1693,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
                 ContactsContract.CommonDataKinds.Phone.TYPE,
+                ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
 
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.TYPE,
@@ -1747,8 +1765,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     profileDetailSparseArray.put(id, phoneBookContact);
 //                    profileDataList.add(phoneBookContact);
                 }
+//                phoneBookContact.setLookupKey(cursor.getString(cursor.getColumnIndex
+//                        (ContactsContract.Contacts.LOOKUP_KEY)));
                 phoneBookContact.setLookupKey(cursor.getString(cursor.getColumnIndex
-                        (ContactsContract.Contacts.LOOKUP_KEY)));
+                        (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
                 phoneBookContact.setIsFavourite(cursor.getString(cursor.getColumnIndex
                         (ContactsContract.Contacts.STARRED)));
                 String mimeType = cursor.getString(mimeTypeIdx);

@@ -3,7 +3,6 @@ package com.rawalinfocom.rcontact.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.PrivacyRequestDataItem;
@@ -37,7 +36,7 @@ public class TableRCContactRequest {
     private static final String COLUMN_CAR_CLOUD_REQUEST_ID = "car_cloud_request_id";
     private static final String COLUMN_CAR_CREATED_AT = "car_created_at";
     private static final String COLUMN_CAR_UPDATED_AT = "car_updated_at";
-    private static final String COLUMN_CRM_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
+    static final String COLUMN_CRM_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
 
     // Table Create Statements
     static final String CREATE_TABLE_RC_CONTACT_REQUEST = "CREATE TABLE " + TABLE_RC_CONTACT_ACCESS_REQUEST +
@@ -54,7 +53,7 @@ public class TableRCContactRequest {
             " UNIQUE(" + COLUMN_CAR_CLOUD_REQUEST_ID + ")" +
             ");";
 
-    public void addRequest(int status, String carId, String carMongodbRecordIndex, int carPmIdFrom, String requestType, String createdAt, String updatedAt) {
+    public int addRequest(int status, String carId, String carMongodbRecordIndex, int carPmIdFrom, String requestType, String createdAt, String updatedAt) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -66,9 +65,11 @@ public class TableRCContactRequest {
         values.put(COLUMN_CAR_CREATED_AT, createdAt);
         values.put(COLUMN_CAR_UPDATED_AT, updatedAt);
         try {
-            db.insert(TABLE_RC_CONTACT_ACCESS_REQUEST, null, values);
+            int id = (int) db.insert(TABLE_RC_CONTACT_ACCESS_REQUEST, null, values);
             db.close();
+            return id;
         } catch (Exception e) {
+            return -1;
         }
     }
 

@@ -3,7 +3,6 @@ package com.rawalinfocom.rcontact.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.Comment;
@@ -36,7 +35,7 @@ public class TableCommentMaster {
     private static final String COLUMN_CRM_TYPE = "crm_type"; // "eventName" "birthday" ,
     // "anniversary" , "become father"
     private static final String COLUMN_CRM_CLOUD_COMMENT_ID = "crm_cloud_comment_id";
-    private static final String COLUMN_CRM_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
+    static final String COLUMN_CRM_RC_PROFILE_MASTER_PM_ID = "rc_profile_master_pm_id";
     private static final String COLUMN_CRM_COMMENT = "crm_comment";
     private static final String COLUMN_CRM_REPLY = "crm_reply";
     private static final String COLUMN_CRM_CREATED_AT = "crm_created_at";
@@ -63,8 +62,7 @@ public class TableCommentMaster {
             " UNIQUE(" + COLUMN_CRM_CLOUD_COMMENT_ID + ")" +
             ");";
 
-    // Adding new Event
-    public void addComment(Comment comment) {
+    public int addComment(Comment comment) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -80,9 +78,11 @@ public class TableCommentMaster {
         values.put(COLUMN_CRM_UPDATED_AT, comment.getCrmUpdatedAt());
         values.put(COLUMN_EVM_RECORD_INDEX_ID, comment.getEvmRecordIndexId());
         try {
-            db.insert(TABLE_RC_COMMENT_MASTER, null, values);
+            int id = (int) db.insert(TABLE_RC_COMMENT_MASTER, null, values);
             db.close();
+            return id;
         } catch (Exception e) {
+            return -1;
         }
     }
 
@@ -184,9 +184,11 @@ public class TableCommentMaster {
     public ArrayList<Comment> getAllReplyReceived(String fromDate, String toDate) {
         ArrayList<Comment> arrayListReplyReceived = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
-                " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and " + COLUMN_CRM_TYPE + "!='Rating' and "
+                " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and "
+                + COLUMN_CRM_TYPE + "!='Rating' and "
                 + COLUMN_CRM_REPLY + "!=''" + " and strftime('%m-%d'," +
-                COLUMN_CRM_REPLIED_AT + ") between '" + fromDate + "' and '" + toDate + "' order by " + COLUMN_CRM_REPLIED_AT + " desc";
+                COLUMN_CRM_REPLIED_AT + ") between '" + fromDate + "' and '" + toDate + "' order " +
+                "by " + COLUMN_CRM_REPLIED_AT + " desc";
 
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
@@ -198,14 +200,20 @@ public class TableCommentMaster {
                 comment.setCrmStatus(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_STATUS)));
                 comment.setCrmRating(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_RATING)));
                 comment.setCrmType(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_TYPE)));
-                comment.setCrmCloudPrId(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CLOUD_COMMENT_ID)));
-                comment.setRcProfileMasterPmId(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
+                comment.setCrmCloudPrId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_CLOUD_COMMENT_ID)));
+                comment.setRcProfileMasterPmId(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
                 comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
                 comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));
-                comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CREATED_AT)));
-                comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLIED_AT)));
-                comment.setCrmUpdatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_UPDATED_AT)));
-                comment.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_RECORD_INDEX_ID)));
+                comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_CREATED_AT)));
+                comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_REPLIED_AT)));
+                comment.setCrmUpdatedAt(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_UPDATED_AT)));
+                comment.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_RECORD_INDEX_ID)));
                 arrayListReplyReceived.add(comment);
             } while (cursor.moveToNext());
             cursor.close();
@@ -218,9 +226,11 @@ public class TableCommentMaster {
     public ArrayList<Comment> getAllRatingReplyReceived(String fromDate, String toDate) {
         ArrayList<Comment> arrayListReplyReceived = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
-                " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and " + COLUMN_CRM_TYPE + "='Rating' and "
+                " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and "
+                + COLUMN_CRM_TYPE + "='Rating' and "
                 + COLUMN_CRM_REPLY + "!=''" + " and strftime('%m-%d'," +
-                COLUMN_CRM_REPLIED_AT + ") between '" + fromDate + "' and '" + toDate + "' order by " + COLUMN_CRM_REPLIED_AT + " desc";
+                COLUMN_CRM_REPLIED_AT + ") between '" + fromDate + "' and '" + toDate + "' order " +
+                "by " + COLUMN_CRM_REPLIED_AT + " desc";
 
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
@@ -232,14 +242,20 @@ public class TableCommentMaster {
                 comment.setCrmStatus(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_STATUS)));
                 comment.setCrmRating(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_RATING)));
                 comment.setCrmType(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_TYPE)));
-                comment.setCrmCloudPrId(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CLOUD_COMMENT_ID)));
-                comment.setRcProfileMasterPmId(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
+                comment.setCrmCloudPrId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_CLOUD_COMMENT_ID)));
+                comment.setRcProfileMasterPmId(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
                 comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
                 comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));
-                comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CREATED_AT)));
-                comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLIED_AT)));
-                comment.setCrmUpdatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_UPDATED_AT)));
-                comment.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_RECORD_INDEX_ID)));
+                comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_CREATED_AT)));
+                comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_REPLIED_AT)));
+                comment.setCrmUpdatedAt(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_UPDATED_AT)));
+                comment.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_RECORD_INDEX_ID)));
                 arrayListReplyReceived.add(comment);
             } while (cursor.moveToNext());
             cursor.close();
@@ -252,9 +268,11 @@ public class TableCommentMaster {
     public ArrayList<Comment> getAllRatingDone(String fromDate, String toDate) {
         ArrayList<Comment> arrayList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
-                " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and " + COLUMN_CRM_TYPE + "='Rating' "
+                " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_SENT + " and "
+                + COLUMN_CRM_TYPE + "='Rating' "
                 + " and strftime('%m-%d'," +
-                COLUMN_CRM_CREATED_AT + ") between '" + fromDate + "' and '" + toDate + "' order by " + COLUMN_CRM_CREATED_AT + " desc";
+                COLUMN_CRM_CREATED_AT + ") between '" + fromDate + "' and '" + toDate + "' order " +
+                "by " + COLUMN_CRM_CREATED_AT + " desc";
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -265,14 +283,20 @@ public class TableCommentMaster {
                 comment.setCrmStatus(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_STATUS)));
                 comment.setCrmRating(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_RATING)));
                 comment.setCrmType(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_TYPE)));
-                comment.setCrmCloudPrId(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CLOUD_COMMENT_ID)));
-                comment.setRcProfileMasterPmId(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
+                comment.setCrmCloudPrId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_CLOUD_COMMENT_ID)));
+                comment.setRcProfileMasterPmId(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
                 comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
                 comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));
-                comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CREATED_AT)));
-                comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLIED_AT)));
-                comment.setCrmUpdatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_UPDATED_AT)));
-                comment.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_RECORD_INDEX_ID)));
+                comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_CREATED_AT)));
+                comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_REPLIED_AT)));
+                comment.setCrmUpdatedAt(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_UPDATED_AT)));
+                comment.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_RECORD_INDEX_ID)));
                 arrayList.add(comment);
             } while (cursor.moveToNext());
             cursor.close();
@@ -285,9 +309,11 @@ public class TableCommentMaster {
     public ArrayList<Comment> getAllRatingReceived(String from, String to) {
         ArrayList<Comment> arrayList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_RC_COMMENT_MASTER +
-                " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_RECEIVED + " and " + COLUMN_CRM_TYPE + "='Rating' "
+                " WHERE " + COLUMN_CRM_STATUS + "=" + AppConstants.COMMENT_STATUS_RECEIVED + " " +
+                "and " + COLUMN_CRM_TYPE + "='Rating' "
                 + " and strftime('%m-%d'," +
-                COLUMN_CRM_CREATED_AT + ") between '" + from + "' and '" + to + "' order by " + COLUMN_CRM_CREATED_AT + " desc";
+                COLUMN_CRM_CREATED_AT + ") between '" + from + "' and '" + to + "' order by " +
+                COLUMN_CRM_CREATED_AT + " desc";
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -298,14 +324,20 @@ public class TableCommentMaster {
                 comment.setCrmStatus(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_STATUS)));
                 comment.setCrmRating(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_RATING)));
                 comment.setCrmType(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_TYPE)));
-                comment.setCrmCloudPrId(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CLOUD_COMMENT_ID)));
-                comment.setRcProfileMasterPmId(cursor.getInt(cursor.getColumnIndex(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
+                comment.setCrmCloudPrId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_CLOUD_COMMENT_ID)));
+                comment.setRcProfileMasterPmId(cursor.getInt(cursor.getColumnIndex
+                        (COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
                 comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
                 comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));
-                comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CREATED_AT)));
-                comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLIED_AT)));
-                comment.setCrmUpdatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_UPDATED_AT)));
-                comment.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex(COLUMN_EVM_RECORD_INDEX_ID)));
+                comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_CREATED_AT)));
+                comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_REPLIED_AT)));
+                comment.setCrmUpdatedAt(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_CRM_UPDATED_AT)));
+                comment.setEvmRecordIndexId(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EVM_RECORD_INDEX_ID)));
                 arrayList.add(comment);
             } while (cursor.moveToNext());
             cursor.close();

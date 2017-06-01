@@ -57,6 +57,7 @@ public class AppConstants {
 
     public static int REQUEST_CODE_COUNTRY_REGISTRATION = 2;
     public static int REQUEST_CODE_MAP_LOCATION_SELECTION = 3;
+    public static int REQUEST_CODE_PROFILE_DETAIL = 4;
 
     //</editor-fold>
 
@@ -113,6 +114,7 @@ public class AppConstants {
     public static String EXTRA_LATITUDE = "extra_latitude";
     public static String EXTRA_LONGITUDE = "extra_longitude";
     public static String EXTRA_CONTACT_PROFILE_IMAGE = "extra_contact_profile_image";
+    public static String EXTRA_IS_FROM_FAVOURITE = "extra_is_from_favourite";
 
 
     //</editor-fold>
@@ -141,11 +143,13 @@ public class AppConstants {
             "action_local_broadcast_recent_calls";
     public static String ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_CALLS_CALL_LOGS =
             "action_local_broadcast_recent_calls_call_logs";
-    public static String ACTION_LOCAL_BROADCAST_SMS_RECEIVER = "action_local_broadcast_sms_receiver";
+    public static String ACTION_LOCAL_BROADCAST_SMS_RECEIVER =
+            "action_local_broadcast_sms_receiver";
     public static String ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_SMS =
             "action_local_broadcast_recent_sms";
     public static String ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER = "action_local_broadcast_delete_sms_receiver";
     public static String ACTION_LOCAL_BROADCAST_SYNC_SMS = "action_local_broadcast_sync_sms";
+    public static String ACTION_LOCAL_BROADCAST_UPDATE_NOTIFICATION_COUNT = "action_local_broadcast_update_notification_count";
 
     //</editor-fold>
 
@@ -237,7 +241,7 @@ public class AppConstants {
 
 
     public static boolean isFromReceiver = false;
-    public static boolean isSMSFromReceiver =  false;
+    public static boolean isSMSFromReceiver = false;
     public static boolean isComposingSMS = false;
     public static  boolean isFromSearchActivity = false;
 
@@ -274,6 +278,15 @@ public class AppConstants {
 
     // special character to prefix the otp.
     public static final String OTP_DELIMITER = "is ";
+
+    //<editor-fold desc="Notification constants">
+
+    public static final int NOTIFICATION_TYPE_TIMELINE = 1;
+    public static final int NOTIFICATION_TYPE_RATE = 2;
+    public static final int NOTIFICATION_TYPE_COMMENTS = 3;
+    public static final int NOTIFICATION_TYPE_PROFILE_REQUEST = 4;
+    public static final int NOTIFICATION_TYPE_PROFILE_RESPONSE = 5;
+    public static final int NOTIFICATION_TYPE_RUPDATE = 6;
 
     //</editor-fold>
 }

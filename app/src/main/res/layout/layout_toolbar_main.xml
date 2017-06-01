@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -25,7 +24,7 @@
             android:contentDescription="@string/str_content_description"
             android:padding="@dimen/activity_half_horizontal_margin"
             android:src="@drawable/ic_action_drawer"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/linear_action_right"
@@ -41,21 +40,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/str_content_description"
-                android:paddingBottom="@dimen/margin_small"
-                android:paddingLeft="@dimen/margin_tiny"
-                android:paddingRight="@dimen/margin_tiny"
-                android:paddingTop="@dimen/margin_small"
+                android:padding="@dimen/margin_small"
                 android:src="@drawable/ic_action_notification"/>
+
+            <LinearLayout
+                android:id="@+id/badge_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_gravity="center_vertical|top"
+                android:layout_marginLeft="-15dp"
+                android:gravity="center_vertical|top">
+
+                <TextView
+                    android:id="@+id/badge_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_circle_red"
+                    android:gravity="center"
+                    android:text="9"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:textColor="@color/colorWhite" />
+
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/image_add_contact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/str_content_description"
-                android:paddingBottom="@dimen/margin_small"
-                android:paddingLeft="@dimen/margin_tiny"
-                android:paddingRight="@dimen/margin_small"
-                android:paddingTop="@dimen/margin_small"
+                android:padding="@dimen/margin_small"
                 android:src="@drawable/ic_add_new_contact"/>
 
             <!-- <ImageView

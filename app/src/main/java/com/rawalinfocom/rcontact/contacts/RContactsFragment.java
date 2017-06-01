@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.RContactListAdapter;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
@@ -36,6 +37,8 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.app.Activity.RESULT_OK;
 
 public class RContactsFragment extends BaseFragment {
 
@@ -55,7 +58,7 @@ public class RContactsFragment extends BaseFragment {
     ColorGroupSectionTitleIndicator titleIndicator;*/
 
     ArrayList<String> arrayListContactHeaders;
-    ArrayList<Object> arrayListRContact;
+    public static ArrayList<Object> arrayListRContact;
 
     RContactListAdapter rContactListAdapter;
 
@@ -82,6 +85,7 @@ public class RContactsFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (arrayListRContact == null) {
             arrayListContactHeaders = new ArrayList<>();
+            isReload = false;
         } else {
             isReload = true;
         }
@@ -110,6 +114,26 @@ public class RContactsFragment extends BaseFragment {
             init();
         }
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+//            super.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == AppConstants.REQUEST_CODE_PROFILE_DETAIL && resultCode ==
+                    RESULT_OK) {
+                if (OptionMenuDialog.IS_CONTACT_DELETED) {
+                    OptionMenuDialog.IS_CONTACT_DELETED = false;
+                    init();
+                }
+                /*Toast.makeText(getActivity(), "Called: " + allContactListAdapter
+                        .getListClickedPosition(), Toast.LENGTH_SHORT).show();*/
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
@@ -164,7 +188,7 @@ public class RContactsFragment extends BaseFragment {
                 arrayListRContact.add(arrayListDisplayProfile.get(i));
             }*/
             arrayListRContact.addAll(arrayListDisplayProfile);
-            rContactListAdapter = new RContactListAdapter(getActivity(), arrayListRContact,
+            rContactListAdapter = new RContactListAdapter(this, arrayListRContact,
                     arrayListContactHeaders);
             recyclerViewContactList.setAdapter(rContactListAdapter);
 

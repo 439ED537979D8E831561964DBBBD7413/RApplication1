@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
@@ -18,6 +19,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by user on 11/01/17.
@@ -106,7 +108,7 @@ public class QueryManager {
         //<editor-fold desc="Phone Number">
         String mobileNumberQuery = "SELECT mobile." + TableMobileMaster.COLUMN_MNM_MOBILE_NUMBER
                 + ",mobile." + TableMobileMaster.COLUMN_MNM_NUMBER_TYPE
-                + ",mobile." + TableMobileMaster.COLUMN_MNM_IS_PRIVATE+ ",mobile." +
+                + ",mobile." + TableMobileMaster.COLUMN_MNM_IS_PRIVATE + ",mobile." +
                 TableMobileMaster.COLUMN_MNM_RECORD_INDEX_ID + ",mobile." + TableMobileMaster
                 .COLUMN_MNM_IS_PRIMARY + ",mobile." + TableMobileMaster.COLUMN_MNM_NUMBER_PRIVACY
                 + " from " + TableMobileMaster.TABLE_RC_MOBILE_NUMBER_MASTER + " mobile WHERE " +
@@ -307,7 +309,8 @@ public class QueryManager {
 
         // <editor-fold desc="Address">
         String addressQuery = "SELECT address." + TableAddressMaster.COLUMN_AM_FORMATTED_ADDRESS
-                + ", address." + TableAddressMaster.COLUMN_AM_ADDRESS_TYPE  + ", address." + TableAddressMaster.COLUMN_AM_IS_PRIVATE +", address." +
+                + ", address." + TableAddressMaster.COLUMN_AM_ADDRESS_TYPE + ", address." +
+                TableAddressMaster.COLUMN_AM_IS_PRIVATE + ", address." +
                 TableAddressMaster.COLUMN_AM_RECORD_INDEX_ID + ", address." +
                 TableAddressMaster.COLUMN_AM_ADDRESS_PRIVACY + " FROM " + TableAddressMaster
                 .TABLE_RC_ADDRESS_MASTER + " address WHERE address." + TableAddressMaster
@@ -373,6 +376,97 @@ public class QueryManager {
 
         // return profile data operation
         return profileDataOperation;
+    }
+
+    private void deleteRcProfileDetail(String rcpId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        //<editor-fold desc="TABLE_PB_PROFILE_EMAIL_MAPPING">
+        db.delete(TableProfileEmailMapping.TABLE_PB_PROFILE_EMAIL_MAPPING,
+                TableProfileEmailMapping.COLUMN_EPM_CLOUD_PM_ID + " = ?", new String[]{rcpId});
+        //</editor-fold>
+
+        // <editor-fold desc="TABLE_PB_PROFILE_MOBILE_MAPPING">
+        db.delete(TableProfileMobileMapping.TABLE_PB_PROFILE_MOBILE_MAPPING,
+                TableProfileMobileMapping.COLUMN_MPM_CLOUD_PM_ID + " = ?", new String[]{rcpId});
+        //</editor-fold>
+
+        // <editor-fold desc="TABLE_RC_ADDRESS_MASTER">
+        db.delete(TableAddressMaster.TABLE_RC_ADDRESS_MASTER,
+                TableAddressMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
+        //</editor-fold>
+
+        // <editor-fold desc="TABLE_RC_COMMENT_MASTER">
+        db.delete(TableCommentMaster.TABLE_RC_COMMENT_MASTER,
+                TableCommentMaster.COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " = ?", new
+                        String[]{rcpId});
+        //</editor-fold>
+
+        // <editor-fold desc="TABLE_RC_CONTACT_ACCESS_REQUEST">
+        db.delete(TableRCContactRequest.TABLE_RC_CONTACT_ACCESS_REQUEST,
+                TableRCContactRequest.COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " = ?", new
+                        String[]{rcpId});
+        //</editor-fold>
+
+        // <editor-fold desc="TABLE_RC_EMAIL_MASTER">
+        db.delete(TableEmailMaster.TABLE_RC_EMAIL_MASTER,
+                TableEmailMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
+        //</editor-fold>
+
+        // <editor-fold desc="TABLE_RC_EVENT_MASTER">
+        db.delete(TableEventMaster.TABLE_RC_EVENT_MASTER,
+                TableEventMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
+        //</editor-fold>
+
+        // <editor-fold desc="TABLE_RC_IM_MASTER">
+        db.delete(TableImMaster.TABLE_RC_IM_MASTER,
+                TableImMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
+        //</editor-fold>
+
+        // <editor-fold desc="TABLE_RC_MOBILE_NUMBER_MASTER">
+        db.delete(TableMobileMaster.TABLE_RC_MOBILE_NUMBER_MASTER,
+                TableMobileMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
+        //</editor-fold>
+
+        // <editor-fold desc="TABLE_RC_ORGANIZATION_MASTER">
+        db.delete(TableOrganizationMaster.TABLE_RC_ORGANIZATION_MASTER,
+                TableOrganizationMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new
+                        String[]{rcpId});
+        //</editor-fold>
+
+        // <editor-fold desc="TABLE_RC_PROFILE_MASTER">
+        db.delete(TableProfileMaster.TABLE_RC_PROFILE_MASTER,
+                TableProfileMaster.COLUMN_PM_RCP_ID + " = ?", new String[]{rcpId});
+        //</editor-fold>
+
+        // <editor-fold desc="TABLE_RC_WEBSITE_MASTER">
+        db.delete(TableWebsiteMaster.TABLE_RC_WEBSITE_MASTER,
+                TableWebsiteMaster.COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?", new String[]{rcpId});
+        //</editor-fold>
+
+
+        db.close();
+
+    }
+
+    public void updateRcProfileDetail(Context context, int rcpId, String rawId) {
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+        String rawIdFromRcpId = tableProfileMaster.getRawIdFromRcpId(rcpId);
+        if (StringUtils.contains(rawIdFromRcpId, ",")) {
+            /* Multiple Contacts with single pm_id */
+            String rawIds[] = rawIdFromRcpId.split(",");
+            ArrayList<String> arrayListRawIds = new ArrayList<>(Arrays.asList(rawIds));
+            arrayListRawIds.remove(rawId);
+            tableProfileMaster.updateRawIds(rcpId, StringUtils.join(arrayListRawIds, ","));
+        } else {
+            if (String.valueOf(rcpId).equalsIgnoreCase(((BaseActivity) context).getUserPmId())) {
+                /* Single Contact with self registered pm_id */
+                tableProfileMaster.updateRawIds(rcpId, "");
+            } else {
+                /* Single Contact with single pm_id */
+                deleteRcProfileDetail(String.valueOf(rcpId));
+            }
+        }
     }
 
     public ArrayList<ProfileData> getRcpNumberName(String cloudPmIds) {

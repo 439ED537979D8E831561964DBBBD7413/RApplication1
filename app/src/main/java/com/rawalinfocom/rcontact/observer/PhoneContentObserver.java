@@ -183,9 +183,10 @@ public class PhoneContentObserver extends ContentObserver {
         ProfileDataOperation operation = new ProfileDataOperation();
         operation.setFlag(Integer.parseInt(flag));
 
-        //<editor-fold desc="Structured Name">
-        Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);
         ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
+     /*   //<editor-fold desc="Structured Name">
+        Cursor contactStructuredNameCursor = phoneBookContacts.getStructuredName(rawId);
+
 
         if (contactStructuredNameCursor != null && contactStructuredNameCursor.getCount() > 0) {
 
@@ -220,7 +221,7 @@ public class PhoneContentObserver extends ContentObserver {
             contactStructuredNameCursor.close();
         }
 //                arrayListOperation.add(operation);
-        //</editor-fold>
+        //</editor-fold>*/
 
         // <editor-fold desc="Starred Contact">
         Cursor starredContactCursor = phoneBookContacts.getStarredStatus(rawId);
