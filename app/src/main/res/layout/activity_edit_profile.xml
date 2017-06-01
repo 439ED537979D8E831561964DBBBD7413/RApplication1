@@ -845,14 +845,15 @@
                         android:inputType="textPersonName"
                         android:textColor="@color/colorAccent" />
 
-                    <EditText
+                    <!--<EditText
                         android:id="@+id/input_pincode"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginTop="@dimen/margin_5dp"
                         android:hint="@string/hint_pincode"
                         android:inputType="number"
-                        android:textColor="@color/colorAccent" />
+                        android:textColor="@color/colorAccent"
+                        android:visibility="gone"/>-->
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
@@ -867,6 +868,18 @@
                             android:layout_marginTop="@dimen/margin_5dp"
                             android:layout_toLeftOf="@+id/image_map_marker"
                             android:hint="@string/hint_google_code"
+                            android:inputType="number"
+                            android:textColor="@color/colorAccent"
+                            android:visibility="gone"/>
+
+                        <EditText
+                            android:id="@+id/input_pincode"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_marginTop="@dimen/margin_5dp"
+                            android:layout_toLeftOf="@+id/image_map_marker"
+                            android:hint="@string/hint_pincode"
                             android:inputType="number"
                             android:textColor="@color/colorAccent" />
 

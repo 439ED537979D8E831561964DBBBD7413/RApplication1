@@ -738,6 +738,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     private void setFonts(){
+
         textMale.setTypeface(Utils.typefaceRegular(this));
         textFemale.setTypeface(Utils.typefaceRegular(this));
         inputAnniversary.setTypeface(Utils.typefaceRegular(this));
@@ -760,6 +761,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputSteet1.setTypeface(Utils.typefaceRegular(this));
         inputTwitterUsername.setTypeface(Utils.typefaceRegular(this));
         inputWebAddress.setTypeface(Utils.typefaceRegular(this));
+
     }
 
     private void initToolbar(){
