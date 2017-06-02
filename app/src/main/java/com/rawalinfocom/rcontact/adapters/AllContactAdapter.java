@@ -39,9 +39,6 @@ import com.rawalinfocom.rcontact.contacts.FavoritesFragment;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
-import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
-import com.rawalinfocom.rcontact.database.TableProfileMaster;
-import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -84,15 +81,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     /* phone book contacts */
     private ArrayList<Object> arrayListUserContact;
     private ArrayList<String> arrayListContactHeader;
-    private int previousPosition = 0;
 
     private final int HEADER = 0, CONTACT = 1, FOOTER = 2;
     private int colorBlack, colorPineGreen;
     private int listClickedPosition = -1;
-
-    private TableProfileMaster tableProfileMaster;
-    private TableProfileMobileMapping tableProfileMobileMapping;
-    private TableProfileEmailMapping tableProfileEmailMapping;
 
     private ArrayList<Integer> arrayListExpandedPositions;
 
@@ -117,13 +109,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
-
-        tableProfileMaster = new TableProfileMaster(((BaseActivity) context).databaseHandler);
-        tableProfileMobileMapping = new TableProfileMobileMapping(((BaseActivity) context)
-                .databaseHandler);
-        tableProfileEmailMapping = new TableProfileEmailMapping(((BaseActivity) context)
-                .databaseHandler);
-
         phoneBookContacts = new PhoneBookContacts(context);
     }
 
@@ -143,13 +128,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
-
-        tableProfileMaster = new TableProfileMaster(((BaseActivity) context).databaseHandler);
-        tableProfileMobileMapping = new TableProfileMobileMapping(((BaseActivity) context)
-                .databaseHandler);
-        tableProfileEmailMapping = new TableProfileEmailMapping(((BaseActivity) context)
-                .databaseHandler);
-
         phoneBookContacts = new PhoneBookContacts(context);
     }
     //</editor-fold>
@@ -236,7 +214,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         List<String> sections = new ArrayList<>();
         mSectionPositions = new ArrayList<>();
         int startPosition = 0;
-        if(fragment != null){
+        if (fragment != null) {
             if (fragment instanceof AllContactsListFragment) {
                 startPosition = 2;
             } else {
@@ -1325,15 +1303,15 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void filter(String charText) {
         Pattern numberPat = Pattern.compile("\\d+");
         Matcher matcher1 = numberPat.matcher(charText);
-        if (matcher1.find()){
+        if (matcher1.find()) {
             arrayListUserContact.clear();
             if (charText.length() == 0) {
                 arrayListUserContact.addAll(arraylist);
             } else {
-                for(int i=0; i<arraylist.size(); i++){
-                    if(arraylist.get(i) instanceof ProfileData){
+                for (int i = 0; i < arraylist.size(); i++) {
+                    if (arraylist.get(i) instanceof ProfileData) {
                         ProfileData profileData = (ProfileData) arraylist.get(i);
-                        if(!TextUtils.isEmpty(profileData.getTempNumber())){
+                        if (!TextUtils.isEmpty(profileData.getTempNumber())) {
                             if (profileData.getTempNumber().contains(charText)) {
                                 arrayListUserContact.add(profileData);
                             }
@@ -1343,17 +1321,17 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             }
 
-        }else{
+        } else {
             charText = charText.toLowerCase(Locale.getDefault());
             arrayListUserContact.clear();
             if (charText.length() == 0) {
                 arrayListUserContact.addAll(arraylist);
             } else {
 
-                for(int i=0; i<arraylist.size(); i++){
-                    if(arraylist.get(i) instanceof ProfileData){
+                for (int i = 0; i < arraylist.size(); i++) {
+                    if (arraylist.get(i) instanceof ProfileData) {
                         ProfileData profileData = (ProfileData) arraylist.get(i);
-                        if(!TextUtils.isEmpty(profileData.getName())){
+                        if (!TextUtils.isEmpty(profileData.getName())) {
                             if (profileData.getName().toLowerCase(Locale.getDefault()).contains(charText)) {
                                 arrayListUserContact.add(profileData);
                             }

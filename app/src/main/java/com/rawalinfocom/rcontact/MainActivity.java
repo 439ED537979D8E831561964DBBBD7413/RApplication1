@@ -123,7 +123,6 @@ public class MainActivity extends BaseActivity implements NavigationView
     RelativeLayout relativeRootContactsMain;
     Toolbar toolbar;
     ImageView imageNotification;
-    ImageView imageAddContact;
     LinearLayout badgeLayout;
     TextView badgeTextView;
     //    TextView textImageNotification;
@@ -140,21 +139,17 @@ public class MainActivity extends BaseActivity implements NavigationView
     RContactApplication rContactApplication;
 
     int LIST_PARTITION_COUNT = 10;
-    private ArrayList<String> listOfCallLogIds;
     private ArrayList<CallLogType> callLogTypeArrayListMain;
     ArrayList<CallLogType> callLogsListbyChunck;
     ArrayList<CallLogType> newList;
     ArrayList<SmsDataType> newSmsList;
-    String callLogResponseRowId = "";
-    String callLogResponseDate = "";
     int logsSyncedCount = 10;
     MaterialDialog permissionConfirmationDialog;
     private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
             .permission.READ_CALL_LOG, Manifest.permission.READ_SMS};
     boolean isCompaseIcon = false;
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
-    public static CallLogType callLogTypeReceiverMain;
-    boolean isRecentBroadCastForCallLogsMainInstance = false;
+    private static CallLogType callLogTypeReceiverMain;
     private ImageView imageViewSearch;
     private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
     private ArrayList<SmsDataType> smsLogTypeArrayListMain;
