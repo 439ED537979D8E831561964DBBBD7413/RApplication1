@@ -556,6 +556,9 @@ public class Utils {
             if (country != null) {
                 defaultCountryCode = country.getCountryCodeNumber();
             }
+            if (StringUtils.startsWith(phoneNumber, "*")) {
+                return phoneNumber;
+            }
             if (!StringUtils.startsWith(phoneNumber, "+")) {
                 if (StringUtils.startsWith(phoneNumber, "0")) {
                     phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber, 1);
