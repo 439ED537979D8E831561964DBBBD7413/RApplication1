@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.contacts;
+package com.rawalinfocom.rcontact;
 
 import android.Manifest;
 import android.app.Activity;
@@ -15,7 +15,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,13 +35,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.rawalinfocom.rcontact.BaseActivity;
-import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.contacts.MapsActivity;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
@@ -89,7 +91,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class EditProfileActivity extends BaseActivity implements WsResponseListener{
+public class EditProfileActivity extends BaseActivity implements WsResponseListener,RippleView
+        .OnRippleCompleteListener {
 
     private final String EVENT_DATE_FORMAT = "dd'th' MMM, yyyy";
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -229,9 +232,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     @BindView(R.id.relative_root_edit_profile)
     RelativeLayout relativeRootEditProfile;
 
-    EditText inputCountry;
+    //    EditText inputCountry;
     EditText inputState;
-    EditText inputCity;
+    //    EditText inputCity;
     EditText inputStreet;
     EditText inputNeighborhood;
     EditText inputPinCode;
@@ -243,6 +246,154 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     boolean isStorageFromSettings = false, isCameraFromSettings = false;
 
     Bitmap selectedBitmap = null;
+    @BindView(R.id.text_male_icon)
+    TextView textMaleIcon;
+    @BindView(R.id.text_male)
+    TextView textMale;
+    @BindView(R.id.linear_male)
+    LinearLayout linearMale;
+    @BindView(R.id.text_female_icon)
+    TextView textFemaleIcon;
+    @BindView(R.id.text_female)
+    TextView textFemale;
+    @BindView(R.id.linear_female)
+    LinearLayout linearFemale;
+    @BindView(R.id.input_organization_name)
+    EditText inputOrganizationName;
+    @BindView(R.id.deleteOrganization)
+    ImageView deleteOrganization;
+    @BindView(R.id.input_organization_designation)
+    EditText inputOrganizationDesignation;
+    @BindView(R.id.checkbox_current_organization)
+    CheckBox checkboxCurrentOrganization;
+    @BindView(R.id.input_registered_number)
+    EditText inputRegisteredNumber;
+    @BindView(R.id.input_optional_number)
+    EditText inputOptionalNumber;
+    @BindView(R.id.spinneNumberType)
+    Spinner spinneNumberType;
+    @BindView(R.id.input_registered_email)
+    EditText inputRegisteredEmail;
+    @BindView(R.id.input_optional_email)
+    EditText inputOptionalEmail;
+    @BindView(R.id.spinnerNumberTypeEmail)
+    Spinner spinnerNumberTypeEmail;
+    @BindView(R.id.input_web_address)
+    EditText inputWebAddress;
+    @BindView(R.id.spinnerNumberTypeWeb)
+    Spinner spinnerNumberTypeWeb;
+    @BindView(R.id.input_country)
+    EditText inputCountry;
+    @BindView(R.id.spinnerNumberTypeCountry)
+    Spinner spinnerNumberTypeCountry;
+    @BindView(R.id.input_city)
+    EditText inputCity;
+    @BindView(R.id.input_capital)
+    EditText inputCapital;
+    @BindView(R.id.input_Steet1)
+    EditText inputSteet1;
+    @BindView(R.id.input_landmark)
+    EditText inputLandmark;
+    @BindView(R.id.input_pincode)
+    EditText inputPincode;
+    @BindView(R.id.input_google_pin)
+    EditText inputGooglePin;
+    @BindView(R.id.image_map_marker)
+    ImageView imageMapMarker;
+    @BindView(R.id.input_facebook_username)
+    EditText inputFacebookUsername;
+    @BindView(R.id.spinner_facebook)
+    Spinner spinnerFacebook;
+    @BindView(R.id.input_skypee_username)
+    EditText inputSkypeeUsername;
+    @BindView(R.id.spinner_skypee)
+    Spinner spinnerSkypee;
+    @BindView(R.id.input_twitter_username)
+    EditText inputTwitterUsername;
+    @BindView(R.id.spinner_twitter)
+    Spinner spinnerTwitter;
+    @BindView(R.id.input_birthday)
+    EditText inputBirthday;
+    @BindView(R.id.birth_calender)
+    ImageView birthCalender;
+    @BindView(R.id.spinner_birthday)
+    Spinner spinnerBirthday;
+    @BindView(R.id.checkbox_birthday)
+    CheckBox checkboxBirthday;
+    @BindView(R.id.input_anniversary)
+    EditText inputAnniversary;
+    @BindView(R.id.anniversary_calender)
+    ImageView anniversaryCalender;
+    @BindView(R.id.spinner_anniversary)
+    Spinner spinnerAnniversary;
+    @BindView(R.id.checkbox_anniversary)
+    CheckBox checkboxAnniversary;
+    @BindView(R.id.relativeName)
+    RelativeLayout relativeName;
+    @BindView(R.id.relativeOrganization)
+    RelativeLayout relativeOrganization;
+    @BindView(R.id.relativePhone)
+    RelativeLayout relativePhone;
+    @BindView(R.id.deleteNumber)
+    ImageView deleteNumber;
+    @BindView(R.id.relativeEmail)
+    RelativeLayout relativeEmail;
+    @BindView(R.id.deleteEmail)
+    ImageView deleteEmail;
+    @BindView(R.id.relativeWebsite)
+    RelativeLayout relativeWebsite;
+    @BindView(R.id.deleteWebsite)
+    ImageView deleteWebsite;
+    @BindView(R.id.relativeAddress)
+    RelativeLayout relativeAddress;
+    @BindView(R.id.deleteAddress)
+    ImageView deleteAddress;
+    @BindView(R.id.relativeSocialConnect)
+    RelativeLayout relativeSocialConnect;
+    @BindView(R.id.deleteFacebook)
+    ImageView deleteFacebook;
+    @BindView(R.id.deleteSkypee)
+    ImageView deleteSkypee;
+    @BindView(R.id.deleteTwitter)
+    ImageView deleteTwitter;
+    @BindView(R.id.relativeEvent)
+    RelativeLayout relativeEvent;
+    @BindView(R.id.deleteBirthday)
+    ImageView deleteBirthday;
+    @BindView(R.id.deleteAnniversary)
+    ImageView deleteAnniversary;
+    @BindView(R.id.relativeGender)
+    RelativeLayout relativeGender;
+    @BindView(R.id.linearOrganizationButtons)
+    LinearLayout linearOrganizationButtons;
+    @BindView(R.id.linearPhoneButtons)
+    LinearLayout linearPhoneButtons;
+    @BindView(R.id.linearEmailButtons)
+    LinearLayout linearEmailButtons;
+    @BindView(R.id.linearWebsiteButtons)
+    LinearLayout linearWebsiteButtons;
+    @BindView(R.id.linearAddressButtons)
+    LinearLayout linearAddressButtons;
+    @BindView(R.id.linearSocialButtons)
+    LinearLayout linearSocialButtons;
+    @BindView(R.id.linearEventButtons)
+    LinearLayout linearEventButtons;
+    @BindView(R.id.linearGenderButtons)
+    LinearLayout linearGenderButtons;
+    @BindView(R.id.relativeNameDetails)
+    RelativeLayout relativeNameDetails;
+    @BindView(R.id.linearNameBottom)
+    LinearLayout linearNameBottom;
+    @BindView(R.id.include_toolbar)
+    Toolbar includeToolbar;
+    @BindView(R.id.image_action_back)
+    ImageView imageActionBack;
+    @BindView(R.id.ripple_action_back)
+    RippleView rippleActionBack;
+    @BindView(R.id.text_toolbar_title)
+    TextView textToolbarTitle;
+    @BindView(R.id.relative_action_back)
+    RelativeLayout relativeActionBack;
     private File mFileTemp;
     private Uri fileUri;
 
@@ -256,13 +407,19 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     ArrayList<Object> arrayListAddressObject;
     ArrayList<Object> arrayListEventObject;
     ArrayList<Object> arrayListOrganizationObject;
+    Calendar myCalendar;
+    DatePickerDialog.OnDateSetListener dataPicker;
+    EditText editTextEvent;
 
+    boolean isBirthday = false;
+    boolean isExpanded = false;
+    boolean isEvent = false;
     //<editor-fold desc="Override Methods">
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_profile_temp);
+        setContentView(R.layout.activity_edit_profile);
         ButterKnife.bind(this);
         arrayListProfile = new ArrayList<>();
         init();
@@ -427,14 +584,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         super.onResume();
         if (isStorageFromSettings) {
             isStorageFromSettings = false;
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission
                     .WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 showChooseImageIntent();
             }
         }
         if (isCameraFromSettings) {
             isCameraFromSettings = false;
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission
                     .WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 selectImageFromCamera();
             }
@@ -455,53 +612,60 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             //<editor-fold desc="button_phone_add_field">
             case R.id.button_phone_add_field:
-                checkBeforeViewAdd(AppConstants.PHONE_NUMBER, linearPhoneDetails);
+//                checkBeforeViewAdd(AppConstants.PHONE_NUMBER, linearPhoneDetails);
+                Toast.makeText(this, "Add more fields", Toast.LENGTH_SHORT).show();
                 break;
             //</editor-fold>
 
             //<editor-fold desc="button_email_add_field">
             case R.id.button_email_add_field:
-                checkBeforeViewAdd(AppConstants.EMAIL, linearEmailDetails);
+//                checkBeforeViewAdd(AppConstants.EMAIL, linearEmailDetails);
+                Toast.makeText(this, "Add more fields", Toast.LENGTH_SHORT).show();
                 break;
             //</editor-fold>
 
             //<editor-fold desc="button_website_add_field">
             case R.id.button_website_add_field:
-                checkBeforeViewAdd(AppConstants.WEBSITE, linearWebsiteDetails);
+//                checkBeforeViewAdd(AppConstants.WEBSITE, linearWebsiteDetails);
+                Toast.makeText(this, "Add more fields", Toast.LENGTH_SHORT).show();
                 break;
             //</editor-fold>
 
             // <editor-fold desc="button_social_contact_add_field">
             case R.id.button_social_contact_add_field:
-                checkBeforeViewAdd(AppConstants.IM_ACCOUNT, linearSocialContactDetails);
+//                checkBeforeViewAdd(AppConstants.IM_ACCOUNT, linearSocialContactDetails);
+                Toast.makeText(this, "Add more fields", Toast.LENGTH_SHORT).show();
                 break;
             //</editor-fold>
 
             // <editor-fold desc="button_address_add_field">
             case R.id.button_address_add_field:
-                checkBeforeAddressViewAdd();
+//                checkBeforeAddressViewAdd();
+                Toast.makeText(this, "Add more fields", Toast.LENGTH_SHORT).show();
                 break;
             //</editor-fold>
 
             // <editor-fold desc="button_event_add_field">
             case R.id.button_event_add_field:
-                checkBeforeViewAdd(AppConstants.EVENT, linearEventDetails);
+//                checkBeforeViewAdd(AppConstants.EVENT, linearEventDetails);
+                Toast.makeText(this, "Add more fields", Toast.LENGTH_SHORT).show();
                 break;
             //</editor-fold>
 
             // <editor-fold desc="button_organization_add_field">
             case R.id.button_organization_add_field:
-                checkBeforeOrganizationViewAdd();
+//                checkBeforeOrganizationViewAdd();
+                Toast.makeText(this, "Add more fields", Toast.LENGTH_SHORT).show();
                 break;
             //</editor-fold>
 
             // <editor-fold desc="image_profile">
             case R.id.image_profile:
                 if (ContextCompat.checkSelfPermission(this,
-                        android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
 
-                    ActivityCompat.requestPermissions(this, new String[]{android.Manifest
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest
                             .permission.WRITE_EXTERNAL_STORAGE}, AppConstants
                             .MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
 
@@ -536,20 +700,1061 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
+    @Override
+    public void onComplete(RippleView rippleView) {
+        switch (rippleView.getId()) {
+            case R.id.ripple_action_back:
+                onBackPressed();
+                break;
+
+        }
+    }
+
+
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
 
     private void init() {
-
-        profileDetails();
+        // -- Old view code
+        /*profileDetails();
         phoneNumberDetails();
         emailDetails();
         websiteDetails();
         socialContactDetails();
         addressDetails();
         eventDetails();
-        organizationDetails();
+        organizationDetails();*/
+        inputRegisteredNumber.setEnabled(false);
+        inputRegisteredEmail.setEnabled(false);
+        initToolbar();
+        setFonts();
+        profileDetails();
+        genderDetails();
+        clickEvents();
+        firstExpandableView();
+        expandCollapse();
+
+    }
+
+    private void setFonts(){
+
+        textMale.setTypeface(Utils.typefaceRegular(this));
+        textFemale.setTypeface(Utils.typefaceRegular(this));
+        inputAnniversary.setTypeface(Utils.typefaceRegular(this));
+        inputBirthday.setTypeface(Utils.typefaceRegular(this));
+        inputCapital.setTypeface(Utils.typefaceRegular(this));
+        inputCity.setTypeface(Utils.typefaceRegular(this));
+        inputCountry.setTypeface(Utils.typefaceRegular(this));
+        inputFacebookUsername.setTypeface(Utils.typefaceRegular(this));
+        inputFirstName.setTypeface(Utils.typefaceRegular(this));
+        inputGooglePin.setTypeface(Utils.typefaceRegular(this));
+        inputLandmark.setTypeface(Utils.typefaceRegular(this));
+        inputLastName.setTypeface(Utils.typefaceRegular(this));
+        inputOptionalEmail.setTypeface(Utils.typefaceRegular(this));
+        inputOrganizationDesignation.setTypeface(Utils.typefaceRegular(this));
+        inputOptionalNumber.setTypeface(Utils.typefaceRegular(this));
+        inputPincode.setTypeface(Utils.typefaceRegular(this));
+        inputRegisteredEmail.setTypeface(Utils.typefaceRegular(this));
+        inputRegisteredNumber.setTypeface(Utils.typefaceRegular(this));
+        inputSkypeeUsername.setTypeface(Utils.typefaceRegular(this));
+        inputSteet1.setTypeface(Utils.typefaceRegular(this));
+        inputTwitterUsername.setTypeface(Utils.typefaceRegular(this));
+        inputWebAddress.setTypeface(Utils.typefaceRegular(this));
+
+    }
+
+    private void initToolbar(){
+        rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
+        textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
+        textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
+        rippleActionBack.setOnRippleCompleteListener(this);
+        textToolbarTitle.setText(getResources().getString(R.string.myprofile_toolbar_title));
+    }
+
+    private void firstExpandableView() {
+        imageNameExpand.setImageResource(R.drawable.ic_arrow_up);
+        linearName.setVisibility(View.VISIBLE);
+        collapseAll();
+    }
+
+    private void expandCollapse() {
+       /* imageNameExpand.setImageResource(R.drawable.ic_arrow_up);
+        linearName.setVisibility(View.VISIBLE);*/
+
+        relativeName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /*if(isExpanded){
+                    isExpanded = false;
+                    imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    relativeNameDetails.setVisibility(View.GONE);
+                    linearNameBottom.setVisibility(View.GONE);
+
+                }else{*/
+                    imageNameExpand.setImageResource(R.drawable.ic_arrow_up);
+                    imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    linearName.setVisibility(View.VISIBLE);
+                    relativeNameDetails.setVisibility(View.VISIBLE);
+                    linearNameBottom.setVisibility(View.VISIBLE);
+                    collapseAll();
+//                    isExpanded = true;
+//                }
+
+            }
+        });
+
+        relativeOrganization.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /*if(isExpanded){
+                    isExpanded = false;
+                    imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    linearOrganizationDetails.setVisibility(View.GONE);
+                    linearOrganizationButtons.setVisibility(View.GONE);
+
+                }else{*/
+                    imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_up);
+                    imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
+//                linearName.setVisibility(View.GONE);
+                    relativeNameDetails.setVisibility(View.GONE);
+                    linearNameBottom.setVisibility(View.GONE);
+                    linearOrganizationDetails.setVisibility(View.VISIBLE);
+                    linearOrganizationButtons.setVisibility(View.VISIBLE);
+                    linearPhoneDetails.setVisibility(View.GONE);
+                    linearPhoneButtons.setVisibility(View.GONE);
+                    linearEmailDetails.setVisibility(View.GONE);
+                    linearEmailButtons.setVisibility(View.GONE);
+                    linearWebsiteDetails.setVisibility(View.GONE);
+                    linearWebsiteButtons.setVisibility(View.GONE);
+                    linearAddressDetails.setVisibility(View.GONE);
+                    linearAddressButtons.setVisibility(View.GONE);
+                    linearSocialContactDetails.setVisibility(View.GONE);
+                    linearSocialButtons.setVisibility(View.GONE);
+                    linearEventDetails.setVisibility(View.GONE);
+                    linearEventButtons.setVisibility(View.GONE);
+                    linearGenderDetails.setVisibility(View.GONE);
+                    linearGenderButtons.setVisibility(View.GONE);
+//                    isExpanded =true;
+//                }
+
+
+            }
+        });
+
+        relativePhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /*if(isExpanded){
+                    isExpanded = false;
+                    imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    linearPhoneDetails.setVisibility(View.GONE);
+                    linearPhoneButtons.setVisibility(View.GONE);
+
+                }else{*/
+                    imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imagePhoneExpand.setImageResource(R.drawable.ic_arrow_up);
+//                linearName.setVisibility(View.GONE);
+                    relativeNameDetails.setVisibility(View.GONE);
+                    linearNameBottom.setVisibility(View.GONE);
+                    linearOrganizationDetails.setVisibility(View.GONE);
+                    linearOrganizationButtons.setVisibility(View.GONE);
+                    linearPhoneDetails.setVisibility(View.VISIBLE);
+                    linearPhoneButtons.setVisibility(View.VISIBLE);
+                    linearEmailDetails.setVisibility(View.GONE);
+                    linearEmailButtons.setVisibility(View.GONE);
+                    linearWebsiteDetails.setVisibility(View.GONE);
+                    linearWebsiteButtons.setVisibility(View.GONE);
+                    linearAddressDetails.setVisibility(View.GONE);
+                    linearAddressButtons.setVisibility(View.GONE);
+                    linearSocialContactDetails.setVisibility(View.GONE);
+                    linearSocialButtons.setVisibility(View.GONE);
+                    linearEventDetails.setVisibility(View.GONE);
+                    linearEventButtons.setVisibility(View.GONE);
+                    linearGenderDetails.setVisibility(View.GONE);
+                    linearGenderButtons.setVisibility(View.GONE);
+//                    isExpanded = true;
+//                }
+
+            }
+        });
+
+        relativeEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /*if(isExpanded){
+                    isExpanded = false;
+                    imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    linearEmailDetails.setVisibility(View.GONE);
+                    linearEmailButtons.setVisibility(View.GONE);
+
+                }else {*/
+                    imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEmailExpand.setImageResource(R.drawable.ic_arrow_up);
+//                linearName.setVisibility(View.GONE);
+                    relativeNameDetails.setVisibility(View.GONE);
+                    linearNameBottom.setVisibility(View.GONE);
+                    linearOrganizationDetails.setVisibility(View.GONE);
+                    linearOrganizationButtons.setVisibility(View.GONE);
+                    linearPhoneDetails.setVisibility(View.GONE);
+                    linearPhoneButtons.setVisibility(View.GONE);
+                    linearEmailDetails.setVisibility(View.VISIBLE);
+                    linearEmailButtons.setVisibility(View.VISIBLE);
+                    linearWebsiteDetails.setVisibility(View.GONE);
+                    linearWebsiteButtons.setVisibility(View.GONE);
+                    linearAddressDetails.setVisibility(View.GONE);
+                    linearAddressButtons.setVisibility(View.GONE);
+                    linearSocialContactDetails.setVisibility(View.GONE);
+                    linearSocialButtons.setVisibility(View.GONE);
+                    linearEventDetails.setVisibility(View.GONE);
+                    linearEventButtons.setVisibility(View.GONE);
+                    linearGenderDetails.setVisibility(View.GONE);
+                    linearGenderButtons.setVisibility(View.GONE);
+//                    isExpanded = true;
+//                }
+
+            }
+        });
+
+        relativeWebsite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /*if(isExpanded){
+                    isExpanded = false;
+                    imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    linearWebsiteDetails.setVisibility(View.GONE);
+                    linearWebsiteButtons.setVisibility(View.GONE);
+                }else{*/
+                    imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_up);
+                    imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
+//                linearName.setVisibility(View.GONE);
+                    relativeNameDetails.setVisibility(View.GONE);
+                    linearNameBottom.setVisibility(View.GONE);
+                    linearOrganizationDetails.setVisibility(View.GONE);
+                    linearOrganizationButtons.setVisibility(View.GONE);
+                    linearPhoneDetails.setVisibility(View.GONE);
+                    linearPhoneButtons.setVisibility(View.GONE);
+                    linearEmailDetails.setVisibility(View.GONE);
+                    linearEmailButtons.setVisibility(View.GONE);
+                    linearWebsiteDetails.setVisibility(View.VISIBLE);
+                    linearWebsiteButtons.setVisibility(View.VISIBLE);
+                    linearAddressDetails.setVisibility(View.GONE);
+                    linearAddressButtons.setVisibility(View.GONE);
+                    linearSocialContactDetails.setVisibility(View.GONE);
+                    linearSocialButtons.setVisibility(View.GONE);
+                    linearEventDetails.setVisibility(View.GONE);
+                    linearEventButtons.setVisibility(View.GONE);
+                    linearGenderDetails.setVisibility(View.GONE);
+                    linearGenderButtons.setVisibility(View.GONE);
+//                    isExpanded =  true;
+//                }
+
+            }
+        });
+
+        relativeAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /*if(isExpanded){
+                    isExpanded = false;
+                    imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    linearAddressDetails.setVisibility(View.GONE);
+                    linearAddressButtons.setVisibility(View.GONE);
+                }else{*/
+                    imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageAddressExpand.setImageResource(R.drawable.ic_arrow_up);
+//                linearName.setVisibility(View.GONE);
+                    relativeNameDetails.setVisibility(View.GONE);
+                    linearNameBottom.setVisibility(View.GONE);
+                    linearOrganizationDetails.setVisibility(View.GONE);
+                    linearOrganizationButtons.setVisibility(View.GONE);
+                    linearPhoneDetails.setVisibility(View.GONE);
+                    linearPhoneButtons.setVisibility(View.GONE);
+                    linearEmailDetails.setVisibility(View.GONE);
+                    linearEmailButtons.setVisibility(View.GONE);
+                    linearWebsiteDetails.setVisibility(View.GONE);
+                    linearWebsiteButtons.setVisibility(View.GONE);
+                    linearAddressDetails.setVisibility(View.VISIBLE);
+                    linearAddressButtons.setVisibility(View.VISIBLE);
+                    linearSocialContactDetails.setVisibility(View.GONE);
+                    linearSocialButtons.setVisibility(View.GONE);
+                    linearEventDetails.setVisibility(View.GONE);
+                    linearEventButtons.setVisibility(View.GONE);
+                    linearGenderDetails.setVisibility(View.GONE);
+                    linearGenderButtons.setVisibility(View.GONE);
+//                    isExpanded = true;
+//                }
+
+            }
+        });
+
+        relativeSocialConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /*if(isExpanded){
+                    isExpanded = false;
+                    imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    linearSocialContactDetails.setVisibility(View.GONE);
+                    linearSocialButtons.setVisibility(View.GONE);
+                }else{*/
+                    imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_up);
+//                linearName.setVisibility(View.GONE);
+                    relativeNameDetails.setVisibility(View.GONE);
+                    linearNameBottom.setVisibility(View.GONE);
+                    linearOrganizationDetails.setVisibility(View.GONE);
+                    linearOrganizationButtons.setVisibility(View.GONE);
+                    linearPhoneDetails.setVisibility(View.GONE);
+                    linearPhoneButtons.setVisibility(View.GONE);
+                    linearEmailDetails.setVisibility(View.GONE);
+                    linearEmailButtons.setVisibility(View.GONE);
+                    linearWebsiteDetails.setVisibility(View.GONE);
+                    linearWebsiteButtons.setVisibility(View.GONE);
+                    linearAddressDetails.setVisibility(View.GONE);
+                    linearAddressButtons.setVisibility(View.GONE);
+                    linearSocialContactDetails.setVisibility(View.VISIBLE);
+                    linearSocialButtons.setVisibility(View.VISIBLE);
+                    linearEventDetails.setVisibility(View.GONE);
+                    linearEventButtons.setVisibility(View.GONE);
+                    linearGenderDetails.setVisibility(View.GONE);
+                    linearGenderButtons.setVisibility(View.GONE);
+//                    isExpanded = true;
+//                }
+
+            }
+        });
+
+        relativeEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /*if(isExpanded){
+                    isExpanded = false;
+                    imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    linearEventDetails.setVisibility(View.GONE);
+                    linearEventButtons.setVisibility(View.GONE);
+                }else{*/
+                    imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEventExpand.setImageResource(R.drawable.ic_arrow_up);
+//                linearName.setVisibility(View.GONE);
+                    relativeNameDetails.setVisibility(View.GONE);
+                    linearNameBottom.setVisibility(View.GONE);
+                    linearOrganizationDetails.setVisibility(View.GONE);
+                    linearOrganizationButtons.setVisibility(View.GONE);
+                    linearPhoneDetails.setVisibility(View.GONE);
+                    linearPhoneButtons.setVisibility(View.GONE);
+                    linearEmailDetails.setVisibility(View.GONE);
+                    linearEmailButtons.setVisibility(View.GONE);
+                    linearWebsiteDetails.setVisibility(View.GONE);
+                    linearWebsiteButtons.setVisibility(View.GONE);
+                    linearAddressDetails.setVisibility(View.GONE);
+                    linearAddressButtons.setVisibility(View.GONE);
+                    linearSocialContactDetails.setVisibility(View.GONE);
+                    linearSocialButtons.setVisibility(View.GONE);
+                    linearEventDetails.setVisibility(View.VISIBLE);
+                    linearEventButtons.setVisibility(View.VISIBLE);
+                    linearGenderDetails.setVisibility(View.GONE);
+                    linearGenderButtons.setVisibility(View.GONE);
+//                    isExpanded = true;
+//                }
+
+            }
+        });
+
+        relativeGender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /*if(isExpanded){
+                    isExpanded = false;
+                    imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    linearGenderDetails.setVisibility(View.GONE);
+                    linearGenderButtons.setVisibility(View.GONE);
+                }else{*/
+                    imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageNameExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
+                    imageGenderExpand.setImageResource(R.drawable.ic_arrow_up);
+//                linearName.setVisibility(View.GONE);
+                    relativeNameDetails.setVisibility(View.GONE);
+                    linearNameBottom.setVisibility(View.GONE);
+                    linearOrganizationDetails.setVisibility(View.GONE);
+                    linearOrganizationButtons.setVisibility(View.GONE);
+                    linearPhoneDetails.setVisibility(View.GONE);
+                    linearPhoneButtons.setVisibility(View.GONE);
+                    linearEmailDetails.setVisibility(View.GONE);
+                    linearEmailButtons.setVisibility(View.GONE);
+                    linearWebsiteDetails.setVisibility(View.GONE);
+                    linearWebsiteButtons.setVisibility(View.GONE);
+                    linearAddressDetails.setVisibility(View.GONE);
+                    linearAddressButtons.setVisibility(View.GONE);
+                    linearSocialContactDetails.setVisibility(View.GONE);
+                    linearSocialButtons.setVisibility(View.GONE);
+                    linearEventDetails.setVisibility(View.GONE);
+                    linearEventButtons.setVisibility(View.GONE);
+                    linearGenderDetails.setVisibility(View.VISIBLE);
+                    linearGenderButtons.setVisibility(View.VISIBLE);
+//                    isExpanded = true;
+//                }
+
+            }
+
+        });
+
+    }
+
+    private void collapseAll() {
+//        linearName.setVisibility(View.GONE);
+        imageOrganizationExpand.setImageResource(R.drawable.ic_arrow_bottom);
+        imagePhoneExpand.setImageResource(R.drawable.ic_arrow_bottom);
+        imageEmailExpand.setImageResource(R.drawable.ic_arrow_bottom);
+        imageWebsiteExpand.setImageResource(R.drawable.ic_arrow_bottom);
+        imageAddressExpand.setImageResource(R.drawable.ic_arrow_bottom);
+        imageSocialContactExpand.setImageResource(R.drawable.ic_arrow_bottom);
+        imageEventExpand.setImageResource(R.drawable.ic_arrow_bottom);
+        imageGenderExpand.setImageResource(R.drawable.ic_arrow_bottom);
+
+        linearOrganizationDetails.setVisibility(View.GONE);
+        linearOrganizationButtons.setVisibility(View.GONE);
+        linearPhoneDetails.setVisibility(View.GONE);
+        linearPhoneButtons.setVisibility(View.GONE);
+        linearEmailDetails.setVisibility(View.GONE);
+        linearEmailButtons.setVisibility(View.GONE);
+        linearWebsiteDetails.setVisibility(View.GONE);
+        linearWebsiteButtons.setVisibility(View.GONE);
+        linearAddressDetails.setVisibility(View.GONE);
+        linearAddressButtons.setVisibility(View.GONE);
+        linearSocialContactDetails.setVisibility(View.GONE);
+        linearSocialButtons.setVisibility(View.GONE);
+        linearEventDetails.setVisibility(View.GONE);
+        linearEventButtons.setVisibility(View.GONE);
+        linearGenderDetails.setVisibility(View.GONE);
+        linearGenderButtons.setVisibility(View.GONE);
+    }
+
+    private void clickEvents() {
+
+        imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        imageMapMarker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EditProfileActivity.this, MapsActivity.class);
+                int position =0;
+                if (position != -1) {
+                  /*  mapLatitude = Double.parseDouble(((ProfileDataOperationAddress)
+                            arrayListAddressObject.get(position)).getGoogleLatitude());
+                    mapLongitude = Double.parseDouble(((ProfileDataOperationAddress)
+                            arrayListAddressObject.get(position)).getGoogleLongitude());
+                    intent.putExtra(AppConstants.EXTRA_LATITUDE, mapLatitude);
+                    intent.putExtra(AppConstants.EXTRA_LONGITUDE, mapLongitude);*/
+//                    View view = linearAddressDetails.getChildAt(position);
+                    TextView textLatitude = (TextView) findViewById(R.id.input_latitude);
+                    TextView textLongitude = (TextView) findViewById(R.id.input_longitude);
+//                    EditText country = (EditText) view.findViewById(R.id.input_country);
+                    EditText country = (EditText) findViewById(R.id.input_country);
+//                    EditText state = (EditText) view.findViewById(R.id.input_state);
+                    EditText state = (EditText) findViewById(R.id.input_capital);
+//                    EditText city = (EditText) view.findViewById(R.id.input_city);
+                    EditText city = (EditText) findViewById(R.id.input_city);
+//                    EditText street = (EditText) view.findViewById(R.id.input_street);
+                    EditText street = (EditText) findViewById(R.id.input_Steet1);
+//                    EditText neighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
+                    EditText neighborhood = (EditText) findViewById(R.id.input_landmark);
+//                    EditText pinCode = (EditText) view.findViewById(R.id.input_pin_code);
+                    EditText pinCode = (EditText) findViewById(R.id.input_pincode);
+
+                    String countryName = country.getText().toString();
+                    String stateName = state.getText().toString();
+                    String cityName = city.getText().toString();
+                    String streetName = street.getText().toString();
+                    String neighborhoodName = neighborhood.getText().toString();
+                    String pinCodeName = pinCode.getText().toString();
+                    String formattedAddress ="";
+                    if(textLatitude!=null  && textLongitude!=null){
+                        intent.putExtra(AppConstants.EXTRA_LATITUDE, Double.parseDouble(StringUtils
+                                .defaultIfEmpty(textLatitude.getText().toString(), "0")));
+                        intent.putExtra(AppConstants.EXTRA_LONGITUDE, Double.parseDouble(StringUtils
+                                .defaultIfEmpty(textLongitude.getText().toString(), "0")));
+                        formattedAddress = Utils.setFormattedAddress(streetName,
+                                neighborhoodName, cityName, stateName, countryName, pinCodeName);
+                    }
+
+                    if (StringUtils.length(formattedAddress) > 0) {
+                        intent.putExtra(AppConstants.EXTRA_FORMATTED_ADDRESS, formattedAddress);
+                    }
+                }
+                /*if (detailObject != null && position != -1) {
+                    intent.putExtra(AppConstants.EXTRA_FORMATTED_ADDRESS, (
+                            (ProfileDataOperationAddress) arrayListAddressObject.get(position))
+                            .getFormattedAddress());
+                }*/
+                if (position == -1) {
+                    clickedPosition = 0;
+                } else {
+                    clickedPosition = position;
+                }
+                startActivityForResult(intent, AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
+            }
+        });
+
+        inputAnniversary.setClickable(false);
+        inputAnniversary.setFocusable(false);
+        inputAnniversary.setCursorVisible(false);
+        inputAnniversary.setEnabled(false);
+
+        inputBirthday.setClickable(false);
+        inputBirthday.setFocusable(false);
+        inputBirthday.setCursorVisible(false);
+        inputBirthday.setEnabled(false);
+
+        myCalendar = Calendar.getInstance();
+
+        dataPicker = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+//                updateLabel();
+                if (isBirthday) {
+                    updateBirthdayEditText(myCalendar);
+                } else if(isEvent){
+                    updateEditTextEvent(myCalendar);
+                }else{
+                    updateAnniversaryEditText(myCalendar);
+
+                }
+            }
+
+        };
+
+        anniversaryCalender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(EditProfileActivity.this, dataPicker, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                isBirthday = false;
+
+            }
+        });
+
+        birthCalender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(EditProfileActivity.this, dataPicker, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                isBirthday = true;
+
+            }
+        });
+
+        List<String> typeList;
+
+        spinneNumberType.setTag(AppConstants.PHONE_NUMBER);
+        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
+                .array.types_phone_number)));
+        spinnerPhoneAdapter = new ArrayAdapter<>(this, R.layout
+                .list_item_spinner, typeList);
+        spinnerPhoneAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        spinneNumberType.setAdapter(spinnerPhoneAdapter);
+
+
+        spinnerNumberTypeEmail.setTag(AppConstants.EMAIL);
+        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
+                .array.types_email_address)));
+        spinnerEmailAdapter = new ArrayAdapter<>(this, R.layout
+                .list_item_spinner, typeList);
+        spinnerNumberTypeEmail.setAdapter(spinnerEmailAdapter);
+
+        spinnerNumberTypeWeb.setTag(AppConstants.WEBSITE);
+        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
+                .array.types_email_address)));
+        spinnerWebsiteAdapter = new ArrayAdapter<>(this, R.layout
+                .list_item_spinner, typeList);
+        spinnerWebsiteAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        spinnerNumberTypeWeb.setAdapter(spinnerWebsiteAdapter);
+
+        spinnerNumberTypeCountry.setTag(AppConstants.WEBSITE);
+        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
+                .array.types_email_address)));
+        spinnerWebsiteAdapter = new ArrayAdapter<>(this, R.layout
+                .list_item_spinner, typeList);
+        spinnerWebsiteAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        spinnerNumberTypeCountry.setAdapter(spinnerWebsiteAdapter);
+
+        spinnerFacebook.setTag(AppConstants.IM_ACCOUNT);
+        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
+                .array.types_social_media)));
+        spinnerImAccountAdapter = new ArrayAdapter<>(this, R.layout
+                .list_item_spinner, typeList);
+        spinnerImAccountAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        spinnerFacebook.setAdapter(spinnerImAccountAdapter);
+        spinnerFacebook.setSelection(spinnerImAccountAdapter.getPosition("Facebook"));
+
+        spinnerSkypee.setTag(AppConstants.IM_ACCOUNT);
+        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
+                .array.types_social_media)));
+        spinnerImAccountAdapter = new ArrayAdapter<>(this, R.layout
+                .list_item_spinner, typeList);
+        spinnerImAccountAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        spinnerSkypee.setAdapter(spinnerImAccountAdapter);
+        spinnerSkypee.setSelection(spinnerImAccountAdapter.getPosition("Skype"));
+
+
+        spinnerTwitter.setTag(AppConstants.IM_ACCOUNT);
+        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
+                .array.types_social_media)));
+        spinnerImAccountAdapter = new ArrayAdapter<>(this, R.layout
+                .list_item_spinner, typeList);
+        spinnerImAccountAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        spinnerTwitter.setAdapter(spinnerImAccountAdapter);
+        spinnerTwitter.setSelection(spinnerImAccountAdapter.getPosition("Twitter"));
+
+        spinnerAnniversary.setTag(AppConstants.EVENT);
+        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
+                .array.types_Event)));
+        spinnerEventAdapter = new ArrayAdapter<>(this, R.layout
+                .list_item_spinner, typeList);
+        spinnerEventAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        spinnerAnniversary.setAdapter(spinnerEventAdapter);
+        spinnerAnniversary.setSelection(spinnerEventAdapter.getPosition("Anniversary"));
+
+        spinnerBirthday.setTag(AppConstants.EVENT);
+        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
+                .array.types_Event)));
+        spinnerEventAdapter = new ArrayAdapter<>(this, R.layout
+                .list_item_spinner, typeList);
+        spinnerEventAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        spinnerBirthday.setAdapter(spinnerEventAdapter);
+        spinnerBirthday.setSelection(spinnerEventAdapter.getPosition("Birthday"));
+
+        linearMale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textFemaleIcon.setTextColor(getResources().getColor(R.color.darkGray));
+                textFemale.setTextColor(getResources().getColor(R.color.darkGray));
+                textMaleIcon.setTextColor(getResources().getColor(R.color.colorAccent));
+                textMale.setTextColor(getResources().getColor(R.color.colorAccent));
+            }
+        });
+
+        linearFemale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textFemaleIcon.setTextColor(getResources().getColor(R.color.colorAccent));
+                textFemale.setTextColor(getResources().getColor(R.color.colorAccent));
+                textMaleIcon.setTextColor(getResources().getColor(R.color.darkGray));
+                textMale.setTextColor(getResources().getColor(R.color.darkGray));
+            }
+        });
+
+        buttonOrganizationAddField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkBeforeOrganizationViewAdd();
+            }
+        });
+
+        buttonOrganizationCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        buttonOrganizationUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        deleteOrganization.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputOrganizationName.setText("");
+                inputOrganizationDesignation.setText("");
+            }
+        });
+
+        buttonPhoneAddField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkBeforeViewAdd(AppConstants.PHONE_NUMBER, linearPhoneDetails);
+
+            }
+        });
+
+        buttonPhoneCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        buttonPhoneUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        deleteNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputOptionalNumber.setText("");
+            }
+        });
+
+        buttonEmailAddField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkBeforeViewAdd(AppConstants.EMAIL, linearEmailDetails);
+
+            }
+        });
+
+        buttonEmailCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        buttonEmailUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        deleteEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputOptionalEmail.setText("");
+            }
+        });
+
+        buttonWebsiteAddField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkBeforeViewAdd(AppConstants.WEBSITE, linearWebsiteDetails);
+
+            }
+        });
+
+        buttonWebsiteCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        buttonWebsiteUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        deleteWebsite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputWebAddress.setText("");
+            }
+        });
+
+        buttonAddressAddField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkBeforeAddressViewAdd();
+
+            }
+        });
+
+        buttonAddressCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        buttonAddressUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        deleteAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                inputCountry.setText("");
+                inputCity.setText("");
+                inputCapital.setText("");
+                inputSteet1.setText("");
+                inputLandmark.setText("");
+                inputPincode.setText("");
+                inputGooglePin.setText("");
+            }
+        });
+
+        buttonSocialContactAddField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkBeforeViewAdd(AppConstants.IM_ACCOUNT, linearSocialContactDetails);
+
+            }
+        });
+
+        buttonSocialContactCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        buttonSocialContactUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        deleteFacebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputFacebookUsername.setText("");
+            }
+        });
+
+        deleteTwitter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputTwitterUsername.setText("");
+            }
+        });
+
+        deleteSkypee.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputSkypeeUsername.setText("");
+            }
+        });
+
+        buttonEventAddField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkBeforeViewAdd(AppConstants.EVENT, linearEventDetails);
+
+            }
+        });
+
+        buttonEventCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        buttonEventUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        deleteBirthday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputBirthday.setText("");
+            }
+        });
+
+        deleteAnniversary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputAnniversary.setText("");
+            }
+        });
+
+
+        buttonGenderUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        buttonGenderCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+
+    private void updateBirthdayEditText(Calendar myCalendar) {
+
+        SimpleDateFormat format = new SimpleDateFormat("d");
+        String date = format.format(myCalendar.getTime());
+
+        if (date.endsWith("1") && !date.endsWith("11"))
+            format = new SimpleDateFormat("d'st' MMMM, yyyy");
+        else if (date.endsWith("2") && !date.endsWith("12"))
+            format = new SimpleDateFormat("d'nd' MMMM, yyyy");
+        else if (date.endsWith("3") && !date.endsWith("13"))
+            format = new SimpleDateFormat("d'rd' MMMM, yyyy");
+        else
+            format = new SimpleDateFormat("d'th' MMMM, yyyy");
+
+        String yourDate = format.format(myCalendar.getTime());
+        if (!TextUtils.isEmpty(yourDate))
+            inputBirthday.setText(yourDate);
+    }
+
+    private void updateAnniversaryEditText(Calendar myCalendar) {
+
+        SimpleDateFormat format = new SimpleDateFormat("d");
+        String date = format.format(myCalendar.getTime());
+
+        if (date.endsWith("1") && !date.endsWith("11"))
+            format = new SimpleDateFormat("d'st' MMMM, yyyy");
+        else if (date.endsWith("2") && !date.endsWith("12"))
+            format = new SimpleDateFormat("d'nd' MMMM, yyyy");
+        else if (date.endsWith("3") && !date.endsWith("13"))
+            format = new SimpleDateFormat("d'rd' MMMM, yyyy");
+        else
+            format = new SimpleDateFormat("d'th' MMMM, yyyy");
+
+        String yourDate = format.format(myCalendar.getTime());
+        if (!TextUtils.isEmpty(yourDate))
+            inputAnniversary.setText(yourDate);
+    }
+
+    private void updateEventEditText(EditText editText){
+        editTextEvent =  editText;
+        new DatePickerDialog(EditProfileActivity.this, dataPicker, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+//        updateEditTextEvent(myCalendar);
+    }
+
+    private void updateEditTextEvent(Calendar myCalendar){
+        SimpleDateFormat format = new SimpleDateFormat("d");
+        String date = format.format(myCalendar.getTime());
+
+        if (date.endsWith("1") && !date.endsWith("11"))
+            format = new SimpleDateFormat("d'st' MMMM, yyyy");
+        else if (date.endsWith("2") && !date.endsWith("12"))
+            format = new SimpleDateFormat("d'nd' MMMM, yyyy");
+        else if (date.endsWith("3") && !date.endsWith("13"))
+            format = new SimpleDateFormat("d'rd' MMMM, yyyy");
+        else
+            format = new SimpleDateFormat("d'th' MMMM, yyyy");
+
+        String yourDate = format.format(myCalendar.getTime());
+        if (!TextUtils.isEmpty(yourDate))
+            editTextEvent.setText(yourDate);
+
+//        isEvent = false;
+    }
+
+    private void genderDetails() {
+        textFemaleIcon.setTypeface(Utils.typefaceIcons(this));
+        textMaleIcon.setTypeface(Utils.typefaceIcons(this));
+        textFemaleIcon.setText(getResources().getString(R.string.im_female));
+        textMaleIcon.setText(getResources().getString(R.string.im_gender_male));
 
     }
 
@@ -774,26 +1979,41 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     private void checkBeforeAddressViewAdd() {
         boolean toAdd = false;
+        EditText inputCountry = null;
+        EditText inputState = null;
+        EditText inputCity = null;
+        EditText inputStreet = null;
         for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
             View linearView = linearAddressDetails.getChildAt(i);
-            EditText inputCountry = (EditText) linearView.findViewById(R.id.input_country);
-            EditText inputState = (EditText) linearView.findViewById(R.id.input_state);
-            EditText inputCity = (EditText) linearView.findViewById(R.id.input_city);
-            EditText inputStreet = (EditText) linearView.findViewById(R.id.input_street);
-            if (StringUtils.length(StringUtils.trimToEmpty(inputCountry.getText().toString())) <
-                    1 ||
-                    StringUtils.length(StringUtils.trimToEmpty(inputState.getText().toString()))
-                            < 1 ||
-                    StringUtils.length(StringUtils.trimToEmpty(inputCity.getText().toString())) <
-                            1 ||
-                    StringUtils.length(StringUtils.trimToEmpty(inputStreet.getText().toString()))
-                            < 1) {
-                toAdd = false;
-                break;
-            } else {
-                toAdd = true;
+            if(inputCountry == null)
+                inputCountry= (EditText) linearView.findViewById(R.id.input_country);
+            if(inputState == null)
+                inputState = (EditText) linearView.findViewById(R.id.input_capital);
+            //                inputState = (EditText) linearView.findViewById(R.id.input_state);
+            if(inputCity == null)
+                inputCity = (EditText) linearView.findViewById(R.id.input_city);
+            if(inputStreet == null)
+                inputStreet = (EditText) linearView.findViewById(R.id.input_Steet1);
+            //                inputStreet = (EditText) linearView.findViewById(R.id.input_Steet);
+
+            if(inputCountry!=null && inputState!=null && inputCity!= null && inputStreet!= null){
+                if (StringUtils.length(StringUtils.trimToEmpty(inputCountry.getText().toString())) <
+                        1 ||
+                        StringUtils.length(StringUtils.trimToEmpty(inputState.getText().toString()))
+                                < 1 ||
+                        StringUtils.length(StringUtils.trimToEmpty(inputCity.getText().toString())) <
+                                1 ||
+                        StringUtils.length(StringUtils.trimToEmpty(inputStreet.getText().toString()))
+                                < 1) {
+                    toAdd = false;
+                    break;
+                } else {
+                    toAdd = true;
+                }
             }
+
         }
+
         if (toAdd) {
             addAddressView(null, linearAddressDetails.getChildCount());
         }
@@ -801,19 +2021,29 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     private void checkBeforeOrganizationViewAdd() {
         boolean toAdd = false;
+        EditText inputCompanyName = null;
+        EditText inputDesignationName = null;
         for (int i = 0; i < linearOrganizationDetails.getChildCount(); i++) {
             View linearView = linearOrganizationDetails.getChildAt(i);
-            EditText inputCompanyName = (EditText) linearView.findViewById(R.id.input_company_name);
-            EditText inputDesignationName = (EditText) linearView.findViewById(R.id
-                    .input_designation_name);
-            if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText().toString())
-            ) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputDesignationName.getText()
-                    .toString())) < 1) {
-                toAdd = false;
-                break;
-            } else {
-                toAdd = true;
+//            EditText inputCompanyName = (EditText) linearView.findViewById(R.id.input_company_name);
+            if(inputCompanyName == null)
+                inputCompanyName = (EditText) linearView.findViewById(R.id.input_organization_name);
+//            EditText inputDesignationName = (EditText) linearView.findViewById(R.id
+//                    .input_designation_name);
+            if(inputDesignationName == null)
+                inputDesignationName= (EditText) linearView.findViewById(R.id.input_organization_designation);
+
+            if(inputDesignationName !=null && inputCompanyName !=null){
+                if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText().toString())
+                ) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputDesignationName.getText()
+                        .toString())) < 1) {
+                    toAdd = false;
+                    break;
+                } else {
+                    toAdd = true;
+                }
             }
+
         }
         if (toAdd) {
             addOrganizationView(null);
@@ -824,14 +2054,29 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         boolean toAdd = false;
         for (int i = 0; i < linearLayout.getChildCount(); i++) {
             View linearView = linearLayout.getChildAt(i);
-            EditText editText = (EditText) linearView.findViewById(R.id.input_value);
-            if (StringUtils.length(StringUtils.trimToEmpty(editText.getText().toString())) < 1) {
+//            EditText editText = (EditText) linearView.findViewById(R.id.input_value);
+            EditText editText = null;
+            if(viewType == AppConstants.PHONE_NUMBER)
+                editText = (EditText) linearView.findViewById(R.id.input_optional_number);
+            if(viewType == AppConstants.EMAIL)
+                editText = (EditText) linearView.findViewById(R.id.input_optional_email);
+            if(viewType == AppConstants.WEBSITE)
+                editText = (EditText) linearView.findViewById(R.id.input_web_address);
+            if(viewType == AppConstants.IM_ACCOUNT)
+                editText = (EditText) linearView.findViewById(R.id.input_twitter_username);
+            if(viewType == AppConstants.EVENT)
+                editText = (EditText) linearView.findViewById(R.id.input_anniversary);
+
+            if(editText!=null){
+                if (StringUtils.length(StringUtils.trimToEmpty(editText.getText().toString())) < 1) {
 //            if (editText.getText().length() < 1) {
-                toAdd = false;
-                break;
-            } else {
-                toAdd = true;
+                    toAdd = false;
+                    break;
+                } else {
+                    toAdd = true;
+                }
             }
+
         }
         if (toAdd) {
             addView(viewType, linearLayout, null, -1);
@@ -841,17 +2086,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private void addView(int viewType, final LinearLayout linearLayout, Object detailObject, int
             position) {
         View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile, null);
-        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
+//        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
+        ImageView imageViewDelete = (ImageView) view.findViewById(R.id.image_delete);
         final Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
         final EditText inputValue = (EditText) view.findViewById(R.id.input_value);
         LinearLayout linerCheckbox = (LinearLayout) view.findViewById(R.id.liner_checkbox);
         final CheckBox checkboxHideYear = (CheckBox) view.findViewById(R.id.checkbox_hide_year);
         TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
         TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+        ImageView imageViewCalender = (ImageView) view.findViewById(R.id.image_calender);
+        imageViewCalender.setVisibility(View.GONE);
         final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
                 .relative_row_edit_profile);
 
-        textImageCross.setTypeface(Utils.typefaceIcons(this));
+//        textImageCross.setTypeface(Utils.typefaceIcons(this));
         inputValue.setTypeface(Utils.typefaceRegular(this));
         textLabelCheckbox.setTypeface(Utils.typefaceLight(this));
 
@@ -860,9 +2108,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         switch (viewType) {
             case AppConstants.PHONE_NUMBER:
                 linerCheckbox.setVisibility(View.GONE);
-                textImageCross.setTag(AppConstants.PHONE_NUMBER);
+//                textImageCross.setTag(AppConstants.PHONE_NUMBER);
+                imageViewDelete.setTag(AppConstants.PHONE_NUMBER);
+                inputValue.setHint("Optional Number");
                 spinnerType.setTag(AppConstants.PHONE_NUMBER);
-                inputValue.setHint("Number");
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_phone_number)));
                 spinnerPhoneAdapter = new ArrayAdapter<>(this, R.layout
@@ -875,7 +2124,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     if (position == 0) {
                         inputValue.setEnabled(false);
                         spinnerType.setVisibility(View.GONE);
-                        textImageCross.setVisibility(View.INVISIBLE);
+//                        textImageCross.setVisibility(View.INVISIBLE);
+                        imageViewDelete.setVisibility(View.INVISIBLE);
                     }
                     ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                             detailObject;
@@ -898,9 +2148,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             case AppConstants.EMAIL:
                 linerCheckbox.setVisibility(View.GONE);
-                textImageCross.setTag(AppConstants.EMAIL);
+//                textImageCross.setTag(AppConstants.EMAIL);
+                imageViewDelete.setTag(AppConstants.EMAIL);
+                inputValue.setHint("Optional Email");
                 spinnerType.setTag(AppConstants.EMAIL);
-                inputValue.setHint("Email");
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_email_address)));
                 spinnerEmailAdapter = new ArrayAdapter<>(this, R.layout
@@ -927,9 +2178,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             case AppConstants.WEBSITE:
                 linerCheckbox.setVisibility(View.GONE);
-                textImageCross.setTag(AppConstants.WEBSITE);
+//                textImageCross.setTag(AppConstants.WEBSITE);
+                imageViewDelete.setTag(AppConstants.WEBSITE);
+                inputValue.setHint("Web Address");
                 spinnerType.setTag(AppConstants.WEBSITE);
-                inputValue.setHint("Website");
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_email_address)));
                 spinnerWebsiteAdapter = new ArrayAdapter<>(this, R.layout
@@ -960,9 +2212,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             case AppConstants.IM_ACCOUNT:
                 linerCheckbox.setVisibility(View.GONE);
-                textImageCross.setTag(AppConstants.IM_ACCOUNT);
+//                textImageCross.setTag(AppConstants.IM_ACCOUNT);
+                imageViewDelete.setTag(AppConstants.IM_ACCOUNT);
+                inputValue.setHint("Account Name");
                 spinnerType.setTag(AppConstants.IM_ACCOUNT);
-                inputValue.setHint("Link");
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_social_media)));
                 spinnerImAccountAdapter = new ArrayAdapter<>(this, R.layout
@@ -995,10 +2248,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             case AppConstants.EVENT:
                 linerCheckbox.setVisibility(View.VISIBLE);
-                textImageCross.setTag(AppConstants.EVENT);
-                spinnerType.setTag(AppConstants.EVENT);
-                inputValue.setHint("Event");
+//                textImageCross.setTag(AppConstants.EVENT);
+                imageViewDelete.setTag(AppConstants.EVENT);
+                inputValue.setHint("Choose date");
                 inputValue.setFocusable(false);
+                spinnerType.setTag(AppConstants.EVENT);
+                imageViewCalender.setVisibility(View.VISIBLE);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_Event)));
                 spinnerEventAdapter = new ArrayAdapter<>(this, R.layout
@@ -1007,6 +2262,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         .simple_spinner_dropdown_item);
                 spinnerType.setAdapter(spinnerEventAdapter);
                 inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
+                inputValue.setTextSize((float) 13.5);
                 if (detailObject != null) {
                     ProfileDataOperationEvent event = (ProfileDataOperationEvent)
                             detailObject;
@@ -1025,10 +2281,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     spinnerType.setSelection(spinnerPosition);
                     relativeRowEditProfile.setTag(event.getEventId());
                 }
-                inputValue.setOnClickListener(new View.OnClickListener() {
+                /*inputValue.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         showDatePicker((EditText) v);
+                    }
+                });*/
+
+                imageViewCalender.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        isEvent = true;
+                        updateEventEditText(inputValue);
+
+
                     }
                 });
                 break;
@@ -1038,7 +2304,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
         }
 
-        textImageCross.setOnClickListener(new View.OnClickListener() {
+        imageViewDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch ((Integer) v.getTag()) {
@@ -1105,10 +2371,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     private void addOrganizationView(Object detailObject) {
-        View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_organization,
+//        View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_organization,
+//                null);
+        View view = LayoutInflater.from(this).inflate(R.layout.list_item_my_profile_edit_organization,
                 null);
-        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
-        TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
+//        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
+//        TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
+        ImageView deleteOrganization = (ImageView) view.findViewById(R.id.deleteOrganization);
         final EditText inputCompanyName = (EditText) view.findViewById(R.id.input_company_name);
         final EditText inputDesignationName = (EditText) view.findViewById(R.id
                 .input_designation_name);
@@ -1124,10 +2393,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputDesignationName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
                 .TYPE_TEXT_FLAG_CAP_WORDS);
 
-        textImageCross.setTypeface(Utils.typefaceIcons(this));
+//        textImageCross.setTypeface(Utils.typefaceIcons(this));
         inputCompanyName.setTypeface(Utils.typefaceRegular(this));
         inputDesignationName.setTypeface(Utils.typefaceRegular(this));
-        textLabelCheckbox.setTypeface(Utils.typefaceLight(this));
+//        textLabelCheckbox.setTypeface(Utils.typefaceLight(this));
 
         ProfileDataOperationOrganization organization = (ProfileDataOperationOrganization)
                 detailObject;
@@ -1148,16 +2417,19 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         View view = linearOrganizationDetails.getChildAt(i);
                         CheckBox checkbox = (CheckBox) view.findViewById(R.id
                                 .checkbox_organization);
-                        if (!(checkbox.getTag() == buttonView.getTag())) {
-                            checkbox.setChecked(false);
+                        if(checkbox!=null){
+                            if (!(checkbox.getTag() == buttonView.getTag())) {
+                                checkbox.setChecked(false);
+                            }
                         }
+
                     }
+
                 }
             }
         });
 
-        textImageCross.setOnClickListener(new View.OnClickListener()
-
+        deleteOrganization.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v) {
@@ -1170,13 +2442,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         });
 
+
         linearOrganizationDetails.addView(view);
     }
 
     private void addAddressView(final Object detailObject, final int position) {
         View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_address,
                 null);
-        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
+//        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
+        ImageView imageViewDelete = (ImageView) view.findViewById(R.id.image_delete);
         TextView textImageMapMarker = (TextView) view.findViewById(R.id.text_image_map_marker);
         Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
         inputCountry = (EditText) view.findViewById(R.id.input_country);
@@ -1202,7 +2476,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 .TYPE_TEXT_FLAG_CAP_WORDS);
         inputPinCode.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-        textImageCross.setTypeface(Utils.typefaceIcons(this));
+//        textImageCross.setTypeface(Utils.typefaceIcons(this));
         textImageMapMarker.setTypeface(Utils.typefaceIcons(this));
         inputCountry.setTypeface(Utils.typefaceRegular(this));
         inputState.setTypeface(Utils.typefaceRegular(this));
@@ -1216,7 +2490,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputState.setHint("State (Required)");
         inputCity.setHint("City (Required)");
         inputStreet.setHint("Street (Required)");
-        inputNeighborhood.setHint("Neighborhood");
+        inputNeighborhood.setHint("Landmark");
         inputPinCode.setHint("Pincode");
         inputPoBox.setHint("Po. Box No.");
 
@@ -1252,7 +2526,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
 
 
-        textImageCross.setOnClickListener(new View.OnClickListener() {
+        imageViewDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (linearAddressDetails.getChildCount() > 1) {
@@ -1567,7 +2841,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     private void editProfile(ProfileDataOperation editProfile) {
 
-        /*WsRequestObject editProfileObject = new WsRequestObject();
+        WsRequestObject editProfileObject = new WsRequestObject();
         editProfileObject.setProfileEdit(editProfile);
 
         if (Utils.isNetworkAvailable(this)) {
@@ -1578,8 +2852,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
                     .getString(R.string.msg_no_network));
-        }*/
+        }
     }
+
+
 
     //</editor-fold>
 

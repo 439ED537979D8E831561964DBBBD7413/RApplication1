@@ -25,6 +25,7 @@ import android.transition.Slide;
 import android.transition.Transition;
 import android.transition.TransitionSet;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -442,9 +443,14 @@ public class DialerActivity extends Activity {
         editTextNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                editTextNumber.requestFocus();
+                editTextNumber.setCursorVisible(true);
+                String mainText = editTextNumber.getText().toString();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context
                         .INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(editTextNumber.getWindowToken(), 0);
+
+
             }
         });
 

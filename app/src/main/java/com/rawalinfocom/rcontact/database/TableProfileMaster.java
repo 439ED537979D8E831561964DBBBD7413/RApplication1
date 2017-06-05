@@ -591,5 +591,31 @@ public class TableProfileMaster {
         // return user profile list
         return userProfiles;
     }
+    public ArrayList<String> getAllRcpIdFromRawId(String rawId) {
 
+        ArrayList<String> rcpIds = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT " + COLUMN_PM_RCP_ID + "," + COLUMN_PM_FIRST_NAME + "," +
+                COLUMN_PM_LAST_NAME + " FROM " + TABLE_RC_PROFILE_MASTER + " WHERE " +
+                COLUMN_PM_RAW_ID + " LIKE '%" + rawId + "%'";
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor != null) {
+
+            if (cursor.moveToFirst()) {
+                do {
+                    rcpIds.add(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_RCP_ID)));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+
+        db.close();
+
+        return rcpIds;
+    }
 }

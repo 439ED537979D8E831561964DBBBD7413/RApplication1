@@ -49,10 +49,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.rawalinfocom.rcontact.BaseActivity;
-import com.rawalinfocom.rcontact.ContactListingActivity;
-import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.RContactApplication;
+import com.rawalinfocom.rcontact.*;
 import com.rawalinfocom.rcontact.adapters.CallHistoryListAdapter;
 import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
 import com.rawalinfocom.rcontact.adapters.PhoneBookContactDetailAdapter;
@@ -675,10 +672,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     }
 
                 } else if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_EDIT)) {
-                    startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
-                            null);
-                    /*Intent i = new Intent(ProfileDetailActivity.this, EditProfileTempActivity
-                    .class);
+                    /*startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
+                            null);*/
+                    startActivityIntent(ProfileDetailActivity.this, com.rawalinfocom.rcontact.EditProfileActivity.class,null);
+                    /*Intent i = new Intent(ProfileDetailActivity.this, EditProfileActivity.class);
                     startActivityForResult(i, 1);
                     overridePendingTransition(R.anim.enter, R.anim.exit);*/
                 }
@@ -793,7 +790,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             // RCP Contact from RCP tab
                             menuType = OptionMenuDialog.R_CONTACT_RCP;
                         } else if (StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
-                            // PB Contact 
+                            // PB Contact
                             menuType = OptionMenuDialog.ALL_CONTACT_NON_RCP;
                         } else {
                             // RCP Contact
@@ -1810,6 +1807,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imageRightLeft.setImageResource(R.drawable.ic_action_edit);
                 rippleActionRightRight.setVisibility(View.GONE);
                 imageRightLeft.setTag(TAG_IMAGE_EDIT);
+                imageRightLeft.setVisibility(View.VISIBLE);
             } else {
                 textToolbarTitle.setText("Profile Detail");
                 linearCallSms.setVisibility(View.VISIBLE);

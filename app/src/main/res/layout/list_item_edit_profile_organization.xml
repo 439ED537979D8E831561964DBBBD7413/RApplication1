@@ -18,10 +18,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginStart="@dimen/margin_small"
-        android:layout_toLeftOf="@id/text_image_cross"
-        android:layout_toStartOf="@id/text_image_cross"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/text_image_cross">
 
         <EditText
             android:id="@+id/input_company_name"

@@ -10,7 +10,7 @@ import android.util.Log;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
-import com.rawalinfocom.rcontact.observer.PhoneContentObserver;
+//import com.rawalinfocom.rcontact.observer.PhoneContentObserver;
 
 import org.apache.commons.lang3.StringUtils;
 

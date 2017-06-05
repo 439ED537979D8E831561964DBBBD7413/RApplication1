@@ -28,4 +28,8 @@
         <item name="android:textSize">11sp</item>
     </style>
 
+    <!--<style name="DarkGrayCheck">
+        <item name="colorDarkGray">#E6444444</item>
+    </style>-->
+
 </resources>

@@ -46,7 +46,7 @@
                     android:scrollHorizontally="true"
                     android:singleLine="true"
                     android:textAppearance="?android:textAppearanceMedium"
-                    tools:text="Hello World"/>
+                    tools:text="Hello World" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -231,7 +231,7 @@
                         android:id="@+id/button_call_log"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/colorAccent"
+                        android:background="@drawable/rounded_cornor_green_background"
                         android:text="Call Log"
                         android:textColor="@color/colorWhite"/>
                 </com.rawalinfocom.rcontact.helper.RippleView>
@@ -252,7 +252,7 @@
                         android:id="@+id/button_sms"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/colorAccent"
+                        android:background="@drawable/rounded_cornor_green_background"
                         android:text="SMS"
                         android:textColor="@color/colorWhite"/>
                 </com.rawalinfocom.rcontact.helper.RippleView>
@@ -394,7 +394,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/recycler_call_history"
                     android:layout_centerHorizontal="true"
-                    android:background="@color/colorAccent"
+                    android:background="@drawable/rounded_cornor_green_background"
                     android:padding="@dimen/padding_10dp"
                     android:text="View old records"
                     android:textColor="@color/colorWhite"/>

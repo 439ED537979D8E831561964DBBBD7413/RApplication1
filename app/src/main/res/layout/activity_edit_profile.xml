@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relative_root_edit_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rawalinfocom.rcontact.contacts.EditProfileActivity">
 
+
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_toolbar_edit_profile_details"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none">
+        android:scrollbars="none"
+        android:layout_below="@+id/include_toolbar">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin_10dp">
 
             <ImageView
                 android:id="@+id/image_profile"
@@ -22,7 +30,7 @@
                 android:layout_height="150dp"
                 android:layout_centerHorizontal="true"
                 android:contentDescription="@string/str_content_description"
-                tools:src="@mipmap/ic_launcher"/>
+                tools:src="@mipmap/ic_launcher" />
 
             <TextView
                 android:id="@+id/text_label_profile_image"
@@ -31,7 +39,7 @@
                 android:layout_below="@id/image_profile"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/margin_tiny"
-                android:text="Change Profile Picture"/>
+                android:text="Change Profile Picture" />
 
             <LinearLayout
                 android:id="@+id/linear_name"
@@ -44,7 +52,16 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relativeName">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray"
+                        android:layout_above="@+id/text_label_name"
+                        android:layout_marginBottom="@dimen/margin_3dp">
+                    </View>
 
                     <TextView
                         android:id="@+id/text_label_name"
@@ -52,7 +69,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="Name"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_name_expand"
@@ -61,28 +78,47 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray"
+                        android:layout_below="@+id/image_name_expand"
+                        android:layout_marginTop="@dimen/margin_3dp">
+                    </View>
 
                 </RelativeLayout>
 
-                <EditText
-                    android:id="@+id/input_first_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/hint_first_name"
-                    android:inputType="textPersonName"/>
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relativeNameDetails"
+                    android:visibility="visible">
 
-                <EditText
-                    android:id="@+id/input_last_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/hint_last_name"
-                    android:inputType="textPersonName"/>
+                    <EditText
+                        android:id="@+id/input_first_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="@string/hint_first_name"
+                        android:inputType="textPersonName" />
+
+                    <EditText
+                        android:id="@+id/input_last_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/input_first_name"
+                        android:hint="@string/hint_last_name"
+                        android:inputType="textPersonName" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:id="@+id/linearNameBottom"
+                    android:visibility="visible">
 
                     <Button
                         android:id="@+id/button_name_update"
@@ -91,9 +127,9 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorAccent"
-                        android:text="Update"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_cornor_green_background"
+                        android:text="@string/update"
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_name_cancel"
@@ -102,26 +138,168 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="@string/action_cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_corner_light_gray_background"
+                        android:text="@string/cancel"
+                        android:textColor="@color/colorWhite" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/linear_phone"
+                android:id="@+id/linear_organization"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/linear_name"
+                android:layout_marginTop="@dimen/margin_tiny"
+                android:orientation="vertical"
+                android:padding="@dimen/margin_small"
+                android:visibility="visible">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relativeOrganization">
+
+                    <TextView
+                        android:id="@+id/text_label_organization"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/str_organization"
+                        android:textAppearance="?android:textAppearanceMedium" />
+
+                    <ImageView
+                        android:id="@+id/image_organization_expand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="@string/str_content_description"
+                        android:src="@drawable/ic_arrow_bottom" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray"
+                        android:layout_below="@+id/image_organization_expand"
+                        android:layout_marginTop="@dimen/margin_3dp">
+                    </View>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_organization_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_tiny"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/input_organization_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_marginTop="@dimen/margin_5dp"
+                            android:layout_toLeftOf="@+id/deleteOrganization"
+                            android:hint="@string/hint_organization_name"
+                            android:inputType="textPersonName"
+                            android:textColor="@color/colorAccent" />
+
+                        <ImageView
+                            android:id="@+id/deleteOrganization"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_delete"
+                            android:visibility="visible" />
+                    </RelativeLayout>
+
+                    <EditText
+                        android:id="@+id/input_organization_designation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_5dp"
+                        android:hint="@string/hint_organization_designation"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/colorAccent" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_current_organization"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_5dp"
+                        android:text="@string/check_text_current_organization"
+                        android:textColor="@color/darkGray" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/linearOrganizationButtons"
+                    android:visibility="visible">
+
+                    <Button
+                        android:id="@+id/button_organization_add_field"
+                        style="?android:attr/buttonBarStyle"
+                        android:layout_width="@dimen/margin_10dp"
+                        android:layout_height="@dimen/height_button"
+                        android:layout_marginEnd="@dimen/margin_tiny"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_rounded_border_green"
+                        android:text="@string/add_field"
+                        android:textColor="@color/colorAccent" />
+
+                    <Button
+                        android:id="@+id/button_organization_update"
+                        style="?android:attr/buttonBarStyle"
+                        android:layout_width="@dimen/margin_10dp"
+                        android:layout_height="@dimen/height_button"
+                        android:layout_marginEnd="@dimen/margin_tiny"
+                        android:layout_marginStart="@dimen/margin_tiny"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_cornor_green_background"
+                        android:text="@string/update"
+                        android:textColor="@color/colorWhite" />
+
+                    <Button
+                        android:id="@+id/button_organization_cancel"
+                        style="?android:attr/buttonBarStyle"
+                        android:layout_width="@dimen/margin_10dp"
+                        android:layout_height="@dimen/height_button"
+                        android:layout_marginStart="@dimen/margin_tiny"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_corner_light_gray_background"
+                        android:text="@string/cancel"
+                        android:textColor="@color/colorWhite" />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:id="@+id/linear_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear_organization"
                 android:layout_marginTop="@dimen/margin_tiny"
                 android:orientation="vertical"
                 android:padding="@dimen/margin_small">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relativePhone">
 
                     <TextView
                         android:id="@+id/text_label_phone"
@@ -129,7 +307,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="Phone"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_phone_expand"
@@ -138,7 +316,15 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray"
+                        android:layout_below="@+id/image_phone_expand"
+                        android:layout_marginTop="@dimen/margin_3dp">
+                    </View>
 
                 </RelativeLayout>
 
@@ -147,12 +333,67 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_tiny"
-                    android:orientation="vertical"/>
+                    android:orientation="vertical">
+
+                    <!--<View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray">
+
+                    </View>-->
+
+                    <EditText
+                        android:id="@+id/input_registered_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/margin_5dp"
+                        android:hint="@string/hint_registered_number"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/colorAccent" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/input_optional_number"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_marginTop="@dimen/margin_5dp"
+                            android:layout_toLeftOf="@+id/spinneNumberType"
+                            android:hint="@string/hint_optional_number"
+                            android:inputType="number"
+                            android:textColor="@color/colorAccent" />
+
+                        <Spinner
+                            android:id="@+id/spinneNumberType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/deleteNumber"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_centerVertical="true"
+                            android:visibility="visible" />
+
+                        <ImageView
+                            android:id="@+id/deleteNumber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_delete"
+                            android:visibility="visible" />
+
+                    </RelativeLayout>
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:id="@+id/linearPhoneButtons">
 
                     <Button
                         android:id="@+id/button_phone_add_field"
@@ -161,9 +402,9 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="Add Field"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/background_rounded_border_green"
+                        android:text="@string/add_field"
+                        android:textColor="@color/colorAccent" />
 
                     <Button
                         android:id="@+id/button_phone_update"
@@ -173,9 +414,9 @@
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorAccent"
-                        android:text="Update"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_cornor_green_background"
+                        android:text="@string/update"
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_phone_cancel"
@@ -184,11 +425,10 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="@string/action_cancel"
-                        android:textColor="@color/colorWhite"/>
-
-
+                        android:background="@drawable/rounded_corner_light_gray_background"
+                        android:text="@string/cancel"
+                        android:textColor="@color/colorWhite" />
+                    ]
                 </LinearLayout>
 
             </LinearLayout>
@@ -204,7 +444,8 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relativeEmail">
 
                     <TextView
                         android:id="@+id/text_label_email"
@@ -212,7 +453,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="Email"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_email_expand"
@@ -221,7 +462,15 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray"
+                        android:layout_below="@+id/image_email_expand"
+                        android:layout_marginTop="@dimen/margin_3dp">
+                    </View>
 
                 </RelativeLayout>
 
@@ -230,12 +479,68 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_tiny"
-                    android:orientation="vertical"/>
+                    android:orientation="vertical">
+
+
+                   <!-- <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray">
+
+                    </View>-->
+
+                    <EditText
+                        android:id="@+id/input_registered_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/margin_5dp"
+                        android:hint="@string/hint_registered_email"
+                        android:inputType="textEmailAddress"
+                        android:textColor="@color/colorAccent" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/input_optional_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_marginTop="@dimen/margin_5dp"
+                            android:layout_toLeftOf="@+id/spinnerNumberTypeEmail"
+                            android:hint="@string/hint_optional_email"
+                            android:inputType="textEmailAddress"
+                            android:textColor="@color/colorAccent" />
+
+                        <Spinner
+                            android:id="@+id/spinnerNumberTypeEmail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/deleteEmail"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_centerVertical="true"
+                            android:visibility="visible" />
+
+                        <ImageView
+                            android:id="@+id/deleteEmail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_delete"
+                            android:visibility="visible" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:id="@+id/linearEmailButtons">
 
                     <Button
                         android:id="@+id/button_email_add_field"
@@ -244,9 +549,9 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="Add Field"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/background_rounded_border_green"
+                        android:text="@string/add_field"
+                        android:textColor="@color/colorAccent" />
 
                     <Button
                         android:id="@+id/button_email_update"
@@ -256,9 +561,9 @@
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorAccent"
-                        android:text="Update"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_cornor_green_background"
+                        android:text="@string/update"
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_email_cancel"
@@ -267,92 +572,9 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="@string/action_cancel"
-                        android:textColor="@color/colorWhite"/>
-
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linear_organization"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/linear_email"
-                android:layout_marginTop="@dimen/margin_tiny"
-                android:orientation="vertical"
-                android:padding="@dimen/margin_small">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/text_label_organization"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="@string/str_organization"
-                        android:textAppearance="?android:textAppearanceMedium"/>
-
-                    <ImageView
-                        android:id="@+id/image_organization_expand"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
-
-                </RelativeLayout>
-
-                <LinearLayout
-                    android:id="@+id/linear_organization_details"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_tiny"
-                    android:orientation="vertical"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <Button
-                        android:id="@+id/button_organization_add_field"
-                        style="?android:attr/buttonBarStyle"
-                        android:layout_width="@dimen/margin_10dp"
-                        android:layout_height="@dimen/height_button"
-                        android:layout_marginEnd="@dimen/margin_tiny"
-                        android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="Add Field"
-                        android:textColor="@color/colorWhite"/>
-
-                    <Button
-                        android:id="@+id/button_organization_update"
-                        style="?android:attr/buttonBarStyle"
-                        android:layout_width="@dimen/margin_10dp"
-                        android:layout_height="@dimen/height_button"
-                        android:layout_marginEnd="@dimen/margin_tiny"
-                        android:layout_marginStart="@dimen/margin_tiny"
-                        android:layout_weight="1"
-                        android:background="@color/colorAccent"
-                        android:text="Update"
-                        android:textColor="@color/colorWhite"/>
-
-                    <Button
-                        android:id="@+id/button_organization_cancel"
-                        style="?android:attr/buttonBarStyle"
-                        android:layout_width="@dimen/margin_10dp"
-                        android:layout_height="@dimen/height_button"
-                        android:layout_marginStart="@dimen/margin_tiny"
-                        android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="@string/action_cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_corner_light_gray_background"
+                        android:text="@string/cancel"
+                        android:textColor="@color/colorWhite" />
 
 
                 </LinearLayout>
@@ -363,14 +585,15 @@
                 android:id="@+id/linear_website"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/linear_organization"
+                android:layout_below="@id/linear_email"
                 android:layout_marginTop="@dimen/margin_tiny"
                 android:orientation="vertical"
                 android:padding="@dimen/margin_small">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relativeWebsite">
 
                     <TextView
                         android:id="@+id/text_label_website"
@@ -378,7 +601,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="@string/str_website"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_website_expand"
@@ -387,7 +610,15 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray"
+                        android:layout_below="@+id/image_website_expand"
+                        android:layout_marginTop="@dimen/margin_3dp">
+                    </View>
 
                 </RelativeLayout>
 
@@ -396,12 +627,58 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_tiny"
-                    android:orientation="vertical"/>
+                    android:orientation="vertical">
+
+                   <!-- <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray">
+
+                    </View>-->
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/input_web_address"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_marginTop="@dimen/margin_5dp"
+                            android:layout_toLeftOf="@+id/spinnerNumberTypeWeb"
+                            android:hint="@string/hint_web_address"
+                            android:inputType="textWebEditText"
+                            android:textColor="@color/colorAccent" />
+
+                        <Spinner
+                            android:id="@+id/spinnerNumberTypeWeb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/deleteWebsite"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_centerVertical="true"
+                            android:visibility="visible" />
+
+                        <ImageView
+                            android:id="@+id/deleteWebsite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_delete"
+                            android:visibility="visible" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:id="@+id/linearWebsiteButtons">
 
                     <Button
                         android:id="@+id/button_website_add_field"
@@ -410,9 +687,9 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="Add Field"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/background_rounded_border_green"
+                        android:text="@string/add_field"
+                        android:textColor="@color/colorAccent" />
 
                     <Button
                         android:id="@+id/button_website_update"
@@ -422,9 +699,9 @@
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorAccent"
-                        android:text="Update"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_cornor_green_background"
+                        android:text="@string/update"
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_website_cancel"
@@ -433,9 +710,9 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="@string/action_cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_corner_light_gray_background"
+                        android:text="@string/cancel"
+                        android:textColor="@color/colorWhite" />
 
 
                 </LinearLayout>
@@ -453,7 +730,8 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relativeAddress">
 
                     <TextView
                         android:id="@+id/text_label_address"
@@ -461,7 +739,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="@string/str_address"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_address_expand"
@@ -470,7 +748,14 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray"
+                        android:layout_below="@+id/image_address_expand"
+                        android:layout_marginTop="@dimen/margin_3dp">
+                    </View>
 
                 </RelativeLayout>
 
@@ -479,12 +764,142 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_tiny"
-                    android:orientation="vertical"/>
+                    android:orientation="vertical">
+
+                    <!--<View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray">
+
+                    </View>-->
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/input_country"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_marginTop="@dimen/margin_5dp"
+                            android:layout_toLeftOf="@+id/spinnerNumberTypeCountry"
+                            android:hint="@string/hint_country"
+                            android:inputType="textPersonName"
+                            android:textColor="@color/colorAccent" />
+
+                        <Spinner
+                            android:id="@+id/spinnerNumberTypeCountry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@+id/deleteAddress"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:visibility="visible" />
+
+                        <ImageView
+                            android:id="@+id/deleteAddress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_delete"
+                            android:visibility="visible" />
+
+                    </RelativeLayout>
+
+                    <EditText
+                        android:id="@+id/input_city"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/margin_5dp"
+                        android:hint="@string/hint_city"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/colorAccent" />
+
+                    <EditText
+                        android:id="@+id/input_capital"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/margin_5dp"
+                        android:hint="@string/hint_capital"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/colorAccent" />
+
+                    <EditText
+                        android:id="@+id/input_Steet1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/margin_5dp"
+                        android:hint="@string/hint_street"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/colorAccent" />
+
+                    <EditText
+                        android:id="@+id/input_landmark"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/margin_5dp"
+                        android:hint="@string/hint_landmark"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/colorAccent" />
+
+                    <!--<EditText
+                        android:id="@+id/input_pincode"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/margin_5dp"
+                        android:hint="@string/hint_pincode"
+                        android:inputType="number"
+                        android:textColor="@color/colorAccent"
+                        android:visibility="gone"/>-->
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_5dp">
+
+                        <EditText
+                            android:id="@+id/input_google_pin"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_marginTop="@dimen/margin_5dp"
+                            android:layout_toLeftOf="@+id/image_map_marker"
+                            android:hint="@string/hint_google_code"
+                            android:inputType="number"
+                            android:textColor="@color/colorAccent"
+                            android:visibility="gone"/>
+
+                        <EditText
+                            android:id="@+id/input_pincode"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_marginTop="@dimen/margin_5dp"
+                            android:layout_toLeftOf="@+id/image_map_marker"
+                            android:hint="@string/hint_pincode"
+                            android:inputType="number"
+                            android:textColor="@color/colorAccent" />
+
+                        <ImageView
+                            android:id="@+id/image_map_marker"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:contentDescription="@string/str_content_description"
+                            android:src="@drawable/ic_map_marker_gray" />
+                    </RelativeLayout>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:id="@+id/linearAddressButtons">
 
                     <Button
                         android:id="@+id/button_address_add_field"
@@ -493,9 +908,9 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="Add Field"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/background_rounded_border_green"
+                        android:text="@string/add_field"
+                        android:textColor="@color/colorAccent" />
 
                     <Button
                         android:id="@+id/button_address_update"
@@ -505,9 +920,9 @@
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorAccent"
-                        android:text="Update"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_cornor_green_background"
+                        android:text="@string/update"
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_address_cancel"
@@ -516,9 +931,9 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="@string/action_cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_corner_light_gray_background"
+                        android:text="@string/cancel"
+                        android:textColor="@color/colorWhite" />
 
 
                 </LinearLayout>
@@ -536,7 +951,8 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relativeSocialConnect">
 
                     <TextView
                         android:id="@+id/text_label_social_contact"
@@ -544,7 +960,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="Social Connect"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_social_contact_expand"
@@ -553,7 +969,15 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray"
+                        android:layout_below="@+id/image_social_contact_expand"
+                        android:layout_marginTop="@dimen/margin_3dp">
+                    </View>
 
                 </RelativeLayout>
 
@@ -562,12 +986,131 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_tiny"
-                    android:orientation="vertical"/>
+                    android:orientation="vertical">
+
+                    <!--<View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray">
+
+                    </View>-->
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/input_facebook_username"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_marginTop="@dimen/margin_5dp"
+                            android:layout_toLeftOf="@+id/spinner_facebook"
+                            android:hint="@string/hint_facebook_username"
+                            android:inputType="textPersonName"
+                            android:textColor="@color/colorAccent" />
+
+                        <Spinner
+                            android:id="@+id/spinner_facebook"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@+id/deleteFacebook"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:visibility="visible" />
+
+                        <ImageView
+                            android:id="@+id/deleteFacebook"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_delete"
+                            android:visibility="visible" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/input_skypee_username"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_marginTop="@dimen/margin_5dp"
+                            android:layout_toLeftOf="@+id/spinner_skypee"
+                            android:hint="@string/hint_skypee_username"
+                            android:inputType="textPersonName"
+                            android:textColor="@color/colorAccent" />
+
+                        <Spinner
+                            android:id="@+id/spinner_skypee"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/deleteSkypee"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_centerVertical="true"
+                            android:visibility="visible" />
+
+                        <ImageView
+                            android:id="@+id/deleteSkypee"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_delete"
+                            android:visibility="visible" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/input_twitter_username"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_marginTop="@dimen/margin_5dp"
+                            android:layout_toLeftOf="@+id/spinner_twitter"
+                            android:hint="@string/hint_twitter_username"
+                            android:inputType="textPersonName"
+                            android:textColor="@color/colorAccent" />
+
+                        <Spinner
+                            android:id="@+id/spinner_twitter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@+id/deleteTwitter"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:visibility="visible" />
+
+                        <ImageView
+                            android:id="@+id/deleteTwitter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_delete"
+                            android:visibility="visible" />
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:id="@+id/linearSocialButtons">
 
                     <Button
                         android:id="@+id/button_social_contact_add_field"
@@ -576,9 +1119,9 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="Add Field"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/background_rounded_border_green"
+                        android:text="@string/add_field"
+                        android:textColor="@color/colorAccent" />
 
                     <Button
                         android:id="@+id/button_social_contact_update"
@@ -588,9 +1131,9 @@
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorAccent"
-                        android:text="Update"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_cornor_green_background"
+                        android:text="@string/update"
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_social_contact_cancel"
@@ -599,9 +1142,9 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="@string/action_cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_corner_light_gray_background"
+                        android:text="@string/cancel"
+                        android:textColor="@color/colorWhite" />
 
 
                 </LinearLayout>
@@ -619,7 +1162,8 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relativeEvent">
 
                     <TextView
                         android:id="@+id/text_label_event"
@@ -627,7 +1171,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="@string/str_event"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_event_expand"
@@ -636,7 +1180,15 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray"
+                        android:layout_below="@+id/image_event_expand"
+                        android:layout_marginTop="@dimen/margin_3dp">
+                    </View>
 
                 </RelativeLayout>
 
@@ -645,12 +1197,131 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_tiny"
-                    android:orientation="vertical"/>
+                    android:orientation="vertical">
+
+                    <!--<View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray">
+
+                    </View>-->
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/input_birthday"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="@dimen/margin_5dp"
+                            android:hint="@string/hint_select_born_date"
+                            android:layout_toLeftOf="@+id/birth_calender"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:inputType="textPersonName"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="@dimen/text_size_14sp"/>
+
+                        <ImageView
+                            android:id="@+id/birth_calender"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_toLeftOf="@+id/spinner_birthday"
+                            android:src="@drawable/ic_date_picker" />
+
+                        <Spinner
+                            android:id="@+id/spinner_birthday"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@+id/deleteBirthday"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:visibility="visible" />
+
+                        <ImageView
+                            android:id="@+id/deleteBirthday"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_delete"
+                            android:visibility="visible" />
+
+
+                    </RelativeLayout>
+
+                    <CheckBox
+                        android:id="@+id/checkbox_birthday"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/check_text_donot_show_year"
+                        android:textColor="@color/darkGray" />
+
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/input_anniversary"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="@dimen/margin_5dp"
+                            android:hint="@string/hint_select_anniversary"
+                            android:layout_toLeftOf="@+id/anniversary_calender"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:inputType="textPersonName"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="@dimen/text_size_14sp"/>
+
+                        <ImageView
+                            android:id="@+id/anniversary_calender"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:layout_toLeftOf="@+id/spinner_anniversary"
+                            android:src="@drawable/ic_date_picker" />
+
+                        <Spinner
+                            android:id="@+id/spinner_anniversary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@+id/deleteAnniversary"
+                            android:layout_marginRight="@dimen/margin_5dp"
+                            android:visibility="visible" />
+
+                        <ImageView
+                            android:id="@+id/deleteAnniversary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_delete"
+                            android:visibility="visible" />
+
+                    </RelativeLayout>
+
+                    <CheckBox
+                        android:id="@+id/checkbox_anniversary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_5dp"
+                        android:text="@string/check_text_donot_show_year"
+                        android:textColor="@color/darkGray" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:id="@+id/linearEventButtons">
 
                     <Button
                         android:id="@+id/button_event_add_field"
@@ -659,9 +1330,9 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="Add Field"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/background_rounded_border_green"
+                        android:text="@string/add_field"
+                        android:textColor="@color/colorAccent" />
 
                     <Button
                         android:id="@+id/button_event_update"
@@ -671,9 +1342,9 @@
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorAccent"
-                        android:text="Update"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_cornor_green_background"
+                        android:text="@string/update"
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_event_cancel"
@@ -682,9 +1353,9 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="@string/action_cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_corner_light_gray_background"
+                        android:text="@string/cancel"
+                        android:textColor="@color/colorWhite" />
 
 
                 </LinearLayout>
@@ -702,7 +1373,9 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relativeGender"
+                    android:layout_marginBottom="@dimen/margin_10dp">
 
                     <TextView
                         android:id="@+id/text_label_gender"
@@ -710,7 +1383,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="@string/str_gender"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_gender_expand"
@@ -719,7 +1392,15 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray"
+                        android:layout_below="@+id/image_gender_expand"
+                        android:layout_marginTop="@dimen/margin_3dp">
+                    </View>
 
                 </RelativeLayout>
 
@@ -728,12 +1409,75 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_tiny"
-                    android:orientation="vertical"/>
+                    android:orientation="vertical">
+
+                    <!--<View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorDarkGray">
+                    </View>-->
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/linear_male"
+                            android:orientation="vertical">
+
+                           <TextView
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:id="@+id/text_male_icon"
+                               tools:text="@string/im_gender_male"
+                               android:layout_gravity="center"
+                               android:textSize="@dimen/text_size_45sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/text_male"
+                                android:text="@string/str_male"
+                                android:layout_gravity="center_horizontal"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/linear_female"
+                            android:orientation="vertical"
+                            android:layout_marginRight="@dimen/margin_10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/text_female_icon"
+                                android:layout_gravity="center"
+                                android:textSize="@dimen/text_size_45sp"
+                                tools:text="@string/im_female"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/text_female"
+                                android:text="@string/str_female"
+                                android:layout_gravity="center_horizontal"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:id="@+id/linearGenderButtons"
+                    android:layout_marginBottom="@dimen/margin_5dp">
 
                     <Button
                         android:id="@+id/button_gender_update"
@@ -743,9 +1487,9 @@
                         android:layout_marginEnd="@dimen/margin_tiny"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorAccent"
-                        android:text="Update"
-                        android:textColor="@color/colorWhite"/>
+                        android:background="@drawable/rounded_cornor_green_background"
+                        android:text="@string/update"
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_gender_cancel"
@@ -754,10 +1498,9 @@
                         android:layout_height="@dimen/height_button"
                         android:layout_marginStart="@dimen/margin_tiny"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkGray"
-                        android:text="@string/action_cancel"
-                        android:textColor="@color/colorWhite"/>
-
+                        android:background="@drawable/rounded_corner_light_gray_background"
+                        android:text="@string/cancel"
+                        android:textColor="@color/colorWhite" />
 
                 </LinearLayout>
 
