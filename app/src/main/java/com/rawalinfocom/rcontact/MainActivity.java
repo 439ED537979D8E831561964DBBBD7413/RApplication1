@@ -52,7 +52,6 @@ import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
-import com.rawalinfocom.rcontact.contacts.RContactsFragment;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.PhoneBookSMSLogs;
