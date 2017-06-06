@@ -1955,8 +1955,6 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                         EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
                 arrayListNewEvent.add(event);
             }
-
-
         }
 
         //</editor-fold>
