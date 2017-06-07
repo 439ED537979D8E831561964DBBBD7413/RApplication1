@@ -2799,9 +2799,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                       /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
                                 number));
-                        startActivity(intent);
+                        startActivity(intent);*/
+                        Utils.callIntent(ProfileDetailActivity.this, number);
                         break;
                 }
             }

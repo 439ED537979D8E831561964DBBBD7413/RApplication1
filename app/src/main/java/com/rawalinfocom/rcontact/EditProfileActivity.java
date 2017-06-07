@@ -301,6 +301,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     EditText inputStreet;
     EditText inputNeighborhood;
     EditText inputPinCode;
+    TextView textImageMapMarker;
 
     ArrayAdapter<String> spinnerPhoneAdapter, spinnerEmailAdapter, spinnerWebsiteAdapter,
             spinnerImAccountAdapter, spinnerEventAdapter;
@@ -488,6 +489,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             inputCity.setText(inputCity.getText().toString());
                         } else {
                             inputCity.setText("Surat");
+                        }
+                        if (StringUtils.length(inputStreet.getText().toString()) > 0) {
+                            inputStreet.setText(inputStreet.getText().toString());
+                        } else {
+                            inputStreet.setText("");
                         }
                         if (StringUtils.length(inputStreet.getText().toString()) > 0) {
                             inputStreet.setText(inputStreet.getText().toString());
@@ -690,7 +696,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
             //</editor-fold>
 
-            // <editor-fold desc="button_name_update">
+            // <editor-fold desc="button_phone_update">
             case R.id.button_phone_update:
                 ArrayList<ProfileDataOperationPhoneNumber> arrayListNewPhone = new ArrayList<>();
                 for (int i = 0; i < linearPhoneDetails.getChildCount(); i++) {
@@ -908,7 +914,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
             //</editor-fold>
 
-            // <editor-fold desc="button_event_update">
+            // <editor-fold desc="button_address_update">
             case R.id.button_address_update:
                 ArrayList<ProfileDataOperationAddress> arrayListNewAddress = new ArrayList<>();
                 isValid = true;
@@ -924,8 +930,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .input_neighborhood);
                     EditText pinCode = (EditText) linearAddress.findViewById(R.id.input_pin_code);
                     RelativeLayout relativeRowEditProfile = (RelativeLayout) linearAddress
-                            .findViewById(R
-                                    .id.relative_row_edit_profile);
+                            .findViewById(R.id.relative_row_edit_profile);
                     TextView textLatitude = (TextView) linearAddress.findViewById(R.id
                             .input_latitude);
                     TextView textLongitude = (TextView) linearAddress.findViewById(R.id
@@ -949,8 +954,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     address.setNeighborhood(neighborhoodName);
                     address.setPostCode(pinCodeName);
                     address.setFormattedAddress(Utils.setFormattedAddress(streetName,
-                            neighborhoodName,
-                            cityName, stateName, countryName, pinCodeName));
+                            neighborhoodName, cityName, stateName, countryName, pinCodeName));
                     address.setAddressType((String) addressType.getSelectedItem());
                     address.setGoogleAddress(textGoogleAddress.getText().toString());
                     address.setGoogleLatitude(textLatitude.getText().toString());
@@ -976,6 +980,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         } else {
                                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                                     "Address mapping on Map is required!");
+//                                            textma
                                             isValid = false;
                                             break;
                                         }
@@ -1020,6 +1025,79 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
+    @OnClick({R.id.button_name_cancel, R.id.button_phone_cancel, R.id.button_email_cancel, R.id
+            .button_website_cancel, R.id.button_social_contact_cancel, R.id
+            .button_organization_cancel, R.id.button_gender_cancel, R.id.button_event_cancel, R
+            .id.button_address_cancel})
+    public void onCancelClick(View view) {
+
+        switch (view.getId()) {
+
+            //<editor-fold desc="button_name_cancel">
+            case R.id.button_name_cancel:
+                profileDetails(true, false, false);
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="button_gender_cancel">
+            case R.id.button_gender_cancel:
+                profileDetails(false, true, false);
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="button_phone_cancel">
+            case R.id.button_phone_cancel:
+                linearPhoneDetails.removeAllViews();
+                phoneNumberDetails();
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="button_email_cancel">
+            case R.id.button_email_cancel:
+                linearEmailDetails.removeAllViews();
+                emailDetails();
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="button_social_contact_cancel">
+            case R.id.button_social_contact_cancel:
+                linearSocialContactDetails.removeAllViews();
+                socialContactDetails();
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="button_website_cancel">
+            case R.id.button_website_cancel:
+                linearWebsiteDetails.removeAllViews();
+                websiteDetails();
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="button_organization_cancel">
+            case R.id.button_organization_cancel:
+                linearOrganizationDetails.removeAllViews();
+                organizationDetails();
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="button_event_cancel">
+            case R.id.button_event_cancel:
+                linearEventDetails.removeAllViews();
+                eventDetails();
+                break;
+            //</editor-fold>
+
+            // <editor-fold desc="button_address_cancel">
+            case R.id.button_address_cancel:
+                linearAddressDetails.removeAllViews();
+                addressDetails();
+                break;
+            //</editor-fold>
+
+        }
+
+    }
+
     @Override
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
@@ -1037,7 +1115,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private void init() {
         initToolbar();
         setFonts();
-        profileDetails();
+        profileDetails(true, true, true);
         phoneNumberDetails();
         emailDetails();
         organizationDetails();
@@ -1577,8 +1655,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         spinnerEventAdapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
 
-        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
-                .array.types_Event)));
+        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array
+                .types_Event)));
         spinnerEventAdapter = new ArrayAdapter<>(this, R.layout
                 .list_item_spinner, typeList);
         spinnerEventAdapter.setDropDownViewResource(android.R.layout
@@ -1675,31 +1753,36 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     }
 
-    private void profileDetails() {
+    private void profileDetails(boolean setNames, boolean setGender, boolean setProfileImage) {
 
         TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
 
         userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
         if (userProfile != null) {
-            inputFirstName.setText(userProfile.getPmFirstName());
-            inputLastName.setText(userProfile.getPmLastName());
-
-            if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Female")) {
-                selectGenderFemale();
-            } else if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Male")) {
-                selectGenderMale();
+            if (setNames) {
+                inputFirstName.setText(userProfile.getPmFirstName());
+                inputLastName.setText(userProfile.getPmLastName());
             }
 
-            Glide.with(this)
-                    .load(userProfile.getPmProfileImage())
-                    .placeholder(R.drawable.home_screen_profile)
-                    .error(R.drawable.home_screen_profile)
-                    .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
-                    .override(200, 200)
-                    .into(imageProfile);
+            if (setGender) {
+                if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Female")) {
+                    selectGenderFemale();
+                } else if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Male")) {
+                    selectGenderMale();
+                }
+            }
+
+            if (setProfileImage) {
+                Glide.with(this)
+                        .load(userProfile.getPmProfileImage())
+                        .placeholder(R.drawable.home_screen_profile)
+                        .error(R.drawable.home_screen_profile)
+                        .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                        .override(200, 200)
+                        .into(imageProfile);
+            }
 
         }
-
 
     }
 
@@ -2433,7 +2516,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 null);
 //        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
         ImageView imageViewDelete = (ImageView) view.findViewById(R.id.image_delete);
-        TextView textImageMapMarker = (TextView) view.findViewById(R.id.text_image_map_marker);
+        textImageMapMarker = (TextView) view.findViewById(R.id.text_image_map_marker);
         Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
         inputCountry = (EditText) view.findViewById(R.id.input_country);
         inputState = (EditText) view.findViewById(R.id.input_state);
@@ -2477,8 +2560,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputPoBox.setHint("Po. Box No.");
 
         inputPoBox.setVisibility(View.GONE);
-        textImageMapMarker.setTextColor(ContextCompat.getColor(this, R.color
-                .colorSnackBarNegative));
+        /*textImageMapMarker.setTextColor(ContextCompat.getColor(this, R.color
+                .colorSnackBarNegative));*/
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, R.layout
                 .list_item_spinner, getResources().getStringArray(R.array.types_email_address));

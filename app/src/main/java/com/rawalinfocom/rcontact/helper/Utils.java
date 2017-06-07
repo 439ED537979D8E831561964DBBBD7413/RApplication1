@@ -18,6 +18,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.ContactsContract;
@@ -524,8 +525,15 @@ public class Utils {
     }
     //</editor-fold>
 
+    public static void callIntent(Context context, String number) {
+        String unicodeNumber = number.replace("*", Uri.encode("*")).replace("#", Uri.encode("#"));
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + unicodeNumber));
+        context.startActivity(intent);
+    }
+
     public static String setFormattedAddress(String streetName, String neighborhoodName, String
             cityName, String stateName, String countryName, String pinCodeName) {
+
         String[] addressStrings = {streetName, neighborhoodName, cityName, stateName,
                 countryName, pinCodeName};
 
@@ -602,23 +610,28 @@ public class Utils {
 
     public static String getFormattedNumber(Context context, String phoneNumber) {
         if (StringUtils.length(phoneNumber) > 0) {
-            Country country = (Country) Utils.getObjectPreference(context, AppConstants
-                    .PREF_SELECTED_COUNTRY_OBJECT, Country.class);
-            String defaultCountryCode = "+91";
-            if (country != null) {
-                defaultCountryCode = country.getCountryCodeNumber();
-            }
-            if (!StringUtils.startsWith(phoneNumber, "+")) {
-                if (StringUtils.startsWith(phoneNumber, "0")) {
-                    phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber, 1);
-                } else {
-                    phoneNumber = defaultCountryCode + phoneNumber;
+            if (StringUtils.contains(phoneNumber, "#") || StringUtils.contains(phoneNumber, "*")) {
+//                return phoneNumber.replace("*", Uri.encode("*")).replace("#", Uri.encode("#"));
+                return phoneNumber;
+            } else {
+                Country country = (Country) Utils.getObjectPreference(context, AppConstants
+                        .PREF_SELECTED_COUNTRY_OBJECT, Country.class);
+                String defaultCountryCode = "+91";
+                if (country != null) {
+                    defaultCountryCode = country.getCountryCodeNumber();
                 }
-            }
+                if (!StringUtils.startsWith(phoneNumber, "+")) {
+                    if (StringUtils.startsWith(phoneNumber, "0")) {
+                        phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber, 1);
+                    } else {
+                        phoneNumber = defaultCountryCode + phoneNumber;
+                    }
+                }
 
         /* remove special characters from number */
-            return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
-                    "[\\D]", "");
+                return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
+                        "[\\D]", "");
+            }
         } else {
             return "";
         }

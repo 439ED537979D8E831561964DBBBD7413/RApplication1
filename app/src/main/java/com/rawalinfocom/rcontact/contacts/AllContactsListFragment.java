@@ -550,8 +550,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 if (grantResults.length > 0 && grantResults[0] == PackageManager
                         .PERMISSION_GRANTED) {
                     // Permission Granted
-                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + callNumber));
-                    startActivity(intent);
+                  /*  Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                  callNumber));
+                    startActivity(intent);*/
+                    Utils.callIntent(getActivity(), callNumber);
                 } else {
                     // Permission Denied
                     showPermissionConfirmationDialog(AppConstants
@@ -1529,9 +1531,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     .CALL_PHONE}, AppConstants
                                     .MY_PERMISSIONS_REQUEST_PHONE_CALL);
                         } else {
-                            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                           /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
                                     callNumber));
-                            startActivity(intent);
+                            startActivity(intent);*/
+                            Utils.callIntent(getActivity(), callNumber);
                         }
                         break;
                 }
