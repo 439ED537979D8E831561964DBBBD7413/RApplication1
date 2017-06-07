@@ -12,14 +12,24 @@
         android:layout_height="wrap_content"
         android:visibility="gone"/>
 
-    <TextView
+    <!--<TextView
         android:id="@+id/text_image_cross"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:padding="@dimen/margin_small"
-        android:text="@string/im_cross"/>
+        android:text="@string/im_cross"
+        android:visibility="gone"/>-->
+
+    <ImageView
+        android:id="@+id/image_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_delete"
+        android:visibility="visible" />
 
     <Spinner
         android:id="@+id/spinner_type"
@@ -29,8 +39,8 @@
         android:layout_marginLeft="@dimen/margin_small"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginStart="@dimen/margin_small"
-        android:layout_toLeftOf="@id/text_image_cross"
-        android:layout_toStartOf="@id/text_image_cross"/>
+        android:layout_toLeftOf="@id/image_delete"
+        android:layout_toStartOf="@id/image_delete"/>
 
     <LinearLayout
         android:id="@+id/linear_address"
@@ -45,41 +55,43 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
-            android:textColorHint="@color/darkCyan"
             android:textSize="16sp"/>
+        <!--android:textColorHint="@color/darkCyan"-->
 
         <EditText
             android:id="@+id/input_state"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
-            android:textColorHint="@color/darkCyan"
             android:textSize="16sp"/>
+        <!--android:textColorHint="@color/darkCyan"-->
 
         <EditText
             android:id="@+id/input_city"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
-            android:textColorHint="@color/darkCyan"
             android:textSize="16sp"/>
+        <!--android:textColorHint="@color/darkCyan"-->
+
 
         <EditText
             android:id="@+id/input_street"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
-            android:textColorHint="@color/darkCyan"
             android:textSize="16sp"/>
+        <!--android:textColorHint="@color/darkCyan"-->
 
         <EditText
             android:id="@+id/input_neighborhood"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
-            android:textColorHint="@color/darkCyan"
             android:textSize="16sp"
             tools:ignore="TextFields"/>
+        <!--android:textColorHint="@color/darkCyan"-->
+
 
         <TextView
             android:id="@+id/input_latitude"
@@ -107,18 +119,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
-            android:textColorHint="@color/darkCyan"
             android:textSize="16sp"
             tools:ignore="TextFields"/>
+        <!--android:textColorHint="@color/darkCyan"-->
+
 
         <EditText
             android:id="@+id/input_po_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
-            android:textColorHint="@color/darkCyan"
             android:textSize="16sp"
             tools:ignore="TextFields"/>
+        <!--android:textColorHint="@color/darkCyan"-->
+
 
     </LinearLayout>
 

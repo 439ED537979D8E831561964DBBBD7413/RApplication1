@@ -1253,6 +1253,8 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     private void setCurrentTabFragment(int tabPosition) {
         switch (tabPosition) {
+
+
             case 0:
                 showAddToContact(true);
                 fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable
@@ -1268,7 +1270,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 replaceFragment(callLogFragment);
                 break;
             case 2:
-                showAddToContact(false);
+                showAddToContact(true);
                 fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable
                         .ic_mode_edit));
                 isCompaseIcon = true;
@@ -1423,7 +1425,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             String numberTypeLog = getPhoneNumberType(cursor.getInt(numberType));
                             log.setNumberType(numberTypeLog);
                             String userNumber = cursor.getString(number);
-                            String uniquePhoneBookId = getStarredStatusFromNumber(userNumber);
+                            String uniquePhoneBookId = getRawContactIdFromNumber(userNumber);
                             if (!TextUtils.isEmpty(uniquePhoneBookId))
                                 log.setLocalPbRowId(uniquePhoneBookId);
                             else
@@ -1436,7 +1438,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                     } else {*/
                             arrayListHistory = callLogHistory(userNumber);
 //                    }
-                            log.setArrayListCallHistory(arrayListHistory);
+//                            log.setArrayListCallHistory(arrayListHistory);
 
                             ArrayList<CallLogType> arrayListHistoryCount = new ArrayList<>();
                             for (int j = 0; j < arrayListHistory.size(); j++) {
@@ -1455,6 +1457,13 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 if (intentDate.equalsIgnoreCase(arrayDate)) {
                                     arrayListHistoryCount.add(tempCallLogType);
                                 }
+                                // 25/05/2017 Updated bcz sync format changed
+                                log.setHistoryNumber(tempCallLogType.getHistoryNumber());
+                                log.setHistoryType(tempCallLogType.getHistoryType());
+                                log.setHistoryDate(tempCallLogType.getHistoryDate());
+                                log.setHistoryDuration(tempCallLogType.getHistoryDuration());
+                                log.setHistoryCallSimNumber(tempCallLogType.getHistoryCallSimNumber());
+                                log.setHistoryId(tempCallLogType.getHistoryId());
                             }
                             int logCount = arrayListHistoryCount.size();
                             log.setHistoryLogCount(logCount);
@@ -1726,7 +1735,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         return "OTHERS";
     }
 
-    private String getStarredStatusFromNumber(String phoneNumber) {
+    private String getRawContactIdFromNumber(String phoneNumber) {
         String numberId = "";
         try {
 
@@ -1758,6 +1767,48 @@ public class MainActivity extends BaseActivity implements NavigationView
 
 
         return numberId;
+
+        /*String numberId = "";
+        try {
+
+            numberId = "";
+            ContentResolver contentResolver = this.getContentResolver();
+
+           *//* Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));*//*
+            Uri uri = ContactsContract.Data.CONTENT_URI;
+
+            String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
+                    ContactsContract.CommonDataKinds.Phone.NUMBER};
+
+//            String selection = ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?";
+//            String[] selectionArgs = new String[]{phoneNumber};
+
+            String selection = ContactsContract.Data.MIMETYPE + " in (?) AND " +
+                    ContactsContract.CommonDataKinds.Phone.NUMBER + "=?";
+            String[] selectionArgs = {
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE, phoneNumber};
+
+            Cursor cursor =
+                    contentResolver.query(uri, projection, selection, selectionArgs, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    *//*String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));*//*
+                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.
+                            Phone.RAW_CONTACT_ID));
+                Log.d("LocalPBId", "contactMatch id: " + numberId);
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return numberId;*/
     }
 
     private ArrayList callLogHistory(String number) {
@@ -1841,6 +1892,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                     logObject.setDurationToPass(durationtoPass);
 
                     callDetails.add(logObject);
+                    break;
                 }
             }
 

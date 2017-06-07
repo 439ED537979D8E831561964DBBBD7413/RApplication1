@@ -184,6 +184,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".SearchActivity"></activity>
+
+        <activity android:name=".EditProfileActivity">
+        </activity>
     </application>
 
 </manifest>
