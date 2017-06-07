@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact;
+package com.rawalinfocom.rcontact.notifications;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.rawalinfocom.rcontact.adapters.NotificationPopupListAdapter;
+import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.RatingHistoryPopupListAdapter;
 import com.rawalinfocom.rcontact.helper.Utils;
 
