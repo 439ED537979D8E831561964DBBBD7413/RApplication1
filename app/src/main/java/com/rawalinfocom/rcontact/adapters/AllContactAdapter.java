@@ -1236,6 +1236,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 } else {
                     if (fragment instanceof AllContactsListFragment) {
                         ((AllContactsListFragment) fragment).callNumber = actionNumber;
+                    } else if (fragment instanceof FavoritesFragment) {
+                        ((FavoritesFragment) fragment).callNumber = actionNumber;
                     }
                     showCallConfirmationDialog();
                 }
@@ -1336,6 +1338,9 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             if (fragment instanceof AllContactsListFragment) {
                                 Utils.callIntent(context, ((AllContactsListFragment) fragment)
                                         .callNumber);
+                            } else if (fragment instanceof FavoritesFragment) {
+                                Utils.callIntent(context, ((FavoritesFragment) fragment)
+                                        .callNumber);
                             }
                         }
                         break;
@@ -1349,6 +1354,9 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         callConfirmationDialog.setRightButtonText("Call");
         if (fragment instanceof AllContactsListFragment) {
             callConfirmationDialog.setDialogBody("Call " + ((AllContactsListFragment) fragment)
+                    .callNumber + "?");
+        } else if (fragment instanceof FavoritesFragment) {
+            callConfirmationDialog.setDialogBody("Call " + ((FavoritesFragment) fragment)
                     .callNumber + "?");
         }
 

@@ -1,7 +1,9 @@
 package com.rawalinfocom.rcontact.contacts;
 
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +14,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
@@ -91,7 +95,11 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     private View rootView;
     private boolean isReload = false;
     RContactApplication rContactApplication;
-    private MaterialDialog callConfirmationDialog;
+    MaterialDialog callConfirmationDialog, permissionConfirmationDialog;
+    public String callNumber = "";
+
+    boolean isFromSettings = false;
+    int settingRequestPermission = 0;
 
     //<editor-fold desc="Constructors">
 
@@ -149,6 +157,21 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                         .getListClickedPosition());
                 rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_UNMODIFIED);
             }
+        }
+        if (isFromSettings) {
+            isFromSettings = false;
+            if (settingRequestPermission == AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS) {
+                if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
+                        .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                    if (!isReload) {
+                        init();
+                    }
+                }
+            }
+            /*else if (settingRequestPermission == AppConstants
+                    .MY_PERMISSIONS_REQUEST_READ_CONTACTS) {
+
+            }*/
         }
     }
 
@@ -289,6 +312,30 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
+                    // Permission Granted
+                  /*  Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                  callNumber));
+                    startActivity(intent);*/
+                    Utils.callIntent(getActivity(), callNumber);
+                } else {
+                    // Permission Denied
+                    showPermissionConfirmationDialog(AppConstants
+                            .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                }
+            }
+            break;
+        }
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
@@ -376,7 +423,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                     startActivity(smsIntent);
 
                 } else {
-                    showCallConfirmationDialog(actionNumber);
+                    showCallConfirmationDialog();
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -393,6 +440,13 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 if (viewHolder instanceof AllContactAdapter.ContactHeaderViewHolder ||
                         viewHolder instanceof AllContactAdapter.ContactFooterViewHolder) {
                     return 0;
+                }
+                 /* Disable swiping in multiple RC case */
+                if (viewHolder instanceof AllContactAdapter.AllContactViewHolder) {
+                    if (((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
+                        return 0;
+                    }
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
@@ -672,7 +726,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
     }
 
-    private void showCallConfirmationDialog(final String number) {
+    private void showCallConfirmationDialog() {
 
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
@@ -686,10 +740,17 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
-                       /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                number));
-                        startActivity(intent);*/
-                        Utils.callIntent(getActivity(), number);
+                        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest
+                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission
+                                    .CALL_PHONE}, AppConstants
+                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                        } else {
+                           /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                                    callNumber));
+                            startActivity(intent);*/
+                            Utils.callIntent(getActivity(), callNumber);
+                        }
                         break;
                 }
             }
@@ -699,7 +760,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText("Cancel");
         callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
+        callConfirmationDialog.setDialogBody("Call " + callNumber + "?");
 
         callConfirmationDialog.showDialog();
 
@@ -719,6 +780,70 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
     public RecyclerView getRecyclerViewContactList() {
         return recyclerViewContactList;
+    }
+
+    private void showPermissionConfirmationDialog(final int permissionType) {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        permissionConfirmationDialog.dismissDialog();
+                        switch (permissionType) {
+                            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+                                getActivity().finish();
+                                break;
+                            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
+                                break;
+                        }
+                        break;
+
+                    case R.id.rippleRight:
+                        permissionConfirmationDialog.dismissDialog();
+                        isFromSettings = true;
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", getActivity().getPackageName(), null));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        switch (permissionType) {
+                            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+                                settingRequestPermission = AppConstants
+                                        .MY_PERMISSIONS_REQUEST_READ_CONTACTS;
+                                break;
+                            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
+                                settingRequestPermission = AppConstants
+                                        .MY_PERMISSIONS_REQUEST_PHONE_CALL;
+                                break;
+                        }
+                        getActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
+                        break;
+                }
+            }
+        };
+
+        String message = "";
+        switch (permissionType) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+                message = "Contact read permission is required of this app. Do you want to try " +
+                        "again?";
+                break;
+            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
+                message = "Calling permission is required to make the call. Do you want to try " +
+                        "again?";
+                break;
+        }
+
+        permissionConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+        permissionConfirmationDialog.setTitleVisibility(View.GONE);
+        permissionConfirmationDialog.setLeftButtonText("Cancel");
+        permissionConfirmationDialog.setRightButtonText("OK");
+        permissionConfirmationDialog.setDialogBody(message);
+
+        permissionConfirmationDialog.showDialog();
+
     }
 
     //</editor-fold>
