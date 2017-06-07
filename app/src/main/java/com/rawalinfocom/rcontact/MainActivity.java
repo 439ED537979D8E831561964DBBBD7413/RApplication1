@@ -149,8 +149,6 @@ public class MainActivity extends BaseActivity implements NavigationView
             .permission.READ_CALL_LOG, Manifest.permission.READ_SMS};
     boolean isCompaseIcon = false;
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
-    private static CallLogType callLogTypeReceiverMain;
-    private ImageView imageViewSearch;
     private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
     private ArrayList<SmsDataType> smsLogTypeArrayListMain;
     ArrayList<SmsDataType> smsLogsListbyChunck;
@@ -190,7 +188,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         rContactApplication = (RContactApplication) getApplicationContext();
         callLogTypeArrayListMain = new ArrayList<>();
         smsLogTypeArrayListMain = new ArrayList<>();
-        callLogTypeReceiverMain = new CallLogType();
         CallLogFragment.callLogTypeReceiver = new CallLogType();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermissionToExecute();
@@ -1055,7 +1052,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     private void init() {
 
         imageNotification = (ImageView) toolbar.findViewById(R.id.image_notification);
-        imageViewSearch = (ImageView) toolbar.findViewById(R.id.image_search);
+        ImageView imageViewSearch = (ImageView) toolbar.findViewById(R.id.image_search);
         badgeLayout = (LinearLayout) toolbar.findViewById(R.id.badge_layout);
         badgeTextView = (TextView) toolbar.findViewById(R.id.badge_count);
 
@@ -1529,10 +1526,10 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
     private ArrayList<ArrayList<String>> chopped(ArrayList<String> list, final int L) {
-        ArrayList<ArrayList<String>> parts = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<String>> parts = new ArrayList<>();
         final int N = list.size();
         for (int i = 0; i < N; i += L) {
-            parts.add(new ArrayList<String>(
+            parts.add(new ArrayList<>(
                     list.subList(i, Math.min(N, i + L)))
             );
         }
@@ -1541,10 +1538,10 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     private ArrayList<ArrayList<CallLogType>> choppedCallLog(ArrayList<CallLogType> list, final
     int L) {
-        ArrayList<ArrayList<CallLogType>> parts = new ArrayList<ArrayList<CallLogType>>();
+        ArrayList<ArrayList<CallLogType>> parts = new ArrayList<>();
         final int N = list.size();
         for (int i = 0; i < N; i += L) {
-            parts.add(new ArrayList<CallLogType>(
+            parts.add(new ArrayList<>(
                     list.subList(i, Math.min(N, i + L)))
             );
         }
@@ -2208,16 +2205,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                             AppConstants.isFromReceiver = false;
                             CallLogFragment.isIdsFetchedFirstTime = false;
 //                                rContactApplication.setArrayListCallLogType(null);
-                        } else {
-                                /*if(Utils.getBooleanPreference(MainActivity.this,
-                                        AppConstants
-                                        .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false)){
-                                    Utils.setBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false);
-                                    Utils.setBooleanPreference(MainActivity.this, AppConstants
-                                            .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
-                                    AppConstants.isFromReceiver = false;
-                                }*/
                         }
                     }
                 }, 100);
