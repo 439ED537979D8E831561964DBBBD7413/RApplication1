@@ -140,7 +140,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     boolean isFromSettings = false;
     int settingRequestPermission = 0;
-    private String callNumber = "";
+    public String callNumber = "";
     private SyncingTask syncingTask;
 
     //<editor-fold desc="Constructors">
@@ -1460,6 +1460,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 if (viewHolder instanceof AllContactAdapter.ContactHeaderViewHolder || viewHolder
                         instanceof AllContactAdapter.ContactFooterViewHolder) {
                     return 0;
+                }
+                 /* Disable swiping in multiple RC case */
+                if (viewHolder instanceof AllContactAdapter.AllContactViewHolder) {
+                    if (((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
+                        return 0;
+                    }
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
