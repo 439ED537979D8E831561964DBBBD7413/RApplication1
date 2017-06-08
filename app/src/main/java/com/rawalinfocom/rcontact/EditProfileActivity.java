@@ -333,6 +333,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     boolean isEvent = false;
     boolean isMale = false, isFemale = false;
 
+    UserProfile userProfile;
+
     //<editor-fold desc="Override Methods">
 
     @Override
@@ -739,8 +741,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     TextView textIsPublic = (TextView) linearEmail.findViewById(R.id
                             .text_is_public);
                     RelativeLayout relativeRowEditProfile = (RelativeLayout) linearEmail
-                            .findViewById(R
-                                    .id.relative_row_edit_profile);
+                            .findViewById(R.id.relative_row_edit_profile);
                     email.setEmEmailId(emailId.getText().toString());
                     email.setEmType((String) emailType.getSelectedItem());
                     email.setEmId((String) relativeRowEditProfile.getTag());
@@ -872,9 +873,21 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         break;
                     }
                 }
-                if (isValid) {
-                    profileDataOperation.setPbOrganization(arrayListNewOrganization);
-                    editProfile(profileDataOperation);
+                boolean isCurrentSelected = false;
+                for (int i = 0; i < arrayListNewOrganization.size(); i++) {
+                    if (arrayListNewOrganization.get(i).getIsCurrent() == 1) {
+                        isCurrentSelected = true;
+                        break;
+                    }
+                }
+                if (isCurrentSelected) {
+                    if (isValid) {
+                        profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                        editProfile(profileDataOperation);
+                    }
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "Select current " +
+                            "Organization!");
                 }
                 break;
             //</editor-fold>
@@ -1767,7 +1780,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             if (setGender) {
                 if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Female")) {
                     selectGenderFemale();
-                } else if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Male")) {
+                }
+//                else if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Male")) {
+                else {
                     selectGenderMale();
                 }
             }
@@ -2179,8 +2194,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 spinnerType.setTag(AppConstants.PHONE_NUMBER);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_phone_number)));
-                spinnerPhoneAdapter = new ArrayAdapter<>(this, R.layout
-                        .list_item_spinner, typeList);
+                spinnerPhoneAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner,
+                        typeList);
                 spinnerPhoneAdapter.setDropDownViewResource(android.R.layout
                         .simple_spinner_dropdown_item);
                 spinnerType.setAdapter(spinnerPhoneAdapter);
@@ -2194,7 +2209,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     }
                     ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                             detailObject;
-                    inputValue.setText(phoneNumber.getPhoneNumber());
+                    if (position == 0) {
+                        inputValue.setText(phoneNumber.getPhoneNumber() + " ◊");
+                    } else {
+                        inputValue.setText(phoneNumber.getPhoneNumber());
+                    }
                     textIsPublic.setText(String.valueOf(phoneNumber.getPhonePublic()));
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(phoneNumber.getPhoneType()))) {
@@ -2287,6 +2306,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 spinnerImAccountAdapter.setDropDownViewResource(android.R.layout
                         .simple_spinner_dropdown_item);
                 spinnerType.setAdapter(spinnerImAccountAdapter);
+                spinnerType.setSelection(1);
                 inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
                 if (detailObject != null) {
                     ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount)
@@ -2439,8 +2459,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 // .list_item_edit_profile_organization,
 //                null);
         View view = LayoutInflater.from(this).inflate(R.layout
-                        .list_item_my_profile_edit_organization,
-                null);
+                .list_item_my_profile_edit_organization, null);
 //        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
 //        TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
         ImageView deleteOrganization = (ImageView) view.findViewById(R.id.deleteOrganization);
@@ -2472,6 +2491,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             inputCompanyName.setText(organization.getOrgName());
             inputDesignationName.setText(organization.getOrgJobTitle());
             checkboxOrganization.setChecked(organization.getIsCurrent() == 1);
+        } else {
+            if (linearOrganizationDetails.getChildCount() == 0) {
+                checkboxOrganization.setChecked(true);
+            }
         }
 
         checkboxOrganization.setOnCheckedChangeListener(new CompoundButton
@@ -2509,6 +2532,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
 
         linearOrganizationDetails.addView(view);
+        Log.i("addOrganizationView", linearOrganizationDetails.getChildCount() + "");
     }
 
     private void addAddressView(final Object detailObject, final int position) {
@@ -2699,6 +2723,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         textFromContact.setText("Take Photo");
         textFromSocialMedia.setText("Choose Photo");
         textRemovePhoto.setText("Remove Photo");
+
+        if (userProfile.getPmProfileImage().length() > 0) {
+            textRemovePhoto.setVisibility(View.VISIBLE);
+        } else {
+            textRemovePhoto.setVisibility(View.GONE);
+        }
 
         buttonLeft.setText(R.string.action_cancel);
 
