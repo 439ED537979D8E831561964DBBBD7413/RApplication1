@@ -220,12 +220,12 @@ public class WsRequestObject {
 
     private ArrayList<ProfileVisit> arrayListProfileVisit;
 
-//    private ArrayList<ProfileDataOperation> profileEdit;
-
+    //    private ArrayList<ProfileDataOperation> profileEdit;
     private ProfileDataOperation profileEdit;
 
     private ArrayList<CallLogHistoryType> historyTypeArrayList;
     private ArrayList<SmsDataType> arrayListSmsDataType;
+
     @JsonProperty("pr_reply")
     private String prReply;
 

@@ -199,12 +199,14 @@ public class MainActivity extends BaseActivity implements NavigationView
                     }
                 });*/
 
-            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants
+                    .PREF_CALL_LOG_SYNCED, false)) {
                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                 syncCallLogAsyncTask.execute();
             }
 
-            if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+            if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants
+                    .PREF_CALL_LOG_SYNCED, false)
                     && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                 syncSmsLogAsyncTask.execute();
@@ -279,7 +281,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         }
 
         if (smsLogs) {
-            if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+            if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants
+                    .PREF_CALL_LOG_SYNCED, false)
                     && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                 syncSmsLogAsyncTask.execute();
@@ -311,7 +314,8 @@ public class MainActivity extends BaseActivity implements NavigationView
             badgeLayout.setVisibility(View.GONE);
         }
         count = getTimeLineNotificationCount(databaseHandler);
-        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id.nav_user_timeline).getActionView();
+        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id
+                .nav_user_timeline).getActionView();
         TextView textView = (TextView) view.findViewById(R.id.badge_count);
         if (count > 0) {
             view.setVisibility(View.VISIBLE);
@@ -1078,7 +1082,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         imageViewSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(MainActivity.this,"Open Search Activity",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this,"Open Search Activity",Toast.LENGTH_SHORT)
+// .show();
                 startActivityIntent(MainActivity.this, SearchActivity.class, null);
 
             }
@@ -1324,15 +1329,18 @@ public class MainActivity extends BaseActivity implements NavigationView
         localBroadcastManagerReceiveRecentSms.registerReceiver(localBroadCastReceiverRecentSMS,
                 intentFilter2);
 
-        LocalBroadcastManager localBroadcastManagerSyncSmsLogs = LocalBroadcastManager.getInstance(this);
+        LocalBroadcastManager localBroadcastManagerSyncSmsLogs = LocalBroadcastManager
+                .getInstance(this);
         IntentFilter intentFilter1 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_SYNC_SMS);
-        localBroadcastManagerSyncSmsLogs.registerReceiver(localBroadcastReceiverSmsLogSync, intentFilter1);
+        localBroadcastManagerSyncSmsLogs.registerReceiver(localBroadcastReceiverSmsLogSync,
+                intentFilter1);
 
         LocalBroadcastManager localBroadcastManagerUpdateNotificationCount = LocalBroadcastManager
                 .getInstance(MainActivity.this);
         IntentFilter intentFilterUpdateCount = new IntentFilter(AppConstants
                 .ACTION_LOCAL_BROADCAST_UPDATE_NOTIFICATION_COUNT);
-        localBroadcastManagerUpdateNotificationCount.registerReceiver(localBroadCastReceiverUpdateCount, intentFilterUpdateCount);
+        localBroadcastManagerUpdateNotificationCount.registerReceiver
+                (localBroadCastReceiverUpdateCount, intentFilterUpdateCount);
 
     }
 
@@ -2053,7 +2061,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                 String uniqueCallLogId = listOfRowIds.get(i);
                 if (!TextUtils.isEmpty(uniqueCallLogId)) {
                     String order = Telephony.Sms.DEFAULT_SORT_ORDER;
-                    Cursor cursor = MainActivity.this.getContentResolver().query(Telephony.Sms.CONTENT_URI,
+                    Cursor cursor = MainActivity.this.getContentResolver().query(Telephony.Sms
+                                    .CONTENT_URI,
                             null, Telephony.Sms._ID + " = " + uniqueCallLogId, null, order);
 
                     if (cursor != null) {
@@ -2066,7 +2075,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                             int type = cursor.getColumnIndexOrThrow(Telephony.Sms.TYPE);
                             int thread_id = cursor.getColumnIndexOrThrow(Telephony.Sms.THREAD_ID);
                             while (cursor.moveToNext()) {
-                                if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask.isCancelled())
+                                if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask
+                                        .isCancelled())
                                     return;
                                 SmsDataType smsDataType = new SmsDataType();
                                 String address = cursor.getString(number);
@@ -2078,8 +2088,10 @@ public class MainActivity extends BaseActivity implements NavigationView
                                         smsDataType.setAddress(address);
                                     } else {
                                         // Todo: Add format number method before setting the address
-                                        final String formattedNumber = Utils.getFormattedNumber(MainActivity.this, address);
-                                        String contactName = getContactNameFromNumber(formattedNumber);
+                                        final String formattedNumber = Utils.getFormattedNumber
+                                                (MainActivity.this, address);
+                                        String contactName = getContactNameFromNumber
+                                                (formattedNumber);
                                         if (!TextUtils.isEmpty(contactName)) {
                                             smsDataType.setAddress(contactName);
                                             smsDataType.setNumber(formattedNumber);
@@ -2258,8 +2270,10 @@ public class MainActivity extends BaseActivity implements NavigationView
                     public void run() {
 
                         if (Utils.getBooleanPreference(MainActivity.this,
-                                AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, false)) {
-                            Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
+                                AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,
+                                false)) {
+                            Utils.setBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
                             Utils.setBooleanPreference(MainActivity.this, AppConstants
                                     .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
                             AppConstants.isFromReceiver = false;
@@ -2298,7 +2312,8 @@ public class MainActivity extends BaseActivity implements NavigationView
 
                 if (Utils.getBooleanPreference(MainActivity.this,
                         AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false)) {
-                    Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
+                    Utils.setBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
                     Utils.setBooleanPreference(MainActivity.this, AppConstants
                             .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
                 }
@@ -2345,14 +2360,17 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
     private int getNotificationCount(DatabaseHandler databaseHandler) {
-        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster(databaseHandler);
+        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster
+                (databaseHandler);
         return notificationStateMaster.getTotalUnreadCount();
 
     }
 
     private int getTimeLineNotificationCount(DatabaseHandler databaseHandler) {
 
-        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster(databaseHandler);
-        return notificationStateMaster.getTotalUnreadCountByType(AppConstants.NOTIFICATION_TYPE_TIMELINE);
+        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster
+                (databaseHandler);
+        return notificationStateMaster.getTotalUnreadCountByType(AppConstants
+                .NOTIFICATION_TYPE_TIMELINE);
     }
 }

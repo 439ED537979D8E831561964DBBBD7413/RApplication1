@@ -49,7 +49,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.rawalinfocom.rcontact.*;
+import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.ContactListingActivity;
+import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.CallHistoryListAdapter;
 import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
 import com.rawalinfocom.rcontact.adapters.PhoneBookContactDetailAdapter;
@@ -674,7 +677,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_EDIT)) {
                     /*startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
                             null);*/
-                    startActivityIntent(ProfileDetailActivity.this, com.rawalinfocom.rcontact.EditProfileActivity.class,null);
+                    startActivityIntent(ProfileDetailActivity.this, com.rawalinfocom.rcontact
+                            .EditProfileActivity.class, null);
                     /*Intent i = new Intent(ProfileDetailActivity.this, EditProfileActivity.class);
                     startActivityForResult(i, 1);
                     overridePendingTransition(R.anim.enter, R.anim.exit);*/
@@ -2694,9 +2698,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
-                String actionNumber = StringUtils.defaultString(((ProfileDetailAdapter
-                        .ProfileDetailViewHolder) viewHolder).textMain1.getText()
-                        .toString());
+                String actionNumber;
+                if (displayOwnProfile) {
+                    actionNumber = StringUtils.defaultString(((ProfileDetailAdapter
+                            .ProfileDetailViewHolder) viewHolder).textMain1.getText()
+                            .toString());
+                } else {
+                    actionNumber = StringUtils.defaultString(((ProfileDetailAdapter
+                            .ProfileDetailViewHolder) viewHolder).textMain2.getText()
+                            .toString());
+                }
                 if (direction == ItemTouchHelper.LEFT) {
                     /* SMS */
                     Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
@@ -2788,9 +2799,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                       /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
                                 number));
-                        startActivity(intent);
+                        startActivity(intent);*/
+                        Utils.callIntent(ProfileDetailActivity.this, number);
                         break;
                 }
             }
@@ -2830,6 +2842,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
         TextView textFromContact = (TextView) dialog.findViewById(R.id.text_from_contact);
         TextView textFromSocialMedia = (TextView) dialog.findViewById(R.id.text_from_social_media);
+        TextView textRemovePhoto = (TextView) dialog.findViewById(R.id.text_remove_photo);
 
         RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
         Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
@@ -2842,6 +2855,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textDialogTitle.setText("Share " + contactName + "'s Profile");
 
         buttonLeft.setText(R.string.action_cancel);
+        textRemovePhoto.setVisibility(View.GONE);
 
         rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override

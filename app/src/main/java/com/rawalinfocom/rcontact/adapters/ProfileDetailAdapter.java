@@ -722,7 +722,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         @BindView(R.id.view_own_profile)
         LinearLayout viewOwnProfile;
         @BindView(R.id.text_main1)
-        TextView textMain2;
+        public TextView textMain2;
         @BindView(R.id.text_sub2)
         TextView textSub2;
         @BindView(R.id.button_request)

@@ -13,8 +13,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +33,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -39,6 +44,7 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
@@ -49,6 +55,7 @@ import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
@@ -67,6 +74,8 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
+import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
+import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
@@ -89,7 +98,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class EditProfileActivity extends BaseActivity implements WsResponseListener{
+public class EditProfileTempActivity extends BaseActivity implements RippleView
+        .OnRippleCompleteListener, WsResponseListener {
 
     private final String EVENT_DATE_FORMAT = "dd'th' MMM, yyyy";
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -98,134 +108,84 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private static final String IMAGE_DIRECTORY_NAME = "RContactImages";
     public static String TEMP_PHOTO_FILE_NAME = "";
 
-    @BindView(R.id.image_profile)
-    ImageView imageProfile;
-    @BindView(R.id.text_label_profile_image)
-    TextView textLabelProfileImage;
+    @BindView(R.id.include_toolbar)
+    Toolbar includeToolbar;
     @BindView(R.id.text_label_name)
     TextView textLabelName;
-    @BindView(R.id.image_name_expand)
-    ImageView imageNameExpand;
     @BindView(R.id.input_first_name)
     EditText inputFirstName;
     @BindView(R.id.input_last_name)
     EditText inputLastName;
-    @BindView(R.id.button_name_update)
-    Button buttonNameUpdate;
-    @BindView(R.id.button_name_cancel)
-    Button buttonNameCancel;
-    @BindView(R.id.linear_name)
-    LinearLayout linearName;
+    @BindView(R.id.linear_section_left)
+    LinearLayout linearSectionLeft;
+    @BindView(R.id.image_profile)
+    ImageView imageProfile;
+    @BindView(R.id.linear_section_top)
+    LinearLayout linearSectionTop;
+    @BindView(R.id.image_add_phone)
+    ImageView imageAddPhone;
     @BindView(R.id.text_label_phone)
     TextView textLabelPhone;
-    @BindView(R.id.image_phone_expand)
-    ImageView imagePhoneExpand;
+    @BindView(R.id.relative_contact_details)
+    RelativeLayout relativeContactDetails;
     @BindView(R.id.linear_phone_details)
     LinearLayout linearPhoneDetails;
-    @BindView(R.id.button_phone_add_field)
-    Button buttonPhoneAddField;
-    @BindView(R.id.button_phone_update)
-    Button buttonPhoneUpdate;
-    @BindView(R.id.button_phone_cancel)
-    Button buttonPhoneCancel;
-    @BindView(R.id.linear_phone)
-    LinearLayout linearPhone;
+    @BindView(R.id.image_add_email)
+    ImageView imageAddEmail;
     @BindView(R.id.text_label_email)
     TextView textLabelEmail;
-    @BindView(R.id.image_email_expand)
-    ImageView imageEmailExpand;
+    @BindView(R.id.relative_email_details)
+    RelativeLayout relativeEmailDetails;
     @BindView(R.id.linear_email_details)
     LinearLayout linearEmailDetails;
-    @BindView(R.id.button_email_add_field)
-    Button buttonEmailAddField;
-    @BindView(R.id.button_email_update)
-    Button buttonEmailUpdate;
-    @BindView(R.id.button_email_cancel)
-    Button buttonEmailCancel;
-    @BindView(R.id.linear_email)
-    LinearLayout linearEmail;
-    @BindView(R.id.text_label_organization)
-    TextView textLabelOrganization;
-    @BindView(R.id.image_organization_expand)
-    ImageView imageOrganizationExpand;
-    @BindView(R.id.linear_organization_details)
-    LinearLayout linearOrganizationDetails;
-    @BindView(R.id.button_organization_add_field)
-    Button buttonOrganizationAddField;
-    @BindView(R.id.button_organization_update)
-    Button buttonOrganizationUpdate;
-    @BindView(R.id.button_organization_cancel)
-    Button buttonOrganizationCancel;
-    @BindView(R.id.linear_organization)
-    LinearLayout linearOrganization;
+    @BindView(R.id.image_add_website)
+    ImageView imageAddWebsite;
     @BindView(R.id.text_label_website)
     TextView textLabelWebsite;
-    @BindView(R.id.image_website_expand)
-    ImageView imageWebsiteExpand;
+    @BindView(R.id.relative_website_details)
+    RelativeLayout relativeWebsiteDetails;
     @BindView(R.id.linear_website_details)
     LinearLayout linearWebsiteDetails;
-    @BindView(R.id.button_website_add_field)
-    Button buttonWebsiteAddField;
-    @BindView(R.id.button_website_update)
-    Button buttonWebsiteUpdate;
-    @BindView(R.id.button_website_cancel)
-    Button buttonWebsiteCancel;
-    @BindView(R.id.linear_website)
-    LinearLayout linearWebsite;
+    @BindView(R.id.image_add_address)
+    ImageView imageAddAddress;
     @BindView(R.id.text_label_address)
     TextView textLabelAddress;
-    @BindView(R.id.image_address_expand)
-    ImageView imageAddressExpand;
+    @BindView(R.id.relative_address_details)
+    RelativeLayout relativeAddressDetails;
     @BindView(R.id.linear_address_details)
     LinearLayout linearAddressDetails;
-    @BindView(R.id.button_address_add_field)
-    Button buttonAddressAddField;
-    @BindView(R.id.button_address_update)
-    Button buttonAddressUpdate;
-    @BindView(R.id.button_address_cancel)
-    Button buttonAddressCancel;
-    @BindView(R.id.linear_address)
-    LinearLayout linearAddress;
+    @BindView(R.id.image_add_social_contact)
+    ImageView imageAddSocialContact;
     @BindView(R.id.text_label_social_contact)
     TextView textLabelSocialContact;
-    @BindView(R.id.image_social_contact_expand)
-    ImageView imageSocialContactExpand;
+    @BindView(R.id.relative_social_contact_details)
+    RelativeLayout relativeSocialContactDetails;
     @BindView(R.id.linear_social_contact_details)
     LinearLayout linearSocialContactDetails;
-    @BindView(R.id.button_social_contact_add_field)
-    Button buttonSocialContactAddField;
-    @BindView(R.id.button_social_contact_update)
-    Button buttonSocialContactUpdate;
-    @BindView(R.id.button_social_contact_cancel)
-    Button buttonSocialContactCancel;
-    @BindView(R.id.linear_social_contact)
-    LinearLayout linearSocialContact;
+    @BindView(R.id.image_add_organization)
+    ImageView imageAddOrganization;
+    @BindView(R.id.text_label_organization)
+    TextView textLabelOrganization;
+    @BindView(R.id.relative_organization_details)
+    RelativeLayout relativeOrganizationDetails;
+    @BindView(R.id.linear_organization_detail)
+    LinearLayout linearOrganizationDetail;
+    @BindView(R.id.image_add_event)
+    ImageView imageAddEvent;
     @BindView(R.id.text_label_event)
     TextView textLabelEvent;
-    @BindView(R.id.image_event_expand)
-    ImageView imageEventExpand;
+    @BindView(R.id.relative_event_details)
+    RelativeLayout relativeEventDetails;
     @BindView(R.id.linear_event_details)
     LinearLayout linearEventDetails;
-    @BindView(R.id.button_event_add_field)
-    Button buttonEventAddField;
-    @BindView(R.id.button_event_update)
-    Button buttonEventUpdate;
-    @BindView(R.id.button_event_cancel)
-    Button buttonEventCancel;
-    @BindView(R.id.linear_event)
-    LinearLayout linearEvent;
     @BindView(R.id.text_label_gender)
     TextView textLabelGender;
-    @BindView(R.id.image_gender_expand)
-    ImageView imageGenderExpand;
-    @BindView(R.id.linear_gender_details)
-    LinearLayout linearGenderDetails;
-    @BindView(R.id.button_gender_update)
-    Button buttonGenderUpdate;
-    @BindView(R.id.button_gender_cancel)
-    Button buttonGenderCancel;
-    @BindView(R.id.linear_gender)
-    LinearLayout linearGender;
+    @BindView(R.id.radio_male)
+    RadioButton radioMale;
+    @BindView(R.id.radio_female)
+    RadioButton radioFemale;
+    @BindView(R.id.radio_group_gender)
+    RadioGroup radioGroupGender;
     @BindView(R.id.relative_root_edit_profile)
     RelativeLayout relativeRootEditProfile;
 
@@ -236,18 +196,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     EditText inputNeighborhood;
     EditText inputPinCode;
 
-    ArrayAdapter<String> spinnerPhoneAdapter, spinnerEmailAdapter, spinnerWebsiteAdapter,
-            spinnerImAccountAdapter, spinnerEventAdapter;
-
-    ArrayList<ProfileDataOperation> arrayListProfile;
-    boolean isStorageFromSettings = false, isCameraFromSettings = false;
-
-    Bitmap selectedBitmap = null;
-    private File mFileTemp;
-    private Uri fileUri;
-
-    int clickedPosition = -1;
-    String formattedAddress;
+    RippleView rippleActionBack;
+    RippleView rippleActionRightLeft;
 
     ArrayList<Object> arrayListPhoneNumberObject;
     ArrayList<Object> arrayListEmailObject;
@@ -256,6 +206,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     ArrayList<Object> arrayListAddressObject;
     ArrayList<Object> arrayListEventObject;
     ArrayList<Object> arrayListOrganizationObject;
+
+    ArrayAdapter<String> spinnerPhoneAdapter, spinnerEmailAdapter, spinnerWebsiteAdapter,
+            spinnerImAccountAdapter, spinnerEventAdapter;
+
+    UserProfile userProfile;
+
+    String formattedAddress;
+
+    Bitmap selectedBitmap = null;
+    private File mFileTemp;
+    private Uri fileUri;
+
+    boolean isStorageFromSettings = false, isCameraFromSettings = false;
+
+    MaterialDialog permissionConfirmationDialog;
+
+    ArrayList<ProfileDataOperation> arrayListProfile;
+    int clickedPosition = -1;
+
+    double mapLatitude = 0, mapLongitude = 0;
 
     //<editor-fold desc="Override Methods">
 
@@ -269,6 +239,59 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (isStorageFromSettings) {
+            isStorageFromSettings = false;
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+                    .WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                showChooseImageIntent();
+            }
+        }
+        if (isCameraFromSettings) {
+            isCameraFromSettings = false;
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+                    .WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                selectImageFromCamera();
+            }
+        }
+    }
+
+    @Override
+    public void onComplete(RippleView rippleView) {
+        switch (rippleView.getId()) {
+
+            case R.id.ripple_action_back:
+                onBackPressed();
+                break;
+
+            case R.id.ripple_action_right_left:
+
+                if (StringUtils.length(inputFirstName.getText().toString()) < 1 || StringUtils
+                        .length(inputLastName.getText().toString()) < 1) {
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "Please add valid " +
+                            "name!");
+                } else {
+                    getUpdatedProfile();
+                }
+
+                break;
+
+
+        }
+    }
+
+   /* @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("result", 1);
+        setResult(AppConstants.RESULT_CODE_EDIT_PROFILE, returnIntent);
+        finish();
+        overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
+    }*/
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -277,7 +300,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             Glide.with(this)
                     .load(fileUri)
-                    .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                    .bitmapTransform(new CropCircleTransformation(EditProfileTempActivity.this))
                     .into(imageProfile);
 
 
@@ -311,15 +334,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 Glide.with(this)
                         .load(mFileTemp)
-                        .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                        .bitmapTransform(new CropCircleTransformation(EditProfileTempActivity.this))
                         .into(imageProfile);
 
             } catch (Exception e) {
                 Log.e("TAG", "Error while creating temp file", e);
             }
 
-        }
-       /* else if (requestCode == AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION) {
+        } else if (requestCode == AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION) {
             if (data != null) {
                 String locationString = data.getStringExtra(AppConstants.EXTRA_OBJECT_LOCATION);
                 ReverseGeocodingAddress objAddress = (ReverseGeocodingAddress) data
@@ -365,12 +387,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         inputPinCode.setText(((ProfileDataOperationAddress)
                                 arrayListAddressObject.get(clickedPosition)).getPostCode());
                     } else {
-                        *//*inputCountry.setText("India");
+                        /*inputCountry.setText("India");
                         inputState.setText("Gujarat");
                         inputCity.setText("Surat");
                         inputStreet.setText("");
                         inputPinCode.setText("");
-                        inputNeighborhood.setText("");*//*
+                        inputNeighborhood.setText("");*/
                         inputCountry.setText(inputCountry.getText().toString());
                         inputState.setText(inputState.getText().toString());
                         inputCity.setText(inputCity.getText().toString());
@@ -380,7 +402,42 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     }
                 }
             }
-        }*/
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
+
+                    showChooseImageIntent();
+
+                } else {
+                    showPermissionConfirmationDialog("Storage permission is required for " +
+                            "uploading profile image. Do you want to try again?", true);
+                }
+            }
+            break;
+
+            case AppConstants.MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
+
+                    selectImageFromCamera();
+
+                } else {
+                    showPermissionConfirmationDialog("Camera permission is required for taking " +
+                            "photo. Do you want to try again?", false);
+                }
+            }
+            break;
+        }
     }
 
     @Override
@@ -394,14 +451,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (editProfileResponse != null && StringUtils.equalsIgnoreCase
                         (editProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    /*ProfileDataOperation profileDetail = editProfileResponse.getProfileDetail();
+                    ProfileDataOperation profileDetail = editProfileResponse.getProfileDetail();
                     Utils.setObjectPreference(EditProfileTempActivity.this, AppConstants
                             .PREF_REGS_USER_OBJECT, profileDetail);
 
-                    storeProfileDataToDb(profileDetail);*/
+                    storeProfileDataToDb(profileDetail);
 
                     Utils.showSuccessSnackBar(this, relativeRootEditProfile, "Profile Updated " +
                             "Successfully! ");
+//                    Log.i("onDeliveryResponse", editProfileResponse.getMessage());
 
                 } else {
                     if (editProfileResponse != null) {
@@ -422,75 +480,55 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (isStorageFromSettings) {
-            isStorageFromSettings = false;
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
-                    .WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                showChooseImageIntent();
-            }
-        }
-        if (isCameraFromSettings) {
-            isCameraFromSettings = false;
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
-                    .WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                selectImageFromCamera();
-            }
-        }
-    }
-
     //</editor-fold>
 
     //<editor-fold desc="Onclick">
 
-    @OnClick({R.id.button_phone_add_field, R.id.button_email_add_field, R.id
-            .button_address_add_field, R.id.button_organization_add_field, R.id
-            .button_website_add_field, R.id.button_social_contact_add_field, R.id
-            .button_event_add_field})
+    @OnClick({R.id.image_add_phone, R.id.image_add_email, R.id.image_add_website,
+            R.id.image_add_social_contact, R.id.image_add_address, R.id.image_add_event, R.id
+            .image_add_organization, R.id.image_profile})
     public void onClick(View view) {
 
         switch (view.getId()) {
 
-            //<editor-fold desc="button_phone_add_field">
-            case R.id.button_phone_add_field:
+            //<editor-fold desc="image_add_phone">
+            case R.id.image_add_phone:
                 checkBeforeViewAdd(AppConstants.PHONE_NUMBER, linearPhoneDetails);
                 break;
             //</editor-fold>
 
-            //<editor-fold desc="button_email_add_field">
-            case R.id.button_email_add_field:
+            //<editor-fold desc="image_add_email">
+            case R.id.image_add_email:
                 checkBeforeViewAdd(AppConstants.EMAIL, linearEmailDetails);
                 break;
             //</editor-fold>
 
-            //<editor-fold desc="button_website_add_field">
-            case R.id.button_website_add_field:
+            //<editor-fold desc="image_add_website">
+            case R.id.image_add_website:
                 checkBeforeViewAdd(AppConstants.WEBSITE, linearWebsiteDetails);
                 break;
             //</editor-fold>
 
-            // <editor-fold desc="button_social_contact_add_field">
-            case R.id.button_social_contact_add_field:
+            // <editor-fold desc="image_add_social_contact">
+            case R.id.image_add_social_contact:
                 checkBeforeViewAdd(AppConstants.IM_ACCOUNT, linearSocialContactDetails);
                 break;
             //</editor-fold>
 
-            // <editor-fold desc="button_address_add_field">
-            case R.id.button_address_add_field:
+            // <editor-fold desc="image_add_address">
+            case R.id.image_add_address:
                 checkBeforeAddressViewAdd();
                 break;
             //</editor-fold>
 
-            // <editor-fold desc="button_event_add_field">
-            case R.id.button_event_add_field:
+            // <editor-fold desc="image_add_event">
+            case R.id.image_add_event:
                 checkBeforeViewAdd(AppConstants.EVENT, linearEventDetails);
                 break;
             //</editor-fold>
 
-            // <editor-fold desc="button_organization_add_field">
-            case R.id.button_organization_add_field:
+            // <editor-fold desc="image_add_organization">
+            case R.id.image_add_organization:
                 checkBeforeOrganizationViewAdd();
                 break;
             //</editor-fold>
@@ -513,34 +551,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     }
 
-    @OnClick({R.id.button_name_update})
-    public void onUpdateClick(View view) {
-
-        ProfileDataOperation profileDataOperation;
-
-        switch (view.getId()) {
-
-            //<editor-fold desc="button_name_update">
-            case R.id.button_name_update:
-                profileDataOperation = new ProfileDataOperation();
-                String firstName = inputFirstName.getText().toString();
-                String lastName = inputLastName.getText().toString();
-                if (StringUtils.length(firstName) > 0 && StringUtils.length(firstName) > 0) {
-                    profileDataOperation.setPbNameFirst(firstName);
-                    profileDataOperation.setPbNameLast(lastName);
-                    editProfile(profileDataOperation);
-                }
-                break;
-            //</editor-fold>
-
-        }
-    }
-
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
 
     private void init() {
+
+        rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
+        rippleActionRightLeft = ButterKnife.findById(includeToolbar, R.id.ripple_action_right_left);
 
         profileDetails();
         phoneNumberDetails();
@@ -550,6 +568,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         addressDetails();
         eventDetails();
         organizationDetails();
+
+        rippleActionRightLeft.setOnRippleCompleteListener(this);
+        rippleActionBack.setOnRippleCompleteListener(this);
 
     }
 
@@ -562,17 +583,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             inputFirstName.setText(userProfile.getPmFirstName());
             inputLastName.setText(userProfile.getPmLastName());
 
-           /* if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Female")) {
+            if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Female")) {
                 radioGroupGender.check(R.id.radio_female);
             } else if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Male")) {
                 radioGroupGender.check(R.id.radio_male);
-            }*/
+            }
 
             Glide.with(this)
                     .load(userProfile.getPmProfileImage())
                     .placeholder(R.mipmap.ic_launcher)
                     .error(R.mipmap.ic_launcher)
-                    .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                    .bitmapTransform(new CropCircleTransformation(EditProfileTempActivity.this))
                     .override(200, 200)
                     .into(imageProfile);
 
@@ -769,72 +790,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         } else {
             addAddressView(null, -1);
-        }
-    }
-
-    private void checkBeforeAddressViewAdd() {
-        boolean toAdd = false;
-        for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
-            View linearView = linearAddressDetails.getChildAt(i);
-            EditText inputCountry = (EditText) linearView.findViewById(R.id.input_country);
-            EditText inputState = (EditText) linearView.findViewById(R.id.input_state);
-            EditText inputCity = (EditText) linearView.findViewById(R.id.input_city);
-            EditText inputStreet = (EditText) linearView.findViewById(R.id.input_street);
-            if (StringUtils.length(StringUtils.trimToEmpty(inputCountry.getText().toString())) <
-                    1 ||
-                    StringUtils.length(StringUtils.trimToEmpty(inputState.getText().toString()))
-                            < 1 ||
-                    StringUtils.length(StringUtils.trimToEmpty(inputCity.getText().toString())) <
-                            1 ||
-                    StringUtils.length(StringUtils.trimToEmpty(inputStreet.getText().toString()))
-                            < 1) {
-                toAdd = false;
-                break;
-            } else {
-                toAdd = true;
-            }
-        }
-        if (toAdd) {
-            addAddressView(null, linearAddressDetails.getChildCount());
-        }
-    }
-
-    private void checkBeforeOrganizationViewAdd() {
-        boolean toAdd = false;
-        for (int i = 0; i < linearOrganizationDetails.getChildCount(); i++) {
-            View linearView = linearOrganizationDetails.getChildAt(i);
-            EditText inputCompanyName = (EditText) linearView.findViewById(R.id.input_company_name);
-            EditText inputDesignationName = (EditText) linearView.findViewById(R.id
-                    .input_designation_name);
-            if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText().toString())
-            ) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputDesignationName.getText()
-                    .toString())) < 1) {
-                toAdd = false;
-                break;
-            } else {
-                toAdd = true;
-            }
-        }
-        if (toAdd) {
-            addOrganizationView(null);
-        }
-    }
-
-    private void checkBeforeViewAdd(int viewType, LinearLayout linearLayout) {
-        boolean toAdd = false;
-        for (int i = 0; i < linearLayout.getChildCount(); i++) {
-            View linearView = linearLayout.getChildAt(i);
-            EditText editText = (EditText) linearView.findViewById(R.id.input_value);
-            if (StringUtils.length(StringUtils.trimToEmpty(editText.getText().toString())) < 1) {
-//            if (editText.getText().length() < 1) {
-                toAdd = false;
-                break;
-            } else {
-                toAdd = true;
-            }
-        }
-        if (toAdd) {
-            addView(viewType, linearLayout, null, -1);
         }
     }
 
@@ -1104,75 +1059,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         linearLayout.addView(view);
     }
 
-    private void addOrganizationView(Object detailObject) {
-        View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_organization,
-                null);
-        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
-        TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
-        final EditText inputCompanyName = (EditText) view.findViewById(R.id.input_company_name);
-        final EditText inputDesignationName = (EditText) view.findViewById(R.id
-                .input_designation_name);
-        CheckBox checkboxOrganization = (CheckBox) view.findViewById(R.id.checkbox_organization);
-
-        checkboxOrganization.setTag(linearOrganizationDetails.getChildCount());
-
-        final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
-                .relative_row_edit_profile);
-
-        inputCompanyName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
-                .TYPE_TEXT_FLAG_CAP_WORDS);
-        inputDesignationName.setInputType(InputType.TYPE_CLASS_TEXT | InputType
-                .TYPE_TEXT_FLAG_CAP_WORDS);
-
-        textImageCross.setTypeface(Utils.typefaceIcons(this));
-        inputCompanyName.setTypeface(Utils.typefaceRegular(this));
-        inputDesignationName.setTypeface(Utils.typefaceRegular(this));
-        textLabelCheckbox.setTypeface(Utils.typefaceLight(this));
-
-        ProfileDataOperationOrganization organization = (ProfileDataOperationOrganization)
-                detailObject;
-
-        if (detailObject != null) {
-            relativeRowEditProfile.setTag(organization.getOrgId());
-            inputCompanyName.setText(organization.getOrgName());
-            inputDesignationName.setText(organization.getOrgJobTitle());
-            checkboxOrganization.setChecked(organization.getIsCurrent() == 1);
-        }
-
-        checkboxOrganization.setOnCheckedChangeListener(new CompoundButton
-                .OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    for (int i = 0; i < linearOrganizationDetails.getChildCount(); i++) {
-                        View view = linearOrganizationDetails.getChildAt(i);
-                        CheckBox checkbox = (CheckBox) view.findViewById(R.id
-                                .checkbox_organization);
-                        if (!(checkbox.getTag() == buttonView.getTag())) {
-                            checkbox.setChecked(false);
-                        }
-                    }
-                }
-            }
-        });
-
-        textImageCross.setOnClickListener(new View.OnClickListener()
-
-        {
-            @Override
-            public void onClick(View v) {
-                if (linearOrganizationDetails.getChildCount() > 1) {
-                    linearOrganizationDetails.removeView(relativeRowEditProfile);
-                } else if (linearOrganizationDetails.getChildCount() == 1) {
-                    inputCompanyName.setText("");
-                    inputDesignationName.setText("");
-                }
-            }
-        });
-
-        linearOrganizationDetails.addView(view);
-    }
-
     private void addAddressView(final Object detailObject, final int position) {
         View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_address,
                 null);
@@ -1273,7 +1159,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             @Override
             public void onClick(View v) {
 //                startActivityIntent(EditProfileTempActivity.this, MapsActivity.class, null);
-                Intent intent = new Intent(EditProfileActivity.this, MapsActivity.class);
+                Intent intent = new Intent(EditProfileTempActivity.this, MapsActivity.class);
 
                 if (position != -1) {
                   /*  mapLatitude = Double.parseDouble(((ProfileDataOperationAddress)
@@ -1327,6 +1213,93 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         linearAddressDetails.addView(view);
     }
 
+    private void addOrganizationView(Object detailObject) {
+        View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_organization,
+                null);
+        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
+        TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
+        final EditText inputCompanyName = (EditText) view.findViewById(R.id.input_company_name);
+        final EditText inputDesignationName = (EditText) view.findViewById(R.id
+                .input_designation_name);
+        CheckBox checkboxOrganization = (CheckBox) view.findViewById(R.id.checkbox_organization);
+
+        checkboxOrganization.setTag(linearOrganizationDetail.getChildCount());
+
+        final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
+                .relative_row_edit_profile);
+
+        inputCompanyName.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        inputDesignationName.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+
+        textImageCross.setTypeface(Utils.typefaceIcons(this));
+        inputCompanyName.setTypeface(Utils.typefaceRegular(this));
+        inputDesignationName.setTypeface(Utils.typefaceRegular(this));
+        textLabelCheckbox.setTypeface(Utils.typefaceLight(this));
+
+        ProfileDataOperationOrganization organization = (ProfileDataOperationOrganization)
+                detailObject;
+
+        if (detailObject != null) {
+            relativeRowEditProfile.setTag(organization.getOrgId());
+            inputCompanyName.setText(organization.getOrgName());
+            inputDesignationName.setText(organization.getOrgJobTitle());
+            checkboxOrganization.setChecked(organization.getIsCurrent() == 1);
+        }
+
+        checkboxOrganization.setOnCheckedChangeListener(new CompoundButton
+                .OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    for (int i = 0; i < linearOrganizationDetail.getChildCount(); i++) {
+                        View view = linearOrganizationDetail.getChildAt(i);
+                        CheckBox checkbox = (CheckBox) view.findViewById(R.id
+                                .checkbox_organization);
+                        if (!(checkbox.getTag() == buttonView.getTag())) {
+                            checkbox.setChecked(false);
+                        }
+                    }
+                }
+            }
+        });
+
+        textImageCross.setOnClickListener(new View.OnClickListener()
+
+        {
+            @Override
+            public void onClick(View v) {
+                if (linearOrganizationDetail.getChildCount() > 1) {
+                    linearOrganizationDetail.removeView(relativeRowEditProfile);
+                } else if (linearOrganizationDetail.getChildCount() == 1) {
+                    inputCompanyName.setText("");
+                    inputDesignationName.setText("");
+                }
+            }
+        });
+
+        linearOrganizationDetail.addView(view);
+    }
+
+    private void showDatePicker(final EditText editText) {
+        final Calendar calendar = Calendar.getInstance();
+        DatePickerDialog.OnDateSetListener datePickerDialog = new DatePickerDialog
+                .OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                SimpleDateFormat sdf = new SimpleDateFormat(EVENT_DATE_FORMAT, Locale.US);
+                editText.setText(sdf.format(calendar.getTime()));
+            }
+
+        };
+        new DatePickerDialog(this, datePickerDialog, calendar
+                .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
     private void showChooseImageIntent() {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1377,10 +1350,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest
+                if (ContextCompat.checkSelfPermission(EditProfileTempActivity.this, Manifest
                         .permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 
-                    ActivityCompat.requestPermissions(EditProfileActivity.this, new
+                    ActivityCompat.requestPermissions(EditProfileTempActivity.this, new
                             String[]{Manifest.permission.CAMERA}, AppConstants
                             .MY_PERMISSIONS_REQUEST_CAMERA);
 
@@ -1393,24 +1366,132 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         dialog.show();
     }
 
-    private void showDatePicker(final EditText editText) {
-        final Calendar calendar = Calendar.getInstance();
-        DatePickerDialog.OnDateSetListener datePickerDialog = new DatePickerDialog
-                .OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, monthOfYear);
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                SimpleDateFormat sdf = new SimpleDateFormat(EVENT_DATE_FORMAT, Locale.US);
-                editText.setText(sdf.format(calendar.getTime()));
-            }
+    private void selectImageFromGallery() {
+        mFileTemp = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 
-        };
-        new DatePickerDialog(this, datePickerDialog, calendar
-                .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)).show();
+        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(i, GALLERY_IMAGE_REQUEST_CODE);
+    }
+
+    private File getOutputMediaFile(int type) {
+
+        // External sdcard location
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment
+                .DIRECTORY_PICTURES), IMAGE_DIRECTORY_NAME);
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d(IMAGE_DIRECTORY_NAME, "Oops! Failed create " + IMAGE_DIRECTORY_NAME + " " +
+                        "directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format
+                (new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE) {
+
+            TEMP_PHOTO_FILE_NAME = "IMG_" + timeStamp + ".jpg";
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + TEMP_PHOTO_FILE_NAME);
+
+        } else {
+            return null;
+        }
+
+        return mediaFile;
+    }
+
+    private void copyStream(InputStream inputStream, FileOutputStream fileOutputStream) throws
+            IOException {
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            fileOutputStream.write(buffer, 0, bytesRead);
+        }
+    }
+
+    private void selectImageFromCamera() {
+        mFileTemp = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+
+        // start the image capture Intent
+        startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+    }
+
+    private Uri getOutputMediaFileUri(int type) {
+        return Uri.fromFile(getOutputMediaFile(type));
+    }
+
+    private void checkBeforeViewAdd(int viewType, LinearLayout linearLayout) {
+        boolean toAdd = false;
+        for (int i = 0; i < linearLayout.getChildCount(); i++) {
+            View linearView = linearLayout.getChildAt(i);
+            EditText editText = (EditText) linearView.findViewById(R.id.input_value);
+            if (StringUtils.length(StringUtils.trimToEmpty(editText.getText().toString())) < 1) {
+//            if (editText.getText().length() < 1) {
+                toAdd = false;
+                break;
+            } else {
+                toAdd = true;
+            }
+        }
+        if (toAdd) {
+            addView(viewType, linearLayout, null, -1);
+        }
+    }
+
+    private void checkBeforeAddressViewAdd() {
+        boolean toAdd = false;
+        for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
+            View linearView = linearAddressDetails.getChildAt(i);
+            EditText inputCountry = (EditText) linearView.findViewById(R.id.input_country);
+            EditText inputState = (EditText) linearView.findViewById(R.id.input_state);
+            EditText inputCity = (EditText) linearView.findViewById(R.id.input_city);
+            EditText inputStreet = (EditText) linearView.findViewById(R.id.input_street);
+            if (StringUtils.length(StringUtils.trimToEmpty(inputCountry.getText().toString())) <
+                    1 ||
+                    StringUtils.length(StringUtils.trimToEmpty(inputState.getText().toString()))
+                            < 1 ||
+                    StringUtils.length(StringUtils.trimToEmpty(inputCity.getText().toString())) <
+                            1 ||
+                    StringUtils.length(StringUtils.trimToEmpty(inputStreet.getText().toString()))
+                            < 1) {
+                toAdd = false;
+                break;
+            } else {
+                toAdd = true;
+            }
+        }
+        if (toAdd) {
+            addAddressView(null, linearAddressDetails.getChildCount());
+        }
+    }
+
+    private void checkBeforeOrganizationViewAdd() {
+        boolean toAdd = false;
+        for (int i = 0; i < linearOrganizationDetail.getChildCount(); i++) {
+            View linearView = linearOrganizationDetail.getChildAt(i);
+            EditText inputCompanyName = (EditText) linearView.findViewById(R.id.input_company_name);
+            EditText inputDesignationName = (EditText) linearView.findViewById(R.id
+                    .input_designation_name);
+            if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText().toString())
+            ) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputDesignationName.getText()
+                    .toString())) < 1) {
+                toAdd = false;
+                break;
+            } else {
+                toAdd = true;
+            }
+        }
+        if (toAdd) {
+            addOrganizationView(null);
+        }
     }
 
     private void showCustomTypeDialog(final Spinner spinnerType) {
@@ -1454,7 +1535,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
             public void onComplete(RippleView rippleView) {
-                Utils.hideSoftKeyboard(EditProfileActivity.this, inputCustomName);
+                Utils.hideSoftKeyboard(EditProfileTempActivity.this, inputCustomName);
                 dialog.dismiss();
                 switch ((Integer) spinnerType.getTag()) {
                     case AppConstants.PHONE_NUMBER:
@@ -1499,65 +1580,589 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         dialog.show();
     }
 
-    private void selectImageFromGallery() {
-        mFileTemp = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+    private void storeProfileDataToDb(ProfileDataOperation profileDetail) {
 
-        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(i, GALLERY_IMAGE_REQUEST_CODE);
+        //<editor-fold desc="Basic Details">
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+
+        UserProfile userProfile = new UserProfile();
+        userProfile.setPmRcpId(getUserPmId());
+        userProfile.setPmPrefix(profileDetail.getPbNamePrefix());
+        userProfile.setPmFirstName(profileDetail.getPbNameFirst());
+        userProfile.setPmMiddleName(profileDetail.getPbNameMiddle());
+        userProfile.setPmLastName(profileDetail.getPbNameLast());
+        userProfile.setPmSuffix(profileDetail.getPbNameSuffix());
+        userProfile.setPmNickName(profileDetail.getPbNickname());
+        userProfile.setPmPhoneticFirstName(profileDetail.getPbPhoneticNameFirst());
+        userProfile.setPmPhoneticMiddleName(profileDetail.getPbPhoneticNameMiddle());
+        userProfile.setPmPhoneticLastName(profileDetail.getPbPhoneticNameLast());
+        userProfile.setPmNotes(profileDetail.getPbNote());
+        userProfile.setProfileRating(profileDetail.getProfileRating());
+        userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
+        userProfile.setPmIsFavourite(profileDetail.getIsFavourite());
+        userProfile.setPmNosqlMasterId(profileDetail.getNoSqlMasterId());
+        userProfile.setPmJoiningDate(profileDetail.getJoiningDate());
+        userProfile.setPmGender(profileDetail.getPbGender());
+        userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
+
+        tableProfileMaster.updateUserProfile(userProfile);
+        //</editor-fold>
+
+        // <editor-fold desc="Mobile Number">
+        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+
+        // Remove Existing Number
+        tableMobileMaster.deleteMobileNumber(getUserPmId());
+
+        ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
+        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber =
+                profileDetail.getPbPhoneNumber();
+        if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber)) {
+            for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
+                MobileNumber mobileNumber = new MobileNumber();
+                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i)
+                        .getPhoneId());
+                mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i)
+                        .getPhoneType());
+                mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(i)
+                        .getPhoneNumber());
+                mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
+                        .get(i).getPhonePublic()));
+                mobileNumber.setMnmIsPrimary(arrayListPhoneNumber.get(i).getPbRcpType());
+                mobileNumber.setRcProfileMasterPmId(getUserPmId());
+                arrayListMobileNumber.add(mobileNumber);
+            }
+            tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Email Master">
+
+        TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
+
+        // Remove Existing Number
+        tableEmailMaster.deleteEmail(getUserPmId());
+
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
+            ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
+            ArrayList<Email> arrayListEmail = new ArrayList<>();
+            for (int i = 0; i < arrayListEmailId.size(); i++) {
+                Email email = new Email();
+                email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
+                email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+                email.setEmEmailType(arrayListEmailId.get(i).getEmType());
+                email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
+                email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
+                email.setRcProfileMasterPmId(getUserPmId());
+                arrayListEmail.add(email);
+            }
+
+
+            tableEmailMaster.addArrayEmail(arrayListEmail);
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Organization Master">
+
+        TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
+                (databaseHandler);
+
+        // Remove Existing Number
+        tableOrganizationMaster.deleteOrganization(getUserPmId());
+
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
+            ArrayList<ProfileDataOperationOrganization> arrayListOrganization = profileDetail
+                    .getPbOrganization();
+            ArrayList<Organization> organizationList = new ArrayList<>();
+            for (int i = 0; i < arrayListOrganization.size(); i++) {
+                Organization organization = new Organization();
+                organization.setOmRecordIndexId(arrayListOrganization.get(i).getOrgId());
+                organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName());
+                organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
+                        .getOrgJobTitle());
+                organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
+                        .getIsCurrent()));
+                organization.setRcProfileMasterPmId(getUserPmId());
+                organizationList.add(organization);
+            }
+
+            tableOrganizationMaster.addArrayOrganization(organizationList);
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Website Master">
+
+        TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
+
+        // Remove Existing Number
+        tableWebsiteMaster.deleteWebsite(getUserPmId());
+
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
+//            ArrayList<String> arrayListWebsite = profileDetail.getPbWebAddress();
+            ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileDetail
+                    .getPbWebAddress();
+            ArrayList<Website> websiteList = new ArrayList<>();
+            for (int j = 0; j < arrayListWebsite.size(); j++) {
+                Website website = new Website();
+                website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
+                website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
+                website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
+                website.setRcProfileMasterPmId(getUserPmId());
+                websiteList.add(website);
+            }
+
+            tableWebsiteMaster.addArrayWebsite(websiteList);
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Address Master">
+
+        TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
+
+        // Remove Existing Number
+        tableAddressMaster.deleteAddress(getUserPmId());
+
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
+            ArrayList<ProfileDataOperationAddress> arrayListAddress = profileDetail.getPbAddress();
+            ArrayList<Address> addressList = new ArrayList<>();
+            for (int j = 0; j < arrayListAddress.size(); j++) {
+                Address address = new Address();
+                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
+                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
+                address.setAmState(arrayListAddress.get(j).getState());
+                address.setAmCity(arrayListAddress.get(j).getCity());
+                address.setAmCountry(arrayListAddress.get(j).getCountry());
+                address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
+                address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
+                address.setAmPostCode(arrayListAddress.get(j).getPostCode());
+                address.setAmPoBox(arrayListAddress.get(j).getPoBox());
+                address.setAmStreet(arrayListAddress.get(j).getStreet());
+                address.setAmAddressType(arrayListAddress.get(j).getAddressType());
+                address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
+                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
+                address.setRcProfileMasterPmId(getUserPmId());
+                addressList.add(address);
+            }
+
+            tableAddressMaster.addArrayAddress(addressList);
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Im Account Master">
+        TableImMaster tableImMaster = new TableImMaster(databaseHandler);
+
+        // Remove Existing Number
+        tableImMaster.deleteImAccount(getUserPmId());
+
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
+            ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileDetail
+                    .getPbIMAccounts();
+            ArrayList<ImAccount> imAccountsList = new ArrayList<>();
+            for (int j = 0; j < arrayListImAccount.size(); j++) {
+                ImAccount imAccount = new ImAccount();
+                imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
+                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
+//                imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
+                imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
+                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
+                        .getIMAccountPublic()));
+                imAccount.setRcProfileMasterPmId(getUserPmId());
+                imAccountsList.add(imAccount);
+            }
+
+            tableImMaster.addArrayImAccount(imAccountsList);
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Event Master">
+
+        TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
+
+        // Remove Existing Number
+        tableEventMaster.deleteEvent(getUserPmId());
+
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
+            ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail
+                    .getPbEvent();
+            ArrayList<Event> eventList = new ArrayList<>();
+            for (int j = 0; j < arrayListEvent.size(); j++) {
+                Event event = new Event();
+                event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
+                event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
+                event.setEvmEventType(arrayListEvent.get(j).getEventType());
+                event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
+                event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
+                event.setRcProfileMasterPmId(getUserPmId());
+                eventList.add(event);
+            }
+
+            tableEventMaster.addArrayEvent(eventList);
+        }
+        //</editor-fold>
+
     }
 
-    private void selectImageFromCamera() {
-        mFileTemp = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+    private void showPermissionConfirmationDialog(String message, final boolean isStorage) {
 
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
 
-        // start the image capture Intent
-        startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        permissionConfirmationDialog.dismissDialog();
+                        break;
+
+                    case R.id.rippleRight:
+                        permissionConfirmationDialog.dismissDialog();
+                        if (isStorage) {
+                            isStorageFromSettings = true;
+                        } else {
+                            isCameraFromSettings = true;
+                        }
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", getPackageName(), null));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        permissionConfirmationDialog = new MaterialDialog(this, cancelListener);
+        permissionConfirmationDialog.setTitleVisibility(View.GONE);
+        permissionConfirmationDialog.setLeftButtonText("Cancel");
+        permissionConfirmationDialog.setRightButtonText("OK");
+        permissionConfirmationDialog.setDialogBody(message);
+
+        permissionConfirmationDialog.showDialog();
+
     }
 
-    private File getOutputMediaFile(int type) {
+    private void getUpdatedProfile() {
 
-        // External sdcard location
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment
-                .DIRECTORY_PICTURES), IMAGE_DIRECTORY_NAME);
+        boolean isValid = true;
+        String message = "";
 
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                Log.d(IMAGE_DIRECTORY_NAME, "Oops! Failed create " + IMAGE_DIRECTORY_NAME + " " +
-                        "directory");
-                return null;
+        //<editor-fold desc="Email">
+        ArrayList<ProfileDataOperationEmail> arrayListNewEmail = new ArrayList<>();
+        for (int i = 0; i < linearEmailDetails.getChildCount(); i++) {
+            ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+            View view = linearEmailDetails.getChildAt(i);
+            EditText emailId = (EditText) view.findViewById(R.id.input_value);
+            Spinner emailType = (Spinner) view.findViewById(R.id.spinner_type);
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            email.setEmEmailId(emailId.getText().toString());
+            email.setEmType((String) emailType.getSelectedItem());
+            email.setEmId((String) relativeRowEditProfile.getTag());
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                email.setEmPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+            }
+
+            if (StringUtils.length(email.getEmEmailId()) > 0) {
+                arrayListNewEmail.add(email);
+            }
+
+        }
+
+        //</editor-fold>
+
+        //<editor-fold desc="Phone Number">
+        ArrayList<ProfileDataOperationPhoneNumber> arrayListNewPhone = new ArrayList<>();
+        for (int i = 0; i < linearPhoneDetails.getChildCount(); i++) {
+            ProfileDataOperationPhoneNumber phoneNumber = new
+                    ProfileDataOperationPhoneNumber();
+            View view = linearPhoneDetails.getChildAt(i);
+            EditText emailId = (EditText) view.findViewById(R.id.input_value);
+            Spinner emailType = (Spinner) view.findViewById(R.id.spinner_type);
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            phoneNumber.setPhoneNumber(emailId.getText().toString());
+            phoneNumber.setPhoneType((String) emailType.getSelectedItem());
+            phoneNumber.setPhoneId((String) relativeRowEditProfile.getTag());
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                phoneNumber.setPhonePublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_MY_CONTACT);
+            }
+
+            if (StringUtils.length(phoneNumber.getPhoneNumber()) > 0) {
+                arrayListNewPhone.add(phoneNumber);
+            }
+
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Website">
+        ArrayList<ProfileDataOperationWebAddress> arrayListNewWebAddress = new
+                ArrayList<>();
+
+        for (int i = 0; i < linearWebsiteDetails.getChildCount(); i++) {
+            ProfileDataOperationWebAddress webAddress = new
+                    ProfileDataOperationWebAddress();
+            View view = linearWebsiteDetails.getChildAt(i);
+            EditText website = (EditText) view.findViewById(R.id.input_value);
+            Spinner websiteType = (Spinner) view.findViewById(R.id.spinner_type);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            webAddress.setWebAddress(website.getText().toString());
+            webAddress.setWebType((String) websiteType.getSelectedItem());
+            webAddress.setWebId((String) relativeRowEditProfile.getTag());
+
+            webAddress.setWebPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+            if (StringUtils.length(webAddress.getWebAddress()) > 0) {
+                arrayListNewWebAddress.add(webAddress);
+            }
+
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Event">
+        ArrayList<ProfileDataOperationEvent> arrayListNewEvent = new ArrayList<>();
+        for (int i = 0; i < linearEventDetails.getChildCount(); i++) {
+            ProfileDataOperationEvent event = new ProfileDataOperationEvent();
+            View view = linearEventDetails.getChildAt(i);
+            EditText eventDate = (EditText) view.findViewById(R.id.input_value);
+            Spinner eventType = (Spinner) view.findViewById(R.id.spinner_type);
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+            CheckBox checkboxHideYear = (CheckBox) view.findViewById(R.id
+                    .checkbox_hide_year);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+//                    event.setEventDateTime(eventDate.getText().toString());
+            event.setEventType((String) eventType.getSelectedItem());
+            event.setIsYearHidden(checkboxHideYear.isChecked() ? 1 : 0);
+            event.setEventId((String) relativeRowEditProfile.getTag());
+//            event.setEventPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                event.setEventPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                event.setEventPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+            }
+            if (eventDate.getText().toString().length() > 0) {
+                event.setEventDateTime(Utils.convertDateFormat(eventDate.getText()
+                        .toString(), EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
+                event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString(),
+                        EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
+                arrayListNewEvent.add(event);
             }
         }
 
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format
-                (new Date());
-        File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE) {
+        //</editor-fold>
 
-            TEMP_PHOTO_FILE_NAME = "IMG_" + timeStamp + ".jpg";
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + TEMP_PHOTO_FILE_NAME);
+        // <editor-fold desc="Organization">.
+        ArrayList<ProfileDataOperationOrganization> arrayListNewOrganization = new
+                ArrayList<>();
+        for (int i = 0; i < linearOrganizationDetail.getChildCount(); i++) {
+            ProfileDataOperationOrganization organization = new
+                    ProfileDataOperationOrganization();
+            View view = linearOrganizationDetail.getChildAt(i);
+            EditText inputCompanyName = (EditText) view.findViewById(R.id
+                    .input_company_name);
+            EditText inputDesignationName = (EditText) view.findViewById(R.id
+                    .input_designation_name);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            CheckBox checkboxOrganization = (CheckBox) view.findViewById(R.id
+                    .checkbox_organization);
+            organization.setOrgName(inputCompanyName.getText().toString());
+            organization.setOrgJobTitle(inputDesignationName.getText().toString());
+            organization.setOrgId((String) relativeRowEditProfile.getTag());
+            organization.setIsCurrent(checkboxOrganization.isChecked() ? 1 : 0);
 
-        } else {
-            return null;
+            organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+            if (isValid && (StringUtils.length(organization.getOrgName()) > 0 || StringUtils.length
+                    (organization.getOrgJobTitle()) > 0)) {
+//                arrayListNewOrganization.add(organization);
+                if (StringUtils.length(organization.getOrgName()) > 0) {
+                    if (StringUtils.length(organization.getOrgJobTitle()) > 0) {
+                        arrayListNewOrganization.add(organization);
+                    } else {
+                        isValid = false;
+                        message = "Designation in organization is required!";
+                    }
+                } else {
+                    isValid = false;
+                    message = "Company name in organization is required!";
+                }
+            }
+
+
         }
 
-        return mediaFile;
-    }
+        //</editor-fold>
 
-    private Uri getOutputMediaFileUri(int type) {
-        return Uri.fromFile(getOutputMediaFile(type));
-    }
+        // <editor-fold desc="Social Contact">.
+        ArrayList<ProfileDataOperationImAccount> arrayListNewImAccount = new ArrayList<>();
+        for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
+            ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
+            View view = linearSocialContactDetails.getChildAt(i);
+            EditText imAccountName = (EditText) view.findViewById(R.id.input_value);
+            Spinner imAccountProtocol = (Spinner) view.findViewById(R.id.spinner_type);
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            imAccount.setIMAccountDetails(imAccountName.getText().toString());
+            imAccount.setIMAccountProtocol((String) imAccountProtocol.getSelectedItem());
+            imAccount.setIMId((String) relativeRowEditProfile.getTag());
 
-    private void copyStream(InputStream inputStream, FileOutputStream fileOutputStream) throws
-            IOException {
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            fileOutputStream.write(buffer, 0, bytesRead);
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                imAccount.setIMAccountPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+            }
+
+            if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
+                arrayListNewImAccount.add(imAccount);
+            }
+
+        }
+
+        //</editor-fold>
+
+        // <editor-fold desc="Address">
+        ArrayList<ProfileDataOperationAddress> arrayListNewAddress = new ArrayList<>();
+        for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
+            ProfileDataOperationAddress address = new ProfileDataOperationAddress();
+            View view = linearAddressDetails.getChildAt(i);
+            Spinner addressType = (Spinner) view.findViewById(R.id.spinner_type);
+            EditText country = (EditText) view.findViewById(R.id.input_country);
+            EditText state = (EditText) view.findViewById(R.id.input_state);
+            EditText city = (EditText) view.findViewById(R.id.input_city);
+            EditText street = (EditText) view.findViewById(R.id.input_street);
+            EditText neighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
+            EditText pinCode = (EditText) view.findViewById(R.id.input_pin_code);
+            RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R
+                    .id.relative_row_edit_profile);
+            TextView textLatitude = (TextView) view.findViewById(R.id.input_latitude);
+            TextView textLongitude = (TextView) view.findViewById(R.id.input_longitude);
+            TextView textGoogleAddress = (TextView) view.findViewById(R.id
+                    .input_google_address);
+
+            TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+
+            String countryName = country.getText().toString();
+            String stateName = state.getText().toString();
+            String cityName = city.getText().toString();
+            String streetName = street.getText().toString();
+            String neighborhoodName = neighborhood.getText().toString();
+            String pinCodeName = pinCode.getText().toString();
+
+            /*String[] addressStrings = {streetName, neighborhoodName, cityName, stateName,
+                    countryName, pinCodeName};
+
+            String formattedAddress = "";
+
+            for (int j = 0; j < addressStrings.length; j++) {
+                if (j != addressStrings.length - 1) {
+                    if (StringUtils.length(addressStrings[j]) > 0) {
+                        formattedAddress = formattedAddress + StringUtils.appendIfMissing
+                                (addressStrings[j], ", ");
+                    }
+                } else {
+                    formattedAddress = formattedAddress + pinCodeName;
+                }
+            }*/
+
+            address.setCountry(countryName);
+            address.setState(stateName);
+            address.setCity(cityName);
+            address.setStreet(streetName);
+            address.setNeighborhood(neighborhoodName);
+            address.setPostCode(pinCodeName);
+//            address.setFormattedAddress(StringUtils.removeEnd(formattedAddress, ", "));
+            address.setFormattedAddress(Utils.setFormattedAddress(streetName, neighborhoodName,
+                    cityName, stateName, countryName, pinCodeName));
+            address.setAddressType((String) addressType.getSelectedItem());
+            address.setGoogleAddress(textGoogleAddress.getText().toString());
+            address.setGoogleLatitude(textLatitude.getText().toString());
+            address.setGoogleLongitude(textLongitude.getText().toString());
+//            address.setAddPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            address.setAddId((String) relativeRowEditProfile.getTag());
+            if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                address.setAddPublic(Integer.parseInt(textIsPublic.getText().toString()));
+            } else {
+                address.setAddPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+            }
+
+            if (isValid && (StringUtils.length(address.getCountry()) > 0 || StringUtils.length
+                    (address.getState()) > 0 || StringUtils.length(address.getCity()) > 0 ||
+                    StringUtils.length(address.getStreet()) > 0)) {
+//                arrayListNewAddress.add(address);
+                if (StringUtils.length(address.getCountry()) > 0) {
+                    if (StringUtils.length(address.getState()) > 0) {
+                        if (StringUtils.length(address.getCity()) > 0) {
+                            if (StringUtils.length(address.getStreet()) > 0) {
+                                arrayListNewAddress.add(address);
+                            } else {
+                                isValid = false;
+                                message = "Street in address is required!";
+                            }
+                        } else {
+                            isValid = false;
+                            message = "City in address is required!";
+                        }
+                    } else {
+                        isValid = false;
+                        message = "State in address is required!";
+                    }
+                } else {
+                    isValid = false;
+                    message = "Country in address is required!";
+                }
+            }
+
+
+        }
+
+        //</editor-fold>*/
+
+        ArrayList<ProfileDataOperation> arrayList = new ArrayList<>();
+
+        int radioButtonID = radioGroupGender.getCheckedRadioButtonId();
+        View radioButton = radioGroupGender.findViewById(radioButtonID);
+        int index = radioGroupGender.indexOfChild(radioButton);
+
+        RadioButton r = (RadioButton) radioGroupGender.getChildAt(index);
+        String selectedText = r.getText().toString();
+
+        String bitmapString = "";
+        if (selectedBitmap != null) {
+            bitmapString = Utils.convertBitmapToBase64(selectedBitmap);
+        }
+
+        ProfileDataOperation profileDataOperation = new ProfileDataOperation();
+
+        profileDataOperation.setPbNameFirst(inputFirstName.getText().toString());
+        profileDataOperation.setPbNameLast(inputLastName.getText().toString());
+        profileDataOperation.setPbGender(selectedText);
+        profileDataOperation.setPbProfilePhoto(bitmapString);
+
+        profileDataOperation.setPbEmailId(arrayListNewEmail);
+        profileDataOperation.setPbPhoneNumber(arrayListNewPhone);
+        profileDataOperation.setPbWebAddress(arrayListNewWebAddress);
+        profileDataOperation.setPbEvent(arrayListNewEvent);
+        profileDataOperation.setPbAddress(arrayListNewAddress);
+        profileDataOperation.setPbOrganization(arrayListNewOrganization);
+        profileDataOperation.setPbIMAccounts(arrayListNewImAccount);
+
+        arrayList.add(profileDataOperation);
+//                arrayList.add(updatedAddress);
+
+        if (isValid) {
+            editProfile(arrayList);
+        } else {
+            Utils.showErrorSnackBar(EditProfileTempActivity.this, relativeRootEditProfile, message);
         }
     }
 
@@ -1565,10 +2170,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     //<editor-fold desc="Web Service Call">
 
-    private void editProfile(ProfileDataOperation editProfile) {
+    private void editProfile(ArrayList<ProfileDataOperation> editProfile) {
 
-        /*WsRequestObject editProfileObject = new WsRequestObject();
-        editProfileObject.setProfileEdit(editProfile);
+        WsRequestObject editProfileObject = new WsRequestObject();
+//        editProfileObject.setProfileEdit(editProfile);
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
@@ -1578,9 +2183,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
                     .getString(R.string.msg_no_network));
-        }*/
+        }
     }
 
     //</editor-fold>
-
 }

@@ -140,7 +140,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     boolean isFromSettings = false;
     int settingRequestPermission = 0;
-    private String callNumber = "";
+    public String callNumber = "";
     private SyncingTask syncingTask;
 
     //<editor-fold desc="Constructors">
@@ -550,8 +550,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 if (grantResults.length > 0 && grantResults[0] == PackageManager
                         .PERMISSION_GRANTED) {
                     // Permission Granted
-                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + callNumber));
-                    startActivity(intent);
+                  /*  Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                  callNumber));
+                    startActivity(intent);*/
+                    Utils.callIntent(getActivity(), callNumber);
                 } else {
                     // Permission Denied
                     showPermissionConfirmationDialog(AppConstants
@@ -992,7 +994,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     profileData.setTempPrefix(data.getString(prefixNameIdx));
                     profileData.setTempSufix(data.getString(suffixNameIdx));
                     profileData.setTempMiddleName(data.getString(middleNameIdx));
-                    profileData.setName(data.getString(givenNameIdx) + data.getString(familyNameIdx));
+                    profileData.setName(data.getString(givenNameIdx) + data.getString
+                            (familyNameIdx));
                     break;
             }
         }
@@ -1458,6 +1461,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         instanceof AllContactAdapter.ContactFooterViewHolder) {
                     return 0;
                 }
+                 /* Disable swiping in multiple RC case */
+                if (viewHolder instanceof AllContactAdapter.AllContactViewHolder) {
+                    if (((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
+                        return 0;
+                    }
+                }
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
 
@@ -1528,9 +1538,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     .CALL_PHONE}, AppConstants
                                     .MY_PERMISSIONS_REQUEST_PHONE_CALL);
                         } else {
-                            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                           /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
                                     callNumber));
-                            startActivity(intent);
+                            startActivity(intent);*/
+                            Utils.callIntent(getActivity(), callNumber);
                         }
                         break;
                 }

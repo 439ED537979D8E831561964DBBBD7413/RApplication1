@@ -52,7 +52,7 @@ class ExpandableContactListAdapter extends RecyclerView
 
     private TableProfileMaster tableProfileMaster;
 
-    String displayNamePmId;
+    private String displayNamePmId;
 
     ExpandableContactListAdapter(Fragment fragment, ArrayList<ProfileMobileMapping>
             arrayListDbMobileNumbers, ArrayList<ProfileEmailMapping> arrayListDbEmailIds, String

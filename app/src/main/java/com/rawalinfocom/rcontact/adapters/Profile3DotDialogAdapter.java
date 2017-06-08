@@ -566,13 +566,15 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
+                        /*Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                        number));
                         try {
                             context.startActivity(intent);
 
                         } catch (SecurityException e) {
                             e.printStackTrace();
-                        }
+                        }*/
+                        Utils.callIntent(context, number);
                         break;
                 }
             }
