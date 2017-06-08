@@ -1,19 +1,11 @@
 package com.rawalinfocom.rcontact.adapters;
 
-import android.annotation.TargetApi;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.CallLog;
-import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,13 +19,8 @@ import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialogClipboard;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.model.CallLogType;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,7 +29,8 @@ import butterknife.ButterKnife;
  * Created by Aniruddh on 29/04/17.
  */
 
-public class SmsDialogListAdapter  extends RecyclerView.Adapter<SmsDialogListAdapter.MaterialViewHolder>{
+public class SmsDialogListAdapter extends RecyclerView.Adapter<SmsDialogListAdapter
+        .MaterialViewHolder> {
 
 
     private Context context;
@@ -52,23 +40,27 @@ public class SmsDialogListAdapter  extends RecyclerView.Adapter<SmsDialogListAda
     String dialogName;
     String smsThreadId;
 
-    public SmsDialogListAdapter(Context context, ArrayList<String> arrayList, String number, String name,String threadId) {
+    public SmsDialogListAdapter(Context context, ArrayList<String> arrayList, String number,
+                                String name, String threadId) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
         this.dialogName = name;
-        this.smsThreadId =  threadId;
+        this.smsThreadId = threadId;
     }
 
     @Override
-    public SmsDialogListAdapter.MaterialViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_dialog_call_log,
+    public SmsDialogListAdapter.MaterialViewHolder onCreateViewHolder(ViewGroup parent, int
+            viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout
+                        .list_item_dialog_call_log,
                 parent, false);
         return new SmsDialogListAdapter.MaterialViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(SmsDialogListAdapter.MaterialViewHolder holder, final int position) {
+    public void onBindViewHolder(SmsDialogListAdapter.MaterialViewHolder holder, final int
+            position) {
         final String value = arrayListString.get(position);
         holder.textItemValue.setText(value);
 
@@ -84,24 +76,29 @@ public class SmsDialogListAdapter  extends RecyclerView.Adapter<SmsDialogListAda
 
                     Utils.addToContact(context, numberToCall);
 
-                } else if (value.equalsIgnoreCase(context.getString(R.string.add_to_existing_contact))) {
+                } else if (value.equalsIgnoreCase(context.getString(R.string
+                        .add_to_existing_contact))) {
                     Utils.addToExistingContact(context, numberToCall);
 
-                }  else if (value.equalsIgnoreCase(context.getString(R.string.copy_phone_number))) {
-                    MaterialDialogClipboard materialDialogClipboard = new MaterialDialogClipboard(context, numberToCall);
+                } else if (value.equalsIgnoreCase(context.getString(R.string.copy_phone_number))) {
+                    MaterialDialogClipboard materialDialogClipboard = new MaterialDialogClipboard
+                            (context, numberToCall);
                     materialDialogClipboard.showDialog();
 
-                }else if(value.equalsIgnoreCase(context.getString(R.string.delete))){
-                    if(!TextUtils.isEmpty(smsThreadId))
+                } else if (value.equalsIgnoreCase(context.getString(R.string.delete))) {
+                    if (!TextUtils.isEmpty(smsThreadId))
                         deleteMessageThreadWise(smsThreadId);
 
-                }else{
-//                    Toast.makeText(context, "Please select any one option", Toast.LENGTH_SHORT).show();
+                } else {
+//                    Toast.makeText(context, "Please select any one option", Toast.LENGTH_SHORT)
+// .show();
 
                 }
 
-                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG_SMS);
-                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                Intent localBroadcastIntent = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_DIALOG_SMS);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                        (context);
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
             }
@@ -110,17 +107,21 @@ public class SmsDialogListAdapter  extends RecyclerView.Adapter<SmsDialogListAda
     }
 
 
-    private void deleteMessageThreadWise(String threadId){
+    private void deleteMessageThreadWise(String threadId) {
         try {
-            String where =  Telephony.Sms.THREAD_ID + "=?";
+            String where = Telephony.Sms.THREAD_ID + "=?";
             String[] selectionArguments = new String[]{threadId};
-            int value = context.getContentResolver().delete(Telephony.Sms.CONTENT_URI,where,selectionArguments);
-//            int value = context.getContentResolver().delete(Uri.parse("content://sms/conversations/" + threadId), null, null);
-            if(value>0){
-                Toast.makeText(context, value + " message deleted." , Toast.LENGTH_SHORT);
+            int value = context.getContentResolver().delete(Telephony.Sms.CONTENT_URI, where,
+                    selectionArguments);
+//            int value = context.getContentResolver().delete(Uri.parse
+// ("content://sms/conversations/" + threadId), null, null);
+            if (value > 0) {
+                Toast.makeText(context, value + " message deleted.", Toast.LENGTH_SHORT);
 
-                Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER);
-                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+                Intent localBroadcastIntent = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                        (context);
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
             }
 
@@ -185,13 +186,15 @@ public class SmsDialogListAdapter  extends RecyclerView.Adapter<SmsDialogListAda
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
+                       /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                       number));
                         try {
                             context.startActivity(intent);
 
                         } catch (SecurityException e) {
                             e.printStackTrace();
-                        }
+                        }*/
+                        Utils.callIntent(context, number);
                         break;
                 }
             }

@@ -26,7 +26,6 @@ import android.transition.Transition;
 import android.transition.TransitionSet;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -494,46 +493,47 @@ public class DialerActivity extends Activity {
     }
 
     private void showContactDetail(final String number) {
-            if(!TextUtils.isEmpty(number)){
-                String name = getNameFromNumber(number);
-                if(!TextUtils.isEmpty(name)){
-                    relativeContact.setVisibility(View.VISIBLE);
-                    linearAddToContact.setVisibility(View.GONE);
-                    textContactName.setText(name);
-                    textContactNumber.setText(number);
-                    String imageUrl =  getPhotoUrlFromNumber(number);
-                    if(!TextUtils.isEmpty(imageUrl)){
-                        Glide.with(this)
-                                .load(imageUrl)
-                                .placeholder(R.drawable.home_screen_profile)
-                                .error(R.drawable.home_screen_profile)
-                                .bitmapTransform(new CropCircleTransformation(this))
-                                .override(200, 200)
-                                .into(imageProfile);
+        if (!TextUtils.isEmpty(number)) {
+            String name = getNameFromNumber(number);
+            if (!TextUtils.isEmpty(name)) {
+                relativeContact.setVisibility(View.VISIBLE);
+                linearAddToContact.setVisibility(View.GONE);
+                textContactName.setText(name);
+                textContactNumber.setText(number);
+                String imageUrl = getPhotoUrlFromNumber(number);
+                if (!TextUtils.isEmpty(imageUrl)) {
+                    Glide.with(this)
+                            .load(imageUrl)
+                            .placeholder(R.drawable.home_screen_profile)
+                            .error(R.drawable.home_screen_profile)
+                            .bitmapTransform(new CropCircleTransformation(this))
+                            .override(200, 200)
+                            .into(imageProfile);
 
-                    }else{
-                        imageProfile.setImageResource(R.drawable.home_screen_profile);
-                    }
-                    relativeContact.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS, number);
-                            }else{
-                                showCallConfirmationDialog(number);
-                            }
-                        }
-                    });
-
-                }else{
-                    relativeContact.setVisibility(View.GONE);
-                    linearAddToContact.setVisibility(View.VISIBLE);
+                } else {
+                    imageProfile.setImageResource(R.drawable.home_screen_profile);
                 }
-            }else{
+                relativeContact.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS,
+                                    number);
+                        } else {
+                            showCallConfirmationDialog(number);
+                        }
+                    }
+                });
+
+            } else {
                 relativeContact.setVisibility(View.GONE);
                 linearAddToContact.setVisibility(View.VISIBLE);
             }
+        } else {
+            relativeContact.setVisibility(View.GONE);
+            linearAddToContact.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -541,12 +541,12 @@ public class DialerActivity extends Activity {
     // A method to check if a permission is granted then execute tasks depending on that
     // particular permission
     @TargetApi(Build.VERSION_CODES.M)
-    private void checkPermissionToExecute(String permissions[], int requestCode,String number) {
+    private void checkPermissionToExecute(String permissions[], int requestCode, String number) {
 
         boolean logs = ContextCompat.checkSelfPermission(this, permissions[0]) !=
                 PackageManager.PERMISSION_GRANTED;
         if (logs) {
-            numberToCall =  number;
+            numberToCall = number;
             requestPermissions(permissions, requestCode);
         } else {
             showCallConfirmationDialog(number);
@@ -561,8 +561,8 @@ public class DialerActivity extends Activity {
 
         if (requestCode == AppConstants.READ_LOGS && permissions[0].equals(Manifest.permission
                 .READ_CALL_LOG)) {
-            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED ) {
-                if(!TextUtils.isEmpty(numberToCall))
+            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED) {
+                if (!TextUtils.isEmpty(numberToCall))
                     showCallConfirmationDialog(numberToCall);
             } else {
                 showPermissionConfirmationDialog();
@@ -618,9 +618,12 @@ public class DialerActivity extends Activity {
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
+                       /* String unicodeNumber = number.replace("*", Uri.encode("*")).replace("#",
+                                Uri.encode("#"));
                         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                number));
-                        startActivity(intent);
+                                unicodeNumber));
+                        startActivity(intent);*/
+                        Utils.callIntent(DialerActivity.this, number);
                         break;
                 }
             }

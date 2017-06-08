@@ -19,6 +19,7 @@ import android.util.Log;
 
 import com.rawalinfocom.rcontact.ProfileRegistrationActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.contacts.MapsActivity;
 
 import java.io.IOException;
 import java.util.List;
@@ -208,6 +209,11 @@ public class GPSTracker extends Service implements LocationListener {
                 switch (rippleView.getId()) {
                     case R.id.rippleLeft:
                         dialogGps.dismissDialog();
+                        if (mContext instanceof MapsActivity) {
+                            latitude = 21.1702;
+                            longitude = 72.8311;
+                            ((MapsActivity) mContext).addMapMarker();
+                        }
                         break;
 
                     case R.id.rippleRight:

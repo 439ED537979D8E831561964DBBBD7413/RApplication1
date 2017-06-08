@@ -5,7 +5,7 @@
     android:id="@+id/relative_root_edit_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rawalinfocom.rcontact.contacts.EditProfileActivity">
+    tools:context="com.rawalinfocom.rcontact.contacts.EditProfileTempActivity">
 
     <include
         android:id="@+id/include_toolbar"

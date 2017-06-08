@@ -101,7 +101,7 @@ public class ProfileDataOperation implements Serializable {
     @JsonIgnore
     @JsonProperty("pb_name_suffix")
     public String getPbNameSuffix() {
-        return StringUtils.defaultString(this.pbNameSuffix);
+        return this.pbNameSuffix;
     }
 
     public void setPbNameSuffix(String pbNameSuffix) {
@@ -119,7 +119,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("pb_name_first")
     public String getPbNameFirst() {
-        return StringUtils.defaultString(this.pbNameFirst);
+        return this.pbNameFirst;
     }
 
     public void setPbNameFirst(String pbNameFirst) {
@@ -128,7 +128,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("pb_name_middle")
     public String getPbNameMiddle() {
-        return StringUtils.defaultString(this.pbNameMiddle);
+        return this.pbNameMiddle;
     }
 
     public void setPbNameMiddle(String pbNameMiddle) {
@@ -146,7 +146,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("is_favourite")
     public String getIsFavourite() {
-        return StringUtils.defaultString(this.isFavourite);
+        return this.isFavourite;
     }
 
     public void setIsFavourite(String isFavourite) {
@@ -155,7 +155,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("pb_source")
     public String getPbSource() {
-        return StringUtils.defaultString(this.pbSource);
+        return this.pbSource;
     }
 
     public void setPbSource(String pbSource) {
@@ -164,7 +164,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("pb_name_prefix")
     public String getPbNamePrefix() {
-        return StringUtils.defaultString(this.pbNamePrefix);
+        return this.pbNamePrefix;
     }
 
     public void setPbNamePrefix(String pbNamePrefix) {
@@ -173,7 +173,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("pb_name_last")
     public String getPbNameLast() {
-        return StringUtils.defaultString(this.pbNameLast);
+        return this.pbNameLast;
     }
 
     public void setPbNameLast(String pbNameLast) {
@@ -182,7 +182,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("pb_phonetic_name_first")
     public String getPbPhoneticNameFirst() {
-        return StringUtils.defaultString(this.pbPhoneticNameFirst);
+        return this.pbPhoneticNameFirst;
     }
 
     public void setPbPhoneticNameFirst(String pbPhoneticNameFirst) {
@@ -191,7 +191,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("pb_phonetic_name_last")
     public String getPbPhoneticNameLast() {
-        return StringUtils.defaultString(this.pbPhoneticNameLast);
+        return this.pbPhoneticNameLast;
     }
 
     public void setPbPhoneticNameLast(String pbPhoneticNameLast) {
@@ -209,7 +209,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("pb_phonetic_name_middle")
     public String getPbPhoneticNameMiddle() {
-        return StringUtils.defaultString(this.pbPhoneticNameMiddle);
+        return this.pbPhoneticNameMiddle;
     }
 
     public void setPbPhoneticNameMiddle(String pbPhoneticNameMiddle) {
@@ -227,7 +227,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("pb_note")
     public String getPbNote() {
-        return StringUtils.defaultString(this.pbNote);
+        return this.pbNote;
     }
 
     public void setPbNote(String pbNote) {
@@ -236,7 +236,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("pb_nickname")
     public String getPbNickname() {
-        return StringUtils.defaultString(this.pbNickname);
+        return this.pbNickname;
     }
 
     public void setPbNickname(String pbNickname) {
@@ -245,7 +245,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("created_at")
     public String getCreatedAt() {
-        return StringUtils.defaultString(createdAt);
+        return createdAt;
     }
 
     public void setCreatedAt(String createdAt) {
@@ -254,7 +254,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("rcp_pm_id")
     public String getRcpPmId() {
-        return StringUtils.defaultString(rcpPmId);
+        return rcpPmId;
     }
 
     public void setRcpPmId(String rcpPmId) {
@@ -263,7 +263,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("updated_at")
     public String getUpdatedAt() {
-        return StringUtils.defaultString(updatedAt);
+        return updatedAt;
     }
 
     public void setUpdatedAt(String updatedAt) {
@@ -272,7 +272,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("_id")
     public String getNoSqlMasterId() {
-        return StringUtils.defaultString(noSqlMasterId);
+        return noSqlMasterId;
     }
 
     public void setNoSqlMasterId(String noSqlMasterId) {
@@ -281,7 +281,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("mobile_number")
     public String getVerifiedMobileNumber() {
-        return StringUtils.defaultString(verifiedMobileNumber);
+        return verifiedMobileNumber;
     }
 
     public void setVerifiedMobileNumber(String verifiedMobileNumber) {
@@ -290,7 +290,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("mnm_id")
     public String getMnmCloudId() {
-        return StringUtils.defaultString(mnmCloudId);
+        return mnmCloudId;
     }
 
     public void setMnmCloudId(String mnmCloudId) {
@@ -299,7 +299,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("joining_date")
     public String getJoiningDate() {
-        return StringUtils.defaultString(joiningDate);
+        return joiningDate;
     }
 
     public void setJoiningDate(String joiningDate) {
@@ -308,7 +308,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("pb_rcp_verify")
     public String getPbRcpVerify() {
-        return StringUtils.defaultString(pbRcpVerify);
+        return pbRcpVerify;
     }
 
     public void setPbRcpVerify(String pbRcpVerify) {
@@ -326,7 +326,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("total_profile_rate_user")
     public String getTotalProfileRateUser() {
-        return StringUtils.defaultString(totalProfileRateUser, "0");
+        return StringUtils.defaultString(totalProfileRateUser,"0");
     }
 
     public void setTotalProfileRateUser(String totalProfileRateUser) {
@@ -353,7 +353,7 @@ public class ProfileDataOperation implements Serializable {
 
     @JsonProperty("pb_gender")
     public String getPbGender() {
-        return StringUtils.defaultString(pbGender);
+        return pbGender;
     }
 
     public void setPbGender(String pbGender) {

@@ -111,7 +111,6 @@
 
     </android.support.v7.widget.Toolbar>
 
-
     <RelativeLayout
         android:id="@+id/relative_fetch_address"
         android:layout_width="match_parent"
@@ -139,60 +138,25 @@
 
     </RelativeLayout>
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/relative_fetch_address"
-        android:layout_below="@id/toolbar_map"/>
-
-    <!--<RelativeLayout
-        android:id="@+id/relative_last_address"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/colorWhite"
-        android:padding="@dimen/margin_small"
-        android:visibility="gone">
+        android:layout_above="@id/relative_fetch_address"
+        android:layout_below="@id/toolbar_map">
 
-        <TextView
-            android:id="@+id/text_label_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/str_address"/>
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
-        <TextView
-            android:id="@+id/text_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/text_label_address"
-            android:layout_marginBottom="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_small"
-            tools:text="Nayaran Marg, Kamela Darwaia\nSurat - 395002, Gujarat"/>
-
-        <LinearLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_suggestions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_address"
-            android:orientation="horizontal">
+            android:background="@color/colorWhite"/>
 
-            <Button
-                android:id="@+id/button_cancel"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/action_cancel"/>
+    </FrameLayout>
 
-            <Button
-                android:id="@+id/button_done"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="Done"/>
-
-        </LinearLayout>
-
-    </RelativeLayout>-->
 
 </RelativeLayout>
