@@ -2,13 +2,9 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.drawable.LayerDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -236,13 +232,17 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         if (StringUtils.length(prefix) > 0) {
             contactDisplayName = prefix + " ";
-        } if (StringUtils.length(firstName) > 0) {
+        }
+        if (StringUtils.length(firstName) > 0) {
             contactDisplayName = contactDisplayName + firstName + " ";
-        } if (StringUtils.length(middleName) > 0) {
+        }
+        if (StringUtils.length(middleName) > 0) {
             contactDisplayName = contactDisplayName + middleName + " ";
-        } if (StringUtils.length(lastName) > 0) {
+        }
+        if (StringUtils.length(lastName) > 0) {
             contactDisplayName = contactDisplayName + lastName + " ";
-        } if (StringUtils.length(suffix) > 0) {
+        }
+        if (StringUtils.length(suffix) > 0) {
             contactDisplayName = contactDisplayName + suffix;
         }
         contactDisplayName = StringUtils.trimToEmpty(contactDisplayName);
@@ -271,8 +271,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             }
         }
 
-        final String profileImage =  profileData.getProfileUrl();
-        if(!TextUtils.isEmpty(profileImage)){
+        final String profileImage = profileData.getProfileUrl();
+        if (!TextUtils.isEmpty(profileImage)) {
             Glide.with(context)
                     .load(profileImage)
                     .placeholder(R.drawable.home_screen_profile)
@@ -280,7 +280,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     .bitmapTransform(new CropCircleTransformation(context))
                     .override(200, 200)
                     .into(holder.imageProfile);
-        }else{
+        } else {
             holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
 
@@ -335,7 +335,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                         bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textCloudName
                                 .getText().toString());
                     }
-                    bundle.putString(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE,profileImage);
+                    bundle.putString(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileImage);
                     ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
                             .class, bundle);
                 }
@@ -887,7 +887,6 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     //</editor-fold>
-
 
 
 }

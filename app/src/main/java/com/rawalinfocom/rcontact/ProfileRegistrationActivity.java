@@ -110,10 +110,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     private final int RC_SIGN_IN = 7;
 
-    private final String host = "api.linkedin.com";
-    private final String topCardUrl = "https://" + host + "/v1/people/~:(id,email-address," +
-            "first-name,last-name,phone-numbers,picture-url,picture-urls::(original))";
-
     final String FIRST_NAME = "first_name";
     final String LAST_NAME = "last_name";
     final String PROFILE_IMAGE = "profile_image";
@@ -1214,6 +1210,9 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     public void getUserData() {
         APIHelper apiHelper = APIHelper.getInstance(getApplicationContext());
+        String host = "api.linkedin.com";
+        String topCardUrl = "https://" + host + "/v1/people/~:(id,email-address," +
+                "first-name,last-name,phone-numbers,picture-url,picture-urls::(original))";
         apiHelper.getRequest(ProfileRegistrationActivity.this, topCardUrl, new ApiListener() {
             @Override
             public void onApiSuccess(ApiResponse result) {
