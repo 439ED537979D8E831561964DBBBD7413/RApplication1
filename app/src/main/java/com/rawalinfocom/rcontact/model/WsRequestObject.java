@@ -221,6 +221,7 @@ public class WsRequestObject {
     private ArrayList<ProfileVisit> arrayListProfileVisit;
 
 //    private ArrayList<ProfileDataOperation> profileEdit;
+
     private ProfileDataOperation profileEdit;
 
     private ArrayList<CallLogHistoryType> historyTypeArrayList;

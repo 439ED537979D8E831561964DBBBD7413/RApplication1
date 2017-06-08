@@ -165,6 +165,14 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         this.searchCount = searchCount;
     }
 
+    public ArrayList<Object> getArrayListUserContact() {
+        return arrayListUserContact;
+    }
+
+    public void setArrayListUserContact(ArrayList<Object> arrayListUserContact) {
+        this.arrayListUserContact = arrayListUserContact;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -498,10 +506,14 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             Intent intent = new Intent(context, ProfileDetailActivity.class);
                             bundle.putBoolean(AppConstants.EXTRA_IS_FROM_FAVOURITE, true);
                             intent.putExtras(bundle);
-                            fragment.startActivityForResult(intent, AppConstants
-                                    .REQUEST_CODE_PROFILE_DETAIL);
-                            ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
-                                    .anim.exit);
+                            if(fragment!=null)
+                            {
+                                fragment.startActivityForResult(intent, AppConstants
+                                        .REQUEST_CODE_PROFILE_DETAIL);
+                                ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
+                                        .anim.exit);
+                            }
+
                         }
                     }
                 } else {
@@ -1364,6 +1376,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         }
 
+        setArrayListUserContact(arrayListUserContact);
         setSearchCount(arrayListUserContact.size());
         notifyDataSetChanged();
     }
