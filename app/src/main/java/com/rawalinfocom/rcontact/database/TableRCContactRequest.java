@@ -3,7 +3,6 @@ package com.rawalinfocom.rcontact.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.model.PrivacyRequestDataItem;

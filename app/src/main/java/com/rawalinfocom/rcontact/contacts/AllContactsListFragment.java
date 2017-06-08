@@ -140,7 +140,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     boolean isFromSettings = false;
     int settingRequestPermission = 0;
-    private String callNumber = "";
+    public String callNumber = "";
     private SyncingTask syncingTask;
 
     //<editor-fold desc="Constructors">
@@ -161,7 +161,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        phoneBookContacts = new PhoneBookContacts(getActivity());
+        phoneBookContacts = new PhoneBookContacts(getActivity());
 
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
         Utils.setBooleanPreference(getActivity(), AppConstants
@@ -196,6 +196,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             myProfileData.setTempFirstName(userProfile.getPmFirstName());
             myProfileData.setTempLastName(userProfile.getPmLastName());
+            myProfileData.setProfileUrl(userProfile.getPmProfileImage());
             myProfileData.setTempNumber(mobileNumber.getMnmMobileNumber());
             myProfileData.setTempIsRcp(true);
             myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
@@ -398,6 +399,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             Utils.setBooleanPreference(getActivity(), AppConstants
                                     .PREF_CONTACT_SYNCED, true);
                             getRcpDetail();
+                            phoneBookContacts.saveRawIdsToPref();
                           /*  AsyncTask.execute(new Runnable() {
                                 @Override
                                 public void run() {
@@ -548,8 +550,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 if (grantResults.length > 0 && grantResults[0] == PackageManager
                         .PERMISSION_GRANTED) {
                     // Permission Granted
-                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + callNumber));
-                    startActivity(intent);
+                  /*  Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                  callNumber));
+                    startActivity(intent);*/
+                    Utils.callIntent(getActivity(), callNumber);
                 } else {
                     // Permission Denied
                     showPermissionConfirmationDialog(AppConstants
@@ -600,6 +604,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
         set.add(ContactsContract.Contacts.PHOTO_ID);
         set.add(ContactsContract.Contacts.LOOKUP_KEY);
+        set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
 
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = set.toArray(new String[0]);
@@ -891,7 +896,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             for (int i = 2; i < arrayListPhoneBookContacts.size(); i++) {
                 if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
                     if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
-                            (i)).getLocalPhoneBookId())) {
+                            (i)).getRawContactId())) {
                         ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
                   /*  String name = tableProfileMaster.getNameFromRawId(((ProfileData)
                             arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId());
@@ -900,7 +905,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         ArrayList<UserProfile> userProfiles = new ArrayList<>();
                         userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
                                 (ProfileData) arrayListPhoneBookContacts.get(i))
-                                .getLocalPhoneBookId()));
+                                .getRawContactId()));
                         String name = "0";
                         String rcpID = "0";
                         if (userProfiles.size() > 1) {
@@ -945,7 +950,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
         final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-//        final int phoneTypeIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
+
         final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
                 .StructuredName.GIVEN_NAME);
         final int familyNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
@@ -956,14 +961,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 .StructuredName.SUFFIX);
         final int prefixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
                 .StructuredName.PREFIX);
-        final int photoIdIdx = data.getColumnIndex(ContactsContract.Data.PHOTO_ID);
         final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
-//        final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-//        final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-//                .Phone.DISPLAY_NAME);
         final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
                 .PHOTO_THUMBNAIL_URI);
-//        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
+
         final int rawIdIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
                 .RAW_CONTACT_ID);
 
@@ -980,11 +981,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             }
 
             profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+            profileData.setRawContactId(data.getString(rawIdIdx));
 
             switch (data.getString(mimeTypeIdx)) {
                 case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
-//                    profileData.setTempNumber(Utils.getFormattedNumber(getActivity(), data
-//                            .getString(phoneIdx)));
                     profileData.setTempNumber(data.getString(phoneIdx));
                     profileData.setProfileUrl(data.getString(photoURIIdx));
                     break;
@@ -994,9 +994,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     profileData.setTempPrefix(data.getString(prefixNameIdx));
                     profileData.setTempSufix(data.getString(suffixNameIdx));
                     profileData.setTempMiddleName(data.getString(middleNameIdx));
-                    /*profileData.setName(data.getString(prefixNameIdx) + data.getString(givenNameIdx) + data.getString(middleNameIdx)
-                            + data.getString(familyNameIdx) + data.getString(suffixNameIdx));*/
-                    profileData.setName(data.getString(givenNameIdx) + data.getString(familyNameIdx));
+                    profileData.setName(data.getString(givenNameIdx) + data.getString
+                            (familyNameIdx));
                     break;
             }
         }
@@ -1462,6 +1461,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         instanceof AllContactAdapter.ContactFooterViewHolder) {
                     return 0;
                 }
+                 /* Disable swiping in multiple RC case */
+                if (viewHolder instanceof AllContactAdapter.AllContactViewHolder) {
+                    if (((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
+                        return 0;
+                    }
+                }
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
 
@@ -1532,9 +1538,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     .CALL_PHONE}, AppConstants
                                     .MY_PERMISSIONS_REQUEST_PHONE_CALL);
                         } else {
-                            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                           /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
                                     callNumber));
-                            startActivity(intent);
+                            startActivity(intent);*/
+                            Utils.callIntent(getActivity(), callNumber);
                         }
                         break;
                 }
@@ -1684,7 +1691,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         String[] projection = {
                 ContactsContract.Data.MIMETYPE,
                 ContactsContract.Data.CONTACT_ID,
-                ContactsContract.Data.LOOKUP_KEY,
                 ContactsContract.Contacts.STARRED,
 
                 ContactsContract.CommonDataKinds.StructuredName.PREFIX,
@@ -1698,6 +1704,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
                 ContactsContract.CommonDataKinds.Phone.TYPE,
+                ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
 
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.TYPE,
@@ -1769,8 +1776,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     profileDetailSparseArray.put(id, phoneBookContact);
 //                    profileDataList.add(phoneBookContact);
                 }
+//                phoneBookContact.setLookupKey(cursor.getString(cursor.getColumnIndex
+//                        (ContactsContract.Contacts.LOOKUP_KEY)));
                 phoneBookContact.setLookupKey(cursor.getString(cursor.getColumnIndex
-                        (ContactsContract.Contacts.LOOKUP_KEY)));
+                        (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
                 phoneBookContact.setIsFavourite(cursor.getString(cursor.getColumnIndex
                         (ContactsContract.Contacts.STARRED)));
                 String mimeType = cursor.getString(mimeTypeIdx);

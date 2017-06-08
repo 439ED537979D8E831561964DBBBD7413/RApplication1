@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class ProfileData {
 
     private String localPhoneBookId;
+    private String rawContactId;
     private String isFavourite;
     //    private String givenName;
     private ArrayList<ProfileDataOperation> operation;
@@ -40,6 +41,15 @@ public class ProfileData {
 
     public void setLocalPhoneBookId(String localPhoneBookId) {
         this.localPhoneBookId = localPhoneBookId;
+    }
+
+    @JsonIgnore
+    public String getRawContactId() {
+        return rawContactId;
+    }
+
+    public void setRawContactId(String rawContactId) {
+        this.rawContactId = rawContactId;
     }
 
     @JsonProperty("operation")

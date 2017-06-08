@@ -107,11 +107,12 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
                         if (!arrayListSelectedContacts.contains(buttonView.getTag())) {
                             arrayListSelectedContacts.add((Integer) buttonView.getTag());
                         }
-                    } else {
-                        if (arrayListSelectedContacts.contains(buttonView.getTag())) {
-                            arrayListSelectedContacts.remove((Integer) buttonView.getTag());
+                        if (arrayListSelectedContacts.size() == (arrayListContactDetail.size() -
+                                1)) {
+                            isSelectAll(true);
                         }
-
+                    } else {
+                        removeChecked((Integer) buttonView.getTag());
                     }
                 }
                 Log.i("onCheckedChanged", arrayListSelectedContacts.toString());
@@ -135,7 +136,22 @@ public class PhoneBookContactDetailAdapter extends RecyclerView
                 }
             }
         }
-        notifyDataSetChanged();
+        try {
+            notifyDataSetChanged();
+        } catch (Exception ignore) {
+        }
+    }
+
+    private void removeChecked(int tagPosition) {
+        isSelectedAll = false;
+        arrayListSelectedContacts.remove((Integer) 0);
+        if (!arrayListSelectedContacts.contains(tagPosition)) {
+            arrayListSelectedContacts.remove((Integer) tagPosition);
+        }
+        try {
+            notifyItemChanged(0);
+        } catch (Exception ignore) {
+        }
     }
 
     public ArrayList<Integer> getArrayListSelectedContacts() {

@@ -1,7 +1,9 @@
 package com.rawalinfocom.rcontact.contacts;
 
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,11 +14,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.util.LongSparseArray;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -49,6 +54,8 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -74,21 +81,25 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     RelativeLayout relativeRootFavourite;
     @BindView(R.id.layout_empty_view)
     LinearLayout layoutEmptyView;
-
+    LongSparseArray<ProfileData> array = new LongSparseArray<>();
     TextView textEmptyView;
 
     PhoneBookContacts phoneBookContacts;
 
     //    AllContactListAdapter allContactListAdapter;
     AllContactAdapter allContactListAdapter;
-    ArrayList<ProfileData> arrayListUserContact;
+    ArrayList<ProfileData> arrayListUserContact = new ArrayList<>();
     ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> arrayListContactHeaders;
 
     private View rootView;
     private boolean isReload = false;
     RContactApplication rContactApplication;
-    private MaterialDialog callConfirmationDialog;
+    MaterialDialog callConfirmationDialog, permissionConfirmationDialog;
+    public String callNumber = "";
+
+    boolean isFromSettings = false;
+    int settingRequestPermission = 0;
 
     //<editor-fold desc="Constructors">
 
@@ -147,6 +158,21 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_UNMODIFIED);
             }
         }
+        if (isFromSettings) {
+            isFromSettings = false;
+            if (settingRequestPermission == AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS) {
+                if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
+                        .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                    if (!isReload) {
+                        init();
+                    }
+                }
+            }
+            /*else if (settingRequestPermission == AppConstants
+                    .MY_PERMISSIONS_REQUEST_READ_CONTACTS) {
+
+            }*/
+        }
     }
 
     @Override
@@ -161,19 +187,41 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        //Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        Uri uri = ContactsContract.Data.CONTENT_URI;
+//        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER,
+//                ContactsContract.Data.LOOKUP_KEY, ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI,
+//                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract
+//                .CommonDataKinds.Phone._ID, ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
+//                ContactsContract.Contacts._ID};
+        Set<String> set = new HashSet<>();
+        set.add(ContactsContract.Data.MIMETYPE);
+        set.add(ContactsContract.Data.CONTACT_ID);
+        set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
+//        set.add(ContactsContract.CommonDataKinds.Phone.TYPE);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.PREFIX);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.SUFFIX);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME);
+        set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
+        set.add(ContactsContract.Contacts.PHOTO_ID);
+        set.add(ContactsContract.Contacts.LOOKUP_KEY);
+        set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
+        String[] projection = set.toArray(new String[0]);
 
-        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER,
-                ContactsContract.Data.LOOKUP_KEY, ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI,
-                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract
-                .CommonDataKinds.Phone._ID, ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
-                ContactsContract.Contacts._ID};
-
-        String selection = "starred = ?";
-        String[] selectionArgs = new String[]{"1"};
+//        String selection = "starred = ?";
+//        String[] selectionArgs = new String[]{"1"};
 //        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
-        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"; ;
-
+//        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and starred = ?";
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+                "1"
+        };
+//        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+        String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC";
         return new CursorLoader(
                 getActivity(),
                 uri,
@@ -264,6 +312,30 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
+                    // Permission Granted
+                  /*  Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                  callNumber));
+                    startActivity(intent);*/
+                    Utils.callIntent(getActivity(), callNumber);
+                } else {
+                    // Permission Denied
+                    showPermissionConfirmationDialog(AppConstants
+                            .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                }
+            }
+            break;
+        }
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
@@ -351,7 +423,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                     startActivity(smsIntent);
 
                 } else {
-                    showCallConfirmationDialog(actionNumber);
+                    showCallConfirmationDialog();
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -368,6 +440,13 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 if (viewHolder instanceof AllContactAdapter.ContactHeaderViewHolder ||
                         viewHolder instanceof AllContactAdapter.ContactFooterViewHolder) {
                     return 0;
+                }
+                 /* Disable swiping in multiple RC case */
+                if (viewHolder instanceof AllContactAdapter.AllContactViewHolder) {
+                    if (((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
+                        return 0;
+                    }
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
@@ -442,7 +521,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
             if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
                 if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
-                        (i)).getLocalPhoneBookId())) {
+                        (i)).getRawContactId())) {
                     ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
                    /*  String name = tableProfileMaster.getNameFromRawId(((ProfileData)
                     arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId());
@@ -450,7 +529,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                             .setTempRcpName(name);*/
                     ArrayList<UserProfile> userProfiles = new ArrayList<>();
                     userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
-                            (ProfileData) arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId
+                            (ProfileData) arrayListPhoneBookContacts.get(i)).getRawContactId
                             ()));
                     String name = "0";
                     String rcpID = "0";
@@ -486,41 +565,97 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     }
 
     private void getFavouritesFromPhonebook(Cursor data) {
-
+        final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
+        final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+
         final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-                .Phone.DISPLAY_NAME);
+                .StructuredName.GIVEN_NAME);
+        final int familyNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+                .StructuredName.FAMILY_NAME);
+        final int middleNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+                .StructuredName.MIDDLE_NAME);
+        final int suffixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+                .StructuredName.SUFFIX);
+        final int prefixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+                .StructuredName.PREFIX);
+        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
         final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
                 .PHOTO_THUMBNAIL_URI);
-        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
+
         final int rawIdIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
                 .RAW_CONTACT_ID);
 
-        ArrayList contactsWithNoName = new ArrayList<>();
-        String lastDisplayName = "XXX", lastRawId = "XXX";
 
         while (data.moveToNext()) {
-            ProfileData profileData;
-            profileData = new ProfileData();
-            profileData.setTempFirstName(data.getString(givenNameIdx));
-            profileData.setTempNumber(data.getString(phoneIdx));
-            profileData.setProfileUrl(data.getString(photoURIIdx));
-            profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
-            profileData.setTempRawId(data.getString(rawIdIdx));
 
-            if (profileData.getTempFirstName().equals(profileData.getTempNumber())) {
-                contactsWithNoName.add(profileData);
-            } else {
-                if (lastDisplayName.equals(profileData.getTempFirstName()) && lastRawId.equals
-                        (profileData.getTempRawId())) {
-                } else {
-                    arrayListPhoneBookContacts.add(profileData);
-                    lastDisplayName = profileData.getTempFirstName();
-                    lastRawId = profileData.getTempRawId();
-                }
+            long id = data.getLong(idIdx);
+            ProfileData profileData = array.get(id);
+
+            if (profileData == null) {
+                profileData = new ProfileData();
+                array.put(id, profileData);
+                arrayListUserContact.add(profileData);
+            }
+
+            profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+            profileData.setRawContactId(data.getString(rawIdIdx));
+
+            switch (data.getString(mimeTypeIdx)) {
+                case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
+                    profileData.setTempNumber(data.getString(phoneIdx));
+                    profileData.setProfileUrl(data.getString(photoURIIdx));
+                    break;
+                case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
+                    profileData.setTempFirstName(data.getString(givenNameIdx));
+                    profileData.setTempLastName(data.getString(familyNameIdx));
+                    profileData.setTempPrefix(data.getString(prefixNameIdx));
+                    profileData.setTempSufix(data.getString(suffixNameIdx));
+                    profileData.setTempMiddleName(data.getString(middleNameIdx));
+                    profileData.setName(data.getString(givenNameIdx) + data.getString(familyNameIdx));
+                    break;
             }
         }
-        arrayListPhoneBookContacts.addAll(contactsWithNoName);
+        if (arrayListUserContact.size() > 0) {
+            for (int i = 0; i < arrayListUserContact.size(); i++) {
+                arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
+            }
+//        final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+//        final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+//                .Phone.DISPLAY_NAME);
+//        final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
+//                .PHOTO_THUMBNAIL_URI);
+//        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
+//        final int rawIdIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
+//                .RAW_CONTACT_ID);
+//
+//        ArrayList contactsWithNoName = new ArrayList<>();
+//        String lastDisplayName = "XXX", lastRawId = "XXX";
+//
+//        while (data.moveToNext()) {
+//            ProfileData profileData;
+//            profileData = new ProfileData();
+//            profileData.setTempFirstName(data.getString(givenNameIdx));
+//            profileData.setTempNumber(data.getString(phoneIdx));
+//            profileData.setProfileUrl(data.getString(photoURIIdx));
+//            profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+//            profileData.setRawContactId(data.getString(rawIdIdx));
+//            profileData.setTempRawId(data.getString(rawIdIdx));
+//
+//            if (profileData.getTempFirstName().equals(profileData.getTempNumber())) {
+//                contactsWithNoName.add(profileData);
+//            } else {
+//                if (lastDisplayName.equals(profileData.getTempFirstName()) && lastRawId.equals
+//                        (profileData.getTempRawId())) {
+//                } else {
+//                    arrayListPhoneBookContacts.add(profileData);
+//                    lastDisplayName = profileData.getTempFirstName();
+//                    lastRawId = profileData.getTempRawId();
+//                }
+//            }
+//        }
+//        arrayListPhoneBookContacts.addAll(contactsWithNoName);
+        }
     }
 
     private void populateRecyclerView() {
@@ -591,7 +726,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
     }
 
-    private void showCallConfirmationDialog(final String number) {
+    private void showCallConfirmationDialog() {
 
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
@@ -605,9 +740,17 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                number));
-                        startActivity(intent);
+                        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest
+                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission
+                                    .CALL_PHONE}, AppConstants
+                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                        } else {
+                           /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                                    callNumber));
+                            startActivity(intent);*/
+                            Utils.callIntent(getActivity(), callNumber);
+                        }
                         break;
                 }
             }
@@ -617,7 +760,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText("Cancel");
         callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
+        callConfirmationDialog.setDialogBody("Call " + callNumber + "?");
 
         callConfirmationDialog.showDialog();
 
@@ -637,6 +780,70 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
     public RecyclerView getRecyclerViewContactList() {
         return recyclerViewContactList;
+    }
+
+    private void showPermissionConfirmationDialog(final int permissionType) {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        permissionConfirmationDialog.dismissDialog();
+                        switch (permissionType) {
+                            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+                                getActivity().finish();
+                                break;
+                            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
+                                break;
+                        }
+                        break;
+
+                    case R.id.rippleRight:
+                        permissionConfirmationDialog.dismissDialog();
+                        isFromSettings = true;
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", getActivity().getPackageName(), null));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        switch (permissionType) {
+                            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+                                settingRequestPermission = AppConstants
+                                        .MY_PERMISSIONS_REQUEST_READ_CONTACTS;
+                                break;
+                            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
+                                settingRequestPermission = AppConstants
+                                        .MY_PERMISSIONS_REQUEST_PHONE_CALL;
+                                break;
+                        }
+                        getActivity().overridePendingTransition(R.anim.enter, R.anim.exit);
+                        break;
+                }
+            }
+        };
+
+        String message = "";
+        switch (permissionType) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+                message = "Contact read permission is required of this app. Do you want to try " +
+                        "again?";
+                break;
+            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
+                message = "Calling permission is required to make the call. Do you want to try " +
+                        "again?";
+                break;
+        }
+
+        permissionConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+        permissionConfirmationDialog.setTitleVisibility(View.GONE);
+        permissionConfirmationDialog.setLeftButtonText("Cancel");
+        permissionConfirmationDialog.setRightButtonText("OK");
+        permissionConfirmationDialog.setDialogBody(message);
+
+        permissionConfirmationDialog.showDialog();
+
     }
 
     //</editor-fold>

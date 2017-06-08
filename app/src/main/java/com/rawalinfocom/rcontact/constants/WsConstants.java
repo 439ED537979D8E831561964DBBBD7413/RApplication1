@@ -9,7 +9,7 @@ package com.rawalinfocom.rcontact.constants;
 public class WsConstants {
 
     // Monal
-//    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
+    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 //    public static final String WS_ROOT = "http://54.202.191.41/api/v1/";
 //    public static final String WS_ROOT = "http://10.0.21.123/api/v1/";
 
@@ -18,17 +18,18 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
 
     // Aniruddh
-//    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
+    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
     //  public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
 
     //    Maulik
-    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
 
     // Shailesh
 //    public static final String WS_ROOT = "http://10.0.21.14:8000/api/v1/";
 
     //Jignesh
 //    public static final String WS_ROOT = "http://10.0.21.15/api/v1/";
+//    public static final String WS_ROOT = "  http://10.0.21.15:8080/api/v1/";
 
     // Satyam bhai
 //    public static final String WS_ROOT = "http://10.0.21.115:/api/v1/";
@@ -54,6 +55,9 @@ public class WsConstants {
 //    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
 
     public static final String RESPONSE_STATUS_TRUE = "true";
+
+    public static final String REQ_GOOGLE_TEXT_BY_LOCATIONS = "https://maps.googleapis" +
+            ".com/maps/api/place/textsearch/json?";
 
     public static final String REQ_COUNTRY_CODE_DETAIL = "country-code-detail";
     public static final String REQ_SEND_OTP = "send_otp";

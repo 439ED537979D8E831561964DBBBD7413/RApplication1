@@ -13,6 +13,7 @@ import android.util.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
@@ -90,6 +91,11 @@ public class NotificationFCMService extends FirebaseMessagingService {
                 return;
             }
             String msg = m.get("msg");
+            if (api.equalsIgnoreCase("newUserRegistration")) {
+                sendNotification(msg, -1);
+                return;
+            }
+
             TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster(databaseHandler);
             NotificationStateData notificationStateData = new NotificationStateData();
             notificationStateData.setNotificationState(Integer.parseInt(m.get("unm_status")));
@@ -266,7 +272,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
     }
 
     private void sendNotification(String messageBody, int type) {
-        Class aClass = null;
+        Class aClass = MainActivity.class;
         int tabIndex = -1;
         int subTabIndex = -1;
         switch (type) {
@@ -276,12 +282,12 @@ public class NotificationFCMService extends FirebaseMessagingService {
             case AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST:
                 aClass = NotificationsDetailActivity.class;
                 tabIndex = NotificationsDetailActivity.TAB_REQUEST;
-                subTabIndex=0;
+                subTabIndex = 0;
                 break;
             case AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE:
                 aClass = NotificationsDetailActivity.class;
                 tabIndex = NotificationsDetailActivity.TAB_REQUEST;
-                subTabIndex=1;
+                subTabIndex = 1;
                 break;
             case AppConstants.NOTIFICATION_TYPE_RATE:
                 aClass = NotificationsDetailActivity.class;

@@ -29,6 +29,7 @@ public class AppConstants {
     public static final int EVENT = 5;
     public static final int GENDER = 6;
     public static final int ORGANIZATION = 7;
+    public static boolean isRecentCallFromSMSTab =  false;
     //</editor-fold>
 
     //<editor-fold desc="App Specific final constants">
@@ -243,6 +244,7 @@ public class AppConstants {
     public static boolean isFromReceiver = false;
     public static boolean isSMSFromReceiver = false;
     public static boolean isComposingSMS = false;
+    public static  boolean isFromSearchActivity = false;
 
     //<editor-fold desc="Call-log constants">
     public static final int READ_LOGS = 725;

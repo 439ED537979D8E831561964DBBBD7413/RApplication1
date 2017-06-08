@@ -90,7 +90,8 @@ public class CallLogType implements Serializable {
     private String durationToPass;
     @JsonProperty("simtype")
     private String historyCallSimNumber;
-    @JsonProperty("details")
+//    @JsonProperty("details")
+    @JsonIgnore
     ArrayList<CallLogType> arrayListCallHistory;
 
     public CallLogType() {

@@ -543,11 +543,12 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                     showCallConfirmationDialog(profileContactNumber);
                                 }
                             }
-                        }else{
-                            if(tempPhoneNumber !=null && tempPhoneNumber.size()==1){
-                                ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
-                                if(phoneNumber!=null){
-                                    historyNumber =  phoneNumber.getPhoneNumber();
+                        } else {
+                            if (tempPhoneNumber != null && tempPhoneNumber.size() == 1) {
+                                ProfileDataOperationPhoneNumber phoneNumber =
+                                        (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
+                                if (phoneNumber != null) {
+                                    historyNumber = phoneNumber.getPhoneNumber();
                                 }
                             }
                             if (!TextUtils.isEmpty(historyNumber)) {
@@ -587,11 +588,12 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 showCallConfirmationDialog(profileContactNumber);
                             }
                         }
-                    }else{
-                        if(tempPhoneNumber !=null && tempPhoneNumber.size()==1){
-                            ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
-                            if(phoneNumber!=null){
-                                historyNumber =  phoneNumber.getPhoneNumber();
+                    } else {
+                        if (tempPhoneNumber != null && tempPhoneNumber.size() == 1) {
+                            ProfileDataOperationPhoneNumber phoneNumber =
+                                    (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(0);
+                            if (phoneNumber != null) {
+                                historyNumber = phoneNumber.getPhoneNumber();
                             }
                         }
                         if (!TextUtils.isEmpty(historyNumber)) {
@@ -1787,9 +1789,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                       /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
                                 formattedNumber));
-                        startActivity(intent);
+                        startActivity(intent);*/
+                        Utils.callIntent(CallHistoryDetailsActivity.this, formattedNumber);
                         break;
                 }
             }

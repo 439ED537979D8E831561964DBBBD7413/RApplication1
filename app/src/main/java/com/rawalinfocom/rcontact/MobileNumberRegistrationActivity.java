@@ -81,14 +81,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         setContentView(R.layout.activity_mobile_number_registration);
         ButterKnife.bind(this);
         // Hide the status bar.
-        if (Utils.hasJellybean()) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager
-                    .LayoutParams.FLAG_FULLSCREEN);
-        } else {
-            View decorView = getWindow().getDecorView();
-            int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-            decorView.setSystemUiVisibility(uiOptions);
-        }
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager
+                .LayoutParams.FLAG_FULLSCREEN);
 
         init();
 

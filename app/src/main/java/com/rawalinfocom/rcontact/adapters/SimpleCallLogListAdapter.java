@@ -26,6 +26,7 @@ import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.CallLogType;
+import com.rawalinfocom.rcontact.model.ProfileData;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,10 +45,10 @@ import butterknife.ButterKnife;
  * Created by Aniruddh on 01/05/17.
  */
 
-public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
-    private ArrayList<CallLogType> arrayListCallLogs;
+    private  ArrayList<CallLogType> arrayListCallLogs;
     String address;
     private int previousPosition = 0;
 
@@ -62,7 +64,10 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
     CallLogType selectedCallLogData;
     long selectedLogDate = 0;
     long dateFromReceiver;
-    String formattedNumber ="";
+    String formattedNumber = "";
+    ArrayList<CallLogType> arrayList;
+    private int searchCount;
+
 
     public int getSelectedPosition() {
         return selectedPosition;
@@ -76,10 +81,41 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         return selectedLogDate;
     }
 
+    public int getSearchCount() {
+        return searchCount;
+    }
 
-    public SimpleCallLogListAdapter(Context context, ArrayList<CallLogType> SmsListAdapter) {
+    public void setSearchCount(int searchCount) {
+        this.searchCount = searchCount;
+    }
+
+    public ArrayList<CallLogType> getArrayList() {
+        return arrayList;
+    }
+
+    public void setArrayList(ArrayList<CallLogType> arrayList) {
+        this.arrayList = arrayList;
+    }
+
+    public ArrayList<CallLogType> getArrayListCallLogs() {
+        return arrayListCallLogs;
+    }
+
+    public void setArrayListCallLogs(ArrayList<CallLogType> arrayListCallLogs) {
+        this.arrayListCallLogs = arrayListCallLogs;
+    }
+
+    public SimpleCallLogListAdapter(Context context, ArrayList<CallLogType> callLogTypes) {
         this.context = context;
-        this.arrayListCallLogs = SmsListAdapter;
+//        this.arrayListCallLogs = arraylistCallLogs;
+        if(AppConstants.isFromSearchActivity){
+            this.arrayListCallLogs = new ArrayList<>();
+            this.arrayListCallLogs.addAll(callLogTypes);
+        }else{
+            this.arrayListCallLogs = callLogTypes;
+        }
+        this.arrayList = new ArrayList<>();
+        this.arrayList.addAll(arrayListCallLogs);
 
     }
 
@@ -96,7 +132,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         final CallLogType callLogType = (CallLogType) arrayListCallLogs.get(position);
         final String name = callLogType.getName();
         final String number = callLogType.getNumber();
-        if(!TextUtils.isEmpty(number)){
+        if (!TextUtils.isEmpty(number)) {
             formattedNumber = Utils.getFormattedNumber(context, number);
         }
         final String uniqueRowID = callLogType.getUniqueContactId();
@@ -155,23 +191,24 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         if (date > 0) {
             Date dateCallLog = new Date(date);
 //            String logDateCallLog = new SimpleDateFormat("MMM dd, hh:mm a").format(date1);
-            if(logDate.equalsIgnoreCase(currentDate)){
-                finalDate =  "Today, " + new SimpleDateFormat("hh:mm a").format(dateCallLog);
-            }else if(logDate.equalsIgnoreCase(yesterdayDate)){
+            if (logDate.equalsIgnoreCase(currentDate)) {
+                finalDate = "Today, " + new SimpleDateFormat("hh:mm a").format(dateCallLog);
+            } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
                 finalDate = "Yesterday, " + new SimpleDateFormat("hh:mm a").format(dateCallLog);
-            }else{
-                finalDate =  new SimpleDateFormat("MMM dd, hh:mm a").format(dateCallLog);
+            } else {
+                finalDate = new SimpleDateFormat("MMM dd, hh:mm a").format(dateCallLog);
             }
             holder.textContactDate.setText(finalDate);
         } else {
             Date callDate = callLogType.getCallReceiverDate();
-            if(callDate!=null){
-                if(logDate.equalsIgnoreCase(currentDate)){
-                    finalDate =  "Today, " + new SimpleDateFormat("hh:mm a").format(callDate);
-                }else if(logDate.equalsIgnoreCase(yesterdayDate)){
-                    finalDate = "Yesterday, " + new SimpleDateFormat("hh:mm a").format(callDate);;
-                }else{
-                    finalDate =  new SimpleDateFormat("MMM dd, hh:mm a").format(callDate);
+            if (callDate != null) {
+                if (logDate.equalsIgnoreCase(currentDate)) {
+                    finalDate = "Today, " + new SimpleDateFormat("hh:mm a").format(callDate);
+                } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
+                    finalDate = "Yesterday, " + new SimpleDateFormat("hh:mm a").format(callDate);
+                    ;
+                } else {
+                    finalDate = new SimpleDateFormat("MMM dd, hh:mm a").format(callDate);
                 }
                 holder.textContactDate.setText(finalDate);
             }
@@ -238,8 +275,8 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 
         }
 
-        final String thumbnailUrl =  callLogType.getProfileImage();
-        if(!TextUtils.isEmpty(thumbnailUrl)){
+        final String thumbnailUrl = callLogType.getProfileImage();
+        if (!TextUtils.isEmpty(thumbnailUrl)) {
             Glide.with(context)
                     .load(thumbnailUrl)
                     .placeholder(R.drawable.home_screen_profile)
@@ -248,7 +285,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     .override(200, 200)
                     .into(holder.imageProfile);
 
-        }else{
+        } else {
             holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
 
@@ -400,7 +437,6 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
 
-
     @Override
     public int getItemCount() {
         return arrayListCallLogs.size();
@@ -445,6 +481,64 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             super(itemView);
             ButterKnife.bind(this, itemView);
             textSimType.setVisibility(View.GONE);
+            if (AppConstants.isFromSearchActivity) {
+                image3dotsCallLog.setVisibility(View.GONE);
+            } else {
+                image3dotsCallLog.setVisibility(View.VISIBLE);
+            }
         }
+    }
+
+    // Filter Class
+    public void filter(String charText) {
+        Pattern numberPat = Pattern.compile("\\d+");
+        Matcher matcher1 = numberPat.matcher(charText);
+        if (matcher1.find()) {
+            arrayListCallLogs.clear();
+            if (charText.length() == 0) {
+                arrayListCallLogs.addAll(arrayList);
+            } else {
+                for (int i = 0; i < arrayList.size(); i++) {
+                    if (arrayList.get(i) instanceof CallLogType) {
+                        CallLogType profileData = (CallLogType) arrayList.get(i);
+                        if (!TextUtils.isEmpty(profileData.getNumber())) {
+                            if (profileData.getNumber().contains(charText)) {
+                                arrayListCallLogs.add(profileData);
+                            }
+                        }
+                        setArrayList(arrayList);
+                    }
+                }
+            }
+
+        }/*else{
+            charText = charText.toLowerCase(Locale.getDefault());
+            arrayListCallLogs.clear();
+            if (charText.length() == 0) {
+                arrayListCallLogs.addAll(arrayList);
+            } else {
+
+                for(int i=0; i<arrayList.size(); i++){
+                    if(arrayList.get(i) instanceof CallLogType){
+                        ProfileData profileData = (CallLogType) arrayList.get(i);
+                        if(!TextUtils.isEmpty(profileData.getName())){
+                            if (profileData.getName().toLowerCase(Locale.getDefault()).contains(charText)) {
+                                arrayListCallLogs.add(profileData);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }*/
+
+        if (arrayListCallLogs.size() > 0){
+            setSearchCount(arrayListCallLogs.size());
+            setArrayListCallLogs(arrayListCallLogs);
+        }
+//        else
+//            setSearchCount(arrayList.size());
+
+        notifyDataSetChanged();
     }
 }

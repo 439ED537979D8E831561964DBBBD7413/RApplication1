@@ -71,7 +71,7 @@ public class TableProfileMaster {
             " " + COLUMN_PM_NICK_NAME_PRIVACY + " integer DEFAULT 1," +
             " " + COLUMN_PM_NOTES + " text," +
             " " + COLUMN_PM_NOTES_PRIVACY + " integer DEFAULT 1," +
-            " " + COLUMN_PM_GENDER + " text," +
+            " " + COLUMN_PM_GENDER + " varchar," +
             " " + COLUMN_PM_GENDER_PRIVACY + " integer DEFAULT 1," +
             " " + COLUMN_PM_PROFILE_RATING + " integer," +
             " " + COLUMN_PM_PROFILE_RATE_USER + " integer," +
@@ -168,8 +168,8 @@ public class TableProfileMaster {
 
             if (count > 0) {
                 // Update if already exists
-                db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
-                        new String[]{String.valueOf(arrayListUserProfile.get(i).getPmRcpId())});
+               /* db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
+                        new String[]{String.valueOf(arrayListUserProfile.get(i).getPmRcpId())});*/
             } else {
                 // Inserting Row
                 db.insert(TABLE_RC_PROFILE_MASTER, null, values);
@@ -592,4 +592,31 @@ public class TableProfileMaster {
         return userProfiles;
     }
 
+    public ArrayList<String> getAllRcpIdFromRawId(String rawId) {
+
+        ArrayList<String> rcpIds = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT " + COLUMN_PM_RCP_ID + "," + COLUMN_PM_FIRST_NAME + "," +
+                COLUMN_PM_LAST_NAME + " FROM " + TABLE_RC_PROFILE_MASTER + " WHERE " +
+                COLUMN_PM_RAW_ID + " LIKE '%" + rawId + "%'";
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor != null) {
+
+            if (cursor.moveToFirst()) {
+                do {
+                    rcpIds.add(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_RCP_ID)));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+
+        db.close();
+
+        return rcpIds;
+    }
 }
