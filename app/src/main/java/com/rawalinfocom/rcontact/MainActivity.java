@@ -473,15 +473,18 @@ public class MainActivity extends BaseActivity implements NavigationView
 //                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
                             Utils.setBooleanPreference(this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, true);
+
+                            Intent localBroadcastIntent = new Intent(AppConstants
+                                    .ACTION_LOCAL_BROADCAST_SYNC_SMS);
+                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                                    .getInstance(MainActivity.this);
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
                         }
                         Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
                                 logsSyncedCount);
 
-                        Intent localBroadcastIntent = new Intent(AppConstants
-                                .ACTION_LOCAL_BROADCAST_SYNC_SMS);
-                        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
-                                .getInstance(MainActivity.this);
-                        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
 
                     }
                 } else {
@@ -1468,7 +1471,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             int logCount = arrayListHistoryCount.size();
                             log.setHistoryLogCount(logCount);
                             callLogTypeArrayListMain.add(log);
-
+                            rContactApplication.setArrayListCallLogType(callLogTypeArrayListMain);
                         }
                         cursor.close();
                     }
@@ -1493,7 +1496,17 @@ public class MainActivity extends BaseActivity implements NavigationView
     private BroadcastReceiver localBroadcastReceiverSmsLogSync = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            syncSMSLogDataToServer(smsLogTypeArrayListMain);
+            if(smsLogTypeArrayListMain!=null && smsLogTypeArrayListMain.size()>0)
+                syncSMSLogDataToServer(smsLogTypeArrayListMain);
+            else{
+                if (Utils.isNetworkAvailable(MainActivity.this) && Utils.getBooleanPreference(MainActivity.this,
+                        AppConstants.PREF_CALL_LOG_SYNCED, false)
+                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                    syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                    syncSmsLogAsyncTask.execute();
+                }
+
+            }
         }
     };
 
@@ -2102,18 +2115,17 @@ public class MainActivity extends BaseActivity implements NavigationView
                     }
                 }
             }
-//            makeSimpleDataThreadWise(smsDataTypeList);
             syncSMSLogDataToServer(smsLogTypeArrayListMain);
-
+            makeSimpleDataThreadWise(smsDataTypeList);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /*private void makeSimpleDataThreadWise(ArrayList<SmsDataType> filteredList) {
+    private void makeSimpleDataThreadWise(ArrayList<SmsDataType> filteredList) {
         if (filteredList != null && filteredList.size() > 0) {
-            smsLogTypeArrayListMain = new ArrayList<>();
+            ArrayList<SmsDataType> smsLogTypeArrayListMain = new ArrayList<>();
             for (int k = 0; k < filteredList.size(); k++) {
                 SmsDataType smsDataType = filteredList.get(k);
                 String threadId = smsDataType.getThreadId();
@@ -2138,13 +2150,9 @@ public class MainActivity extends BaseActivity implements NavigationView
                     }
                 }
             }
-
-//            rContactApplication.setArrayListSmsLogType(smsDataTypeArrayList);
-            syncSMSLogDataToServer(smsLogTypeArrayListMain);
+            rContactApplication.setArrayListSmsLogType(smsLogTypeArrayListMain);
         }
-
-
-    }*/
+    }
 
     private void syncSMSLogDataToServer(ArrayList<SmsDataType> list) {
         if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask.isCancelled())

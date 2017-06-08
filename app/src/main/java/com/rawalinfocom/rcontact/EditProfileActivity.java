@@ -1345,6 +1345,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 .array.types_email_address)));
         spinnerEmailAdapter = new ArrayAdapter<>(this, R.layout
                 .list_item_spinner, typeList);
+        spinnerEmailAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
         spinnerNumberTypeEmail.setAdapter(spinnerEmailAdapter);
 
         spinnerNumberTypeWeb.setTag(AppConstants.WEBSITE);
