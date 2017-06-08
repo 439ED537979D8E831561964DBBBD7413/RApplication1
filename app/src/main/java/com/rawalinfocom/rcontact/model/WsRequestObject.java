@@ -220,7 +220,8 @@ public class WsRequestObject {
 
     private ArrayList<ProfileVisit> arrayListProfileVisit;
 
-    private ArrayList<ProfileDataOperation> profileEdit;
+    //    private ArrayList<ProfileDataOperation> profileEdit;
+    private ProfileDataOperation profileEdit;
 
     private ArrayList<CallLogHistoryType> historyTypeArrayList;
     private ArrayList<SmsDataType> arrayListSmsDataType;
@@ -595,12 +596,21 @@ public class WsRequestObject {
         this.arrayListCallLogType = arrayListCallLogType;
     }
 
-    @JsonProperty("profile_edit")
+   /* @JsonProperty("profile_edit")
     public ArrayList<ProfileDataOperation> getProfileEdit() {
         return profileEdit;
     }
 
     public void setProfileEdit(ArrayList<ProfileDataOperation> profileEdit) {
+        this.profileEdit = profileEdit;
+    }*/
+
+    @JsonProperty("profile_edit")
+    public ProfileDataOperation getProfileEdit() {
+        return profileEdit;
+    }
+
+    public void setProfileEdit(ProfileDataOperation profileEdit) {
         this.profileEdit = profileEdit;
     }
 

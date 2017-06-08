@@ -117,10 +117,17 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
         if (arrayListCallLogType != null && arrayListCallLogType.size() > 0) {
             recycleViewDeleteCallLog.setVisibility(View.VISIBLE);
             textNoRecordToDisplay.setVisibility(View.GONE);
+            checkboxSelectAll.setEnabled(true);
+            rippleActionToolbarDelete.setEnabled(true);
             deleteCallLogListAdapter = new
                     DeleteCallLogListAdapter(this, arrayListCallLogType);
             recycleViewDeleteCallLog.setAdapter(deleteCallLogListAdapter);
             setRecyclerViewLayoutManager(recycleViewDeleteCallLog);
+        }else{
+            textNoRecordToDisplay.setVisibility(View.VISIBLE);
+            textNoRecordToDisplay.setText("No history to delete");
+            checkboxSelectAll.setEnabled(false);
+            rippleActionToolbarDelete.setEnabled(false);
         }
     }
 

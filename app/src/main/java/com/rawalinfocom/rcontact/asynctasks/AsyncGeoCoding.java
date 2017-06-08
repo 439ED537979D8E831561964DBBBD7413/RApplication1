@@ -22,17 +22,12 @@ import java.util.List;
 public class AsyncGeoCoding extends AsyncTask<String, Void, Object> {
 
     private final String LOG_TAG = "AsyncGeoCoding";
-    Exception error = null;
-
-    Context context;
-
-    WsResponseListener wsResponseListener;
-
-    ReverseGeocodingAddress objAddress = null;
-
-    String serviceType;
-
-    boolean showProgress;
+    private Exception error = null;
+    private Context context;
+    private WsResponseListener wsResponseListener;
+    private ReverseGeocodingAddress objAddress = null;
+    private String serviceType;
+    private boolean showProgress;
 
     public AsyncGeoCoding(Context context, boolean showProgress, String serviceType) {
         this.context = context;

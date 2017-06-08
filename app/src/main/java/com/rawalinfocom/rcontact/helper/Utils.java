@@ -7,7 +7,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
@@ -16,6 +18,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.ContactsContract;
@@ -73,24 +76,13 @@ public class Utils {
 
     private static String LOG_TAG = Utils.class.getSimpleName();
 
-    static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private final static AtomicInteger c = new AtomicInteger(0);
 
     public static int getID() {
         return c.incrementAndGet();
     }
-
-    //<editor-fold desc="Check Android OS Version">
-
-    /**
-     * Uses static final constants to detect if the device's platform version is Jellybean or
-     * later.
-     */
-    public static boolean hasJellybean() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-    }
-    //</editor-fold>
 
     //<editor-fold desc="Network Info">
 
@@ -453,10 +445,49 @@ public class Utils {
     //<editor-fold desc="Image Conversion">
 
     public static String convertBitmapToBase64(Bitmap imgBitmap) {
+//        imgBitmap = Bitmap.createScaledBitmap(imgBitmap, 100, 100, false);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         imgBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
+    private Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int
+            reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
+    }
+
+    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
     //</editor-fold>
@@ -483,8 +514,15 @@ public class Utils {
     }
     //</editor-fold>
 
+    public static void callIntent(Context context, String number) {
+        String unicodeNumber = number.replace("*", Uri.encode("*")).replace("#", Uri.encode("#"));
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + unicodeNumber));
+        context.startActivity(intent);
+    }
+
     public static String setFormattedAddress(String streetName, String neighborhoodName, String
             cityName, String stateName, String countryName, String pinCodeName) {
+
         String[] addressStrings = {streetName, neighborhoodName, cityName, stateName,
                 countryName, pinCodeName};
 
@@ -561,23 +599,28 @@ public class Utils {
 
     public static String getFormattedNumber(Context context, String phoneNumber) {
         if (StringUtils.length(phoneNumber) > 0) {
-            Country country = (Country) Utils.getObjectPreference(context, AppConstants
-                    .PREF_SELECTED_COUNTRY_OBJECT, Country.class);
-            String defaultCountryCode = "+91";
-            if (country != null) {
-                defaultCountryCode = country.getCountryCodeNumber();
-            }
-            if (!StringUtils.startsWith(phoneNumber, "+")) {
-                if (StringUtils.startsWith(phoneNumber, "0")) {
-                    phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber, 1);
-                } else {
-                    phoneNumber = defaultCountryCode + phoneNumber;
+            if (StringUtils.contains(phoneNumber, "#") || StringUtils.contains(phoneNumber, "*")) {
+//                return phoneNumber.replace("*", Uri.encode("*")).replace("#", Uri.encode("#"));
+                return phoneNumber;
+            } else {
+                Country country = (Country) Utils.getObjectPreference(context, AppConstants
+                        .PREF_SELECTED_COUNTRY_OBJECT, Country.class);
+                String defaultCountryCode = "+91";
+                if (country != null) {
+                    defaultCountryCode = country.getCountryCodeNumber();
                 }
-            }
+                if (!StringUtils.startsWith(phoneNumber, "+")) {
+                    if (StringUtils.startsWith(phoneNumber, "0")) {
+                        phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber, 1);
+                    } else {
+                        phoneNumber = defaultCountryCode + phoneNumber;
+                    }
+                }
 
         /* remove special characters from number */
-            return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
-                    "[\\D]", "");
+                return "+" + StringUtils.replaceAll(StringUtils.substring(phoneNumber, 1),
+                        "[\\D]", "");
+            }
         } else {
             return "";
         }

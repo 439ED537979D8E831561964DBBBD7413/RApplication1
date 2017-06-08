@@ -41,6 +41,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -51,17 +52,47 @@ import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
-import com.rawalinfocom.rcontact.contacts.RContactsFragment;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
+import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.PhoneBookSMSLogs;
+import com.rawalinfocom.rcontact.database.QueryManager;
+import com.rawalinfocom.rcontact.database.TableAddressMaster;
+import com.rawalinfocom.rcontact.database.TableEmailMaster;
+import com.rawalinfocom.rcontact.database.TableEventMaster;
+import com.rawalinfocom.rcontact.database.TableImMaster;
+import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.database.TableNotificationStateMaster;
+import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
+import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
+import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.CallLogType;
+import com.rawalinfocom.rcontact.model.Email;
+import com.rawalinfocom.rcontact.model.Event;
+import com.rawalinfocom.rcontact.model.ImAccount;
+import com.rawalinfocom.rcontact.model.MobileNumber;
+import com.rawalinfocom.rcontact.model.Organization;
+import com.rawalinfocom.rcontact.model.ProfileData;
+import com.rawalinfocom.rcontact.model.ProfileDataOperation;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
+import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
+import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
+import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.SmsDataType;
+import com.rawalinfocom.rcontact.model.UserProfile;
+import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.notifications.EventsActivity;
@@ -76,7 +107,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,7 +123,6 @@ public class MainActivity extends BaseActivity implements NavigationView
     RelativeLayout relativeRootContactsMain;
     Toolbar toolbar;
     ImageView imageNotification;
-    ImageView imageAddContact;
     LinearLayout badgeLayout;
     TextView badgeTextView;
     //    TextView textImageNotification;
@@ -107,22 +139,16 @@ public class MainActivity extends BaseActivity implements NavigationView
     RContactApplication rContactApplication;
 
     int LIST_PARTITION_COUNT = 10;
-    private ArrayList<String> listOfCallLogIds;
     private ArrayList<CallLogType> callLogTypeArrayListMain;
     ArrayList<CallLogType> callLogsListbyChunck;
     ArrayList<CallLogType> newList;
     ArrayList<SmsDataType> newSmsList;
-    String callLogResponseRowId = "";
-    String callLogResponseDate = "";
     int logsSyncedCount = 10;
     MaterialDialog permissionConfirmationDialog;
     private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
             .permission.READ_CALL_LOG, Manifest.permission.READ_SMS};
     boolean isCompaseIcon = false;
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
-    public static CallLogType callLogTypeReceiverMain;
-    boolean isRecentBroadCastForCallLogsMainInstance = false;
-    private ImageView imageViewSearch;
     private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
     private ArrayList<SmsDataType> smsLogTypeArrayListMain;
     ArrayList<SmsDataType> smsLogsListbyChunck;
@@ -162,7 +188,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         rContactApplication = (RContactApplication) getApplicationContext();
         callLogTypeArrayListMain = new ArrayList<>();
         smsLogTypeArrayListMain = new ArrayList<>();
-        callLogTypeReceiverMain = new CallLogType();
         CallLogFragment.callLogTypeReceiver = new CallLogType();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermissionToExecute();
@@ -174,12 +199,14 @@ public class MainActivity extends BaseActivity implements NavigationView
                     }
                 });*/
 
-            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants
+                    .PREF_CALL_LOG_SYNCED, false)) {
                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                 syncCallLogAsyncTask.execute();
             }
 
-            if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+            if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants
+                    .PREF_CALL_LOG_SYNCED, false)
                     && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                 syncSmsLogAsyncTask.execute();
@@ -254,7 +281,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         }
 
         if (smsLogs) {
-            if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+            if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants
+                    .PREF_CALL_LOG_SYNCED, false)
                     && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                 syncSmsLogAsyncTask.execute();
@@ -286,7 +314,8 @@ public class MainActivity extends BaseActivity implements NavigationView
             badgeLayout.setVisibility(View.GONE);
         }
         count = getTimeLineNotificationCount(databaseHandler);
-        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id.nav_user_timeline).getActionView();
+        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id
+                .nav_user_timeline).getActionView();
         TextView textView = (TextView) view.findViewById(R.id.badge_count);
         if (count > 0) {
             view.setVisibility(View.VISIBLE);
@@ -379,24 +408,49 @@ public class MainActivity extends BaseActivity implements NavigationView
             // <editor-fold desc="REQ_UPLOAD_CONTACTS">
 
             else if (serviceType.contains(WsConstants.REQ_UPLOAD_CONTACTS)) {
-                WsResponseObject syncDeleteResponse = (WsResponseObject) data;
-                if (syncDeleteResponse != null && StringUtils.equalsIgnoreCase
-                        (syncDeleteResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                    Log.i("syncBackgroundContacts", "Sync Successful");
-                    //Toast.makeText(this, "Sync Successful", Toast.LENGTH_SHORT).show();
+                WsResponseObject uploadContactResponse = (WsResponseObject) data;
+                if (uploadContactResponse != null && StringUtils.equalsIgnoreCase
+                        (uploadContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                    if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+                            .getArrayListUserRcProfile())) {
+
+                                /* Store Unique Contacts to ProfileMobileMapping */
+                        storeToMobileMapping(uploadContactResponse
+                                .getArrayListUserRcProfile());
+
+                                /* Store Unique Emails to ProfileEmailMapping */
+                        storeToEmailMapping(uploadContactResponse
+                                .getArrayListUserRcProfile());
+
+                                /* Store Profile Details to respective Table */
+                        storeProfileDataToDb(uploadContactResponse
+                                .getArrayListUserRcProfile(), uploadContactResponse
+                                .getArrayListMapping());
+                    }
+                    if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
+                            .getArrayListMapping())) {
+                        removeRemovedDataFromDb(uploadContactResponse
+                                .getArrayListMapping());
+                    }
+                    Log.i("uploadContactResponse", "Sync Successful");
 
                     String currentTimeStamp = (StringUtils.split(serviceType, "_"))[1];
+                    Log.i("uploadContactResponse", "currentTimeStamp" + currentTimeStamp);
+                    PhoneBookContacts phoneBookContacts = new PhoneBookContacts(this);
+                    phoneBookContacts.saveRawIdsToPref();
                     Utils.setStringPreference(this, AppConstants.PREF_CONTACT_LAST_SYNC_TIME,
                             currentTimeStamp);
                 } else {
-                    if (syncDeleteResponse != null) {
-                        Log.e("error response", syncDeleteResponse.getMessage());
+                    if (uploadContactResponse != null) {
+                        Log.e("error response", uploadContactResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "uploadContactResponse null");
                     }
                 }
             }
             //</editor-fold>
+
+            // <editor-fold desc="REQ_UPLOAD_CALL_LOGS">
             else if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)) {
                 WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
                 if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase
@@ -411,7 +465,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             if (temp != null && temp.size() > 0)
                                 insertServiceCall(newList);
                         } else {
-//                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
+                            Log.e("onDeliveryResponse: ", "All Call Logs Synced");
                         }
 
                     } else {
@@ -423,32 +477,36 @@ public class MainActivity extends BaseActivity implements NavigationView
 //                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
                             Utils.setBooleanPreference(this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, true);
+
+                            Intent localBroadcastIntent = new Intent(AppConstants
+                                    .ACTION_LOCAL_BROADCAST_SYNC_SMS);
+                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                                    .getInstance(MainActivity.this);
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
                         }
                         Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
                                 logsSyncedCount);
 
-                        Intent localBroadcastIntent = new Intent(AppConstants
-                                .ACTION_LOCAL_BROADCAST_SYNC_SMS);
-                        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
-                                .getInstance(MainActivity.this);
-                        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
 
                     }
                 } else {
                     if (callLogInsertionResponse != null) {
                         Log.e("error response", callLogInsertionResponse.getMessage());
                     } else {
-                        Log.e("onDeliveryResponse: ", "userProfileResponse null");
-                        Log.e("onDeliveryResponse: ", getString(R.string.msg_try_later));
-//                        Toast.makeText(this,getString(R.string.msg_try_later),Toast
-// .LENGTH_SHORT).show();
+                        Log.e("onDeliveryResponse: ", "callLogInsertionResponse null");
                     }
                 }
-            } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_SMS_LOGS)) {
+            }
+            //</editor-fold>
 
-                WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
-                if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase
-                        (callLogInsertionResponse
+            // <editor-fold desc="REQ_UPLOAD_SMS_LOGS">
+            else if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_SMS_LOGS)) {
+
+                WsResponseObject smsLogInsertionResponse = (WsResponseObject) data;
+                if (smsLogInsertionResponse != null && StringUtils.equalsIgnoreCase
+                        (smsLogInsertionResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     if (Utils.getBooleanPreference(this, AppConstants
@@ -459,9 +517,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                             if (temp != null && temp.size() > 0)
                                 insertSMSLogServiceCall(newSmsList);
                         } else {
-//                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
+                            Log.e("onDeliveryResponse: ", "All SMS Logs Synced");
                         }
-
                     } else {
                         ArrayList<SmsDataType> callLogTypeArrayList = divideSmsLogByChunck();
                         if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
@@ -476,19 +533,435 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 logsSyncedCount);
                     }
                 } else {
-                    if (callLogInsertionResponse != null) {
-                        Log.e("error response", callLogInsertionResponse.getMessage());
+                    if (smsLogInsertionResponse != null) {
+                        Log.e("error response", smsLogInsertionResponse.getMessage());
                     } else {
-                        Log.e("onDeliveryResponse: ", "userProfileResponse null");
-                        Log.e("onDeliveryResponse: ", getString(R.string.msg_try_later));
-//                        Toast.makeText(this,getString(R.string.msg_try_later),Toast
-// .LENGTH_SHORT).show();
+                        Log.e("onDeliveryResponse: ", "smsLogInsertionResponse null");
+                    }
+                }
+            }
+            //</editor-fold>
+        } else {
+            Log.e("error", error.getMessage());
+        }
+    }
+
+
+    private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
+//        if (!Utils.isArraylistNullOrEmpty(arrayListContactNumbers)) {
+        TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
+                (databaseHandler);
+        ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new ArrayList<>();
+//            for (int i = 0; i < arrayListContactNumbers.size(); i++) {
+           /* if (!tableProfileMobileMapping.getIsMobileNumberExists(arrayListContactNumbers
+                    .get(i))) {*/
+
+//                ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
+//                profileMobileMapping.setMpmMobileNumber(arrayListContactNumbers.get(i));
+//                profileMobileMapping.setMpmIsRcp("0");
+        if (!Utils.isArraylistNullOrEmpty(profileData)) {
+            for (int j = 0; j < profileData.size(); j++) {
+                /*if (!tableProfileMobileMapping.getIsMobileNumberExists(profileData.get(j)
+                        .getVerifiedMobileNumber())) {*/
+                ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
+                profileMobileMapping.setMpmMobileNumber(profileData.get(j)
+                        .getVerifiedMobileNumber());
+                profileMobileMapping.setMpmCloudMnmId(profileData.get(j)
+                        .getMnmCloudId());
+                profileMobileMapping.setMpmCloudPmId(profileData.get(j).getRcpPmId());
+                profileMobileMapping.setMpmIsRcp("1");
+                arrayListProfileMobileMapping.add(profileMobileMapping);
+//                }
+            }
+        }
+               /* arrayListProfileMobileMapping.add(profileMobileMapping);
+            }*/
+//            }
+        tableProfileMobileMapping.addArrayProfileMobileMapping(arrayListProfileMobileMapping);
+       /* int count = tableProfileMobileMapping.getProfileMobileMappingCount();
+        Log.i("storeToMobileMapping: ", String.valueOf(count));*/
+//        }
+    }
+
+    private void storeToEmailMapping(ArrayList<ProfileDataOperation> profileData) {
+//        if (!Utils.isArraylistNullOrEmpty(arrayListContactEmails)) {
+        TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping
+                (databaseHandler);
+        ArrayList<ProfileEmailMapping> arrayListProfileEmailMapping = new ArrayList<>();
+//            for (int i = 0; i < arrayListContactEmails.size(); i++) {
+//            if (!tableProfileEmailMapping.getIsEmailIdExists(arrayListContactEmails.get(i))) {
+
+//                    ProfileEmailMapping profileEmailMapping = new ProfileEmailMapping();
+//                    profileEmailMapping.setEpmEmailId(arrayListContactEmails.get(i));
+//                profileEmailMapping.setEpmIsRcp("0");
+        if (!Utils.isArraylistNullOrEmpty(profileData)) {
+            for (int j = 0; j < profileData.size(); j++) {
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(j).getVerifiedEmailIds())) {
+                    for (int k = 0; k < profileData.get(j).getVerifiedEmailIds().size(); k++) {
+                               /* if (StringUtils.equalsIgnoreCase(arrayListContactEmails.get(i),
+                                        profileData.get(j).getVerifiedEmailIds().get(k)
+                                                .getEmEmailId())) {*/
+                        if (!tableProfileEmailMapping.getIsEmailIdExists(profileData.get(j)
+                                .getVerifiedEmailIds().get(k).getEmEmailId())) {
+                            ProfileEmailMapping profileEmailMapping = new ProfileEmailMapping();
+                            profileEmailMapping.setEpmEmailId(profileData.get(j)
+                                    .getVerifiedEmailIds().get(k).getEmEmailId());
+                            profileEmailMapping.setEpmCloudEmId(String.valueOf(profileData
+                                    .get(j).getVerifiedEmailIds().get(k).getEmId()));
+                            profileEmailMapping.setEpmCloudPmId(profileData.get(j).getRcpPmId
+                                    ());
+                            profileEmailMapping.setEpmIsRcp("1");
+//                                }
+                            arrayListProfileEmailMapping.add(profileEmailMapping);
+                        }
+                    }
+//                            }
+                }
+            }
+
+//                    arrayListProfileEmailMapping.add(profileEmailMapping);
+        }
+//            }
+        tableProfileEmailMapping.addArrayProfileEmailMapping(arrayListProfileEmailMapping);
+//            }
+//        }
+    }
+
+    private void storeProfileDataToDb(ArrayList<ProfileDataOperation> profileData,
+                                      ArrayList<ProfileData> mapping) {
+
+        // Hashmap with key as rcpId and value as rawId/s
+        HashMap<String, String> mapLocalRcpId = new HashMap<>();
+
+        for (int i = 0; i < mapping.size(); i++) {
+//            if (mapping.get(i).getRcpPmId().size() > 0) {
+            for (int j = 0; j < mapping.get(i).getRcpPmId().size(); j++) {
+                String phonebookRawId;
+                if (mapLocalRcpId.containsKey(mapping.get(i).getRcpPmId().get(j))) {
+                    phonebookRawId = mapLocalRcpId.get(mapping.get(i).getRcpPmId().get(j)) +
+                            "," + mapping.get(i).getLocalPhoneBookId();
+                } else {
+                    phonebookRawId = mapping.get(i).getLocalPhoneBookId();
+                }
+
+                mapLocalRcpId.put(mapping.get(i).getRcpPmId().get(j), phonebookRawId);
+            }
+//            }
+        }
+
+        // Basic Profile Data
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+
+        ArrayList<UserProfile> arrayListUserProfile = new ArrayList<>();
+        for (int i = 0; i < profileData.size(); i++) {
+
+            //<editor-fold desc="Profile Master">
+            UserProfile userProfile = new UserProfile();
+            userProfile.setPmSuffix(profileData.get(i).getPbNameSuffix());
+            userProfile.setPmPrefix(profileData.get(i).getPbNamePrefix());
+            userProfile.setPmFirstName(profileData.get(i).getPbNameFirst());
+            userProfile.setPmMiddleName(profileData.get(i).getPbNameMiddle());
+            userProfile.setPmLastName(profileData.get(i).getPbNameLast());
+            userProfile.setPmPhoneticFirstName(profileData.get(i).getPbPhoneticNameFirst());
+            userProfile.setPmPhoneticMiddleName(profileData.get(i).getPbPhoneticNameMiddle());
+            userProfile.setPmPhoneticLastName(profileData.get(i).getPbPhoneticNameLast());
+            userProfile.setPmIsFavourite(profileData.get(i).getIsFavourite());
+            userProfile.setPmNotes(profileData.get(i).getPbNote());
+            userProfile.setPmNickName(profileData.get(i).getPbNickname());
+            userProfile.setPmRcpId(profileData.get(i).getRcpPmId());
+            userProfile.setPmNosqlMasterId(profileData.get(i).getNoSqlMasterId());
+            userProfile.setProfileRating(profileData.get(i).getProfileRating());
+            userProfile.setPmProfileImage(profileData.get(i).getPbProfilePhoto());
+            userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
+
+
+            if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
+                userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
+            }
+
+//            if (tableProfileMaster.getRcpIdCount(Integer.parseInt(userProfile.getPmRcpId())) <=
+// 0) {
+            String existingRawId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt
+                    (userProfile.getPmRcpId()));
+            if (StringUtils.length(existingRawId) <= 0) {
+
+                arrayListUserProfile.add(userProfile);
+                tableProfileMaster.addArrayProfile(arrayListUserProfile);
+                //</editor-fold>
+
+                //<editor-fold desc="Mobile Master">
+                ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber = profileData
+                        .get(i).getPbPhoneNumber();
+                ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
+                for (int j = 0; j < arrayListPhoneNumber.size(); j++) {
+
+                    MobileNumber mobileNumber = new MobileNumber();
+                    mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
+                    mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(j)
+                            .getPhoneNumber());
+                    mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
+                    mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
+                            .getPhonePublic()));
+                    mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(j).getIsPrivate());
+                    mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                    if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber()
+                            , mobileNumber.getMnmMobileNumber())) {
+                        mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
+                                .RCP_TYPE_PRIMARY));
+                    } else {
+                        mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
+                                .RCP_TYPE_SECONDARY));
+                    }
+//                arrayListPhoneNumber.get(j).
+                    arrayListMobileNumber.add(mobileNumber);
+                }
+
+                TableMobileMaster tableMobileMaster = new TableMobileMaster
+                        (databaseHandler);
+                tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
+                //</editor-fold>
+
+                //<editor-fold desc="Email Master">
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbEmailId())) {
+                    ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileData.get(i)
+                            .getPbEmailId();
+                    ArrayList<Email> arrayListEmail = new ArrayList<>();
+                    for (int j = 0; j < arrayListEmailId.size(); j++) {
+                        Email email = new Email();
+                        email.setEmEmailAddress(arrayListEmailId.get(j).getEmEmailId());
+                        email.setEmRecordIndexId(arrayListEmailId.get(j).getEmId());
+                        email.setEmEmailType(arrayListEmailId.get(j).getEmType());
+                        email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j)
+                                .getEmPublic()));
+                        email.setEmIsVerified(arrayListEmailId.get(j).getEmRcpType());
+                        email.setEmIsPrivate(arrayListEmailId.get(j).getEmIsPrivate());
+
+                        email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+
+                        if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getVerifiedEmailIds
+                                ())) {
+                            for (int k = 0; k < profileData.get(i).getVerifiedEmailIds().size();
+                                 k++) {
+                                if (StringUtils.equalsIgnoreCase(profileData.get(i)
+                                        .getVerifiedEmailIds().get(k).getEmEmailId(), email
+                                        .getEmEmailAddress())) {
+//                                email.setEmIsPrimary(String.valueOf(getActivity().getResources()
+//                                        .getInteger(R.integer.rcp_type_primary)));
+                                    email.setEmIsVerified("1");
+                                } else {
+//                                email.setEmIsPrimary(String.valueOf(getActivity().getResources()
+//                                        .getInteger(R.integer.rcp_type_secondary)));
+                                    email.setEmIsVerified("0");
+                                }
+                            }
+                        }
+                        arrayListEmail.add(email);
+                    }
+
+                    TableEmailMaster tableEmailMaster = new TableEmailMaster
+                            (databaseHandler);
+                    tableEmailMaster.addArrayEmail(arrayListEmail);
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="Organization Master">
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbOrganization())) {
+                    ArrayList<ProfileDataOperationOrganization> arrayListOrganization =
+                            profileData
+                                    .get(i).getPbOrganization();
+                    ArrayList<Organization> organizationList = new ArrayList<>();
+                    for (int j = 0; j < arrayListOrganization.size(); j++) {
+                        Organization organization = new Organization();
+                        organization.setOmRecordIndexId(arrayListOrganization.get(j).getOrgId
+                                ());
+                        organization.setOmOrganizationCompany(arrayListOrganization.get(j)
+                                .getOrgName
+                                        ());
+//                    organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgType());
+//                    organization.setOmOrganizationTitle(arrayListOrganization.get(j).getOrgName
+// ());
+//                    organization.setOmOrganizationDepartment(arrayListOrganization.get(j)
+//                            .getOrgDepartment());
+//                    organization.setOmJobDescription(arrayListOrganization.get(j)
+//                            .getOrgJobTitle());
+//                    organization.setOmOfficeLocation(arrayListOrganization.get(j)
+//                            .getOrgOfficeLocation());
+                        organization.setOmOrganizationDesignation(arrayListOrganization.get(j)
+                                .getOrgJobTitle());
+                        organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(j)
+                                .getIsCurrent()));
+                        organization.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                        organizationList.add(organization);
+                    }
+
+                    TableOrganizationMaster tableOrganizationMaster = new
+                            TableOrganizationMaster
+                            (databaseHandler);
+                    tableOrganizationMaster.addArrayOrganization(organizationList);
+                }
+                //</editor-fold>
+
+                // <editor-fold desc="Website Master">
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbWebAddress())) {
+//                ArrayList<String> arrayListWebsite = profileData.get(i).getPbWebAddress();
+                    ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileData
+                            .get(i)
+                            .getPbWebAddress();
+                    ArrayList<Website> websiteList = new ArrayList<>();
+                    for (int j = 0; j < arrayListWebsite.size(); j++) {
+                        Website website = new Website();
+                        website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
+                        website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
+                        website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
+                        website.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                        websiteList.add(website);
+                    }
+
+                    TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster
+                            (databaseHandler);
+                    tableWebsiteMaster.addArrayWebsite(websiteList);
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="Address Master">
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbAddress())) {
+                    ArrayList<ProfileDataOperationAddress> arrayListAddress = profileData.get(i)
+                            .getPbAddress();
+                    ArrayList<Address> addressList = new ArrayList<>();
+                    for (int j = 0; j < arrayListAddress.size(); j++) {
+                        Address address = new Address();
+                        address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
+                        address.setAmCity(arrayListAddress.get(j).getCity());
+                        address.setAmCountry(arrayListAddress.get(j).getCountry());
+                        address.setAmFormattedAddress(arrayListAddress.get(j)
+                                .getFormattedAddress
+                                        ());
+                        address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
+                        address.setAmPostCode(arrayListAddress.get(j).getPostCode());
+                        address.setAmPoBox(arrayListAddress.get(j).getPoBox());
+                        address.setAmStreet(arrayListAddress.get(j).getStreet());
+                        address.setAmAddressType(arrayListAddress.get(j).getAddressType());
+                        address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude
+                                ());
+                        address.setAmGoogleLongitude(arrayListAddress.get(j)
+                                .getGoogleLongitude());
+//                    address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
+                        address.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                        address.setAmIsPrivate(arrayListAddress.get(j).getIsPrivate());
+                        address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j)
+                                .getAddPublic()));
+                        addressList.add(address);
+                    }
+
+                    TableAddressMaster tableAddressMaster = new TableAddressMaster
+                            (databaseHandler);
+                    tableAddressMaster.addArrayAddress(addressList);
+                }
+                //</editor-fold>
+
+                // <editor-fold desc="Im Account Master">
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbIMAccounts())) {
+                    ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileData
+                            .get(i)
+                            .getPbIMAccounts();
+                    ArrayList<ImAccount> imAccountsList = new ArrayList<>();
+                    for (int j = 0; j < arrayListImAccount.size(); j++) {
+                        ImAccount imAccount = new ImAccount();
+                        imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
+//                    imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
+                        imAccount.setImImProtocol(arrayListImAccount.get(j)
+                                .getIMAccountProtocol());
+                        imAccount.setImImDetail(arrayListImAccount.get(j)
+                                .getIMAccountDetails());
+                        imAccount.setImIsPrivate(arrayListImAccount.get(j)
+                                .getIMAccountIsPrivate());
+                        imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
+                                .getIMAccountPublic()));
+                        imAccount.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                        imAccountsList.add(imAccount);
+                    }
+
+                    TableImMaster tableImMaster = new TableImMaster(databaseHandler);
+                    tableImMaster.addArrayImAccount(imAccountsList);
+                }
+                //</editor-fold>
+
+                // <editor-fold desc="Event Master">
+                if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbEvent())) {
+                    ArrayList<ProfileDataOperationEvent> arrayListEvent = profileData.get(i)
+                            .getPbEvent();
+                    ArrayList<Event> eventList = new ArrayList<>();
+                    for (int j = 0; j < arrayListEvent.size(); j++) {
+                        Event event = new Event();
+                        event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
+                        event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
+                        event.setEvmEventType(arrayListEvent.get(j).getEventType());
+                        event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
+                        event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
+                        event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j)
+                                .getEventPublic()));
+                        event.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
+                        eventList.add(event);
+                    }
+
+                    TableEventMaster tableEventMaster = new TableEventMaster
+                            (databaseHandler);
+                    tableEventMaster.addArrayEvent(eventList);
+                }
+                //</editor-fold>
+
+            } else {
+                if (StringUtils.contains(existingRawId, ",")) {
+                    String rawIds[] = existingRawId.split(",");
+                    ArrayList<String> arrayListRawIds = new ArrayList<>(Arrays.asList(rawIds));
+                    if (arrayListRawIds.contains(mapLocalRcpId.get(profileData.get(i)
+                            .getRcpPmId()))) {
+                        return;
+                    } else {
+                        String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData.get(i)
+                                .getRcpPmId());
+                        tableProfileMaster.updateRawIds(Integer.parseInt(userProfile.getPmRcpId()),
+                                newRawIds);
+                    }
+                } else {
+                    if (existingRawId.equals(mapLocalRcpId.get(profileData.get(i)
+                            .getRcpPmId())))
+                        return;
+                    else {
+                        String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData.get(i)
+                                .getRcpPmId());
+                        tableProfileMaster.updateRawIds(Integer.parseInt(userProfile.getPmRcpId()),
+                                newRawIds);
                     }
                 }
 
+            }
+        }
+    }
 
-            } else {
-                Toast.makeText(this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+    private void removeRemovedDataFromDb(ArrayList<ProfileData> mapping) {
+
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+
+        for (int i = 0; i < mapping.size(); i++) {
+            String rawId = mapping.get(i).getLocalPhoneBookId();
+
+            ArrayList<String> newRcpIds = new ArrayList<>();
+            for (int j = 0; j < mapping.get(i).getRcpPmId().size(); j++) {
+                String rcPid = mapping.get(i).getRcpPmId().get(j);
+                newRcpIds.add(rcPid);
+            }
+
+            ArrayList<String> existingRcpIds = tableProfileMaster.getAllRcpIdFromRawId(rawId);
+            existingRcpIds.removeAll(newRcpIds);
+
+//            Log.i("MAULIK", "We are here::rawId" + rawId);
+//            Log.i("MAULIK", "We are here::existingRcpIds.toString()" + existingRcpIds.toString());
+
+            for (int k = 0; k < existingRcpIds.size(); k++) {
+//                Log.i("MAULIK", "We are here::" + existingRcpIds.get(k));
+                QueryManager queryManager = new QueryManager(databaseHandler);
+                queryManager.updateRcProfileDetail(this, Integer.parseInt(existingRcpIds.get(k)), rawId);
             }
 
         }
@@ -586,7 +1059,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     private void init() {
 
         imageNotification = (ImageView) toolbar.findViewById(R.id.image_notification);
-        imageViewSearch = (ImageView) toolbar.findViewById(R.id.image_search);
+        ImageView imageViewSearch = (ImageView) toolbar.findViewById(R.id.image_search);
         badgeLayout = (LinearLayout) toolbar.findViewById(R.id.badge_layout);
         badgeTextView = (TextView) toolbar.findViewById(R.id.badge_count);
 
@@ -609,7 +1082,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         imageViewSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(MainActivity.this,"Open Search Activity",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this,"Open Search Activity",Toast.LENGTH_SHORT)
+// .show();
                 startActivityIntent(MainActivity.this, SearchActivity.class, null);
 
             }
@@ -787,6 +1261,8 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     private void setCurrentTabFragment(int tabPosition) {
         switch (tabPosition) {
+
+
             case 0:
                 showAddToContact(true);
                 fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable
@@ -802,7 +1278,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 replaceFragment(callLogFragment);
                 break;
             case 2:
-                showAddToContact(false);
+                showAddToContact(true);
                 fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable
                         .ic_mode_edit));
                 isCompaseIcon = true;
@@ -853,15 +1329,18 @@ public class MainActivity extends BaseActivity implements NavigationView
         localBroadcastManagerReceiveRecentSms.registerReceiver(localBroadCastReceiverRecentSMS,
                 intentFilter2);
 
-        LocalBroadcastManager localBroadcastManagerSyncSmsLogs = LocalBroadcastManager.getInstance(this);
+        LocalBroadcastManager localBroadcastManagerSyncSmsLogs = LocalBroadcastManager
+                .getInstance(this);
         IntentFilter intentFilter1 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_SYNC_SMS);
-        localBroadcastManagerSyncSmsLogs.registerReceiver(localBroadcastReceiverSmsLogSync, intentFilter1);
+        localBroadcastManagerSyncSmsLogs.registerReceiver(localBroadcastReceiverSmsLogSync,
+                intentFilter1);
 
         LocalBroadcastManager localBroadcastManagerUpdateNotificationCount = LocalBroadcastManager
                 .getInstance(MainActivity.this);
         IntentFilter intentFilterUpdateCount = new IntentFilter(AppConstants
                 .ACTION_LOCAL_BROADCAST_UPDATE_NOTIFICATION_COUNT);
-        localBroadcastManagerUpdateNotificationCount.registerReceiver(localBroadCastReceiverUpdateCount, intentFilterUpdateCount);
+        localBroadcastManagerUpdateNotificationCount.registerReceiver
+                (localBroadCastReceiverUpdateCount, intentFilterUpdateCount);
 
     }
 
@@ -957,7 +1436,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             String numberTypeLog = getPhoneNumberType(cursor.getInt(numberType));
                             log.setNumberType(numberTypeLog);
                             String userNumber = cursor.getString(number);
-                            String uniquePhoneBookId = getStarredStatusFromNumber(userNumber);
+                            String uniquePhoneBookId = getRawContactIdFromNumber(userNumber);
                             if (!TextUtils.isEmpty(uniquePhoneBookId))
                                 log.setLocalPbRowId(uniquePhoneBookId);
                             else
@@ -970,7 +1449,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                     } else {*/
                             arrayListHistory = callLogHistory(userNumber);
 //                    }
-                            log.setArrayListCallHistory(arrayListHistory);
+//                            log.setArrayListCallHistory(arrayListHistory);
 
                             ArrayList<CallLogType> arrayListHistoryCount = new ArrayList<>();
                             for (int j = 0; j < arrayListHistory.size(); j++) {
@@ -989,11 +1468,18 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 if (intentDate.equalsIgnoreCase(arrayDate)) {
                                     arrayListHistoryCount.add(tempCallLogType);
                                 }
+                                // 25/05/2017 Updated bcz sync format changed
+                                log.setHistoryNumber(tempCallLogType.getHistoryNumber());
+                                log.setHistoryType(tempCallLogType.getHistoryType());
+                                log.setHistoryDate(tempCallLogType.getHistoryDate());
+                                log.setHistoryDuration(tempCallLogType.getHistoryDuration());
+                                log.setHistoryCallSimNumber(tempCallLogType.getHistoryCallSimNumber());
+                                log.setHistoryId(tempCallLogType.getHistoryId());
                             }
                             int logCount = arrayListHistoryCount.size();
                             log.setHistoryLogCount(logCount);
                             callLogTypeArrayListMain.add(log);
-
+                            rContactApplication.setArrayListCallLogType(callLogTypeArrayListMain);
                         }
                         cursor.close();
                     }
@@ -1018,7 +1504,17 @@ public class MainActivity extends BaseActivity implements NavigationView
     private BroadcastReceiver localBroadcastReceiverSmsLogSync = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            syncSMSLogDataToServer(smsLogTypeArrayListMain);
+            if(smsLogTypeArrayListMain!=null && smsLogTypeArrayListMain.size()>0)
+                syncSMSLogDataToServer(smsLogTypeArrayListMain);
+            else{
+                if (Utils.isNetworkAvailable(MainActivity.this) && Utils.getBooleanPreference(MainActivity.this,
+                        AppConstants.PREF_CALL_LOG_SYNCED, false)
+                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                    syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                    syncSmsLogAsyncTask.execute();
+                }
+
+            }
         }
     };
 
@@ -1060,10 +1556,10 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
     private ArrayList<ArrayList<String>> chopped(ArrayList<String> list, final int L) {
-        ArrayList<ArrayList<String>> parts = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<String>> parts = new ArrayList<>();
         final int N = list.size();
         for (int i = 0; i < N; i += L) {
-            parts.add(new ArrayList<String>(
+            parts.add(new ArrayList<>(
                     list.subList(i, Math.min(N, i + L)))
             );
         }
@@ -1072,10 +1568,10 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     private ArrayList<ArrayList<CallLogType>> choppedCallLog(ArrayList<CallLogType> list, final
     int L) {
-        ArrayList<ArrayList<CallLogType>> parts = new ArrayList<ArrayList<CallLogType>>();
+        ArrayList<ArrayList<CallLogType>> parts = new ArrayList<>();
         final int N = list.size();
         for (int i = 0; i < N; i += L) {
-            parts.add(new ArrayList<CallLogType>(
+            parts.add(new ArrayList<>(
                     list.subList(i, Math.min(N, i + L)))
             );
         }
@@ -1260,7 +1756,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         return "OTHERS";
     }
 
-    private String getStarredStatusFromNumber(String phoneNumber) {
+    private String getRawContactIdFromNumber(String phoneNumber) {
         String numberId = "";
         try {
 
@@ -1292,6 +1788,48 @@ public class MainActivity extends BaseActivity implements NavigationView
 
 
         return numberId;
+
+        /*String numberId = "";
+        try {
+
+            numberId = "";
+            ContentResolver contentResolver = this.getContentResolver();
+
+           *//* Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));*//*
+            Uri uri = ContactsContract.Data.CONTENT_URI;
+
+            String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
+                    ContactsContract.CommonDataKinds.Phone.NUMBER};
+
+//            String selection = ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?";
+//            String[] selectionArgs = new String[]{phoneNumber};
+
+            String selection = ContactsContract.Data.MIMETYPE + " in (?) AND " +
+                    ContactsContract.CommonDataKinds.Phone.NUMBER + "=?";
+            String[] selectionArgs = {
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE, phoneNumber};
+
+            Cursor cursor =
+                    contentResolver.query(uri, projection, selection, selectionArgs, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    *//*String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));*//*
+                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.
+                            Phone.RAW_CONTACT_ID));
+                Log.d("LocalPBId", "contactMatch id: " + numberId);
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return numberId;*/
     }
 
     private ArrayList callLogHistory(String number) {
@@ -1375,6 +1913,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                     logObject.setDurationToPass(durationtoPass);
 
                     callDetails.add(logObject);
+                    break;
                 }
             }
 
@@ -1522,7 +2061,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                 String uniqueCallLogId = listOfRowIds.get(i);
                 if (!TextUtils.isEmpty(uniqueCallLogId)) {
                     String order = Telephony.Sms.DEFAULT_SORT_ORDER;
-                    Cursor cursor = MainActivity.this.getContentResolver().query(Telephony.Sms.CONTENT_URI,
+                    Cursor cursor = MainActivity.this.getContentResolver().query(Telephony.Sms
+                                    .CONTENT_URI,
                             null, Telephony.Sms._ID + " = " + uniqueCallLogId, null, order);
 
                     if (cursor != null) {
@@ -1535,7 +2075,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                             int type = cursor.getColumnIndexOrThrow(Telephony.Sms.TYPE);
                             int thread_id = cursor.getColumnIndexOrThrow(Telephony.Sms.THREAD_ID);
                             while (cursor.moveToNext()) {
-                                if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask.isCancelled())
+                                if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask
+                                        .isCancelled())
                                     return;
                                 SmsDataType smsDataType = new SmsDataType();
                                 String address = cursor.getString(number);
@@ -1547,8 +2088,10 @@ public class MainActivity extends BaseActivity implements NavigationView
                                         smsDataType.setAddress(address);
                                     } else {
                                         // Todo: Add format number method before setting the address
-                                        final String formattedNumber = Utils.getFormattedNumber(MainActivity.this, address);
-                                        String contactName = getContactNameFromNumber(formattedNumber);
+                                        final String formattedNumber = Utils.getFormattedNumber
+                                                (MainActivity.this, address);
+                                        String contactName = getContactNameFromNumber
+                                                (formattedNumber);
                                         if (!TextUtils.isEmpty(contactName)) {
                                             smsDataType.setAddress(contactName);
                                             smsDataType.setNumber(formattedNumber);
@@ -1584,18 +2127,17 @@ public class MainActivity extends BaseActivity implements NavigationView
                     }
                 }
             }
-//            makeSimpleDataThreadWise(smsDataTypeList);
             syncSMSLogDataToServer(smsLogTypeArrayListMain);
-
+            makeSimpleDataThreadWise(smsDataTypeList);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /*private void makeSimpleDataThreadWise(ArrayList<SmsDataType> filteredList) {
+    private void makeSimpleDataThreadWise(ArrayList<SmsDataType> filteredList) {
         if (filteredList != null && filteredList.size() > 0) {
-            smsLogTypeArrayListMain = new ArrayList<>();
+            ArrayList<SmsDataType> smsLogTypeArrayListMain = new ArrayList<>();
             for (int k = 0; k < filteredList.size(); k++) {
                 SmsDataType smsDataType = filteredList.get(k);
                 String threadId = smsDataType.getThreadId();
@@ -1620,13 +2162,9 @@ public class MainActivity extends BaseActivity implements NavigationView
                     }
                 }
             }
-
-//            rContactApplication.setArrayListSmsLogType(smsDataTypeArrayList);
-            syncSMSLogDataToServer(smsLogTypeArrayListMain);
+            rContactApplication.setArrayListSmsLogType(smsLogTypeArrayListMain);
         }
-
-
-    }*/
+    }
 
     private void syncSMSLogDataToServer(ArrayList<SmsDataType> list) {
         if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask.isCancelled())
@@ -1732,23 +2270,15 @@ public class MainActivity extends BaseActivity implements NavigationView
                     public void run() {
 
                         if (Utils.getBooleanPreference(MainActivity.this,
-                                AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, false)) {
-                            Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
+                                AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,
+                                false)) {
+                            Utils.setBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
                             Utils.setBooleanPreference(MainActivity.this, AppConstants
                                     .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
                             AppConstants.isFromReceiver = false;
                             CallLogFragment.isIdsFetchedFirstTime = false;
 //                                rContactApplication.setArrayListCallLogType(null);
-                        } else {
-                                /*if(Utils.getBooleanPreference(MainActivity.this,
-                                        AppConstants
-                                        .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false)){
-                                    Utils.setBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false);
-                                    Utils.setBooleanPreference(MainActivity.this, AppConstants
-                                            .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
-                                    AppConstants.isFromReceiver = false;
-                                }*/
                         }
                     }
                 }, 100);
@@ -1782,7 +2312,8 @@ public class MainActivity extends BaseActivity implements NavigationView
 
                 if (Utils.getBooleanPreference(MainActivity.this,
                         AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false)) {
-                    Utils.setBooleanPreference(MainActivity.this, AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
+                    Utils.setBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
                     Utils.setBooleanPreference(MainActivity.this, AppConstants
                             .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
                 }
@@ -1829,14 +2360,17 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
     private int getNotificationCount(DatabaseHandler databaseHandler) {
-        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster(databaseHandler);
+        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster
+                (databaseHandler);
         return notificationStateMaster.getTotalUnreadCount();
 
     }
 
     private int getTimeLineNotificationCount(DatabaseHandler databaseHandler) {
 
-        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster(databaseHandler);
-        return notificationStateMaster.getTotalUnreadCountByType(AppConstants.NOTIFICATION_TYPE_TIMELINE);
+        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster
+                (databaseHandler);
+        return notificationStateMaster.getTotalUnreadCountByType(AppConstants
+                .NOTIFICATION_TYPE_TIMELINE);
     }
 }

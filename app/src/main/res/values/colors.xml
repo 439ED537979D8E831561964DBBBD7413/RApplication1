@@ -23,6 +23,7 @@
     <color name="grayishMagenta">#D0CFD0</color>
     <color name="regularFontColor">#757575</color>
     <color name="vividRed">#DA1F31</color>
+    <color name="lightGrey">#CCCCCC</color>
 
     <!--swipe call SMS-->
     <color name="darkModerateLimeGreen">#388E3C</color>

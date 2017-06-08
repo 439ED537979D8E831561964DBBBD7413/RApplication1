@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -49,7 +50,7 @@ class OptionMenuDialog {
 
     private String dialogTag;
     private String rawId;
-
+    private PhoneBookContacts phoneBookContacts;
     private RContactApplication rContactApplication;
 
     //<editor-fold desc="Constructor">
@@ -61,7 +62,16 @@ class OptionMenuDialog {
         this.isFromFavourite = isFromFavourite;
 
         rContactApplication = (RContactApplication) context.getApplicationContext();
+        phoneBookContacts = new PhoneBookContacts(context);
+        if (menuType == R_CONTACT_RCP) {
 
+            if (StringUtils.contains(this.rawId, ",")) {
+                String rawIds[] = this.rawId.split(",");
+                this.rawId = phoneBookContacts.getLookupKeyFromRawId(rawIds[0]);
+            } else {
+                this.rawId = phoneBookContacts.getLookupKeyFromRawId(rawId);
+            }
+        }
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_option_menu);
@@ -292,11 +302,11 @@ class OptionMenuDialog {
         QueryManager queryManager = new QueryManager(((BaseActivity) context).databaseHandler);
         Intent intent;
         Uri lookupUri, res;
-        String rcpRawId = ((ProfileDetailActivity) context).checkNumberFavourite;
-        if (StringUtils.contains(rcpRawId, ",")) {
-            rcpRawId = rcpRawId.split(",")[0];
-        }
-
+//        String rcpRawId = ((ProfileDetailActivity) context).checkNumberFavourite;
+//        if (StringUtils.contains(rcpRawId, ",")) {
+//            rcpRawId = rcpRawId.split(",")[0];
+//        }
+        Log.i("MAULIK", "rcpRawId" + rawId);
         switch (position) {
 
             //<editor-fold desc="Edit">
@@ -314,7 +324,7 @@ class OptionMenuDialog {
 
             // <editor-fold desc="View in AC">
             case 1:
-                String phonebookName = phoneBookContacts.getStructuredName(rcpRawId);
+                String phonebookName = phoneBookContacts.getStructuredName(rawId);
                 String cloudName = ((ProfileDetailActivity) context).contactName;
                 Bundle bundle = new Bundle();
                 if (StringUtils.equals(phonebookName, cloudName)) {
@@ -326,7 +336,7 @@ class OptionMenuDialog {
                             (ProfileDetailActivity) context).contactName + ")");
                 }
                 bundle.putString(AppConstants.EXTRA_PM_ID, ((ProfileDetailActivity) context).pmId);
-                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, rcpRawId);
+                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, rawId);
                 bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, ((ProfileDetailActivity)
                         context).thumbnailUrl);
                 bundle.putString(AppConstants.EXTRA_CONTACT_POSITION, ((ProfileDetailActivity)
@@ -347,7 +357,7 @@ class OptionMenuDialog {
             // <editor-fold desc="Delete">
             case 3:
                 queryManager.updateRcProfileDetail(context, Integer.parseInt(
-                        ((ProfileDetailActivity) context).pmId), rcpRawId);
+                        ((ProfileDetailActivity) context).pmId), rawId);
                 /*TableProfileMaster tableProfileMaster = new TableProfileMaster(((BaseActivity)
                         context).databaseHandler);
                 String rawIdFromRcpId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt(
@@ -370,7 +380,7 @@ class OptionMenuDialog {
                         queryManager.deleteRcProfileDetail(((ProfileDetailActivity) context).pmId);
                     }
                 }*/
-                phoneBookContacts.deleteContact(rcpRawId);
+                phoneBookContacts.deleteContact(rawId);
                 if (context instanceof ProfileDetailActivity) {
                     ((ProfileDetailActivity) context).onBackPressed();
                 }

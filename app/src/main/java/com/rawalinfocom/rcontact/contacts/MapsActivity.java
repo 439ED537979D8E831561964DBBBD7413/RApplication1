@@ -9,6 +9,11 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -28,17 +33,25 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.adapters.PlaceSuggestionListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncGeoCoding;
+import com.rawalinfocom.rcontact.asynctasks.AsyncGetGoogleLocation;
 import com.rawalinfocom.rcontact.asynctasks.AsyncReverseGeoCoding;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.helper.GPSTracker;
+import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
+import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.GetGoogleLocationResponse;
+import com.rawalinfocom.rcontact.model.GetGoogleLocationResultObject;
 import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
 
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,6 +97,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
     RelativeLayout relativeFetchAddress;
     @BindView(R.id.ripple_fetch_address)
     RippleView rippleFetchAddress;
+    @BindView(R.id.recycler_view_suggestions)
+    RecyclerView recyclerViewSuggestions;
 
 
     SupportMapFragment mapFragment;
@@ -247,7 +262,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                         } else {
                             Utils.showErrorSnackBar(this, relativeRootMap, "Unable to find " +
                                     "Location");
-
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -256,6 +270,30 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
 
                     }
 //                    Log.i("onDeliveryResponse", objAddress.getAddress());
+                }
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="REQ_GOOGLE_TEXT_BY_LOCATIONS">
+            else if (serviceType.equalsIgnoreCase(WsConstants.REQ_GOOGLE_TEXT_BY_LOCATIONS)) {
+                GetGoogleLocationResponse getGoogleLocationResponse = (GetGoogleLocationResponse)
+                        data;
+                if (getGoogleLocationResponse.getStatus().equalsIgnoreCase("OK")) {
+                    ArrayList<GetGoogleLocationResultObject> arylstLocationResults = new
+                            ArrayList<>();
+
+                    arylstLocationResults.addAll(getGoogleLocationResponse.getPredictions());
+
+                    PlaceSuggestionListAdapter adapter = new PlaceSuggestionListAdapter(this,
+                            arylstLocationResults);
+                    recyclerViewSuggestions.setAdapter(adapter);
+
+                } else if (getGoogleLocationResponse.getStatus().equalsIgnoreCase
+                        ("OVER_QUERY_LIMIT")) {
+                    Utils.showErrorSnackBar(this, relativeRootMap, "You have exceeded your daily " +
+                            "request quota for this API.");
+                } else {
+                    Log.e(serviceType + "response", "fail");
                 }
             }
             //</editor-fold>
@@ -304,11 +342,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 break;*/
 
             case R.id.ripple_action_right_right:
-             /*   AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(this, true, WsConstants
-                        .REQ_GEO_CODING_ADDRESS + "_FALSE");
-                asyncGeoCoding.execute(null, String.valueOf(latitude), String.valueOf(longitude));
-//                getLocationDetail();*/
-
                 if (StringUtils.length(StringUtils.trim(inputSearchLocation.getText().toString())
                 ) > 0) {
                     AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(this, true, WsConstants
@@ -318,7 +351,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 } else {
                     Utils.showErrorSnackBar(this, relativeRootMap, "Please add Address to search");
                 }
-
                 break;
         }
 
@@ -352,6 +384,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 } else {
 
                     // Permission Denied
+                    latitude = 21.1702;
+                    longitude = 72.8311;
+                    addMapMarker();
 
 
                 }
@@ -368,6 +403,25 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        recyclerViewSuggestions.setVisibility(View.GONE);
+        recyclerViewSuggestions.setLayoutManager(new LinearLayoutManager(this));
+
+        RecyclerItemDecoration decoration = new RecyclerItemDecoration(this, ContextCompat.getColor
+                (this, R.color.darkGray), 0.5f);
+        recyclerViewSuggestions.addItemDecoration(decoration);
+
+        recyclerViewSuggestions.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, new RecyclerItemClickListener
+                        .OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        TextView textview = (TextView) view.findViewById(R.id.text_suggestion);
+                        inputSearchLocation.setText(textview.getText().toString());
+                        recyclerViewSuggestions.setVisibility(View.GONE);
+                    }
+                })
+        );
 
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionRightRight.setOnRippleCompleteListener(this);
@@ -391,7 +445,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 if (Utils.isLocationEnabled(this)) {
                     getLocationDetail();
                 } else {
-                    gpsTracker.showSettingsAlert();
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission
+                            .ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        gpsTracker.showSettingsAlert();
+                    }
                 }
             }
 
@@ -422,9 +479,31 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
             }
         });*/
 
+        inputSearchLocation.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 0) {
+                    recyclerViewSuggestions.setVisibility(View.VISIBLE);
+                    searchLocation(false, charSequence.toString());
+                } else {
+                    recyclerViewSuggestions.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
     }
 
-    private void addMapMarker() {
+    public void addMapMarker() {
         googleMap.clear();
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -508,6 +587,24 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
         });
 
         dialog.show();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Web Service Call">
+
+    private void searchLocation(Boolean displayProgress, String queryString) {
+        if (Utils.isNetworkAvailable(this)) {
+            AsyncGetGoogleLocation asyncGetGoogleLocation = new AsyncGetGoogleLocation
+                    (this, displayProgress, WsConstants.REQ_GOOGLE_TEXT_BY_LOCATIONS);
+            asyncGetGoogleLocation.execute("https://maps.googleapis" +
+                    ".com/maps/api/place/autocomplete/json?key" +
+                    "=AIzaSyDz4oI0o5qB_hUTiiQXMg6dz8pacDEd_jM&input=" + queryString +
+                    "&types=geocode&sensor=true");
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootMap, getResources().getString(R.string
+                    .msg_no_network));
+        }
     }
 
     //</editor-fold>
