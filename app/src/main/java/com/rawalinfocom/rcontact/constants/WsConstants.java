@@ -18,7 +18,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
 
     // Aniruddh
-//    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
+    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
     //  public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
 
     //    Maulik
@@ -29,6 +29,7 @@ public class WsConstants {
 
     //Jignesh
 //    public static final String WS_ROOT = "http://10.0.21.15/api/v1/";
+//    public static final String WS_ROOT = "  http://10.0.21.15:8080/api/v1/";
 
     // Satyam bhai
 //    public static final String WS_ROOT = "http://10.0.21.115:/api/v1/";

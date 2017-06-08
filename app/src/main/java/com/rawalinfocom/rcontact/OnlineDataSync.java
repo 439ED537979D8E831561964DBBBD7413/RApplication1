@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.support.v4.util.LongSparseArray;
-import android.util.Log;
 
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -42,7 +41,7 @@ public class OnlineDataSync {
     private Context context;
     private PhoneBookContacts phoneBookContacts;
     private ArrayList<ProfileData> arrayListSyncUserContact;
-    String currentStamp;
+    private String currentStamp;
 
     public OnlineDataSync(Context context) {
         this.context = context;

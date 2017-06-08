@@ -24,6 +24,7 @@ import android.text.TextWatcher;
 import android.transition.Slide;
 import android.transition.Transition;
 import android.transition.TransitionSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -150,6 +151,7 @@ public class DialerActivity extends Activity {
     String numberToCall;
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG};
     MaterialDialog permissionConfirmationDialog;
+    int EDITTEXTSIZESMALL = 18;
 
 
     @Override
@@ -178,21 +180,25 @@ public class DialerActivity extends Activity {
             public void afterTextChanged(Editable s) {
 
                 // TODO Auto-generated method stub
-                if (s.length() == 11) {
-                    String number = s.toString();
-                    if (!TextUtils.isEmpty(number))
-                        showContactDetail(number);
-                } else if (s.length() == 13) {
-                    String number = s.toString();
-                    if (!TextUtils.isEmpty(number))
-                        showContactDetail(number);
-                } else if (s.length() == 10) {
-                    String number = s.toString();
-                    if (!TextUtils.isEmpty(number))
-                        showContactDetail(number);
-                } else if (s.length() == 0) {
-                    showContactDetail(s.toString());
-                }
+                    if(s.length()==11){
+                        String number =  s.toString();
+                        if(!TextUtils.isEmpty(number))
+                            showContactDetail(number);
+                    }else if(s.length() == 13){
+                        String number =  s.toString();
+                        if(!TextUtils.isEmpty(number))
+                            showContactDetail(number);
+                    }else if(s.length() == 10){
+                        String number =  s.toString();
+                        if(!TextUtils.isEmpty(number))
+                            showContactDetail(number);
+                    }else if(s.length()==0){
+                        showContactDetail(s.toString());
+                    }else if(s.length()>11){
+                        editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_14sp));
+                    }else if(s.length()<11){
+                        editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_25sp));
+                    }
 
             }
         });
@@ -288,8 +294,12 @@ public class DialerActivity extends Activity {
             public void onClick(View v) {
                 isCalledOnce = false;
                 int length = editTextNumber.getText().length();
-                if (length > 0) {
-                    editTextNumber.getText().delete(length - 1, length);
+                int positionFrom =  editTextNumber.getSelectionEnd();
+//                Log.e("Dialer cursor position", positionFrom+"");
+                if (positionFrom > 0) {
+                    editTextNumber.getText().delete(positionFrom-1, positionFrom);
+                }else{
+                    editTextNumber.setCursorVisible(false);
                 }
             }
         });
@@ -308,7 +318,7 @@ public class DialerActivity extends Activity {
             public boolean onLongClick(View v) {
 
                 editTextNumber.setText(editTextNumber.getText().toString() + "+");
-                inputNumberValidation();
+//                inputNumberValidation();
                 return true;
             }
         });
@@ -317,7 +327,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "0");
-                inputNumberValidation();
+//                inputNumberValidation();
             }
         });
 
@@ -325,7 +335,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "1");
-                inputNumberValidation();
+//                inputNumberValidation();
 
             }
         });
@@ -334,7 +344,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "2");
-                inputNumberValidation();
+//                inputNumberValidation();
             }
         });
 
@@ -342,7 +352,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "3");
-                inputNumberValidation();
+//                inputNumberValidation();
             }
         });
 
@@ -350,7 +360,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "4");
-                inputNumberValidation();
+//                inputNumberValidation();
 
             }
         });
@@ -358,7 +368,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "5");
-                inputNumberValidation();
+//                inputNumberValidation();
             }
         });
 
@@ -366,7 +376,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "6");
-                inputNumberValidation();
+//                inputNumberValidation();
             }
         });
 
@@ -374,7 +384,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "7");
-                inputNumberValidation();
+//                inputNumberValidation();
 
             }
         });
@@ -383,7 +393,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "8");
-                inputNumberValidation();
+//                inputNumberValidation();
 
             }
         });
@@ -392,7 +402,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "9");
-                inputNumberValidation();
+//                inputNumberValidation();
 
             }
         });
@@ -401,7 +411,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "*");
-                inputNumberValidation();
+//                inputNumberValidation();
 
             }
         });
@@ -410,7 +420,7 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.setText(editTextNumber.getText().toString() + "#");
-                inputNumberValidation();
+//                inputNumberValidation();
 
             }
         });
@@ -443,12 +453,16 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.requestFocus();
-                editTextNumber.setCursorVisible(true);
+                int positionFrom =  editTextNumber.getSelectionEnd();
+                if(positionFrom==0)
+                    editTextNumber.setCursorVisible(false);
+                else
+                    editTextNumber.setCursorVisible(true);
+
                 String mainText = editTextNumber.getText().toString();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context
                         .INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(editTextNumber.getWindowToken(), 0);
-
 
             }
         });

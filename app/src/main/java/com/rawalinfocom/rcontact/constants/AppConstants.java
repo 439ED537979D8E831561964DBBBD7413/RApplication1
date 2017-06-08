@@ -29,6 +29,7 @@ public class AppConstants {
     public static final int EVENT = 5;
     public static final int GENDER = 6;
     public static final int ORGANIZATION = 7;
+    public static boolean isRecentCallFromSMSTab =  false;
     //</editor-fold>
 
     //<editor-fold desc="App Specific final constants">

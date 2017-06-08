@@ -76,24 +76,13 @@ public class Utils {
 
     private static String LOG_TAG = Utils.class.getSimpleName();
 
-    static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private final static AtomicInteger c = new AtomicInteger(0);
 
     public static int getID() {
         return c.incrementAndGet();
     }
-
-    //<editor-fold desc="Check Android OS Version">
-
-    /**
-     * Uses static final constants to detect if the device's platform version is Jellybean or
-     * later.
-     */
-    public static boolean hasJellybean() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-    }
-    //</editor-fold>
 
     //<editor-fold desc="Network Info">
 

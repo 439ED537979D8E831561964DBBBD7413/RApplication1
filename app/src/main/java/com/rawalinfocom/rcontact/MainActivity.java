@@ -123,7 +123,6 @@ public class MainActivity extends BaseActivity implements NavigationView
     RelativeLayout relativeRootContactsMain;
     Toolbar toolbar;
     ImageView imageNotification;
-    ImageView imageAddContact;
     LinearLayout badgeLayout;
     TextView badgeTextView;
     //    TextView textImageNotification;
@@ -140,22 +139,16 @@ public class MainActivity extends BaseActivity implements NavigationView
     RContactApplication rContactApplication;
 
     int LIST_PARTITION_COUNT = 10;
-    private ArrayList<String> listOfCallLogIds;
     private ArrayList<CallLogType> callLogTypeArrayListMain;
     ArrayList<CallLogType> callLogsListbyChunck;
     ArrayList<CallLogType> newList;
     ArrayList<SmsDataType> newSmsList;
-    String callLogResponseRowId = "";
-    String callLogResponseDate = "";
     int logsSyncedCount = 10;
     MaterialDialog permissionConfirmationDialog;
     private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
             .permission.READ_CALL_LOG, Manifest.permission.READ_SMS};
     boolean isCompaseIcon = false;
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
-    public static CallLogType callLogTypeReceiverMain;
-    boolean isRecentBroadCastForCallLogsMainInstance = false;
-    private ImageView imageViewSearch;
     private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
     private ArrayList<SmsDataType> smsLogTypeArrayListMain;
     ArrayList<SmsDataType> smsLogsListbyChunck;
@@ -195,7 +188,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         rContactApplication = (RContactApplication) getApplicationContext();
         callLogTypeArrayListMain = new ArrayList<>();
         smsLogTypeArrayListMain = new ArrayList<>();
-        callLogTypeReceiverMain = new CallLogType();
         CallLogFragment.callLogTypeReceiver = new CallLogType();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermissionToExecute();
@@ -485,15 +477,18 @@ public class MainActivity extends BaseActivity implements NavigationView
 //                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
                             Utils.setBooleanPreference(this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, true);
+
+                            Intent localBroadcastIntent = new Intent(AppConstants
+                                    .ACTION_LOCAL_BROADCAST_SYNC_SMS);
+                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                                    .getInstance(MainActivity.this);
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
                         }
                         Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
                                 logsSyncedCount);
 
-                        Intent localBroadcastIntent = new Intent(AppConstants
-                                .ACTION_LOCAL_BROADCAST_SYNC_SMS);
-                        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
-                                .getInstance(MainActivity.this);
-                        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
 
                     }
                 } else {
@@ -1064,7 +1059,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     private void init() {
 
         imageNotification = (ImageView) toolbar.findViewById(R.id.image_notification);
-        imageViewSearch = (ImageView) toolbar.findViewById(R.id.image_search);
+        ImageView imageViewSearch = (ImageView) toolbar.findViewById(R.id.image_search);
         badgeLayout = (LinearLayout) toolbar.findViewById(R.id.badge_layout);
         badgeTextView = (TextView) toolbar.findViewById(R.id.badge_count);
 
@@ -1484,7 +1479,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             int logCount = arrayListHistoryCount.size();
                             log.setHistoryLogCount(logCount);
                             callLogTypeArrayListMain.add(log);
-
+                            rContactApplication.setArrayListCallLogType(callLogTypeArrayListMain);
                         }
                         cursor.close();
                     }
@@ -1509,7 +1504,17 @@ public class MainActivity extends BaseActivity implements NavigationView
     private BroadcastReceiver localBroadcastReceiverSmsLogSync = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            syncSMSLogDataToServer(smsLogTypeArrayListMain);
+            if(smsLogTypeArrayListMain!=null && smsLogTypeArrayListMain.size()>0)
+                syncSMSLogDataToServer(smsLogTypeArrayListMain);
+            else{
+                if (Utils.isNetworkAvailable(MainActivity.this) && Utils.getBooleanPreference(MainActivity.this,
+                        AppConstants.PREF_CALL_LOG_SYNCED, false)
+                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                    syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                    syncSmsLogAsyncTask.execute();
+                }
+
+            }
         }
     };
 
@@ -1551,10 +1556,10 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
     private ArrayList<ArrayList<String>> chopped(ArrayList<String> list, final int L) {
-        ArrayList<ArrayList<String>> parts = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<String>> parts = new ArrayList<>();
         final int N = list.size();
         for (int i = 0; i < N; i += L) {
-            parts.add(new ArrayList<String>(
+            parts.add(new ArrayList<>(
                     list.subList(i, Math.min(N, i + L)))
             );
         }
@@ -1563,10 +1568,10 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     private ArrayList<ArrayList<CallLogType>> choppedCallLog(ArrayList<CallLogType> list, final
     int L) {
-        ArrayList<ArrayList<CallLogType>> parts = new ArrayList<ArrayList<CallLogType>>();
+        ArrayList<ArrayList<CallLogType>> parts = new ArrayList<>();
         final int N = list.size();
         for (int i = 0; i < N; i += L) {
-            parts.add(new ArrayList<CallLogType>(
+            parts.add(new ArrayList<>(
                     list.subList(i, Math.min(N, i + L)))
             );
         }
@@ -2122,18 +2127,17 @@ public class MainActivity extends BaseActivity implements NavigationView
                     }
                 }
             }
-//            makeSimpleDataThreadWise(smsDataTypeList);
             syncSMSLogDataToServer(smsLogTypeArrayListMain);
-
+            makeSimpleDataThreadWise(smsDataTypeList);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /*private void makeSimpleDataThreadWise(ArrayList<SmsDataType> filteredList) {
+    private void makeSimpleDataThreadWise(ArrayList<SmsDataType> filteredList) {
         if (filteredList != null && filteredList.size() > 0) {
-            smsLogTypeArrayListMain = new ArrayList<>();
+            ArrayList<SmsDataType> smsLogTypeArrayListMain = new ArrayList<>();
             for (int k = 0; k < filteredList.size(); k++) {
                 SmsDataType smsDataType = filteredList.get(k);
                 String threadId = smsDataType.getThreadId();
@@ -2158,13 +2162,9 @@ public class MainActivity extends BaseActivity implements NavigationView
                     }
                 }
             }
-
-//            rContactApplication.setArrayListSmsLogType(smsDataTypeArrayList);
-            syncSMSLogDataToServer(smsLogTypeArrayListMain);
+            rContactApplication.setArrayListSmsLogType(smsLogTypeArrayListMain);
         }
-
-
-    }*/
+    }
 
     private void syncSMSLogDataToServer(ArrayList<SmsDataType> list) {
         if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask.isCancelled())
@@ -2279,16 +2279,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                             AppConstants.isFromReceiver = false;
                             CallLogFragment.isIdsFetchedFirstTime = false;
 //                                rContactApplication.setArrayListCallLogType(null);
-                        } else {
-                                /*if(Utils.getBooleanPreference(MainActivity.this,
-                                        AppConstants
-                                        .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false)){
-                                    Utils.setBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false);
-                                    Utils.setBooleanPreference(MainActivity.this, AppConstants
-                                            .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
-                                    AppConstants.isFromReceiver = false;
-                                }*/
                         }
                     }
                 }, 100);
