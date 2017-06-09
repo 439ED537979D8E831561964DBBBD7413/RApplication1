@@ -489,7 +489,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 logsSyncedCount);
 
 
-
                     }
                 } else {
                     if (callLogInsertionResponse != null) {
@@ -918,7 +917,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                             .getRcpPmId()))) {
                         return;
                     } else {
-                        String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData.get(i)
+                        String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
+                                .get(i)
                                 .getRcpPmId());
                         tableProfileMaster.updateRawIds(Integer.parseInt(userProfile.getPmRcpId()),
                                 newRawIds);
@@ -928,7 +928,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                             .getRcpPmId())))
                         return;
                     else {
-                        String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData.get(i)
+                        String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
+                                .get(i)
                                 .getRcpPmId());
                         tableProfileMaster.updateRawIds(Integer.parseInt(userProfile.getPmRcpId()),
                                 newRawIds);
@@ -961,7 +962,8 @@ public class MainActivity extends BaseActivity implements NavigationView
             for (int k = 0; k < existingRcpIds.size(); k++) {
 //                Log.i("MAULIK", "We are here::" + existingRcpIds.get(k));
                 QueryManager queryManager = new QueryManager(databaseHandler);
-                queryManager.updateRcProfileDetail(this, Integer.parseInt(existingRcpIds.get(k)), rawId);
+                queryManager.updateRcProfileDetail(this, Integer.parseInt(existingRcpIds.get(k)),
+                        rawId);
             }
 
         }
@@ -1473,7 +1475,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 log.setHistoryType(tempCallLogType.getHistoryType());
                                 log.setHistoryDate(tempCallLogType.getHistoryDate());
                                 log.setHistoryDuration(tempCallLogType.getHistoryDuration());
-                                log.setHistoryCallSimNumber(tempCallLogType.getHistoryCallSimNumber());
+                                log.setHistoryCallSimNumber(tempCallLogType
+                                        .getHistoryCallSimNumber());
                                 log.setHistoryId(tempCallLogType.getHistoryId());
                             }
                             int logCount = arrayListHistoryCount.size();
@@ -1504,12 +1507,14 @@ public class MainActivity extends BaseActivity implements NavigationView
     private BroadcastReceiver localBroadcastReceiverSmsLogSync = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(smsLogTypeArrayListMain!=null && smsLogTypeArrayListMain.size()>0)
+            if (smsLogTypeArrayListMain != null && smsLogTypeArrayListMain.size() > 0)
                 syncSMSLogDataToServer(smsLogTypeArrayListMain);
-            else{
-                if (Utils.isNetworkAvailable(MainActivity.this) && Utils.getBooleanPreference(MainActivity.this,
-                        AppConstants.PREF_CALL_LOG_SYNCED, false)
-                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+            else {
+                if (Utils.isNetworkAvailable(MainActivity.this) && Utils.getBooleanPreference
+                        (MainActivity.this,
+                                AppConstants.PREF_CALL_LOG_SYNCED, false)
+                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                        .PREF_SMS_SYNCED, false)) {
                     syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                     syncSmsLogAsyncTask.execute();
                 }
@@ -1799,7 +1804,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                     .encode(phoneNumber));*//*
             Uri uri = ContactsContract.Data.CONTENT_URI;
 
-            String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
+            String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone
+            .RAW_CONTACT_ID,
                     ContactsContract.CommonDataKinds.Phone.NUMBER};
 
 //            String selection = ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?";
@@ -1817,7 +1823,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                 while (cursor.moveToNext()) {
                     *//*String contactName = cursor.getString(cursor.getColumnIndexOrThrow
                             (ContactsContract.PhoneLookup.DISPLAY_NAME));*//*
-                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.
+                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                    .CommonDataKinds.
                             Phone.RAW_CONTACT_ID));
                 Log.d("LocalPBId", "contactMatch id: " + numberId);
                 }

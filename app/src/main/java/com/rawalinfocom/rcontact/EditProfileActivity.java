@@ -646,13 +646,19 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             //<editor-fold desc="linear_male">
             case R.id.linear_male:
-                selectGenderMale();
+                if (isFemale) {
+                    isUpdated = true;
+                    selectGenderMale();
+                }
                 break;
             //</editor-fold>
 
             // <editor-fold desc="linear_female">
             case R.id.linear_female:
-                selectGenderFemale();
+                if (isMale) {
+                    isUpdated = true;
+                    selectGenderFemale();
+                }
                 break;
             //</editor-fold>
 
