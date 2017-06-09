@@ -481,11 +481,13 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             super(itemView);
             ButterKnife.bind(this, itemView);
             textSimType.setVisibility(View.GONE);
-            if (AppConstants.isFromSearchActivity) {
+            /*if (AppConstants.isFromSearchActivity) {
                 image3dotsCallLog.setVisibility(View.GONE);
             } else {
                 image3dotsCallLog.setVisibility(View.VISIBLE);
-            }
+            }*/
+            image3dotsCallLog.setVisibility(View.VISIBLE);
+
         }
     }
 
