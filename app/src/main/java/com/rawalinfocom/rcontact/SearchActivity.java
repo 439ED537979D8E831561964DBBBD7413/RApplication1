@@ -106,13 +106,13 @@ public class SearchActivity extends BaseActivity {
         if (rContactApplication.getArrayListAllPhoneBookContacts() != null)
             objectArrayListContact.addAll(rContactApplication.getArrayListAllPhoneBookContacts());
 
-        if(rContactApplication.getArrayListCallLogType()!=null){
+        if(rContactApplication.getArrayListCallLogType()!=null && rContactApplication.getArrayListCallLogType().size()>0){
             callLogTypeArrayListMain.addAll(rContactApplication.getArrayListCallLogType());
         }else{
             getCallLogData();
         }
 
-        if(rContactApplication.getArrayListSmsLogType()!=null){
+        if(rContactApplication.getArrayListSmsLogType()!=null && rContactApplication.getArrayListSmsLogType().size()>0){
             smsDataTypeArrayList.addAll(rContactApplication.getArrayListSmsLogType());
         }else{
             getSMSData();
@@ -144,6 +144,14 @@ public class SearchActivity extends BaseActivity {
     private void displayData() {
         if (objectArrayListContact != null && objectArrayListContact.size() > 0) {
             allContactAdapter = new AllContactAdapter(SearchActivity.this, objectArrayListContact);
+        }
+
+        if(callLogTypeArrayListMain !=null && callLogTypeArrayListMain.size()>0){
+            simpleCallLogListAdapter = new SimpleCallLogListAdapter(SearchActivity.this,callLogTypeArrayListMain);
+        }
+
+        if(smsDataTypeArrayList != null && smsDataTypeArrayList.size()>0){
+            smsListAdapter =  new SmsListAdapter(SearchActivity.this,smsDataTypeArrayList,recycleViewPbContact);
         }
 
         search.addTextChangedListener(new TextWatcher() {
@@ -522,7 +530,7 @@ public class SearchActivity extends BaseActivity {
                 int position = viewHolder.getAdapterPosition();
                 String numberToSend = "";
                 String actionNumber ="";
-                if(allContactAdapter!=null /*&& simpleCallLogListAdapter!=null*/){
+                if(allContactAdapter!=null && simpleCallLogListAdapter!=null){
                     if (allContactAdapter.getSearchCount() == 0) {
                         if(simpleCallLogListAdapter.getSearchCount() == 0){
                             actionNumber = StringUtils.defaultString(((SmsListAdapter
@@ -562,7 +570,7 @@ public class SearchActivity extends BaseActivity {
                     startActivity(smsIntent);
 
                 } else {
-                    if (allContactAdapter != null /*&& simpleCallLogListAdapter != null*/) {
+                    if (allContactAdapter != null && simpleCallLogListAdapter != null) {
                         if (allContactAdapter.getSearchCount() == 0) {
                             if (simpleCallLogListAdapter.getSearchCount() == 0) {
                                 showCallConfirmationDialog(numberToSend, actionNumber);
@@ -578,7 +586,7 @@ public class SearchActivity extends BaseActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (allContactAdapter != null /*&& simpleCallLogListAdapter != null*/) {
+                        if (allContactAdapter != null && simpleCallLogListAdapter != null) {
                             if (allContactAdapter.getSearchCount() == 0) {
                                 if(simpleCallLogListAdapter.getSearchCount() == 0){
                                         if(smsListAdapter != null && smsListAdapter.getSearchCount()>0)
