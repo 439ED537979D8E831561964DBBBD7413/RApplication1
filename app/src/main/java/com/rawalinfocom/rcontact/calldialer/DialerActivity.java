@@ -317,7 +317,14 @@ public class DialerActivity extends Activity {
             @Override
             public boolean onLongClick(View v) {
 
-                editTextNumber.setText(editTextNumber.getText().toString() + "+");
+
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "+");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "+");
+                }
+
 //                inputNumberValidation();
                 return true;
             }
@@ -326,15 +333,25 @@ public class DialerActivity extends Activity {
         linear0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "0");
-//                inputNumberValidation();
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "0");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "0");
+                }
+                //                inputNumberValidation();
             }
         });
 
         linear1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "1");
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "1");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "1");
+                }
 //                inputNumberValidation();
 
             }
@@ -343,7 +360,12 @@ public class DialerActivity extends Activity {
         linear2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "2");
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "2");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "2");
+                }
 //                inputNumberValidation();
             }
         });
@@ -351,7 +373,12 @@ public class DialerActivity extends Activity {
         linear3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "3");
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "3");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "3");
+                }
 //                inputNumberValidation();
             }
         });
@@ -359,7 +386,12 @@ public class DialerActivity extends Activity {
         linear4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "4");
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "4");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "4");
+                }
 //                inputNumberValidation();
 
             }
@@ -367,7 +399,12 @@ public class DialerActivity extends Activity {
         linear5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "5");
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "5");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "5");
+                }
 //                inputNumberValidation();
             }
         });
@@ -375,7 +412,12 @@ public class DialerActivity extends Activity {
         linear6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "6");
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "6");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "6");
+                }
 //                inputNumberValidation();
             }
         });
@@ -383,7 +425,12 @@ public class DialerActivity extends Activity {
         linear7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "7");
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "7");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "7");
+                }
 //                inputNumberValidation();
 
             }
@@ -392,7 +439,12 @@ public class DialerActivity extends Activity {
         linear8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "8");
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "8");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "8");
+                }
 //                inputNumberValidation();
 
             }
@@ -401,7 +453,12 @@ public class DialerActivity extends Activity {
         linear9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "9");
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "9");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "9");
+                }
 //                inputNumberValidation();
 
             }
@@ -410,7 +467,12 @@ public class DialerActivity extends Activity {
         linearStar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "*");
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "*");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "*");
+                }
 //                inputNumberValidation();
 
             }
@@ -419,7 +481,12 @@ public class DialerActivity extends Activity {
         linearHashTag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "#");
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "#");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "#");
+                }
 //                inputNumberValidation();
 
             }
@@ -454,11 +521,11 @@ public class DialerActivity extends Activity {
             public void onClick(View v) {
                 editTextNumber.requestFocus();
                 int positionFrom =  editTextNumber.getSelectionEnd();
-                if(positionFrom==0)
+               /* if(positionFrom==0)
                     editTextNumber.setCursorVisible(false);
                 else
-                    editTextNumber.setCursorVisible(true);
-
+                    editTextNumber.setCursorVisible(true);*/
+                editTextNumber.setCursorVisible(true);
                 String mainText = editTextNumber.getText().toString();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context
                         .INPUT_METHOD_SERVICE);

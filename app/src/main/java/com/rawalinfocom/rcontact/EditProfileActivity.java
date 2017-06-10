@@ -16,8 +16,10 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +53,7 @@ import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
@@ -86,6 +89,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -332,6 +336,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     boolean isExpanded = false;
     boolean isEvent = false;
     boolean isMale = false, isFemale = false;
+    boolean isUpdated = false;
+
+    UserProfile userProfile;
+    MaterialDialog backConfirmationDialog;
 
     //<editor-fold desc="Override Methods">
 
@@ -369,7 +377,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 String bitmapString = Utils.convertBitmapToBase64(selectedBitmap);
                 ProfileDataOperation profileDataOperation = new ProfileDataOperation();
                 profileDataOperation.setPbProfilePhoto(bitmapString);
-                editProfile(profileDataOperation);
+                editProfile(profileDataOperation, AppConstants.PROFILE_IMAGE);
             }
 
 
@@ -419,7 +427,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     String bitmapString = Utils.convertBitmapToBase64(selectedBitmap);
                     ProfileDataOperation profileDataOperation = new ProfileDataOperation();
                     profileDataOperation.setPbProfilePhoto(bitmapString);
-                    editProfile(profileDataOperation);
+                    editProfile(profileDataOperation, AppConstants.PROFILE_IMAGE);
                 }
 
             } catch (Exception e) {
@@ -521,17 +529,58 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         if (error == null) {
 
             //<editor-fold desc="REQ_PROFILE_UPDATE">
-            if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_UPDATE)) {
+            if (serviceType.contains(WsConstants.REQ_PROFILE_UPDATE)) {
                 WsResponseObject editProfileResponse = (WsResponseObject) data;
                 Utils.hideProgressDialog();
                 if (editProfileResponse != null && StringUtils.equalsIgnoreCase
                         (editProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    isUpdated = false;
 
                     ProfileDataOperation profileDetail = editProfileResponse.getProfileDetail();
                     Utils.setObjectPreference(EditProfileActivity.this, AppConstants
                             .PREF_REGS_USER_OBJECT, profileDetail);
 
                     storeProfileDataToDb(profileDetail);
+
+                    String[] serviceTypes = StringUtils.split(serviceType, ":");
+                    int type = Integer.parseInt(serviceTypes[1]);
+                    switch (type) {
+                        case AppConstants.NAME:
+                            profileDetails(true, false, false);
+                            break;
+                        case AppConstants.PHONE_NUMBER:
+                            linearPhoneDetails.removeAllViews();
+                            phoneNumberDetails();
+                            break;
+                        case AppConstants.EMAIL:
+                            linearEmailDetails.removeAllViews();
+                            emailDetails();
+                            break;
+                        case AppConstants.IM_ACCOUNT:
+                            linearSocialContactDetails.removeAllViews();
+                            socialContactDetails();
+                            break;
+                        case AppConstants.WEBSITE:
+                            linearWebsiteDetails.removeAllViews();
+                            websiteDetails();
+                            break;
+                        case AppConstants.ORGANIZATION:
+                            linearOrganizationDetails.removeAllViews();
+                            organizationDetails();
+                            break;
+                        case AppConstants.EVENT:
+                            linearEventDetails.removeAllViews();
+                            eventDetails();
+                            break;
+                        case AppConstants.ADDRESS:
+                            linearAddressDetails.removeAllViews();
+                            addressDetails();
+                            break;
+                        case AppConstants.GENDER:
+                            profileDetails(false, true, false);
+                            break;
+                    }
 
                     Utils.showSuccessSnackBar(this, relativeRootEditProfile, "Profile Updated " +
                             "Successfully! ");
@@ -630,21 +679,25 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             // <editor-fold desc="image_profile">
             case R.id.image_profile:
-
                 showChooseImageIntent();
-
                 break;
             //</editor-fold>
 
             //<editor-fold desc="linear_male">
             case R.id.linear_male:
-                selectGenderMale();
+                if (isFemale) {
+                    isUpdated = true;
+                    selectGenderMale();
+                }
                 break;
             //</editor-fold>
 
             // <editor-fold desc="linear_female">
             case R.id.linear_female:
-                selectGenderFemale();
+                if (isMale) {
+                    isUpdated = true;
+                    selectGenderFemale();
+                }
                 break;
             //</editor-fold>
 
@@ -669,7 +722,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (StringUtils.length(firstName) > 0 && StringUtils.length(lastName) > 0) {
                     profileDataOperation.setPbNameFirst(firstName);
                     profileDataOperation.setPbNameLast(lastName);
-                    editProfile(profileDataOperation);
+                    editProfile(profileDataOperation, AppConstants.NAME);
                 } else {
                     if (StringUtils.length(firstName) <= 0) {
                         Utils.showErrorSnackBar(this, relativeRootEditProfile, "Please add First " +
@@ -686,10 +739,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case R.id.button_gender_update:
                 if (isMale) {
                     profileDataOperation.setPbGender("Male");
-                    editProfile(profileDataOperation);
+                    editProfile(profileDataOperation, AppConstants.GENDER);
                 } else if (isFemale) {
                     profileDataOperation.setPbGender("Female");
-                    editProfile(profileDataOperation);
+                    editProfile(profileDataOperation, AppConstants.GENDER);
                 } else {
                     Utils.showErrorSnackBar(this, relativeRootEditProfile, "Select any gender!");
                 }
@@ -699,6 +752,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             // <editor-fold desc="button_phone_update">
             case R.id.button_phone_update:
                 ArrayList<ProfileDataOperationPhoneNumber> arrayListNewPhone = new ArrayList<>();
+                isValid = true;
                 for (int i = 0; i < linearPhoneDetails.getChildCount(); i++) {
                     ProfileDataOperationPhoneNumber phoneNumber = new
                             ProfileDataOperationPhoneNumber();
@@ -721,16 +775,32 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     if (StringUtils.length(phoneNumber.getPhoneNumber()) > 0) {
                         arrayListNewPhone.add(phoneNumber);
+                    } else {
+                        if (i != 0) {
+                            isValid = false;
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                    "Number is required!");
+                        }
                     }
                 }
-                profileDataOperation.setPbPhoneNumber(arrayListNewPhone);
-                editProfile(profileDataOperation);
+                if (isValid) {
+                    if (arrayListNewPhone.size() > 0) {
+                        profileDataOperation.setPbPhoneNumber(arrayListNewPhone);
+                        editProfile(profileDataOperation, AppConstants.PHONE_NUMBER);
+                    } else {
+                        if (arrayListPhoneNumberObject.size() > 0) {
+                            profileDataOperation.setPbPhoneNumber(arrayListNewPhone);
+                            editProfile(profileDataOperation, AppConstants.PHONE_NUMBER);
+                        }
+                    }
+                }
                 break;
             //</editor-fold>
 
             // <editor-fold desc="button_email_update">
             case R.id.button_email_update:
                 ArrayList<ProfileDataOperationEmail> arrayListNewEmail = new ArrayList<>();
+                isValid = true;
                 for (int i = 0; i < linearEmailDetails.getChildCount(); i++) {
                     ProfileDataOperationEmail email = new ProfileDataOperationEmail();
                     View linearEmail = linearEmailDetails.getChildAt(i);
@@ -739,8 +809,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     TextView textIsPublic = (TextView) linearEmail.findViewById(R.id
                             .text_is_public);
                     RelativeLayout relativeRowEditProfile = (RelativeLayout) linearEmail
-                            .findViewById(R
-                                    .id.relative_row_edit_profile);
+                            .findViewById(R.id.relative_row_edit_profile);
                     email.setEmEmailId(emailId.getText().toString());
                     email.setEmType((String) emailType.getSelectedItem());
                     email.setEmId((String) relativeRowEditProfile.getTag());
@@ -752,17 +821,33 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     if (StringUtils.length(email.getEmEmailId()) > 0) {
                         arrayListNewEmail.add(email);
+                    } else {
+                        if (i != 0) {
+                            isValid = false;
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                    "Email is required!");
+                        }
                     }
 
                 }
-                profileDataOperation.setPbEmailId(arrayListNewEmail);
-                editProfile(profileDataOperation);
+                if (isValid) {
+                    if (arrayListNewEmail.size() > 0) {
+                        profileDataOperation.setPbEmailId(arrayListNewEmail);
+                        editProfile(profileDataOperation, AppConstants.EMAIL);
+                    } else {
+                        if (arrayListEmailObject.size() > 0) {
+                            profileDataOperation.setPbEmailId(arrayListNewEmail);
+                            editProfile(profileDataOperation, AppConstants.EMAIL);
+                        }
+                    }
+                }
                 break;
             //</editor-fold>
 
             // <editor-fold desc="button_social_contact_update">
             case R.id.button_social_contact_update:
                 ArrayList<ProfileDataOperationImAccount> arrayListNewImAccount = new ArrayList<>();
+                isValid = true;
                 for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
                     ProfileDataOperationImAccount imAccount = new ProfileDataOperationImAccount();
                     View linearSocialContact = linearSocialContactDetails.getChildAt(i);
@@ -787,11 +872,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
                         arrayListNewImAccount.add(imAccount);
+                    } else {
+                        if (i != 0) {
+                            isValid = false;
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                    "Account is required!");
+                        }
                     }
 
                 }
-                profileDataOperation.setPbIMAccounts(arrayListNewImAccount);
-                editProfile(profileDataOperation);
+                if (isValid) {
+                    if (arrayListNewImAccount.size() > 0) {
+                        profileDataOperation.setPbIMAccounts(arrayListNewImAccount);
+                        editProfile(profileDataOperation, AppConstants.IM_ACCOUNT);
+                    } else {
+                        if (arrayListSocialContactObject.size() > 0) {
+                            profileDataOperation.setPbIMAccounts(arrayListNewImAccount);
+                            editProfile(profileDataOperation, AppConstants.IM_ACCOUNT);
+                        }
+                    }
+                }
                 break;
             //</editor-fold>
 
@@ -799,6 +899,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case R.id.button_website_update:
                 ArrayList<ProfileDataOperationWebAddress> arrayListNewWebAddress = new
                         ArrayList<>();
+                isValid = true;
                 for (int i = 0; i < linearWebsiteDetails.getChildCount(); i++) {
                     ProfileDataOperationWebAddress webAddress = new
                             ProfileDataOperationWebAddress();
@@ -815,11 +916,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     if (StringUtils.length(webAddress.getWebAddress()) > 0) {
                         arrayListNewWebAddress.add(webAddress);
+                    } else {
+                        if (i != 0) {
+                            isValid = false;
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                    "Web address is required!");
+                        }
                     }
 
                 }
-                profileDataOperation.setPbWebAddress(arrayListNewWebAddress);
-                editProfile(profileDataOperation);
+                if (isValid) {
+                    if (arrayListNewWebAddress.size() > 0) {
+                        profileDataOperation.setPbWebAddress(arrayListNewWebAddress);
+                        editProfile(profileDataOperation, AppConstants.WEBSITE);
+                    } else {
+                        if (arrayListWebsiteObject.size() > 0) {
+                            profileDataOperation.setPbWebAddress(arrayListNewWebAddress);
+                            editProfile(profileDataOperation, AppConstants.WEBSITE);
+                        }
+                    }
+                }
                 break;
             //</editor-fold>
 
@@ -866,15 +982,38 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             break;
                         }
                     } else {
-                        Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                "Organization name is required!");
-                        isValid = false;
+                        if (i != 0) {
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                    "Organization name is required!");
+                            isValid = false;
+                        }
+                        break;
+                    }
+                }
+                boolean isCurrentSelected = false;
+                for (int i = 0; i < arrayListNewOrganization.size(); i++) {
+                    if (arrayListNewOrganization.get(i).getIsCurrent() == 1) {
+                        isCurrentSelected = true;
                         break;
                     }
                 }
                 if (isValid) {
-                    profileDataOperation.setPbOrganization(arrayListNewOrganization);
-                    editProfile(profileDataOperation);
+                     /*   profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                        editProfile(profileDataOperation, AppConstants.ORGANIZATION);*/
+                    if (arrayListNewOrganization.size() > 0) {
+                        if (!isCurrentSelected) {
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile, "Select " +
+                                    "current Organization!");
+                        } else {
+                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+                        }
+                    } else {
+                        if (arrayListOrganizationObject.size() > 0) {
+                            profileDataOperation.setPbOrganization(arrayListNewOrganization);
+                            editProfile(profileDataOperation, AppConstants.ORGANIZATION);
+                        }
+                    }
                 }
                 break;
             //</editor-fold>
@@ -909,8 +1048,19 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         arrayListNewEvent.add(event);
                     }
                 }
-                profileDataOperation.setPbEvent(arrayListNewEvent);
-                editProfile(profileDataOperation);
+                ArrayList<String> valueTypes = new ArrayList<>();
+                for (int i = 0; i < arrayListNewEvent.size(); i++) {
+                    valueTypes.add(StringUtils.lowerCase(arrayListNewEvent.get(i).getEventType()));
+                }
+                int birthDayCount = Collections.frequency(valueTypes, "birthday");
+                int anniversaryCount = Collections.frequency(valueTypes, "anniversary");
+                if (birthDayCount > 1 || anniversaryCount > 1) {
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "You can add Birthday " +
+                            "and Anniversary only once!");
+                } else {
+                    profileDataOperation.setPbEvent(arrayListNewEvent);
+                    editProfile(profileDataOperation, AppConstants.EVENT);
+                }
                 break;
             //</editor-fold>
 
@@ -1017,7 +1167,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }
                 if (isValid) {
                     profileDataOperation.setPbAddress(arrayListNewAddress);
-                    editProfile(profileDataOperation);
+                    editProfile(profileDataOperation, AppConstants.ADDRESS);
                 }
                 break;
             //</editor-fold>
@@ -1036,12 +1186,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             //<editor-fold desc="button_name_cancel">
             case R.id.button_name_cancel:
                 profileDetails(true, false, false);
+                isUpdated = false;
                 break;
             //</editor-fold>
 
             // <editor-fold desc="button_gender_cancel">
             case R.id.button_gender_cancel:
                 profileDetails(false, true, false);
+                isUpdated = false;
                 break;
             //</editor-fold>
 
@@ -1049,6 +1201,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case R.id.button_phone_cancel:
                 linearPhoneDetails.removeAllViews();
                 phoneNumberDetails();
+                isUpdated = false;
                 break;
             //</editor-fold>
 
@@ -1056,6 +1209,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case R.id.button_email_cancel:
                 linearEmailDetails.removeAllViews();
                 emailDetails();
+                isUpdated = false;
                 break;
             //</editor-fold>
 
@@ -1063,6 +1217,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case R.id.button_social_contact_cancel:
                 linearSocialContactDetails.removeAllViews();
                 socialContactDetails();
+                isUpdated = false;
                 break;
             //</editor-fold>
 
@@ -1070,6 +1225,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case R.id.button_website_cancel:
                 linearWebsiteDetails.removeAllViews();
                 websiteDetails();
+                isUpdated = false;
                 break;
             //</editor-fold>
 
@@ -1077,6 +1233,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case R.id.button_organization_cancel:
                 linearOrganizationDetails.removeAllViews();
                 organizationDetails();
+                isUpdated = false;
                 break;
             //</editor-fold>
 
@@ -1084,6 +1241,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case R.id.button_event_cancel:
                 linearEventDetails.removeAllViews();
                 eventDetails();
+                isUpdated = false;
                 break;
             //</editor-fold>
 
@@ -1091,6 +1249,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case R.id.button_address_cancel:
                 linearAddressDetails.removeAllViews();
                 addressDetails();
+                isUpdated = false;
                 break;
             //</editor-fold>
 
@@ -1102,7 +1261,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
             case R.id.ripple_action_back:
-                onBackPressed();
+                if (isUpdated) {
+                    showBackConfirmationDialog();
+                } else {
+                    onBackPressed();
+                }
                 break;
 
         }
@@ -1127,7 +1290,28 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         clickEvents();
         firstExpandableView();
         expandCollapse();
+
+        inputFirstName.addTextChangedListener(nameTextWatcher);
+        inputLastName.addTextChangedListener(nameTextWatcher);
+
     }
+
+    TextWatcher nameTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            isUpdated = true;
+        }
+    };
 
     private void setFonts() {
 
@@ -1767,7 +1951,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             if (setGender) {
                 if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Female")) {
                     selectGenderFemale();
-                } else if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Male")) {
+                }
+//                else if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Male")) {
+                else {
                     selectGenderMale();
                 }
             }
@@ -1978,52 +2164,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     private void checkBeforeAddressViewAdd() {
-       /* boolean toAdd = false;
-        EditText inputCountry = null;
-        EditText inputState = null;
-        EditText inputCity = null;
-        EditText inputStreet = null;
-        for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
-            View linearView = linearAddressDetails.getChildAt(i);
-            if (inputCountry == null)
-                inputCountry = (EditText) linearView.findViewById(R.id.input_country);
-            if (inputState == null)
-                //                inputState = (EditText) linearView.findViewById(R.id.input_state);
-                if (inputCity == null)
-                    inputCity = (EditText) linearView.findViewById(R.id.input_city);
-            if (inputStreet == null)
-                //                inputStreet = (EditText) linearView.findViewById(R.id
-                // .input_Steet);
-
-                if (inputCountry != null && inputState != null && inputCity != null &&
-                        inputStreet !=
-                                null) {
-                    if (StringUtils.length(StringUtils.trimToEmpty(inputCountry.getText()
-                            .toString())) <
-                            1 ||
-                            StringUtils.length(StringUtils.trimToEmpty(inputState.getText()
-                                    .toString()))
-                                    < 1 ||
-                            StringUtils.length(StringUtils.trimToEmpty(inputCity.getText()
-                                    .toString()
-                            )) <
-                                    1 ||
-                            StringUtils.length(StringUtils.trimToEmpty(inputStreet.getText()
-                                    .toString
-                                            ()))
-                                    < 1) {
-                        toAdd = false;
-                        break;
-                    } else {
-                        toAdd = true;
-                    }
-                }
-
-        }
-
-        if (toAdd) {
-            addAddressView(null, linearAddressDetails.getChildCount());
-        }*/
         boolean toAdd = false;
         for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
             View linearView = linearAddressDetails.getChildAt(i);
@@ -2046,40 +2186,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         }
         if (toAdd) {
+            isUpdated = true;
             addAddressView(null, linearAddressDetails.getChildCount());
         }
     }
 
     private void checkBeforeOrganizationViewAdd() {
-  /*      boolean toAdd = false;
-//        EditText inputCompanyName = null;
-//        EditText inputDesignationName = null;
-        for (int i = 0; i < linearOrganizationDetails.getChildCount(); i++) {
-            View linearView = linearOrganizationDetails.getChildAt(i);
-            EditText inputCompanyName = (EditText) linearView.findViewById(R.id
-                    .input_company_name);
-            if (inputCompanyName == null)
-                EditText inputDesignationName = (EditText) linearView.findViewById(R.id
-                        .input_designation_name);
-            if (inputDesignationName == null)
-
-                if (inputDesignationName != null && inputCompanyName != null) {
-                    if (StringUtils.length(StringUtils.trimToEmpty(inputCompanyName.getText()
-                            .toString())
-                    ) < 1 || StringUtils.length(StringUtils.trimToEmpty(inputDesignationName
-                            .getText()
-                            .toString())) < 1) {
-                        toAdd = false;
-                        break;
-                    } else {
-                        toAdd = true;
-                    }
-                }
-
-        }
-        if (toAdd) {
-            addOrganizationView(null);
-        }*/
         boolean toAdd = false;
         for (int i = 0; i < linearOrganizationDetails.getChildCount(); i++) {
             View linearView = linearOrganizationDetails.getChildAt(i);
@@ -2096,42 +2208,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         }
         if (toAdd) {
+            isUpdated = true;
             addOrganizationView(null);
         }
     }
 
     private void checkBeforeViewAdd(int viewType, LinearLayout linearLayout) {
-      /*  boolean toAdd = false;
-        for (int i = 0; i < linearLayout.getChildCount(); i++) {
-            View linearView = linearLayout.getChildAt(i);
-//            EditText editText = (EditText) linearView.findViewById(R.id.input_value);
-            EditText editText = null;
-            if (viewType == AppConstants.PHONE_NUMBER)
-                editText = (EditText) linearView.findViewById(R.id.input_optional_number);
-            if (viewType == AppConstants.EMAIL)
-                editText = (EditText) linearView.findViewById(R.id.input_optional_email);
-            if (viewType == AppConstants.WEBSITE)
-                editText = (EditText) linearView.findViewById(R.id.input_web_address);
-            if (viewType == AppConstants.IM_ACCOUNT)
-                editText = (EditText) linearView.findViewById(R.id.input_twitter_username);
-            if (viewType == AppConstants.EVENT)
-                editText = (EditText) linearView.findViewById(R.id.input_anniversary);
-
-            if (editText != null) {
-                if (StringUtils.length(StringUtils.trimToEmpty(editText.getText().toString())) <
-                        1) {
-//            if (editText.getText().length() < 1) {
-                    toAdd = false;
-                    break;
-                } else {
-                    toAdd = true;
-                }
-            }
-
-        }
-        if (toAdd) {
-            addView(viewType, linearLayout, null, -1);
-        }*/
         boolean toAdd = false;
         for (int i = 0; i < linearLayout.getChildCount(); i++) {
             View linearView = linearLayout.getChildAt(i);
@@ -2145,6 +2227,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
         }
         if (toAdd) {
+            isUpdated = true;
             addView(viewType, linearLayout, null, -1);
         }
     }
@@ -2179,8 +2262,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 spinnerType.setTag(AppConstants.PHONE_NUMBER);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_phone_number)));
-                spinnerPhoneAdapter = new ArrayAdapter<>(this, R.layout
-                        .list_item_spinner, typeList);
+                spinnerPhoneAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner,
+                        typeList);
                 spinnerPhoneAdapter.setDropDownViewResource(android.R.layout
                         .simple_spinner_dropdown_item);
                 spinnerType.setAdapter(spinnerPhoneAdapter);
@@ -2194,7 +2277,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     }
                     ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                             detailObject;
-                    inputValue.setText(phoneNumber.getPhoneNumber());
+                    if (position == 0) {
+                        inputValue.setText(phoneNumber.getPhoneNumber() + " ◊");
+                    } else {
+                        inputValue.setText(phoneNumber.getPhoneNumber());
+                    }
                     textIsPublic.setText(String.valueOf(phoneNumber.getPhonePublic()));
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(phoneNumber.getPhoneType()))) {
@@ -2287,6 +2374,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 spinnerImAccountAdapter.setDropDownViewResource(android.R.layout
                         .simple_spinner_dropdown_item);
                 spinnerType.setAdapter(spinnerImAccountAdapter);
+                spinnerType.setSelection(1);
                 inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
                 if (detailObject != null) {
                     ProfileDataOperationImAccount imAccount = (ProfileDataOperationImAccount)
@@ -2371,6 +2459,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         imageViewDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                isUpdated = true;
+
                 switch ((Integer) v.getTag()) {
 
                     case AppConstants.PHONE_NUMBER:
@@ -2439,15 +2530,15 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 // .list_item_edit_profile_organization,
 //                null);
         View view = LayoutInflater.from(this).inflate(R.layout
-                        .list_item_my_profile_edit_organization,
-                null);
+                .list_item_my_profile_edit_organization, null);
 //        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
 //        TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
         ImageView deleteOrganization = (ImageView) view.findViewById(R.id.deleteOrganization);
         final EditText inputCompanyName = (EditText) view.findViewById(R.id.input_company_name);
         final EditText inputDesignationName = (EditText) view.findViewById(R.id
                 .input_designation_name);
-        CheckBox checkboxOrganization = (CheckBox) view.findViewById(R.id.checkbox_organization);
+        final CheckBox checkboxOrganization = (CheckBox) view.findViewById(R.id
+                .checkbox_organization);
 
         checkboxOrganization.setTag(linearOrganizationDetails.getChildCount());
 
@@ -2472,6 +2563,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             inputCompanyName.setText(organization.getOrgName());
             inputDesignationName.setText(organization.getOrgJobTitle());
             checkboxOrganization.setChecked(organization.getIsCurrent() == 1);
+        } else {
+            if (linearOrganizationDetails.getChildCount() == 0) {
+                checkboxOrganization.setChecked(true);
+            }
         }
 
         checkboxOrganization.setOnCheckedChangeListener(new CompoundButton
@@ -2498,17 +2593,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         deleteOrganization.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isUpdated = true;
                 if (linearOrganizationDetails.getChildCount() > 1) {
                     linearOrganizationDetails.removeView(relativeRowEditProfile);
                 } else if (linearOrganizationDetails.getChildCount() == 1) {
                     inputCompanyName.setText("");
                     inputDesignationName.setText("");
+                    checkboxOrganization.setChecked(true);
                 }
             }
         });
 
 
         linearOrganizationDetails.addView(view);
+        Log.i("addOrganizationView", linearOrganizationDetails.getChildCount() + "");
     }
 
     private void addAddressView(final Object detailObject, final int position) {
@@ -2597,6 +2695,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         imageViewDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isUpdated = true;
                 if (linearAddressDetails.getChildCount() > 1) {
                     linearAddressDetails.removeView(relativeRowEditProfile);
                 } else if (linearAddressDetails.getChildCount() == 1) {
@@ -2700,6 +2799,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         textFromSocialMedia.setText("Choose Photo");
         textRemovePhoto.setText("Remove Photo");
 
+        if (userProfile.getPmProfileImage().length() > 0) {
+            textRemovePhoto.setVisibility(View.VISIBLE);
+        } else {
+            textRemovePhoto.setVisibility(View.GONE);
+        }
+
         buttonLeft.setText(R.string.action_cancel);
 
         rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
@@ -2758,11 +2863,40 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                 ProfileDataOperation profileDataOperation = new ProfileDataOperation();
                 profileDataOperation.setPbProfilePhoto("");
-                editProfile(profileDataOperation);
+                editProfile(profileDataOperation, AppConstants.PROFILE_IMAGE);
             }
         });
 
         dialog.show();
+    }
+
+    private void showBackConfirmationDialog() {
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        backConfirmationDialog.dismissDialog();
+                        break;
+
+                    case R.id.rippleRight:
+                        backConfirmationDialog.dismissDialog();
+                        finish();
+                        break;
+                }
+            }
+        };
+
+        backConfirmationDialog = new MaterialDialog(this, cancelListener);
+        backConfirmationDialog.setTitleVisibility(View.GONE);
+        backConfirmationDialog.setLeftButtonText("Cancel");
+        backConfirmationDialog.setRightButtonText("OK");
+        backConfirmationDialog.setDialogBody("Some details are left unsaved. Are you sure you " +
+                "want to proceed?");
+
+        backConfirmationDialog.showDialog();
     }
 
     private void showDatePicker(final EditText editText) {
@@ -3159,7 +3293,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     //<editor-fold desc="Web Service Call">
 
-    private void editProfile(ProfileDataOperation editProfile) {
+    private void editProfile(ProfileDataOperation editProfile, int type) {
 
         WsRequestObject editProfileObject = new WsRequestObject();
         editProfileObject.setProfileEdit(editProfile);
@@ -3167,8 +3301,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     editProfileObject, null, WsResponseObject.class, WsConstants
-                    .REQ_PROFILE_UPDATE, getResources().getString(R.string.msg_please_wait),
-                    true).execute(WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_UPDATE);
+                    .REQ_PROFILE_UPDATE + ":" + type, getResources().getString(R.string
+                    .msg_please_wait), true).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_PROFILE_UPDATE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
                     .getString(R.string.msg_no_network));

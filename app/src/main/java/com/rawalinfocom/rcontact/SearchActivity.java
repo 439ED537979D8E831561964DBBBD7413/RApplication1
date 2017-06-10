@@ -1,7 +1,11 @@
 package com.rawalinfocom.rcontact;
 
+import android.*;
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,12 +13,16 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.provider.Telephony;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -77,6 +85,9 @@ public class SearchActivity extends BaseActivity {
     MaterialDialog callConfirmationDialog;
     ArrayList<SmsDataType> smsDataTypeArrayList;
     SmsListAdapter smsListAdapter;
+    private String[] requiredPermissions = {android.Manifest
+            .permission.READ_CALL_LOG, android.Manifest.permission.READ_SMS};
+    MaterialDialog permissionConfirmationDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +105,73 @@ public class SearchActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    @Override
+    @TargetApi(Build.VERSION_CODES.M)
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == AppConstants.READ_LOGS && permissions[0].equals(Manifest.permission
+                .READ_CALL_LOG) && permissions[1].equals(Manifest.permission.READ_SMS)) {
+            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED && grantResults[1] ==
+                    PermissionChecker.PERMISSION_GRANTED ) {
+                getCallLogData();
+                getSMSData();
+            } else {
+                showPermissionConfirmationDialog();
+            }
+        }
+
+    }
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute(String permissions[], int requestCode) {
+
+        boolean logs = ContextCompat.checkSelfPermission(SearchActivity.this, permissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;
+        boolean sms = ContextCompat.checkSelfPermission(SearchActivity.this, permissions[1]) !=
+                PackageManager.PERMISSION_GRANTED;
+        if (logs || sms) {
+            requestPermissions(permissions, requestCode);
+        } else {
+            getCallLogData();
+            getSMSData();
+        }
+    }
+
+    private void showPermissionConfirmationDialog() {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        permissionConfirmationDialog.dismissDialog();
+                        finish();
+                        break;
+
+                    case R.id.rippleRight:
+                        permissionConfirmationDialog.dismissDialog();
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", getPackageName(), null));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        permissionConfirmationDialog = new MaterialDialog(SearchActivity.this, cancelListener);
+        permissionConfirmationDialog.setTitleVisibility(View.GONE);
+        permissionConfirmationDialog.setLeftButtonText("Cancel");
+        permissionConfirmationDialog.setRightButtonText("OK");
+        permissionConfirmationDialog.setDialogBody("Call log permission is required. Do you want " +
+                "to try again?");
+
+        permissionConfirmationDialog.showDialog();
+
+    }
     private void init() {
         textPbHeader.setTypeface(Utils.typefaceSemiBold(this));
         rlTitle.setVisibility(View.GONE);
@@ -106,16 +184,24 @@ public class SearchActivity extends BaseActivity {
         if (rContactApplication.getArrayListAllPhoneBookContacts() != null)
             objectArrayListContact.addAll(rContactApplication.getArrayListAllPhoneBookContacts());
 
-        if(rContactApplication.getArrayListCallLogType()!=null){
+        if(rContactApplication.getArrayListCallLogType()!=null && rContactApplication.getArrayListCallLogType().size()>0){
             callLogTypeArrayListMain.addAll(rContactApplication.getArrayListCallLogType());
         }else{
-            getCallLogData();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
+            }else{
+                getCallLogData();
+            }
         }
 
-        if(rContactApplication.getArrayListSmsLogType()!=null){
+        if(rContactApplication.getArrayListSmsLogType()!=null && rContactApplication.getArrayListSmsLogType().size()>0){
             smsDataTypeArrayList.addAll(rContactApplication.getArrayListSmsLogType());
         }else{
-            getSMSData();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
+            }else{
+                getSMSData();
+            }
         }
 
     }
@@ -127,10 +213,6 @@ public class SearchActivity extends BaseActivity {
                 if (search.getText().toString().length() > 0) {
                     search.clearFocus();
                     search.setText("");
-                   /* callLogTypeArrayListMain.addAll(rContactApplication.getArrayListCallLogType());
-                    if (rContactApplication.getArrayListAllPhoneBookContacts() != null)
-                        objectArrayListContact.addAll(rContactApplication.getArrayListAllPhoneBookContacts());
-                    smsDataTypeArrayList.addAll(rContactApplication.getArrayListSmsLogType());*/
                 } else {
                     finish();
                     if (!isTaskRoot()) {
@@ -144,6 +226,14 @@ public class SearchActivity extends BaseActivity {
     private void displayData() {
         if (objectArrayListContact != null && objectArrayListContact.size() > 0) {
             allContactAdapter = new AllContactAdapter(SearchActivity.this, objectArrayListContact);
+        }
+
+        if(callLogTypeArrayListMain !=null && callLogTypeArrayListMain.size()>0){
+            simpleCallLogListAdapter = new SimpleCallLogListAdapter(SearchActivity.this,callLogTypeArrayListMain);
+        }
+
+        if(smsDataTypeArrayList != null && smsDataTypeArrayList.size()>0){
+            smsListAdapter =  new SmsListAdapter(SearchActivity.this,smsDataTypeArrayList,recycleViewPbContact);
         }
 
         search.addTextChangedListener(new TextWatcher() {
@@ -522,7 +612,7 @@ public class SearchActivity extends BaseActivity {
                 int position = viewHolder.getAdapterPosition();
                 String numberToSend = "";
                 String actionNumber ="";
-                if(allContactAdapter!=null /*&& simpleCallLogListAdapter!=null*/){
+                if(allContactAdapter!=null && simpleCallLogListAdapter!=null){
                     if (allContactAdapter.getSearchCount() == 0) {
                         if(simpleCallLogListAdapter.getSearchCount() == 0){
                             actionNumber = StringUtils.defaultString(((SmsListAdapter
@@ -562,7 +652,7 @@ public class SearchActivity extends BaseActivity {
                     startActivity(smsIntent);
 
                 } else {
-                    if (allContactAdapter != null /*&& simpleCallLogListAdapter != null*/) {
+                    if (allContactAdapter != null && simpleCallLogListAdapter != null) {
                         if (allContactAdapter.getSearchCount() == 0) {
                             if (simpleCallLogListAdapter.getSearchCount() == 0) {
                                 showCallConfirmationDialog(numberToSend, actionNumber);
@@ -578,7 +668,7 @@ public class SearchActivity extends BaseActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (allContactAdapter != null /*&& simpleCallLogListAdapter != null*/) {
+                        if (allContactAdapter != null && simpleCallLogListAdapter != null) {
                             if (allContactAdapter.getSearchCount() == 0) {
                                 if(simpleCallLogListAdapter.getSearchCount() == 0){
                                         if(smsListAdapter != null && smsListAdapter.getSearchCount()>0)
