@@ -642,6 +642,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         || StringUtils.equals(imageRightLeft.getTag().toString(),
                         TAG_IMAGE_UN_FAVOURITE)) {
                     int favStatus;
+                    String favStatusRawId;
+                    if (profileActivityCallInstance) {
+                        favStatusRawId = hashMapKey;
+                    } else {
+                        favStatusRawId = phoneBookId;
+                    }
                     if (StringUtils.equals(imageRightLeft.getTag().toString(),
                             TAG_IMAGE_FAVOURITE)) {
                         favStatus = PhoneBookContacts.STATUS_UN_FAVOURITE;
@@ -652,14 +658,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
                         imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);
                     }
-                    int updateStatus = phoneBookContacts.setFavouriteStatus(phoneBookId, favStatus);
+
+                    int updateStatus = phoneBookContacts.setFavouriteStatus(favStatusRawId, favStatus);
+
                     if (updateStatus != 1) {
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, "Error while " +
                                 "updating favourite status!");
                     }
                     ArrayList<ProfileData> arrayListFavourites = new ArrayList<>();
                     ProfileData favouriteStatus = new ProfileData();
-                    favouriteStatus.setLocalPhoneBookId(phoneBookId);
+                    favouriteStatus.setLocalPhoneBookId(favStatusRawId);
                     favouriteStatus.setIsFavourite(String.valueOf(favStatus));
                     arrayListFavourites.add(favouriteStatus);
                     setFavouriteStatus(arrayListFavourites);
@@ -1989,6 +1997,31 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         imageRightCenter.setImageResource(R.drawable.ic_phone);
         imageRightCenter.setTag(TAG_IMAGE_CALL);
+
+
+        if (!TextUtils.isEmpty(historyName)) {
+            imageRightLeft.setVisibility(View.VISIBLE);
+            Cursor contactFavouriteCursor = phoneBookContacts.getStarredStatus(hashMapKey);
+
+            if (contactFavouriteCursor != null && contactFavouriteCursor.getCount() > 0) {
+                while (contactFavouriteCursor.moveToNext()) {
+                    isFavourite = contactFavouriteCursor.getInt(contactFavouriteCursor
+                            .getColumnIndex(ContactsContract.Contacts.STARRED));
+                }
+                contactFavouriteCursor.close();
+            }
+
+            if (isFavourite == 0) {
+                imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
+                imageRightLeft.setTag(TAG_IMAGE_UN_FAVOURITE);
+            } else {
+                imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
+                imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);
+            }
+        } else {
+            imageRightLeft.setVisibility(View.GONE);
+        }
+
 
     }
 

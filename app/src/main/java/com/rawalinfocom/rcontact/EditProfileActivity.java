@@ -1021,6 +1021,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             // <editor-fold desc="button_event_update">
             case R.id.button_event_update:
                 ArrayList<ProfileDataOperationEvent> arrayListNewEvent = new ArrayList<>();
+                isValid = true;
                 for (int i = 0; i < linearEventDetails.getChildCount(); i++) {
                     ProfileDataOperationEvent event = new ProfileDataOperationEvent();
                     View linearEvent = linearEventDetails.getChildAt(i);
@@ -1046,6 +1047,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString(),
                                 EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
                         arrayListNewEvent.add(event);
+                    } else {
+                        if (i != 0) {
+                            isValid = false;
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                    "Event date is required!");
+                        }
                     }
                 }
                 ArrayList<String> valueTypes = new ArrayList<>();
@@ -1058,8 +1065,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     Utils.showErrorSnackBar(this, relativeRootEditProfile, "You can add Birthday " +
                             "and Anniversary only once!");
                 } else {
-                    profileDataOperation.setPbEvent(arrayListNewEvent);
-                    editProfile(profileDataOperation, AppConstants.EVENT);
+                    if (isValid) {
+                        if (arrayListNewEvent.size() > 0) {
+                            profileDataOperation.setPbEvent(arrayListNewEvent);
+                            editProfile(profileDataOperation, AppConstants.EVENT);
+                        } else {
+                            if (arrayListEventObject.size() > 0) {
+                                profileDataOperation.setPbEvent(arrayListNewEvent);
+                                editProfile(profileDataOperation, AppConstants.EVENT);
+                            }
+                        }
+                    }
+
                 }
                 break;
             //</editor-fold>
