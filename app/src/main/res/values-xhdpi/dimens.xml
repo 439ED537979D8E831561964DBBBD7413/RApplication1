@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="password_logo">200dp</dimen>
+     <dimen name="subtitle">18sp</dimen>
+    <dimen name="content">12sp</dimen>
+    <dimen name="sub_content">10sp</dimen>
+
+    <dimen name="activity_half_horizontal_margin">10dp</dimen>
+    <dimen name="activity_margin">5dp</dimen>
+
+</resources>

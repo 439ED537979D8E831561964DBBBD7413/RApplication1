@@ -207,7 +207,7 @@
     <!--Search-->
     <string name="title_phonebook">Phone Book</string>
     <string name="search_hint">Search by name or number</string>
-    
+
     <!--edit-profile-text-->
     <string name="add_field">+ ADD FIELD</string>
     <string name="update">UPDATE</string>
@@ -234,5 +234,11 @@
     <string name="hint_select_anniversary">Choose your anniversary</string>
     <string name="check_text_donot_show_year">Don\'t Show Year</string>
     <string name="myprofile_toolbar_title">Edit My Profile</string>
+    <string name="set_password">Set Password</string>
+    <string name="title_confirm_password">Configure Password</string>
+    <string name="msg_enter_password">To prevent unauthorized access please set password.</string>
+    <string name="str_password">Password</string>
+    <string name="str_confirm_password">Confirm Password</string>
+    <string name="msg_tip_password">Tip: At least 1 upper &amp; lower case letter, 1 number &amp; special character and min 8 character long</string>
 
 </resources>
