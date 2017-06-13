@@ -1490,8 +1490,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 address.setAmPoBox(arrayListAddress.get(j).getPoBox());
                 address.setAmStreet(arrayListAddress.get(j).getStreet());
                 address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-                address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
-                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
+              /*  address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
+                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());*/
                 address.setRcProfileMasterPmId(getUserPmId());
                 addressList.add(address);
             }

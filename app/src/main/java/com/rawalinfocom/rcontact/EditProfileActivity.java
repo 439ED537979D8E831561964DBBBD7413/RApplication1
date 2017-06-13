@@ -460,9 +460,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }*/
                 textLatitude.setText(objAddress.getLatitude());
                 textLongitude.setText(objAddress.getLongitude());
-                textGoogleAddress.setText(locationString);
+                textGoogleAddress.setText(objAddress.getAddress());
                 textImageMapMarker.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
-                if (resultCode == AppConstants.RESULT_CODE_MAP_LOCATION_SELECTION) {
+
+              /*  if (resultCode == AppConstants.RESULT_CODE_MAP_LOCATION_SELECTION) {
                     inputCountry.setText(objAddress.getCountry());
                     inputState.setText(objAddress.getState());
                     inputCity.setText(objAddress.getCity());
@@ -519,7 +520,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             inputNeighborhood.setText("");
                         }
                     }
-                }
+                }*/
             }
         }
     }
@@ -963,7 +964,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
-
                     if (StringUtils.length(organization.getOrgName()) > 0 ||
                             StringUtils.length(organization.getOrgJobTitle()) > 0) {
                         if (StringUtils.length(organization.getOrgName()) > 0) {
@@ -1124,8 +1124,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             neighborhoodName, cityName, stateName, countryName, pinCodeName));
                     address.setAddressType((String) addressType.getSelectedItem());
                     address.setGoogleAddress(textGoogleAddress.getText().toString());
-                    address.setGoogleLatitude(textLatitude.getText().toString());
-                    address.setGoogleLongitude(textLongitude.getText().toString());
+                    ArrayList<String> arrayListLatLong = new ArrayList<>();
+                    arrayListLatLong.add(textLongitude.getText().toString());
+                    arrayListLatLong.add(textLatitude.getText().toString());
+                    address.setGoogleLatLong(arrayListLatLong);
                     address.setAddId((String) relativeRowEditProfile.getTag());
                     if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
                         address.setAddPublic(Integer.parseInt(textIsPublic.getText().toString()));
@@ -1140,14 +1142,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             if (StringUtils.length(address.getState()) > 0) {
                                 if (StringUtils.length(address.getCity()) > 0) {
                                     if (StringUtils.length(address.getStreet()) > 0) {
-                                        if (StringUtils.length(address.getGoogleLatitude()) > 0
-                                                && StringUtils.length(address.getGoogleLatitude()
+                                        if (StringUtils.length(address.getGoogleLatLong().get(0))
+                                                > 0
+                                                && StringUtils.length(address.getGoogleLatLong()
+                                                .get(1)
                                         ) > 0) {
                                             arrayListNewAddress.add(address);
                                         } else {
                                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                                     "Address mapping on Map is required!");
-//                                            textma
+                                            textImageMapMarker.setTextColor(ContextCompat
+                                                    .getColor(this, R.color.colorSnackBarNegative));
                                             isValid = false;
                                             break;
                                         }
@@ -1176,15 +1181,28 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             break;
                         }
                     } else {
-                        Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                       /* Utils.showErrorSnackBar(this, relativeRootEditProfile,
                                 "Country is required!");
                         isValid = false;
+                        break;*/
+                        if (i != 0) {
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                    "Country name is required!");
+                            isValid = false;
+                        }
                         break;
                     }
                 }
                 if (isValid) {
-                    profileDataOperation.setPbAddress(arrayListNewAddress);
-                    editProfile(profileDataOperation, AppConstants.ADDRESS);
+                    if (arrayListNewAddress.size() > 0) {
+                        profileDataOperation.setPbAddress(arrayListNewAddress);
+                        editProfile(profileDataOperation, AppConstants.ADDRESS);
+                    } else {
+                        if (arrayListAddressObject.size() > 0) {
+                            profileDataOperation.setPbAddress(arrayListNewAddress);
+                            editProfile(profileDataOperation, AppConstants.ADDRESS);
+                        }
+                    }
                 }
                 break;
             //</editor-fold>
@@ -2164,8 +2182,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             address.setNeighborhood(arrayListAddress.get(i).getAmNeighborhood());
             address.setPostCode(arrayListAddress.get(i).getAmPostCode());
             address.setAddressType(arrayListAddress.get(i).getAmAddressType());
-            address.setGoogleLatitude(arrayListAddress.get(i).getAmGoogleLatitude());
-            address.setGoogleLongitude(arrayListAddress.get(i).getAmGoogleLongitude());
+           /* address.setGoogleLatitude(arrayListAddress.get(i).getAmGoogleLatitude());
+            address.setGoogleLongitude(arrayListAddress.get(i).getAmGoogleLongitude());*/
+            ArrayList<String> arrayListLatLong = new ArrayList<>();
+            arrayListLatLong.add(arrayListAddress.get(i).getAmGoogleLongitude());
+            arrayListLatLong.add(arrayListAddress.get(i).getAmGoogleLatitude());
+            address.setGoogleLatLong(arrayListLatLong);
             address.setAddId(arrayListAddress.get(i).getAmRecordIndexId());
             address.setAddPublic(Integer.parseInt(arrayListAddress.get(i).getAmAddressPrivacy()));
             arrayListAddressObject.add(address);
@@ -2668,10 +2690,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         inputCountry.setHint("Country (Required)");
         inputState.setHint("State (Required)");
-        inputCity.setHint("City (Required)");
-        inputStreet.setHint("Street (Required)");
-        inputNeighborhood.setHint("Landmark");
-        inputPinCode.setHint("Pincode");
+        inputCity.setHint("City / Town (Required)");
+        inputStreet.setHint("Address Line 1 (Required)");
+        inputNeighborhood.setHint("Address Line 2 (Optional)");
+        inputPinCode.setHint("Pincode (Required)");
         inputPoBox.setHint("Po. Box No.");
 
         inputPoBox.setVisibility(View.GONE);
@@ -2690,8 +2712,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             inputStreet.setText(address.getStreet());
             inputNeighborhood.setText(address.getNeighborhood());
             inputPinCode.setText(address.getPostCode());
-            textLatitude.setText(address.getGoogleLatitude());
-            textLongitude.setText(address.getGoogleLongitude());
+            textLatitude.setText(address.getGoogleLatLong().get(1));
+            textLongitude.setText(address.getGoogleLatLong().get(0));
             textIsPublic.setText(String.valueOf(address.getAddPublic()));
             formattedAddress = address.getFormattedAddress();
             textImageMapMarker.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
@@ -2722,6 +2744,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     inputStreet.setText("");
                     inputNeighborhood.setText("");
                     inputPinCode.setText("");
+                    inputPinCode.setText("");
+                    inputPinCode.setText("");
                     inputPoBox.setText("");
                 }
             }
@@ -2730,55 +2754,65 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         textImageMapMarker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivityIntent(EditProfileTempActivity.this, MapsActivity.class, null);
-                Intent intent = new Intent(EditProfileActivity.this, MapsActivity.class);
 
-                if (position != -1) {
+                View view = linearAddressDetails.getChildAt(position);
+                TextView textLatitude = (TextView) view.findViewById(R.id.input_latitude);
+                TextView textLongitude = (TextView) view.findViewById(R.id.input_longitude);
+                EditText country = (EditText) view.findViewById(R.id.input_country);
+                EditText state = (EditText) view.findViewById(R.id.input_state);
+                EditText city = (EditText) view.findViewById(R.id.input_city);
+                EditText street = (EditText) view.findViewById(R.id.input_street);
+                EditText neighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
+                EditText pinCode = (EditText) view.findViewById(R.id.input_pin_code);
+
+                String countryName = country.getText().toString();
+                String stateName = state.getText().toString();
+                String cityName = city.getText().toString();
+                String streetName = street.getText().toString();
+                String neighborhoodName = neighborhood.getText().toString();
+                String pinCodeName = pinCode.getText().toString();
+
+                if (StringUtils.length(countryName) > 0 && StringUtils.length(stateName) > 0 &&
+                        StringUtils.length(cityName) > 0 && StringUtils.length(streetName) > 0 &&
+                        StringUtils.length(pinCodeName) > 0) {
+
+                    Intent intent = new Intent(EditProfileActivity.this, MapsActivity.class);
+
+                    if (position != -1) {
                   /*  mapLatitude = Double.parseDouble(((ProfileDataOperationAddress)
                             arrayListAddressObject.get(position)).getGoogleLatitude());
                     mapLongitude = Double.parseDouble(((ProfileDataOperationAddress)
                             arrayListAddressObject.get(position)).getGoogleLongitude());
                     intent.putExtra(AppConstants.EXTRA_LATITUDE, mapLatitude);
                     intent.putExtra(AppConstants.EXTRA_LONGITUDE, mapLongitude);*/
-                    View view = linearAddressDetails.getChildAt(position);
-                    TextView textLatitude = (TextView) view.findViewById(R.id.input_latitude);
-                    TextView textLongitude = (TextView) view.findViewById(R.id.input_longitude);
-                    EditText country = (EditText) view.findViewById(R.id.input_country);
-                    EditText state = (EditText) view.findViewById(R.id.input_state);
-                    EditText city = (EditText) view.findViewById(R.id.input_city);
-                    EditText street = (EditText) view.findViewById(R.id.input_street);
-                    EditText neighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
-                    EditText pinCode = (EditText) view.findViewById(R.id.input_pin_code);
 
-                    String countryName = country.getText().toString();
-                    String stateName = state.getText().toString();
-                    String cityName = city.getText().toString();
-                    String streetName = street.getText().toString();
-                    String neighborhoodName = neighborhood.getText().toString();
-                    String pinCodeName = pinCode.getText().toString();
-
-                    intent.putExtra(AppConstants.EXTRA_LATITUDE, Double.parseDouble(StringUtils
-                            .defaultIfEmpty(textLatitude.getText().toString(), "0")));
-                    intent.putExtra(AppConstants.EXTRA_LONGITUDE, Double.parseDouble(StringUtils
-                            .defaultIfEmpty(textLongitude.getText().toString(), "0")));
-                    String formattedAddress = Utils.setFormattedAddress(streetName,
-                            neighborhoodName, cityName, stateName, countryName, pinCodeName);
-                    if (StringUtils.length(formattedAddress) > 0) {
-                        intent.putExtra(AppConstants.EXTRA_FORMATTED_ADDRESS, formattedAddress);
+                        intent.putExtra(AppConstants.EXTRA_LATITUDE, Double.parseDouble(StringUtils
+                                .defaultIfEmpty(textLatitude.getText().toString(), "0")));
+                        intent.putExtra(AppConstants.EXTRA_LONGITUDE, Double.parseDouble(StringUtils
+                                .defaultIfEmpty(textLongitude.getText().toString(), "0")));
+                        String formattedAddress = Utils.setFormattedAddress(streetName,
+                                neighborhoodName, cityName, stateName, countryName, pinCodeName);
+                        if (StringUtils.length(formattedAddress) > 0) {
+                            intent.putExtra(AppConstants.EXTRA_FORMATTED_ADDRESS, formattedAddress);
+                        }
                     }
-                }
-                if (detailObject != null && position != -1) {
-                    intent.putExtra(AppConstants.EXTRA_FORMATTED_ADDRESS, (
-                            (ProfileDataOperationAddress) arrayListAddressObject.get(position))
-                            .getFormattedAddress());
-                }
-                if (position == -1) {
-                    clickedPosition = 0;
+                    if (detailObject != null && position != -1) {
+                        intent.putExtra(AppConstants.EXTRA_FORMATTED_ADDRESS, (
+                                (ProfileDataOperationAddress) arrayListAddressObject.get(position))
+                                .getFormattedAddress());
+                    }
+                    if (position == -1) {
+                        clickedPosition = 0;
+                    } else {
+                        clickedPosition = position;
+                    }
+                    startActivityForResult(intent, AppConstants
+                            .REQUEST_CODE_MAP_LOCATION_SELECTION);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
                 } else {
-                    clickedPosition = position;
+                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
+                            "Please add address!");
                 }
-                startActivityForResult(intent, AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION);
-                overridePendingTransition(R.anim.enter, R.anim.exit);
             }
         });
 
@@ -3242,8 +3276,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 address.setAmPoBox(arrayListAddress.get(j).getPoBox());
                 address.setAmStreet(arrayListAddress.get(j).getStreet());
                 address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-                address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
-                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
+                address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatLong().get(1));
+                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLatLong().get(0));
                 address.setRcProfileMasterPmId(getUserPmId());
                 addressList.add(address);
             }
