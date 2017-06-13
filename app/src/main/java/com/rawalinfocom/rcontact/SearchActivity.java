@@ -88,6 +88,7 @@ public class SearchActivity extends BaseActivity {
     private String[] requiredPermissions = {android.Manifest
             .permission.READ_CALL_LOG, android.Manifest.permission.READ_SMS};
     MaterialDialog permissionConfirmationDialog;
+    boolean isHomePressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,43 @@ public class SearchActivity extends BaseActivity {
     protected void onDestroy() {
         AppConstants.isFromSearchActivity = false;
         super.onDestroy();
+    }
+
+     @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        if(isHomePressed){
+            isHomePressed = false;
+            if(callLogTypeArrayListMain!=null && callLogTypeArrayListMain.size()==0){
+                if(rContactApplication.getArrayListCallLogType()!=null && rContactApplication.getArrayListCallLogType().size()>0){
+                    callLogTypeArrayListMain.addAll(rContactApplication.getArrayListCallLogType());
+                } else{
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                        checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
+                    }else{
+                        getCallLogData();
+                    }
+                }
+            }
+
+
+            if(smsDataTypeArrayList!=null && smsDataTypeArrayList.size()==0){
+                if(rContactApplication.getArrayListSmsLogType()!=null && rContactApplication.getArrayListSmsLogType().size()>0){
+                    smsDataTypeArrayList.addAll(rContactApplication.getArrayListSmsLogType());
+                }else{
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                        checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
+                    }else{
+                        getSMSData();
+                    }
+                }
+            }
+        }
+        super.onResume();
     }
 
     @Override
@@ -123,6 +161,7 @@ public class SearchActivity extends BaseActivity {
         }
 
     }
+
     @TargetApi(Build.VERSION_CODES.M)
     private void checkPermissionToExecute(String permissions[], int requestCode) {
 
@@ -153,6 +192,7 @@ public class SearchActivity extends BaseActivity {
 
                     case R.id.rippleRight:
                         permissionConfirmationDialog.dismissDialog();
+                        isHomePressed = true;
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                                 Uri.fromParts("package", getPackageName(), null));
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -246,28 +286,30 @@ public class SearchActivity extends BaseActivity {
                     Matcher matcher1 = numberPat.matcher(arg0);
                     if (matcher1.find()) {
                         String text = arg0.toString();
-                        allContactAdapter.filter(text);
-                        if (allContactAdapter.getSearchCount() == 0) {
-                            if (callLogTypeArrayListMain != null && callLogTypeArrayListMain.size() > 0) {
-                                AppConstants.isFromSearchActivity = true;
-                                simpleCallLogListAdapter = new SimpleCallLogListAdapter(SearchActivity.this,
-                                        callLogTypeArrayListMain);
-                                simpleCallLogListAdapter.filter(text);
-                                if (simpleCallLogListAdapter.getArrayListCallLogs().size() > 0) {
-                                    rlTitle.setVisibility(View.VISIBLE);
-                                    recycleViewPbContact.setAdapter(simpleCallLogListAdapter);
-                                } else {
-                                    if (simpleCallLogListAdapter.getSearchCount() == 0) {
-                                        smsListAdapter = new SmsListAdapter(SearchActivity.this, smsDataTypeArrayList, recycleViewPbContact);
-                                        smsListAdapter.filter(text);
+                        if(allContactAdapter!=null){
+                            allContactAdapter.filter(text);
+                            if (allContactAdapter.getSearchCount() == 0) {
+                                if (callLogTypeArrayListMain != null && callLogTypeArrayListMain.size() > 0) {
+                                    AppConstants.isFromSearchActivity = true;
+                                    simpleCallLogListAdapter = new SimpleCallLogListAdapter(SearchActivity.this,
+                                            callLogTypeArrayListMain);
+                                    simpleCallLogListAdapter.filter(text);
+                                    if (simpleCallLogListAdapter.getArrayListCallLogs().size() > 0) {
                                         rlTitle.setVisibility(View.VISIBLE);
-                                        recycleViewPbContact.setAdapter(smsListAdapter);
+                                        recycleViewPbContact.setAdapter(simpleCallLogListAdapter);
+                                    } else {
+                                        if (simpleCallLogListAdapter.getSearchCount() == 0) {
+                                            smsListAdapter = new SmsListAdapter(SearchActivity.this, smsDataTypeArrayList, recycleViewPbContact);
+                                            smsListAdapter.filter(text);
+                                            rlTitle.setVisibility(View.VISIBLE);
+                                            recycleViewPbContact.setAdapter(smsListAdapter);
+                                        }
                                     }
                                 }
+                            } else {
+                                rlTitle.setVisibility(View.VISIBLE);
+                                recycleViewPbContact.setAdapter(allContactAdapter);
                             }
-                        } else {
-                            rlTitle.setVisibility(View.VISIBLE);
-                            recycleViewPbContact.setAdapter(allContactAdapter);
                         }
 
                     } else {
