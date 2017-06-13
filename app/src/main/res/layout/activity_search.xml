@@ -13,45 +13,157 @@
         android:layout_height="?attr/actionBarSize" />
 
     <RelativeLayout
+        android:id="@+id/rl_pb_content_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/rl_title"
-        android:background="@color/colorVeryLightGray"
+        android:minHeight="@dimen/height_pb_contact_search"
         android:layout_below="@+id/include_toolbar">
 
-        <TextView
-            android:id="@+id/text_pb_header"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/rl_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/padding_10dp"
-            android:paddingLeft="@dimen/padding_10dp"
-            android:paddingRight="@dimen/padding_10dp"
-            android:paddingTop="@dimen/padding_10dp"
-            android:text="@string/title_phonebook"/>
+            android:background="@color/colorVeryLightGray">
+
+            <TextView
+                android:id="@+id/text_pb_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/padding_10dp"
+                android:paddingLeft="@dimen/padding_10dp"
+                android:paddingRight="@dimen/padding_10dp"
+                android:paddingTop="@dimen/padding_10dp"
+                android:text="@string/title_phonebook" />
 
 
-        <TextView
-            android:id="@+id/text_search_count"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/text_search_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:paddingBottom="@dimen/padding_10dp"
+                android:paddingLeft="@dimen/padding_10dp"
+                android:paddingRight="@dimen/padding_10dp"
+                android:paddingTop="@dimen/padding_10dp"
+                tools:text="1234" />
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycle_view_pb_contact"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/padding_10dp"
-            android:paddingLeft="@dimen/padding_10dp"
-            android:paddingRight="@dimen/padding_10dp"
-            android:paddingTop="@dimen/padding_10dp"
-            tools:text="1234"
-            android:layout_alignParentRight="true"/>
-
+            android:layout_below="@+id/rl_title"
+            android:scrollbars="vertical"
+            android:visibility="visible"></android.support.v7.widget.RecyclerView>
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycle_view_pb_contact"
+
+    <RelativeLayout
+        android:id="@+id/rl_global_content_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rl_title"
-        android:visibility="visible"
-        android:scrollbars="vertical">
+        android:layout_below="@+id/rl_pb_content_main">
 
-    </android.support.v7.widget.RecyclerView>
+        <RelativeLayout
+            android:id="@+id/rl_global_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorVeryLightGray">
 
+            <TextView
+                android:id="@+id/text_global_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/padding_10dp"
+                android:paddingLeft="@dimen/padding_10dp"
+                android:paddingRight="@dimen/padding_10dp"
+                android:paddingTop="@dimen/padding_10dp"
+                android:text="@string/title_global_directory" />
+
+            <TextView
+                android:id="@+id/text_global_search_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:paddingBottom="@dimen/padding_10dp"
+                android:paddingLeft="@dimen/padding_10dp"
+                android:paddingRight="@dimen/padding_10dp"
+                android:paddingTop="@dimen/padding_10dp"
+                tools:text="1234" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_global_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/rl_global_title"
+            android:layout_marginBottom="@dimen/margin_10dp">
+
+            <com.rawalinfocom.rcontact.helper.RippleView
+                android:id="@+id/ripple_view_search_on_global"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_global_button"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="@dimen/margin_10dp"
+                app:rv_alpha="@integer/alpha_ripple"
+                app:rv_color="@color/colorWhite"
+                app:rv_rippleDuration="@integer/duration_ripple">
+
+                <Button
+                    android:id="@+id/button_search_on_global"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_cornor_green_background"
+                    android:paddingTop="@dimen/padding_10dp"
+                    android:paddingBottom="@dimen/padding_10dp"
+                    android:paddingLeft="@dimen/padding_15dp"
+                    android:paddingRight="@dimen/padding_15dp"
+                    android:text="@string/search_on_global"
+                    android:textColor="@color/colorWhite" />
+            </com.rawalinfocom.rcontact.helper.RippleView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_global_text"
+                android:gravity="center"
+                android:text="@string/search_global_text"
+                android:layout_below="@+id/ripple_view_search_on_global"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycle_view_global_contact"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/ripple_view_more_global_contacts"
+                android:scrollbars="vertical"
+                android:visibility="visible"></android.support.v7.widget.RecyclerView>
+
+            <com.rawalinfocom.rcontact.helper.RippleView
+                android:id="@+id/ripple_view_more_global_contacts"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_button"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/margin_10dp"
+                app:rv_alpha="@integer/alpha_ripple"
+                app:rv_color="@color/colorWhite"
+                app:rv_rippleDuration="@integer/duration_ripple">
+
+                <Button
+                    android:id="@+id/button_view_old_records"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_cornor_green_background"
+                    android:padding="@dimen/padding_10dp"
+                    android:text="@string/view_more_results"
+                    android:textColor="@color/colorWhite" />
+            </com.rawalinfocom.rcontact.helper.RippleView>
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </RelativeLayout>
