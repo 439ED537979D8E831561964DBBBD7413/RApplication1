@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.rawalinfocom.rcontact">
 
@@ -104,10 +103,10 @@
             -->
         </activity>
 
-        <!--<service-->
-        <!--android:name=".services.ContactIdFetchService"-->
-        <!--android:enabled="true"-->
-        <!--android:exported="true" />-->
+        <!-- <service -->
+        <!-- android:name=".services.ContactIdFetchService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="true" /> -->
 
         <activity android:name=".contacts.ProfileDetailActivity">
 
@@ -183,8 +182,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".SearchActivity" />
-        <activity android:name=".contacts.EditProfileActivity"></activity>
-        <activity android:name=".EditProfileActivity"></activity>
+        <activity android:name=".contacts.EditProfileActivity" />
+        <activity android:name=".EditProfileActivity" />
+        <activity android:name=".SetPasswordActivity" />
     </application>
 
 </manifest>
