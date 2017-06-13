@@ -38,15 +38,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.calldialer.transition.ScaleTransition;
+import com.rawalinfocom.rcontact.calllog.TelephonyInfo;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+
+import org.apache.commons.lang3.StringUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -151,7 +155,6 @@ public class DialerActivity extends Activity {
     String numberToCall;
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG};
     MaterialDialog permissionConfirmationDialog;
-    int EDITTEXTSIZESMALL = 18;
 
 
     @Override
@@ -495,9 +498,23 @@ public class DialerActivity extends Activity {
         callButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String numberToCall = editTextNumber.getText().toString();
-                if (!TextUtils.isEmpty(numberToCall))
-                    showCallConfirmationDialog(numberToCall);
+                try{
+                    TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity.this);
+                    if(telephonyInfo!=null){
+                        String simSerialNumber = telephonyInfo.simSerialNumber;
+                        if(!StringUtils.isEmpty(simSerialNumber)){
+                            String numberToCall = editTextNumber.getText().toString();
+                            if (!TextUtils.isEmpty(numberToCall))
+                                showCallConfirmationDialog(numberToCall);
+                        }else{
+                            Toast.makeText(DialerActivity.this, "No sim detected", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
             }
         });
 

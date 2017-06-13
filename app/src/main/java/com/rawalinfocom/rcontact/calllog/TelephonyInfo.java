@@ -23,10 +23,19 @@ public final class TelephonyInfo {
     private boolean isSIM2Ready;
     private String sim1Number;
     private String sim2Number;
+    public static String simSerialNumber;
 
 
     public String getImsiSIM1() {
         return imsiSIM1;
+    }
+
+    public String getSimSerialNumber() {
+        return simSerialNumber;
+    }
+
+    public void setSimSerialNumber(String simSerialNumber) {
+        this.simSerialNumber = simSerialNumber;
     }
 
     /*public static void setImsiSIM1(String imsiSIM1) {
@@ -73,7 +82,8 @@ public final class TelephonyInfo {
             telephonyInfo.imsiSIM1 = telephonyManager.getDeviceId();;
             telephonyInfo.imsiSIM2 = null;
 
-            String simSerialNumber =  telephonyManager.getSimSerialNumber();
+//            String simSerialNumber =  telephonyManager.getSimSerialNumber();
+            simSerialNumber =  telephonyManager.getSimSerialNumber();
             if(!TextUtils.isEmpty(simSerialNumber)){
                 Log.e("Sim Serial Number" , simSerialNumber + " NO " + telephonyManager.getNetworkOperator()
                         + " NON " + telephonyManager.getNetworkOperatorName() + " SO " + telephonyManager.getSimOperator() + " SON "
