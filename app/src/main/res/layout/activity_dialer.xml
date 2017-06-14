@@ -159,8 +159,7 @@
             android:singleLine="true"
             android:maxLines="1"
             android:textAlignment="center"
-            android:textColor="@color/dialer_green"
-            android:textSize="@dimen/text_size_32sp" />
+            android:textColor="@color/dialer_green" />
 
     </RelativeLayout>
 

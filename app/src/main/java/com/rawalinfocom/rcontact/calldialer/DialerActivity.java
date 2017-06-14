@@ -24,8 +24,8 @@ import android.text.TextWatcher;
 import android.transition.Slide;
 import android.transition.Transition;
 import android.transition.TransitionSet;
+import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -38,15 +38,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.calldialer.transition.ScaleTransition;
+import com.rawalinfocom.rcontact.calllog.TelephonyInfo;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+
+import org.apache.commons.lang3.StringUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -193,6 +197,10 @@ public class DialerActivity extends Activity {
                             showContactDetail(number);
                     }else if(s.length()==0){
                         showContactDetail(s.toString());
+                    }else if(s.length()>11){
+                        editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_14sp));
+                    }else if(s.length()<11){
+                        editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_25sp));
                     }
 
             }
@@ -289,8 +297,12 @@ public class DialerActivity extends Activity {
             public void onClick(View v) {
                 isCalledOnce = false;
                 int length = editTextNumber.getText().length();
-                if (length > 0) {
-                    editTextNumber.getText().delete(length - 1, length);
+                int positionFrom =  editTextNumber.getSelectionEnd();
+//                Log.e("Dialer cursor position", positionFrom+"");
+                if (positionFrom > 0) {
+                    editTextNumber.getText().delete(positionFrom-1, positionFrom);
+                }else{
+                    editTextNumber.setCursorVisible(false);
                 }
             }
         });
@@ -308,8 +320,15 @@ public class DialerActivity extends Activity {
             @Override
             public boolean onLongClick(View v) {
 
-                editTextNumber.setText(editTextNumber.getText().toString() + "+");
-                inputNumberValidation();
+
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "+");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "+");
+                }
+
+//                inputNumberValidation();
                 return true;
             }
         });
@@ -317,16 +336,26 @@ public class DialerActivity extends Activity {
         linear0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "0");
-                inputNumberValidation();
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "0");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "0");
+                }
+                //                inputNumberValidation();
             }
         });
 
         linear1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "1");
-                inputNumberValidation();
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "1");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "1");
+                }
+//                inputNumberValidation();
 
             }
         });
@@ -334,48 +363,78 @@ public class DialerActivity extends Activity {
         linear2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "2");
-                inputNumberValidation();
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "2");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "2");
+                }
+//                inputNumberValidation();
             }
         });
 
         linear3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "3");
-                inputNumberValidation();
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "3");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "3");
+                }
+//                inputNumberValidation();
             }
         });
 
         linear4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "4");
-                inputNumberValidation();
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "4");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "4");
+                }
+//                inputNumberValidation();
 
             }
         });
         linear5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "5");
-                inputNumberValidation();
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "5");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "5");
+                }
+//                inputNumberValidation();
             }
         });
 
         linear6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "6");
-                inputNumberValidation();
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "6");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "6");
+                }
+//                inputNumberValidation();
             }
         });
 
         linear7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "7");
-                inputNumberValidation();
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "7");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "7");
+                }
+//                inputNumberValidation();
 
             }
         });
@@ -383,8 +442,13 @@ public class DialerActivity extends Activity {
         linear8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "8");
-                inputNumberValidation();
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "8");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "8");
+                }
+//                inputNumberValidation();
 
             }
         });
@@ -392,8 +456,13 @@ public class DialerActivity extends Activity {
         linear9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "9");
-                inputNumberValidation();
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "9");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "9");
+                }
+//                inputNumberValidation();
 
             }
         });
@@ -401,8 +470,13 @@ public class DialerActivity extends Activity {
         linearStar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "*");
-                inputNumberValidation();
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "*");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "*");
+                }
+//                inputNumberValidation();
 
             }
         });
@@ -410,8 +484,13 @@ public class DialerActivity extends Activity {
         linearHashTag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextNumber.setText(editTextNumber.getText().toString() + "#");
-                inputNumberValidation();
+                int positionFrom =editTextNumber.getSelectionStart(); //this is to get the the cursor position
+                if(positionFrom>=0){
+                    editTextNumber.getText().insert(positionFrom, "#");
+                }else{
+                    editTextNumber.setText(editTextNumber.getText().toString() + "#");
+                }
+//                inputNumberValidation();
 
             }
         });
@@ -419,9 +498,23 @@ public class DialerActivity extends Activity {
         callButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String numberToCall = editTextNumber.getText().toString();
-                if (!TextUtils.isEmpty(numberToCall))
-                    showCallConfirmationDialog(numberToCall);
+                try{
+                    TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(DialerActivity.this);
+                    if(telephonyInfo!=null){
+                        String simSerialNumber = telephonyInfo.simSerialNumber;
+                        if(!StringUtils.isEmpty(simSerialNumber)){
+                            String numberToCall = editTextNumber.getText().toString();
+                            if (!TextUtils.isEmpty(numberToCall))
+                                showCallConfirmationDialog(numberToCall);
+                        }else{
+                            Toast.makeText(DialerActivity.this, "No sim detected", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
             }
         });
 
@@ -444,12 +537,16 @@ public class DialerActivity extends Activity {
             @Override
             public void onClick(View v) {
                 editTextNumber.requestFocus();
+                int positionFrom =  editTextNumber.getSelectionEnd();
+               /* if(positionFrom==0)
+                    editTextNumber.setCursorVisible(false);
+                else
+                    editTextNumber.setCursorVisible(true);*/
                 editTextNumber.setCursorVisible(true);
                 String mainText = editTextNumber.getText().toString();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context
                         .INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(editTextNumber.getWindowToken(), 0);
-
 
             }
         });
@@ -480,46 +577,47 @@ public class DialerActivity extends Activity {
     }
 
     private void showContactDetail(final String number) {
-            if(!TextUtils.isEmpty(number)){
-                String name = getNameFromNumber(number);
-                if(!TextUtils.isEmpty(name)){
-                    relativeContact.setVisibility(View.VISIBLE);
-                    linearAddToContact.setVisibility(View.GONE);
-                    textContactName.setText(name);
-                    textContactNumber.setText(number);
-                    String imageUrl =  getPhotoUrlFromNumber(number);
-                    if(!TextUtils.isEmpty(imageUrl)){
-                        Glide.with(this)
-                                .load(imageUrl)
-                                .placeholder(R.drawable.home_screen_profile)
-                                .error(R.drawable.home_screen_profile)
-                                .bitmapTransform(new CropCircleTransformation(this))
-                                .override(200, 200)
-                                .into(imageProfile);
+        if (!TextUtils.isEmpty(number)) {
+            String name = getNameFromNumber(number);
+            if (!TextUtils.isEmpty(name)) {
+                relativeContact.setVisibility(View.VISIBLE);
+                linearAddToContact.setVisibility(View.GONE);
+                textContactName.setText(name);
+                textContactNumber.setText(number);
+                String imageUrl = getPhotoUrlFromNumber(number);
+                if (!TextUtils.isEmpty(imageUrl)) {
+                    Glide.with(this)
+                            .load(imageUrl)
+                            .placeholder(R.drawable.home_screen_profile)
+                            .error(R.drawable.home_screen_profile)
+                            .bitmapTransform(new CropCircleTransformation(this))
+                            .override(200, 200)
+                            .into(imageProfile);
 
-                    }else{
-                        imageProfile.setImageResource(R.drawable.home_screen_profile);
-                    }
-                    relativeContact.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS, number);
-                            }else{
-                                showCallConfirmationDialog(number);
-                            }
-                        }
-                    });
-
-                }else{
-                    relativeContact.setVisibility(View.GONE);
-                    linearAddToContact.setVisibility(View.VISIBLE);
+                } else {
+                    imageProfile.setImageResource(R.drawable.home_screen_profile);
                 }
-            }else{
+                relativeContact.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS,
+                                    number);
+                        } else {
+                            showCallConfirmationDialog(number);
+                        }
+                    }
+                });
+
+            } else {
                 relativeContact.setVisibility(View.GONE);
                 linearAddToContact.setVisibility(View.VISIBLE);
             }
+        } else {
+            relativeContact.setVisibility(View.GONE);
+            linearAddToContact.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -527,12 +625,12 @@ public class DialerActivity extends Activity {
     // A method to check if a permission is granted then execute tasks depending on that
     // particular permission
     @TargetApi(Build.VERSION_CODES.M)
-    private void checkPermissionToExecute(String permissions[], int requestCode,String number) {
+    private void checkPermissionToExecute(String permissions[], int requestCode, String number) {
 
         boolean logs = ContextCompat.checkSelfPermission(this, permissions[0]) !=
                 PackageManager.PERMISSION_GRANTED;
         if (logs) {
-            numberToCall =  number;
+            numberToCall = number;
             requestPermissions(permissions, requestCode);
         } else {
             showCallConfirmationDialog(number);
@@ -547,8 +645,8 @@ public class DialerActivity extends Activity {
 
         if (requestCode == AppConstants.READ_LOGS && permissions[0].equals(Manifest.permission
                 .READ_CALL_LOG)) {
-            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED ) {
-                if(!TextUtils.isEmpty(numberToCall))
+            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED) {
+                if (!TextUtils.isEmpty(numberToCall))
                     showCallConfirmationDialog(numberToCall);
             } else {
                 showPermissionConfirmationDialog();
@@ -604,9 +702,12 @@ public class DialerActivity extends Activity {
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
+                       /* String unicodeNumber = number.replace("*", Uri.encode("*")).replace("#",
+                                Uri.encode("#"));
                         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                number));
-                        startActivity(intent);
+                                unicodeNumber));
+                        startActivity(intent);*/
+                        Utils.callIntent(DialerActivity.this, number);
                         break;
                 }
             }

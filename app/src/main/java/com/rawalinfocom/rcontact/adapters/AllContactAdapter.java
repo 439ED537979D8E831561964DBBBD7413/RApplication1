@@ -1,12 +1,21 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.drawable.LayerDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
@@ -14,6 +23,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +49,11 @@ import com.rawalinfocom.rcontact.contacts.FavoritesFragment;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
+import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
@@ -81,10 +95,15 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     /* phone book contacts */
     private ArrayList<Object> arrayListUserContact;
     private ArrayList<String> arrayListContactHeader;
+    private int previousPosition = 0;
 
     private final int HEADER = 0, CONTACT = 1, FOOTER = 2;
     private int colorBlack, colorPineGreen;
     private int listClickedPosition = -1;
+
+    private TableProfileMaster tableProfileMaster;
+    private TableProfileMobileMapping tableProfileMobileMapping;
+    private TableProfileEmailMapping tableProfileEmailMapping;
 
     private ArrayList<Integer> arrayListExpandedPositions;
 
@@ -92,6 +111,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private ArrayList<Integer> mSectionPositions;
     private ArrayList<Object> arraylist;
     private int searchCount;
+    private MaterialDialog callConfirmationDialog;
+    private ContactListExpandAdapter expandableAdapter;
 
     //<editor-fold desc="Constructor">
     public AllContactAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
@@ -109,6 +130,13 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
+
+        tableProfileMaster = new TableProfileMaster(((BaseActivity) context).databaseHandler);
+        tableProfileMobileMapping = new TableProfileMobileMapping(((BaseActivity) context)
+                .databaseHandler);
+        tableProfileEmailMapping = new TableProfileEmailMapping(((BaseActivity) context)
+                .databaseHandler);
+
         phoneBookContacts = new PhoneBookContacts(context);
     }
 
@@ -128,6 +156,13 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
+
+        tableProfileMaster = new TableProfileMaster(((BaseActivity) context).databaseHandler);
+        tableProfileMobileMapping = new TableProfileMobileMapping(((BaseActivity) context)
+                .databaseHandler);
+        tableProfileEmailMapping = new TableProfileEmailMapping(((BaseActivity) context)
+                .databaseHandler);
+
         phoneBookContacts = new PhoneBookContacts(context);
     }
     //</editor-fold>
@@ -430,10 +465,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         arrayList.addAll(queryManager.getRcpNumberName(String.valueOf(v.getTag())));
                         holder.recyclerViewMultipleRc.setLayoutManager(new LinearLayoutManager
                                 (context));
-                        ContactListExpandAdapter adapter = new ContactListExpandAdapter(context,
+                        expandableAdapter = new ContactListExpandAdapter(context,
                                 arrayList, profileData.getLocalPhoneBookId(), holder
                                 .textContactName.getText().toString());
-                        holder.recyclerViewMultipleRc.setAdapter(adapter);
+                        holder.recyclerViewMultipleRc.setAdapter(expandableAdapter);
                     } else if (StringUtils.equalsAnyIgnoreCase(String.valueOf(v.getTag()), "-1")) {
                         // Non Rcp
                         holder.recyclerViewMultipleRc.setVisibility(View.GONE);
@@ -1171,6 +1206,164 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         dialog.show();
     }
 
+    private void initSwipe(RecyclerView recyclerView) {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
+                .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                String actionNumber = StringUtils.defaultString(((ContactListExpandAdapter
+                        .AllContactViewHolder) viewHolder).textContactNumber.getText()
+                        .toString());
+                if (direction == ItemTouchHelper.LEFT) {
+                    /* SMS */
+                    Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                    smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                    smsIntent.setType("vnd.android-dir/mms-sms");
+                  /*  smsIntent.setData(Uri.parse("sms:" + ((ProfileData)
+                            arrayListPhoneBookContacts.get(position)).getOperation().get(0)
+                            .getPbPhoneNumber().get(0).getPhoneNumber()));*/
+                    smsIntent.setData(Uri.parse("sms:" + actionNumber));
+                    context.startActivity(smsIntent);
+
+                } else {
+                    if (fragment instanceof AllContactsListFragment) {
+                        ((AllContactsListFragment) fragment).callNumber = actionNumber;
+                    } else if (fragment instanceof FavoritesFragment) {
+                        ((FavoritesFragment) fragment).callNumber = actionNumber;
+                    }
+                    showCallConfirmationDialog();
+                }
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (expandableAdapter != null)
+                            expandableAdapter.notifyDataSetChanged();
+                    }
+                }, 1500);
+            }
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                /* Disable swiping in headers */
+               /* if (viewHolder instanceof AllContactAdapter.ContactHeaderViewHolder || viewHolder
+                        instanceof AllContactAdapter.ContactFooterViewHolder) {
+                    return 0;
+                }
+                if (viewHolder instanceof AllContactAdapter.AllContactViewHolder) {
+                    if (((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
+                        return 0;
+                    }
+                }*/
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder
+                    viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                Bitmap icon;
+                Paint p = new Paint();
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+                    View itemView = viewHolder.itemView;
+                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                    float width = height / 3;
+
+                    if (dX > 0) {
+                        p.setColor(ContextCompat.getColor(context, R.color
+                                .darkModerateLimeGreen));
+                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView
+                                .getTop(), dX, (float) itemView.getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(context.getResources(), R.drawable
+                                .ic_action_call);
+                        RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
+                                itemView.getTop() + width, (float) itemView.getLeft() + 2 *
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    } else {
+                        p.setColor(ContextCompat.getColor(context, R.color.brightOrange));
+                        RectF background = new RectF((float) itemView.getRight() + dX, (float)
+                                itemView.getTop(), (float) itemView.getRight(), (float) itemView
+                                .getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(context.getResources(), R.drawable
+                                .ic_action_sms);
+                        RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width,
+                                (float) itemView.getTop() + width, (float) itemView.getRight() -
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState,
+                        isCurrentlyActive);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+    }
+
+    private void showCallConfirmationDialog() {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        callConfirmationDialog.dismissDialog();
+                        break;
+
+                    case R.id.rippleRight:
+                        callConfirmationDialog.dismissDialog();
+                        if (ContextCompat.checkSelfPermission(context, android.Manifest
+                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                            fragment.requestPermissions(new String[]{Manifest.permission
+                                    .CALL_PHONE}, AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                        } else {
+                           /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                                    callNumber));
+                            startActivity(intent);*/
+                            if (fragment instanceof AllContactsListFragment) {
+                                Utils.callIntent(context, ((AllContactsListFragment) fragment)
+                                        .callNumber);
+                            } else if (fragment instanceof FavoritesFragment) {
+                                Utils.callIntent(context, ((FavoritesFragment) fragment)
+                                        .callNumber);
+                            }
+                        }
+                        break;
+                }
+            }
+        };
+
+        callConfirmationDialog = new MaterialDialog(context, cancelListener);
+        callConfirmationDialog.setTitleVisibility(View.GONE);
+        callConfirmationDialog.setLeftButtonText("Cancel");
+        callConfirmationDialog.setRightButtonText("Call");
+        if (fragment instanceof AllContactsListFragment) {
+            callConfirmationDialog.setDialogBody("Call " + ((AllContactsListFragment) fragment)
+                    .callNumber + "?");
+        } else if (fragment instanceof FavoritesFragment) {
+            callConfirmationDialog.setDialogBody("Call " + ((FavoritesFragment) fragment)
+                    .callNumber + "?");
+        }
+
+        callConfirmationDialog.showDialog();
+
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="View Holders">
@@ -1198,7 +1391,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         @BindView(R.id.linear_rating)
         LinearLayout linearRating;
         @BindView(R.id.recycler_view_multiple_rc)
-        RecyclerView recyclerViewMultipleRc;
+        public RecyclerView recyclerViewMultipleRc;
         @BindView(R.id.button_invite)
         Button buttonInvite;
         @BindView(R.id.ripple_invite)
@@ -1243,6 +1436,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             /*textContactName.setMaxWidth(Utils.getDeviceWidth(context) / 2);
             textCloudContactName.setMaxWidth(Utils.getDeviceWidth(context) / 2);*/
+
+            initSwipe(recyclerViewMultipleRc);
 
         }
     }
@@ -1332,7 +1527,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     if (arraylist.get(i) instanceof ProfileData) {
                         ProfileData profileData = (ProfileData) arraylist.get(i);
                         if (!TextUtils.isEmpty(profileData.getName())) {
-                            if (profileData.getName().toLowerCase(Locale.getDefault()).contains(charText)) {
+                            if (profileData.getName().toLowerCase(Locale.getDefault()).contains
+                                    (charText)) {
                                 arrayListUserContact.add(profileData);
                             }
                         }

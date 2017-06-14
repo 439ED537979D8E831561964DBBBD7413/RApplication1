@@ -39,6 +39,14 @@
             android:text="@string/str_select_social_media"
             android:textAppearance="?android:textAppearanceMedium"/>
 
+        <TextView
+            android:id="@+id/text_remove_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_small"
+            android:textAppearance="?android:textAppearanceMedium"
+            tools:text="Remove Photo"/>
+
     </LinearLayout>
 
     <LinearLayout

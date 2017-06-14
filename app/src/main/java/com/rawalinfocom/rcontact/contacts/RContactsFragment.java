@@ -324,9 +324,10 @@ public class RContactsFragment extends BaseFragment {
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                       /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
                                 number));
-                        startActivity(intent);
+                        startActivity(intent);*/
+                        Utils.callIntent(getActivity(), number);
                         break;
                 }
             }

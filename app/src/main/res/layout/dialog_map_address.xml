@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:padding="@dimen/margin_small"
-        android:text="My Address"/>
+        android:text="Postal Address"/>
 
     <TextView
         android:id="@+id/text_my_address"
@@ -61,7 +61,7 @@
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_large"
         android:background="@color/colorAccent"
-        android:text="Use My Address"
+        android:text="Use Postal Address"
         android:textColor="@color/colorWhite"/>
 
     <Button
