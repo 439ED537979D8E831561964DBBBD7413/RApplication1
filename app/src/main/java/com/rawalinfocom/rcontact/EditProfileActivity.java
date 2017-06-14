@@ -4,8 +4,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +18,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
@@ -37,6 +41,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -53,6 +58,7 @@ import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
+import com.rawalinfocom.rcontact.helper.CropingOption;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -331,6 +337,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     Calendar myCalendar;
     DatePickerDialog.OnDateSetListener dataPicker;
     EditText editTextEvent;
+    //    EditText inputValue;
+    EditText inputCompanyName, inputDesignationName;
 
     boolean isBirthday = false;
     boolean isExpanded = false;
@@ -536,7 +544,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (editProfileResponse != null && StringUtils.equalsIgnoreCase
                         (editProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    isUpdated = false;
+
+                    Utils.hideProgressDialog();
 
                     ProfileDataOperation profileDetail = editProfileResponse.getProfileDetail();
                     Utils.setObjectPreference(EditProfileActivity.this, AppConstants
@@ -584,7 +593,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     }
 
                     Utils.showSuccessSnackBar(this, relativeRootEditProfile, "Profile Updated " +
-                            "Successfully! ");
+                            "Successfully!");
+                    isUpdated = false;
 
                 } else {
                     if (editProfileResponse != null) {
@@ -821,7 +831,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     }
 
                     if (StringUtils.length(email.getEmEmailId()) > 0) {
-                        arrayListNewEmail.add(email);
+                        if (android.util.Patterns.EMAIL_ADDRESS.matcher(email.getEmEmailId())
+                                .matches()) {
+                            arrayListNewEmail.add(email);
+                        } else {
+                            isValid = false;
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                    "Invalid EmailId!");
+                        }
                     } else {
                         if (i != 0) {
                             isValid = false;
@@ -1296,13 +1313,23 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
             case R.id.ripple_action_back:
-                if (isUpdated) {
+        /*        if (isUpdated) {
                     showBackConfirmationDialog();
                 } else {
                     onBackPressed();
-                }
+                }*/
+                onBackPressed();
                 break;
 
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isUpdated) {
+            showBackConfirmationDialog();
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -1326,12 +1353,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         firstExpandableView();
         expandCollapse();
 
-        inputFirstName.addTextChangedListener(nameTextWatcher);
-        inputLastName.addTextChangedListener(nameTextWatcher);
+        inputFirstName.addTextChangedListener(valueTextWatcher);
+        inputLastName.addTextChangedListener(valueTextWatcher);
 
     }
 
-    TextWatcher nameTextWatcher = new TextWatcher() {
+    TextWatcher valueTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -1817,69 +1844,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
 
         };
-
-        List<String> typeList;
-
-        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
-                .array.types_phone_number)));
-        spinnerPhoneAdapter = new ArrayAdapter<>(this, R.layout
-                .list_item_spinner, typeList);
-        spinnerPhoneAdapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-
-        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
-                .array.types_email_address)));
-        spinnerEmailAdapter = new ArrayAdapter<>(this, R.layout
-                .list_item_spinner, typeList);
-
-        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
-                .array.types_email_address)));
-        spinnerWebsiteAdapter = new ArrayAdapter<>(this, R.layout
-                .list_item_spinner, typeList);
-        spinnerWebsiteAdapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-
-        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
-                .array.types_email_address)));
-        spinnerWebsiteAdapter = new ArrayAdapter<>(this, R.layout
-                .list_item_spinner, typeList);
-        spinnerWebsiteAdapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-
-        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
-                .array.types_social_media)));
-        spinnerImAccountAdapter = new ArrayAdapter<>(this, R.layout
-                .list_item_spinner, typeList);
-        spinnerImAccountAdapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-
-        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
-                .array.types_social_media)));
-        spinnerImAccountAdapter = new ArrayAdapter<>(this, R.layout
-                .list_item_spinner, typeList);
-        spinnerImAccountAdapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-
-        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
-                .array.types_social_media)));
-        spinnerImAccountAdapter = new ArrayAdapter<>(this, R.layout
-                .list_item_spinner, typeList);
-        spinnerImAccountAdapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-
-        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
-                .array.types_Event)));
-        spinnerEventAdapter = new ArrayAdapter<>(this, R.layout
-                .list_item_spinner, typeList);
-        spinnerEventAdapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-
-        typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array
-                .types_Event)));
-        spinnerEventAdapter = new ArrayAdapter<>(this, R.layout
-                .list_item_spinner, typeList);
-        spinnerEventAdapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
     }
 
     private void selectGenderMale() {
@@ -2028,6 +1992,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 addView(AppConstants.PHONE_NUMBER, linearPhoneDetails, arrayListPhoneNumberObject
                         .get(i), i);
             }
+            for (int i = 0; i < linearPhoneDetails.getChildCount(); i++) {
+                View linearPhone = linearPhoneDetails.getChildAt(i);
+                EditText emailId = (EditText) linearPhone.findViewById(R.id.input_value);
+                emailId.addTextChangedListener(valueTextWatcher);
+            }
+//            inputValue.addTextChangedListener(valueTextWatcher);
         } else {
             addView(AppConstants.PHONE_NUMBER, linearPhoneDetails, null, -1);
         }
@@ -2051,6 +2021,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             for (int i = 0; i < arrayListEmailObject.size(); i++) {
                 addView(AppConstants.EMAIL, linearEmailDetails, arrayListEmailObject.get(i), i);
             }
+            for (int i = 0; i < linearEmailDetails.getChildCount(); i++) {
+                View linearEmail = linearEmailDetails.getChildAt(i);
+                EditText emailId = (EditText) linearEmail.findViewById(R.id.input_value);
+                emailId.addTextChangedListener(valueTextWatcher);
+            }
+//            inputValue.addTextChangedListener(valueTextWatcher);
         } else {
             addView(AppConstants.EMAIL, linearEmailDetails, null, -1);
         }
@@ -2076,6 +2052,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 addView(AppConstants.WEBSITE, linearWebsiteDetails, arrayListWebsiteObject.get(i)
                         , i);
             }
+            for (int i = 0; i < linearWebsiteDetails.getChildCount(); i++) {
+                View linearWebsite = linearWebsiteDetails.getChildAt(i);
+                EditText Website = (EditText) linearWebsite.findViewById(R.id.input_value);
+                Website.addTextChangedListener(valueTextWatcher);
+            }
+//            inputValue.addTextChangedListener(valueTextWatcher);
         } else {
             addView(AppConstants.WEBSITE, linearWebsiteDetails, null, -1);
         }
@@ -2104,6 +2086,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails,
                         arrayListSocialContactObject.get(i), i);
             }
+            for (int i = 0; i < linearSocialContactDetails.getChildCount(); i++) {
+                View linearSocialContact = linearSocialContactDetails.getChildAt(i);
+                EditText socialContact = (EditText) linearSocialContact.findViewById(R.id
+                        .input_value);
+                socialContact.addTextChangedListener(valueTextWatcher);
+            }
+//            inputValue.addTextChangedListener(valueTextWatcher);
         } else {
             addView(AppConstants.IM_ACCOUNT, linearSocialContactDetails, null, -1);
         }
@@ -2134,6 +2123,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             for (int i = 0; i < arrayListEventObject.size(); i++) {
                 addView(AppConstants.EVENT, linearEventDetails, arrayListEventObject.get(i), i);
             }
+            for (int i = 0; i < linearEventDetails.getChildCount(); i++) {
+                View linearEvent = linearEventDetails.getChildAt(i);
+                EditText event = (EditText) linearEvent.findViewById(R.id.input_value);
+                event.addTextChangedListener(valueTextWatcher);
+            }
+//            inputValue.addTextChangedListener(valueTextWatcher);
         } else {
             addView(AppConstants.EVENT, linearEventDetails, null, -1);
         }
@@ -2161,6 +2156,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             for (int i = 0; i < arrayListOrganizationObject.size(); i++) {
                 addOrganizationView(arrayListOrganizationObject.get(i));
             }
+            inputCompanyName.addTextChangedListener(valueTextWatcher);
+            inputDesignationName.addTextChangedListener(valueTextWatcher);
         } else {
             addOrganizationView(null);
         }
@@ -2182,9 +2179,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             address.setNeighborhood(arrayListAddress.get(i).getAmNeighborhood());
             address.setPostCode(arrayListAddress.get(i).getAmPostCode());
             address.setAddressType(arrayListAddress.get(i).getAmAddressType());
-           /* address.setGoogleLatitude(arrayListAddress.get(i).getAmGoogleLatitude());
-            address.setGoogleLongitude(arrayListAddress.get(i).getAmGoogleLongitude());*/
             ArrayList<String> arrayListLatLong = new ArrayList<>();
+            arrayListLatLong.add(arrayListAddress.get(i).getAmGoogleLongitude());
+            arrayListLatLong.add(arrayListAddress.get(i).getAmGoogleLatitude());
+            address.setGoogleLatLong(arrayListLatLong);
+            /*address.setGoogleLatitude(arrayListAddress.get(i).getAmGoogleLatitude());
+            address.setGoogleLongitude(arrayListAddress.get(i).getAmGoogleLongitude());*/
             arrayListLatLong.add(arrayListAddress.get(i).getAmGoogleLongitude());
             arrayListLatLong.add(arrayListAddress.get(i).getAmGoogleLatitude());
             address.setGoogleLatLong(arrayListLatLong);
@@ -2197,6 +2197,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             for (int i = 0; i < arrayListAddressObject.size(); i++) {
                 addAddressView(arrayListAddressObject.get(i), i);
             }
+            inputCountry.addTextChangedListener(valueTextWatcher);
+            inputState.addTextChangedListener(valueTextWatcher);
+            inputCity.addTextChangedListener(valueTextWatcher);
+            inputStreet.addTextChangedListener(valueTextWatcher);
+            inputNeighborhood.addTextChangedListener(valueTextWatcher);
+            inputPinCode.addTextChangedListener(valueTextWatcher);
         } else {
             addAddressView(null, 0);
         }
@@ -2277,6 +2283,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
         ImageView imageViewDelete = (ImageView) view.findViewById(R.id.image_delete);
         final Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
+//        final EditText inputValue = (EditText) view.findViewById(R.id.input_value);
         final EditText inputValue = (EditText) view.findViewById(R.id.input_value);
         LinearLayout linerCheckbox = (LinearLayout) view.findViewById(R.id.liner_checkbox);
         final CheckBox checkboxHideYear = (CheckBox) view.findViewById(R.id.checkbox_hide_year);
@@ -2324,8 +2331,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     textIsPublic.setText(String.valueOf(phoneNumber.getPhonePublic()));
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(phoneNumber.getPhoneType()))) {
-                        spinnerPosition = spinnerPhoneAdapter.getPosition(phoneNumber.getPhoneType
-                                ());
+                        spinnerPosition = spinnerPhoneAdapter.getPosition(phoneNumber
+                                .getPhoneType());
                     } else {
                         spinnerPhoneAdapter.add(phoneNumber.getPhoneType());
                         spinnerPhoneAdapter.notifyDataSetChanged();
@@ -2573,9 +2580,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
 //        TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
         ImageView deleteOrganization = (ImageView) view.findViewById(R.id.deleteOrganization);
-        final EditText inputCompanyName = (EditText) view.findViewById(R.id.input_company_name);
-        final EditText inputDesignationName = (EditText) view.findViewById(R.id
-                .input_designation_name);
+        inputCompanyName = (EditText) view.findViewById(R.id.input_company_name);
+        inputDesignationName = (EditText) view.findViewById(R.id.input_designation_name);
         final CheckBox checkboxOrganization = (CheckBox) view.findViewById(R.id
                 .checkbox_organization);
 
@@ -2786,10 +2792,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     intent.putExtra(AppConstants.EXTRA_LATITUDE, mapLatitude);
                     intent.putExtra(AppConstants.EXTRA_LONGITUDE, mapLongitude);*/
 
-                        intent.putExtra(AppConstants.EXTRA_LATITUDE, Double.parseDouble(StringUtils
+                      /*  intent.putExtra(AppConstants.EXTRA_LATITUDE, Double.parseDouble
+                      (StringUtils
                                 .defaultIfEmpty(textLatitude.getText().toString(), "0")));
                         intent.putExtra(AppConstants.EXTRA_LONGITUDE, Double.parseDouble(StringUtils
-                                .defaultIfEmpty(textLongitude.getText().toString(), "0")));
+                                .defaultIfEmpty(textLongitude.getText().toString(), "0")));*/
                         String formattedAddress = Utils.setFormattedAddress(streetName,
                                 neighborhoodName, cityName, stateName, countryName, pinCodeName);
                         if (StringUtils.length(formattedAddress) > 0) {
