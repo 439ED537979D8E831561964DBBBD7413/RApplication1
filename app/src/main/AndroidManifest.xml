@@ -185,20 +185,8 @@
         <activity android:name=".SearchActivity" />
         <activity android:name=".contacts.EditProfileActivity" />
         <activity android:name=".EditProfileActivity" />
-        <activity android:name=".SetPasswordActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".EnterPasswordActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".SetPasswordActivity" />
+        <activity android:name=".EnterPasswordActivity" />
     </application>
 
 </manifest>
