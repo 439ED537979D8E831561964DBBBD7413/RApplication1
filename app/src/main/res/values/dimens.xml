@@ -63,7 +63,7 @@
     <!--search-->
 
     <dimen name="height_pb_contact_search">260dp</dimen>
-    <dimen name="height_global_contact_search"></dimen>
+<!--    <dimen name="height_global_contact_search"></dimen>-->
     <dimen name="height_global_button">45dp</dimen>
 
 </resources>
