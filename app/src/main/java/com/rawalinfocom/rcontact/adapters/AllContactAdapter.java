@@ -41,6 +41,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -224,7 +225,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemViewType(int position) {
-        if (position == arrayListUserContact.size()) {
+//        if (position == arrayListUserContact.size() && fragment!=null) {
+        if (position == arrayListUserContact.size() && !(context instanceof SearchActivity)) {
             return FOOTER;
         } else if (arrayListUserContact.get(position) instanceof ProfileData) {
             return CONTACT;
@@ -236,7 +238,14 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return (arrayListUserContact.size() + 1);
+//        if(fragment!=null){
+        if(!(context instanceof SearchActivity)){
+            return (arrayListUserContact.size() + 1);
+        }else
+        {
+            return arrayListUserContact.size();
+        }
+
     }
 
     /**
@@ -507,7 +516,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                     .REQUEST_CODE_PROFILE_DETAIL);
                             ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
                                     .anim.exit);
-                        } else {
+                        } else if (fragment instanceof FavoritesFragment) {
                             Intent intent = new Intent(context, ProfileDetailActivity.class);
                             bundle.putBoolean(AppConstants.EXTRA_IS_FROM_FAVOURITE, true);
                             intent.putExtras(bundle);
@@ -515,6 +524,14 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                     .REQUEST_CODE_PROFILE_DETAIL);
                             ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
                                     .anim.exit);
+                        }else{
+                            if(context instanceof SearchActivity){
+                                Intent intent = new Intent(context, ProfileDetailActivity.class);
+                                intent.putExtras(bundle);
+                                context.startActivity(intent);
+                                ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
+                                        .anim.exit);
+                            }
                         }
                     }
                 } else {
@@ -1482,10 +1499,21 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         inviteContactObject.setArrayListEmailAddress(arrayListEmail);
 
         if (Utils.isNetworkAvailable(context)) {
-            new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    inviteContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_SEND_INVITATION, null, true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+            if(fragment!=null){
+                new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                        inviteContactObject, null, WsResponseObject.class, WsConstants
+                        .REQ_SEND_INVITATION, null, true).execute
+                        (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+            }else{
+                if(context instanceof SearchActivity){
+                    new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                            inviteContactObject, null, WsResponseObject.class, WsConstants
+                            .REQ_SEND_INVITATION, null, true).execute
+                            (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+                }
+
+            }
+
         }
         /*else {
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
