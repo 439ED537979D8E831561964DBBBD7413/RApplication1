@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.rawalinfocom.rcontact">
 
@@ -184,7 +185,20 @@
         <activity android:name=".SearchActivity" />
         <activity android:name=".contacts.EditProfileActivity" />
         <activity android:name=".EditProfileActivity" />
-        <activity android:name=".SetPasswordActivity" />
+        <activity android:name=".SetPasswordActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".EnterPasswordActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
