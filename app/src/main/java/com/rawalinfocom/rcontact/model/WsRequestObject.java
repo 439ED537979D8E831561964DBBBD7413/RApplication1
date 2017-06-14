@@ -226,6 +226,10 @@ public class WsRequestObject {
     private ArrayList<CallLogHistoryType> historyTypeArrayList;
     private ArrayList<SmsDataType> arrayListSmsDataType;
 
+    private ArrayList<GlobalSearchType> globalSearchTypeArrayList;
+
+    private String searchQuery;
+
     @JsonProperty("pr_reply")
     private String prReply;
 
@@ -639,5 +643,19 @@ public class WsRequestObject {
 
     public void setArrayListSmsDataType(ArrayList<SmsDataType> arrayListSmsDataType) {
         this.arrayListSmsDataType = arrayListSmsDataType;
+    }
+
+    @JsonProperty("results")
+    public ArrayList<GlobalSearchType> getGlobalSearchTypeArrayList() {
+        return globalSearchTypeArrayList;
+    }
+
+    public void setGlobalSearchTypeArrayList(ArrayList<GlobalSearchType> globalSearchTypeArrayList) {
+        this.globalSearchTypeArrayList = globalSearchTypeArrayList;
+    }
+
+    @JsonProperty("search")
+    public void setSearchQuery(String searchQuery) {
+        this.searchQuery = searchQuery;
     }
 }
