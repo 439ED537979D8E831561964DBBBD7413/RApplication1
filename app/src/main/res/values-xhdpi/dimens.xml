@@ -1,4 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <dimen name="password_logo">200dp</dimen>
+     <dimen name="subtitle">18sp</dimen>
+    <dimen name="content">12sp</dimen>
+    <dimen name="sub_content">10sp</dimen>
+
+    <dimen name="activity_margin">5dp</dimen>
+
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
@@ -25,7 +34,6 @@
     <dimen name="margin_huge">64dp</dimen>
     <dimen name="margin_extra_small">6dp</dimen>
 
-
     <dimen name="list_item_height">72dp</dimen>
 
     <dimen name="padding_around_content_area">24dp</dimen>
@@ -48,22 +56,15 @@
     <dimen name="text_size_14sp">14sp</dimen>
     <dimen name="margin_3dp">3dp</dimen>
 
-
-
     <!--call dialer-->
     <dimen name="padding_12dp">12dp</dimen>
     <dimen name="text_size_32sp">32sp</dimen>
     <dimen name="text_size_45sp">45sp</dimen>
-    <dimen name="text_size_25sp">25sp</dimen>
+    <dimen name="text_size_25sp">18sp</dimen>
     <dimen name="padding_14dp">14dp</dimen>
     <dimen name="margin_28dp">28dp</dimen>
     <dimen name="margin_20dp">20dp</dimen>
     <dimen name="margin_25dp">25dp</dimen>
 
-    <!--search-->
-
-    <dimen name="height_pb_contact_search">260dp</dimen>
-    <dimen name="height_global_contact_search"></dimen>
-    <dimen name="height_global_button">45dp</dimen>
 
 </resources>
