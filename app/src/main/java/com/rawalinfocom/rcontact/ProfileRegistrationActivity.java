@@ -774,7 +774,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                         .getPhoneId());
                 mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i)
                         .getPhoneType());
-                mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(i)
+                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i)
                         .getPhoneNumber());
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
                         .get(i).getPhonePublic()));
