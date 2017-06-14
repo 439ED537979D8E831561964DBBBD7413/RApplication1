@@ -60,5 +60,10 @@
     <dimen name="margin_20dp">20dp</dimen>
     <dimen name="margin_25dp">25dp</dimen>
 
+    <!--search-->
+
+    <dimen name="height_pb_contact_search">260dp</dimen>
+    <dimen name="height_global_contact_search"></dimen>
+    <dimen name="height_global_button">45dp</dimen>
 
 </resources>
