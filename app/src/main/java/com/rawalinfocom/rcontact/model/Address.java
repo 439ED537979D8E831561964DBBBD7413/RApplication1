@@ -20,13 +20,13 @@ public class Address {
     private String amStreet;
     private int amIsPrivate;
     private String amAddressType;
+    private String amGoogleAddress;
     private String amGoogleLatitude;
     private String amGoogleLongitude;
     private String amAddressPrivacy;
     private String rcProfileMasterPmId;
 
 //    private String amCustomType;
-//    private String amGoogleAddress;
 
     public String getAmId() {
         return amId;
@@ -154,5 +154,13 @@ public class Address {
 
     public void setAmIsPrivate(int amIsPrivate) {
         this.amIsPrivate = amIsPrivate;
+    }
+
+    public String getAmGoogleAddress() {
+        return amGoogleAddress;
+    }
+
+    public void setAmGoogleAddress(String amGoogleAddress) {
+        this.amGoogleAddress = amGoogleAddress;
     }
 }

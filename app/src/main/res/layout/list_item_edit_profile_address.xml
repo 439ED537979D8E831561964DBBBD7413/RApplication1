@@ -22,41 +22,68 @@
         android:text="@string/im_cross"
         android:visibility="gone"/>-->
 
-    <ImageView
-        android:id="@+id/image_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/ic_delete"
-        android:visibility="visible"/>
+    <!-- <ImageView
+         android:id="@+id/image_delete"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentEnd="true"
+         android:layout_alignParentRight="true"
+         android:src="@drawable/ic_delete"
+         android:visibility="visible"/>
 
-    <Spinner
-        android:id="@+id/spinner_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_small"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_small"
-        android:layout_marginStart="@dimen/margin_small"
-        android:layout_toLeftOf="@id/image_delete"
-        android:layout_toStartOf="@id/image_delete"/>
+     <Spinner
+         android:id="@+id/spinner_type"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_marginEnd="@dimen/margin_small"
+         android:layout_marginLeft="@dimen/margin_small"
+         android:layout_marginRight="@dimen/margin_small"
+         android:layout_marginStart="@dimen/margin_small"
+         android:layout_toLeftOf="@id/image_delete"
+         android:layout_toStartOf="@id/image_delete"/>-->
 
     <LinearLayout
         android:id="@+id/linear_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/spinner_type"
-        android:layout_toStartOf="@id/spinner_type"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/input_country"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent"
-            android:textSize="16sp"/>
-        <!--android:textColorHint="@color/darkCyan"-->
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/image_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:contentDescription="@string/str_content_description"
+                android:src="@drawable/ic_delete"
+                android:visibility="visible"/>
+
+            <Spinner
+                android:id="@+id/spinner_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_marginRight="@dimen/margin_small"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_toLeftOf="@id/image_delete"
+                android:layout_toStartOf="@id/image_delete"/>
+
+            <EditText
+                android:id="@+id/input_country"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/spinner_type"
+                android:layout_toStartOf="@id/spinner_type"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"/>
+
+        </RelativeLayout>
+
 
         <EditText
             android:id="@+id/input_state"
@@ -115,13 +142,33 @@
             android:textSize="16sp"
             android:visibility="gone"/>
 
-        <EditText
-            android:id="@+id/input_pin_code"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent"
-            android:textSize="16sp"
-            tools:ignore="TextFields"/>
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/text_image_map_marker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:padding="@dimen/margin_small"
+                android:text="@string/im_map_marker"
+                android:textSize="25sp"/>
+
+            <EditText
+                android:id="@+id/input_pin_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/text_image_map_marker"
+                android:layout_toStartOf="@id/text_image_map_marker"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                tools:ignore="TextFields"/>
+
+        </RelativeLayout>
+
+
         <!--android:textColorHint="@color/darkCyan"-->
 
 
@@ -137,15 +184,15 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/text_image_map_marker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/linear_address"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:padding="@dimen/margin_small"
-        android:text="@string/im_map_marker"
-        android:textSize="25sp"/>
+    <!--    <TextView
+            android:id="@+id/text_image_map_marker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/linear_address"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/margin_small"
+            android:text="@string/im_map_marker"
+            android:textSize="25sp"/>-->
 
 </RelativeLayout>
