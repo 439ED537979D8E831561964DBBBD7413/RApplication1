@@ -446,6 +446,7 @@ public class Utils {
 
     public static String convertBitmapToBase64(Bitmap imgBitmap) {
 //        imgBitmap = Bitmap.createScaledBitmap(imgBitmap, 100, 100, false);
+        imgBitmap = Bitmap.createScaledBitmap(imgBitmap, 512, 512, false);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         imgBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
