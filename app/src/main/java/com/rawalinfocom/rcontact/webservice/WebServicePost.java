@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.webservice;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
@@ -111,6 +112,59 @@ class WebServicePost {
                     inputStream = new BufferedInputStream(urlConnection.getInputStream());
                     String responseString = convertInputStreamToString(inputStream);
                     response = getMapper().readValue(responseString, responseType);
+                } else if (statusCode == HttpsURLConnection.HTTP_BAD_REQUEST) {
+                    ((Activity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+//                            Toast.makeText(context, "Bad Request", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    Log.e("Status Code: ", HttpsURLConnection.HTTP_BAD_REQUEST + " : Bad Request " +
+                            ": Due to user error");
+                    response = null;
+                } else if (statusCode == HttpsURLConnection.HTTP_INTERNAL_ERROR) {
+                    ((Activity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                         /*   Toast.makeText(context, "Internal Server Error", Toast.LENGTH_SHORT)
+                                    .show();*/
+                        }
+                    });
+                    Log.e("Status Code: ", HttpsURLConnection.HTTP_INTERNAL_ERROR + " : Internal " +
+                            "Server Error : Due to any unhandled error on server");
+                    response = null;
+                } else if (statusCode == HttpsURLConnection.HTTP_NOT_FOUND) {
+                    ((Activity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+//                            Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    Log.e("Status Code: ", HttpsURLConnection.HTTP_NOT_FOUND + " :  Not Found :  " +
+                            "Request resource not found");
+                    response = null;
+                } else if (statusCode == HttpsURLConnection.HTTP_UNAUTHORIZED) {
+                    ((Activity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+//                            Toast.makeText(context, "Unauthorised Access", Toast.LENGTH_SHORT)
+//                                    .show();
+                        }
+                    });
+                    Log.e("Status Code: ", HttpsURLConnection.HTTP_UNAUTHORIZED + " :  " +
+                            "Unauthorised Access :  Due to invalid credentials or invalid access " +
+                            "token or expired token");
+                    response = null;
+                } else if (statusCode == 429) {
+                    ((Activity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+//                            Toast.makeText(context, "Too many request", Toast.LENGTH_SHORT)
+// .show();
+                        }
+                    });
+                    Log.e("Status Code: ", 429 + " :  Too many request :  Due to API throttling");
+                    response = null;
                 } else {
                     response = null;
                 }
