@@ -756,8 +756,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             address.setNeighborhood(arrayListAddress.get(i).getAmNeighborhood());
             address.setPostCode(arrayListAddress.get(i).getAmPostCode());
             address.setAddressType(arrayListAddress.get(i).getAmAddressType());
-            address.setGoogleLatitude(arrayListAddress.get(i).getAmGoogleLatitude());
-            address.setGoogleLongitude(arrayListAddress.get(i).getAmGoogleLongitude());
+          /*  address.setGoogleLatitude(arrayListAddress.get(i).getAmGoogleLatitude());
+            address.setGoogleLongitude(arrayListAddress.get(i).getAmGoogleLongitude());*/
             address.setAddId(arrayListAddress.get(i).getAmRecordIndexId());
             address.setAddPublic(Integer.parseInt(arrayListAddress.get(i).getAmAddressPrivacy()));
             arrayListAddressObject.add(address);
@@ -1234,8 +1234,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             inputStreet.setText(address.getStreet());
             inputNeighborhood.setText(address.getNeighborhood());
             inputPinCode.setText(address.getPostCode());
-            textLatitude.setText(address.getGoogleLatitude());
-            textLongitude.setText(address.getGoogleLongitude());
+          /*  textLatitude.setText(address.getGoogleLatitude());
+            textLongitude.setText(address.getGoogleLongitude());*/
             textIsPublic.setText(String.valueOf(address.getAddPublic()));
             formattedAddress = address.getFormattedAddress();
             /*int spinnerPosition;

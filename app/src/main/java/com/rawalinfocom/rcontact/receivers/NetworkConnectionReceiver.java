@@ -3,12 +3,10 @@ package com.rawalinfocom.rcontact.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import com.rawalinfocom.rcontact.OnlineDataSync;
 
@@ -28,8 +26,7 @@ public class NetworkConnectionReceiver extends BroadcastReceiver {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
-        if (isConnected && ContextCompat.checkSelfPermission(context, android.Manifest.permission
-                .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+        if (isConnected) {
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -38,6 +35,5 @@ public class NetworkConnectionReceiver extends BroadcastReceiver {
             });
 
         }
-
     }
 }

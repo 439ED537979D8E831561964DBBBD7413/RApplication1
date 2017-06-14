@@ -777,8 +777,8 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
             address.setNeighborhood(arrayListAddress.get(i).getAmNeighborhood());
             address.setPostCode(arrayListAddress.get(i).getAmPostCode());
             address.setAddressType(arrayListAddress.get(i).getAmAddressType());
-            address.setGoogleLatitude(arrayListAddress.get(i).getAmGoogleLatitude());
-            address.setGoogleLongitude(arrayListAddress.get(i).getAmGoogleLongitude());
+           /* address.setGoogleLatitude(arrayListAddress.get(i).getAmGoogleLatitude());
+            address.setGoogleLongitude(arrayListAddress.get(i).getAmGoogleLongitude());*/
             address.setAddId(arrayListAddress.get(i).getAmRecordIndexId());
             address.setAddPublic(Integer.parseInt(arrayListAddress.get(i).getAmAddressPrivacy()));
             arrayListAddressObject.add(address);
@@ -1120,8 +1120,8 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
             inputStreet.setText(address.getStreet());
             inputNeighborhood.setText(address.getNeighborhood());
             inputPinCode.setText(address.getPostCode());
-            textLatitude.setText(address.getGoogleLatitude());
-            textLongitude.setText(address.getGoogleLongitude());
+            /*textLatitude.setText(address.getGoogleLatitude());
+            textLongitude.setText(address.getGoogleLongitude());*/
             textIsPublic.setText(String.valueOf(address.getAddPublic()));
             formattedAddress = address.getFormattedAddress();
             /*int spinnerPosition;
@@ -1738,8 +1738,8 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                 address.setAmPoBox(arrayListAddress.get(j).getPoBox());
                 address.setAmStreet(arrayListAddress.get(j).getStreet());
                 address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-                address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
-                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
+                /*address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
+                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());*/
                 address.setRcProfileMasterPmId(getUserPmId());
                 addressList.add(address);
             }
@@ -2085,8 +2085,8 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                     cityName, stateName, countryName, pinCodeName));
             address.setAddressType((String) addressType.getSelectedItem());
             address.setGoogleAddress(textGoogleAddress.getText().toString());
-            address.setGoogleLatitude(textLatitude.getText().toString());
-            address.setGoogleLongitude(textLongitude.getText().toString());
+           /* address.setGoogleLatitude(textLatitude.getText().toString());
+            address.setGoogleLongitude(textLongitude.getText().toString());*/
 //            address.setAddPublic(Integer.parseInt(textIsPublic.getText().toString()));
             address.setAddId((String) relativeRowEditProfile.getTag());
             if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
