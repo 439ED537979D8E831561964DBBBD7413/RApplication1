@@ -87,6 +87,7 @@ public class WsConstants {
     public static final String REQ_GET_PROFILE_PRIVACY_REQUEST = "get-profile-privacy-request";
     public static final String REQ_GET_CALL_LOG_HISTORY_REQUEST = "call-history";
     public static final String REQ_UPLOAD_SMS_LOGS = "sync-sms-log";
+    public static final String REQ_GET_GLOBAL_SEARCH_RECORDS = "search";
 
 
 }

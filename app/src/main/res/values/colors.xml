@@ -53,5 +53,6 @@
 
     <color name="lightGrayishCyan">#CCE4E1</color>
     <color name="textColorGreen">#1F8072</color>
+    <color name="textColorBlue">#189BE7</color>
 
 </resources>
