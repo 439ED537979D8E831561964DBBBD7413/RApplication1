@@ -21,14 +21,14 @@ import butterknife.ButterKnife;
  * Created by user on 14/12/16.
  */
 
-public class BottomSheetSocialMediaAdapter extends RecyclerView
-        .Adapter<BottomSheetSocialMediaAdapter.SocialMediaViewHolder> {
+public class BottomSheetSocialMediaAdapter extends RecyclerView.Adapter<BottomSheetSocialMediaAdapter.SocialMediaViewHolder> {
 
     private Context context;
     private ArrayList<Integer> arrayListSocialMediaIcons;
     private ArrayList<String> arrayListSocialMediaNames;
 
-    public BottomSheetSocialMediaAdapter(Context context) {
+    public BottomSheetSocialMediaAdapter(Context context)
+    {
         this.context = context;
         arrayListSocialMediaIcons = new ArrayList<>();
         arrayListSocialMediaIcons.add(R.drawable.img_whatsapp);
@@ -63,7 +63,8 @@ public class BottomSheetSocialMediaAdapter extends RecyclerView
     }
 
     @Override
-    public int getItemCount() {
+    public int getItemCount()
+    {
         return arrayListSocialMediaIcons.size();
     }
 
