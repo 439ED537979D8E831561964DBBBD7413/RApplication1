@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,12 +19,13 @@ public class ProfileDataOperationAddress implements Serializable {
     private String city;
     private String postCode;
     private String street;
-    private String googleLongitude;
+    //    private String googleLongitude;
     private String googleAddress;
+    private ArrayList<String> googleLatLong;
     private String neighborhood;
     private String state;
     private String PoBox;
-    private String googleLatitude;
+    //    private String googleLatitude;
     private String formattedAddress;
     private int addPublic;
     private int isPrivate;
@@ -84,13 +86,13 @@ public class ProfileDataOperationAddress implements Serializable {
         this.street = street;
     }
 
-    @JsonProperty("google_lng")
-    public String getGoogleLongitude() {
-        return StringUtils.defaultString(this.googleLongitude);
+    @JsonProperty("lat_lng")
+    public ArrayList<String> getGoogleLatLong() {
+        return googleLatLong;
     }
 
-    public void setGoogleLongitude(String googleLongitude) {
-        this.googleLongitude = googleLongitude;
+    public void setGoogleLatLong(ArrayList<String> googleLatLong) {
+        this.googleLatLong = googleLatLong;
     }
 
     @JsonProperty("google_address")
@@ -127,15 +129,6 @@ public class ProfileDataOperationAddress implements Serializable {
 
     public void setPoBox(String po_box) {
         this.PoBox = po_box;
-    }
-
-    @JsonProperty("google_lat")
-    public String getGoogleLatitude() {
-        return StringUtils.defaultString(this.googleLatitude);
-    }
-
-    public void setGoogleLatitude(String googleLatitude) {
-        this.googleLatitude = googleLatitude;
     }
 
     @JsonProperty("formatted_address")

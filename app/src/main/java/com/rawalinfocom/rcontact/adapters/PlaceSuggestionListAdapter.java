@@ -56,12 +56,15 @@ public class PlaceSuggestionListAdapter extends RecyclerView.Adapter<PlaceSugges
 
         @BindView(R.id.text_suggestion)
         TextView textSuggestion;
+        @BindView(R.id.text_image_map_marker)
+        TextView textImageMapMarker;
 
         SuggestionViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
             textSuggestion.setTypeface(Utils.typefaceRegular(context));
+            textImageMapMarker.setTypeface(Utils.typefaceIcons(context));
 
         }
     }

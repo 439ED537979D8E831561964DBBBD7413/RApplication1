@@ -207,7 +207,11 @@
     <!--Search-->
     <string name="title_phonebook">Phone Book</string>
     <string name="search_hint">Search by name or number</string>
-    
+    <string name="title_global_directory">Global Directory</string>
+    <string name="view_more_results">VIEW MORE RESULTS</string>
+    <string name="search_on_global">SEARCH ON GLOBAL</string>
+    <string name="search_global_text">This search on rcontacts global directory</string>
+
     <!--edit-profile-text-->
     <string name="add_field">+ ADD FIELD</string>
     <string name="update">UPDATE</string>
@@ -234,5 +238,19 @@
     <string name="hint_select_anniversary">Choose your anniversary</string>
     <string name="check_text_donot_show_year">Don\'t Show Year</string>
     <string name="myprofile_toolbar_title">Edit My Profile</string>
+    <string name="set_password">Set Password</string>
+    <string name="title_confirm_password">Configure Password</string>
+    <string name="msg_enter_password">To prevent unauthorized access please set password.</string>
+    <string name="str_password">Password</string>
+    <string name="str_confirm_password">Confirm Password</string>
+    <string name="msg_tip_password">Tip: At least 1 upper &amp; lower case letter, 1 number &amp; special character and min 8 character long</string>
+    <string name="title_password_protected">Password Protected</string>
+    <string name="msg_enter_password_tips">Please enter password to access and open account.</string>
+    <string name="str_enter_password">Enter Password</string>
+    <string name="action_login">Login</string>
+    <string name="action_forget_password">Forgot Password</string>
+    <string name="err_msg_please_enter_password">Please enter password</string>
+    <string name="err_msg_please_confirm_password">Please enter confirm password</string>
+    <string name="err_msg_password_not_match">Password does not match</string>
 
 </resources>

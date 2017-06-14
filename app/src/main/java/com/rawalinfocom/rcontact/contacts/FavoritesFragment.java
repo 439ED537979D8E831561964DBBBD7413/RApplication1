@@ -32,7 +32,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
@@ -150,7 +149,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     @Override
     public void onResume() {
         super.onResume();
-        if (rContactApplication.getFavouriteStatus() == RContactApplication.FAVOURITE_REMOVED) {
+        if (allContactListAdapter != null && rContactApplication.getFavouriteStatus() ==
+                RContactApplication.FAVOURITE_REMOVED) {
             if (allContactListAdapter.getListClickedPosition() != -1) {
                 arrayListPhoneBookContacts.remove(allContactListAdapter.getListClickedPosition());
                 allContactListAdapter.notifyItemRemoved(allContactListAdapter
@@ -190,7 +190,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         //Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         Uri uri = ContactsContract.Data.CONTENT_URI;
 //        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER,
-//                ContactsContract.Data.LOOKUP_KEY, ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI,
+//                ContactsContract.Data.LOOKUP_KEY, ContactsContract.PhoneLookup
+// .PHOTO_THUMBNAIL_URI,
 //                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract
 //                .CommonDataKinds.Phone._ID, ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
 //                ContactsContract.Contacts._ID};
@@ -612,7 +613,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                     profileData.setTempPrefix(data.getString(prefixNameIdx));
                     profileData.setTempSufix(data.getString(suffixNameIdx));
                     profileData.setTempMiddleName(data.getString(middleNameIdx));
-                    profileData.setName(data.getString(givenNameIdx) + data.getString(familyNameIdx));
+                    profileData.setName(data.getString(givenNameIdx) + data.getString
+                            (familyNameIdx));
                     break;
             }
         }
