@@ -1321,10 +1321,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         address.setAmPoBox(arrayListAddress.get(j).getPoBox());
                         address.setAmStreet(arrayListAddress.get(j).getStreet());
                         address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-                        address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude
+                      /*  address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude
                                 ());
                         address.setAmGoogleLongitude(arrayListAddress.get(j)
-                                .getGoogleLongitude());
+                                .getGoogleLongitude());*/
 //                    address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                         address.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         address.setAmIsPrivate(arrayListAddress.get(j).getIsPrivate());

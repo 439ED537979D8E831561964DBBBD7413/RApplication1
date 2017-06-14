@@ -317,7 +317,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "Please add " +
                             "First Name and Last Name");
                 } else if (emailId.length() > 0 && !emailId.matches(emailPattern)) {
-                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "Please enter valid email");
+                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "Please enter " +
+                            "valid email");
                 } else {
                     profileRegistration(firstName, lastName, emailId, null, "", "",
                             IntegerConstants.REGISTRATION_VIA_EMAIL);
@@ -372,11 +373,13 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     @TargetApi(Build.VERSION_CODES.M)
     private void checkPermissionToExecute(String[] permissions, int requestCode) {
-        boolean READ_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission(ProfileRegistrationActivity
-                .this, permissions[0]) !=
+        boolean READ_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission
+                (ProfileRegistrationActivity
+                        .this, permissions[0]) !=
                 PackageManager.PERMISSION_GRANTED;
-        boolean WRITE_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission(ProfileRegistrationActivity
-                .this, permissions[1]) !=
+        boolean WRITE_EXTERNAL_STORAGE = ContextCompat.checkSelfPermission
+                (ProfileRegistrationActivity
+                        .this, permissions[1]) !=
                 PackageManager.PERMISSION_GRANTED;
         if (READ_EXTERNAL_STORAGE || WRITE_EXTERNAL_STORAGE) {
             requestPermissions(permissions, requestCode);
@@ -553,7 +556,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             case GOOGLE_LOGIN_PERMISSION:
             case LINKEDIN_LOGIN_PERMISSION:
                 if (permissions[0].equals(Manifest.permission
-                        .READ_EXTERNAL_STORAGE) && permissions[1].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        .READ_EXTERNAL_STORAGE) && permissions[1].equals(Manifest.permission
+                        .WRITE_EXTERNAL_STORAGE)) {
                     prepareToLoginUsingSocialMedia(requestCode);
                 }
                 break;
@@ -871,10 +875,13 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 address.setAmPoBox(arrayListAddress.get(j).getPoBox());
                 address.setAmStreet(arrayListAddress.get(j).getStreet());
                 address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-                address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
-                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());
+                if (arrayListAddress.get(j).getGoogleLatLong() != null && arrayListAddress.get(j)
+                        .getGoogleLatLong().size() == 2) {
+                    address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatLong().get(1));
+                    address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLatLong().get(0));
+                }
                 address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
-//                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
+                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                 address.setRcProfileMasterPmId(userProfileRegistered.getPmId());
                 addressList.add(address);
             }
