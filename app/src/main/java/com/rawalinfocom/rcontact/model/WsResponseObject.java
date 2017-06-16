@@ -54,6 +54,7 @@ public class WsResponseObject {
     private ArrayList<ProfileData> arrayListMapping;
 
     private  ArrayList<CallLogType> arrayListCallLogHistory;
+    private  ArrayList<GlobalSearchType> globalSearchTypeArrayList;
 
     private String profileSharingData;
 
@@ -187,5 +188,10 @@ public class WsResponseObject {
     @JsonProperty("call_history")
     public ArrayList<CallLogType> getArrayListCallLogHistory() {
         return arrayListCallLogHistory;
+    }
+
+    @JsonProperty("results")
+    public ArrayList<GlobalSearchType> getGlobalSearchTypeArrayList() {
+        return globalSearchTypeArrayList;
     }
 }

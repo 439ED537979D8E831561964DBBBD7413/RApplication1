@@ -354,29 +354,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
         if (error == null) {
 
-            //<editor-fold desc="REQ_GET_PROFILE_DETAIL">
-            if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_PROFILE_DETAIL)) {
-                WsResponseObject profileDetailResponse = (WsResponseObject) data;
-                Utils.hideProgressDialog();
-                if (profileDetailResponse != null && StringUtils.equalsIgnoreCase
-                        (profileDetailResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
-                    final ProfileDataOperation profileDetail = profileDetailResponse
-                            .getProfileDetail();
-                    setUpView(profileDetail);
-
-                } else {
-                    if (profileDetailResponse != null) {
-                        Log.e("error response", profileDetailResponse.getMessage());
-                    } else {
-                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
-                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
-                                .string.msg_try_later));
-                    }
-                }
-            }
-            //</editor-fold>
-
             // <editor-fold desc="REQ_MARK_AS_FAVOURITE">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_MARK_AS_FAVOURITE)) {
                 WsResponseObject favouriteStatusResponse = (WsResponseObject) data;
