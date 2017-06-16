@@ -54,11 +54,11 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final int VIEW_TYPE_LOADING = 1;
     private RecyclerView recyclerViewSmsLogs;
 
-    private OnLoadMoreListener onLoadMoreListener;
     private boolean isLoading;
     private boolean isMoreData = false;
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
+    private OnLoadMoreListener onLoadMoreListener;
     ArrayList<String> arrayListForKnownContact;
     ArrayList<SmsDataType> arrayList;
     private int searchCount;
