@@ -293,6 +293,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         rippleViewMoreGlobalContacts.setVisibility(View.VISIBLE);
                         rippleViewSearchOnGlobal.setVisibility(View.GONE);
                         textGlobalText.setVisibility(View.GONE);
+                        textNoRecords.setVisibility(View.GONE);
                         if(globalSearchCount>0){
                             globalSearchCount =  globalSearchCount + globalSearchTypeArrayList.size();
                         }else
@@ -311,6 +312,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                     }else{
                         recycleViewGlobalContact.setVisibility(View.GONE);
                         rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                        textNoRecords.setVisibility(View.VISIBLE);
+                        textNoRecords.setTypeface(Utils.typefaceRegular(this));
                     }
                 }
             }
