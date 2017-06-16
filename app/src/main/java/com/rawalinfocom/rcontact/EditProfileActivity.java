@@ -4,11 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,7 +15,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
@@ -41,7 +37,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -58,7 +53,6 @@ import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
-import com.rawalinfocom.rcontact.helper.CropingOption;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -382,7 +376,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     .into(imageProfile);
 
             if (selectedBitmap != null) {
-                String bitmapString = Utils.convertBitmapToBase64(selectedBitmap);
+                String bitmapString = Utils.convertBitmapToBase64(selectedBitmap, fileUri.getPath
+                        ());
                 ProfileDataOperation profileDataOperation = new ProfileDataOperation();
                 profileDataOperation.setPbProfilePhoto(bitmapString);
                 editProfile(profileDataOperation, AppConstants.PROFILE_IMAGE);
@@ -432,7 +427,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }
 
                 if (selectedBitmap != null) {
-                    String bitmapString = Utils.convertBitmapToBase64(selectedBitmap);
+                    String bitmapString = Utils.convertBitmapToBase64(selectedBitmap, picturePath);
                     ProfileDataOperation profileDataOperation = new ProfileDataOperation();
                     profileDataOperation.setPbProfilePhoto(bitmapString);
                     editProfile(profileDataOperation, AppConstants.PROFILE_IMAGE);
@@ -2324,7 +2319,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                             detailObject;
                     if (position == 0) {
-                        inputValue.setText(phoneNumber.getPhoneNumber() + " ◊");
+                        inputValue.setText(phoneNumber.getPhoneNumber());
+//                        inputValue.setText(phoneNumber.getPhoneNumber() + " ◊");
                     } else {
                         inputValue.setText(phoneNumber.getPhoneNumber());
                     }
@@ -3169,8 +3165,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         .getPhoneId());
                 mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i)
                         .getPhoneType());
-                mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(i)
-                        .getPhoneNumber());
+                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
                         .get(i).getPhonePublic()));
                 mobileNumber.setMnmIsPrimary(arrayListPhoneNumber.get(i).getPbRcpType());
