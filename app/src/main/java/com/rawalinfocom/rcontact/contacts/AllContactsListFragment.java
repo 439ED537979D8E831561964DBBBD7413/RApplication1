@@ -86,6 +86,7 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -1044,7 +1045,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 /*if (!tableProfileMobileMapping.getIsMobileNumberExists(profileData.get(j)
                         .getVerifiedMobileNumber())) {*/
                 ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
-                profileMobileMapping.setMpmMobileNumber(profileData.get(j)
+                profileMobileMapping.setMpmMobileNumber("+" + profileData.get(j)
                         .getVerifiedMobileNumber());
                 profileMobileMapping.setMpmCloudMnmId(profileData.get(j)
                         .getMnmCloudId());
@@ -1177,7 +1178,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                     MobileNumber mobileNumber = new MobileNumber();
                     mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
-                    mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(j)
+                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
                             .getPhoneNumber());
                     mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                     mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
@@ -1391,10 +1392,33 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 //</editor-fold>
 
             } else {
-                String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData.get(i)
+               /* String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData.get(i)
                         .getRcpPmId());
                 tableProfileMaster.updateRawIds(Integer.parseInt(userProfile.getPmRcpId()),
-                        newRawIds);
+                        newRawIds);*/
+                if (StringUtils.contains(existingRawId, ",")) {
+                    String rawIds[] = existingRawId.split(",");
+                    ArrayList<String> arrayListRawIds = new ArrayList<>(Arrays.asList(rawIds));
+                    if (arrayListRawIds.contains(mapLocalRcpId.get(profileData.get(i)
+                            .getRcpPmId()))) {
+                        return;
+                    } else {
+                        String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
+                                .get(i).getRcpPmId());
+                        tableProfileMaster.updateRawIds(Integer.parseInt(userProfile.getPmRcpId()),
+                                newRawIds);
+                    }
+                } else {
+                    if (existingRawId.equals(mapLocalRcpId.get(profileData.get(i)
+                            .getRcpPmId())))
+                        return;
+                    else {
+                        String newRawIds = existingRawId + "," + mapLocalRcpId.get(profileData
+                                .get(i).getRcpPmId());
+                        tableProfileMaster.updateRawIds(Integer.parseInt(userProfile.getPmRcpId()),
+                                newRawIds);
+                    }
+                }
             }
         }
     }

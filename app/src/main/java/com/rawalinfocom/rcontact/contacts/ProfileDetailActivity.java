@@ -1167,29 +1167,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
         if (error == null) {
 
-            //<editor-fold desc="REQ_GET_PROFILE_DETAIL">
-            if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_PROFILE_DETAIL)) {
-                WsResponseObject profileDetailResponse = (WsResponseObject) data;
-                Utils.hideProgressDialog();
-                if (profileDetailResponse != null && StringUtils.equalsIgnoreCase
-                        (profileDetailResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
-                    final ProfileDataOperation profileDetail = profileDetailResponse
-                            .getProfileDetail();
-                    setUpView(profileDetail);
-
-                } else {
-                    if (profileDetailResponse != null) {
-                        Log.e("error response", profileDetailResponse.getMessage());
-                    } else {
-                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
-                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
-                                .string.msg_try_later));
-                    }
-                }
-            }
-            //</editor-fold>
-
             // <editor-fold desc="REQ_MARK_AS_FAVOURITE">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_MARK_AS_FAVOURITE)) {
                 WsResponseObject favouriteStatusResponse = (WsResponseObject) data;
@@ -3181,22 +3158,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     //</editor-fold>
 
     //<editor-fold desc="Web Service Call">
-
-    private void getProfileDetail() {
-
-        WsRequestObject profileDetailObject = new WsRequestObject();
-        profileDetailObject.setPmId(Integer.parseInt(pmId));
-
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    profileDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_PROFILE_DETAIL, getString(R.string.msg_please_wait), true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_DETAIL);
-        } else {
-            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
-                    .string.msg_no_network));
-        }
-    }
 
     private void setFavouriteStatus(ArrayList<ProfileData> favourites) {
 

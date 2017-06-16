@@ -239,7 +239,8 @@ public class TableMobileMaster {
                 COLUMN_MNM_IS_PRIVATE + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
                 TABLE_RC_MOBILE_NUMBER_MASTER + " WHERE " +
-                COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
+                COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId + " ORDER BY " +
+                COLUMN_MNM_IS_PRIMARY;
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

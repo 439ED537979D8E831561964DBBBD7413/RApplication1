@@ -38,13 +38,13 @@ import javax.net.ssl.HttpsURLConnection;
 
 class WebServicePost {
 
-    private static final String TAG_LOG = "WebServicePost";
 
-    private final Lock lock = new ReentrantLock();
     private String jsonObject = "";
     private String url;
     private int requestType = 0;
     private ObjectMapper mapper = null;
+    private static final String TAG_LOG = "WebServicePost";
+    private final Lock lock = new ReentrantLock();
     private boolean setHeader = false;
     private Context context;
 
