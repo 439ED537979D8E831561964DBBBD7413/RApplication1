@@ -183,7 +183,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".SearchActivity" />
-        <activity android:name=".contacts.EditProfileActivity" />
         <activity android:name=".EditProfileActivity" />
         <activity android:name=".SetPasswordActivity" />
         <activity android:name=".EnterPasswordActivity" />
