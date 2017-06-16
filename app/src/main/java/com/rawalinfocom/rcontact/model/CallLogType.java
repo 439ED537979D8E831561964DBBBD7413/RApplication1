@@ -42,17 +42,17 @@ public class CallLogType implements Serializable {
     @JsonIgnore
     private String logDate;
 
-    //    @JsonIgnore
-    @JsonProperty("historyNumber")
+     @JsonIgnore
+//    @JsonProperty("historyNumber")
     private String historyNumber;
-    //    @JsonIgnore
-    @JsonProperty("historyDate")
+    @JsonIgnore
+//    @JsonProperty("historyDate")
     private long historyDate;
 
     @JsonProperty("historyDuration")
     private String historyCallTime;
-    //    @JsonIgnore
-    @JsonProperty("historyType")
+        @JsonIgnore
+   // @JsonProperty("historyType")
     private int historyType;
     //    @JsonIgnore
     @JsonProperty("historyNumberType")
