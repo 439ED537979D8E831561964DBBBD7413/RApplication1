@@ -86,6 +86,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equalsIgnoreCase("rawal_otp")) {
+//                    Log.i("MAULIK","Intent received");
                     final String message = intent.getStringExtra("message");
                     if (StringUtils.length(message) == AppConstants.OTP_LENGTH)
                         inputOtp.setText(message);
@@ -303,6 +304,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
     }
 
     private void verifyOtp(String message) {
+//        Log.i("MAULIK","verifyOtp");
         if (StringUtils.length(message) == AppConstants.OTP_LENGTH) {
             TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(databaseHandler);
             OtpLog otpLog = tableOtpLogDetails.getLastOtpDetails();
