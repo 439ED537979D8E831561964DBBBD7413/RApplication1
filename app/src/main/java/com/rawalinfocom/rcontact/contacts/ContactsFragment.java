@@ -85,8 +85,7 @@ public class ContactsFragment extends BaseFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
-    {
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         init();
@@ -118,7 +117,7 @@ public class ContactsFragment extends BaseFragment {
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.frame_container_call_tab, fragment, tag);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     private void setupTabLayout() {

@@ -20,6 +20,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        app:itemBackground="@drawable/drawer_item_bg"
         app:headerLayout="@layout/nav_header_contacts_main"
         app:menu="@menu/activity_contacts_main_drawer"/>
 
