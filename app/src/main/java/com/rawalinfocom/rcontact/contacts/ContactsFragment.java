@@ -114,7 +114,7 @@ public class ContactsFragment extends BaseFragment {
     }
 
     private void replaceFragment(Fragment fragment, String tag) {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getChildFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.frame_container_call_tab, fragment, tag);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

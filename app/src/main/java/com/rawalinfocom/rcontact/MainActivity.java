@@ -158,7 +158,9 @@ public class MainActivity extends BaseActivity implements NavigationView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts_main);
+
         ButterKnife.bind(this);
+
         /*Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
         startService(contactIdFetchService);*/
 
