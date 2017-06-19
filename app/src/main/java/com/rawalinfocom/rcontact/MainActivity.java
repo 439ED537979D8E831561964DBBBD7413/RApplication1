@@ -563,7 +563,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 /*if (!tableProfileMobileMapping.getIsMobileNumberExists(profileData.get(j)
                         .getVerifiedMobileNumber())) {*/
                 ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
-                profileMobileMapping.setMpmMobileNumber(profileData.get(j)
+                profileMobileMapping.setMpmMobileNumber("+" + profileData.get(j)
                         .getVerifiedMobileNumber());
                 profileMobileMapping.setMpmCloudMnmId(profileData.get(j)
                         .getMnmCloudId());
@@ -696,7 +696,7 @@ public class MainActivity extends BaseActivity implements NavigationView
 
                     MobileNumber mobileNumber = new MobileNumber();
                     mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(j).getPhoneId());
-                    mobileNumber.setMnmMobileNumber(arrayListPhoneNumber.get(j)
+                    mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(j)
                             .getPhoneNumber());
                     mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(j).getPhoneType());
                     mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
@@ -1471,13 +1471,22 @@ public class MainActivity extends BaseActivity implements NavigationView
                                     arrayListHistoryCount.add(tempCallLogType);
                                 }
                                 // 25/05/2017 Updated bcz sync format changed
-                                log.setHistoryNumber(tempCallLogType.getHistoryNumber());
-                                log.setHistoryType(tempCallLogType.getHistoryType());
-                                log.setHistoryDate(tempCallLogType.getHistoryDate());
+                                // 16/06/2017 changed done start
+                                //log.setHistoryNumber(tempCallLogType.getHistoryNumber());
+                                //log.setHistoryType(tempCallLogType.getHistoryType());
+                                //log.setHistoryDate(tempCallLogType.getHistoryDate());
                                 log.setHistoryDuration(tempCallLogType.getHistoryDuration());
                                 log.setHistoryCallSimNumber(tempCallLogType
                                         .getHistoryCallSimNumber());
                                 log.setHistoryId(tempCallLogType.getHistoryId());
+                                log.setCallDateAndTime(tempCallLogType.getCallDateAndTime());
+                                log.setTypeOfCall(tempCallLogType.getTypeOfCall());
+                                log.setDurationToPass(tempCallLogType.getDurationToPass());
+                                if (!StringUtils.isEmpty(tempCallLogType.getHistoryCallSimNumber()))
+                                    log.setHistoryCallSimNumber(tempCallLogType.getHistoryCallSimNumber());
+                                else
+                                    log.setHistoryCallSimNumber(" ");
+                                // 16/06/2017 changed done end
                             }
                             int logCount = arrayListHistoryCount.size();
                             log.setHistoryLogCount(logCount);

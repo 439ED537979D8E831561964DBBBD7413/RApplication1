@@ -244,21 +244,6 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
             }
             //</editor-fold>
 
-            // <editor-fold desc="REQ_UPLOAD_IMAGE">
-            if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_IMAGE)) {
-                WsResponseObject otpDetailResponse = (WsResponseObject) data;
-                if (otpDetailResponse.getStatus().equalsIgnoreCase(WsConstants
-                        .RESPONSE_STATUS_TRUE)) {
-
-                    Utils.showSuccessSnackBar(this, relativeRootMobileRegistration, "" +
-                            "Uploaded Successfully");
-
-                } else {
-                    Log.e("error response", otpDetailResponse.getMessage());
-                }
-            }
-            //</editor-fold>
-
         } else {
 //            AppUtils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootMobileRegistration, "" + error
@@ -293,31 +278,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                 return true;
             }
         });
-
-       /* Glide.with(this)
-                .load("http://www.newsread.in/wp-content/uploads/2016/06/Images-10.jpg")
-                .asBitmap()
-                .placeholder(R.mipmap.ic_launcher)
-                .override(100, 100)
-                .into(target);*/
     }
-
-    private SimpleTarget target = new SimpleTarget<Bitmap>() {
-        @Override
-        public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-//            imageRegistrationLogo.setImageBitmap(bitmap);
-
-            FileUtils fileUtils = new FileUtils(bitmap);
-            if (fileUtils.saveImageToDirectory()) {
-                Log.i("file absolute path: ", fileUtils.getrContactDir().getAbsolutePath());
-                uploadImage(Utils.convertBitmapToBase64(BitmapFactory.decodeFile(fileUtils
-                        .getrContactDir().getAbsolutePath())));
-            } else {
-                Log.e("onResourceReady: ", "There is some error in storing Image!");
-            }
-
-        }
-    };
 
     //</editor-fold>
 
@@ -340,25 +301,5 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                     .getString(R.string.msg_no_network));
         }
     }
-
-    private void uploadImage(String userImage) {
-
-        WsRequestObject otpObject = new WsRequestObject();
-       /* otpObject.setUserName("Monal");
-        otpObject.setUserImage(userImage);*/
-
-
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
-                    null, WsResponseObject.class, WsConstants.REQ_UPLOAD_IMAGE, getString(R.string
-                    .msg_please_wait), false).execute(WsConstants.WS_ROOT + WsConstants
-                    .REQ_UPLOAD_IMAGE);
-        } else {
-            Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources()
-                    .getString(R.string.msg_no_network));
-        }
-    }
-
-
     //</editor-fold>
 }

@@ -4,8 +4,13 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
+import android.util.Base64;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
@@ -13,6 +18,8 @@ import com.facebook.appevents.AppEventsLogger;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import io.fabric.sdk.android.Fabric;
@@ -50,9 +57,24 @@ public class RContactApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+//        Log.d("KeyHash:", "We are here");
+//        try {
+//            PackageInfo info = getPackageManager().getPackageInfo(
+//                    "com.rawalinfocom.rcontact",
+//                    PackageManager.GET_SIGNATURES);
+//            for (Signature signature : info.signatures) {
+//                MessageDigest md = MessageDigest.getInstance("SHA");
+//                md.update(signature.toByteArray());
+//                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+//            }
+//        } catch (PackageManager.NameNotFoundException e) {
+//
+//        } catch (NoSuchAlgorithmException e) {
+//
+//        }
+//        Log.d("KeyHash:", "We are here end");
 //         Fabric Initialization
-//        Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
 
         arrayListAllPhoneBookContacts = new ArrayList<>();
         arrayListAllContactHeaders = new ArrayList<>();

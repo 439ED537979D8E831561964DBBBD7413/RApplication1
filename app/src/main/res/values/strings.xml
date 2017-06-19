@@ -3,7 +3,6 @@
 
     <!-- facebook -->
     <string name="facebook_app_id">1410546345629965</string>
-    <string name="fb_login_protocol_scheme">fb1410546345629965</string>
     <string name="google_maps_key">AIzaSyBJSXzIhhMakvEuZ8JCLfbs5m1nKXf0zHA</string>
 
     <!-- Google -->
