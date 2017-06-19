@@ -971,7 +971,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
 
         while (data.moveToNext()) {
-
             long id = data.getLong(idIdx);
             ProfileData profileData = array.get(id);
 

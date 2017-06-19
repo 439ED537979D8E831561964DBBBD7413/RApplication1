@@ -1099,11 +1099,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (arrayListHistory != null && arrayListHistory.size() > 0) {
             CallLogType callLogType = arrayListHistory.get(arrayListHistory.size() - 1);
             String number = callLogType.getHistoryNumber();
+            String formattedNumber = "";
+            if(!StringUtils.isEmpty(number))
+                formattedNumber = Utils.getFormattedNumber(this, number);
             long date = callLogType.getHistoryDate();
                 /*Date date1 = new Date(date);
                 String finalDate = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss").format(date1);*/
             CallLogHistoryType callLogHistoryType = new CallLogHistoryType();
-            callLogHistoryType.setHistoryNumber(number);
+            if(!StringUtils.isEmpty(formattedNumber))
+                callLogHistoryType.setHistoryNumber(formattedNumber);
             callLogHistoryType.setHistoryDate(date);
             arrayListToSend.add(callLogHistoryType);
 
@@ -1329,9 +1333,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     if (callHistoryResponse != null) {
                         Log.e("error response", callHistoryResponse.getMessage());
                     } else {
-                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                        Log.e("onDeliveryResponse: ", "Callhistoryapi null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
                                 .string.msg_try_later));
+                        progressBarLoadCallLogs.setVisibility(View.GONE);
                     }
                 }
             }
@@ -1379,7 +1384,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
 
         } else
-
         {
 //            AppUtils.hideProgressDialog();
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, "" + error
@@ -1940,9 +1944,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             Matcher matcher1 = numberPat.matcher(historyName);
             if (matcher1.find()) {
 //                textToolbarTitle.setText("Unknown number");
-                textToolbarTitle.setText(historyName);
+//                textToolbarTitle.setText(historyName);
+                //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
+                textToolbarTitle.setText("Profile Detail");
             } else {
-                textToolbarTitle.setText(historyName);
+//                textToolbarTitle.setText(historyName);
+                //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
+                textToolbarTitle.setText("Profile Detail");
             }
             textFullScreenText.setTypeface(Utils.typefaceBold(this));
             textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
@@ -1954,8 +1962,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 textFullScreenText.setText(historyNumber);
 //                textToolbarTitle.setText("Unknown number");
-                textToolbarTitle.setText(historyNumber);
-
+//                textToolbarTitle.setText(historyNumber);
+                //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
+                textToolbarTitle.setText("Profile Detail");
             }
 
         }

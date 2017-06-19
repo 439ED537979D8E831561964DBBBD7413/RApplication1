@@ -12,6 +12,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -129,6 +130,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     GlobalSearchAdapter globalSearchAdapter;
     LinearLayoutManager mLinearLayoutManager;
     ArrayList<GlobalSearchType> globalSearchTypeArrayListMain;
+    private SyncCallLogAsyncTask syncCallLogAsyncTask;
+    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +146,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     @Override
     protected void onDestroy() {
         AppConstants.isFromSearchActivity = false;
+        if (syncCallLogAsyncTask != null)
+            syncCallLogAsyncTask.cancel(true);
+        if (syncSmsLogAsyncTask != null)
+            syncSmsLogAsyncTask.cancel(true);
         super.onDestroy();
     }
 
@@ -212,8 +219,11 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         if (logs || sms) {
             requestPermissions(permissions, requestCode);
         } else {
-            getCallLogData();
-            getSMSData();
+            syncCallLogAsyncTask  =  new SyncCallLogAsyncTask();
+            syncCallLogAsyncTask.execute();
+
+            syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+            syncSmsLogAsyncTask.execute();
         }
     }
 
@@ -331,6 +341,24 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         }
     }
 
+    private class SyncCallLogAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            getCallLogData();
+            return null;
+        }
+    }
+
+    private class SyncSmsLogAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            getSMSData();
+            return null;
+        }
+    }
+
     private void init() {
         textPbHeader.setTypeface(Utils.typefaceSemiBold(this));
         rlTitle.setVisibility(View.GONE);
@@ -362,7 +390,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
             } else {
-                getCallLogData();
+                syncCallLogAsyncTask =  new SyncCallLogAsyncTask();
+                syncCallLogAsyncTask.execute();
             }
         }
 
@@ -372,7 +401,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
             } else {
-                getSMSData();
+                syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                syncSmsLogAsyncTask.execute();
             }
         }
 
@@ -667,6 +697,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
 
                         while (cursor.moveToNext()) {
+
+                            if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.isCancelled())
+                                return;
+
                             CallLogType log = new CallLogType(this);
                             log.setNumber(cursor.getString(number));
                             String userName = cursor.getString(name);
@@ -1096,6 +1130,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             int type = cursor.getColumnIndexOrThrow(Telephony.Sms.TYPE);
                             int thread_id = cursor.getColumnIndexOrThrow(Telephony.Sms.THREAD_ID);
                             while (cursor.moveToNext()) {
+                                if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask
+                                        .isCancelled())
+                                    return;
                                 SmsDataType smsDataType = new SmsDataType();
                                 String address = cursor.getString(number);
                                 String contactNumber = "";

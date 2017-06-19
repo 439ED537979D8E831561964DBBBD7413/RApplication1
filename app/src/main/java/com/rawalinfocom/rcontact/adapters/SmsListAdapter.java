@@ -251,6 +251,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             } else {
                 userViewHolder.icon.setImageResource(R.drawable.home_screen_profile);
             }
+
             userViewHolder.llContent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -264,6 +265,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     intent.putExtra("finishActivityOnSaveCompleted", true);
                     context.startActivity(intent);
 
+//                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", add, null)));
 
                 }
             });
