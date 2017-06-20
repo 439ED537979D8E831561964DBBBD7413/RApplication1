@@ -898,7 +898,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     int pastVisiblesItems = mLinearLayoutManager.findFirstVisibleItemPosition();
 
                     if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                        Log.v("...", "Last Item Wow !");
+//                        Log.v("...", "Last Item Wow !");
                         //Do pagination.. i.e. fetch new data
                         if (isFirstTime) {
 //                            progressBarLoadCallLogs.setVisibility(View.VISIBLE);
@@ -1791,8 +1791,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             log.setNumberType(numberTypeLog);*/
                             String userNumber = cursor.getString(number);
                             String uniquePhoneBookId = getStarredStatusFromNumber(userNumber);
-                            Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" +
-                                    userNumber);
+                            /*Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" +
+                                    userNumber);*/
                             if (!TextUtils.isEmpty(uniquePhoneBookId)) {
                                 log.setLocalPbRowId(uniquePhoneBookId);
                             } else
@@ -2144,9 +2144,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         isDualSIM = telephonyInfo.isDualSIM();
         AppConstants.setIsDualSimPhone(isDualSIM);
-        Log.i("IsDual", isDualSIM + "");
-        Log.i("SIM1 ready", isSIM1Ready + "");
-        Log.i("SIM2 ready", isSIM2Ready + "");
+//        Log.i("IsDual", isDualSIM + "");
+        /*Log.i("SIM1 ready", isSIM1Ready + "");
+        Log.i("SIM2 ready", isSIM2Ready + "");*/
 
 
     }
@@ -2235,7 +2235,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 + " =?", new String[]{number}, null);
         if (c != null && c.getCount() > 0) {
             String id = c.getString(c.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID));
-            Log.i("Sim slot id", id + " of number " + number);
+//            Log.i("Sim slot id", id + " of number " + number);
         }
         c.close();
 
@@ -2312,12 +2312,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     String accountId = " ";
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         accountId = cursor.getString(account_id);
-                        if (!TextUtils.isEmpty(accountId) && account_id > 0)
-                            Log.e("Sim Type", accountId);
+                        /*if (!TextUtils.isEmpty(accountId) && account_id > 0)
+                            Log.e("Sim Type", accountId);*/
 
                         String accountName = cursor.getString(account);
-                        if (!TextUtils.isEmpty(accountName))
-                            Log.e("Sim Name", accountName);
+                        /*if (!TextUtils.isEmpty(accountName))
+                            Log.e("Sim Name", accountName);*/
 
 //                        String userImage = cursor.getString(profileImage);
 //                        if (userImage != null)
@@ -2325,7 +2325,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     } else {
                         if (account_id > 0) {
                             accountId = cursor.getString(account_id);
-                            Log.e("Sim Type", accountId);
+//                            Log.e("Sim Type", accountId);
                         }
                     }
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
@@ -2529,7 +2529,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+//            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
 
             removeLogs = intent.getBooleanExtra(AppConstants.EXTRA_REMOVE_CALL_LOGS, false);
 
@@ -2567,7 +2567,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private BroadcastReceiver localBroadcastReceiverDeleteLogs = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+//            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
 
             boolean deleteAll = intent.getBooleanExtra(AppConstants.EXTRA_DELETE_ALL_CALL_LOGS,
                     false);
@@ -2734,7 +2734,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private BroadcastReceiver localBroadcastReceiverTabChange = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+//            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
 
             if (AppConstants.EXTRA_CALL_LOG_SWITCH_TAB_VALUE) {
 //                loadsCallLogsInBackgroundAsyncTask.cancel(true);
@@ -2750,7 +2750,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private BroadcastReceiver localBroadcastReceiverBlock = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+//            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
 
             /*boolean isBlocked = intent.getBooleanExtra(AppConstants.EXTRA_CALL_LOG_BLOCK, false);
 

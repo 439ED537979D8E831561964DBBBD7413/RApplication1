@@ -96,11 +96,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     public static SmsDataType smsDataTypeReceiver;
     private MaterialDialog callConfirmationDialog;
 
-
     public SmsFragment() {
         // Required empty public constructor
     }
-
 
     public static SmsFragment newInstance() {
         return new SmsFragment();
@@ -177,6 +175,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     loadData();
                 }
             }
+
         }
     }
 
@@ -209,6 +208,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     loadData();
                 }
             }
+
         } else {
             isFromSettings = true;
             textGrantPermission.setVisibility(View.VISIBLE);
