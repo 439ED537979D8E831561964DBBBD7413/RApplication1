@@ -2,8 +2,11 @@ package com.rawalinfocom.rcontact.contacts;
 
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -82,6 +85,7 @@ import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.services.SyncService;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -143,6 +147,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     int settingRequestPermission = 0;
     public String callNumber = "";
     private SyncingTask syncingTask;
+    private LocalReceiver localReceiver;
 
     //<editor-fold desc="Constructors">
 
@@ -163,7 +168,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         phoneBookContacts = new PhoneBookContacts(getActivity());
-
+        localReceiver= new LocalReceiver();
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
         Utils.setBooleanPreference(getActivity(), AppConstants
                 .PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, true);
@@ -246,6 +251,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     }
                 }
             }
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction("ALL-CONTACT-SYNCED");
+            LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+            localBroadcastManager.registerReceiver(localReceiver,intentFilter);
             /*else if (settingRequestPermission == AppConstants
                     .MY_PERMISSIONS_REQUEST_READ_CONTACTS) {
 
@@ -673,9 +682,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //                syncContacts();
 //            }
 //        };
-        if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
-            syncingTask = new SyncingTask();
-            syncingTask.execute();
+        if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false) && !SyncService.isRunning) {
+            Intent intent = new Intent(getContext(), SyncService.class);
+            getContext().startService(intent);
+//            syncingTask = new SyncingTask();
+//            syncingTask.execute();
         }
     }
 
@@ -2137,6 +2148,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         } else {
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
                     .getString(R.string.msg_no_network));
+        }
+    }
+
+    class LocalReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(getActivity()!=null){
+                getRcpDetail();
+            }
+
         }
     }
 
