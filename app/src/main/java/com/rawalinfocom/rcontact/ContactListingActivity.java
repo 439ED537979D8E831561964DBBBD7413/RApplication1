@@ -161,8 +161,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                         shareContactNonRcp(receiver);
                     }
                 } else {
-                    Utils.showErrorSnackBar(this, activityContactListing, "Please select at least" +
-                            " one contact");
+                    Utils.showErrorSnackBar(this, activityContactListing, getString(R.string.please_select_one_contact));
                 }
 
                 break;
@@ -180,7 +179,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 Utils.hideProgressDialog();
                 if (shareResponse != null && StringUtils.equalsIgnoreCase
                         (shareResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                    Utils.showSuccessSnackBar(this, activityContactListing, "Invitation Shared");
+                    Utils.showSuccessSnackBar(this, activityContactListing, getString(R.string.invitation_shared));
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -206,8 +205,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 Utils.hideProgressDialog();
                 if (inviteResponse != null && StringUtils.equalsIgnoreCase
                         (inviteResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                    Utils.showSuccessSnackBar(this, activityContactListing, "Invitation Sent " +
-                            "successfully!");
+                    Utils.showSuccessSnackBar(this, activityContactListing, getString(R.string.invitation_sent));
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -464,14 +462,12 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     inviteContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_SEND_INVITATION, "Sending Invitation...", true).execute
+                    .REQ_SEND_INVITATION, getString(R.string.invitation_sending), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
         } else {
             Utils.showErrorSnackBar(this, activityContactListing, getResources()
                     .getString(R.string.msg_no_network));
         }
     }
-
     //</editor-fold>
-
 }

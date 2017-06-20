@@ -141,13 +141,11 @@ public class NotificationsActivity extends BaseActivity implements RippleView
         public void onReceive(Context context, Intent intent) {
 
             try {
-
                 updateNotificationCount();
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
     };
 

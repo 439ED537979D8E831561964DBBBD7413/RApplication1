@@ -64,12 +64,10 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
             subTabIndex = intent.getIntExtra("SUB_TAB_INDEX", 0);
             init();
         }
-
-
     }
 
     public void init() {
-        textToolbarTitle.setText("Notifications");
+        textToolbarTitle.setText(getString(R.string.text_notifications));
         int profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
         int profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
         profileCount = profileRequestCount + profileResponseCount;
@@ -135,22 +133,21 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
         int count = 0;
         switch (position) {
             case 0:
-                title = "Profile";
+                title = getString(R.string.str_tab_profile);
                 count = profileCount;
                 break;
             case 1:
-                title = "Rating";
+                title = getString(R.string.str_tab_rating);
                 count = ratingCount;
                 break;
             case 2:
-                title = "Comment";
+                title = getString(R.string.str_tab_comment);
                 count = commentsCount;
                 break;
             case 3:
-                title = "RContact";
+                title = getString(R.string.str_tab_r_contact);
                 count = rContactsCount;
                 break;
-
         }
 
         titleText.setText(title);
@@ -280,6 +277,4 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
         int badgeCount = tableNotificationStateMaster.getTotalUnreadCount();
         ShortcutBadger.applyCount(getApplicationContext(), badgeCount);
     }
-
-
 }

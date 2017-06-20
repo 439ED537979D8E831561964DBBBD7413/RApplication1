@@ -77,20 +77,21 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
         } else {
             holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "hh:mm a"));
         }
-        holder.textRatingDetailInfo.setText(item.getRaterName() + " reply you on your rating and comment.");
-        holder.buttonRatingViewReply.setText("VIEW REPLY");
+        holder.textRatingDetailInfo.setText(item.getRaterName() + context.getString(R.string.str_rating_comment_hint_1));
+        holder.buttonRatingViewReply.setAllCaps(true);
+        holder.buttonRatingViewReply.setText(context.getString(R.string.view_profile));
         holder.buttonRatingViewReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArrayList<String> arrayListComments = new ArrayList<>();
                 arrayListComments.add(item.getRaterName());
-                arrayListComments.add("Rating");
+                arrayListComments.add(context.getString(R.string.text_rating));
                 arrayListComments.add(item.getComment());
                 arrayListComments.add(Utils.formatDateTime(item.getCommentTime(), "dd MMM, hh:mm a"));
                 arrayListComments.add(item.getReply());
                 arrayListComments.add(Utils.formatDateTime(item.getReplyTime(), "dd MMM, hh:mm a"));
                 notificationPopupDialog = new NotificationPopupDialog(context, arrayListComments, true);
-                notificationPopupDialog.setDialogTitle(item.getRaterName() + " Rate You");
+                notificationPopupDialog.setDialogTitle(item.getRaterName() + context.getString(R.string.text_rate_you));
                 notificationPopupDialog.setRatingInfo(item.getRating());
                 notificationPopupDialog.showDialog();
             }

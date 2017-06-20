@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/relative_row_edit_profile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_row_edit_profile"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/text_is_public"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <!--<TextView
         android:id="@+id/text_image_cross"
@@ -60,7 +60,7 @@
                 android:layout_alignParentRight="true"
                 android:contentDescription="@string/str_content_description"
                 android:src="@drawable/ic_delete"
-                android:visibility="visible"/>
+                android:visibility="visible" />
 
             <Spinner
                 android:id="@+id/spinner_type"
@@ -71,7 +71,7 @@
                 android:layout_marginRight="@dimen/margin_small"
                 android:layout_marginStart="@dimen/margin_small"
                 android:layout_toLeftOf="@id/image_delete"
-                android:layout_toStartOf="@id/image_delete"/>
+                android:layout_toStartOf="@id/image_delete" />
 
             <EditText
                 android:id="@+id/input_country"
@@ -80,7 +80,7 @@
                 android:layout_toLeftOf="@id/spinner_type"
                 android:layout_toStartOf="@id/spinner_type"
                 android:textColor="@color/colorAccent"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
         </RelativeLayout>
 
@@ -90,7 +90,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
         <!--android:textColorHint="@color/darkCyan"-->
 
         <EditText
@@ -98,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
         <!--android:textColorHint="@color/darkCyan"-->
 
 
@@ -107,7 +107,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <!--android:textColorHint="@color/darkCyan"-->
 
@@ -117,7 +117,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
             android:textSize="16sp"
-            tools:ignore="TextFields"/>
+            tools:ignore="TextFields" />
         <!--android:textColorHint="@color/darkCyan"-->
 
 
@@ -126,21 +126,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/input_longitude"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/input_google_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -154,7 +154,7 @@
                 android:layout_alignParentRight="true"
                 android:padding="@dimen/margin_small"
                 android:text="@string/im_map_marker"
-                android:textSize="25sp"/>
+                android:textSize="25sp" />
 
             <EditText
                 android:id="@+id/input_pin_code"
@@ -164,7 +164,7 @@
                 android:layout_toStartOf="@id/text_image_map_marker"
                 android:textColor="@color/colorAccent"
                 android:textSize="16sp"
-                tools:ignore="TextFields"/>
+                tools:ignore="TextFields" />
 
         </RelativeLayout>
 
@@ -178,7 +178,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
             android:textSize="16sp"
-            tools:ignore="TextFields"/>
+            tools:ignore="TextFields" />
         <!--android:textColorHint="@color/darkCyan"-->
 
 

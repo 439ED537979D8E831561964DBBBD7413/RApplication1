@@ -1,9 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rawalinfocom.rcontact.contacts.AllContactsFragment">
 
     <!-- <android.support.design.widget.TabLayout
          android:id="@+id/tab_call"
@@ -56,19 +56,19 @@
         app:tabIndicatorHeight="0dp"
         app:tabMode="fixed"
         app:tabSelectedTextColor="@color/colorPrimary"
-        app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"/>
+        app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget" />
 
     <include
         android:id="@+id/include_elevation"
         layout="@layout/layout_elevation"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_elevation"
-        android:layout_below="@id/tab_contact"/>
+        android:layout_below="@id/tab_contact" />
 
     <FrameLayout
         android:id="@+id/frame_container_call_tab"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tab_contact"/>
+        android:layout_below="@id/tab_contact" />
 
 </RelativeLayout>

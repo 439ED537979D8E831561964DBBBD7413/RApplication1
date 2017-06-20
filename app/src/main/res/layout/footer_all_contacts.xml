@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,7 +12,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginTop="@dimen/activity_half_horizontal_margin"
         android:background="@color/colorVeryLightGray"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/text_total_contacts"
@@ -23,6 +22,6 @@
         android:layout_marginBottom="@dimen/margin_huge"
         android:layout_marginTop="@dimen/margin_small"
         android:textAppearance="?android:textAppearanceLarge"
-        tools:text="10 Contacts"/>
+        tools:text="10 Contacts" />
 
 </RelativeLayout>

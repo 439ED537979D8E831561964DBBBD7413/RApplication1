@@ -1,5 +1,4 @@
-<android.support.v7.widget.Toolbar
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -33,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/description_action_back"
                 android:padding="@dimen/activity_half_horizontal_margin"
-                android:src="@drawable/ic_action_back"/>
+                android:src="@drawable/ic_action_back" />
 
         </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -48,7 +47,7 @@
             android:textColor="@color/colorWhite"
             android:singleLine="true"
             android:ellipsize="end"
-            tools:text="Title"/>
+            tools:text="Title" />
 
         <LinearLayout
             android:id="@+id/linear_action_right"
@@ -74,7 +73,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/activity_half_horizontal_margin"
-                    android:src="@drawable/ic_action_edit"/>
+                    android:src="@drawable/ic_action_edit" />
 
             </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -93,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/activity_half_horizontal_margin"
-                    android:src="@drawable/ic_action_share"/>
+                    android:src="@drawable/ic_action_share" />
 
             </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -112,7 +111,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/activity_half_horizontal_margin"
-                    android:src="@drawable/ic_action_more_vertical"/>
+                    android:src="@drawable/ic_action_more_vertical" />
 
             </com.rawalinfocom.rcontact.helper.RippleView>
 

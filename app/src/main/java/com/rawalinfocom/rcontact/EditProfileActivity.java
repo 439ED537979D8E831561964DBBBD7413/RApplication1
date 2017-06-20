@@ -731,11 +731,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     editProfile(profileDataOperation, AppConstants.NAME);
                 } else {
                     if (StringUtils.length(firstName) <= 0) {
-                        Utils.showErrorSnackBar(this, relativeRootEditProfile, "Please add First " +
-                                "name!");
+                        Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string.str_valid_first_name));
                     } else {
-                        Utils.showErrorSnackBar(this, relativeRootEditProfile, "Please add Last " +
-                                "name!");
+                        Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string.str_valid_last_name));
                     }
                 }
                 break;
@@ -744,13 +742,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             // <editor-fold desc="button_gender_update">
             case R.id.button_gender_update:
                 if (isMale) {
-                    profileDataOperation.setPbGender("Male");
+                    profileDataOperation.setPbGender(getString(R.string.str_male));
                     editProfile(profileDataOperation, AppConstants.GENDER);
                 } else if (isFemale) {
-                    profileDataOperation.setPbGender("Female");
+                    profileDataOperation.setPbGender(getString(R.string.str_female));
                     editProfile(profileDataOperation, AppConstants.GENDER);
                 } else {
-                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "Select any gender!");
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string.str_valid_gender));
                 }
                 break;
             //</editor-fold>
@@ -785,7 +783,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         if (i != 0) {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Number is required!");
+                                    getString(R.string.str_valid_number));
                         }
                     }
                 }

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_margin="@dimen/margin_10dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="@dimen/margin_10dp">
 
 
     <LinearLayout
@@ -23,7 +22,7 @@
             android:textAppearance="?android:textAppearanceLarge"
             tools:text="Title"
             android:layout_gravity="center"
-            android:textColor="@color/darkGray"/>
+            android:textColor="@color/darkGray" />
 
     </LinearLayout>
 
@@ -41,7 +40,6 @@
         </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
-
 
 
 </LinearLayout>

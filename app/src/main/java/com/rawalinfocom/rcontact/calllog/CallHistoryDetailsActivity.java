@@ -1777,7 +1777,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + formattedNumber + "?");
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + formattedNumber + "?");
         callConfirmationDialog.showDialog();
     }
 
@@ -1847,7 +1847,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             textNoHistoryToShow.setVisibility(View.GONE);
             recyclerCallHistory.setVisibility(View.VISIBLE);
             rippleViewOldRecords.setVisibility(View.VISIBLE);
-            callHistoryListAdapter = new CallHistoryListAdapter(arrayListHistory);
+            callHistoryListAdapter = new CallHistoryListAdapter(getApplicationContext(), arrayListHistory);
             recyclerCallHistory.setAdapter(callHistoryListAdapter);
             recyclerCallHistory.setFocusable(false);
             setRecyclerViewLayoutManager(recyclerCallHistory);
@@ -2096,52 +2096,52 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 return getString(R.string.type_fax_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_PAGER:
-                return "";
+                return getString(R.string.type_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
-                return "";
+                return getString(R.string.type_other);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK:
-                return "";
+                return getString(R.string.type_callback);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CAR:
-                return "";
+                return getString(R.string.type_car);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
-                return "";
+                return getString(R.string.type_company_main);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
-                return "";
+                return getString(R.string.type_isdn);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
-                return "";
+                return getString(R.string.type_main);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX:
-                return "";
+                return getString(R.string.type_other_fax);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_RADIO:
-                return "Radio";
+                return getString(R.string.type_radio);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TELEX:
-                return "Telex";
+                return getString(R.string.type_telex);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD:
-                return "Tty Tdd";
+                return getString(R.string.type_tty_tdd);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
-                return "Work Mobile";
+                return getString(R.string.type_work_mobile);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER:
-                return "Work Pager";
+                return getString(R.string.type_work_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT:
-                return "Assistant";
+                return getString(R.string.type_assistant);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
-                return "MMS";
+                return getString(R.string.type_mms);
 
         }
-        return "Other";
+        return getString(R.string.type_other);
     }
 
 

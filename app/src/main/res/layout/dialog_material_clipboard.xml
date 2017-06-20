@@ -22,7 +22,7 @@
             android:textColor="@color/darkGray"
             tools:text="Title"
             android:paddingTop="@dimen/padding_around_content_area"
-            android:paddingLeft="@dimen/padding_around_content_area"/>
+            android:paddingLeft="@dimen/padding_around_content_area" />
 
         <com.rawalinfocom.rcontact.helper.RippleView
             android:id="@+id/rippleRow"

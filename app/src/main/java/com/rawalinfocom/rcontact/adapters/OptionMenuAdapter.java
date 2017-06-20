@@ -60,8 +60,6 @@ public class OptionMenuAdapter extends RecyclerView.Adapter<OptionMenuAdapter
             ButterKnife.bind(this, itemView);
 
             textOptionMenu.setTypeface(Utils.typefaceRegular(context));
-
         }
     }
-
 }

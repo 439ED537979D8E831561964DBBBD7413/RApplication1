@@ -27,8 +27,7 @@ public class BottomSheetSocialMediaAdapter extends RecyclerView.Adapter<BottomSh
     private ArrayList<Integer> arrayListSocialMediaIcons;
     private ArrayList<String> arrayListSocialMediaNames;
 
-    public BottomSheetSocialMediaAdapter(Context context)
-    {
+    public BottomSheetSocialMediaAdapter(Context context) {
         this.context = context;
         arrayListSocialMediaIcons = new ArrayList<>();
         arrayListSocialMediaIcons.add(R.drawable.img_whatsapp);
@@ -39,12 +38,12 @@ public class BottomSheetSocialMediaAdapter extends RecyclerView.Adapter<BottomSh
         arrayListSocialMediaIcons.add(R.drawable.img_skype);
 
         arrayListSocialMediaNames = new ArrayList<>();
-        arrayListSocialMediaNames.add("Whatsapp");
-        arrayListSocialMediaNames.add("Facebook");
-        arrayListSocialMediaNames.add("Messenger");
-        arrayListSocialMediaNames.add("Twitter");
-        arrayListSocialMediaNames.add("Linkedin");
-        arrayListSocialMediaNames.add("Skype");
+        arrayListSocialMediaNames.add(context.getString(R.string.str_whats_app));
+        arrayListSocialMediaNames.add(context.getString(R.string.str_facebook));
+        arrayListSocialMediaNames.add(context.getString(R.string.str_messenger));
+        arrayListSocialMediaNames.add(context.getString(R.string.str_twitter));
+        arrayListSocialMediaNames.add(context.getString(R.string.str_linked_in));
+        arrayListSocialMediaNames.add(context.getString(R.string.str_skype));
     }
 
     @Override
@@ -63,8 +62,7 @@ public class BottomSheetSocialMediaAdapter extends RecyclerView.Adapter<BottomSh
     }
 
     @Override
-    public int getItemCount()
-    {
+    public int getItemCount() {
         return arrayListSocialMediaIcons.size();
     }
 
@@ -82,5 +80,4 @@ public class BottomSheetSocialMediaAdapter extends RecyclerView.Adapter<BottomSh
             textSocialMedia.setTypeface(Utils.typefaceRegular(context));
         }
     }
-
 }

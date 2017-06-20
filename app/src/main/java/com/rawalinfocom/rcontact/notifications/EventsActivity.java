@@ -38,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -307,7 +308,7 @@ public class EventsActivity extends BaseActivity implements RippleView
                 UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
 
                 eventType = getEventType(eventName);
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 try {
                     date = sdf.parse(e.getEvmStartDate());
                     eventYear = date.getYear();

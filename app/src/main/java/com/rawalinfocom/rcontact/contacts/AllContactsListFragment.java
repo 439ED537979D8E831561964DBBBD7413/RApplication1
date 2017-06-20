@@ -183,7 +183,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             arrayListFavouriteContacts = new ArrayList<>();
 
             arrayListContactHeaders.add(" ");
-            arrayListPhoneBookContacts.add("My Profile");
+            arrayListPhoneBookContacts.add(getActivity().getString(R.string.title_my_profile));
 
             ProfileData myProfileData = new ProfileData();
 
@@ -221,7 +221,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             arrayListOperation.add(myOperation);
             myProfileData.setOperation(arrayListOperation);*/
             arrayListPhoneBookContacts.add(myProfileData);
-            arrayListPhoneBookContacts.add("My Contacts");
+            arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
 
@@ -393,7 +393,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             }
 
                             Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                    "All Contact Synced");
+                                    getActivity().getString(R.string.str_all_contact_sync));
                             Utils.setStringPreference(getActivity(), AppConstants
                                     .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System
                                     .currentTimeMillis() - 10000));
@@ -492,7 +492,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
                             (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                         Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                "Invitation sent successfully");
+                                getActivity().getString(R.string.invitation_sent));
                     } else {
                         if (inviteContactResponse != null) {
                             Log.e("error response", inviteContactResponse.getMessage());
@@ -1573,9 +1573,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + callNumber + "?");
+        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + callNumber + "?");
 
         callConfirmationDialog.showDialog();
 
@@ -1626,19 +1626,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         String message = "";
         switch (permissionType) {
             case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
-                message = "Contact read permission is required of this app. Do you want to try " +
-                        "again?";
+                message = getActivity().getString(R.string.contact_read_permission);
                 break;
             case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
-                message = "Calling permission is required to make the call. Do you want to try " +
-                        "again?";
+                message = getActivity().getString(R.string.calling_permission);
                 break;
         }
 
         permissionConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText("Cancel");
-        permissionConfirmationDialog.setRightButtonText("OK");
+        permissionConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+        permissionConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_ok));
         permissionConfirmationDialog.setDialogBody(message);
 
         permissionConfirmationDialog.showDialog();
@@ -2137,7 +2135,5 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     .getString(R.string.msg_no_network));
         }
     }
-
     //</editor-fold>
-
 }

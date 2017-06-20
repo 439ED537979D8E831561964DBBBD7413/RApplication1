@@ -260,7 +260,9 @@ public class SmsListDateWiseAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             position) {
         String date = (String) arrayListCallLogs.get(position);
 
-        if (listOfDateToDisplay.contains(date) || date.equalsIgnoreCase("Today") || date.equalsIgnoreCase("Yesterday")) {
+        if (listOfDateToDisplay.contains(date) ||
+                date.equalsIgnoreCase(context.getString(R.string.str_today)) ||
+                date.equalsIgnoreCase(context.getString(R.string.str_yesterday))) {
             holder.textHeader.setVisibility(View.VISIBLE);
             holder.textHeader.setText(date);
         } else {
