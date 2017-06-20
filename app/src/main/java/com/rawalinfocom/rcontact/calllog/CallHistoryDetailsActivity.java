@@ -1106,11 +1106,14 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
     private void setCallLogHistoryDetails() {
         if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase("[Unknown]")*/) {
-            textToolbarTitle.setText(contactName);
-
+//            textToolbarTitle.setText(contactName);
+            //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
+            textToolbarTitle.setText("Profile Detail");
         } else {
             if (!TextUtils.isEmpty(profileContactNumber)) {
-                textToolbarTitle.setText(profileContactNumber);
+//                textToolbarTitle.setText(profileContactNumber);
+                //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
+                textToolbarTitle.setText("Profile Detail");
             }
 
         }

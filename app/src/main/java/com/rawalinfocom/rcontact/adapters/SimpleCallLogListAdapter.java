@@ -170,19 +170,19 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 //        long logDate1 = callLogType.getDate();
         Date date1 = new Date(date);
         String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
-        Log.i("Call Log date", logDate);
+//        Log.i("Call Log date", logDate);
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
         Date yesDate;
         yesDate = cal.getTime();
         String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd").format(yesDate);
-        Log.i("Call yesterday date", yesterdayDate);
+//        Log.i("Call yesterday date", yesterdayDate);
 
         Calendar c = Calendar.getInstance();
         Date cDate = c.getTime();
         String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
-        Log.i("Call Current date", currentDate);
+//        Log.i("Call Current date", currentDate);
         Date dateFromReceiver1 = callLogType.getCallReceiverDate();
         if (dateFromReceiver1 != null) {
             dateFromReceiver = dateFromReceiver1.getTime();
@@ -313,7 +313,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                 }
                 if (callLogTypeList != null) {
                     for (int j = 0; j < callLogTypeList.size(); j++) {
-                        Log.i("value", callLogTypeList.get(j) + "");
+//                        Log.i("value", callLogTypeList.get(j) + "");
                         String tempNumber = callLogTypeList.get(j).getNumber();
                         if (tempNumber.equalsIgnoreCase(number)) {
                             blockedNumber = tempNumber;
