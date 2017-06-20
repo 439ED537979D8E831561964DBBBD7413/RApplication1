@@ -9,13 +9,19 @@
     <!--<string name="server_client_id">842331483294-os1beu18aonoukiskj67li7l0e4orn61.apps.googleusercontent.com</string>-->
     <string name="server_client_id">842331483294-ehe2r3r6mdbn6e1g9b33ecuakb5j0n28.apps.googleusercontent.com</string>
 
+    <!-- Common -->
+    <string name="msg_try_later">There is some error! Please try again later.</string>
+    <string name="msg_please_wait">Please Wait&#8230;</string>
+    <string name="msg_no_network">Network Not Available.</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_call">Call</string>
+
+    <!-- Other -->
     <string name="description_registration_logo">Registration Logo</string>
     <string name="str_content_description">Content Description</string>
     <string name="title_verify_number">Verify Your Phone Number</string>
     <string name="msg_enter_number">Please Confirm your Country Code and Enter Your Phone Number</string>
     <string name="action_submit">Submit</string>
-    <string name="msg_please_wait">Please Wait&#8230;</string>
-    <string name="msg_no_network">Network Not Available.</string>
     <string name="hint_search">Search</string>
     <string name="description_action_back">Description Action Back</string>
     <string name="error_invalid_number">Please add valid Number</string>
@@ -38,7 +44,6 @@
     <string name="text_google">Google</string>
     <string name="text_linked_in">LinkedIn</string>
     <string name="title_profile_registration">Profile Registration</string>
-    <string name="msg_try_later">There is some error! Please try again later.</string>
     <string name="title_activity_contacts_main">ContactsMainActivity</string>
     <string name="title_my_profile">My Profile</string>
 
@@ -50,15 +55,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_all_organizations">All Organizations</string>
     <string name="action_close">Close</string>
-    <string name="action_cancel">Cancel</string>
     <string name="action_ok">Ok</string>
     <string name="str_comment">Comment</string>
     <string name="str_choose_from_contacts">Choose from Contacts</string>
     <string name="str_select_social_media">Select Social Media</string>
     <string name="str_select_all">Select all</string>
     <string name="action_delete">Delete</string>
-
-    <string name="text_no_history">No history to show</string>
 
     <string name="str_name">Name</string>
     <string name="str_phone">Phone</string>
@@ -129,19 +131,9 @@
     <string name="block">Block</string>
     <string name="unblock">Unblock</string>
     <string name="call_reminder">Call Reminder</string>
-    <string name="add_to_contact">Add to Contact</string>
-    <string name="add_to_existing_contact">Add to Existing Contact</string>
-    <string name="copy_to_clipboard">Copy to clip board</string>
     <string name="str_hide_year">Hide Year</string>
     <string name="str_i_currently_work_here">I Currently Work Here</string>
     <string name="str_invite">Invite</string>
-    <string name="edit">Edit</string>
-    <string name="view_in_ac">View in AC</string>
-    <string name="view_in_rc">View in RC</string>
-    <string name="delete">Delete</string>
-    <string name="clear_call_log">Clear Call Log</string>
-    <string name="view_profile">View Profile</string>
-    <string name="unblock_All">Unblock All</string>
 
     <string name="nav_text_home">Home</string>
     <string name="nav_text_account">Account</string>
@@ -191,7 +183,6 @@
     <string name="footer_rating_history_text">If you want to see Contact Rating History switch to Website</string>
 
     <string name="title_activity_call_histroy_detail">CallHistroyDetailActivity</string>
-    <string name="block_action_title">Blocked contacts list</string>
     <string name="privacy_everyone">Everyone</string>
     <string name="privacy_my_contact">My Contacts</string>
     <string name="privacy_only_me">Only Me</string>
@@ -252,5 +243,49 @@
     <string name="err_msg_please_enter_password">Please enter password</string>
     <string name="err_msg_please_confirm_password">Please enter confirm password</string>
     <string name="err_msg_password_not_match">Password does not match</string>
+
+    <!-- BLock List Contact -->
+    <string name="add_contacts_to_block_list">Add contacts to block list</string>
+    <string name="unblock_All">Unblock All</string>
+    <string name="block_action_title">Blocked contacts list</string>
+    <string name="contacts">Contacts</string>
+
+    <!-- Call History Details -->
+    <string name="sms">SMS</string>
+    <string name="call_history">Call History</string>
+    <string name="text_no_history">No history to show</string>
+    <string name="view_old_records">View old records</string>
+    <string name="rating_submit">Rating Submitted</string>
+    <string name="please_select_number_view_sms_log">Please select a number to view sms-log</string>
+    <string name="please_select_number_call">Please select a number to call</string>
+    <string name="error_update_favorite_status">Error while updating favourite status!</string>
+    <string name="add_to_contact">Add to Contact</string>
+    <string name="add_to_existing_contact">Add to Existing Contact</string>
+    <string name="copy_to_clipboard">Copy to clip board</string>
+    <string name="view_profile">View Profile</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="clear_call_log">Clear Call Log</string>
+    <string name="view_in_ac">View in AC</string>
+    <string name="view_in_rc">View in RC</string>
+    <string name="text_rate">Rate</string>
+    <string name="characters_left">characters left</string>
+    <string name="text_character">character</string>
+    <string name="please_fill_stars">Please fill appropriate stars!</string>
+
+    <!-- Phone Number Type -->
+    <string name="type_home">Home</string>
+    <string name="type_mobile">Mobile</string>
+    <string name="type_work">Work</string>
+    <string name="type_fax_work">Fax Work</string>
+    <string name="type_fax_home">Fax Home</string>
+    <string name="type_pager">Pager</string>
+    <string name="type_other">Other</string>
+    <string name="type_callback">Callback</string>
+    <string name="type_car">Car</string>
+    <string name="type_company_main">Company Main</string>
+    <string name="type_isdn">ISDN</string>
+    <string name="type_main">Main</string>
+    <string name="type_other_fax">Other Fax</string>
 
 </resources>
