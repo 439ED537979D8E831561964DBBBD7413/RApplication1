@@ -239,10 +239,9 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public int getItemCount() {
 //        if(fragment!=null){
-        if(!(context instanceof SearchActivity)){
+        if (!(context instanceof SearchActivity)) {
             return (arrayListUserContact.size() + 1);
-        }else
-        {
+        } else {
             return arrayListUserContact.size();
         }
 
@@ -414,6 +413,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.textCloudContactName.setText("");
             if (Utils.getBooleanPreference(context, AppConstants.PREF_CONTACT_SYNCED, false)) {
                 holder.rippleInvite.setVisibility(View.VISIBLE);
+                if (StringUtils.length(profileData.getTempNumber()) > 0) {
+                    holder.rippleInvite.setVisibility(View.VISIBLE);
+                } else {
+                    holder.rippleInvite.setVisibility(View.GONE);
+                }
             } else {
                 holder.rippleInvite.setVisibility(View.GONE);
             }
@@ -524,8 +528,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                     .REQUEST_CODE_PROFILE_DETAIL);
                             ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
                                     .anim.exit);
-                        }else{
-                            if(context instanceof SearchActivity){
+                        } else {
+                            if (context instanceof SearchActivity) {
                                 Intent intent = new Intent(context, ProfileDetailActivity.class);
                                 intent.putExtras(bundle);
                                 context.startActivity(intent);
@@ -1499,13 +1503,13 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         inviteContactObject.setArrayListEmailAddress(arrayListEmail);
 
         if (Utils.isNetworkAvailable(context)) {
-            if(fragment!=null){
+            if (fragment != null) {
                 new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         inviteContactObject, null, WsResponseObject.class, WsConstants
                         .REQ_SEND_INVITATION, null, true).execute
                         (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
-            }else{
-                if(context instanceof SearchActivity){
+            } else {
+                if (context instanceof SearchActivity) {
                     new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                             inviteContactObject, null, WsResponseObject.class, WsConstants
                             .REQ_SEND_INVITATION, null, true).execute
