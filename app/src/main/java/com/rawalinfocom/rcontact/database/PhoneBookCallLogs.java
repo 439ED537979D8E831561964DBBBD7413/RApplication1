@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 
+import com.rawalinfocom.rcontact.RContactApplication;
+
 /**
  * Created by Aniruddh on 04/04/17.
  */
@@ -18,8 +20,8 @@ public class PhoneBookCallLogs {
     }
 
     public Cursor getAllCallLogId() {
-        Uri uri =  CallLog.Calls.CONTENT_URI;
+        Uri uri = CallLog.Calls.CONTENT_URI;
         String order = CallLog.Calls.DATE + " DESC";
-        return context.getContentResolver().query(uri, null, null, null, order);
+        return RContactApplication.getInstance().getContentResolver().query(uri, null, null, null, order);
     }
 }
