@@ -20,6 +20,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -56,6 +61,8 @@ import static com.rawalinfocom.rcontact.ProfileRegistrationActivity.isFromSettin
 
 public class MapsActivity extends BaseActivity implements OnMapReadyCallback, RippleView
         .OnRippleCompleteListener, WsResponseListener {
+
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
 
     @BindView(R.id.relative_root_map)
     RelativeLayout relativeRootMap;
@@ -336,8 +343,18 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
     }
 
     @Override
-    public void onBackPressed() {
-
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                Log.i("onActivityResult", "Place: " + place.getName());
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                Log.i("onActivityResult", status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
     }
 
     /* @Override
@@ -474,7 +491,22 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
             }
         });*/
 
-        inputSearchLocation.addTextChangedListener(new TextWatcher() {
+        inputSearchLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete
+                            .MODE_OVERLAY).build(MapsActivity.this);
+                    startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+                } catch (GooglePlayServicesRepairableException e) {
+                    // TODO: Handle the error.
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    // TODO: Handle the error.
+                }
+            }
+        });
+
+        /*inputSearchLocation.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -484,7 +516,16 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() > 0) {
                     recyclerViewSuggestions.setVisibility(View.VISIBLE);
-                    searchLocation(false, charSequence.toString());
+//                    searchLocation(false, charSequence.toString());
+                    try {
+                        Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete
+                                .MODE_OVERLAY).build(MapsActivity.this);
+                        startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+                    } catch (GooglePlayServicesRepairableException e) {
+                        // TODO: Handle the error.
+                    } catch (GooglePlayServicesNotAvailableException e) {
+                        // TODO: Handle the error.
+                    }
                 } else {
                     recyclerViewSuggestions.setVisibility(View.GONE);
                 }
@@ -494,7 +535,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
             public void afterTextChanged(Editable editable) {
 
             }
-        });
+        });*/
 
     }
 
@@ -594,7 +635,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                     (this, displayProgress, WsConstants.REQ_GOOGLE_TEXT_BY_LOCATIONS);
             asyncGetGoogleLocation.execute("https://maps.googleapis" +
                     ".com/maps/api/place/autocomplete/json?key" +
-                    "=AIzaSyDz4oI0o5qB_hUTiiQXMg6dz8pacDEd_jM&input=" + queryString +
+                    "=AIzaSyDHLCyy3FXO9IshxYd2-XAR6uSmVPvnAZQ&input=" + queryString +
                     "&types=geocode&sensor=true");
         } else {
             Utils.showErrorSnackBar(this, relativeRootMap, getResources().getString(R.string

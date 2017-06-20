@@ -9,7 +9,7 @@ package com.rawalinfocom.rcontact.constants;
 public class WsConstants {
 
     // Monal
-//    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
+    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 //    public static final String WS_ROOT = "http://54.202.191.41/api/v1/";
 //    public static final String WS_ROOT = "http://10.0.21.123/api/v1/";
 
@@ -25,7 +25,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
 
     // Shailesh
-    public static final String WS_ROOT = "http://10.0.21.14:8000/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.14:8000/api/v1/";
 
     //Jignesh
 //    public static final String WS_ROOT = "http://10.0.21.15/api/v1/";
@@ -68,21 +68,25 @@ public class WsConstants {
     public static final String REQ_UPLOAD_CONTACTS = "uploadContacts"; //working
     public static final String REQ_UPLOAD_CALL_LOGS = "sync-call-log"; // working
     public static final String REQ_UPLOAD_SMS_LOGS = "sync-sms-log";   // working
-    public static final String REQ_REVERSE_GEO_CODING_ADDRESS = "req_reverse_geo_coding_address"; //google api, working
-    public static final String REQ_GEO_CODING_ADDRESS = "req_geo_coding_address";//google api, working
+    public static final String REQ_REVERSE_GEO_CODING_ADDRESS = "req_reverse_geo_coding_address";
+    //google api, working
+    public static final String REQ_GEO_CODING_ADDRESS = "req_geo_coding_address";//google api,
+    // working
 
     public static final String REQ_GET_CALL_LOG_HISTORY_REQUEST = "call-history"; //anirudh
     public static final String REQ_GET_GLOBAL_SEARCH_RECORDS = "search"; //anirudh
 
     public static final String REQ_MARK_AS_FAVOURITE = "mark-as-favourite"; //working
     public static final String REQ_PROFILE_RATING = "profile-rating"; //working
-    public static final String REQ_RCP_PROFILE_SHARING = "rcp-profile-sharing"; //functionality pending
+    public static final String REQ_RCP_PROFILE_SHARING = "rcp-profile-sharing"; //functionality
+    // pending
     public static final String REQ_SEND_INVITATION = "send-invitation"; //working
     public static final String REQ_ADD_PROFILE_VISIT = "add-profile-visit"; //working
     public static final String REQ_PROFILE_UPDATE = "profile-update"; // monal
 
     public static final String REQ_SET_PRIVACY_SETTING = "set-privacy-setting"; //maulik
-    public static final String REQ_GET_PROFILE_PRIVACY_REQUEST = "get-profile-privacy-request"; //maulik
+    public static final String REQ_GET_PROFILE_PRIVACY_REQUEST = "get-profile-privacy-request";
+    //maulik
     public static final String REQ_PROFILE_PRIVACY_REQUEST = "profile-privacy-request"; //maulik
     public static final String REQ_ADD_EVENT_COMMENT = "event-comment"; //maulik
     public static final String REQ_GET_EVENT_COMMENT = "get-event-comment"; //maulik

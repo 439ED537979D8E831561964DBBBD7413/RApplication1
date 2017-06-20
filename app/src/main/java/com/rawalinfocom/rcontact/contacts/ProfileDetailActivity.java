@@ -394,6 +394,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
                     (this, pmId);
             setUpView(profileDataOperation);
+            layoutVisibility();
         }
     }
 
@@ -659,7 +660,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);
                     }
 
-                    int updateStatus = phoneBookContacts.setFavouriteStatus(favStatusRawId, favStatus);
+                    int updateStatus = phoneBookContacts.setFavouriteStatus(favStatusRawId,
+                            favStatus);
 
                     if (updateStatus != 1) {
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, "Error while " +
@@ -1752,19 +1754,41 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             relativeContactDetails.setVisibility(View.VISIBLE);
             relativeCallHistory.setVisibility(View.GONE);
 
-            textFullScreenText.setText(contactName);
+            if (displayOwnProfile) {
+                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
+                        .parseInt(pmId));
+                textFullScreenText.setText(userProfile.getPmFirstName() + " " + userProfile
+                        .getPmLastName());
 
-            if (!TextUtils.isEmpty(thumbnailUrl)) {
-                Glide.with(this)
-                        .load(thumbnailUrl)
-                        .placeholder(R.drawable.home_screen_profile)
-                        .error(R.drawable.home_screen_profile)
-                        .bitmapTransform(new CropCircleTransformation(this))
+                if (!TextUtils.isEmpty(userProfile.getPmProfileImage())) {
+                    Glide.with(this)
+                            .load(userProfile.getPmProfileImage())
+                            .placeholder(R.drawable.home_screen_profile)
+                            .error(R.drawable.home_screen_profile)
+                            .bitmapTransform(new CropCircleTransformation(this))
 //                        .override(400, 400)
-                        .into(imageProfile);
+                            .into(imageProfile);
+
+                } else {
+                    imageProfile.setImageResource(R.drawable.home_screen_profile);
+                }
 
             } else {
-                imageProfile.setImageResource(R.drawable.home_screen_profile);
+                textFullScreenText.setText(contactName);
+
+                if (!TextUtils.isEmpty(thumbnailUrl)) {
+                    Glide.with(this)
+                            .load(thumbnailUrl)
+                            .placeholder(R.drawable.home_screen_profile)
+                            .error(R.drawable.home_screen_profile)
+                            .bitmapTransform(new CropCircleTransformation(this))
+//                        .override(400, 400)
+                            .into(imageProfile);
+
+                } else {
+                    imageProfile.setImageResource(R.drawable.home_screen_profile);
+                }
             }
 
             if (StringUtils.length(cloudContactName) > 0) {

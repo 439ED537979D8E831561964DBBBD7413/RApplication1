@@ -1492,6 +1492,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         return 0;
                     }
                 }
+                /* Disable swiping for My Profile */
+                if (viewHolder instanceof AllContactAdapter.AllContactViewHolder) {
+                    if (Integer.parseInt(((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .textContactName.getTag().toString()) == 1) {
+                        return 0;
+                    }
+                }
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
 

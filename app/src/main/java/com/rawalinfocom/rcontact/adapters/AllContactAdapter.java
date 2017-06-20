@@ -1392,7 +1392,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         @BindView(R.id.image_social_media)
         ImageView imageSocialMedia;
         @BindView(R.id.text_contact_name)
-        TextView textContactName;
+        public TextView textContactName;
         @BindView(R.id.text_cloud_contact_name)
         TextView textCloudContactName;
         @BindView(R.id.text_rating_user_count)

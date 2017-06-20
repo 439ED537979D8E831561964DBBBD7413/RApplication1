@@ -84,6 +84,7 @@ dependencies {
     compile "com.google.android.gms:play-services-auth:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-plus:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-maps:$PLAY_SERVICES_VERSION"
+    compile "com.google.android.gms:play-services-places:$PLAY_SERVICES_VERSION"
 
     compile "com.fasterxml.jackson.core:jackson-core:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-databind:$JACKSON_CORE_VERSION"
