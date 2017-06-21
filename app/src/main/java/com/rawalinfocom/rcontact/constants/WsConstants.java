@@ -15,7 +15,7 @@ public class WsConstants {
 
     // QA Server
 //    public static final String WS_ROOT = "http://54.186.222.230/api/v1/";
-//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
 
     // Aniruddh
 //    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
@@ -45,14 +45,14 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://10.0.21.131/api/v1/";
 
     // Vijay
-     public static final String WS_ROOT = "http://10.0.21.16/api/v1/";
+//     public static final String WS_ROOT = "http://10.0.21.16/api/v1/";
 
 
     // Web Server
-    public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
+    //public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
 
     // QA Server
-//    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
+    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
 
     public static final String RESPONSE_STATUS_TRUE = "true";
 

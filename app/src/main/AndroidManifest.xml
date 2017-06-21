@@ -222,10 +222,6 @@
         <service
             android:name=".services.CallLogIdFetchService"
             android:enabled="true" />
-
-        <service
-            android:name=".services.SyncService"
-            android:enabled="true" />
     </application>
 
 </manifest>

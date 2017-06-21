@@ -85,7 +85,6 @@ import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
-import com.rawalinfocom.rcontact.services.SyncService;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -164,7 +163,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         phoneBookContacts = new PhoneBookContacts(getActivity());
-        localReceiver= new LocalReceiver();
+        localReceiver = new LocalReceiver();
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
         Utils.setBooleanPreference(getActivity(), AppConstants
                 .PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, true);
@@ -250,7 +249,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction("ALL-CONTACT-SYNCED");
             LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
-            localBroadcastManager.registerReceiver(localReceiver,intentFilter);
+            localBroadcastManager.registerReceiver(localReceiver, intentFilter);
             /*else if (settingRequestPermission == AppConstants
                     .MY_PERMISSIONS_REQUEST_READ_CONTACTS) {
 
@@ -678,11 +677,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //                syncContacts();
 //            }
 //        };
-        if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false) && !SyncService.isRunning) {
-            Intent intent = new Intent(getContext(), SyncService.class);
-            getContext().startService(intent);
-//            syncingTask = new SyncingTask();
-//            syncingTask.execute();
+        if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
+            syncingTask = new SyncingTask();
+            syncingTask.execute();
         }
     }
 
@@ -978,34 +975,37 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
 
         while (data.moveToNext()) {
-            long id = data.getLong(idIdx);
-            ProfileData profileData = array.get(id);
+            try {
+                long id = data.getLong(idIdx);
+                ProfileData profileData = array.get(id);
 
-            if (profileData == null) {
-                profileData = new ProfileData();
-                array.put(id, profileData);
-                arrayListUserContact.add(profileData);
+                if (profileData == null) {
+                    profileData = new ProfileData();
+                    array.put(id, profileData);
+                    arrayListUserContact.add(profileData);
+                }
+
+                profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+                profileData.setRawContactId(data.getString(rawIdIdx));
+
+                switch (data.getString(mimeTypeIdx)) {
+                    case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
+                        profileData.setTempNumber(data.getString(phoneIdx));
+                        profileData.setProfileUrl(data.getString(photoURIIdx));
+                        break;
+                    case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
+                        profileData.setTempFirstName(data.getString(givenNameIdx));
+                        profileData.setTempLastName(data.getString(familyNameIdx));
+                        profileData.setTempPrefix(data.getString(prefixNameIdx));
+                        profileData.setTempSufix(data.getString(suffixNameIdx));
+                        profileData.setTempMiddleName(data.getString(middleNameIdx));
+                        profileData.setName(data.getString(givenNameIdx) + data.getString
+                                (familyNameIdx));
+                        break;
+                }
+            } catch (Exception E) {
+                Log.i("AllContacts", "Crash occured when displaying contacts" + E.toString());
             }
-
-            profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
-            profileData.setRawContactId(data.getString(rawIdIdx));
-
-            switch (data.getString(mimeTypeIdx)) {
-                case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
-                    profileData.setTempNumber(data.getString(phoneIdx));
-                    profileData.setProfileUrl(data.getString(photoURIIdx));
-                    break;
-                case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
-                    profileData.setTempFirstName(data.getString(givenNameIdx));
-                    profileData.setTempLastName(data.getString(familyNameIdx));
-                    profileData.setTempPrefix(data.getString(prefixNameIdx));
-                    profileData.setTempSufix(data.getString(suffixNameIdx));
-                    profileData.setTempMiddleName(data.getString(middleNameIdx));
-                    profileData.setName(data.getString(givenNameIdx) + data.getString
-                            (familyNameIdx));
-                    break;
-            }
-        }
 //        ArrayList contactsWithNoName = new ArrayList<>();
 //        String lastDisplayName = "XXX", lastRawId = "XXX";
 //
@@ -1032,6 +1032,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //            }
 //        }
 //        arrayListPhoneBookContacts.addAll(contactsWithNoName);
+
+        }
     }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
@@ -2149,7 +2151,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(getActivity()!=null){
+            if (getActivity() != null) {
                 getRcpDetail();
             }
 
