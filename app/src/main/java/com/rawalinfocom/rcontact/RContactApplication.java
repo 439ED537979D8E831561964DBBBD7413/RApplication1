@@ -1,28 +1,13 @@
 package com.rawalinfocom.rcontact;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-import android.os.Bundle;
 import android.support.multidex.MultiDex;
-import android.util.Base64;
-import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-
-import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by Monal on 20/10/16.
@@ -49,12 +34,12 @@ public class RContactApplication extends Application {
     int favouriteStatus;
 
     ArrayList<Object> arrayListObjectCallLogs;
-    ArrayList<String> arrayListcallLogsHeaders;
+    //    ArrayList<String> arrayListcallLogsHeaders;
     ArrayList<CallLogType> arrayListCallLogType;
 
     ArrayList<SmsDataType> arrayListSmsLogType;
     ArrayList<Object> arrayListObjectSmsLogs;
-    ArrayList<String> arrayListSmsLogsHeaders;
+//    ArrayList<String> arrayListSmsLogsHeaders;
 
 
     @Override
@@ -80,61 +65,60 @@ public class RContactApplication extends Application {
         mInstance = this;
 
 //         Fabric Initialization
-        Fabric.with(this, new Crashlytics());
+        // Fabric.with(this, new Crashlytics());
 
         arrayListAllPhoneBookContacts = new ArrayList<>();
-        arrayListAllContactHeaders = new ArrayList<>();
+//        arrayListAllContactHeaders = new ArrayList<>();
         arrayListFavPhoneBookContacts = new ArrayList<>();
-        arrayListFavContactHeaders = new ArrayList<>();
+//        arrayListFavContactHeaders = new ArrayList<>();
 
-        arrayListcallLogsHeaders = new ArrayList<>();
+//        arrayListcallLogsHeaders = new ArrayList<>();
         arrayListObjectCallLogs = new ArrayList<>();
         arrayListCallLogType = new ArrayList<>();
 
         arrayListObjectSmsLogs = new ArrayList<>();
-        arrayListSmsLogsHeaders = new ArrayList<>();
+//        arrayListSmsLogsHeaders = new ArrayList<>();
 
         // Facebook Initialization
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
+//        AppEventsLogger.activateApp(this);
 
-        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
-
-            @Override
-            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            }
-
-            @Override
-            public void onActivityStarted(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivityResumed(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivityPaused(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivityStopped(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
-            }
-
-            @Override
-            public void onActivityDestroyed(Activity activity) {
-
-            }
-        });
+//        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+//
+//            @Override
+//            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+//                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//            }
+//
+//            @Override
+//            public void onActivityStarted(Activity activity) {
+//
+//            }
+//
+//            @Override
+//            public void onActivityResumed(Activity activity) {
+//
+//            }
+//
+//            @Override
+//            public void onActivityPaused(Activity activity) {
+//
+//            }
+//
+//            @Override
+//            public void onActivityStopped(Activity activity) {
+//
+//            }
+//
+//            @Override
+//            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+//
+//            }
+//
+//            @Override
+//            public void onActivityDestroyed(Activity activity) {
+//
+//            }
+//        });
     }
 
     public static synchronized RContactApplication getInstance() {
@@ -155,9 +139,9 @@ public class RContactApplication extends Application {
         this.arrayListAllPhoneBookContacts = arrayListAllPhoneBookContacts;
     }
 
-    public ArrayList<String> getArrayListAllContactHeaders() {
-        return arrayListAllContactHeaders;
-    }
+//    public ArrayList<String> getArrayListAllContactHeaders() {
+//        return arrayListAllContactHeaders;
+//    }
 
     public void setArrayListAllContactHeaders(ArrayList<String> arrayListAllContactHeaders) {
         this.arrayListAllContactHeaders = arrayListAllContactHeaders;
@@ -167,17 +151,17 @@ public class RContactApplication extends Application {
         return arrayListFavPhoneBookContacts;
     }
 
-    public void setArrayListFavPhoneBookContacts(ArrayList<Object> arrayListFavPhoneBookContacts) {
-        this.arrayListFavPhoneBookContacts = arrayListFavPhoneBookContacts;
-    }
+//    public void setArrayListFavPhoneBookContacts(ArrayList<Object> arrayListFavPhoneBookContacts) {
+//        this.arrayListFavPhoneBookContacts = arrayListFavPhoneBookContacts;
+//    }
 
     public ArrayList<String> getArrayListFavContactHeaders() {
         return arrayListFavContactHeaders;
     }
 
-    public void setArrayListFavContactHeaders(ArrayList<String> arrayListFavContactHeaders) {
-        this.arrayListFavContactHeaders = arrayListFavContactHeaders;
-    }
+//    public void setArrayListFavContactHeaders(ArrayList<String> arrayListFavContactHeaders) {
+//        this.arrayListFavContactHeaders = arrayListFavContactHeaders;
+//    }
 
  /*   public boolean isFavouriteModified() {
         return isFavouriteModified;
@@ -195,21 +179,21 @@ public class RContactApplication extends Application {
         this.favouriteStatus = favouriteStatus;
     }
 
-    public ArrayList<Object> getArrayListObjectCallLogs() {
-        return arrayListObjectCallLogs;
-    }
+//    public ArrayList<Object> getArrayListObjectCallLogs() {
+//        return arrayListObjectCallLogs;
+//    }
+//
+//    public void setArrayListObjectCallLogs(ArrayList<Object> arrayListObjectCallLogs) {
+//        this.arrayListObjectCallLogs = arrayListObjectCallLogs;
+//    }
 
-    public void setArrayListObjectCallLogs(ArrayList<Object> arrayListObjectCallLogs) {
-        this.arrayListObjectCallLogs = arrayListObjectCallLogs;
-    }
-
-    public ArrayList<String> getArrayListcallLogsHeaders() {
-        return arrayListcallLogsHeaders;
-    }
-
-    public void setArrayListcallLogsHeaders(ArrayList<String> arrayListcallLogsHeaders) {
-        this.arrayListcallLogsHeaders = arrayListcallLogsHeaders;
-    }
+//    public ArrayList<String> getArrayListcallLogsHeaders() {
+//        return arrayListcallLogsHeaders;
+//    }
+//
+//    public void setArrayListcallLogsHeaders(ArrayList<String> arrayListcallLogsHeaders) {
+//        this.arrayListcallLogsHeaders = arrayListcallLogsHeaders;
+//    }
 
     public ArrayList<CallLogType> getArrayListCallLogType() {
         return arrayListCallLogType;
@@ -227,19 +211,19 @@ public class RContactApplication extends Application {
         this.arrayListSmsLogType = arrayListSmsLogType;
     }
 
-    public ArrayList<Object> getArrayListObjectSmsLogs() {
-        return arrayListObjectSmsLogs;
-    }
+//    public ArrayList<Object> getArrayListObjectSmsLogs() {
+//        return arrayListObjectSmsLogs;
+//    }
 
     public void setArrayListObjectSmsLogs(ArrayList<Object> arrayListObjectSmsLogs) {
         this.arrayListObjectSmsLogs = arrayListObjectSmsLogs;
     }
 
-    public ArrayList<String> getArrayListSmsLogsHeaders() {
-        return arrayListSmsLogsHeaders;
-    }
-
-    public void setArrayListSmsLogsHeaders(ArrayList<String> arrayListSmsLogsHeaders) {
-        this.arrayListSmsLogsHeaders = arrayListSmsLogsHeaders;
-    }
+//    public ArrayList<String> getArrayListSmsLogsHeaders() {
+//        return arrayListSmsLogsHeaders;
+//    }
+//
+//    public void setArrayListSmsLogsHeaders(ArrayList<String> arrayListSmsLogsHeaders) {
+//        this.arrayListSmsLogsHeaders = arrayListSmsLogsHeaders;
+//    }
 }

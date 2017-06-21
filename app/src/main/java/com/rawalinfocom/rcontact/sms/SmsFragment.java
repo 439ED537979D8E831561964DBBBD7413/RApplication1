@@ -743,7 +743,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     }
                 }
             }
-            rContactApplication.setArrayListSmsLogsHeaders(arrayListSmsLogHeader);
+//            rContactApplication.setArrayListSmsLogsHeaders(arrayListSmsLogHeader);
             rContactApplication.setArrayListObjectSmsLogs(arrayListObjectSmsLogs);
 
         } catch (Exception e) {

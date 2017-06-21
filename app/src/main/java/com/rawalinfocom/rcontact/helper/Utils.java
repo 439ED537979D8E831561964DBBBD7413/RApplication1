@@ -258,7 +258,6 @@ public class Utils {
         return gson.fromJson(json, type);
     }
 
-
     public static void setIntegerPreference(Context context, String key, int value) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
