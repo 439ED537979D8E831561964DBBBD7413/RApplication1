@@ -181,7 +181,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_registration);
         ButterKnife.bind(this);
-
+        FacebookSdk.sdkInitialize(getApplicationContext());
         userProfile = (UserProfile) Utils.getObjectPreference(ProfileRegistrationActivity.this,
                 AppConstants.PREF_REGS_USER_OBJECT, UserProfile.class);
         if (userProfile == null) {

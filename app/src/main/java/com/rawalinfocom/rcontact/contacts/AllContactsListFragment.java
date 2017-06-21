@@ -113,10 +113,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     ProgressWheel progressAllContact;
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
-    /*    @BindView(R.id.scroller_all_contact)
-        VerticalRecyclerViewFastScroller scrollerAllContact;
-        @BindView(R.id.title_indicator)
-        ColorGroupSectionTitleIndicator titleIndicator;*/
     @BindView(R.id.text_total_contacts)
     TextView textTotalContacts;
 
