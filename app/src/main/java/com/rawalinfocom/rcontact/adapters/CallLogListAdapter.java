@@ -214,10 +214,10 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             Pattern numberPat = Pattern.compile("\\d+");
             Matcher matcher1 = numberPat.matcher(name);
             if (matcher1.find()) {
-                holder.textContactNumber.setText("Unsaved,");
+                holder.textContactNumber.setText(context.getString(R.string.str_unsaved));
             } else {
                 String formattedNumber = Utils.getFormattedNumber(context, number);
-                holder.textContactNumber.setText(formattedNumber + ",");
+                holder.textContactNumber.setText(String.format("%s,", formattedNumber));
             }
 
         } else {
@@ -227,7 +227,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .colorBlack));
                 String formattedNumber = Utils.getFormattedNumber(context, number);
                 holder.textContactName.setText(formattedNumber);
-                holder.textContactNumber.setText("Unsaved,");
+                holder.textContactNumber.setText(context.getString(R.string.str_unsaved));
             } else {
                 holder.textContactName.setText(" ");
             }
@@ -309,8 +309,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         }
 
-        final String thumbnailUrl =  callLogType.getProfileImage();
-        if(!TextUtils.isEmpty(thumbnailUrl)){
+        final String thumbnailUrl = callLogType.getProfileImage();
+        if (!TextUtils.isEmpty(thumbnailUrl)) {
             Glide.with(context)
                     .load(thumbnailUrl)
                     .placeholder(R.drawable.home_screen_profile)
@@ -319,7 +319,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     .override(200, 200)
                     .into(holder.imageProfile);
 
-        }else{
+        } else {
             holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
 
@@ -360,13 +360,13 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         Pattern numberPat = Pattern.compile("\\d+");
                         Matcher matcher1 = numberPat.matcher(name);
                         if (matcher1.find()) {
-                            arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.add_to_contact),
-                                    context.getString(R.string.add_to_existing_contact)
+                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
+                                            + " " +  name, context.getString(R.string.add_to_contact), context.getString(R.string.add_to_existing_contact)
                                     , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
                                     context.getString(R.string.copy_phone_number)/*,context.getString(R.string.call_reminder),*/ /*context.getString(R.string.unblock)*/));
                         } else {
-                            arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.send_sms),
-                                    context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number)/*,
+                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
+                                    + " " +  name, context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number)/*,
                                     context.getString(R.string.call_reminder), context.getString(R.string.unblock)*/));
                         }
 
@@ -378,7 +378,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     } else {
                         if (!TextUtils.isEmpty(number)) {
                             String formatedNumber = Utils.getFormattedNumber(context, number);
-                            arrayListForUnknownContact = new ArrayList<>(Arrays.asList("Call " + formatedNumber, context.getString(R.string.add_to_contact),
+                            arrayListForUnknownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
+                                            + " " +  formatedNumber, context.getString(R.string.add_to_contact),
                                     context.getString(R.string.add_to_existing_contact)
                                     , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
                                     context.getString(R.string.copy_phone_number)/*,context.getString(R.string.call_reminder),
@@ -396,12 +397,14 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         Pattern numberPat = Pattern.compile("\\d+");
                         Matcher matcher1 = numberPat.matcher(name);
                         if (matcher1.find()) {
-                            arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.add_to_contact),
+                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
+                                            + " " +  name, context.getString(R.string.add_to_contact),
                                     context.getString(R.string.add_to_existing_contact)
                                     , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
                                     context.getString(R.string.copy_phone_number)/*,context.getString(R.string.call_reminder), context.getString(R.string.block)*/));
                         } else {
-                            arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + name, context.getString(R.string.send_sms),
+                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
+                                            + " " +  name, context.getString(R.string.send_sms),
                                     context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number)/*,
                                     context.getString(R.string.call_reminder), context.getString(R.string.block)*/));
                         }
@@ -413,7 +416,8 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     } else {
                         if (!TextUtils.isEmpty(number)) {
                             String formatedNumber = Utils.getFormattedNumber(context, number);
-                            arrayListForUnknownContact = new ArrayList<>(Arrays.asList("Call " + formatedNumber, context.getString(R.string.add_to_contact),
+                            arrayListForUnknownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
+                                            + " " +  formatedNumber, context.getString(R.string.add_to_contact),
                                     context.getString(R.string.add_to_existing_contact)
                                     , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
                                     context.getString(R.string.copy_phone_number)/*,context.getString(R.string.call_reminder), context.getString(R.string.block)*/));
@@ -574,7 +578,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            mode.setTitle(nr + " Selected");
+            mode.setTitle(nr + context.getString(R.string.str_selected));
             return false;
         }
 
@@ -583,14 +587,14 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.delete:
-                    Toast.makeText(mActivity, "Delete clicked", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, context.getString(R.string.str_delete_click), Toast.LENGTH_SHORT).show();
                     nr = 0;
                     clearSelection();
                     mode.finish();
                     return true;
 
                 case R.id.selectAll:
-                    Toast.makeText(mActivity, "Select All clicked", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, context.getString(R.string.str_select_all_click), Toast.LENGTH_SHORT).show();
                     mode.finish();
                     return true;
 
@@ -618,7 +622,7 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 nr--;
                 removeSelection(position);
             }
-            mode.setTitle(nr + " selected");
+            mode.setTitle(nr + context.getString(R.string.str_selected));
 
         }
 
@@ -638,14 +642,14 @@ public class CallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.delete:
-                    Toast.makeText(mActivity, "Delete clicked", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, context.getString(R.string.str_delete_click), Toast.LENGTH_SHORT).show();
                     nr = 0;
                     clearSelection();
                     mode.finish();
                     return true;
 
                 case R.id.selectAll:
-                    Toast.makeText(mActivity, "Select All clicked", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, context.getString(R.string.str_select_all_click), Toast.LENGTH_SHORT).show();
                     mode.finish();
                     return true;
 

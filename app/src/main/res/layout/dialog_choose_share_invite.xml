@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/relative_root_rating_dialog"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_root_rating_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/llDialogContentArea"
@@ -21,7 +21,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/padding_between_title_body"
             android:textAppearance="?android:textAppearanceLarge"
-            tools:text="Share Profile"/>
+            tools:text="Share Profile" />
 
         <TextView
             android:id="@+id/text_from_contact"
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/margin_small"
             android:text="@string/str_choose_from_contacts"
-            android:textAppearance="?android:textAppearanceMedium"/>
+            android:textAppearance="?android:textAppearanceMedium" />
 
         <TextView
             android:id="@+id/text_from_social_media"
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/margin_small"
             android:text="@string/str_select_social_media"
-            android:textAppearance="?android:textAppearanceMedium"/>
+            android:textAppearance="?android:textAppearanceMedium" />
 
         <TextView
             android:id="@+id/text_remove_photo"
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/margin_small"
             android:textAppearance="?android:textAppearanceMedium"
-            tools:text="Remove Photo"/>
+            tools:text="Remove Photo" />
 
     </LinearLayout>
 
@@ -74,7 +74,7 @@
                 android:background="@null"
                 android:minWidth="@dimen/min_width_button"
                 android:textColor="@color/colorAccent"
-                tools:text="Cancel"/>
+                tools:text="@string/action_cancel" />
 
         </com.rawalinfocom.rcontact.helper.RippleView>
 

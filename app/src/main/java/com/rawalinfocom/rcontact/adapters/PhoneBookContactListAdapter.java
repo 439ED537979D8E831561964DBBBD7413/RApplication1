@@ -173,7 +173,6 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
         notifyDataSetChanged();
     }
 
-
     public ArrayList<Integer> getArrayListCheckedPositions() {
         return arrayListCheckedPositions;
     }

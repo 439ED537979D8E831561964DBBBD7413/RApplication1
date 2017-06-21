@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -30,8 +31,10 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
         .MyViewHolder> {
 
     private ArrayList<CallLogType> listCallHistory;
+    private Context context;
 
-    public CallHistoryListAdapter(ArrayList<CallLogType> listCallLogType) {
+    public CallHistoryListAdapter(Context context, ArrayList<CallLogType> listCallLogType) {
+        this.context = context;
         this.listCallHistory = listCallLogType;
     }
 
@@ -74,9 +77,9 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
 
         String finalDate;
         if (logDate.equalsIgnoreCase(currentDate)) {
-            finalDate = "Today";
+            finalDate = context.getString(R.string.str_today);
         } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
-            finalDate = "Yesterday";
+            finalDate = context.getString(R.string.str_yesterday);
         } else {
             finalDate = new SimpleDateFormat("EEE,dd/MM").format(date1);
         }
