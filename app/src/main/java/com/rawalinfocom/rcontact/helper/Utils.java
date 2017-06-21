@@ -67,6 +67,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -745,11 +746,11 @@ public class Utils {
 
     public static String getLocalTimeFromUTCTime(String timeStamp) {
         try {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
             Date value = formatter.parse(timeStamp);
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             dateFormatter.setTimeZone(TimeZone.getDefault());
             timeStamp = dateFormatter.format(value);
         } catch (Exception e) {
@@ -760,15 +761,14 @@ public class Utils {
 
     public static String formatDateTime(String timeStamp, String format) {
         try {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             Date value = formatter.parse(timeStamp);
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(format, Locale.getDefault());
             timeStamp = dateFormatter.format(value);
         } catch (Exception e) {
             timeStamp = "";
         }
         return timeStamp;
     }
-
 }

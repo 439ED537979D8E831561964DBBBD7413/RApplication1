@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/llDialogContentArea"
@@ -20,13 +19,13 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/padding_between_title_body"
             android:textAppearance="?android:textAppearanceLarge"
-            tools:text="Title" />
+            tools:text="@string/str_title" />
 
         <TextView
             android:id="@+id/tvDialogBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Message"/>
+            tools:text="@string/str_message" />
     </LinearLayout>
 
     <LinearLayout
@@ -54,7 +53,7 @@
                 android:background="@null"
                 android:minWidth="@dimen/min_width_button"
                 android:textColor="@color/colorAccent"
-                tools:text="Cancel"/>
+                tools:text="@string/action_cancel" />
 
         </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -76,10 +75,8 @@
                 android:background="@null"
                 android:minWidth="@dimen/min_width_button"
                 android:textColor="@color/colorAccent"
-                tools:text="OK"/>
+                tools:text="@string/action_ok" />
 
         </com.rawalinfocom.rcontact.helper.RippleView>
-
     </LinearLayout>
-
 </RelativeLayout>

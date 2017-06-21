@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/image_social_media"
@@ -12,7 +12,7 @@
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/str_content_description"
         android:padding="@dimen/activity_half_horizontal_margin"
-        tools:src="@drawable/img_whatsapp"/>
+        tools:src="@drawable/img_whatsapp" />
 
     <TextView
         android:id="@+id/text_social_media"
@@ -21,6 +21,6 @@
         android:layout_below="@id/image_social_media"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:gravity="center_horizontal"
-        tools:text="Whatsapp"/>
+        tools:text="Whatsapp" />
 
 </RelativeLayout>

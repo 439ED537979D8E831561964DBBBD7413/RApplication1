@@ -59,7 +59,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         String userComment = item.getUserComment();
 
         int notiType = 0;
-        if (context.getResources().getString(R.string.text_rating).equalsIgnoreCase(item.getCrmType()))
+        if (context.getResources().getString(R.string.str_tab_rating).equalsIgnoreCase(item.getCrmType()))
             notiType = 1;
         if (wisherComment != null && wisherComment.length() > 0) {
             holder.textWisherComment.setVisibility(View.VISIBLE);
@@ -128,7 +128,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
     private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int commentStatusReceived, String evmRecordIndexId) {
 
         WsRequestObject addCommentObject = new WsRequestObject();
-        if (crmType.equalsIgnoreCase(context.getResources().getString(R.string.text_rating))) {
+        if (crmType.equalsIgnoreCase(context.getResources().getString(R.string.str_tab_rating))) {
             addCommentObject.setPrId(crmCloudPrId);
             addCommentObject.setPrReply(userComment);
             addCommentObject.setPrStatus(commentStatusReceived + "");
@@ -140,7 +140,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             addCommentObject.setStatus(commentStatusReceived + "");
         }
         if (Utils.isNetworkAvailable(context)) {
-            if (crmType.equalsIgnoreCase(context.getResources().getString(R.string.text_rating))) {
+            if (crmType.equalsIgnoreCase(context.getResources().getString(R.string.str_tab_rating))) {
                 new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
                         .REQ_PROFILE_RATING, context.getResources().getString(R.string.msg_please_wait), true).execute

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relative_root_edit_profile"
     android:layout_width="match_parent"
@@ -11,7 +10,7 @@
         android:id="@+id/include_toolbar"
         layout="@layout/layout_toolbar_edit_profile"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
+        android:layout_height="?attr/actionBarSize" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -46,7 +45,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/str_name"
                         android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/colorBlack"/>
+                        android:textColor="@color/colorBlack" />
 
                     <EditText
                         android:id="@+id/input_first_name"
@@ -57,7 +56,7 @@
                         android:textColor="@color/colorAccent"
                         android:textColorHint="@color/darkCyan"
                         android:textSize="16sp"
-                        tools:text="Monal"/>
+                        tools:text="Monal" />
 
                     <EditText
                         android:id="@+id/input_last_name"
@@ -68,7 +67,7 @@
                         android:textColor="@color/colorAccent"
                         android:textColorHint="@color/darkCyan"
                         android:textSize="16sp"
-                        tools:text="Godiwala"/>
+                        tools:text="Godiwala" />
 
                 </LinearLayout>
 
@@ -80,7 +79,7 @@
                     android:layout_marginStart="@dimen/margin_small"
                     android:layout_weight="1"
                     android:contentDescription="@string/str_content_description"
-                    android:src="@mipmap/ic_launcher"/>
+                    android:src="@mipmap/ic_launcher" />
 
             </LinearLayout>
 
@@ -135,7 +134,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:contentDescription="@string/str_content_description"
-                    android:src="@drawable/ic_action_add"/>
+                    android:src="@drawable/ic_action_add" />
 
                 <TextView
                     android:id="@+id/text_label_phone"
@@ -145,7 +144,7 @@
                     android:layout_toStartOf="@id/image_add_phone"
                     android:text="@string/str_phone"
                     android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@color/colorBlack"/>
+                    android:textColor="@color/colorBlack" />
 
 
             </RelativeLayout>
@@ -156,7 +155,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/relative_contact_details"
                 android:layout_margin="@dimen/margin_tiny"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
 
 
             <RelativeLayout
@@ -173,7 +172,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:contentDescription="@string/str_content_description"
-                    android:src="@drawable/ic_action_add"/>
+                    android:src="@drawable/ic_action_add" />
 
                 <TextView
                     android:id="@+id/text_label_email"
@@ -183,7 +182,7 @@
                     android:layout_toStartOf="@id/image_add_email"
                     android:text="@string/str_email"
                     android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@color/colorBlack"/>
+                    android:textColor="@color/colorBlack" />
 
             </RelativeLayout>
 
@@ -193,7 +192,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/relative_email_details"
                 android:layout_margin="@dimen/margin_tiny"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
 
             <RelativeLayout
                 android:id="@+id/relative_organization_details"
@@ -209,7 +208,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:contentDescription="@string/str_content_description"
-                    android:src="@drawable/ic_action_add"/>
+                    android:src="@drawable/ic_action_add" />
 
                 <TextView
                     android:id="@+id/text_label_organization"
@@ -219,7 +218,7 @@
                     android:layout_toStartOf="@id/image_add_organization"
                     android:text="@string/str_organization"
                     android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@color/colorBlack"/>
+                    android:textColor="@color/colorBlack" />
 
 
             </RelativeLayout>
@@ -230,7 +229,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/relative_organization_details"
                 android:layout_margin="@dimen/margin_tiny"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
 
             <RelativeLayout
                 android:id="@+id/relative_website_details"
@@ -246,7 +245,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:contentDescription="@string/str_content_description"
-                    android:src="@drawable/ic_action_add"/>
+                    android:src="@drawable/ic_action_add" />
 
                 <TextView
                     android:id="@+id/text_label_website"
@@ -256,7 +255,7 @@
                     android:layout_toStartOf="@id/image_add_website"
                     android:text="@string/str_website"
                     android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@color/colorBlack"/>
+                    android:textColor="@color/colorBlack" />
 
             </RelativeLayout>
 
@@ -266,7 +265,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/relative_website_details"
                 android:layout_margin="@dimen/margin_tiny"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
 
 
             <RelativeLayout
@@ -283,7 +282,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:contentDescription="@string/str_content_description"
-                    android:src="@drawable/ic_action_add"/>
+                    android:src="@drawable/ic_action_add" />
 
                 <TextView
                     android:id="@+id/text_label_address"
@@ -293,7 +292,7 @@
                     android:layout_toStartOf="@id/image_add_address"
                     android:text="@string/str_address"
                     android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@color/colorBlack"/>
+                    android:textColor="@color/colorBlack" />
 
             </RelativeLayout>
 
@@ -303,7 +302,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/relative_address_details"
                 android:layout_margin="@dimen/margin_tiny"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
 
 
             <RelativeLayout
@@ -320,7 +319,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:contentDescription="@string/str_content_description"
-                    android:src="@drawable/ic_action_add"/>
+                    android:src="@drawable/ic_action_add" />
 
                 <TextView
                     android:id="@+id/text_label_social_contact"
@@ -330,7 +329,7 @@
                     android:layout_toStartOf="@id/image_add_social_contact"
                     android:text="@string/str_social_contact"
                     android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@color/colorBlack"/>
+                    android:textColor="@color/colorBlack" />
 
             </RelativeLayout>
 
@@ -340,7 +339,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/relative_social_contact_details"
                 android:layout_margin="@dimen/margin_tiny"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
 
             <RelativeLayout
                 android:id="@+id/relative_event_details"
@@ -356,7 +355,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:contentDescription="@string/str_content_description"
-                    android:src="@drawable/ic_action_add"/>
+                    android:src="@drawable/ic_action_add" />
 
                 <TextView
                     android:id="@+id/text_label_event"
@@ -366,7 +365,7 @@
                     android:layout_toStartOf="@id/image_add_event"
                     android:text="@string/str_event"
                     android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@color/colorBlack"/>
+                    android:textColor="@color/colorBlack" />
 
             </RelativeLayout>
 
@@ -376,7 +375,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/relative_event_details"
                 android:layout_margin="@dimen/margin_tiny"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
 
             <TextView
                 android:id="@+id/text_label_gender"
@@ -386,7 +385,7 @@
                 android:layout_marginTop="@dimen/margin_small"
                 android:text="@string/str_gender"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/colorBlack"/>
+                android:textColor="@color/colorBlack" />
 
             <RadioGroup
                 android:id="@+id/radio_group_gender"
@@ -403,7 +402,7 @@
                     android:layout_marginRight="@dimen/margin_tiny"
                     android:checked="true"
                     android:text="@string/str_male"
-                    android:textColor="@color/colorAccent"/>
+                    android:textColor="@color/colorAccent" />
 
                 <RadioButton
                     android:id="@+id/radio_female"
@@ -413,7 +412,7 @@
                     android:layout_marginStart="@dimen/margin_tiny"
                     android:checked="false"
                     android:text="@string/str_female"
-                    android:textColor="@color/colorAccent"/>
+                    android:textColor="@color/colorAccent" />
 
             </RadioGroup>
         </RelativeLayout>

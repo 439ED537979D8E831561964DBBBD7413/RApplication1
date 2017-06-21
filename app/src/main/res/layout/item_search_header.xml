@@ -16,8 +16,7 @@
         android:paddingRight="@dimen/padding_10dp"
         android:paddingTop="@dimen/padding_10dp"
         android:textAppearance="?android:textAppearanceMedium"
-        tools:text="Phone Book"/>
-
+        tools:text="Phone Book" />
 
     <TextView
         android:id="@+id/text_search_count"
@@ -29,6 +28,6 @@
         android:paddingTop="@dimen/padding_10dp"
         android:textAppearance="?android:textAppearanceMedium"
         tools:text="1234"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true" />
 
 </RelativeLayout>

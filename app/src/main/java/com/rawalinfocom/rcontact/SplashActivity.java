@@ -74,5 +74,4 @@ public class SplashActivity extends BaseActivity {
             }
         }, SPLASH_TIME_OUT);
     }
-
 }

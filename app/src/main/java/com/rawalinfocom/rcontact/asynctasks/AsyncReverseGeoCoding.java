@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
@@ -56,7 +57,7 @@ public class AsyncReverseGeoCoding extends AsyncTask<LatLng, Void, Object> {
     protected void onPreExecute() {
         super.onPreExecute();
         if (showProgress) {
-            Utils.showProgressDialog(mContext, "Fetching address...", true);
+            Utils.showProgressDialog(mContext, mContext.getString(R.string.str_fetching_address), true);
         }
     }
 
@@ -128,5 +129,4 @@ public class AsyncReverseGeoCoding extends AsyncTask<LatLng, Void, Object> {
         }
         wsResponseListener.onDeliveryResponse(serviceType, result, error);
     }
-
 }

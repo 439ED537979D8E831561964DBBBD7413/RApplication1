@@ -80,7 +80,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorWhite"
                     app:backgroundTint="@color/dialogUserNameTextColor"
-                    tools:text="CONFIRM" />
+                    tools:text="@string/str_confirm" />
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/button_request_reject"
@@ -88,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorWhite"
                     app:backgroundTint="@color/dialogUserNameTextColor"
-                    tools:text="REJECT" />
+                    tools:text="@string/str_reject" />
             </LinearLayout>
         </LinearLayout>
 

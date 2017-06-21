@@ -82,12 +82,13 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
         final NotiProfileItem item = list.get(position);
         holder.textRequesterName.setText(item.getPersonName());
         holder.textRequestDetailInfo.setText(item.getNotiInfo());
+        holder.buttonRequestConfirm.setAllCaps(true);
         if (item.getProfileNotiType() == 0) {
-            holder.buttonRequestConfirm.setText("CONFIRM");
+            holder.buttonRequestConfirm.setText(context.getString(R.string.str_confirm));
             holder.buttonRequestReject.setVisibility(View.VISIBLE);
-            holder.buttonRequestReject.setText("REJECT");
+            holder.buttonRequestReject.setText(context.getString(R.string.str_reject));
         } else {
-            holder.buttonRequestConfirm.setText("VIEW PROFILE");
+            holder.buttonRequestConfirm.setText(context.getString(R.string.view_profile));
             holder.buttonRequestReject.setVisibility(View.GONE);
         }
         if (recyclerPosition == 1) {

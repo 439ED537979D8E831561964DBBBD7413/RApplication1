@@ -16,7 +16,7 @@
             android:id="@+id/icon"
             android:src="@drawable/home_screen_profile"
             android:layout_gravity="center"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/text_number"
-                android:text="+917788445510"/>
+                android:text="+917788445510" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -40,13 +40,13 @@
                 android:singleLine="true"
                 android:ellipsize="end"
                 android:id="@+id/text_body"
-                android:text="This is demo project This is demo project This is demo project"/>
+                android:text="This is demo project This is demo project This is demo project" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/text_date_n_time"
-                android:text="13 APR, 9:30 AM"/>
+                android:text="13 APR, 9:30 AM" />
         </LinearLayout>
 
         <ImageView
@@ -60,7 +60,7 @@
             android:paddingLeft="@dimen/padding_5dp"
             android:src="@drawable/ic_action_more_vertical"
             android:tint="@color/colorDarkGray"
-            android:visibility="visible"/>
+            android:visibility="visible" />
 
     </RelativeLayout>
 

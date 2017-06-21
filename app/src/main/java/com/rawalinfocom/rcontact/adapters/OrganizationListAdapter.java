@@ -70,7 +70,6 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
         return arrayListOrganization.size();
     }
 
-
     class OrganizationViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.text_main)
@@ -84,8 +83,6 @@ public class OrganizationListAdapter extends RecyclerView.Adapter<OrganizationLi
 
             textMain.setTypeface(Utils.typefaceRegular(context));
             textSub.setTypeface(Utils.typefaceRegular(context));
-
         }
     }
-
 }

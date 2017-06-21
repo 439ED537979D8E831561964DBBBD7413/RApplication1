@@ -9,13 +9,33 @@
     <!--<string name="server_client_id">842331483294-os1beu18aonoukiskj67li7l0e4orn61.apps.googleusercontent.com</string>-->
     <string name="server_client_id">842331483294-ehe2r3r6mdbn6e1g9b33ecuakb5j0n28.apps.googleusercontent.com</string>
 
+    <!-- Common -->
+    <string name="msg_try_later">There is some error! Please try again later.</string>
+    <string name="msg_no_internet">Please check your internet connection.</string>
+    <string name="msg_unsaved_details">Some details are left unsaved. Are you sure you want to proceed?</string>
+    <string name="msg_please_wait">Please Wait&#8230;</string>
+    <string name="msg_no_network">Network Not Available.</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_call">Call</string>
+    <string name="action_delete">Delete</string>
+    <string name="str_comment">Comment</string>
+    <string name="str_choose_from_contacts">Choose from Contacts</string>
+    <string name="str_select_social_media">Select Social Media</string>
+    <string name="str_select_all">Select all</string>
+    <string name="str_fetching_address">Fetching address...</string>
+    <string name="str_searching">Searching...</string>
+    <string name="error_no_placeholders">No placeholders</string>
+    <string name="str_title">Title</string>
+    <string name="str_message">Message</string>
+
+    <!-- Other -->
+    <string name="error_facebook_login_cancelled">Facebook Login Cancelled!!</string>
+    <string name="error_retrieving_details">Error in Retrieving Details!</string>
     <string name="description_registration_logo">Registration Logo</string>
     <string name="str_content_description">Content Description</string>
     <string name="title_verify_number">Verify Your Phone Number</string>
     <string name="msg_enter_number">Please Confirm your Country Code and Enter Your Phone Number</string>
     <string name="action_submit">Submit</string>
-    <string name="msg_please_wait">Please Wait&#8230;</string>
-    <string name="msg_no_network">Network Not Available.</string>
     <string name="hint_search">Search</string>
     <string name="description_action_back">Description Action Back</string>
     <string name="error_invalid_number">Please add valid Number</string>
@@ -38,39 +58,19 @@
     <string name="text_google">Google</string>
     <string name="text_linked_in">LinkedIn</string>
     <string name="title_profile_registration">Profile Registration</string>
-    <string name="msg_try_later">There is some error! Please try again later.</string>
     <string name="title_activity_contacts_main">ContactsMainActivity</string>
     <string name="title_my_profile">My Profile</string>
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_all_organizations">All Organizations</string>
     <string name="action_close">Close</string>
-    <string name="action_cancel">Cancel</string>
-    <string name="action_ok">Ok</string>
-    <string name="str_comment">Comment</string>
-    <string name="str_choose_from_contacts">Choose from Contacts</string>
-    <string name="str_select_social_media">Select Social Media</string>
-    <string name="str_select_all">Select all</string>
-    <string name="action_delete">Delete</string>
+    <string name="action_ok">OK</string>
 
-    <string name="text_no_history">No history to show</string>
-
-    <string name="str_name">Name</string>
-    <string name="str_phone">Phone</string>
-    <string name="str_email">Email</string>
-    <string name="str_website">Website</string>
-    <string name="str_address">Address</string>
     <string name="str_social_contact">Social Contact</string>
-    <string name="str_event">Event</string>
-    <string name="str_gender">Gender</string>
     <string name="str_edit_my_profile">Edit My Profile</string>
-    <string name="str_female">Female</string>
-    <string name="str_male">Male</string>
+
     <string name="str_first">First</string>
     <string name="str_last">Last</string>
     <string name="str_organization">Organization</string>
@@ -129,19 +129,8 @@
     <string name="block">Block</string>
     <string name="unblock">Unblock</string>
     <string name="call_reminder">Call Reminder</string>
-    <string name="add_to_contact">Add to Contact</string>
-    <string name="add_to_existing_contact">Add to Existing Contact</string>
-    <string name="copy_to_clipboard">Copy to clip board</string>
     <string name="str_hide_year">Hide Year</string>
     <string name="str_i_currently_work_here">I Currently Work Here</string>
-    <string name="str_invite">Invite</string>
-    <string name="edit">Edit</string>
-    <string name="view_in_ac">View in AC</string>
-    <string name="view_in_rc">View in RC</string>
-    <string name="delete">Delete</string>
-    <string name="clear_call_log">Clear Call Log</string>
-    <string name="view_profile">View Profile</string>
-    <string name="unblock_All">Unblock All</string>
 
     <string name="nav_text_home">Home</string>
     <string name="nav_text_account">Account</string>
@@ -156,16 +145,11 @@
     <string name="nav_text_about_help">About and Help</string>
     <string name="nav_text_export_db">Export DB</string>
 
-    <string name="today">Today</string>
-    <string name="yesterday">Yesterday</string>
     <string name="past_5_days">Past 5 Days</string>
     <string name="recent_events">Recent Events</string>
     <string name="upcoming_events">Upcoming Events</string>
     <string name="past_pending_requests">Past Pending Requests</string>
-    <string name="text_birthday">Birthday</string>
-    <string name="text_anniversary">Anniversary</string>
     <string name="text_custom">Custom</string>
-    <string name="text_rating">Rating</string>
     <string name="msg_please_enter_some_comment">Please enter some comment first!</string>
     <string name="text_wishes_on_your">Wishes you on your\u0020</string>
     <string name="text_year_old">Year Old</string>
@@ -191,7 +175,6 @@
     <string name="footer_rating_history_text">If you want to see Contact Rating History switch to Website</string>
 
     <string name="title_activity_call_histroy_detail">CallHistroyDetailActivity</string>
-    <string name="block_action_title">Blocked contacts list</string>
     <string name="privacy_everyone">Everyone</string>
     <string name="privacy_my_contact">My Contacts</string>
     <string name="privacy_only_me">Only Me</string>
@@ -252,5 +235,314 @@
     <string name="err_msg_please_enter_password">Please enter password</string>
     <string name="err_msg_please_confirm_password">Please enter confirm password</string>
     <string name="err_msg_password_not_match">Password does not match</string>
+
+    <!-- BLock List Contact -->
+    <string name="add_contacts_to_block_list">Add contacts to block list</string>
+    <string name="unblock_All">Unblock All</string>
+    <string name="block_action_title">Blocked contacts list</string>
+    <string name="contacts">Contacts</string>
+
+    <!-- Call History Details -->
+    <string name="sms">SMS</string>
+    <string name="call_history">Call History</string>
+    <string name="text_no_history">No history to show</string>
+    <string name="view_old_records">View old records</string>
+    <string name="rating_submit">Rating Submitted</string>
+    <string name="please_select_number_view_sms_log">FFct a number to view sms-log</string>
+    <string name="please_select_number_call">Please select a number to call</string>
+    <string name="error_update_favorite_status">Error while updating favourite status!</string>
+    <string name="add_to_contact">Add to Contact</string>
+    <string name="add_to_existing_contact">Add to Existing Contact</string>
+    <string name="copy_to_clipboard">Copy to clip board</string>
+    <string name="view_profile">View Profile</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="clear_call_log">Clear Call Log</string>
+    <string name="view_in_ac">View in AC</string>
+    <string name="view_in_rc">View in RC</string>
+    <string name="text_rate">Rate</string>
+    <string name="characters_left">characters left</string>
+    <string name="text_character">character</string>
+    <string name="please_fill_stars">Please fill appropriate stars!</string>
+
+    <!-- Phone Number Type -->
+    <string name="type_home">Home</string>
+    <string name="type_mobile">Mobile</string>
+    <string name="type_work">Work</string>
+    <string name="type_fax_work">Fax Work</string>
+    <string name="type_fax_home">Fax Home</string>
+    <string name="type_pager">Pager</string>
+    <string name="type_other">Other</string>
+    <string name="type_other_caps">OTHER</string>
+    <string name="type_callback">Callback</string>
+    <string name="type_car">Car</string>
+    <string name="type_company_main">Company Main</string>
+    <string name="type_isdn">ISDN</string>
+    <string name="type_main">Main</string>
+    <string name="type_other_fax">Other Fax</string>
+    <string name="type_radio">Radio</string>
+    <string name="type_telex">Telex</string>
+    <string name="type_tty_tdd">Tty Tdd</string>
+    <string name="type_work_mobile">Work Mobile</string>
+    <string name="type_work_pager">Work Pager</string>
+    <string name="type_assistant">Assistant</string>
+    <string name="type_mms">MMS</string>
+
+    <!-- Call Log -->
+    <string name="no_history_delete">No history to delete</string>
+    <string name="call_logs_deleted">CallLogs deleted</string>
+    <string name="please_select_history_to_delete">Please select call history to delete</string>
+    <string name="str_view_previous_logs">View previous logs</string>
+    <string name="str_loading">loading...</string>
+    <string name="str_no_call_logs">No logs to display</string>
+
+    <!-- Contact Listing -->
+    <string name="please_select_one_contact">Please select at least one contact</string>
+    <string name="please_select_one">Please select at least one</string>
+    <string name="invitation_shared">Invitation Shared</string>
+    <string name="invitation_sent">Invitation sent successfully!</string>
+    <string name="invitation_sending">Sending Invitation...</string>
+    <string name="share_via">Share App Via</string>
+    <string name="db_dump_failed">DB dump failed</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="tab_contact">CONTACTS</string>
+    <string name="tab_call">CALL LOG</string>
+    <string name="tab_sms">SMS</string>
+
+    <string name="tab_all_contact">All Contacts</string>
+    <string name="tab_r_contact">R Contacts</string>
+    <string name="tab_favorites">Favorites</string>
+
+    <string name="data_lost_hint_1">If you switch, your current data will be lost.</string>
+    <string name="data_lost_hint_2">Would you like to continue?</string>
+
+    <string name="call_log_permission">Call log permission is required. Do you want to try again?</string>
+
+    <string name="call_log_incoming">Incoming</string>
+    <string name="call_log_outgoing">Outgoing</string>
+    <string name="call_log_missed">Missed</string>
+    <string name="call_log_rejected">Rejected</string>
+    <string name="call_log_blocked">Blocked</string>
+    <string name="call_log_voice_mail">Voicemail</string>
+
+    <string name="msg_draft">Draft</string>
+    <string name="msg_failed">Failed</string>
+    <string name="msg_received">Received</string>
+    <string name="msg_outbox">Outbox</string>
+    <string name="msg_queued">Queued</string>
+    <string name="msg_sent">Sent</string>
+
+    <string name="protocol_aim">AIM</string>
+    <string name="protocol_msn">MSN</string>
+    <string name="protocol_yahoo">Yahoo</string>
+    <string name="protocol_skype">Skype</string>
+    <string name="protocol_qq">QQ</string>
+    <string name="protocol_google_talk">Google Talk</string>
+    <string name="protocol_icq">ICQ</string>
+    <string name="protocol_jabber">Jabber</string>
+    <string name="protocol_netmeeting">NetMeeting</string>
+    <string name="protocol_whatsapp">WhatsApp</string>
+    <string name="protocol_facebook">Facebook</string>
+
+    <string name="event_anniversary">Anniversary</string>
+    <string name="event_birthday">Birthday</string>
+
+    <string name="web_homepage">Homepage</string>
+    <string name="web_blog">Blog</string>
+    <string name="web_ftp">FTP</string>
+
+    <string name="unknown">[Unknown]</string>
+    <string name="str_all">All</string>
+    <string name="str_invite">Invite</string>
+
+    <string name="str_today">Today</string>
+    <string name="str_yesterday">Yesterday</string>
+
+    <string name="str_unsaved">Unsaved,</string>
+    <string name="str_selected">Selected</string>
+    <string name="str_delete_click">Delete clicked</string>
+    <string name="str_select_all_click">Select All clicked</string>
+
+    <string name="str_all_contact_sync">All Contact Synced</string>
+
+    <string name="contact_read_permission">Contact read permission is required of this app. Do you want to try again?</string>
+    <string name="calling_permission">Contact read permission is required of this app. Do you want to try again?</string>
+
+    <!-- Social Media -->
+    <string name="social_media">Social Media</string>
+    <string name="str_whats_app">Whatsapp</string>
+    <string name="str_facebook">Facebook</string>
+    <string name="str_messenger">Messenger</string>
+    <string name="str_twitter">Twitter</string>
+    <string name="str_linked_in">Linkedin</string>
+    <string name="str_skype">Skype</string>
+
+    <!-- Comment & Notification-->
+    <string name="str_view_reply">VIEW REPLY</string>
+    <string name="str_reply_you">Reply You</string>
+
+    <string name="str_unread_notification_hint_1">You have</string>
+    <string name="str_unread_notification_hint_2">unread notification</string>
+    <string name="str_unread_notification_hint_3">You have no unread notification</string>
+
+    <string name="str_rating_comment_hint_1">reply you on your rating and comment.</string>
+    <string name="str_rating_comment_hint_2">You wrote comment and give rating to </string>
+    <string name="str_rating_comment_hint_3">You receive comment rating from </string>
+
+    <string name="str_view_more">View More</string>
+    <string name="str_view_less">View Less</string>
+    <string name="str_confirm">CONFIRM</string>
+    <string name="str_reject">REJECT</string>
+
+    <string name="str_tab_profile">Profile</string>
+    <string name="str_tab_rating">Rating</string>
+    <string name="str_tab_comment">Comment</string>
+    <string name="str_tab_r_contact">RContact</string>
+
+    <string name="str_requested_for_your">Requested for your </string>
+    <string name="str_confirmed_your_request_for">confirmed your request for </string>
+
+    <!-- Profile -->
+    <string name="str_copy_number">Copied Number</string>
+    <string name="str_copy_email">Copied Email</string>
+    <string name="str_copy_website">Copied Website</string>
+    <string name="str_copy_address">Copied Address</string>
+    <string name="str_copy_number_clip_board">Number copied to Clipboard</string>
+    <string name="str_copy_email_clip_board">Email copied to Clipboard</string>
+    <string name="str_copy_website_clip_board">Website copied to Clipboard</string>
+    <string name="str_copy_address_clip_board">Address copied to Clipboard</string>
+
+    <string name="str_invalid_email">Invalid EmailId!</string>
+    <string name="str_account_required">Account is required</string>
+    <string name="str_web_required">Web address is required</string>
+    <string name="str_org_designation_required">Organization designation is required</string>
+    <string name="str_org_name_required">Organization name is required</string>
+    <string name="str_email_required">Email is required</string>
+    <string name="str_event_required">Event date is required!</string>
+    <string name="str_street_required">Street is required!</string>
+    <string name="str_city_required">City is required!</string>
+    <string name="str_state_required">State is required!</string>
+    <string name="str_country_required">Country name is required!</string>
+
+    <string name="str_add_birthday_anniversary_error">You can add Birthday and Anniversary only once!</string>
+    <string name="str_address_map_error">Address mapping on Map is required!</string>
+
+    <string name="str_select_org">Select current Organization!</string>
+    <string name="str_birthday">birthday</string>
+    <string name="str_anniversary">anniversary</string>
+
+    <string name="str_send_email">Send Email via:</string>
+
+    <string name="str_female">Female</string>
+    <string name="str_male">Male</string>
+
+    <string name="str_event">Event</string>
+    <string name="str_gender">Gender</string>
+    <string name="str_number">Number</string>
+    <string name="str_name">Name</string>
+    <string name="str_phone">Phone</string>
+    <string name="str_email">Email</string>
+    <string name="str_small_cap_email">email</string>
+    <string name="str_website">Website</string>
+    <string name="str_address">Address</string>
+    <string name="str_link">Link</string>
+    <string name="str_account_name">Account Name</string>
+    <string name="str_choose_date">Choose date</string>
+    <string name="str_public_profile">public_profile</string>
+    <string name="str_social_connect">Social Connect</string>
+
+    <string name="str_view_all_organizations">View All Organizations</string>
+    <string name="str_search_location">Search Location...</string>
+    <string name="str_sync_with_google_map">Sync with Google Map</string>
+
+    <string name="str_country_hint">Country (Required)</string>
+    <string name="str_state_hint">State (Required)</string>
+    <string name="str_city_hint">City (Required)</string>
+    <string name="str_street_hint">Street (Required)</string>
+    <string name="str_address_line1_hint">Address Line1 (Required)</string>
+    <string name="str_address_line2_hint">Address Line2 (Optional)</string>
+    <string name="str_neighborhood_hint">Neighbourhood</string>
+    <string name="str_pin_code_hint">Pincode (Required)</string>
+    <string name="str_po_box_number_hint">Po. Box No.</string>
+
+    <string name="str_image_upload_dialog_title">Upload Via</string>
+    <string name="str_image_upload_dialog_camera_title">Take Photo</string>
+    <string name="str_image_upload_dialog_gallery_title">Choose Photo</string>
+    <string name="str_image_upload_dialog_remove_title">Choose Photo</string>
+
+    <string name="str_custom_label">Custom Label Name</string>
+
+    <string name="str_profile_hint_1">Profile Updated Successfully!</string>
+
+    <string name="str_valid_both_name">Please enter First Name and Last Name!</string>
+    <string name="str_valid_email">Please enter valid email!</string>
+    <string name="str_valid_first_name">Please add First name!</string>
+    <string name="str_valid_last_name">Please add Last name!</string>
+    <string name="str_valid_gender">Select any gender!</string>
+    <string name="str_valid_number">Number is required!</string>
+    <string name="str_valid_name">Please add valid name!</string>
+    <string name="str_valid_address">Please add address!</string>
+    <string name="str_valid_designation">Designation in organization is required!</string>
+    <string name="str_valid_company_name">Company name in organization is required!</string>
+    <string name="str_valid_street">Street in address is required!</string>
+    <string name="str_valid_city">City in address is required!</string>
+    <string name="str_valid_state">State in address is required!</string>
+    <string name="str_valid_country">Country in address is required!</string>
+
+    <string name="storage_permission">Storage permission is required for uploading profile image. Do you want to try again?</string>
+    <string name="camera_permission">Camera permission is required for taking photo. Do you want to try again?</string>
+
+    <string name="str_view_in_phone_book">View in Phonebook</string>
+    <string name="str_rate_profile">Rate Profile</string>
+
+    <string name="str_error_retrieving_contact_raw_id">Error while retrieving contact raw id</string>
+
+    <string name="str_profile_deails">Profile Details</string>
+    <string name="str_share">Share</string>
+    <string name="str_s_profile">\'s Profile</string>
+
+    <string name="str_share_contact_via">Share Contact Via</string>
+    <string name="str_change_profile_picture">Change Profile Picture</string>
+
+    <!-- SMS -->
+    <string name="str_message_deleted">message deleted.</string>
+
+    <!-- Dialer -->
+    <string name="str_no_sim">No sim detected</string>
+
+    <!-- Favorite -->
+    <string name="str_no_favorite">No favorites</string>
+
+    <!-- Maps -->
+    <string name="str_no_location_found">No Location Found</string>
+    <string name="str_unable_location_found">Unable to find Location!</string>
+    <string name="str_daily_limit_warning">You have exceeded your daily request quota for this API.</string>
+    <string name="str_hint_search_location">Please search any location!</string>
+    <string name="str_hint_search_address">Please add Address to search</string>
+    <string name="str_postal_address">Postal Address</string>
+    <string name="str_google_address">Google Address</string>
+    <string name="str_use_postal_address">Use Postal Address</string>
+    <string name="str_use_google_address">Use Google Address</string>
+
+    <!-- Privacy-->
+    <string name="str_privacy_setting_update">Privacy Setting Updated Successfully</string>
+    <string name="str_request_sending_fail">Request sending failed!</string>
+
+    <!-- GPS -->
+    <string name="str_gps_disable">GPS is disabled!</string>
+    <string name="str_gps_not_enable">GPS is not enabled. Do you want to go to settings menu?</string>
+    <string name="str_cancel">CANCEL</string>
+    <string name="str_settings">SETTINGS</string>
+
+    <!-- Country -->
+    <string name="str_no_country_found">No Country Found</string>
+
+    <!-- OTP -->
+    <string name="str_rawal_otp">rawal_otp</string>
+
+    <!-- Registration -->
+    <string name="str_mobile_number">Mobile Number</string>
 
 </resources>

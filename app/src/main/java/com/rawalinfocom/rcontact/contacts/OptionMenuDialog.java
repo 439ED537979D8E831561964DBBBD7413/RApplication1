@@ -90,15 +90,17 @@ class OptionMenuDialog {
         String[] menus = new String[0];
         switch (menuType) {
             case ALL_CONTACT_NON_RCP:
-                menus = new String[]{"Edit", "Delete"};
+                menus = new String[]{context.getString(R.string.edit), context.getString(R.string.delete)};
                 break;
 
             case ALL_CONTACT_RCP:
-                menus = new String[]{"Edit", "View in Phonebook", "Rate Profile", "Delete"};
+                menus = new String[]{context.getString(R.string.edit), context.getString(R.string.str_view_in_phone_book),
+                        context.getString(R.string.str_rate_profile), context.getString(R.string.delete)};
                 break;
 
             case R_CONTACT_RCP:
-                menus = new String[]{"Edit", "View in AC", "Rate Profile", "Delete"};
+                menus = new String[]{context.getString(R.string.edit), context.getString(R.string.view_in_ac),
+                        context.getString(R.string.str_rate_profile), context.getString(R.string.delete)};
                 break;
         }
 
@@ -239,7 +241,7 @@ class OptionMenuDialog {
                     ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(context, "Error while retrieving contact raw id", Toast
+                    Toast.makeText(context, context.getString(R.string.str_error_retrieving_contact_raw_id), Toast
                             .LENGTH_SHORT).show();
                 }
                 break;
@@ -394,7 +396,5 @@ class OptionMenuDialog {
             //</editor-fold>
         }
     }
-
     //</editor-fold>
-
 }

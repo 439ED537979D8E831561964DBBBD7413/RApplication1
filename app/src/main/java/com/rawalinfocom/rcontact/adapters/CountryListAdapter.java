@@ -107,8 +107,6 @@ public class CountryListAdapter extends RecyclerView.Adapter<CountryListAdapter.
             ButterKnife.bind(this, itemView);
 
             textCountryName.setTypeface(Utils.typefaceRegular(context));
-
         }
     }
-
 }

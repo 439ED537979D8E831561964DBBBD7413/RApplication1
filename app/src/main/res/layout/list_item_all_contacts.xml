@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/relative_row_all_contact"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/activity_half_horizontal_margin">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_row_all_contact"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/activity_half_horizontal_margin">
 
     <RelativeLayout
         android:id="@+id/relative_row_main"
@@ -20,7 +20,7 @@
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:contentDescription="@string/str_content_description"
-            android:src="@drawable/home_screen_profile"/>
+            android:src="@drawable/home_screen_profile" />
 
         <FrameLayout
             android:id="@+id/frame_container_right"
@@ -37,7 +37,7 @@
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:contentDescription="@string/str_content_description"
-                android:src="@drawable/ic_arrow_bottom"/>
+                android:src="@drawable/ic_arrow_bottom" />
 
             <com.rawalinfocom.rcontact.helper.RippleView
                 android:id="@+id/ripple_invite"
@@ -62,7 +62,7 @@
                     android:paddingTop="@dimen/margin_small"
                     android:text="@string/str_invite"
                     android:textAllCaps="false"
-                    android:textColor="@color/colorWhite"/>
+                    android:textColor="@color/colorWhite" />
 
             </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -101,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    tools:text="Monal"/>
+                    tools:text="Monal" />
 
                 <TextView
                     android:id="@+id/text_cloud_contact_name"
@@ -109,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    tools:text=" (Monell)"/>
+                    tools:text=" (Monell)" />
 
             </LinearLayout>
 
@@ -118,7 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                tools:text="+911234567890"/>
+                tools:text="+911234567890" />
 
             <LinearLayout
                 android:id="@+id/linear_rating"
@@ -133,7 +133,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="2dp"
-                    tools:text="2008"/>
+                    tools:text="2008" />
 
                 <RatingBar
                     android:id="@+id/rating_user"
@@ -142,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:isIndicator="true"
                     android:stepSize="1"
-                    tools:rating="4"/>
+                    tools:rating="4" />
 
             </LinearLayout>
 
@@ -159,13 +159,13 @@
         android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
         android:layout_marginRight="@dimen/activity_half_horizontal_margin"
         android:layout_marginTop="@dimen/activity_half_horizontal_margin"
-        android:background="@color/colorVeryLightGray"/>
+        android:background="@color/colorVeryLightGray" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_multiple_rc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/divider_all_contact"
-        android:overScrollMode="never"/>
+        android:overScrollMode="never" />
 
 </RelativeLayout>

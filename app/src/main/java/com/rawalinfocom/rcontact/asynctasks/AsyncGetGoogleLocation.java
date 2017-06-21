@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.GetGoogleLocationResponse;
@@ -39,7 +40,7 @@ public class AsyncGetGoogleLocation extends AsyncTask<String, Void, Object> {
     protected void onPreExecute() {
         super.onPreExecute();
         if (displayProgress) {
-            Utils.showProgressDialog(context, "Searching...", true);
+            Utils.showProgressDialog(context, context.getString(R.string.str_searching), true);
         }
     }
 

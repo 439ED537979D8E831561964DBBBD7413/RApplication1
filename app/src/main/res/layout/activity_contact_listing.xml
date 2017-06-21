@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_contact_listing"
     android:layout_width="match_parent"
@@ -11,7 +10,7 @@
         android:id="@+id/include_toolbar"
         layout="@layout/layout_toolbar_phonebook_contact"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
+        android:layout_height="?attr/actionBarSize" />
 
     <RelativeLayout
         android:id="@+id/relative_select_options"
@@ -23,7 +22,7 @@
         <Spinner
             android:id="@+id/spinner_share_via"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -37,12 +36,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/str_select_all"
-                android:textColor="@color/colorAccent"/>
+                android:textColor="@color/colorAccent" />
 
             <CheckBox
                 android:id="@+id/checkbox_select_all"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -52,6 +51,6 @@
         android:id="@+id/recycler_view_contacts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/relative_select_options"/>
+        android:layout_below="@id/relative_select_options" />
 
 </RelativeLayout>

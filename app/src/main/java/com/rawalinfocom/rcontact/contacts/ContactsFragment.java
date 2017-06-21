@@ -121,9 +121,9 @@ public class ContactsFragment extends BaseFragment {
     }
 
     private void setupTabLayout() {
-        tabContact.addTab(tabContact.newTab().setText("All Contacts"), true);
-        tabContact.addTab(tabContact.newTab().setText("R Contacts"));
-        tabContact.addTab(tabContact.newTab().setText("Favorites"));
+        tabContact.addTab(tabContact.newTab().setText(getActivity().getString(R.string.tab_all_contact)), true);
+        tabContact.addTab(tabContact.newTab().setText(getActivity().getString(R.string.tab_r_contact)));
+        tabContact.addTab(tabContact.newTab().setText(getActivity().getString(R.string.tab_favorites)));
     }
 
     private void bindWidgetsWithAnEvent() {
