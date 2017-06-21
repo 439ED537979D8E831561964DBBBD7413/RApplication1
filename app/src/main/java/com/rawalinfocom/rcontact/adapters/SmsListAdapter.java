@@ -54,11 +54,11 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final int VIEW_TYPE_LOADING = 1;
     private RecyclerView recyclerViewSmsLogs;
 
-    private OnLoadMoreListener onLoadMoreListener;
     private boolean isLoading;
     private boolean isMoreData = false;
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
+    private OnLoadMoreListener onLoadMoreListener;
     ArrayList<String> arrayListForKnownContact;
     ArrayList<SmsDataType> arrayList;
     private int searchCount;
@@ -251,6 +251,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             } else {
                 userViewHolder.icon.setImageResource(R.drawable.home_screen_profile);
             }
+
             userViewHolder.llContent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -264,6 +265,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     intent.putExtra("finishActivityOnSaveCompleted", true);
                     context.startActivity(intent);
 
+//                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", add, null)));
 
                 }
             });

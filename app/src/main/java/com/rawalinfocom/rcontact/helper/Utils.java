@@ -46,6 +46,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.model.CallLogType;
@@ -237,7 +238,7 @@ public class Utils {
 
     public static void setArrayListPreference(Context context, String key, @Nullable ArrayList
             arrayList) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         Gson gson = new Gson();

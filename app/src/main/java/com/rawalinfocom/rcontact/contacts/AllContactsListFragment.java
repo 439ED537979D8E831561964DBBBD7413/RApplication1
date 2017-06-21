@@ -982,34 +982,32 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
 
         while (data.moveToNext()) {
-            if (idIdx != -1) {
-                long id = data.getLong(idIdx);
-                ProfileData profileData = array.get(id);
+            long id = data.getLong(idIdx);
+            ProfileData profileData = array.get(id);
 
-                if (profileData == null) {
-                    profileData = new ProfileData();
-                    array.put(id, profileData);
-                    arrayListUserContact.add(profileData);
-                }
+            if (profileData == null) {
+                profileData = new ProfileData();
+                array.put(id, profileData);
+                arrayListUserContact.add(profileData);
+            }
 
-                profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
-                profileData.setRawContactId(data.getString(rawIdIdx));
+            profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+            profileData.setRawContactId(data.getString(rawIdIdx));
 
-                switch (data.getString(mimeTypeIdx)) {
-                    case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
-                        profileData.setTempNumber(data.getString(phoneIdx));
-                        profileData.setProfileUrl(data.getString(photoURIIdx));
-                        break;
-                    case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
-                        profileData.setTempFirstName(data.getString(givenNameIdx));
-                        profileData.setTempLastName(data.getString(familyNameIdx));
-                        profileData.setTempPrefix(data.getString(prefixNameIdx));
-                        profileData.setTempSufix(data.getString(suffixNameIdx));
-                        profileData.setTempMiddleName(data.getString(middleNameIdx));
-                        profileData.setName(data.getString(givenNameIdx) + data.getString
-                                (familyNameIdx));
-                        break;
-                }
+            switch (data.getString(mimeTypeIdx)) {
+                case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
+                    profileData.setTempNumber(data.getString(phoneIdx));
+                    profileData.setProfileUrl(data.getString(photoURIIdx));
+                    break;
+                case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
+                    profileData.setTempFirstName(data.getString(givenNameIdx));
+                    profileData.setTempLastName(data.getString(familyNameIdx));
+                    profileData.setTempPrefix(data.getString(prefixNameIdx));
+                    profileData.setTempSufix(data.getString(suffixNameIdx));
+                    profileData.setTempMiddleName(data.getString(middleNameIdx));
+                    profileData.setName(data.getString(givenNameIdx) + data.getString
+                            (familyNameIdx));
+                    break;
             }
         }
 //        ArrayList contactsWithNoName = new ArrayList<>();

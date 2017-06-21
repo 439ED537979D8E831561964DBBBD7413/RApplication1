@@ -32,6 +32,9 @@ import io.fabric.sdk.android.Fabric;
 
 public class RContactApplication extends Application {
 
+
+    private static RContactApplication mInstance;
+
     public static final int FAVOURITE_UNMODIFIED = 0;
     public static final int FAVOURITE_ADDED = 1;
     public static final int FAVOURITE_REMOVED = 2;
@@ -73,6 +76,9 @@ public class RContactApplication extends Application {
 //
 //        }
 //        Log.d("KeyHash:", "We are here end");
+
+        mInstance = this;
+
 //         Fabric Initialization
        // Fabric.with(this, new Crashlytics());
 
@@ -129,6 +135,10 @@ public class RContactApplication extends Application {
 
             }
         });
+    }
+
+    public static synchronized RContactApplication getInstance() {
+        return mInstance;
     }
 
     @Override
