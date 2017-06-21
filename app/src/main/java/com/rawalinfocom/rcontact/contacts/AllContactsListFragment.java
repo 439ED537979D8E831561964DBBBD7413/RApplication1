@@ -119,9 +119,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     ArrayList<String> arrayListContactHeaders;
     ArrayList<ProfileData> arrayListUserContact = new ArrayList<>();
     ArrayList<ProfileData> arrayListSyncUserContact = new ArrayList<>();
-    ArrayList<String> arrayListContactId;
-    ArrayList<String> arrayListContactNumbers;
-    ArrayList<String> arrayListContactEmails;
     ArrayList<String> arrayListFavouriteContacts;
 
     LongSparseArray<ProfileData> array = new LongSparseArray<>();
@@ -142,7 +139,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     int settingRequestPermission = 0;
     public String callNumber = "";
     private SyncingTask syncingTask;
-    private LocalReceiver localReceiver;
 
     //<editor-fold desc="Constructors">
 
@@ -163,7 +159,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         phoneBookContacts = new PhoneBookContacts(getActivity());
-        localReceiver = new LocalReceiver();
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
         Utils.setBooleanPreference(getActivity(), AppConstants
                 .PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, true);
@@ -246,10 +241,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     }
                 }
             }
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction("ALL-CONTACT-SYNCED");
-            LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
-            localBroadcastManager.registerReceiver(localReceiver, intentFilter);
             /*else if (settingRequestPermission == AppConstants
                     .MY_PERMISSIONS_REQUEST_READ_CONTACTS) {
 
@@ -2144,17 +2135,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         } else {
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
                     .getString(R.string.msg_no_network));
-        }
-    }
-
-    class LocalReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (getActivity() != null) {
-                getRcpDetail();
-            }
-
         }
     }
 
