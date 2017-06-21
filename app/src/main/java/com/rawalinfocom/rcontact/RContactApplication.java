@@ -1,28 +1,13 @@
 package com.rawalinfocom.rcontact;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-import android.os.Bundle;
 import android.support.multidex.MultiDex;
-import android.util.Base64;
-import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-
-import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by Monal on 20/10/16.
@@ -49,7 +34,7 @@ public class RContactApplication extends Application {
     int favouriteStatus;
 
     ArrayList<Object> arrayListObjectCallLogs;
-//    ArrayList<String> arrayListcallLogsHeaders;
+    //    ArrayList<String> arrayListcallLogsHeaders;
     ArrayList<CallLogType> arrayListCallLogType;
 
     ArrayList<SmsDataType> arrayListSmsLogType;
@@ -80,7 +65,7 @@ public class RContactApplication extends Application {
         mInstance = this;
 
 //         Fabric Initialization
-       // Fabric.with(this, new Crashlytics());
+        // Fabric.with(this, new Crashlytics());
 
         arrayListAllPhoneBookContacts = new ArrayList<>();
 //        arrayListAllContactHeaders = new ArrayList<>();
@@ -97,43 +82,43 @@ public class RContactApplication extends Application {
         // Facebook Initialization
 //        AppEventsLogger.activateApp(this);
 
-        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
-
-            @Override
-            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            }
-
-            @Override
-            public void onActivityStarted(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivityResumed(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivityPaused(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivityStopped(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
-            }
-
-            @Override
-            public void onActivityDestroyed(Activity activity) {
-
-            }
-        });
+//        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+//
+//            @Override
+//            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+//                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//            }
+//
+//            @Override
+//            public void onActivityStarted(Activity activity) {
+//
+//            }
+//
+//            @Override
+//            public void onActivityResumed(Activity activity) {
+//
+//            }
+//
+//            @Override
+//            public void onActivityPaused(Activity activity) {
+//
+//            }
+//
+//            @Override
+//            public void onActivityStopped(Activity activity) {
+//
+//            }
+//
+//            @Override
+//            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+//
+//            }
+//
+//            @Override
+//            public void onActivityDestroyed(Activity activity) {
+//
+//            }
+//        });
     }
 
     public static synchronized RContactApplication getInstance() {
