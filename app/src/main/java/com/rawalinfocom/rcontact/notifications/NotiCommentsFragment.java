@@ -223,7 +223,7 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
             TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
             TableEventMaster tableEventMaster = new TableEventMaster(getDatabaseHandler());
 
-            if (getResources().getString(R.string.text_rating).equalsIgnoreCase(comment.getCrmType())) {
+            if (getResources().getString(R.string.str_tab_rating).equalsIgnoreCase(comment.getCrmType())) {
 
             } else {
                 Event event = tableEventMaster.getEventByEvmRecordIndexId(comment.getEvmRecordIndexId());

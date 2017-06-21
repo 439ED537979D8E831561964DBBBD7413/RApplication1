@@ -194,7 +194,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:padding="2dp"
-                                android:text="View All Organizations"
+                                android:text="@string/str_view_all_organizations"
                                 android:visibility="gone"
                                 tools:visibility="visible" />
 
@@ -232,7 +232,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rounded_cornor_green_background"
-                        android:text="Call Log"
+                        android:text="@string/tab_call"
                         android:textColor="@color/colorWhite" />
                 </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -253,7 +253,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rounded_cornor_green_background"
-                        android:text="SMS"
+                        android:text="@string/tab_sms"
                         android:textColor="@color/colorWhite" />
                 </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -276,7 +276,7 @@
                     android:paddingBottom="@dimen/margin_10dp"
                     android:paddingLeft="@dimen/padding_10dp"
                     android:paddingTop="10dp"
-                    android:text="Call History"
+                    android:text="@string/call_history"
                     android:textColor="@color/colorDarkGray" />
 
                 <TextView
@@ -288,7 +288,7 @@
                     android:layout_marginTop="@dimen/margin_15dp"
                     android:gravity="center"
                     android:visibility="gone"
-                    tools:text="No history to show" />
+                    tools:text="@string/text_no_history" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_call_history"
@@ -299,7 +299,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignStart="@+id/text_text_call_history"
                     android:layout_below="@+id/text_text_call_history"
-                    android:visibility="visible"></android.support.v7.widget.RecyclerView>
+                    android:visibility="visible"/>
 
 
                 <!--
@@ -395,7 +395,7 @@
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/rounded_cornor_green_background"
                     android:padding="@dimen/padding_10dp"
-                    android:text="View old records"
+                    android:text="@string/view_old_records"
                     android:textColor="@color/colorWhite" />
             </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -656,7 +656,7 @@
                                 android:background="@null"
                                 android:gravity="left|center_vertical"
                                 android:padding="@dimen/activity_half_horizontal_margin"
-                                android:text="View More"
+                                android:text="@string/str_view_more"
                                 android:textAllCaps="false" />
 
                         </com.rawalinfocom.rcontact.helper.RippleView>
@@ -770,7 +770,7 @@
                                         android:layout_centerVertical="true"
                                         android:layout_toLeftOf="@id/image_icon_gender"
                                         android:textColor="@color/colorAccent"
-                                        tools:text="Female" />
+                                        tools:text="@string/str_female" />
 
                                 </RelativeLayout>
 

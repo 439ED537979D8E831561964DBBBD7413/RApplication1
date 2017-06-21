@@ -95,7 +95,6 @@ public class BlockContactListActivity extends BaseActivity implements RippleView
                 profileMenuOptionDialog.showDialog();
 
                 break;
-
         }
     }
 

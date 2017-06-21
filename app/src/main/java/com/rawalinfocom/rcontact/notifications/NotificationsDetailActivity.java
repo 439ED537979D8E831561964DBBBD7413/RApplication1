@@ -115,7 +115,7 @@ public class NotificationsDetailActivity extends BaseActivity implements RippleV
         notiRContactsFragment = NotiRContactsFragment.newInstance();
 
         tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_profile)));
-        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_rating)));
+        tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.str_tab_rating)));
         tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_comments)));
         tabNotifications.addTab(tabNotifications.newTab().setText(getResources().getString(R.string.text_tab_rcontact)));
         for (int i = 0; i < tabNotifications.getTabCount(); i++) {

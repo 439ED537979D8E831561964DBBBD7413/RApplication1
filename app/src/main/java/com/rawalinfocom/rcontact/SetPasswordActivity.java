@@ -20,7 +20,6 @@ import butterknife.ButterKnife;
 public class SetPasswordActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
 
-
     @BindView(R.id.image_action_back)
     ImageView imageActionBack;
     @BindView(R.id.ripple_action_back)
@@ -115,6 +114,5 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                 Utils.showErrorSnackBar(this,layoutRoot,getResources().getString(R.string.msg_tip_password));
             }
         }
-
     }
 }

@@ -47,7 +47,7 @@
             android:textColor="@color/colorWhite"
             android:singleLine="true"
             android:ellipsize="end"
-            tools:text="Title" />
+            tools:text="@string/str_title" />
 
         <LinearLayout
             android:id="@+id/linear_action_right"

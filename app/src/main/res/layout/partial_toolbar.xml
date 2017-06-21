@@ -50,7 +50,7 @@
                 android:layout_toRightOf="@id/ripple_action_back"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/colorWhite"
-                tools:text="Title" />
+                tools:text="@string/str_title" />
 
         </RelativeLayout>
 

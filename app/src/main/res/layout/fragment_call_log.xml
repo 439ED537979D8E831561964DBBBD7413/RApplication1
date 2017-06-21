@@ -30,7 +30,7 @@
         android:id="@+id/spinner_call_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"></Spinner>
+        android:layout_alignParentRight="true"/>
 
 
     <!-- <ScrollView
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="visible"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"></android.support.v7.widget.RecyclerView>
+                android:layout_alignParentStart="true"/>
 
         </LinearLayout>
 
@@ -88,7 +88,7 @@
                 android:layout_centerHorizontal="true"
                 android:background="@color/colorAccent"
                 android:padding="@dimen/padding_10dp"
-                android:text="View previous logs"
+                android:text="@string/str_view_previous_logs"
                 android:textColor="@color/colorWhite" />
         </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -110,7 +110,7 @@
             android:layout_below="@+id/linearMainContent"
             android:layout_centerHorizontal="true"
             android:padding="@dimen/margin_10dp"
-            android:text="loading..."
+            android:text="@string/str_loading"
             android:visibility="gone" />
 
         <RelativeLayout
@@ -148,7 +148,7 @@
             android:layout_centerVertical="true"
             android:layout_gravity="center_horizontal"
             android:padding="@dimen/margin_10dp"
-            android:text="No logs to display"
+            android:text="@string/str_no_call_logs"
             android:visibility="gone" />
     </RelativeLayout>
 

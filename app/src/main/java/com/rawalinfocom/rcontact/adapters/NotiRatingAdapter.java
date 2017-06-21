@@ -85,7 +85,7 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
             public void onClick(View v) {
                 ArrayList<String> arrayListComments = new ArrayList<>();
                 arrayListComments.add(item.getRaterName());
-                arrayListComments.add(context.getString(R.string.text_rating));
+                arrayListComments.add(context.getString(R.string.str_tab_rating));
                 arrayListComments.add(item.getComment());
                 arrayListComments.add(Utils.formatDateTime(item.getCommentTime(), "dd MMM, hh:mm a"));
                 arrayListComments.add(item.getReply());

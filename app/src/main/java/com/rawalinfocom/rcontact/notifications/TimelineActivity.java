@@ -472,13 +472,13 @@ public class TimelineActivity extends BaseActivity implements RippleView
             ArrayList<EventComment> allRatingComments = eventCommentData.getRating();
             if (allBirthdayComments != null) {
                 for (EventComment eventComment : allBirthdayComments) {
-                    Comment comment = createComment(eventComment, getResources().getString(R.string.text_birthday));
+                    Comment comment = createComment(eventComment, getResources().getString(R.string.event_birthday));
                     tableCommentMaster.addComment(comment);
                 }
             }
             if (allAnniversaryComments != null) {
                 for (EventComment eventComment : allAnniversaryComments) {
-                    Comment comment = createComment(eventComment, getResources().getString(R.string.text_anniversary));
+                    Comment comment = createComment(eventComment, getResources().getString(R.string.event_anniversary));
                     tableCommentMaster.addComment(comment);
                     refreshAllList();
                 }
@@ -491,7 +491,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
             }
             if (allRatingComments != null) {
                 for (EventComment eventComment : allRatingComments) {
-                    Comment comment = createComment(eventComment, getResources().getString(R.string.text_rating));
+                    Comment comment = createComment(eventComment, getResources().getString(R.string.str_tab_rating));
                     tableCommentMaster.addComment(comment);
                 }
             }
@@ -504,7 +504,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
         comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
         comment.setCrmRating("");
         comment.setCrmType(commentType);
-        if (commentType.equalsIgnoreCase(getResources().getString(R.string.text_rating))) {
+        if (commentType.equalsIgnoreCase(getResources().getString(R.string.str_tab_rating))) {
             comment.setCrmCloudPrId(eventComment.getPrId());
             comment.setCrmRating(eventComment.getRatingStars());
         } else {

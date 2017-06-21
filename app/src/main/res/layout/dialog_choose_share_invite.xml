@@ -74,7 +74,7 @@
                 android:background="@null"
                 android:minWidth="@dimen/min_width_button"
                 android:textColor="@color/colorAccent"
-                tools:text="Cancel" />
+                tools:text="@string/action_cancel" />
 
         </com.rawalinfocom.rcontact.helper.RippleView>
 

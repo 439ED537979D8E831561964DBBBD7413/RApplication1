@@ -110,7 +110,7 @@ public class NotificationsActivity extends BaseActivity implements RippleView
         }
         NotificationItem item1 = new NotificationItem(getResources().getString(R.string.nav_text_timeline), timeLineCount, 1);
         NotificationItem item2 = new NotificationItem(getResources().getString(R.string.text_tab_profile), profileCount, 2);
-        NotificationItem item3 = new NotificationItem(getResources().getString(R.string.text_rating), ratingCount, 3);
+        NotificationItem item3 = new NotificationItem(getResources().getString(R.string.str_tab_rating), ratingCount, 3);
         NotificationItem item4 = new NotificationItem(getResources().getString(R.string.text_tab_comments), commentsCount, 4);
         NotificationItem item5 = new NotificationItem(getResources().getString(R.string.text_tab_rcontact), rContactsCount, 5);
 

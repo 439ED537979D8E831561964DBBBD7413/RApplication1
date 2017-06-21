@@ -322,7 +322,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 .ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
 
-        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase(getString(R.string.unknown))) {
             fetchAllCallLogHistory(contactName);
         } else {
             if (!TextUtils.isEmpty(profileContactNumber)) {
@@ -1060,7 +1060,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
     private String getPhotoUrlFromNumber() {
         String phoneNumber = "";
-        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase(getString(R.string.unknown))) {
             ArrayList<CallLogType> listOfNumbers = getNumbersFromName(contactName);
             if (listOfNumbers != null && listOfNumbers.size() > 0) {
                 for (int i = 0; i < listOfNumbers.size(); i++) {
@@ -1108,12 +1108,12 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase("[Unknown]")*/) {
 //            textToolbarTitle.setText(contactName);
             //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
-            textToolbarTitle.setText("Profile Detail");
+            textToolbarTitle.setText(getString(R.string.str_profile_deails));
         } else {
             if (!TextUtils.isEmpty(profileContactNumber)) {
 //                textToolbarTitle.setText(profileContactNumber);
                 //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
-                textToolbarTitle.setText("Profile Detail");
+                textToolbarTitle.setText(getString(R.string.str_profile_deails));
             }
 
         }

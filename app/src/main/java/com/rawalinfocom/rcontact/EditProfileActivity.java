@@ -587,8 +587,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             break;
                     }
 
-                    Utils.showSuccessSnackBar(this, relativeRootEditProfile, "Profile Updated " +
-                            "Successfully!");
+                    Utils.showSuccessSnackBar(this, relativeRootEditProfile, getString(R.string.str_profile_hint_1));
                     isUpdated = false;
 
                 } else {
@@ -830,13 +829,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         } else {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Invalid EmailId!");
+                                    getString(R.string.str_invalid_email));
                         }
                     } else {
                         if (i != 0) {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Email is required!");
+                                    getString(R.string.str_email_required));
                         }
                     }
 
@@ -887,7 +886,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         if (i != 0) {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Account is required!");
+                                    getString(R.string.str_account_required));
                         }
                     }
 
@@ -931,7 +930,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         if (i != 0) {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Web address is required!");
+                                    getString(R.string.str_web_required));
                         }
                     }
 
@@ -981,20 +980,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 arrayListNewOrganization.add(organization);
                             } else {
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                        "Organization designation is required!");
+                                        getString(R.string.str_org_designation_required));
                                 isValid = false;
                                 break;
                             }
                         } else {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Organization name is required!");
+                                    getString(R.string.str_org_name_required));
                             isValid = false;
                             break;
                         }
                     } else {
                         if (i != 0) {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Organization name is required!");
+                                    getString(R.string.str_org_name_required));
                             isValid = false;
                         }
                         break;
@@ -1012,8 +1011,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         editProfile(profileDataOperation, AppConstants.ORGANIZATION);*/
                     if (arrayListNewOrganization.size() > 0) {
                         if (!isCurrentSelected) {
-                            Utils.showErrorSnackBar(this, relativeRootEditProfile, "Select " +
-                                    "current Organization!");
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string.str_select_org));
                         } else {
                             profileDataOperation.setPbOrganization(arrayListNewOrganization);
                             editProfile(profileDataOperation, AppConstants.ORGANIZATION);
@@ -1061,7 +1059,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         if (i != 0) {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Event date is required!");
+                                    getString(R.string.str_event_required));
                         }
                     }
                 }
@@ -1069,11 +1067,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 for (int i = 0; i < arrayListNewEvent.size(); i++) {
                     valueTypes.add(StringUtils.lowerCase(arrayListNewEvent.get(i).getEventType()));
                 }
-                int birthDayCount = Collections.frequency(valueTypes, "birthday");
-                int anniversaryCount = Collections.frequency(valueTypes, "anniversary");
+                int birthDayCount = Collections.frequency(valueTypes, getString(R.string.str_birthday));
+                int anniversaryCount = Collections.frequency(valueTypes, getString(R.string.str_anniversary));
                 if (birthDayCount > 1 || anniversaryCount > 1) {
-                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "You can add Birthday " +
-                            "and Anniversary only once!");
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string.str_add_birthday_anniversary_error));
                 } else {
                     if (isValid) {
                         if (arrayListNewEvent.size() > 0) {
@@ -1160,7 +1157,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                             arrayListNewAddress.add(address);
                                         } else {
                                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                                    "Address mapping on Map is required!");
+                                                    getString(R.string.str_address_map_error));
                                             textImageMapMarker.setTextColor(ContextCompat
                                                     .getColor(this, R.color.colorSnackBarNegative));
                                             isValid = false;
@@ -1168,25 +1165,25 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         }
                                     } else {
                                         Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                                "Street is required!");
+                                                getString(R.string.str_street_required));
                                         isValid = false;
                                         break;
                                     }
                                 } else {
                                     Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                            "City is required!");
+                                            getString(R.string.str_city_required));
                                     isValid = false;
                                     break;
                                 }
                             } else {
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                        "State is required!");
+                                        getString(R.string.str_state_required));
                                 isValid = false;
                                 break;
                             }
                         } else {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Country is required!");
+                                    getString(R.string.str_country_required));
                             isValid = false;
                             break;
                         }
@@ -1197,7 +1194,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         break;*/
                         if (i != 0) {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Country name is required!");
+                                    getString(R.string.str_country_required));
                             isValid = false;
                         }
                         break;
@@ -1941,7 +1938,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             }
 
             if (setGender) {
-                if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Female")) {
+                if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), getString(R.string.str_female))) {
                     selectGenderFemale();
                 }
 //                else if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Male")) {
@@ -2341,7 +2338,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case AppConstants.EMAIL:
                 linerCheckbox.setVisibility(View.GONE);
                 imageViewDelete.setTag(AppConstants.EMAIL);
-                inputValue.setHint("Email");
+                inputValue.setHint(getString(R.string.str_email));
                 spinnerType.setTag(AppConstants.EMAIL);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_email_address)));
@@ -2371,7 +2368,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linerCheckbox.setVisibility(View.GONE);
 //                textImageCross.setTag(AppConstants.WEBSITE);
                 imageViewDelete.setTag(AppConstants.WEBSITE);
-                inputValue.setHint("Web Address");
+                inputValue.setHint(getString(R.string.str_website));
                 spinnerType.setTag(AppConstants.WEBSITE);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_email_address)));
@@ -2405,7 +2402,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linerCheckbox.setVisibility(View.GONE);
 //                textImageCross.setTag(AppConstants.IM_ACCOUNT);
                 imageViewDelete.setTag(AppConstants.IM_ACCOUNT);
-                inputValue.setHint("Account Name");
+                inputValue.setHint(getString(R.string.str_account_name));
                 spinnerType.setTag(AppConstants.IM_ACCOUNT);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_social_media)));
@@ -2442,7 +2439,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linerCheckbox.setVisibility(View.VISIBLE);
 //                textImageCross.setTag(AppConstants.EVENT);
                 imageViewDelete.setTag(AppConstants.EVENT);
-                inputValue.setHint("Choose date");
+                inputValue.setHint(getString(R.string.str_choose_date));
                 inputValue.setFocusable(false);
                 spinnerType.setTag(AppConstants.EVENT);
                 imageViewCalender.setVisibility(View.VISIBLE);
@@ -2485,8 +2482,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     public void onClick(View v) {
                         isEvent = true;
                         updateEventEditText(inputValue);
-
-
                     }
                 });
                 break;
@@ -2551,7 +2546,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String items = spinnerType.getSelectedItem().toString();
-                if (items.equalsIgnoreCase("Custom")) {
+                if (items.equalsIgnoreCase(getString(R.string.text_custom))) {
                     showCustomTypeDialog(spinnerType);
                 }
             }
@@ -2688,13 +2683,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputPinCode.setTypeface(Utils.typefaceRegular(this));
         inputPoBox.setTypeface(Utils.typefaceRegular(this));
 
-        inputCountry.setHint("Country (Required)");
-        inputState.setHint("State (Required)");
-        inputCity.setHint("City / Town (Required)");
-        inputStreet.setHint("Address Line 1 (Required)");
-        inputNeighborhood.setHint("Address Line 2 (Optional)");
-        inputPinCode.setHint("Pincode (Required)");
-        inputPoBox.setHint("Po. Box No.");
+        inputCountry.setHint(getString(R.string.str_country_hint));
+        inputState.setHint(getString(R.string.str_state_hint));
+        inputCity.setHint(getString(R.string.str_city_hint));
+        inputStreet.setHint(getString(R.string.str_address_line1_hint));
+        inputNeighborhood.setHint(getString(R.string.str_address_line2_hint));
+        inputPinCode.setHint(getString(R.string.str_pin_code_hint));
+        inputPoBox.setHint(getString(R.string.str_po_box_number_hint));
 
         inputPoBox.setVisibility(View.GONE);
         /*textImageMapMarker.setTextColor(ContextCompat.getColor(this, R.color
@@ -2812,7 +2807,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     overridePendingTransition(R.anim.enter, R.anim.exit);
                 } else {
                     Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
-                            "Please add address!");
+                            getString(R.string.str_valid_address));
                 }
             }
         });
@@ -2846,10 +2841,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         textFromSocialMedia.setTypeface(Utils.typefaceRegular(this));
         buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
 
-        textDialogTitle.setText("Upload Via");
-        textFromContact.setText("Take Photo");
-        textFromSocialMedia.setText("Choose Photo");
-        textRemovePhoto.setText("Remove Photo");
+        textDialogTitle.setText(getString(R.string.str_image_upload_dialog_title));
+        textFromContact.setText(getString(R.string.str_image_upload_dialog_camera_title));
+        textFromSocialMedia.setText(getString(R.string.str_image_upload_dialog_gallery_title));
+        textRemovePhoto.setText(getString(R.string.str_image_upload_dialog_remove_title));
 
         if (userProfile.getPmProfileImage().length() > 0) {
             textRemovePhoto.setVisibility(View.VISIBLE);
@@ -2943,10 +2938,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         backConfirmationDialog = new MaterialDialog(this, cancelListener);
         backConfirmationDialog.setTitleVisibility(View.GONE);
-        backConfirmationDialog.setLeftButtonText("Cancel");
-        backConfirmationDialog.setRightButtonText("OK");
-        backConfirmationDialog.setDialogBody("Some details are left unsaved. Are you sure you " +
-                "want to proceed?");
+        backConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        backConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
+        backConfirmationDialog.setDialogBody(getString(R.string.msg_unsaved_details));
 
         backConfirmationDialog.showDialog();
     }
@@ -2997,10 +2991,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         buttonRight.setTypeface(Utils.typefaceSemiBold(this));
         buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
 
-        textDialogTitle.setText("Custom Label Name");
+        textDialogTitle.setText(getString(R.string.str_custom_label));
 
         buttonLeft.setText(R.string.action_cancel);
-        buttonRight.setText("OK");
+        buttonRight.setText(R.string.action_ok);
 
         rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
@@ -3360,7 +3354,5 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     .getString(R.string.msg_no_network));
         }
     }
-
     //</editor-fold>
-
 }

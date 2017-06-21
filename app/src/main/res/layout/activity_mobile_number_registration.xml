@@ -83,7 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/input_country_code"
-            android:hint="Mobile Number"
+            android:hint="@string/str_mobile_number"
             android:inputType="number"
             android:singleLine="true" />
 

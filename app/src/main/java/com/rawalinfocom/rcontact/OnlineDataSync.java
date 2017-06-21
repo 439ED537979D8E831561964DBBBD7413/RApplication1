@@ -527,8 +527,6 @@ public class OnlineDataSync {
             profileData.setOperation(arrayListOperations);
 
             arrayListSyncUserContact.add(profileData);
-
-
         }
     }
 

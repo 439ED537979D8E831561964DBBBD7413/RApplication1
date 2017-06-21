@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingStart="@dimen/activity_horizontal_margin"
-                android:text="@string/today"
+                android:text="@string/str_today"
                 android:textAppearance="?android:textAppearanceMedium" />
 
             <ImageView
@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingStart="@dimen/activity_horizontal_margin"
-                android:text="@string/yesterday"
+                android:text="@string/str_yesterday"
                 android:textAppearance="?android:textAppearanceMedium" />
 
             <ImageView

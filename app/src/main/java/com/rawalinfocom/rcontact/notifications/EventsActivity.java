@@ -351,9 +351,9 @@ public class EventsActivity extends BaseActivity implements RippleView
 
     private int getEventType(String eventName) {
         int eventType = 0;
-        if (getResources().getString(R.string.text_birthday).equalsIgnoreCase(eventName))
+        if (getResources().getString(R.string.event_birthday).equalsIgnoreCase(eventName))
             eventType = AppConstants.COMMENT_TYPE_BIRTHDAY;
-        if (getResources().getString(R.string.text_anniversary).equalsIgnoreCase(eventName))
+        if (getResources().getString(R.string.event_anniversary).equalsIgnoreCase(eventName))
             eventType = AppConstants.COMMENT_TYPE_ANNIVERSARY;
 
         return eventType;
@@ -377,7 +377,7 @@ public class EventsActivity extends BaseActivity implements RippleView
             }
         }
         if (eventType == AppConstants.COMMENT_TYPE_ANNIVERSARY) {
-            s = Utils.addDateSufixes(eventYears) + " " + getResources().getString(R.string.text_anniversary);
+            s = Utils.addDateSufixes(eventYears) + " " + getResources().getString(R.string.event_anniversary);
         }
         return s;
     }

@@ -39,7 +39,7 @@
                 android:layout_below="@id/image_profile"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/margin_tiny"
-                android:text="Change Profile Picture" />
+                android:text="@string/str_change_profile_picture" />
 
             <LinearLayout
                 android:id="@+id/linear_name"
@@ -60,14 +60,14 @@
                         android:layout_height="1dp"
                         android:layout_above="@+id/text_label_name"
                         android:layout_marginBottom="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"></View>
+                        android:background="@color/colorDarkGray"/>
 
                     <TextView
                         android:id="@+id/text_label_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:text="Name"
+                        android:text="@string/str_name"
                         android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
@@ -84,7 +84,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_name_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"></View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -164,7 +164,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:text="Phone"
+                        android:text="@string/str_phone"
                         android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
@@ -181,7 +181,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_phone_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"></View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -233,7 +233,7 @@
                         android:background="@drawable/rounded_corner_light_gray_background"
                         android:text="@string/cancel"
                         android:textColor="@color/colorWhite" />
-                    ]
+
                 </LinearLayout>
 
             </LinearLayout>
@@ -257,7 +257,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:text="Email"
+                        android:text="@string/str_email"
                         android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
@@ -274,7 +274,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_email_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"></View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -369,7 +369,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_organization_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"></View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -465,7 +465,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_website_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"></View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -559,7 +559,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_address_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"></View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -636,7 +636,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:text="Social Connect"
+                        android:text="@string/str_social_connect"
                         android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
@@ -653,7 +653,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_social_contact_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"></View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -747,7 +747,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_event_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"></View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -842,7 +842,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_gender_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"></View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 

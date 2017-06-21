@@ -20,7 +20,7 @@
             android:layout_gravity="center"
             android:textAppearance="?android:textAppearanceLarge"
             android:textColor="@color/colorAccent"
-            tools:text="Title" />
+            tools:text="@string/str_title" />
 
     </LinearLayout>
 

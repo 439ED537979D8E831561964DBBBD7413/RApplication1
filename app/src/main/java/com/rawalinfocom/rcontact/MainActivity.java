@@ -345,11 +345,10 @@ public class MainActivity extends BaseActivity implements NavigationView
         int id = item.getItemId();
 
         if (id == R.id.nav_share) {
-            final String appPackageName = getPackageName();
             Intent sharingIntent = new Intent(Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
 //                String shareBody = "Here is the share content body";
-            String shareBody = AppConstants.PLAY_STORE_LINK + appPackageName;
+            String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName();
 //                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Share Contact Via");
             sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
             startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
@@ -366,7 +365,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                     emailIntent.setType("vnd.android.cursor.dir/email");
                     emailIntent.putExtra(Intent.EXTRA_STREAM, path);
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
-                    startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                    startActivity(Intent.createChooser(emailIntent, getString(R.string.str_send_email)));
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.db_dump_failed), Toast.LENGTH_SHORT)
                             .show();
@@ -675,7 +674,6 @@ public class MainActivity extends BaseActivity implements NavigationView
             userProfile.setProfileRating(profileData.get(i).getProfileRating());
             userProfile.setPmProfileImage(profileData.get(i).getPbProfilePhoto());
             userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
-
 
             if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
                 userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
@@ -1131,7 +1129,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         setupTabLayout();
         Utils.changeTabsFont(this, tabMain);
 
-
     }
 
     private void openDialer() {
@@ -1184,8 +1181,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         } else {
             imageViewAddContact.setVisibility(View.GONE);
         }
-
-
     }
 
     private void setupTabLayout() {
@@ -1550,9 +1545,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 } else {
                     insertServiceCall(list);
                 }
-
             }
-
         }
     }
 
@@ -1922,7 +1915,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                     logObject.setCallDateAndTime(callDataAndTime);
 
                     String typeOfCall = getLogType(callType);
-                    if (typeOfCall.equalsIgnoreCase("Rejected")) {
+                    if (typeOfCall.equalsIgnoreCase(getString(R.string.call_log_rejected))) {
                         typeOfCall = getString(R.string.call_log_missed);
                     }
                     logObject.setTypeOfCall(typeOfCall);

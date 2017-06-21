@@ -45,7 +45,7 @@
             android:layout_toRightOf="@id/ripple_action_back"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/colorWhite"
-            tools:text="Timeline" />
+            tools:text="@string/nav_text_timeline" />
 
     </RelativeLayout>
 
