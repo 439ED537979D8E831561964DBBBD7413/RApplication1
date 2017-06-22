@@ -52,6 +52,7 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -248,7 +249,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         contactDisplayName = StringUtils.trimToEmpty(contactDisplayName);
 
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
-                "[Unknown]");
+                context.getString(R.string.unknown));
         holder.textCloudContactName.setText("");
         holder.textContactNumber.setText("");
         holder.linearRating.setVisibility(View.GONE);
@@ -306,7 +307,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     if (String.valueOf(view.getTag()).contains(",")) {
                         if (holder.recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
                             holder.recyclerViewMultipleRc.setVisibility(View.GONE);
-                            arrayListExpandedPositions.remove((Object) textName.getTag());
+                            arrayListExpandedPositions.remove(textName.getTag());
                         } else {
                             arrayListExpandedPositions.add((int) textName.getTag());
                             holder.recyclerViewMultipleRc.setVisibility(View.VISIBLE);
@@ -678,7 +679,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
         TextView textSheetHeader = ButterKnife.findById(view, R.id.text_sheet_header);
 
-        textSheetHeader.setText("Social Media");
+        textSheetHeader.setText(context.getString(R.string.social_media));
         textSheetHeader.setTypeface(Utils.typefaceBold(context));
 
         BottomSheetSocialMediaAdapter adapter = new BottomSheetSocialMediaAdapter(context);
@@ -720,7 +721,8 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
                 .relative_root_dialog_list);
         TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        textDialogTitle.setText("Invite " + contactName);
+        textDialogTitle.setText(String.format(Locale.getDefault(), "%s%s", context.getString(R.string.str_invite),
+                contactName));
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(context));
 
         Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
@@ -731,7 +733,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         buttonRight.setTypeface(Utils.typefaceRegular(context));
         buttonRight.setText(R.string.action_cancel);
         buttonLeft.setTypeface(Utils.typefaceRegular(context));
-        buttonLeft.setText("Invite");
+        buttonLeft.setText(context.getString(R.string.str_invite));
 
         rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
@@ -773,8 +775,7 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     }
                     inviteContact(numbers, emails);
                 } else {
-                    Utils.showErrorSnackBar(context, relativeRootDialogList, "Please select at" +
-                            " least one!");
+                    Utils.showErrorSnackBar(context, relativeRootDialogList, context.getString(R.string.please_select_one));
                 }
             }
         });
@@ -887,6 +888,4 @@ public class AllContactListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     //</editor-fold>
-
-
 }

@@ -43,7 +43,6 @@ import butterknife.ButterKnife;
 public class MaterialListAdapter extends RecyclerView.Adapter<MaterialListAdapter.MaterialViewHolder> {
 
 
-
     private Context context;
     private ArrayList<String> arrayListString;
     private String dialogTitle;
@@ -79,12 +78,12 @@ public class MaterialListAdapter extends RecyclerView.Adapter<MaterialListAdapte
                         showCallConfirmationDialog(numberToCall);
                 }
 
-                if(value.equalsIgnoreCase(context.getString(R.string.add_to_contact))){
+                if (value.equalsIgnoreCase(context.getString(R.string.add_to_contact))) {
 
-                    Utils.addToContact(context,numberToCall);
+                    Utils.addToContact(context, numberToCall);
 
-                }else if (value.equalsIgnoreCase(context.getString(R.string.add_to_existing_contact))){
-                    Utils.addToExistingContact(context,numberToCall);
+                } else if (value.equalsIgnoreCase(context.getString(R.string.add_to_existing_contact))) {
+                    Utils.addToExistingContact(context, numberToCall);
 
                 }/*else if(value.equalsIgnoreCase(context.getString(R.string.show_call_history))){
                     Pattern numberPat = Pattern.compile("\\d+");
@@ -104,26 +103,26 @@ public class MaterialListAdapter extends RecyclerView.Adapter<MaterialListAdapte
                     }
 
 
-                }*/else if(value.equalsIgnoreCase(context.getString(R.string.send_sms))){
+                }*/ else if (value.equalsIgnoreCase(context.getString(R.string.send_sms))) {
                     Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
                     smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
                     smsIntent.setType("vnd.android-dir/mms-sms");
                     smsIntent.setData(Uri.parse("sms:" + numberToCall));
                     context.startActivity(smsIntent);
 
-                }else if(value.equalsIgnoreCase(context.getString(R.string.remove_from_call_log))){
+                } else if (value.equalsIgnoreCase(context.getString(R.string.remove_from_call_log))) {
 
-                }else if(value.equalsIgnoreCase(context.getString(R.string.copy_phone_number))){
-                    MaterialDialogClipboard materialDialogClipboard =  new MaterialDialogClipboard(context,numberToCall);
+                } else if (value.equalsIgnoreCase(context.getString(R.string.copy_phone_number))) {
+                    MaterialDialogClipboard materialDialogClipboard = new MaterialDialogClipboard(context, numberToCall);
                     materialDialogClipboard.showDialog();
 
-                }else if(value.equalsIgnoreCase(context.getString(R.string.block))){
+                } else if (value.equalsIgnoreCase(context.getString(R.string.block))) {
 
-                }else if(value.equalsIgnoreCase(context.getString(R.string.call_reminder))){
+                } else if (value.equalsIgnoreCase(context.getString(R.string.call_reminder))) {
 
-                }else {
+                } else {
 
-                    Toast.makeText(context,"Please select any one option", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getString(R.string.please_select_one), Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -183,9 +182,9 @@ public class MaterialListAdapter extends RecyclerView.Adapter<MaterialListAdapte
 
         callConfirmationDialog = new MaterialDialog(context, cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
+        callConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(context.getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " + number + "?");
         callConfirmationDialog.showDialog();
 
     }

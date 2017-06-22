@@ -30,6 +30,8 @@ public class GlobalSearchType implements Serializable {
     private String averageRating;
     @JsonProperty("public_url")
     private String publicProfileUrl;
+    @JsonProperty("rcp_pm_id")
+    private String rcpPmId;
 
     public int getIsRcpVerified() {
         return isRcpVerified;
@@ -93,5 +95,13 @@ public class GlobalSearchType implements Serializable {
 
     public void setPublicProfileUrl(String publicProfileUrl) {
         this.publicProfileUrl = publicProfileUrl;
+    }
+
+    public String getRcpPmId() {
+        return rcpPmId;
+    }
+
+    public void setRcpPmId(String rcpPmId) {
+        this.rcpPmId = rcpPmId;
     }
 }

@@ -16,7 +16,7 @@
         android:paddingRight="@dimen/activity_half_horizontal_margin"
         android:paddingTop="@dimen/margin_tiny"
         android:textAppearance="?android:textAppearanceMedium"
-        tools:text="Today"/>
+        tools:text="@string/str_today" />
 
     <!--<View
         android:layout_width="match_parent"

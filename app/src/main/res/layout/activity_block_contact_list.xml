@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relative_block_contact_list"
     android:layout_width="match_parent"
@@ -11,38 +9,37 @@
         android:id="@+id/include_toolbar"
         layout="@layout/layout_toolbar_block_contact_list"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
+        android:layout_height="?attr/actionBarSize" />
 
     <RelativeLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/main_content"
         android:layout_below="@+id/include_toolbar">
 
         <TextView
+            android:id="@+id/text_total_contacts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/text_total_contacts"
-            android:padding="@dimen/padding_5dp"
             android:layout_marginLeft="@dimen/margin_15dp"
-            tools:text="20 Contacts"/>
+            android:padding="@dimen/padding_5dp"
+            tools:text="" />
 
         <TextView
+            android:id="@+id/no_record_to_display"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/no_record_to_display"
-            android:text="Add contacts to block list"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:visibility="gone"/>
+            android:text="@string/add_contacts_to_block_list"
+            android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_block_contacts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/text_total_contacts"
-            android:visibility="visible">
-        </android.support.v7.widget.RecyclerView>
+            android:visibility="visible" />
 
     </RelativeLayout>
 

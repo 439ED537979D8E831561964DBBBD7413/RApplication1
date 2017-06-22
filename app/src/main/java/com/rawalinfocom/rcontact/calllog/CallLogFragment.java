@@ -165,9 +165,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(AppConstants.isRecentCallFromSMSTab){
+        if (AppConstants.isRecentCallFromSMSTab) {
             AppConstants.isRecentCallFromSMSTab = false;
-        }else{
+        } else {
             callLogTypeReceiver = new CallLogType();
         }
         if (Utils.getBooleanPreference(getActivity(), AppConstants
@@ -202,6 +202,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         // Inflate the layout for this fragment
         mainView = inflater.inflate(R.layout.fragment_call_log, container, false);
         ButterKnife.bind(this, mainView);
+
+//        ALL_CALLS = getActivity().getString(R.string.str_all);
+
         return mainView;
     }
 
@@ -383,24 +386,23 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             rContactApplication.setArrayListCallLogType(arrayListCallLogs);
                             tempList.add(0, callLogTypeReceiver);
 //                        newCallLogListAdapter.notifyItemInserted(0);
-                        if(simpleCallLogListAdapter!=null)
-                            simpleCallLogListAdapter.notifyItemInserted(0);
-                        else
-                        {
-                            setSimpleListAdapter();
-                        }
+                            if (simpleCallLogListAdapter != null)
+                                simpleCallLogListAdapter.notifyItemInserted(0);
+                            else {
+                                setSimpleListAdapter();
+                            }
 //                        simpleCallLogListAdapter.notifyDataSetChanged();
-                        recyclerCallLogs.scrollToPosition(0);
-                        ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
-                        callLogTypeArrayList.add(callLogTypeReceiver);
-                        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED,
-                                false) &&
-                                Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED,
-                                        false)) {
-                            if(!TextUtils.isEmpty(callLogTypeReceiver.getNumber()))
-                                insertServiceCall(callLogTypeArrayList);
+                            recyclerCallLogs.scrollToPosition(0);
+                            ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
+                            callLogTypeArrayList.add(callLogTypeReceiver);
+                            if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED,
+                                    false) &&
+                                    Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED,
+                                            false)) {
+                                if (!TextUtils.isEmpty(callLogTypeReceiver.getNumber()))
+                                    insertServiceCall(callLogTypeArrayList);
+                            }
                         }
-                    }
 
                     }
                 }
@@ -837,6 +839,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         } else {
             initSpinner();
         }
+        initSwipe();
 
         recyclerCallLogs.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -898,7 +901,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     int pastVisiblesItems = mLinearLayoutManager.findFirstVisibleItemPosition();
 
                     if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                        Log.v("...", "Last Item Wow !");
+//                        Log.v("...", "Last Item Wow !");
                         //Do pagination.. i.e. fetch new data
                         if (isFirstTime) {
 //                            progressBarLoadCallLogs.setVisibility(View.VISIBLE);
@@ -1134,7 +1137,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 } else {
                                     arrayListCallLogs = rContactApplication
                                             .getArrayListCallLogType();
-                                    if(arrayListCallLogs!=null && arrayListCallLogs.size() == 1){
+                                    if (arrayListCallLogs != null && arrayListCallLogs.size() == 1) {
                                         arrayListCallLogs = new ArrayList<CallLogType>();
                                         tempList = new ArrayList<CallLogType>();
                                         PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(getActivity());
@@ -1150,7 +1153,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                         Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOGS_ID_SET,
                                                 listOfIds);
                                         loadLogs(selectedCallType);
-                                    }else{
+                                    } else {
                                         if (arrayListCallLogs != null && arrayListCallLogs.size() > 0) {
                                             if (!value.equalsIgnoreCase(ALL_CALLS)) {
                                                 spinnerCount = spinnerCount + 1;
@@ -1314,7 +1317,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         } else {
             textNoCallsFound.setVisibility(View.VISIBLE);
         }
-        initSwipe();
+//        initSwipe();
 
     }
 
@@ -1791,8 +1794,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             log.setNumberType(numberTypeLog);*/
                             String userNumber = cursor.getString(number);
                             String uniquePhoneBookId = getStarredStatusFromNumber(userNumber);
-                            Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" +
-                                    userNumber);
+                            /*Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" +
+                                    userNumber);*/
                             if (!TextUtils.isEmpty(uniquePhoneBookId)) {
                                 log.setLocalPbRowId(uniquePhoneBookId);
                             } else
@@ -1923,86 +1926,85 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     public String getLogType(int type) {
         switch (type) {
             case CallLog.Calls.INCOMING_TYPE:
-                return "Incoming";
+                return getActivity().getString(R.string.call_log_incoming);
             case CallLog.Calls.OUTGOING_TYPE:
-                return "Outgoing";
+                return getActivity().getString(R.string.call_log_outgoing);
             case CallLog.Calls.MISSED_TYPE:
-                return "Missed";
+                return getActivity().getString(R.string.call_log_missed);
             case CallLog.Calls.REJECTED_TYPE:
-                return "Rejected";
+                return getActivity().getString(R.string.call_log_rejected);
             case CallLog.Calls.BLOCKED_TYPE:
-                return "Blocked";
+                return getActivity().getString(R.string.call_log_blocked);
             case CallLog.Calls.VOICEMAIL_TYPE:
-                return "Voicemail";
+                return getActivity().getString(R.string.call_log_voice_mail);
 
         }
-        return "OTHERS";
+        return getActivity().getString(R.string.type_other_caps);
     }
 
     public String getPhoneNumberType(int type) {
         switch (type) {
             case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
-                return "Home";
+                return getActivity().getString(R.string.type_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
-                return "Mobile";
+                return getActivity().getString(R.string.type_mobile);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
-                return "Work";
+                return getActivity().getString(R.string.type_work);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
-                return "Fax Work";
+                return getActivity().getString(R.string.type_fax_work);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
-                return "Fax Home";
+                return getActivity().getString(R.string.type_fax_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_PAGER:
-                return "Pager";
+                return getActivity().getString(R.string.type_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
-                return "Other";
+                return getActivity().getString(R.string.type_other);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK:
-                return "Callback";
+                return getActivity().getString(R.string.type_callback);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CAR:
-                return "Car";
+                return getActivity().getString(R.string.type_car);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
-                return "Company Main";
+                return getActivity().getString(R.string.type_company_main);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
-                return "ISDN";
+                return getActivity().getString(R.string.type_isdn);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
-                return "Main";
+                return getActivity().getString(R.string.type_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX:
-                return "Other Fax";
+                return getActivity().getString(R.string.type_other_fax);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_RADIO:
-                return "Radio";
+                return getActivity().getString(R.string.type_radio);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TELEX:
-                return "Telex";
+                return getActivity().getString(R.string.type_telex);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD:
-                return "Tty Tdd";
+                return getActivity().getString(R.string.type_tty_tdd);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
-                return "Work Mobile";
+                return getActivity().getString(R.string.type_work_mobile);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER:
-                return "Work Pager";
+                return getActivity().getString(R.string.type_work_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT:
-                return "Assistant";
+                return getActivity().getString(R.string.type_assistant);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
-                return "MMS";
-
+                return getActivity().getString(R.string.type_mms);
         }
-        return "Other";
+        return getActivity().getString(R.string.type_other);
     }
 
     private void initSwipe() {
@@ -2124,9 +2126,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + formattedNumber + "?");
+        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + formattedNumber + "?");
         callConfirmationDialog.showDialog();
 
     }
@@ -2144,9 +2146,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         isDualSIM = telephonyInfo.isDualSIM();
         AppConstants.setIsDualSimPhone(isDualSIM);
-        Log.i("IsDual", isDualSIM + "");
-        Log.i("SIM1 ready", isSIM1Ready + "");
-        Log.i("SIM2 ready", isSIM2Ready + "");
+//        Log.i("IsDual", isDualSIM + "");
+        /*Log.i("SIM1 ready", isSIM1Ready + "");
+        Log.i("SIM2 ready", isSIM2Ready + "");*/
 
 
     }
@@ -2235,7 +2237,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 + " =?", new String[]{number}, null);
         if (c != null && c.getCount() > 0) {
             String id = c.getString(c.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID));
-            Log.i("Sim slot id", id + " of number " + number);
+//            Log.i("Sim slot id", id + " of number " + number);
         }
         c.close();
 
@@ -2312,12 +2314,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     String accountId = " ";
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         accountId = cursor.getString(account_id);
-                        if (!TextUtils.isEmpty(accountId) && account_id > 0)
-                            Log.e("Sim Type", accountId);
+                        /*if (!TextUtils.isEmpty(accountId) && account_id > 0)
+                            Log.e("Sim Type", accountId);*/
 
                         String accountName = cursor.getString(account);
-                        if (!TextUtils.isEmpty(accountName))
-                            Log.e("Sim Name", accountName);
+                        /*if (!TextUtils.isEmpty(accountName))
+                            Log.e("Sim Name", accountName);*/
 
 //                        String userImage = cursor.getString(profileImage);
 //                        if (userImage != null)
@@ -2325,7 +2327,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     } else {
                         if (account_id > 0) {
                             accountId = cursor.getString(account_id);
-                            Log.e("Sim Type", accountId);
+//                            Log.e("Sim Type", accountId);
                         }
                     }
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
@@ -2343,8 +2345,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     logObject.setCallDateAndTime(callDataAndTime);
 
                     String typeOfCall = getLogType(callType);
-                    if (typeOfCall.equalsIgnoreCase("Rejected")) {
-                        typeOfCall = "Missed";
+                    if (typeOfCall.equalsIgnoreCase(getActivity().getString(R.string.call_log_rejected))) {
+                        typeOfCall = getActivity().getString(R.string.call_log_missed);
                     }
                     logObject.setTypeOfCall(typeOfCall);
 
@@ -2390,10 +2392,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         permissionConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText("Cancel");
-        permissionConfirmationDialog.setRightButtonText("OK");
-        permissionConfirmationDialog.setDialogBody("Call log permission is required. Do you want " +
-                "to try again?");
+        permissionConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+        permissionConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_ok));
+        permissionConfirmationDialog.setDialogBody(getActivity().getString(R.string.call_log_permission));
 
         permissionConfirmationDialog.showDialog();
 
@@ -2529,7 +2530,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+//            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
 
             removeLogs = intent.getBooleanExtra(AppConstants.EXTRA_REMOVE_CALL_LOGS, false);
 
@@ -2567,7 +2568,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private BroadcastReceiver localBroadcastReceiverDeleteLogs = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+//            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
 
             boolean deleteAll = intent.getBooleanExtra(AppConstants.EXTRA_DELETE_ALL_CALL_LOGS,
                     false);
@@ -2734,7 +2735,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private BroadcastReceiver localBroadcastReceiverTabChange = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+//            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
 
             if (AppConstants.EXTRA_CALL_LOG_SWITCH_TAB_VALUE) {
 //                loadsCallLogsInBackgroundAsyncTask.cancel(true);
@@ -2750,7 +2751,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private BroadcastReceiver localBroadcastReceiverBlock = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+//            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
 
             /*boolean isBlocked = intent.getBooleanExtra(AppConstants.EXTRA_CALL_LOG_BLOCK, false);
 

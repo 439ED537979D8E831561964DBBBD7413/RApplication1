@@ -41,7 +41,8 @@ public class TableProfileEmailMapping {
             " " + COLUMN_EPM_EMAIL_ID + " text NOT NULL," +
             " " + COLUMN_EPM_CLOUD_EM_ID + " integer," +
             " " + COLUMN_EPM_CLOUD_PM_ID + " integer," +
-            " " + COLUMN_EPM_IS_RCP + " tinyint DEFAULT 0" +
+            " " + COLUMN_EPM_IS_RCP + " tinyint DEFAULT 0," +
+            " UNIQUE(" + COLUMN_EPM_CLOUD_EM_ID + ", " + COLUMN_EPM_EMAIL_ID + ")" +
             ");";
 
     // Adding new Profile Email Mapping

@@ -1,6 +1,8 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.LayerDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -14,9 +16,13 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.rawalinfocom.rcontact.PublicProfileOfGlobalContactActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.GlobalSearchType;
@@ -24,6 +30,7 @@ import com.rawalinfocom.rcontact.model.GlobalSearchType;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,6 +44,7 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private Context context;
     ArrayList<GlobalSearchType> globalSearchTypeArrayList;
+    String nameToPass = "";
 
     public GlobalSearchAdapter(Context context, ArrayList<GlobalSearchType> globalSearchTypeList) {
         this.context = context;
@@ -53,7 +61,7 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder contactViewHolder, int position) {
         GlobalSearchViewHolder holder = (GlobalSearchViewHolder) contactViewHolder;
-        final GlobalSearchType globalSearchType = (GlobalSearchType) globalSearchTypeArrayList.get(position);
+        final GlobalSearchType globalSearchType = globalSearchTypeArrayList.get(position);
         String firstName =  globalSearchType.getFirstName();
         int isRcpVerified = globalSearchType.getIsRcpVerified();
         if(isRcpVerified == 1){
@@ -82,9 +90,25 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         else
             holder.textContactLastname.setText("");
 
+        if(!StringUtils.isEmpty(firstName) && !StringUtils.isEmpty(lastName)){
+            nameToPass = firstName +" "+ lastName;
+        }else if(!StringUtils.isEmpty(firstName) && StringUtils.isEmpty(lastName)){
+            nameToPass =  firstName;
+        }else if(StringUtils.isEmpty(firstName) && !StringUtils.isEmpty(lastName)){
+            nameToPass = lastName;
+        }else {
+            nameToPass = "";
+        }
+
         String mobileNumber =  globalSearchType.getMobileNumber();
         if(!StringUtils.isEmpty(mobileNumber))
+        {
+            String subString =  StringUtils.substring(mobileNumber,0,2);
+            if(subString.equalsIgnoreCase("91")){
+                mobileNumber =  "+" + mobileNumber;
+            }
             holder.textContactNumber.setText(mobileNumber);
+        }
         else
             holder.textContactNumber.setText("");
 
@@ -116,20 +140,57 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.ratingUser.setRating(Float.parseFloat("0"));
         }
 
-        String publicUrl = globalSearchType.getPublicProfileUrl();
+        /*final String publicUrl = globalSearchType.getPublicProfileUrl();
         if(!StringUtils.isEmpty(publicUrl)){
             if(isRcpVerified == 1){
                 holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        Intent intent = new Intent(context, PublicProfileOfGlobalContactActivity.class);
+                        String publicProfileUrl =  globalSearchType.getPublicProfileUrl();
+                        if(!StringUtils.isEmpty(publicProfileUrl))
+                            intent.putExtra(AppConstants.EXTRA_GLOBAL_PUBLIC_PROFILE_URL,publicUrl);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
                     }
                 });
             }else {
                 holder.relativeRowMain.setClickable(false);
             }
-        }
+        }*/
 
+        if(isRcpVerified ==1){
+            holder.image3dotsCallLog.setVisibility(View.VISIBLE);
+            holder.image3dotsCallLog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String formattedNumber = globalSearchType.getMobileNumber();
+                    if(!StringUtils.isEmpty(formattedNumber)){
+                        String subString =  StringUtils.substring(formattedNumber,0,2);
+                        if(subString.equalsIgnoreCase("91")){
+                            formattedNumber =  "+" + formattedNumber;
+                        }
+                        ArrayList<String>arrayListForUnknownContact = new ArrayList<>(Arrays.asList("Call " + formattedNumber,
+                                context.getString(R.string.add_to_contact),
+                                context.getString(R.string.add_to_existing_contact)
+                                , context.getString(R.string.send_sms),
+                                context.getString(R.string.copy_phone_number)));
+
+                        MaterialListDialog materialListDialog = new MaterialListDialog(context, arrayListForUnknownContact,
+                                formattedNumber, 0, nameToPass, "", "");
+                        if(!StringUtils.isEmpty(nameToPass))
+                            materialListDialog.setDialogTitle(nameToPass);
+                        else{
+                            materialListDialog.setDialogTitle(formattedNumber);
+                        }
+                        materialListDialog.setCallingAdapter(GlobalSearchAdapter.this);
+                        materialListDialog.showDialog();
+                    }
+                }
+            });
+        }else{
+            holder.image3dotsCallLog.setVisibility(View.GONE);
+        }
 
     }
 
@@ -160,7 +221,7 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @BindView(R.id.textCount)
         TextView textCount;
         @BindView(R.id.text_contact_number)
-        TextView textContactNumber;
+        public TextView textContactNumber;
         @BindView(R.id.text_contact_date)
         TextView textContactDate;
         @BindView(R.id.text_sim_type)
@@ -190,6 +251,8 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             // Empty stars
             Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(context,
                     android.R.color.darker_gray));
+
+            image3dotsCallLog.setVisibility(View.GONE);
 
         }
     }

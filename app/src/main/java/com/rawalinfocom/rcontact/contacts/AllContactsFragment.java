@@ -157,7 +157,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
             arrayListContactHeaders.add(" ");
 
-            arrayListPhoneBookContacts.add("My Profile");
+            arrayListPhoneBookContacts.add(getActivity().getString(R.string.title_my_profile));
 
             ProfileData myProfileData = new ProfileData();
 
@@ -303,12 +303,11 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                  /* Call uploadContact api if there is more data to sync */
                         if (nextNumber < arrayListContactId.size()) {
 //                            phoneBookOperations();
-                            textTotalContacts.setText(previouslySyncedData + " Contacts");
+                            textTotalContacts.setText(previouslySyncedData + " " + getActivity().getString(R.string.contacts));
                         } else {
-                            textTotalContacts.setText(arrayListContactId.size() + " Contacts");
+                            textTotalContacts.setText(arrayListContactId.size() + " " + getActivity().getString(R.string.contacts));
                             Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                    "All " +
-                                            "Contact Synced");
+                                    getActivity().getString(R.string.str_all_contact_sync));
                             Utils.setStringPreference(getActivity(), AppConstants
                                     .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System
                                     .currentTimeMillis() - 10000));
@@ -346,8 +345,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                     if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
                             (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                         Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                "Invitation" +
-                                        " sent successfully");
+                                getActivity().getString(R.string.invitation_sent));
                     } else {
                         if (inviteContactResponse != null) {
                             Log.e("error response", inviteContactResponse.getMessage());
@@ -392,24 +390,18 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
                         .PERMISSION_GRANTED) {
 
                     // Permission Granted
-
                     if (!isReload) {
                         init();
                     }
-
-
                 } else {
-
                     // Permission Denied
 //                    getActivity().onBackPressed();
                     showPermissionConfirmationDialog();
-
                 }
             }
             break;
         }
     }
-
 
     @Override
     public void onDestroy() {
@@ -962,9 +954,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
+        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + number + "?");
 
         callConfirmationDialog.showDialog();
 
@@ -997,10 +989,9 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
 
         permissionConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText("Cancel");
-        permissionConfirmationDialog.setRightButtonText("OK");
-        permissionConfirmationDialog.setDialogBody("Contact read permission is required of this " +
-                "app. Do you want to try again?");
+        permissionConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+        permissionConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_ok));
+        permissionConfirmationDialog.setDialogBody(getActivity().getString(R.string.contact_read_permission));
 
         permissionConfirmationDialog.showDialog();
 
@@ -1532,7 +1523,7 @@ public class AllContactsFragment extends BaseFragment implements WsResponseListe
             if (previouslySyncedData < previousTo) {
                 uploadContacts(previouslySyncedData);
             } else {
-                textTotalContacts.setText(arrayListContactId.size() + " Contacts");
+                textTotalContacts.setText(arrayListContactId.size() + " " + getActivity().getString(R.string.contacts));
                 progressAllContact.setVisibility(View.GONE);
                 populateRecyclerView();
             }

@@ -92,7 +92,7 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
             holder.textRaterName.setText(item.getRaterName());
         }
         Float rating = Float.parseFloat(item.getRating());
-        holder.textRatingGiven.setText(rating + "");
+        holder.textRatingGiven.setText(String.format("%s", rating));
         holder.givenRatingBar.setRating(rating);
 
         LayerDrawable stars = (LayerDrawable) holder.givenRatingBar.getProgressDrawable();
@@ -110,11 +110,14 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
         }
         if (item.getHistoryType() == 0) {
             holder.historyPlaceHolder.setText(context.getResources().getString(R.string.text_you_rated));
-            holder.textRatingDetailInfo.setText("You wrote comment and give rating to " + item.getReceiverPersonName());
+            holder.textRatingDetailInfo.setText(String.format("%s%s", context.getString(R.string.str_rating_comment_hint_2)
+                    , item.getReceiverPersonName()));
         } else {
             holder.historyPlaceHolder.setText(context.getResources().getString(R.string.text_rated_you));
-            holder.textRatingDetailInfo.setText("You receive comment rating from " + item.getRaterName());
+            holder.textRatingDetailInfo.setText(String.format("%s%s", context.getString(R.string.str_rating_comment_hint_3)
+                    , item.getRaterName()));
         }
+
         holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

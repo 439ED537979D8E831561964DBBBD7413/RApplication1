@@ -163,7 +163,7 @@ public class CountryListActivity extends BaseActivity implements WsResponseListe
                 } catch (Exception e) {
                     e.printStackTrace();
                     Utils.showErrorSnackBar(CountryListActivity.this,
-                            relativeRootCountryList, "No Country Found");
+                            relativeRootCountryList, getString(R.string.str_no_country_found));
                 }
             }
 

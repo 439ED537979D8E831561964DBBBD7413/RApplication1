@@ -6,6 +6,7 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
@@ -41,7 +42,7 @@ public class AsyncGeoCoding extends AsyncTask<String, Void, Object> {
     protected void onPreExecute() {
         super.onPreExecute();
         if (showProgress) {
-            Utils.showProgressDialog(context, "Fetching address...", true);
+            Utils.showProgressDialog(context, context.getString(R.string.str_fetching_address), true);
         }
     }
 
@@ -133,5 +134,4 @@ public class AsyncGeoCoding extends AsyncTask<String, Void, Object> {
         Utils.hideProgressDialog();
         wsResponseListener.onDeliveryResponse(serviceType, result, error);
     }
-
 }

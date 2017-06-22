@@ -293,8 +293,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 WsResponseObject inviteContactResponse = (WsResponseObject) data;
                 if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
                         (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                    Utils.showSuccessSnackBar(getActivity(), relativeRootFavourite, "Invitation" +
-                            " sent successfully");
+                    Utils.showSuccessSnackBar(getActivity(), relativeRootFavourite,
+                            getActivity().getString(R.string.invitation_sent));
                 } else {
                     if (inviteContactResponse != null) {
                         Log.e("error response", inviteContactResponse.getMessage());
@@ -675,7 +675,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         } else {
             relativeRootFavourite.setVisibility(View.GONE);
             layoutEmptyView.setVisibility(View.VISIBLE);
-            textEmptyView.setText("No Favourites");
+            textEmptyView.setText(getString(R.string.str_no_favorite));
         }
 
         getRcpDetail();
@@ -760,12 +760,11 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
         callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + callNumber + "?");
+        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + callNumber + "?");
 
         callConfirmationDialog.showDialog();
-
     }
 
     /*public AllContactListAdapter getAllContactListAdapter() {
@@ -829,19 +828,17 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         String message = "";
         switch (permissionType) {
             case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
-                message = "Contact read permission is required of this app. Do you want to try " +
-                        "again?";
+                message = getString(R.string.contact_read_permission);
                 break;
             case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
-                message = "Calling permission is required to make the call. Do you want to try " +
-                        "again?";
+                message = getString(R.string.calling_permission);
                 break;
         }
 
         permissionConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText("Cancel");
-        permissionConfirmationDialog.setRightButtonText("OK");
+        permissionConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        permissionConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
         permissionConfirmationDialog.setDialogBody(message);
 
         permissionConfirmationDialog.showDialog();

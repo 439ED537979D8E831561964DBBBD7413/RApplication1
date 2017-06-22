@@ -102,7 +102,7 @@ class ExpandableContactListAdapter extends RecyclerView
         holder.relativeRowAllContact.setTag(position);
 
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
-                "[Unknown]");
+                context.getString(R.string.unknown));
 
         UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                 .parseInt(displayNamePmId));
@@ -175,7 +175,7 @@ class ExpandableContactListAdapter extends RecyclerView
         RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
         TextView textSheetHeader = ButterKnife.findById(view, R.id.text_sheet_header);
 
-        textSheetHeader.setText("Social Media");
+        textSheetHeader.setText(context.getString(R.string.social_media));
         textSheetHeader.setTypeface(Utils.typefaceBold(context));
 
         BottomSheetSocialMediaAdapter adapter = new BottomSheetSocialMediaAdapter(context);
@@ -252,7 +252,5 @@ class ExpandableContactListAdapter extends RecyclerView
 
         }
     }
-
     //</editor-fold>
-
 }

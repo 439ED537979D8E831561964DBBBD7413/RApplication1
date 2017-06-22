@@ -25,14 +25,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/text_histroy_number"
-                tools:text="+918888888888"/>
+                tools:text="+918888888888" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/text_histroy_call_type"
                 tools:text="(Work)"
-                android:layout_marginLeft="@dimen/margin_5dp"/>
+                android:layout_marginLeft="@dimen/margin_5dp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -52,35 +52,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/image_histroy_call_type"
-                android:src="@drawable/ic_call_outgoing"/>
+                android:src="@drawable/ic_call_outgoing" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/text_histroy_sim_type"
                 tools:text="@string/im_sim_1"
-                android:layout_marginLeft="@dimen/margin_5dp"/>
+                android:layout_marginLeft="@dimen/margin_5dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/text_duration"
                 android:text="Duration :"
-                android:layout_marginLeft="@dimen/margin_5dp"/>
+                android:layout_marginLeft="@dimen/margin_5dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/text_histroy_duration_value"
                 tools:text="2:30"
-                android:layout_marginLeft="@dimen/margin_5dp"/>
+                android:layout_marginLeft="@dimen/margin_5dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/text_histroy_call_time"
                 tools:text="4:30 PM"
-                android:gravity="right"/>
+                android:gravity="right" />
 
 
         </LinearLayout>
@@ -89,7 +89,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/veryLightGray"/>
+        android:background="@color/veryLightGray" />
 
 
 </LinearLayout>

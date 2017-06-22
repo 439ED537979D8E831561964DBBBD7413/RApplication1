@@ -21,8 +21,7 @@ import butterknife.ButterKnife;
  * Created by user on 14/12/16.
  */
 
-public class BottomSheetSocialMediaAdapter extends RecyclerView
-        .Adapter<BottomSheetSocialMediaAdapter.SocialMediaViewHolder> {
+public class BottomSheetSocialMediaAdapter extends RecyclerView.Adapter<BottomSheetSocialMediaAdapter.SocialMediaViewHolder> {
 
     private Context context;
     private ArrayList<Integer> arrayListSocialMediaIcons;
@@ -39,12 +38,12 @@ public class BottomSheetSocialMediaAdapter extends RecyclerView
         arrayListSocialMediaIcons.add(R.drawable.img_skype);
 
         arrayListSocialMediaNames = new ArrayList<>();
-        arrayListSocialMediaNames.add("Whatsapp");
-        arrayListSocialMediaNames.add("Facebook");
-        arrayListSocialMediaNames.add("Messenger");
-        arrayListSocialMediaNames.add("Twitter");
-        arrayListSocialMediaNames.add("Linkedin");
-        arrayListSocialMediaNames.add("Skype");
+        arrayListSocialMediaNames.add(context.getString(R.string.str_whats_app));
+        arrayListSocialMediaNames.add(context.getString(R.string.str_facebook));
+        arrayListSocialMediaNames.add(context.getString(R.string.str_messenger));
+        arrayListSocialMediaNames.add(context.getString(R.string.str_twitter));
+        arrayListSocialMediaNames.add(context.getString(R.string.str_linked_in));
+        arrayListSocialMediaNames.add(context.getString(R.string.str_skype));
     }
 
     @Override
@@ -81,5 +80,4 @@ public class BottomSheetSocialMediaAdapter extends RecyclerView
             textSocialMedia.setTypeface(Utils.typefaceRegular(context));
         }
     }
-
 }

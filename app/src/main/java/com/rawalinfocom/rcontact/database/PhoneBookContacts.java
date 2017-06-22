@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 
+import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 
@@ -444,199 +445,199 @@ public class PhoneBookContacts {
     public String getPhoneNumberType(int type) {
         switch (type) {
             case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
-                return "Home";
+                return context.getString(R.string.type_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
-                return "Mobile";
+                return context.getString(R.string.type_mobile);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
-                return "Work";
+                return context.getString(R.string.type_work);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
-                return "Fax Work";
+                return context.getString(R.string.type_fax_work);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
-                return "Fax Home";
+                return context.getString(R.string.type_fax_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_PAGER:
-                return "Pager";
+                return context.getString(R.string.type_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
-                return "Other";
+                return context.getString(R.string.type_other);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK:
-                return "Callback";
+                return context.getString(R.string.type_callback);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CAR:
-                return "Car";
+                return context.getString(R.string.type_car);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
-                return "Company Main";
+                return context.getString(R.string.type_company_main);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
-                return "ISDN";
+                return context.getString(R.string.type_isdn);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
-                return "Main";
+                return context.getString(R.string.type_main);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX:
-                return "Other Fax";
+                return context.getString(R.string.type_other_fax);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_RADIO:
-                return "Radio";
+                return context.getString(R.string.type_radio);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TELEX:
-                return "Telex";
+                return context.getString(R.string.type_telex);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD:
-                return "Tty Tdd";
+                return context.getString(R.string.type_tty_tdd);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
-                return "Work Mobile";
+                return context.getString(R.string.type_work_mobile);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER:
-                return "Work Pager";
+                return context.getString(R.string.type_work_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT:
-                return "Assistant";
+                return context.getString(R.string.type_assistant);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
-                return "MMS";
+                return context.getString(R.string.type_mms);
 
         }
-        return "Other";
+        return context.getString(R.string.type_other);
     }
 
     public String getEmailType(Cursor cursor, int type) {
         switch (type) {
             case ContactsContract.CommonDataKinds.Email.TYPE_HOME:
-                return "Home";
+                return context.getString(R.string.type_home);
 
             case ContactsContract.CommonDataKinds.Email.TYPE_MOBILE:
-                return "Mobile";
+                return context.getString(R.string.type_mobile);
 
             case ContactsContract.CommonDataKinds.Email.TYPE_WORK:
-                return "Work";
+                return context.getString(R.string.type_work);
 
             case ContactsContract.CommonDataKinds.Email.TYPE_OTHER:
-                return "Other";
+                return context.getString(R.string.type_other);
 
             case ContactsContract.CommonDataKinds.Email.TYPE_CUSTOM:
                 return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
                         .Email.LABEL));
         }
-        return "Other";
+        return context.getString(R.string.type_other);
     }
 
     public String getOrganizationType(Cursor cursor, int type) {
         switch (type) {
 
             case ContactsContract.CommonDataKinds.Organization.TYPE_WORK:
-                return "Home";
+                return context.getString(R.string.type_home);
 
             case ContactsContract.CommonDataKinds.Organization.TYPE_OTHER:
-                return "Other";
+                return context.getString(R.string.type_other);
 
             case ContactsContract.CommonDataKinds.Organization.TYPE_CUSTOM:
                 return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
                         .Organization.LABEL));
         }
-        return "Other";
+        return context.getString(R.string.type_other);
     }
 
     public String getAddressType(Cursor cursor, int type) {
         switch (type) {
             case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME:
-                return "Home";
+                return context.getString(R.string.type_home);
 
             case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_WORK:
-                return "Work";
+                return context.getString(R.string.type_work);
 
             case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_OTHER:
-                return "Other";
+                return context.getString(R.string.type_other);
 
             case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_CUSTOM:
                 return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
                         .StructuredPostal.LABEL));
         }
-        return "Other";
+        return context.getString(R.string.type_other);
     }
 
     public String getImAccountType(Cursor cursor, int type) {
         switch (type) {
             case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_HOME:
-                return "Home";
+                return context.getString(R.string.type_home);
 
             case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_WORK:
-                return "Work";
+                return context.getString(R.string.type_work);
 
             case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_OTHER:
-                return "Other";
+                return context.getString(R.string.type_other);
 
             case ContactsContract.CommonDataKinds.StructuredPostal.TYPE_CUSTOM:
                 return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
                         .StructuredPostal.LABEL));
         }
-        return "Other";
+        return context.getString(R.string.type_other);
     }
 
     public String getImProtocol(int protocol) {
         switch (protocol) {
             case ContactsContract.CommonDataKinds.Im.PROTOCOL_AIM:
-                return "AIM";
+                return context.getString(R.string.protocol_aim);
 
             case ContactsContract.CommonDataKinds.Im.PROTOCOL_MSN:
-                return "MSN";
+                return context.getString(R.string.protocol_msn);
 
             case ContactsContract.CommonDataKinds.Im.PROTOCOL_YAHOO:
-                return "Yahoo";
+                return context.getString(R.string.protocol_yahoo);
 
             case ContactsContract.CommonDataKinds.Im.PROTOCOL_SKYPE:
-                return "Skype";
+                return context.getString(R.string.protocol_skype);
 
             case ContactsContract.CommonDataKinds.Im.PROTOCOL_QQ:
-                return "QQ";
+                return context.getString(R.string.protocol_qq);
 
             case ContactsContract.CommonDataKinds.Im.PROTOCOL_GOOGLE_TALK:
-                return "Google Talk";
+                return context.getString(R.string.protocol_google_talk);
 
             case ContactsContract.CommonDataKinds.Im.PROTOCOL_ICQ:
-                return "ICQ";
+                return context.getString(R.string.protocol_icq);
 
             case ContactsContract.CommonDataKinds.Im.PROTOCOL_JABBER:
-                return "Jabber";
+                return context.getString(R.string.protocol_jabber);
 
             case ContactsContract.CommonDataKinds.Im.PROTOCOL_NETMEETING:
-                return "NetMeeting";
+                return context.getString(R.string.protocol_netmeeting);
 
             case 9:
-                return "WhatsApp";
+                return context.getString(R.string.protocol_whatsapp);
 
             case 10:
-                return "Facebook";
+                return context.getString(R.string.protocol_facebook);
 
             case ContactsContract.CommonDataKinds.Im.PROTOCOL_CUSTOM:
                 return ContactsContract.CommonDataKinds.Im.CUSTOM_PROTOCOL;
         }
-        return "Other";
+        return context.getString(R.string.type_other);
     }
 
     public String getEventType(Cursor cursor, int type) {
         switch (type) {
             case ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY:
-                return "Anniversary";
+                return context.getString(R.string.event_anniversary);
 
             case ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY:
-                return "Birthday";
+                return context.getString(R.string.event_birthday);
 
             case ContactsContract.CommonDataKinds.Event.TYPE_OTHER:
-                return "Other";
+                return context.getString(R.string.type_other);
 
             case ContactsContract.CommonDataKinds.Event.TYPE_CUSTOM:
                 return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
                         .Event.LABEL));
         }
-        return "Other";
+        return context.getString(R.string.type_other);
     }
 
     public String getRelationType(Cursor cursor, int type) {
@@ -688,38 +689,38 @@ public class PhoneBookContacts {
                         .Relation.LABEL));
 
         }
-        return "Other";
+        return context.getString(R.string.type_other);
     }
 
     public String getWebsiteType(Cursor cursor, int type) {
         switch (type) {
             case ContactsContract.CommonDataKinds.Website.TYPE_HOMEPAGE:
-                return "Homepage";
+                return context.getString(R.string.web_homepage);
 
             case ContactsContract.CommonDataKinds.Website.TYPE_BLOG:
-                return "Blog";
+                return context.getString(R.string.web_blog);
 
             case ContactsContract.CommonDataKinds.Website.TYPE_PROFILE:
-                return "Profile";
+                return context.getString(R.string.text_tab_profile);
 
             case ContactsContract.CommonDataKinds.Website.TYPE_HOME:
-                return "Home";
+                return context.getString(R.string.type_home);
 
             case ContactsContract.CommonDataKinds.Website.TYPE_WORK:
-                return "Work";
+                return context.getString(R.string.type_work);
 
             case ContactsContract.CommonDataKinds.Website.TYPE_FTP:
-                return "FTP";
+                return context.getString(R.string.web_ftp);
 
             case ContactsContract.CommonDataKinds.Website.TYPE_OTHER:
-                return "Other";
+                return context.getString(R.string.type_other);
 
             case ContactsContract.CommonDataKinds.Website.TYPE_CUSTOM:
                 return cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds
                         .Website.LABEL));
 
         }
-        return "Other";
+        return context.getString(R.string.type_other);
     }
 
     //</editor-fold>
@@ -778,7 +779,7 @@ public class PhoneBookContacts {
                 ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
                 rawId,
         };
-      //  String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+        //  String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
         Uri uri;
 
         uri = ContactsContract.Data.CONTENT_URI;
@@ -833,5 +834,4 @@ public class PhoneBookContacts {
         Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
                 firstTimeList);
     }
-
 }

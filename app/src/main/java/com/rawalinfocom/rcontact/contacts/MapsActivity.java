@@ -4,22 +4,20 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -29,25 +27,18 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.adapters.PlaceSuggestionListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncGeoCoding;
 import com.rawalinfocom.rcontact.asynctasks.AsyncGetGoogleLocation;
 import com.rawalinfocom.rcontact.asynctasks.AsyncReverseGeoCoding;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.helper.GPSTracker;
-import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
-import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
-import com.rawalinfocom.rcontact.model.GetGoogleLocationResponse;
-import com.rawalinfocom.rcontact.model.GetGoogleLocationResultObject;
 import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
 
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,16 +48,12 @@ import static com.rawalinfocom.rcontact.ProfileRegistrationActivity.isFromSettin
 public class MapsActivity extends BaseActivity implements OnMapReadyCallback, RippleView
         .OnRippleCompleteListener, WsResponseListener {
 
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
+
     @BindView(R.id.relative_root_map)
     RelativeLayout relativeRootMap;
     @BindView(R.id.input_search_location)
     EditText inputSearchLocation;
-    @BindView(R.id.image_right_right)
-    ImageView imageRightRight;
-    @BindView(R.id.ripple_action_right_right)
-    RippleView rippleActionRightRight;
-    @BindView(R.id.linear_action_right)
-    LinearLayout linearActionRight;
     @BindView(R.id.relative_action_back)
     RelativeLayout relativeActionBack;
     @BindView(R.id.button_fetch_address)
@@ -75,8 +62,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
     RelativeLayout relativeFetchAddress;
     @BindView(R.id.ripple_fetch_address)
     RippleView rippleFetchAddress;
-    @BindView(R.id.recycler_view_suggestions)
-    RecyclerView recyclerViewSuggestions;
 
     SupportMapFragment mapFragment;
 
@@ -86,6 +71,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
     int locationCall = 0;
     //    GPSTracker gpsTracker;
     ReverseGeocodingAddress objAddress;
+    Place place;
 
     private String defaultFormattedAddress = "Surat, Gujarat, India";
 
@@ -96,8 +82,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
-
-//        gpsTracker = new GPSTracker(this, null);
 
         Intent intent = getIntent();
 
@@ -117,10 +101,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                     longitude = intent.getDoubleExtra(AppConstants.EXTRA_LONGITUDE, 0);
                 } catch (Exception ignore) {
                 }
-
             }
         }
-
 
         init();
     }
@@ -156,7 +138,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
         } else {*/
         googleMap.getUiSettings().setZoomControlsEnabled(true);
 //        googleMap.setMyLocationEnabled(true);
-        Handler handler = new Handler();
+       /* Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -166,7 +148,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 }
                 addMapMarker();
             }
-        }, 1000);
+        }, 1000);*/
 //        }
 
         googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
@@ -201,15 +183,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                         locationCall++;
                     }
                 }
-                /*else {
-                    try {
-                        locationString = objAddress.getCity() + ", " + objAddress.getState() +
-                       "," +
-                                " " + objAddress.getCountry();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }*/
             }
             //</editor-fold>
 
@@ -217,52 +190,53 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
             else if (serviceType.contains(WsConstants.REQ_GEO_CODING_ADDRESS)) {
 
                 Utils.hideSoftKeyboard(this, inputSearchLocation);
-//                relativeLastAddress.setVisibility(View.VISIBLE);
 
                 objAddress = (ReverseGeocodingAddress) data;
 
                 if (objAddress == null) {
-                    Utils.showErrorSnackBar(this, relativeRootMap, "No Location Found");
+                    Utils.showErrorSnackBar(this, relativeRootMap, getString(R.string.str_no_location_found));
                 } else {
                     try {
-                        latitude = Double.parseDouble(StringUtils.defaultString(objAddress
-                                .getLatitude(), "0"));
-                        longitude = Double.parseDouble(StringUtils.defaultString(objAddress
-                                .getLongitude(), "0"));
+                        if (place != null) {
+                            LatLng latLng = place.getLatLng();
+                            latitude = latLng.latitude;
+                            longitude = latLng.longitude;
+                        } else {
+                            latitude = Double.parseDouble(StringUtils.defaultString(objAddress
+                                    .getLatitude(), "0"));
+                            longitude = Double.parseDouble(StringUtils.defaultString(objAddress
+                                    .getLongitude(), "0"));
+                        }
                         if (latitude != 0 && longitude != 0) {
                             if (serviceType.contains("_TRUE")) {
                                 addMapMarker();
                             } else {
-//                                showAddressDialog(objAddress.getAddress());
-                              /*  Toast.makeText(this, objAddress.getAddress(), Toast.LENGTH_SHORT)
-                                        .show();*/
                                 Intent intent = new Intent();
-                                intent.putExtra(AppConstants.EXTRA_OBJECT_LOCATION, objAddress
-                                        .getAddressLine());
+                                if (place != null) {
+                                    objAddress = new ReverseGeocodingAddress();
+                                    objAddress.setLatitude(String.valueOf(latitude));
+                                    objAddress.setLongitude(String.valueOf(longitude));
+                                    objAddress.setAddress(String.valueOf(place.getAddress()));
+                                }
                                 intent.putExtra(AppConstants.EXTRA_OBJECT_ADDRESS, objAddress);
                                 setResult(AppConstants.RESULT_CODE_MAP_LOCATION_SELECTION, intent);
                                 finish();
                                 overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
                             }
-//                            textAddress.setText(objAddress.getAddress());
-//                            showAddressDialog(objAddress.getAddress());
                         } else {
-                            Utils.showErrorSnackBar(this, relativeRootMap, "Unable to find " +
-                                    "Location");
+                            Utils.showErrorSnackBar(this, relativeRootMap, getString(R.string.str_unable_location_found));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Utils.showErrorSnackBar(this, relativeRootMap, "Unable to find Location! " +
-                                "Please try again.");
+                        Utils.showErrorSnackBar(this, relativeRootMap, getString(R.string.str_unable_location_found));
 
                     }
-//                    Log.i("onDeliveryResponse", objAddress.getAddress());
                 }
             }
             //</editor-fold>
 
             //<editor-fold desc="REQ_GOOGLE_TEXT_BY_LOCATIONS">
-            else if (serviceType.equalsIgnoreCase(WsConstants.REQ_GOOGLE_TEXT_BY_LOCATIONS)) {
+            /*else if (serviceType.equalsIgnoreCase(WsConstants.REQ_GOOGLE_TEXT_BY_LOCATIONS)) {
                 GetGoogleLocationResponse getGoogleLocationResponse = (GetGoogleLocationResponse)
                         data;
                 if (getGoogleLocationResponse.getStatus().equalsIgnoreCase("OK")) {
@@ -277,12 +251,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
 
                 } else if (getGoogleLocationResponse.getStatus().equalsIgnoreCase
                         ("OVER_QUERY_LIMIT")) {
-                    Utils.showErrorSnackBar(this, relativeRootMap, "You have exceeded your daily " +
-                            "request quota for this API.");
+                    Utils.showErrorSnackBar(this, relativeRootMap, getString(R.string.str_daily_limit_warning));
                 } else {
                     Log.e(serviceType + "response", "fail");
                 }
-            }
+            }*/
             //</editor-fold>
 
         } else {
@@ -303,7 +276,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                     asyncGeoCodingFetch.execute(null, String.valueOf(latitude), String.valueOf
                             (longitude));
                 } else {
-                    Utils.showErrorSnackBar(this, relativeRootMap, "Please search any location!");
+                    Utils.showErrorSnackBar(this, relativeRootMap, getString(R.string.str_hint_search_location));
                 }
                 break;
 
@@ -319,7 +292,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 }
                 break;*/
 
-            case R.id.ripple_action_right_right:
                /* if (StringUtils.length(StringUtils.trim(inputSearchLocation.getText().toString())
                 ) > 0) {
                     AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(this, true, WsConstants
@@ -329,15 +301,28 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 } else {
                     Utils.showErrorSnackBar(this, relativeRootMap, "Please add Address to search");
                 }*/
-                inputSearchLocation.setText("");
-                break;
         }
 
     }
 
     @Override
-    public void onBackPressed() {
-
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                place = PlaceAutocomplete.getPlace(this, data);
+//                Log.i("onActivityResult", "Place: " + place.getName());
+                inputSearchLocation.setText(place.getName());
+                AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(MapsActivity.this,
+                        true, WsConstants.REQ_GEO_CODING_ADDRESS + "_TRUE");
+                asyncGeoCoding.execute(StringUtils.trim(inputSearchLocation.getText()
+                        .toString()));
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                Log.i("onActivityResult", status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
     }
 
     /* @Override
@@ -388,10 +373,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        recyclerViewSuggestions.setVisibility(View.GONE);
-        recyclerViewSuggestions.setLayoutManager(new LinearLayoutManager(this));
-
-        RecyclerItemDecoration decoration = new RecyclerItemDecoration(this, ContextCompat.getColor
+       /* RecyclerItemDecoration decoration = new RecyclerItemDecoration(this, ContextCompat
+       .getColor
                 (this, R.color.darkGray), 0.5f);
         recyclerViewSuggestions.addItemDecoration(decoration);
 
@@ -411,91 +394,40 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                             asyncGeoCoding.execute(StringUtils.trim(inputSearchLocation.getText()
                                     .toString()));
                         } else {
-                            Utils.showErrorSnackBar(MapsActivity.this, relativeRootMap, "Please " +
-                                    "add Address to search");
+                            Utils.showErrorSnackBar(MapsActivity.this, relativeRootMap, getString(R.string.str_hint_search_address));
                         }
                     }
                 })
-        );
+        );*/
 
-        rippleActionRightRight.setOnRippleCompleteListener(this);
         rippleFetchAddress.setOnRippleCompleteListener(this);
 
         if (latitude == 0 || longitude == 0) {
-        /*    if (ContextCompat.checkSelfPermission(this, Manifest.permission
-                    .ACCESS_FINE_LOCATION) !=
-                    PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
-                        .ACCESS_FINE_LOCATION}, AppConstants
-                        .MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-
-            } else {*/
             if (StringUtils.length(defaultFormattedAddress) > 0 && !(StringUtils.equals
                     (defaultFormattedAddress, "Surat, Gujarat, India"))) {
                 AsyncGeoCoding asyncGeoCoding = new AsyncGeoCoding(this, true, WsConstants
                         .REQ_GEO_CODING_ADDRESS + "_TRUE");
                 asyncGeoCoding.execute(StringUtils.trim(defaultFormattedAddress));
             }
-            /*else {
-                if (Utils.isLocationEnabled(this)) {
-                    getLocationDetail();
-                } else {
-                    if (ContextCompat.checkSelfPermission(this, Manifest.permission
-                            .ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        gpsTracker.showSettingsAlert();
-                    }
-                }
-            }*/
-
-//            }
         } else {
             AsyncReverseGeoCoding asyncReverseGeoCoding = new AsyncReverseGeoCoding(this,
                     WsConstants.REQ_REVERSE_GEO_CODING_ADDRESS, false);
             asyncReverseGeoCoding.execute(new LatLng(latitude, longitude));
         }
 
-        /*buttonCancel.setOnClickListener(new View.OnClickListener() {
+        inputSearchLocation.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                relativeLastAddress.setVisibility(View.GONE);
-            }
-        });
-
-        buttonDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.putExtra(AppConstants.EXTRA_OBJECT_LOCATION, textAddress.getText()
-                        .toString());
-                intent.putExtra(AppConstants.EXTRA_OBJECT_ADDRESS, objAddress);
-                setResult(AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION, intent);
-                finish();
-                overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
-            }
-        });*/
-
-        inputSearchLocation.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() > 0) {
-                    recyclerViewSuggestions.setVisibility(View.VISIBLE);
-                    searchLocation(false, charSequence.toString());
-                } else {
-                    recyclerViewSuggestions.setVisibility(View.GONE);
+            public void onClick(View view) {
+                try {
+                    Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete
+                            .MODE_OVERLAY).build(MapsActivity.this);
+                    startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+                } catch (GooglePlayServicesRepairableException |
+                        GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
                 }
             }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
         });
-
     }
 
     public void addMapMarker() {
@@ -559,8 +491,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.putExtra(AppConstants.EXTRA_OBJECT_LOCATION, textGoogleAddress.getText()
-                        .toString());
+                /*intent.putExtra(AppConstants.EXTRA_OBJECT_LOCATION, textGoogleAddress.getText()
+                        .toString());*/
                 intent.putExtra(AppConstants.EXTRA_OBJECT_ADDRESS, objAddress);
                 setResult(AppConstants.RESULT_CODE_MAP_LOCATION_SELECTION, intent);
                 finish();
@@ -572,8 +504,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.putExtra(AppConstants.EXTRA_OBJECT_LOCATION, textGoogleAddress.getText()
-                        .toString());
+                /*intent.putExtra(AppConstants.EXTRA_OBJECT_LOCATION, textGoogleAddress.getText()
+                        .toString());*/
                 intent.putExtra(AppConstants.EXTRA_OBJECT_ADDRESS, objAddress);
                 setResult(AppConstants.RESULT_CODE_MY_LOCATION_SELECTION, intent);
                 finish();
@@ -594,14 +526,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                     (this, displayProgress, WsConstants.REQ_GOOGLE_TEXT_BY_LOCATIONS);
             asyncGetGoogleLocation.execute("https://maps.googleapis" +
                     ".com/maps/api/place/autocomplete/json?key" +
-                    "=AIzaSyDz4oI0o5qB_hUTiiQXMg6dz8pacDEd_jM&input=" + queryString +
+                    "=AIzaSyDHLCyy3FXO9IshxYd2-XAR6uSmVPvnAZQ&input=" + queryString +
                     "&types=geocode&sensor=true");
         } else {
             Utils.showErrorSnackBar(this, relativeRootMap, getResources().getString(R.string
                     .msg_no_network));
         }
     }
-
     //</editor-fold>
-
 }

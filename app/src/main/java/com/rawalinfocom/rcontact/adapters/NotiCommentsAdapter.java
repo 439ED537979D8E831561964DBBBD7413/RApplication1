@@ -79,7 +79,7 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
         } else {
             holder.textCommentNotiTime.setText(Utils.formatDateTime(item.getNotiCommentTime(), "hh:mm a"));
         }
-        holder.buttonCommentViewReply.setText("VIEW REPLY");
+        holder.buttonCommentViewReply.setText(context.getString(R.string.str_view_reply));
         holder.buttonCommentViewReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,11 +94,10 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
                 arrayListComments.add(Utils.formatDateTime(item.getReplyTime(), "dd MMM, hh:mm a"));
 
                 notificationPopupDialog = new NotificationPopupDialog(context, arrayListComments, false);
-                notificationPopupDialog.setDialogTitle(item.getCommenterName() + " Reply You");
+                notificationPopupDialog.setDialogTitle(item.getCommenterName() + context.getString(R.string.str_reply_you));
                 notificationPopupDialog.showDialog();
             }
         });
-
     }
 
     @Override

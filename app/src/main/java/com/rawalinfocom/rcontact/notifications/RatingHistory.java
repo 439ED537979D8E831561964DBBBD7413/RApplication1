@@ -43,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -126,7 +127,7 @@ public class RatingHistory extends BaseActivity implements RippleView
         init();
         tableCommentMaster = new TableCommentMaster(databaseHandler);
         initData();
-       // getAllEventRatingReceived(RatingHistory.this);
+        // getAllEventRatingReceived(RatingHistory.this);
     }
 
     private void getAllEventRatingReceived(Context context) {
@@ -299,7 +300,7 @@ public class RatingHistory extends BaseActivity implements RippleView
     }
 
     private String getDate(int dayToAddorSub) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd", Locale.getDefault());
         Date date = new Date();
         date.setTime(date.getTime() + dayToAddorSub * 24 * 60 * 60 * 1000);
         return sdf.format(date);
@@ -498,7 +499,7 @@ public class RatingHistory extends BaseActivity implements RippleView
             ArrayList<EventComment> allRatingComments = eventCommentData.getRating();
             if (allRatingComments != null) {
                 for (EventComment eventComment : allRatingComments) {
-                    Comment comment = createComment(eventComment, getResources().getString(R.string.text_rating));
+                    Comment comment = createComment(eventComment, getResources().getString(R.string.str_tab_rating));
                     tableCommentMaster.addComment(comment);
                     tableCommentMaster.addReply(eventComment.getPrId(), eventComment.getReply(),
                             Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
@@ -513,7 +514,7 @@ public class RatingHistory extends BaseActivity implements RippleView
         comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
         comment.setCrmRating("");
         comment.setCrmType(commentType);
-        if (commentType.equalsIgnoreCase(getResources().getString(R.string.text_rating))) {
+        if (commentType.equalsIgnoreCase(getResources().getString(R.string.str_tab_rating))) {
             comment.setCrmCloudPrId(eventComment.getPrId());
             comment.setCrmRating(eventComment.getRatingStars());
         } else {

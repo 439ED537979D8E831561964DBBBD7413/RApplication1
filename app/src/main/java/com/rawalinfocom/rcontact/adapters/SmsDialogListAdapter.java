@@ -116,7 +116,7 @@ public class SmsDialogListAdapter extends RecyclerView.Adapter<SmsDialogListAdap
 //            int value = context.getContentResolver().delete(Uri.parse
 // ("content://sms/conversations/" + threadId), null, null);
             if (value > 0) {
-                Toast.makeText(context, value + " message deleted.", Toast.LENGTH_SHORT);
+                Toast.makeText(context, value + " " + context.getString(R.string.str_message_deleted), Toast.LENGTH_SHORT);
 
                 Intent localBroadcastIntent = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER);
@@ -202,9 +202,9 @@ public class SmsDialogListAdapter extends RecyclerView.Adapter<SmsDialogListAdap
 
         callConfirmationDialog = new MaterialDialog(context, cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
+        callConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(context.getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " + number + "?");
         callConfirmationDialog.showDialog();
 
     }

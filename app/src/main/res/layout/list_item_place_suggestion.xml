@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -14,7 +13,7 @@
         android:padding="@dimen/margin_small"
         android:text="@string/im_map_marker"
         android:textColor="@color/colorDarkGray"
-        android:textSize="25sp"/>
+        android:textSize="25sp" />
 
     <TextView
         android:id="@+id/text_suggestion"
@@ -25,6 +24,6 @@
         android:paddingLeft="@dimen/margin_small"
         android:paddingRight="@dimen/margin_medium"
         android:paddingTop="@dimen/margin_small"
-        tools:text="Citylight"/>
+        tools:text="Citylight" />
 
 </LinearLayout>

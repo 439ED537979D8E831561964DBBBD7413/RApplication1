@@ -269,8 +269,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
 
                 if (StringUtils.length(inputFirstName.getText().toString()) < 1 || StringUtils
                         .length(inputLastName.getText().toString()) < 1) {
-                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "Please add valid " +
-                            "name!");
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string.str_valid_name));
                 } else {
                     getUpdatedProfile();
                 }
@@ -343,7 +342,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
 
         } else if (requestCode == AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION) {
             if (data != null) {
-                String locationString = data.getStringExtra(AppConstants.EXTRA_OBJECT_LOCATION);
+//                String locationString = data.getStringExtra(AppConstants.EXTRA_OBJECT_LOCATION);
                 ReverseGeocodingAddress objAddress = (ReverseGeocodingAddress) data
                         .getSerializableExtra(AppConstants.EXTRA_OBJECT_ADDRESS);
                 View linearView = linearAddressDetails.getChildAt(clickedPosition);
@@ -365,7 +364,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                 }
                 textLatitude.setText(objAddress.getLatitude());
                 textLongitude.setText(objAddress.getLongitude());
-                textGoogleAddress.setText(locationString);
+//                textGoogleAddress.setText(locationString);
                 if (resultCode == AppConstants.RESULT_CODE_MAP_LOCATION_SELECTION) {
                     inputCountry.setText(objAddress.getCountry());
                     inputState.setText(objAddress.getState());
@@ -418,8 +417,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                     showChooseImageIntent();
 
                 } else {
-                    showPermissionConfirmationDialog("Storage permission is required for " +
-                            "uploading profile image. Do you want to try again?", true);
+                    showPermissionConfirmationDialog(getString(R.string.storage_permission), true);
                 }
             }
             break;
@@ -432,8 +430,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                     selectImageFromCamera();
 
                 } else {
-                    showPermissionConfirmationDialog("Camera permission is required for taking " +
-                            "photo. Do you want to try again?", false);
+                    showPermissionConfirmationDialog(getString(R.string.camera_permission), false);
                 }
             }
             break;
@@ -457,8 +454,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
 
                     storeProfileDataToDb(profileDetail);
 
-                    Utils.showSuccessSnackBar(this, relativeRootEditProfile, "Profile Updated " +
-                            "Successfully! ");
+                    Utils.showSuccessSnackBar(this, relativeRootEditProfile, getString(R.string.str_profile_hint_1));
 //                    Log.i("onDeliveryResponse", editProfileResponse.getMessage());
 
                 } else {
@@ -583,9 +579,9 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
             inputFirstName.setText(userProfile.getPmFirstName());
             inputLastName.setText(userProfile.getPmLastName());
 
-            if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Female")) {
+            if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), this.getString(R.string.str_female))) {
                 radioGroupGender.check(R.id.radio_female);
-            } else if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), "Male")) {
+            } else if (StringUtils.endsWithIgnoreCase(userProfile.getPmGender(), this.getString(R.string.str_male))) {
                 radioGroupGender.check(R.id.radio_male);
             }
 
@@ -598,8 +594,6 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                     .into(imageProfile);
 
         }
-
-
     }
 
     private void phoneNumberDetails() {
@@ -817,7 +811,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                 linerCheckbox.setVisibility(View.GONE);
                 textImageCross.setTag(AppConstants.PHONE_NUMBER);
                 spinnerType.setTag(AppConstants.PHONE_NUMBER);
-                inputValue.setHint("Number");
+                inputValue.setHint(this.getString(R.string.str_number));
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_phone_number)));
                 spinnerPhoneAdapter = new ArrayAdapter<>(this, R.layout
@@ -855,7 +849,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                 linerCheckbox.setVisibility(View.GONE);
                 textImageCross.setTag(AppConstants.EMAIL);
                 spinnerType.setTag(AppConstants.EMAIL);
-                inputValue.setHint("Email");
+                inputValue.setHint(this.getString(R.string.str_email));
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_email_address)));
                 spinnerEmailAdapter = new ArrayAdapter<>(this, R.layout
@@ -884,7 +878,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                 linerCheckbox.setVisibility(View.GONE);
                 textImageCross.setTag(AppConstants.WEBSITE);
                 spinnerType.setTag(AppConstants.WEBSITE);
-                inputValue.setHint("Website");
+                inputValue.setHint(this.getString(R.string.str_website));
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_email_address)));
                 spinnerWebsiteAdapter = new ArrayAdapter<>(this, R.layout
@@ -917,7 +911,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                 linerCheckbox.setVisibility(View.GONE);
                 textImageCross.setTag(AppConstants.IM_ACCOUNT);
                 spinnerType.setTag(AppConstants.IM_ACCOUNT);
-                inputValue.setHint("Link");
+                inputValue.setHint(this.getString(R.string.str_link));
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_social_media)));
                 spinnerImAccountAdapter = new ArrayAdapter<>(this, R.layout
@@ -952,7 +946,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                 linerCheckbox.setVisibility(View.VISIBLE);
                 textImageCross.setTag(AppConstants.EVENT);
                 spinnerType.setTag(AppConstants.EVENT);
-                inputValue.setHint("Event");
+                inputValue.setHint(this.getString(R.string.str_event));
                 inputValue.setFocusable(false);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_Event)));
@@ -1045,7 +1039,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String items = spinnerType.getSelectedItem().toString();
-                if (items.equalsIgnoreCase("Custom")) {
+                if (items.equalsIgnoreCase(getString(R.string.text_custom))) {
                     showCustomTypeDialog(spinnerType);
                 }
             }
@@ -1098,13 +1092,13 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
         inputPinCode.setTypeface(Utils.typefaceRegular(this));
         inputPoBox.setTypeface(Utils.typefaceRegular(this));
 
-        inputCountry.setHint("Country (Required)");
-        inputState.setHint("State (Required)");
-        inputCity.setHint("City (Required)");
-        inputStreet.setHint("Street (Required)");
-        inputNeighborhood.setHint("Neighborhood");
-        inputPinCode.setHint("Pincode");
-        inputPoBox.setHint("Po. Box No.");
+        inputCountry.setHint(getString(R.string.str_country_hint));
+        inputState.setHint(getString(R.string.str_state_hint));
+        inputCity.setHint(getString(R.string.str_city_hint));
+        inputStreet.setHint(getString(R.string.str_street_hint));
+        inputNeighborhood.setHint(getString(R.string.str_neighborhood_hint));
+        inputPinCode.setHint(getString(R.string.str_pin_code_hint));
+        inputPoBox.setHint(getString(R.string.str_po_box_number_hint));
 
         inputPoBox.setVisibility(View.GONE);
 
@@ -1325,9 +1319,9 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
         textFromSocialMedia.setTypeface(Utils.typefaceRegular(this));
         buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
 
-        textDialogTitle.setText("Upload Via");
-        textFromContact.setText("Take Photo");
-        textFromSocialMedia.setText("Choose Photo");
+        textDialogTitle.setText(getString(R.string.str_image_upload_dialog_title));
+        textFromContact.setText(getString(R.string.str_image_upload_dialog_camera_title));
+        textFromSocialMedia.setText(getString(R.string.str_image_upload_dialog_gallery_title));
 
         buttonLeft.setText(R.string.action_cancel);
 
@@ -1520,10 +1514,10 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
         buttonRight.setTypeface(Utils.typefaceSemiBold(this));
         buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
 
-        textDialogTitle.setText("Custom Label Name");
+        textDialogTitle.setText(getString(R.string.str_custom_label));
 
         buttonLeft.setText(R.string.action_cancel);
-        buttonRight.setText("OK");
+        buttonRight.setText(getString(R.string.action_ok));
 
         rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
@@ -1832,12 +1826,11 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
 
         permissionConfirmationDialog = new MaterialDialog(this, cancelListener);
         permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText("Cancel");
-        permissionConfirmationDialog.setRightButtonText("OK");
+        permissionConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        permissionConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
         permissionConfirmationDialog.setDialogBody(message);
 
         permissionConfirmationDialog.showDialog();
-
     }
 
     private void getUpdatedProfile() {
@@ -1989,15 +1982,13 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                         arrayListNewOrganization.add(organization);
                     } else {
                         isValid = false;
-                        message = "Designation in organization is required!";
+                        message = getString(R.string.str_valid_designation);
                     }
                 } else {
                     isValid = false;
-                    message = "Company name in organization is required!";
+                    message = getString(R.string.str_valid_company_name);
                 }
             }
-
-
         }
 
         //</editor-fold>
@@ -2106,19 +2097,19 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                                 arrayListNewAddress.add(address);
                             } else {
                                 isValid = false;
-                                message = "Street in address is required!";
+                                message = getString(R.string.str_valid_street);
                             }
                         } else {
                             isValid = false;
-                            message = "City in address is required!";
+                            message = getString(R.string.str_valid_city);
                         }
                     } else {
                         isValid = false;
-                        message = "State in address is required!";
+                        message = getString(R.string.str_valid_state);
                     }
                 } else {
                     isValid = false;
-                    message = "Country in address is required!";
+                    message = getString(R.string.str_valid_country);
                 }
             }
 
