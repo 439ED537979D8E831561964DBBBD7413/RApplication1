@@ -193,7 +193,9 @@
     <string name="view_more_results">VIEW MORE RESULTS</string>
     <string name="search_on_global">SEARCH ON GLOBAL</string>
     <string name="search_global_text">This search on rcontacts global directory</string>
-    <string name="no_records_found">No records found</string>
+    <string name="no_records_found">No Contact Found</string>
+    <string name="public_profile_toolbar_title">Public Profile</string>
+    <string name="search_query_validation">Please enter some text to search</string>
 
     <!--edit-profile-text-->
     <string name="add_field">+ ADD FIELD</string>

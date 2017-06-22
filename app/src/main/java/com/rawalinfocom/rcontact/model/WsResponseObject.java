@@ -190,7 +190,7 @@ public class WsResponseObject {
         return arrayListCallLogHistory;
     }
 
-    @JsonProperty("results")
+    @JsonProperty("result")
     public ArrayList<GlobalSearchType> getGlobalSearchTypeArrayList() {
         return globalSearchTypeArrayList;
     }

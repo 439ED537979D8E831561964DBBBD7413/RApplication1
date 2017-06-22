@@ -229,6 +229,8 @@ public class WsRequestObject {
     private ArrayList<GlobalSearchType> globalSearchTypeArrayList;
 
     private String searchQuery;
+    private int searchStartAt;
+    private int searchMaxRecord;
 
     @JsonProperty("pr_reply")
     private String prReply;
@@ -654,8 +656,31 @@ public class WsRequestObject {
         this.globalSearchTypeArrayList = globalSearchTypeArrayList;
     }
 
+
+
     @JsonProperty("search")
+    public String getSearchQuery() {
+        return searchQuery;
+    }
     public void setSearchQuery(String searchQuery) {
         this.searchQuery = searchQuery;
+    }
+
+    @JsonProperty("startAt")
+    public int getSearchStartAt() {
+        return searchStartAt;
+    }
+
+    public void setSearchStartAt(int searchStartAt) {
+        this.searchStartAt = searchStartAt;
+    }
+
+    @JsonProperty("maxRecords")
+    public int getSearchMaxRecord() {
+        return searchMaxRecord;
+    }
+
+    public void setSearchMaxRecord(int searchMaxRecord) {
+        this.searchMaxRecord = searchMaxRecord;
     }
 }
