@@ -1073,25 +1073,48 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
                 String numberToSend = "";
                 String actionNumber = "";
-                if (allContactAdapter != null && simpleCallLogListAdapter != null) {
-                    if (allContactAdapter.getSearchCount() == 0) {
-                        if (simpleCallLogListAdapter.getSearchCount() == 0) {
-                            actionNumber = StringUtils.defaultString(((SmsListAdapter
-                                    .SMSViewHolder) viewHolder).textNumber.getText()
-                                    .toString());
-                            Pattern numberPat = Pattern.compile("\\d+");
-                            Matcher matcher1 = numberPat.matcher(actionNumber);
-                            if (matcher1.find()) {
-                                numberToSend = actionNumber;
-                            } else {
-                                numberToSend = getNumberFromName(actionNumber);
-                                if (TextUtils.isEmpty(numberToSend)) {
+                try{
+                    int position = viewHolder.getAdapterPosition();
+                    if (allContactAdapter != null ) {
+                        if (allContactAdapter.getSearchCount() == 0) {
+                            if (simpleCallLogListAdapter != null && simpleCallLogListAdapter.getSearchCount() == 0) {
+                                actionNumber = StringUtils.defaultString(((SmsListAdapter
+                                        .SMSViewHolder) viewHolder).textNumber.getText()
+                                        .toString());
+                                Pattern numberPat = Pattern.compile("\\d+");
+                                Matcher matcher1 = numberPat.matcher(actionNumber);
+                                if (matcher1.find()) {
                                     numberToSend = actionNumber;
+                                } else {
+                                    numberToSend = getNumberFromName(actionNumber);
+                                    if (TextUtils.isEmpty(numberToSend)) {
+                                        numberToSend = actionNumber;
+                                    }
+                                }
+                            } else {
+                                if(smsListAdapter!=null && smsListAdapter.getSearchCount()>0){
+                                    actionNumber = StringUtils.defaultString(((SmsListAdapter
+                                            .SMSViewHolder) viewHolder).textNumber.getText()
+                                            .toString());
+                                    Pattern numberPat = Pattern.compile("\\d+");
+                                    Matcher matcher1 = numberPat.matcher(actionNumber);
+                                    if (matcher1.find()) {
+                                        numberToSend = actionNumber;
+                                    } else {
+                                        numberToSend = getNumberFromName(actionNumber);
+                                        if (TextUtils.isEmpty(numberToSend)) {
+                                            numberToSend = actionNumber;
+                                        }
+                                    }
+                                }else{
+                                    numberToSend = StringUtils.defaultString(((SimpleCallLogListAdapter
+                                            .CallLogViewHolder) viewHolder).textTempNumber.getText()
+                                            .toString());
                                 }
                             }
+
                         } else {
                             if(smsListAdapter!=null && smsListAdapter.getSearchCount()>0){
                                 actionNumber = StringUtils.defaultString(((SmsListAdapter
@@ -1108,35 +1131,17 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                     }
                                 }
                             }else{
-                                numberToSend = StringUtils.defaultString(((SimpleCallLogListAdapter
-                                        .CallLogViewHolder) viewHolder).textTempNumber.getText()
+                                numberToSend = StringUtils.defaultString(((AllContactAdapter
+                                        .AllContactViewHolder) viewHolder).textContactNumber.getText()
                                         .toString());
                             }
-                        }
 
-                    } else {
-                        if(smsListAdapter!=null && smsListAdapter.getSearchCount()>0){
-                            actionNumber = StringUtils.defaultString(((SmsListAdapter
-                                    .SMSViewHolder) viewHolder).textNumber.getText()
-                                    .toString());
-                            Pattern numberPat = Pattern.compile("\\d+");
-                            Matcher matcher1 = numberPat.matcher(actionNumber);
-                            if (matcher1.find()) {
-                                numberToSend = actionNumber;
-                            } else {
-                                numberToSend = getNumberFromName(actionNumber);
-                                if (TextUtils.isEmpty(numberToSend)) {
-                                    numberToSend = actionNumber;
-                                }
-                            }
-                        }else{
-                            numberToSend = StringUtils.defaultString(((AllContactAdapter
-                                    .AllContactViewHolder) viewHolder).textContactNumber.getText()
-                                    .toString());
                         }
-
                     }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+
 
 
                 if (direction == ItemTouchHelper.LEFT) {
@@ -1148,9 +1153,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                     startActivity(smsIntent);
 
                 } else {
-                    if (allContactAdapter != null && simpleCallLogListAdapter != null) {
+                    if (allContactAdapter != null) {
                         if (allContactAdapter.getSearchCount() == 0) {
-                            if (simpleCallLogListAdapter.getSearchCount() == 0) {
+                            if (simpleCallLogListAdapter != null && simpleCallLogListAdapter.getSearchCount() == 0) {
                                 showCallConfirmationDialog(numberToSend, actionNumber);
                             } else {
                                 showCallConfirmationDialog(numberToSend);
@@ -1164,9 +1169,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (allContactAdapter != null && simpleCallLogListAdapter != null) {
+                        if (allContactAdapter != null ) {
                             if (allContactAdapter.getSearchCount() == 0) {
-                                if (simpleCallLogListAdapter.getSearchCount() == 0) {
+                                if (simpleCallLogListAdapter != null && simpleCallLogListAdapter.getSearchCount() == 0) {
                                     if (smsListAdapter != null && smsListAdapter.getSearchCount() > 0)
                                         smsListAdapter.notifyDataSetChanged();
                                 } else {
@@ -1564,6 +1569,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             e.printStackTrace();
         }
 
+
         return photoThumbUrl;
     }
+
+
 }
