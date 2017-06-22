@@ -837,6 +837,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         } else {
             initSpinner();
         }
+        initSwipe();
 
         recyclerCallLogs.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -1314,7 +1315,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         } else {
             textNoCallsFound.setVisibility(View.VISIBLE);
         }
-        initSwipe();
+//        initSwipe();
 
     }
 

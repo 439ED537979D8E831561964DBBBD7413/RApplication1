@@ -197,6 +197,8 @@ public class DialerActivity extends Activity {
                             showContactDetail(number);
                     }else if(s.length()==0){
                         showContactDetail(s.toString());
+                    }else if(s.length()>=0){
+                        showContactDetail(s.toString());
                     }else if(s.length()>11){
                         editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_14sp));
                     }else if(s.length()<11){

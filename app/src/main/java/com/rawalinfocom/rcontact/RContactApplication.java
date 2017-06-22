@@ -74,7 +74,7 @@ public class RContactApplication extends Application {
 //        }
 //        Log.d("KeyHash:", "We are here end");
 //         Fabric Initialization
-        Fabric.with(this, new Crashlytics());
+//        Fabric.with(this, new Crashlytics());
 
         arrayListAllPhoneBookContacts = new ArrayList<>();
         arrayListAllContactHeaders = new ArrayList<>();
