@@ -269,28 +269,28 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (arrayListUserContact.get(i) instanceof ProfileData) {
                 String contactDisplayName = "";
                 ProfileData profileData = (ProfileData) arrayListUserContact.get(i);
-                String prefix = profileData.getTempPrefix();
-                String firstName = profileData.getTempFirstName();
-                String lastName = profileData.getTempLastName();
-                String middleName = profileData.getTempMiddleName();
-                String suffix = profileData.getTempSufix();
+//                String prefix = profileData.getTempPrefix();
+//                String firstName = profileData.getTempFirstName();
+//                String lastName = profileData.getTempLastName();
+//                String middleName = profileData.getTempMiddleName();
+//                String suffix = profileData.getTempSufix();
 
-                if (StringUtils.length(prefix) > 0) {
-                    contactDisplayName = prefix + " ";
-                }
-                if (StringUtils.length(firstName) > 0) {
-                    contactDisplayName = contactDisplayName + firstName + " ";
-                }
-                if (StringUtils.length(middleName) > 0) {
-                    contactDisplayName = contactDisplayName + middleName + " ";
-                }
-                if (StringUtils.length(lastName) > 0) {
-                    contactDisplayName = contactDisplayName + lastName + " ";
-                }
-                if (StringUtils.length(suffix) > 0) {
-                    contactDisplayName = contactDisplayName + suffix;
-                }
-                contactDisplayName = StringUtils.trimToEmpty(contactDisplayName);
+//                if (StringUtils.length(prefix) > 0) {
+//                    contactDisplayName = prefix + " ";
+//                }
+//                if (StringUtils.length(firstName) > 0) {
+//                    contactDisplayName = contactDisplayName + firstName + " ";
+//                }
+//                if (StringUtils.length(middleName) > 0) {
+//                    contactDisplayName = contactDisplayName + middleName + " ";
+//                }
+//                if (StringUtils.length(lastName) > 0) {
+//                    contactDisplayName = contactDisplayName + lastName + " ";
+//                }
+//                if (StringUtils.length(suffix) > 0) {
+//                    contactDisplayName = contactDisplayName + suffix;
+//                }
+                contactDisplayName = /*StringUtils.trimToEmpty(contactDisplayName);*/StringUtils.defaultIfEmpty(profileData.getName(), "");
                 if (contactDisplayName == null || contactDisplayName.length() == 0) {
                     String section = "#";
                     if (!sections.contains(section)) {
@@ -374,7 +374,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (StringUtils.length(suffix) > 0) {
             contactDisplayName = contactDisplayName + suffix;
         }
-        contactDisplayName = StringUtils.trimToEmpty(contactDisplayName);
+        contactDisplayName = /*StringUtils.trimToEmpty(contactDisplayName);*/StringUtils.defaultIfEmpty(profileData.getName(), "");
 
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
                 context.getString(R.string.unknown));
@@ -1372,7 +1372,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     + " " + ((AllContactsListFragment) fragment).callNumber + "?");
         } else if (fragment instanceof FavoritesFragment) {
             callConfirmationDialog.setDialogBody(context.getString(R.string.action_call)
-                   +" " + ((FavoritesFragment) fragment).callNumber + "?");
+                    + " " + ((FavoritesFragment) fragment).callNumber + "?");
         }
 
         callConfirmationDialog.showDialog();

@@ -2,11 +2,8 @@ package com.rawalinfocom.rcontact.contacts;
 
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -592,13 +589,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         set.add(ContactsContract.Data.CONTACT_ID);
         set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
 //        set.add(ContactsContract.CommonDataKinds.Phone.TYPE);
-        set.add(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
-        set.add(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
-        set.add(ContactsContract.CommonDataKinds.StructuredName.PREFIX);
-        set.add(ContactsContract.CommonDataKinds.StructuredName.SUFFIX);
-        set.add(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME);
+        set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+//        set.add(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+//        set.add(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
+//        set.add(ContactsContract.CommonDataKinds.StructuredName.PREFIX);
+//        set.add(ContactsContract.CommonDataKinds.StructuredName.SUFFIX);
+//        set.add(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME);
         set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
-        set.add(ContactsContract.Contacts.PHOTO_ID);
         set.add(ContactsContract.Contacts.LOOKUP_KEY);
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
 
@@ -652,7 +649,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
-        getContactsFromPhonebook(data);
+        getContactsFromPhoneBook(data);
         data.close();
 
         setRecyclerViewLayoutManager();
@@ -942,27 +939,28 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         });*/
     }
 
-    private void getContactsFromPhonebook(Cursor data) {
+    private void getContactsFromPhoneBook(Cursor data) {
         final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
         final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
 
-        final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-                .StructuredName.GIVEN_NAME);
-        final int familyNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-                .StructuredName.FAMILY_NAME);
-        final int middleNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-                .StructuredName.MIDDLE_NAME);
-        final int suffixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-                .StructuredName.SUFFIX);
-        final int prefixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-                .StructuredName.PREFIX);
+//        final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+//                .StructuredName.GIVEN_NAME);
+//        final int familyNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+//                .StructuredName.FAMILY_NAME);
+//        final int middleNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+//                .StructuredName.MIDDLE_NAME);
+//        final int suffixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+//                .StructuredName.SUFFIX);
+//        final int prefixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
+//                .StructuredName.PREFIX);
         final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
         final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
                 .PHOTO_THUMBNAIL_URI);
 
         final int rawIdIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
                 .RAW_CONTACT_ID);
+        final int display = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
 
 
         while (data.moveToNext()) {
@@ -983,15 +981,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
                         profileData.setTempNumber(data.getString(phoneIdx));
                         profileData.setProfileUrl(data.getString(photoURIIdx));
+                        //Log.i("MAULIK", "name::" + data.getString(display));
                         break;
                     case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
-                        profileData.setTempFirstName(data.getString(givenNameIdx));
-                        profileData.setTempLastName(data.getString(familyNameIdx));
-                        profileData.setTempPrefix(data.getString(prefixNameIdx));
-                        profileData.setTempSufix(data.getString(suffixNameIdx));
-                        profileData.setTempMiddleName(data.getString(middleNameIdx));
-                        profileData.setName(data.getString(givenNameIdx) + data.getString
-                                (familyNameIdx));
+                        profileData.setName(data.getString(display) /*+ data.getString
+                                (familyNameIdx)*/);
+////                        profileData.setTempFirstName(data.getString(givenNameIdx));
+////                        profileData.setTempLastName(data.getString(familyNameIdx));
+////                        profileData.setTempPrefix(data.getString(prefixNameIdx));
+////                        profileData.setTempSufix(data.getString(suffixNameIdx));
+////                        profileData.setTempMiddleName(data.getString(middleNameIdx));
+//
                         break;
                 }
             } catch (Exception E) {
