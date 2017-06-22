@@ -147,12 +147,9 @@ public class CallConfirmationListAdapter extends RecyclerView.Adapter<CallConfir
 
         callConfirmationDialog = new MaterialDialog(context, cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
+        callConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(context.getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + number + "?");
         callConfirmationDialog.showDialog();
-
     }
-
-
 }

@@ -38,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -307,7 +308,7 @@ public class EventsActivity extends BaseActivity implements RippleView
                 UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
 
                 eventType = getEventType(eventName);
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 try {
                     date = sdf.parse(e.getEvmStartDate());
                     eventYear = date.getYear();
@@ -350,9 +351,9 @@ public class EventsActivity extends BaseActivity implements RippleView
 
     private int getEventType(String eventName) {
         int eventType = 0;
-        if (getResources().getString(R.string.text_birthday).equalsIgnoreCase(eventName))
+        if (getResources().getString(R.string.event_birthday).equalsIgnoreCase(eventName))
             eventType = AppConstants.COMMENT_TYPE_BIRTHDAY;
-        if (getResources().getString(R.string.text_anniversary).equalsIgnoreCase(eventName))
+        if (getResources().getString(R.string.event_anniversary).equalsIgnoreCase(eventName))
             eventType = AppConstants.COMMENT_TYPE_ANNIVERSARY;
 
         return eventType;
@@ -376,7 +377,7 @@ public class EventsActivity extends BaseActivity implements RippleView
             }
         }
         if (eventType == AppConstants.COMMENT_TYPE_ANNIVERSARY) {
-            s = Utils.addDateSufixes(eventYears) + " " + getResources().getString(R.string.text_anniversary);
+            s = Utils.addDateSufixes(eventYears) + " " + getResources().getString(R.string.event_anniversary);
         }
         return s;
     }

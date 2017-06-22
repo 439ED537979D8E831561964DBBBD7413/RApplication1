@@ -65,8 +65,6 @@ public class PlaceSuggestionListAdapter extends RecyclerView.Adapter<PlaceSugges
 
             textSuggestion.setTypeface(Utils.typefaceRegular(context));
             textImageMapMarker.setTypeface(Utils.typefaceIcons(context));
-
         }
     }
-
 }

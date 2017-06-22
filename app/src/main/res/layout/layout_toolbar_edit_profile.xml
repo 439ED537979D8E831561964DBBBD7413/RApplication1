@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
@@ -31,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/description_action_back"
                 android:padding="@dimen/activity_half_horizontal_margin"
-                android:src="@drawable/ic_action_back"/>
+                android:src="@drawable/ic_action_back" />
 
         </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -44,7 +43,7 @@
             android:layout_toRightOf="@id/ripple_action_back"
             android:text="@string/str_edit_my_profile"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/colorWhite"/>
+            android:textColor="@color/colorWhite" />
 
         <LinearLayout
             android:id="@+id/linear_action_right"
@@ -70,7 +69,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/activity_half_horizontal_margin"
-                    android:src="@drawable/ic_action_check"/>
+                    android:src="@drawable/ic_action_check" />
 
             </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -90,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/activity_half_horizontal_margin"
-                    android:src="@drawable/ic_action_clear"/>
+                    android:src="@drawable/ic_action_clear" />
 
             </com.rawalinfocom.rcontact.helper.RippleView>
 

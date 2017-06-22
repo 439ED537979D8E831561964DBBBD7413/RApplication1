@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/str_content_description"
                 android:padding="@dimen/margin_small"
-                android:src="@drawable/ic_action_notification"/>
+                android:src="@drawable/ic_action_notification" />
 
             <LinearLayout
                 android:id="@+id/badge_layout"
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/str_content_description"
                 android:padding="@dimen/margin_small"
-                android:src="@drawable/ic_add_new_contact"/>
+                android:src="@drawable/ic_add_new_contact" />
 
             <!-- <ImageView
                  android:id="@+id/image_add_contact"
@@ -90,7 +90,7 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/linear_action_right"
             android:layout_toRightOf="@id/imgActionDrawer"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/image_search"
@@ -102,7 +102,7 @@
             android:paddingLeft="@dimen/margin_tiny"
             android:paddingRight="@dimen/margin_small"
             android:paddingTop="@dimen/margin_small"
-            android:src="@drawable/ic_search"/>
+            android:src="@drawable/ic_search" />
 
 
     </RelativeLayout>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/text_sheet_header"
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/activity_half_horizontal_margin"
         android:textAppearance="?android:textAppearanceMedium"
-        tools:text="Share"/>
+        tools:text="Share" />
 
 
     <android.support.v7.widget.RecyclerView
@@ -24,6 +24,6 @@
         android:layout_marginRight="@dimen/activity_half_horizontal_margin"
         android:gravity="center"
         android:padding="@dimen/activity_half_horizontal_margin"
-        app:behavior_peekHeight="120dp"/>
+        app:behavior_peekHeight="120dp" />
 
 </LinearLayout>

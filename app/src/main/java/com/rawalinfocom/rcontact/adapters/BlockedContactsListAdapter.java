@@ -35,7 +35,6 @@ public class BlockedContactsListAdapter extends RecyclerView.Adapter<BlockedCont
         .callLogViewHolder> {
 
 
-
     private Context context;
     private ArrayList<CallLogType> arrayListCallType;
     private ArrayList<CallLogType> arrayListTempCallType;
@@ -73,26 +72,25 @@ public class BlockedContactsListAdapter extends RecyclerView.Adapter<BlockedCont
     public void onBindViewHolder(callLogViewHolder holder, int position) {
         final CallLogType callLogType = arrayListCallType.get(position);
 
-        String name =  callLogType.getName();
-        if(!TextUtils.isEmpty(name))
-        {
+        String name = callLogType.getName();
+        if (!TextUtils.isEmpty(name)) {
             holder.textContactName.setTypeface(Utils.typefaceBold(context));
             holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                     .colorBlack));
             holder.textContactName.setText(name);
-        }else {
+        } else {
             holder.textContactName.setTypeface(Utils.typefaceBold(context));
             holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                     .colorBlack));
-            holder.textContactName.setText("Unknown");
+            holder.textContactName.setText(context.getString(R.string.unknown).replace("[", "").replace("]", ""));
         }
 
-        String number =  callLogType.getNumber();
-        if(!TextUtils.isEmpty(number)){
+        String number = callLogType.getNumber();
+        if (!TextUtils.isEmpty(number)) {
             holder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
                     .mostlyDesaturatedDarkCyanLimeGreen));
             holder.textNumber.setText(number);
-        }else{
+        } else {
 
         }
 
@@ -105,7 +103,7 @@ public class BlockedContactsListAdapter extends RecyclerView.Adapter<BlockedCont
                     HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
                             Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
                     if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
-                        String hasMapKey =  callLogType.getUniqueContactId();
+                        String hasMapKey = callLogType.getUniqueContactId();
                         blockProfileHashMapList.remove(hasMapKey);
                         Utils.setHashMapPreference(context, AppConstants.PREF_BLOCK_CONTACT_LIST,
                                 blockProfileHashMapList);

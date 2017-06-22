@@ -18,8 +18,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:contentDescription="@string/str_content_description"
-            android:background="@drawable/home_screen_profile">
-        </ImageView>
+            android:background="@drawable/home_screen_profile"/>
 
         <ImageView
             android:id="@+id/image_3dots_call_log"
@@ -31,7 +30,7 @@
             android:paddingLeft="@dimen/padding_5dp"
             android:src="@drawable/ic_action_more_vertical"
             android:tint="@color/colorDarkGray"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true" />
 
         <TextView
             android:id="@+id/text_temp_number"
@@ -67,7 +66,7 @@
             android:textAllCaps="false"
             android:textColor="@color/colorWhite"
             android:layout_centerVertical="true"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
 
         <!-- <View
              android:id="@+id/divider_all_contact"
@@ -128,7 +127,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=""
-                    android:textSize="@dimen/text_size_12sp"/>
+                    android:textSize="@dimen/text_size_12sp" />
 
                 <TextView
                     android:id="@+id/text_contact_number"
@@ -156,7 +155,7 @@
                     android:layout_marginLeft="@dimen/margin_5dp"
                     android:text=""
                     android:textColor="@color/vividBlue"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
 
             </LinearLayout>

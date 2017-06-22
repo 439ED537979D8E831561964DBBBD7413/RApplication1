@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -242,20 +243,20 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
             long dateToCompare = 0;
             long nextDate = 0;
             Date objDate1 = new Date(callLogDateToDelete);
-            String dateToDelete = new SimpleDateFormat("dd/MM/yyyy").format(objDate1);
+            String dateToDelete = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(objDate1);
 
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DATE, 1);
             Date TomoDate;
             TomoDate = cal.getTime();
-            String tomorrowDate = new SimpleDateFormat("dd/MM/yyyy").format(TomoDate);
+            String tomorrowDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(TomoDate);
 
             long callLogDate = callLogHistory(number);
             Date date = new Date(callLogDate);
-            String dateToCompare1 = new SimpleDateFormat("dd/MM/yyyy").format(date);
+            String dateToCompare1 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date);
 
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 Date startDate = sdf.parse(dateToDelete);
                 dateToCompare = startDate.getTime();
 
@@ -293,7 +294,8 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
 
             if (value > 0) {
                 Log.i("Delete Query value", value + "");
-                Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, value + context.getString(R.string.call_logs_deleted),
+                        Toast.LENGTH_SHORT).show();
 
                 Intent localBroadcastIntent = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS);
@@ -301,9 +303,6 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
                 LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
                         (context);
                 myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
-
-            } else {
-
             }
 
         } catch (SecurityException e) {
@@ -365,9 +364,9 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
 
         callConfirmationDialog = new MaterialDialog(context, cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
+        callConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(context.getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " + number + "?");
         callConfirmationDialog.showDialog();
 
     }
@@ -452,7 +451,6 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
             e.printStackTrace();
         }
 
-
         return numberId;
     }
 
@@ -470,13 +468,10 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
             }
             cursor.close();
 
-
         } catch (SecurityException e) {
             e.printStackTrace();
         }
 
         return callDateToDelete;
     }
-
-
 }

@@ -131,10 +131,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Utils.copyToClipboard(context, "Copied Number", ((TextView) view).getText()
+                Utils.copyToClipboard(context, context.getString(R.string.str_copy_number), ((TextView) view).getText()
                         .toString());
                 Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
-                        .getRelativeRootProfileDetail(), "Number copied to Clipboard");
+                        .getRelativeRootProfileDetail(), context.getString(R.string.str_copy_number_clip_board));
                 return false;
             }
         });
@@ -213,17 +213,17 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public void onClick(View view) {
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
                         holder.getTextMain(isOwnProfile).getText()));
-                context.startActivity(Intent.createChooser(emailIntent, "Send Email Via:"));
+                context.startActivity(Intent.createChooser(emailIntent, context.getString(R.string.str_send_email)));
             }
         });
 
         holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Utils.copyToClipboard(context, "Copied Email", ((TextView) view).getText()
+                Utils.copyToClipboard(context, context.getString(R.string.str_copy_email), ((TextView) view).getText()
                         .toString());
                 Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
-                        .getRelativeRootProfileDetail(), "Email copied to Clipboard");
+                        .getRelativeRootProfileDetail(),context.getString(R.string.str_copy_email_clip_board));
                 return false;
             }
         });
@@ -323,10 +323,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Utils.copyToClipboard(context, "Copied Website", ((TextView) view).getText()
+                Utils.copyToClipboard(context, context.getString(R.string.str_copy_website), ((TextView) view).getText()
                         .toString());
                 Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
-                        .getRelativeRootProfileDetail(), "Website copied to Clipboard");
+                        .getRelativeRootProfileDetail(), context.getString(R.string.str_copy_website_clip_board));
                 return false;
             }
         });
@@ -362,10 +362,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Utils.copyToClipboard(context, "Copied Address", ((TextView) view).getText()
+                Utils.copyToClipboard(context, context.getString(R.string.str_copy_address), ((TextView) view).getText()
                         .toString());
                 Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
-                        .getRelativeRootProfileDetail(), "Address copied to Clipboard");
+                        .getRelativeRootProfileDetail(), context.getString(R.string.str_copy_address_clip_board));
                 return false;
             }
         });

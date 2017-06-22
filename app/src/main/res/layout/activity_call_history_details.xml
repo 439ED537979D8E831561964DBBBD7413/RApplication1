@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relative_root_profile_detail"
     android:layout_width="match_parent"
@@ -11,7 +10,7 @@
         android:id="@+id/include_toolbar"
         layout="@layout/layout_toolbar_call_history_detail"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
+        android:layout_height="?attr/actionBarSize" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -38,16 +37,16 @@
                     android:id="@+id/text_full_screen_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
                     android:ellipsize="marquee"
                     android:marqueeRepeatLimit="marquee_forever"
                     android:padding="@dimen/margin_small"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
                     android:textAppearance="?android:textAppearanceMedium"
-                    tools:text="Hello World"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    tools:text="" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -60,7 +59,7 @@
                         android:layout_height="100dp"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/home_screen_profile"/>
+                        android:src="@drawable/home_screen_profile" />
 
                     <LinearLayout
                         android:id="@+id/linear_basic_detail_rating"
@@ -75,16 +74,14 @@
                             android:id="@+id/text_user_rating"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/margin_tiny"
-                            tools:text="12345"/>
+                            android:layout_margin="@dimen/margin_tiny" />
 
                         <RatingBar
                             android:id="@+id/rating_user"
                             style="?android:attr/ratingBarStyleSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:isIndicator="true"
-                            tools:rating="4"/>
+                            android:isIndicator="true" />
 
                     </LinearLayout>
 
@@ -111,7 +108,7 @@
                                 android:singleLine="true"
                                 android:textAppearance="?android:textAppearanceMedium"
                                 android:textColor="@color/colorAccent"
-                                tools:text="Monal Godiwala"/>
+                                tools:text="Monal Godiwala" />
 
                         </HorizontalScrollView>
 
@@ -145,7 +142,7 @@
                                 android:padding="2dp"
                                 android:singleLine="true"
                                 android:textColor="@color/colorAccent"
-                                tools:text="Managing Director"/>
+                                tools:text="Managing Director" />
 
                             <TextView
                                 android:id="@+id/text_organization"
@@ -154,7 +151,7 @@
                                 android:padding="2dp"
                                 android:singleLine="true"
                                 android:textColor="@color/colorAccent"
-                                tools:text="Blazze Apps"/>
+                                tools:text="Blazze Apps" />
 
                             <TextView
                                 android:id="@+id/text_view_all_organization"
@@ -163,7 +160,7 @@
                                 android:padding="2dp"
                                 android:text="View All Organizations"
                                 android:visibility="gone"
-                                tools:visibility="visible"/>
+                                tools:visibility="visible" />
 
                         </LinearLayout>
 
@@ -190,10 +187,10 @@
                     android:layout_marginLeft="@dimen/activity_half_horizontal_margin"
                     android:layout_marginRight="@dimen/activity_half_horizontal_margin"
                     android:layout_weight="1"
+                    android:visibility="gone"
                     app:rv_alpha="@integer/alpha_ripple"
                     app:rv_color="@color/colorWhite"
-                    app:rv_rippleDuration="@integer/duration_ripple"
-                    android:visibility="gone">
+                    app:rv_rippleDuration="@integer/duration_ripple">
 
                     <Button
                         android:id="@+id/button_call_log"
@@ -201,7 +198,7 @@
                         android:layout_height="wrap_content"
                         android:background="@color/colorAccent"
                         android:text="Call Log"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
                 </com.rawalinfocom.rcontact.helper.RippleView>
 
                 <com.rawalinfocom.rcontact.helper.RippleView
@@ -221,8 +218,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rounded_cornor_green_background"
-                        android:text="SMS"
-                        android:textColor="@color/colorWhite"/>
+                        android:text="@string/sms"
+                        android:textColor="@color/colorWhite" />
                 </com.rawalinfocom.rcontact.helper.RippleView>
 
 
@@ -240,12 +237,12 @@
                     android:id="@+id/text_text_call_history"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="10dp"
+                    android:background="@color/colorVeryLightGray"
                     android:paddingBottom="@dimen/margin_10dp"
                     android:paddingLeft="@dimen/padding_10dp"
-                    android:text="Call History"
-                    android:textColor="@color/colorDarkGray"
-                    android:background="@color/colorVeryLightGray"/>
+                    android:paddingTop="10dp"
+                    android:text="@string/call_history"
+                    android:textColor="@color/colorDarkGray" />
 
                 <TextView
                     android:id="@+id/text_no_history_to_show"
@@ -256,7 +253,7 @@
                     android:layout_marginTop="@dimen/margin_15dp"
                     android:gravity="center"
                     android:visibility="gone"
-                    tools:text="No history to show"/>
+                    tools:text="@string/text_no_history" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_call_history"
@@ -267,8 +264,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignStart="@+id/text_text_call_history"
                     android:layout_below="@+id/text_text_call_history"
-                    android:visibility="visible">
-                </android.support.v7.widget.RecyclerView>
+                    android:visibility="visible" />
             </RelativeLayout>
 
             <com.rawalinfocom.rcontact.helper.RippleView
@@ -277,33 +273,33 @@
                 android:layout_height="@dimen/height_button"
                 android:layout_below="@+id/relative_call_history"
                 android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/margin_10dp"
+                android:layout_marginTop="@dimen/margin_10dp"
                 app:rv_alpha="@integer/alpha_ripple"
                 app:rv_color="@color/colorWhite"
-                android:layout_marginTop="@dimen/margin_10dp"
-                android:layout_marginBottom="@dimen/margin_10dp"
                 app:rv_rippleDuration="@integer/duration_ripple">
 
                 <Button
+                    android:id="@+id/button_view_old_records"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/button_view_old_records"
                     android:layout_below="@+id/recycler_call_history"
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/rounded_cornor_green_background"
-                    android:textColor="@color/colorWhite"
-                    android:text="View old records"
-                    android:padding="@dimen/padding_10dp"/>
+                    android:padding="@dimen/padding_10dp"
+                    android:text="@string/view_old_records"
+                    android:textColor="@color/colorWhite" />
             </com.rawalinfocom.rcontact.helper.RippleView>
 
             <ProgressBar
+                android:id="@+id/progressBarLoadCallLogs"
                 style="?android:attr/progressBarStyle"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginTop="@dimen/margin_10dp"
-                android:id="@+id/progressBarLoadCallLogs"
                 android:layout_below="@+id/relative_call_history"
                 android:layout_centerHorizontal="true"
-                android:visibility="gone"/>
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:visibility="gone" />
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

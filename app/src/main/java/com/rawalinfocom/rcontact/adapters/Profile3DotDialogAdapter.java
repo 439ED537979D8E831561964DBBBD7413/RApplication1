@@ -282,7 +282,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                 } else {
 
-                    Toast.makeText(context, "Please select any one option", Toast.LENGTH_SHORT)
+                    Toast.makeText(context, context.getString(R.string.please_select_one), Toast.LENGTH_SHORT)
                             .show();
                 }
 
@@ -425,7 +425,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
             if (value > 0) {
                 Log.i("Delete Query value", value + "");
-                Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, value + context.getString(R.string.call_logs_deleted), Toast.LENGTH_SHORT).show();
 
                 Intent localBroadcastIntent = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_PROFILE);
@@ -459,7 +459,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     selectionArguments);
             if (value > 0) {
                 Log.i("Delete Query value", value + "");
-                Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, value + context.getString(R.string.call_logs_deleted), Toast.LENGTH_SHORT).show();
 
                 Intent localBroadcastIntent = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_PROFILE);
@@ -498,7 +498,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     selectionArguments);
             if (value > 0) {
                 Log.i("Delete Query value", value + "");
-                Toast.makeText(context, value + " CallLogs deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, value + context.getString(R.string.call_logs_deleted), Toast.LENGTH_SHORT).show();
 
                 Intent localBroadcastIntent = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_PROFILE);
@@ -582,9 +582,9 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
         callConfirmationDialog = new MaterialDialog(context, cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
+        callConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(context.getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " + number + "?");
         callConfirmationDialog.showDialog();
 
     }

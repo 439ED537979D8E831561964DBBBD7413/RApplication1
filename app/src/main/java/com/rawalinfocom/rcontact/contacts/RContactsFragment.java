@@ -335,13 +335,11 @@ public class RContactsFragment extends BaseFragment {
 
         callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
+        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + number + "?");
 
         callConfirmationDialog.showDialog();
-
     }
-
     //</editor-fold>
 }

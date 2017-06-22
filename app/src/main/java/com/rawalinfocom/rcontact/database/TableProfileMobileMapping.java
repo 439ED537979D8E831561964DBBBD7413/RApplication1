@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
@@ -56,7 +58,8 @@ public class TableProfileMobileMapping {
             " " + COLUMN_MPM_MOBILE_NUMBER + " text NOT NULL," +
             " " + COLUMN_MPM_CLOUD_MNM_ID + " integer," +
             " " + COLUMN_MPM_CLOUD_PM_ID + " integer," +
-            " " + COLUMN_MPM_IS_RCP + " tinyint DEFAULT 0" +
+            " " + COLUMN_MPM_IS_RCP + " tinyint DEFAULT 0," +
+            " UNIQUE(" + COLUMN_MPM_CLOUD_PM_ID + ", " + COLUMN_MPM_MOBILE_NUMBER + ")" +
             ");";
 
     // Adding new Profile Mobile Mapping
@@ -284,7 +287,7 @@ public class TableProfileMobileMapping {
     String makePlaceholders(int len) {
         if (len < 1) {
             // It will lead to an invalid query anyway ..
-            throw new RuntimeException("No placeholders");
+            throw new RuntimeException(RContactApplication.getInstance().getString(R.string.error_no_placeholders));
         } else {
             StringBuilder sb = new StringBuilder(len * 2 - 1);
             sb.append("?");

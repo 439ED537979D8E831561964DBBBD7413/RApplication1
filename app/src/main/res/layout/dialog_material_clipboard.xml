@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
     <LinearLayout
         android:id="@+id/llDialogContentArea"
         android:layout_width="match_parent"
@@ -20,9 +19,9 @@
             android:layout_marginBottom="@dimen/padding_between_title_body"
             android:textAppearance="?android:textAppearanceLarge"
             android:textColor="@color/darkGray"
-            tools:text="Title"
+            tools:text="@string/str_title"
             android:paddingTop="@dimen/padding_around_content_area"
-            android:paddingLeft="@dimen/padding_around_content_area"/>
+            android:paddingLeft="@dimen/padding_around_content_area" />
 
         <com.rawalinfocom.rcontact.helper.RippleView
             android:id="@+id/rippleRow"
@@ -41,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/darkGray"
-                tools:text="Message" />
+                tools:text="@string/str_message" />
         </com.rawalinfocom.rcontact.helper.RippleView>
     </LinearLayout>
 

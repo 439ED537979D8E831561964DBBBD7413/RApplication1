@@ -110,6 +110,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -158,7 +159,9 @@ public class MainActivity extends BaseActivity implements NavigationView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts_main);
+
         ButterKnife.bind(this);
+
         /*Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
         startService(contactIdFetchService);*/
 
@@ -342,14 +345,13 @@ public class MainActivity extends BaseActivity implements NavigationView
         int id = item.getItemId();
 
         if (id == R.id.nav_share) {
-            final String appPackageName = getPackageName();
             Intent sharingIntent = new Intent(Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
 //                String shareBody = "Here is the share content body";
-            String shareBody = AppConstants.PLAY_STORE_LINK + appPackageName;
+            String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName();
 //                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Share Contact Via");
             sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-            startActivity(Intent.createChooser(sharingIntent, "Share App Via"));
+            startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
         } else if (id == R.id.nav_invite) {
             startActivityIntent(MainActivity.this, ContactListingActivity.class, null);
         } else if (id == R.id.nav_db_export) {
@@ -363,9 +365,9 @@ public class MainActivity extends BaseActivity implements NavigationView
                     emailIntent.setType("vnd.android.cursor.dir/email");
                     emailIntent.putExtra(Intent.EXTRA_STREAM, path);
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
-                    startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                    startActivity(Intent.createChooser(emailIntent, getString(R.string.str_send_email)));
                 } else {
-                    Toast.makeText(getApplicationContext(), "DB dump failed", Toast.LENGTH_SHORT)
+                    Toast.makeText(getApplicationContext(), getString(R.string.db_dump_failed), Toast.LENGTH_SHORT)
                             .show();
                 }
             }
@@ -672,7 +674,6 @@ public class MainActivity extends BaseActivity implements NavigationView
             userProfile.setProfileRating(profileData.get(i).getProfileRating());
             userProfile.setPmProfileImage(profileData.get(i).getPbProfilePhoto());
             userProfile.setTotalProfileRateUser(profileData.get(i).getTotalProfileRateUser());
-
 
             if (mapLocalRcpId.containsKey(profileData.get(i).getRcpPmId())) {
                 userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
@@ -1128,7 +1129,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         setupTabLayout();
         Utils.changeTabsFont(this, tabMain);
 
-
     }
 
     private void openDialer() {
@@ -1181,17 +1181,15 @@ public class MainActivity extends BaseActivity implements NavigationView
         } else {
             imageViewAddContact.setVisibility(View.GONE);
         }
-
-
     }
 
     private void setupTabLayout() {
         contactsFragment = ContactsFragment.newInstance();
         callLogFragment = CallLogFragment.newInstance();
         smsFragment = SmsFragment.newInstance();
-        tabMain.addTab(tabMain.newTab().setText("CONTACTS"), true);
-        tabMain.addTab(tabMain.newTab().setText("CALL LOG"));
-        tabMain.addTab(tabMain.newTab().setText("SMS"));
+        tabMain.addTab(tabMain.newTab().setText(getString(R.string.tab_contact)), true);
+        tabMain.addTab(tabMain.newTab().setText(getString(R.string.tab_call)));
+        tabMain.addTab(tabMain.newTab().setText(getString(R.string.tab_sms)));
     }
 
     int tabPosition = -1;
@@ -1253,10 +1251,10 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         callConfirmationDialog = new MaterialDialog(this, cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Ok");
-        callConfirmationDialog.setDialogBody("If you switch, your current data will be lost. \n " +
-                "Would you like to continue?");
+        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
+        callConfirmationDialog.setDialogBody(getString(R.string.data_lost_hint_1) + "\n " +
+                getString(R.string.data_lost_hint_2));
         callConfirmationDialog.showDialog();
 
     }
@@ -1461,23 +1459,32 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 log.setCallSimNumber(simNumber);
                                 long tempdate = tempCallLogType.getHistoryDate();
                                 Date objDate1 = new Date(tempdate);
-                                String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format
+                                String arrayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format
                                         (objDate1);
                                 long callLogDate = log.getDate();
                                 Date intentDate1 = new Date(callLogDate);
-                                String intentDate = new SimpleDateFormat("yyyy-MM-dd").format
+                                String intentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format
                                         (intentDate1);
                                 if (intentDate.equalsIgnoreCase(arrayDate)) {
                                     arrayListHistoryCount.add(tempCallLogType);
                                 }
                                 // 25/05/2017 Updated bcz sync format changed
-                                log.setHistoryNumber(tempCallLogType.getHistoryNumber());
-                                log.setHistoryType(tempCallLogType.getHistoryType());
-                                log.setHistoryDate(tempCallLogType.getHistoryDate());
+                                // 16/06/2017 changed done start
+                                //log.setHistoryNumber(tempCallLogType.getHistoryNumber());
+                                //log.setHistoryType(tempCallLogType.getHistoryType());
+                                //log.setHistoryDate(tempCallLogType.getHistoryDate());
                                 log.setHistoryDuration(tempCallLogType.getHistoryDuration());
                                 log.setHistoryCallSimNumber(tempCallLogType
                                         .getHistoryCallSimNumber());
                                 log.setHistoryId(tempCallLogType.getHistoryId());
+                                log.setCallDateAndTime(tempCallLogType.getCallDateAndTime());
+                                log.setTypeOfCall(tempCallLogType.getTypeOfCall());
+                                log.setDurationToPass(tempCallLogType.getDurationToPass());
+                                if (!StringUtils.isEmpty(tempCallLogType.getHistoryCallSimNumber()))
+                                    log.setHistoryCallSimNumber(tempCallLogType.getHistoryCallSimNumber());
+                                else
+                                    log.setHistoryCallSimNumber(" ");
+                                // 16/06/2017 changed done end
                             }
                             int logCount = arrayListHistoryCount.size();
                             log.setHistoryLogCount(logCount);
@@ -1538,9 +1545,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 } else {
                     insertServiceCall(list);
                 }
-
             }
-
         }
     }
 
@@ -1679,86 +1684,86 @@ public class MainActivity extends BaseActivity implements NavigationView
     private String getPhoneNumberType(int type) {
         switch (type) {
             case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
-                return "Home";
+                return getString(R.string.type_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
-                return "Mobile";
+                return getString(R.string.type_mobile);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
-                return "Work";
+                return getString(R.string.type_work);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
-                return "Fax Work";
+                return getString(R.string.type_fax_work);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
-                return "Fax Home";
+                return getString(R.string.type_fax_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_PAGER:
-                return "Pager";
+                return getString(R.string.type_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
-                return "Other";
+                return getString(R.string.type_other);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK:
-                return "Callback";
+                return getString(R.string.type_callback);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CAR:
-                return "Car";
+                return getString(R.string.type_car);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
-                return "Company Main";
+                return getString(R.string.type_company_main);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
-                return "ISDN";
+                return getString(R.string.type_isdn);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
-                return "Main";
+                return getString(R.string.type_main);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX:
-                return "Other Fax";
+                return getString(R.string.type_other_fax);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_RADIO:
-                return "Radio";
+                return getString(R.string.type_radio);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TELEX:
-                return "Telex";
+                return getString(R.string.type_telex);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD:
-                return "Tty Tdd";
+                return getString(R.string.type_tty_tdd);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
-                return "Work Mobile";
+                return getString(R.string.type_work_mobile);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER:
-                return "Work Pager";
+                return getString(R.string.type_work_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT:
-                return "Assistant";
+                return getString(R.string.type_assistant);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
-                return "MMS";
+                return getString(R.string.type_mms);
 
         }
-        return "Other";
+        return getString(R.string.type_other);
     }
 
     private String getLogType(int type) {
         switch (type) {
             case CallLog.Calls.INCOMING_TYPE:
-                return "Incoming";
+                return getString(R.string.call_log_incoming);
             case CallLog.Calls.OUTGOING_TYPE:
-                return "Outgoing";
+                return getString(R.string.call_log_outgoing);
             case CallLog.Calls.MISSED_TYPE:
-                return "Missed";
+                return getString(R.string.call_log_missed);
             case CallLog.Calls.REJECTED_TYPE:
-                return "Rejected";
+                return getString(R.string.call_log_rejected);
             case CallLog.Calls.BLOCKED_TYPE:
-                return "Blocked";
+                return getString(R.string.call_log_blocked);
             case CallLog.Calls.VOICEMAIL_TYPE:
-                return "Voicemail";
+                return getString(R.string.call_log_voice_mail);
 
         }
-        return "OTHERS";
+        return getString(R.string.type_other);
     }
 
     private String getRawContactIdFromNumber(String phoneNumber) {
@@ -1910,8 +1915,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                     logObject.setCallDateAndTime(callDataAndTime);
 
                     String typeOfCall = getLogType(callType);
-                    if (typeOfCall.equalsIgnoreCase("Rejected")) {
-                        typeOfCall = "Missed";
+                    if (typeOfCall.equalsIgnoreCase(getString(R.string.call_log_rejected))) {
+                        typeOfCall = getString(R.string.call_log_missed);
                     }
                     logObject.setTypeOfCall(typeOfCall);
 
@@ -1986,10 +1991,9 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         permissionConfirmationDialog = new MaterialDialog(this, cancelListener);
         permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText("Cancel");
-        permissionConfirmationDialog.setRightButtonText("OK");
-        permissionConfirmationDialog.setDialogBody("Call log permission is required. Do you want " +
-                "to try again?");
+        permissionConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        permissionConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
+        permissionConfirmationDialog.setDialogBody(getString(R.string.call_log_permission));
 
         permissionConfirmationDialog.showDialog();
 
@@ -2245,25 +2249,25 @@ public class MainActivity extends BaseActivity implements NavigationView
     private String getMessageType(int type) {
         switch (type) {
             case Telephony.Sms.MESSAGE_TYPE_DRAFT:
-                return "Draft";
+                return getString(R.string.msg_draft);
 
             case Telephony.Sms.MESSAGE_TYPE_FAILED:
-                return "Failed";
+                return getString(R.string.msg_failed);
 
             case Telephony.Sms.MESSAGE_TYPE_INBOX:
-                return "Received";
+                return getString(R.string.msg_received);
 
             case Telephony.Sms.MESSAGE_TYPE_OUTBOX:
-                return "Outbox";
+                return getString(R.string.msg_outbox);
 
             case Telephony.Sms.MESSAGE_TYPE_QUEUED:
-                return "Queued";
+                return getString(R.string.msg_queued);
 
             case Telephony.Sms.MESSAGE_TYPE_SENT:
-                return "Sent";
+                return getString(R.string.msg_sent);
 
         }
-        return "Other";
+        return getString(R.string.type_other);
     }
 
     private BroadcastReceiver localBroadcastReceiverRecentCalls = new BroadcastReceiver() {
