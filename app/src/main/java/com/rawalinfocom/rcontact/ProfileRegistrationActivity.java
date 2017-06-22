@@ -975,9 +975,9 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             profileImage, String socialMediaId, String socialMediaToken, int type) {
 
         WsRequestObject profileRegistrationObject = new WsRequestObject();
-        profileRegistrationObject.setFirstName(firstName);
-        profileRegistrationObject.setLastName(lastName);
-        profileRegistrationObject.setEmailId(emailId);
+        profileRegistrationObject.setFirstName(StringUtils.trimToEmpty(firstName));
+        profileRegistrationObject.setLastName(StringUtils.trimToEmpty(lastName));
+        profileRegistrationObject.setEmailId(StringUtils.trimToEmpty(emailId));
         profileRegistrationObject.setPmId(Integer.parseInt(userProfile.getPmId()));
         profileRegistrationObject.setPbSocialId(socialMediaId);
         profileRegistrationObject.setProfileImage(profileImage);

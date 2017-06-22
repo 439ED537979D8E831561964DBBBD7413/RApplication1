@@ -415,6 +415,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.textCloudContactName.setText("");
             if (Utils.getBooleanPreference(context, AppConstants.PREF_CONTACT_SYNCED, false)) {
                 holder.rippleInvite.setVisibility(View.VISIBLE);
+                if (StringUtils.length(profileData.getTempNumber()) > 0) {
+                    holder.rippleInvite.setVisibility(View.VISIBLE);
+                } else {
+                    holder.rippleInvite.setVisibility(View.GONE);
+                }
             } else {
                 holder.rippleInvite.setVisibility(View.GONE);
             }
@@ -1392,7 +1397,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         @BindView(R.id.image_social_media)
         ImageView imageSocialMedia;
         @BindView(R.id.text_contact_name)
-        TextView textContactName;
+        public TextView textContactName;
         @BindView(R.id.text_cloud_contact_name)
         TextView textCloudContactName;
         @BindView(R.id.text_rating_user_count)

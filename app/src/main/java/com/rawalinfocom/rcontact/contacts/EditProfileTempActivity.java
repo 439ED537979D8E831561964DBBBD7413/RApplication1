@@ -342,7 +342,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
 
         } else if (requestCode == AppConstants.REQUEST_CODE_MAP_LOCATION_SELECTION) {
             if (data != null) {
-                String locationString = data.getStringExtra(AppConstants.EXTRA_OBJECT_LOCATION);
+//                String locationString = data.getStringExtra(AppConstants.EXTRA_OBJECT_LOCATION);
                 ReverseGeocodingAddress objAddress = (ReverseGeocodingAddress) data
                         .getSerializableExtra(AppConstants.EXTRA_OBJECT_ADDRESS);
                 View linearView = linearAddressDetails.getChildAt(clickedPosition);
@@ -364,7 +364,7 @@ public class EditProfileTempActivity extends BaseActivity implements RippleView
                 }
                 textLatitude.setText(objAddress.getLatitude());
                 textLongitude.setText(objAddress.getLongitude());
-                textGoogleAddress.setText(locationString);
+//                textGoogleAddress.setText(locationString);
                 if (resultCode == AppConstants.RESULT_CODE_MAP_LOCATION_SELECTION) {
                     inputCountry.setText(objAddress.getCountry());
                     inputState.setText(objAddress.getState());
