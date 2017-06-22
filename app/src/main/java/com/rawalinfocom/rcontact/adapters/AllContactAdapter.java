@@ -350,7 +350,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 //        holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
 
-        boolean showPineGreen;
+        boolean showPineGreen = false;
 
         String contactDisplayName = "";
         String prefix = profileData.getTempPrefix();
@@ -395,8 +395,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 showPineGreen = true;
             } else {
                 holder.textCloudContactName.setVisibility(View.VISIBLE);
-                holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
-                showPineGreen = false;
+                if(!StringUtils.isEmpty(profileData.getTempRcpName())){
+                    holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
+                    showPineGreen = false;
+                }
             }
             holder.rippleInvite.setVisibility(View.GONE);
             holder.relativeRowAllContact.setTag(profileData.getTempRcpId());

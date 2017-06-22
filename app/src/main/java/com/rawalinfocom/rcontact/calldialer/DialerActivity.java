@@ -183,25 +183,27 @@ public class DialerActivity extends Activity {
             public void afterTextChanged(Editable s) {
 
                 // TODO Auto-generated method stub
-                if (s.length() == 11) {
-                    String number = s.toString();
-                    if (!TextUtils.isEmpty(number))
-                        showContactDetail(number);
-                } else if (s.length() == 13) {
-                    String number = s.toString();
-                    if (!TextUtils.isEmpty(number))
-                        showContactDetail(number);
-                } else if (s.length() == 10) {
-                    String number = s.toString();
-                    if (!TextUtils.isEmpty(number))
-                        showContactDetail(number);
-                } else if (s.length() == 0) {
-                    showContactDetail(s.toString());
-                } else if (s.length() > 11) {
-                    editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_14sp));
-                } else if (s.length() < 11) {
-                    editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_25sp));
-                }
+                    if(s.length()==11){
+                        String number =  s.toString();
+                        if(!TextUtils.isEmpty(number))
+                            showContactDetail(number);
+                    }else if(s.length() == 13){
+                        String number =  s.toString();
+                        if(!TextUtils.isEmpty(number))
+                            showContactDetail(number);
+                    }else if(s.length() == 10){
+                        String number =  s.toString();
+                        if(!TextUtils.isEmpty(number))
+                            showContactDetail(number);
+                    }else if(s.length()==0){
+                        showContactDetail(s.toString());
+                    }else if(s.length()>=0){
+                        showContactDetail(s.toString());
+                    }else if(s.length()>11){
+                        editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_14sp));
+                    }else if(s.length()<11){
+                        editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_25sp));
+                    }
 
             }
         });
