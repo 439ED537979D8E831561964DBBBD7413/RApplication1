@@ -56,7 +56,8 @@ public class TableProfileMobileMapping {
             " " + COLUMN_MPM_MOBILE_NUMBER + " text NOT NULL," +
             " " + COLUMN_MPM_CLOUD_MNM_ID + " integer," +
             " " + COLUMN_MPM_CLOUD_PM_ID + " integer," +
-            " " + COLUMN_MPM_IS_RCP + " tinyint DEFAULT 0" +
+            " " + COLUMN_MPM_IS_RCP + " tinyint DEFAULT 0," +
+            " UNIQUE(" + COLUMN_MPM_CLOUD_PM_ID + ", " + COLUMN_MPM_MOBILE_NUMBER + ")" +
             ");";
 
     // Adding new Profile Mobile Mapping
