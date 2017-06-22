@@ -100,7 +100,8 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
                     .REQ_GET_RCONTACT_UPDATES, "Getting updates..", true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_GET_RCONTACT_UPDATES);
         } else {
-            Toast.makeText(getActivity(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getActivity().getString(R.string.msg_no_internet),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

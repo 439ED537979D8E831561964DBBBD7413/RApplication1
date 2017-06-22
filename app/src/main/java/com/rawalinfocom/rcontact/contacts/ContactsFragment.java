@@ -113,17 +113,17 @@ public class ContactsFragment extends BaseFragment {
     }
 
     private void replaceFragment(Fragment fragment, String tag) {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getChildFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.frame_container_call_tab, fragment, tag);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     private void setupTabLayout() {
-        tabContact.addTab(tabContact.newTab().setText("All Contacts"), true);
-        tabContact.addTab(tabContact.newTab().setText("R Contacts"));
-        tabContact.addTab(tabContact.newTab().setText("Favorites"));
+        tabContact.addTab(tabContact.newTab().setText(getActivity().getString(R.string.tab_all_contact)), true);
+        tabContact.addTab(tabContact.newTab().setText(getActivity().getString(R.string.tab_r_contact)));
+        tabContact.addTab(tabContact.newTab().setText(getActivity().getString(R.string.tab_favorites)));
     }
 
     private void bindWidgetsWithAnEvent() {

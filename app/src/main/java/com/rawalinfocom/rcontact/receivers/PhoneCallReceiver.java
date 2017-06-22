@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import static android.R.attr.key;
 
@@ -73,15 +74,20 @@ public class PhoneCallReceiver extends BroadcastReceiver {
     }
 
     //Derived classes should override these to respond to specific events of interest
-    protected void onIncomingCallStarted(Context ctx, String number, Date start) {}
+    protected void onIncomingCallStarted(Context ctx, String number, Date start) {
+    }
 
-    protected void onOutgoingCallStarted(Context ctx, String number, Date start) {}
+    protected void onOutgoingCallStarted(Context ctx, String number, Date start) {
+    }
 
-    protected void onIncomingCallEnded(Context ctx, String number, Date start, Date end) {}
+    protected void onIncomingCallEnded(Context ctx, String number, Date start, Date end) {
+    }
 
-    protected void onOutgoingCallEnded(Context ctx, String number, Date start, Date end) {}
+    protected void onOutgoingCallEnded(Context ctx, String number, Date start, Date end) {
+    }
 
-    protected void onMissedCall(Context ctx, String number, Date start) {}
+    protected void onMissedCall(Context ctx, String number, Date start) {
+    }
 
     //Deals with actual events
 
@@ -120,7 +126,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     String formattedNumber = Utils.getFormattedNumber(context, savedNumber);
                     CallLogFragment.callLogTypeReceiver.setNumber(formattedNumber);
                     CallLogFragment.callLogTypeReceiver.setType(3);
-                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(callStartTime);
+                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a", Locale.getDefault()).format(callStartTime);
                     CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
                     CallLogFragment.callLogTypeReceiver.setCallReceiverDate(callStartTime);
 
@@ -129,7 +135,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     String formattedNumber = Utils.getFormattedNumber(context, savedNumber);
                     CallLogFragment.callLogTypeReceiver.setNumber(formattedNumber);
                     CallLogFragment.callLogTypeReceiver.setType(1);
-                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(callStartTime);
+                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a", Locale.getDefault()).format(callStartTime);
                     CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
                     CallLogFragment.callLogTypeReceiver.setCallReceiverDate(callStartTime);
 
@@ -140,7 +146,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     String formattedNumber = Utils.getFormattedNumber(context, savedNumber);
                     CallLogFragment.callLogTypeReceiver.setNumber(formattedNumber);
                     CallLogFragment.callLogTypeReceiver.setType(2);
-                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a").format(callStartTime);
+                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a", Locale.getDefault()).format(callStartTime);
                     CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
                     CallLogFragment.callLogTypeReceiver.setCallReceiverDate(callStartTime);
 
@@ -158,7 +164,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         lastState = state;
     }
 
-    private void blockCall(Context context, String numberToBlock){
+    private void blockCall(Context context, String numberToBlock) {
         if (Utils.getHashMapPreferenceForBlock(context, AppConstants
                 .PREF_BLOCK_CONTACT_LIST) != null) {
             HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
@@ -167,10 +173,10 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             String blockedNumber = "";
             String hashKey = "";
             if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
-                for (String key : blockProfileHashMapList.keySet() ) {
-                    System.out.println( key );
-                    hashKey =  key;
-                    if(blockProfileHashMapList.containsKey(hashKey)){
+                for (String key : blockProfileHashMapList.keySet()) {
+                    System.out.println(key);
+                    hashKey = key;
+                    if (blockProfileHashMapList.containsKey(hashKey)) {
                         callLogTypeList.addAll(blockProfileHashMapList.get(hashKey));
                         if (callLogTypeList != null) {
                             for (int j = 0; j < callLogTypeList.size(); j++) {
@@ -184,10 +190,10 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 }
             }
 
-            if(!TextUtils.isEmpty(blockedNumber)){
+            if (!TextUtils.isEmpty(blockedNumber)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     Telephony telephonyService;
-                    try{
+                    try {
                         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
                         Method m1 = tm.getClass().getDeclaredMethod("getITelephony");
                         m1.setAccessible(true);
@@ -199,12 +205,12 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                         m2.invoke(iTelephony);
                         m3.invoke(iTelephony);
 
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                }else{
-                    try{
+                } else {
+                    try {
 
                         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
@@ -226,14 +232,11 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                         methodEndCall.invoke(telephonyInterface);
 
 
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-
             }
-
         }
     }
-
 }

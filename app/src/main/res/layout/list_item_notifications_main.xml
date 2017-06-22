@@ -61,7 +61,7 @@
             android:maxLines="1"
             android:textColor="@color/colorWhite"
             app:backgroundTint="@color/dialogUserNameTextColor"
-            tools:text="View More" />
+            tools:text="@string/str_view_more" />
     </RelativeLayout>
 
     <View

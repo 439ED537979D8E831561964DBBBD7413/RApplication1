@@ -166,5 +166,4 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             Toast.makeText(context, context.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
         }
     }
-
 }

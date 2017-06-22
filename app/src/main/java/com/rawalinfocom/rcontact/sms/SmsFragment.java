@@ -55,6 +55,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -117,11 +118,11 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         if (!AppConstants.isFirstTime())
             AppConstants.setIsFirstTime(true);
 
-        Utils.setBooleanPreference(getActivity(), AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE,false);
-        Utils.setBooleanPreference(getActivity(),AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB,false);
+        Utils.setBooleanPreference(getActivity(), AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
+        Utils.setBooleanPreference(getActivity(), AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB, false);
 
         registerLocalBroadcast();
-        smsDataTypeReceiver =  new SmsDataType();
+        smsDataTypeReceiver = new SmsDataType();
     }
 
     @Override
@@ -268,7 +269,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     @Override
     public void onResume() {
         super.onResume();
-        if(AppConstants.isFromReceiver){
+        if (AppConstants.isFromReceiver) {
             AppConstants.isRecentCallFromSMSTab = true;
         }
         if (isFromSettings) {
@@ -288,7 +289,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 //                getLoaderManager().initLoader(0, null, SmsFragment.this);
             }
         } else if (smsListAdapter != null) {
-            if(AppConstants.isComposingSMS){
+            if (AppConstants.isComposingSMS) {
                 AppConstants.isComposingSMS = false;
                 PhoneBookSMSLogs phoneBookSmsLogs = new PhoneBookSMSLogs(getActivity());
                 listOfIds = new ArrayList<>();
@@ -305,13 +306,13 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 smsDataTypeArrayList = null;
                 logsDisplayed = 0;
                 smsListAdapter = null;
-                count =0;
+                count = 0;
               /*  Utils.setBooleanPreference(getActivity(), AppConstants
                         .PREF_SMS_LOG_STARTS_FIRST_TIME, true);*/
                 AppConstants.setIsFirstTime(true);
                 loadData();
 
-            }else{
+            } else {
                 SmsDataType smsDataType = smsListAdapter.getSelectedSmsType();
                 int indexPosition = smsListAdapter.getSelectedPosition();
                 if (smsDataType != null && indexPosition >= 0) {
@@ -354,7 +355,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
     }
 
-    private void registerLocalBroadcast(){
+    private void registerLocalBroadcast() {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance
                 (getActivity());
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_SMS_RECEIVER);
@@ -366,7 +367,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         localBroadcastManagerDeleteSMS.registerReceiver(localBroadcastReceiverDeleteSMS, intentFilter1);
     }
 
-    private void unRegisterLocalBroadcast(){
+    private void unRegisterLocalBroadcast() {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance
                 (getActivity());
         localBroadcastManager.unregisterReceiver(localBroadcastSmsReceiver);
@@ -468,9 +469,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     }
                 } else {
 //                    fetchSMSDataById(tempIdsList);
-                    if(tempIdsList.size()<=0)
+                    if (tempIdsList.size() <= 0)
                         fetchSMSDataById(listOfIds);
-                    else{
+                    else {
                         fetchSMSDataById(tempIdsList);
 
                     }
@@ -562,7 +563,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     }
                 }
             }
-                makeSimpleDataThreadWise(smsDataTypeList);
+            makeSimpleDataThreadWise(smsDataTypeList);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -574,7 +575,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         if (filteredList != null && filteredList.size() > 0) {
             recyclerSmsLogs.setVisibility(View.VISIBLE);
             textNoSmsFound.setVisibility(View.GONE);
-            if(smsDataTypeArrayList == null){
+            if (smsDataTypeArrayList == null) {
                 smsDataTypeArrayList = new ArrayList<>();
             }
             for (int k = 0; k < filteredList.size(); k++) {
@@ -603,11 +604,10 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             }
 
             rContactApplication.setArrayListSmsLogType(smsDataTypeArrayList);
-            if (smsListAdapter == null){
+            if (smsListAdapter == null) {
 //                llLoading.setVisibility(View.GONE);
                 setAdapter();
-            }
-            else {
+            } else {
 //                llLoading.setVisibility(View.GONE);
                 smsListAdapter.notifyDataSetChanged();
             }
@@ -628,19 +628,19 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     SmsDataType callLogType = filteredList.get(i);
                     long logDate1 = callLogType.getDataAndTime();
                     Date date1 = new Date(logDate1);
-                    String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
+                    String logDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date1);
                     Log.i("Call Log date", logDate);
 
                     Calendar cal = Calendar.getInstance();
                     cal.add(Calendar.DATE, -1);
                     Date yesDate;
                     yesDate = cal.getTime();
-                    String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd").format(yesDate);
+                    String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(yesDate);
                     Log.i("Call yesterday date", yesterdayDate);
 
                     Calendar c = Calendar.getInstance();
                     Date cDate = c.getTime();
-                    String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
+                    String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cDate);
                     Log.i("Call Current date", currentDate);
                     String number = callLogType.getThreadId();
                     String finalDate;
@@ -687,7 +687,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                     long objDate = ((SmsDataType) arrayListObjectSmsLogs.get(j))
                                             .getDataAndTime();
                                     Date objDate1 = new Date(objDate);
-                                    String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format
+                                    String arrayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format
                                             (objDate1);
 //                                if (arrayDate.equalsIgnoreCase(logDate)) {
                                     if (!(((SmsDataType) arrayListObjectSmsLogs.get(j))
@@ -706,7 +706,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                             }
                         }
                     } else {
-                        finalDate = new SimpleDateFormat("dd/MM,EEE").format(date1);
+                        finalDate = new SimpleDateFormat("dd/MM,EEE", Locale.getDefault()).format(date1);
 //                    String number = callLogType.getThreadId();
                         if (!arrayListObjectSmsLogs.contains(finalDate)) {
                             arrayListSmsLogHeader.add(finalDate);
@@ -722,7 +722,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                     long objDate = ((SmsDataType) arrayListObjectSmsLogs.get(j))
                                             .getDataAndTime();
                                     Date objDate1 = new Date(objDate);
-                                    String arrayDate = new SimpleDateFormat("yyyy-MM-dd").format
+                                    String arrayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format
                                             (objDate1);
 //                                if (arrayDate.equalsIgnoreCase(logDate)) {
                                     if (!(((SmsDataType) arrayListObjectSmsLogs.get(j))
@@ -740,11 +740,10 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                 arrayListObjectSmsLogs.add(callLogType);
                             }
                         }
-
                     }
                 }
             }
-            rContactApplication.setArrayListSmsLogsHeaders(arrayListSmsLogHeader);
+//            rContactApplication.setArrayListSmsLogsHeaders(arrayListSmsLogHeader);
             rContactApplication.setArrayListObjectSmsLogs(arrayListObjectSmsLogs);
 
         } catch (Exception e) {
@@ -769,7 +768,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
 //        progressBar.setVisibility(View.GONE);
         if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
-            smsListAdapter = new SmsListAdapter(getActivity(), smsDataTypeArrayList,recyclerSmsLogs);
+            smsListAdapter = new SmsListAdapter(getActivity(), smsDataTypeArrayList, recyclerSmsLogs);
             recyclerSmsLogs.setAdapter(smsListAdapter);
             recyclerSmsLogs.setFocusable(false);
         }
@@ -787,9 +786,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     @Override
                     public void run() {
                         Log.e("haint", "Load More 2");
-                        try{
+                        try {
                             //Remove loading item
-                            if(smsDataTypeArrayList!=null && smsListAdapter!=null){
+                            if (smsDataTypeArrayList != null && smsListAdapter != null) {
                                 smsDataTypeArrayList.remove(smsDataTypeArrayList.size() - 1);
                                 smsListAdapter.notifyItemRemoved(smsDataTypeArrayList.size());
                             }
@@ -827,10 +826,10 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                             }
 
                             smsListAdapter.notifyDataSetChanged();
-                            if(!isLastRecord)
+                            if (!isLastRecord)
                                 smsListAdapter.setLoaded();
 
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
@@ -845,27 +844,26 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         switch (type) {
 
             case Telephony.Sms.MESSAGE_TYPE_DRAFT:
-                return "Draft";
+                return getActivity().getString(R.string.msg_draft);
 
             case Telephony.Sms.MESSAGE_TYPE_FAILED:
-                return "Failed";
+                return getActivity().getString(R.string.msg_failed);
 
             case Telephony.Sms.MESSAGE_TYPE_INBOX:
-                return "Received";
+                return getActivity().getString(R.string.msg_received);
 
             case Telephony.Sms.MESSAGE_TYPE_OUTBOX:
-                return "Outbox";
+                return getActivity().getString(R.string.msg_outbox);
 
             case Telephony.Sms.MESSAGE_TYPE_QUEUED:
-                return "Queued";
+                return getActivity().getString(R.string.msg_queued);
 
             case Telephony.Sms.MESSAGE_TYPE_SENT:
-                return "Sent";
+                return getActivity().getString(R.string.msg_sent);
 
         }
-        return "Other";
+        return getActivity().getString(R.string.type_other);
     }
-
 
     private String getPhotoUrlFromNumber(String phoneNumber) {
         String photoThumbUrl = "";
@@ -942,24 +940,24 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     @Override
                     public void run() {
 
-                        if(smsDataTypeReceiver!=null){
-                            boolean isRecordPresent =  false;
-                            SmsDataType smsDataTypeFromReceiver =  new SmsDataType();
-                            String address =  smsDataTypeReceiver.getAddress();
-                            String body =  smsDataTypeReceiver.getBody();
+                        if (smsDataTypeReceiver != null) {
+                            boolean isRecordPresent = false;
+                            SmsDataType smsDataTypeFromReceiver = new SmsDataType();
+                            String address = smsDataTypeReceiver.getAddress();
+                            String body = smsDataTypeReceiver.getBody();
                             long dateAndTime = smsDataTypeReceiver.getDataAndTime();
                             Log.i("Sms Receiver details", address + " " + body);
-                            if(smsDataTypeArrayList!=null && smsDataTypeArrayList.size()>0){
-                                for (int i = 0; i<smsDataTypeArrayList.size(); i++){
-                                    SmsDataType smsDataType =  smsDataTypeArrayList.get(i);
-                                    if(smsDataType !=null){
-                                        String add =  smsDataType.getAddress();
-                                        if(address.equalsIgnoreCase(add)){
+                            if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
+                                for (int i = 0; i < smsDataTypeArrayList.size(); i++) {
+                                    SmsDataType smsDataType = smsDataTypeArrayList.get(i);
+                                    if (smsDataType != null) {
+                                        String add = smsDataType.getAddress();
+                                        if (address.equalsIgnoreCase(add)) {
                                             isRecordPresent = true;
                                             String contactName = getContactNameFromNumber(address);
-                                            if(!TextUtils.isEmpty(contactName)){
+                                            if (!TextUtils.isEmpty(contactName)) {
                                                 smsDataType.setAddress(contactName);
-                                            }else{
+                                            } else {
                                                 smsDataType.setAddress(address);
                                             }
                                             smsDataType.setBody(body);
@@ -977,11 +975,11 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                                 smsDataType.setProfileImage("");
                                             }
 
-                                            smsDataTypeArrayList.set(0,smsDataType);
+                                            smsDataTypeArrayList.set(0, smsDataType);
                                             rContactApplication.setArrayListSmsLogType(smsDataTypeArrayList);
-                                            if(smsListAdapter!=null){
+                                            if (smsListAdapter != null) {
                                                 smsListAdapter.notifyDataSetChanged();
-                                            }else{
+                                            } else {
                                                 setAdapter();
                                             }
                                             recyclerSmsLogs.scrollToPosition(0);
@@ -989,7 +987,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                         }
                                     }
                                 }
-                                if(!isRecordPresent){
+                                if (!isRecordPresent) {
                                     smsDataTypeFromReceiver.setAddress(address);
                                     smsDataTypeFromReceiver.setBody(body);
                                     smsDataTypeFromReceiver.setDataAndTime(dateAndTime);
@@ -1006,7 +1004,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
                                     PhoneBookSMSLogs phoneBookSmsLogs = new PhoneBookSMSLogs(getActivity());
                                     Cursor cursor = phoneBookSmsLogs.getAllSMSLogId();
-                                    String id= "";
+                                    String id = "";
                                     if (cursor != null) {
                                         int rowId = cursor.getColumnIndex(Telephony.Sms._ID);
                                         while (cursor.moveToNext()) {
@@ -1023,7 +1021,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                                 listOfIds);
                                     }
 
-                                    smsDataTypeArrayList.add(0,smsDataTypeFromReceiver);
+                                    smsDataTypeArrayList.add(0, smsDataTypeFromReceiver);
                                     rContactApplication.setArrayListSmsLogType(smsDataTypeArrayList);
                                     /*if(smsListAdapter!= null){
                                         smsListAdapter.notifyItemInserted(0);
@@ -1054,27 +1052,27 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("SmsFragment", "onReceive() of LocalBroadcast");
-            try{
+            try {
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                            if (smsListAdapter != null) {
-                                int itemIndexToRemove = smsListAdapter.getSelectedPosition();
-                                SmsDataType smsDataToUpdate = smsListAdapter
-                                        .getSelectedSmsType();
-                                smsDataTypeArrayList.remove(smsDataToUpdate);
-                                rContactApplication.setArrayListSmsLogType(smsDataTypeArrayList);
-                                String idToRemove = smsDataToUpdate.getUniqueRowId();
-                                listOfIds.remove(idToRemove);
-                                Utils.setArrayListPreference(getActivity(), AppConstants.PREF_SMS_LOGS_ID_SET,
-                                        listOfIds);
-                                smsListAdapter.notifyItemRemoved(itemIndexToRemove);
+                        if (smsListAdapter != null) {
+                            int itemIndexToRemove = smsListAdapter.getSelectedPosition();
+                            SmsDataType smsDataToUpdate = smsListAdapter
+                                    .getSelectedSmsType();
+                            smsDataTypeArrayList.remove(smsDataToUpdate);
+                            rContactApplication.setArrayListSmsLogType(smsDataTypeArrayList);
+                            String idToRemove = smsDataToUpdate.getUniqueRowId();
+                            listOfIds.remove(idToRemove);
+                            Utils.setArrayListPreference(getActivity(), AppConstants.PREF_SMS_LOGS_ID_SET,
+                                    listOfIds);
+                            smsListAdapter.notifyItemRemoved(itemIndexToRemove);
                         }
                     }
                 }, 1000);
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -1104,9 +1102,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 if (matcher1.find()) {
                     numberToSend = actionNumber;
                 } else {
-                    numberToSend =  getNumberFromName(actionNumber);
-                    if(TextUtils.isEmpty(numberToSend)){
-                       numberToSend = actionNumber;
+                    numberToSend = getNumberFromName(actionNumber);
+                    if (TextUtils.isEmpty(numberToSend)) {
+                        numberToSend = actionNumber;
                     }
                 }
 
@@ -1125,7 +1123,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(smsListAdapter!=null)
+                        if (smsListAdapter != null)
                             smsListAdapter.notifyDataSetChanged();
                     }
                 }, 1500);
@@ -1187,8 +1185,8 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     }
 
 
-    private String  getNumberFromName(String name) {
-        String number =  "";
+    private String getNumberFromName(String name) {
+        String number = "";
 //        Cursor cursor = null;
         try {
            /* Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
@@ -1198,8 +1196,8 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     ContactsContract.PhoneLookup.LOOKUP_KEY};*/
 
             Cursor cursor =
-                    getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
-                            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME +" = ?",
+                    getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " = ?",
                             new String[]{name}, null);
             if (cursor != null) {
                 while (cursor.moveToNext()) {
@@ -1238,20 +1236,17 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             }
         };
 
-
         Pattern numberPat = Pattern.compile("\\d+");
         Matcher matcher1 = numberPat.matcher(name);
         if (matcher1.find()) {
             name = number;
-        } else {
         }
 
         callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + name + "?");
+        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + name + "?");
         callConfirmationDialog.showDialog();
-
     }
 }

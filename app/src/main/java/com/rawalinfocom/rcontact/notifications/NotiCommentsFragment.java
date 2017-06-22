@@ -45,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -222,7 +223,7 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
             TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
             TableEventMaster tableEventMaster = new TableEventMaster(getDatabaseHandler());
 
-            if (getResources().getString(R.string.text_rating).equalsIgnoreCase(comment.getCrmType())) {
+            if (getResources().getString(R.string.str_tab_rating).equalsIgnoreCase(comment.getCrmType())) {
 
             } else {
                 Event event = tableEventMaster.getEventByEvmRecordIndexId(comment.getEvmRecordIndexId());
@@ -386,7 +387,7 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
     }
 
     private String getDate(int dayToAddorSub) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd", Locale.getDefault());
         Date date = new Date();
         date.setTime(date.getTime() + dayToAddorSub * 24 * 60 * 60 * 1000);
         return sdf.format(date);

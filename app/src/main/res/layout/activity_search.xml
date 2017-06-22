@@ -2,9 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_search_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rl_search_root"
     tools:context="com.rawalinfocom.rcontact.SearchActivity">
 
     <include
@@ -35,7 +35,6 @@
                 android:paddingTop="@dimen/padding_10dp"
                 android:text="@string/title_phonebook" />
 
-
             <TextView
                 android:id="@+id/text_search_count"
                 android:layout_width="wrap_content"
@@ -64,7 +63,7 @@
         android:id="@+id/rl_global_content_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rl_pb_content_main">+
+        android:layout_below="@+id/rl_pb_content_main">
 
         <RelativeLayout
             android:id="@+id/rl_global_title"
@@ -171,8 +170,7 @@
                 android:layout_height="match_parent"
                 android:layout_above="@+id/ripple_view_more_global_contacts"
                 android:scrollbars="vertical"
-                android:visibility="gone">
-            </android.support.v7.widget.RecyclerView>
+                android:visibility="gone"/>
 
             <com.rawalinfocom.rcontact.helper.RippleView
                 android:id="@+id/ripple_view_more_global_contacts"
@@ -181,10 +179,10 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/margin_10dp"
+                android:visibility="gone"
                 app:rv_alpha="@integer/alpha_ripple"
                 app:rv_color="@color/colorWhite"
-                app:rv_rippleDuration="@integer/duration_ripple"
-                android:visibility="gone">
+                app:rv_rippleDuration="@integer/duration_ripple">
 
                 <Button
                     android:id="@+id/button_view_old_records"

@@ -45,7 +45,6 @@ import static com.rawalinfocom.rcontact.helper.Utils.PLAY_SERVICES_RESOLUTION_RE
 public class OtpVerificationActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
 
-
     @BindView(R.id.includeToolbar)
     LinearLayout includeToolbar;
     ImageView imageActionBack;
@@ -85,7 +84,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equalsIgnoreCase("rawal_otp")) {
+                if (intent.getAction().equalsIgnoreCase(getString(R.string.str_rawal_otp))) {
                     final String message = intent.getStringExtra("message");
                     if (StringUtils.length(message) == AppConstants.OTP_LENGTH)
                         inputOtp.setText(message);
@@ -95,7 +94,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         };
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction("rawal_otp");
+        filter.addAction(getString(R.string.str_rawal_otp));
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
 
         new AsyncGetDeviceToken(this).execute();
@@ -399,7 +398,6 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             Utils.showErrorSnackBar(this, relativeRootOtpVerification, getResources()
                     .getString(R.string.msg_no_network));
         }
-
     }
 
     //</editor-fold>

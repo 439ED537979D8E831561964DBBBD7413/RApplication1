@@ -39,7 +39,8 @@ public class MaterialListDialog {
     String contactName;
     String uniqueRowId;
     String key;
-    public MaterialListDialog(Context context, ArrayList<String> arrayList, String number,long date,String name,
+
+    public MaterialListDialog(Context context, ArrayList<String> arrayList, String number, long date, String name,
                               String uniqueRowId, String key) {
         this.context = context;
         dialog = new Dialog(context);
@@ -61,35 +62,30 @@ public class MaterialListDialog {
 
 //        numberToCall =  Utils.getFormattedNumber(context,number);
         numberToCall = number;
-        callLogDateToDelete =  date;
+        callLogDateToDelete = date;
         dialogTitle = getDialogTitle();
         if (!TextUtils.isEmpty(dialogTitle))
             tvDialogTitle.setText(dialogTitle);
 
         contactName = name;
-        this.uniqueRowId =  uniqueRowId;
+        this.uniqueRowId = uniqueRowId;
         this.key = key;
 
         setAdapter();
 
-        LocalBroadcastManager localBroadcastManager =  LocalBroadcastManager.getInstance(context);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_DIALOG);
-        localBroadcastManager.registerReceiver(localBroadcastReceiverDialog,intentFilter);
+        localBroadcastManager.registerReceiver(localBroadcastReceiverDialog, intentFilter);
     }
 
-
-
     private void setAdapter() {
-        if(!TextUtils.isEmpty(numberToCall)){
+        if (!TextUtils.isEmpty(numberToCall)) {
             CallLogDialogListAdapter materialListAdapter = new CallLogDialogListAdapter(context, stringArrayList, numberToCall,
-                    callLogDateToDelete,contactName,uniqueRowId, key);
+                    callLogDateToDelete, contactName, uniqueRowId, key);
             recycleViewDialog.setAdapter(materialListAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
         }
-
     }
-
-
 
     /**
      * Set RecyclerView's LayoutManager
@@ -159,7 +155,7 @@ public class MaterialListDialog {
     private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment","onReceive() of LocalBroadcast");
+            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
             dismissDialog();
 
         }

@@ -43,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -210,7 +211,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
     }
 
     private String getDate(int dayToAddorSub) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd", Locale.getDefault());
         Date date = new Date();
         date.setTime(date.getTime() + dayToAddorSub * 24 * 60 * 60 * 1000);
         return sdf.format(date);

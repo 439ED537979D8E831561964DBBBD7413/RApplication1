@@ -265,10 +265,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
         permissionConfirmationDialog = new MaterialDialog(SearchActivity.this, cancelListener);
         permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText("Cancel");
-        permissionConfirmationDialog.setRightButtonText("OK");
-        permissionConfirmationDialog.setDialogBody("Call log permission is required. Do you want " +
-                "to try again?");
+        permissionConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        permissionConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
+        permissionConfirmationDialog.setDialogBody(getString(R.string.call_log_permission));
 
         permissionConfirmationDialog.showDialog();
 
@@ -285,8 +284,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
                         (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     Utils.showSuccessSnackBar(SearchActivity.this, rlSearchRoot,
-                            "Invitation" +
-                                    " sent successfully");
+                            getString(R.string.invitation_sent));
                 } else {
                     if (inviteContactResponse != null) {
                         Log.e("error response", inviteContactResponse.getMessage());
@@ -867,67 +865,67 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     private String getPhoneNumberType(int type) {
         switch (type) {
             case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
-                return "Home";
+                return getString(R.string.type_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
-                return "Mobile";
+                return getString(R.string.type_mobile);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
-                return "Work";
+                return getString(R.string.type_work);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
-                return "Fax Work";
+                return getString(R.string.type_fax_work);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
-                return "Fax Home";
+                return getString(R.string.type_fax_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_PAGER:
-                return "Pager";
+                return getString(R.string.type_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
-                return "Other";
+                return getString(R.string.type_other);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK:
-                return "Callback";
+                return getString(R.string.type_callback);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CAR:
-                return "Car";
+                return getString(R.string.type_car);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
-                return "Company Main";
+                return getString(R.string.type_company_main);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
-                return "ISDN";
+                return getString(R.string.type_isdn);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
-                return "Main";
+                return getString(R.string.type_main);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX:
-                return "Other Fax";
+                return getString(R.string.type_other_fax);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_RADIO:
-                return "Radio";
+                return getString(R.string.type_radio);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TELEX:
-                return "Telex";
+                return getString(R.string.type_telex);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD:
-                return "Tty Tdd";
+                return getString(R.string.type_tty_tdd);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
-                return "Work Mobile";
+                return getString(R.string.type_work_mobile);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER:
-                return "Work Pager";
+                return getString(R.string.type_work_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT:
-                return "Assistant";
+                return getString(R.string.type_assistant);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
-                return "MMS";
+                return getString(R.string.type_mms);
 
         }
-        return "Other";
+        return getString(R.string.type_other);
     }
 
     private String getStarredStatusFromNumber(String phoneNumber) {
@@ -1278,11 +1276,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
         callConfirmationDialog = new MaterialDialog(SearchActivity.this, cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + name + "?");
+        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + name + "?");
         callConfirmationDialog.showDialog();
-
     }
 
     private String getNumberFromName(String name) {
@@ -1346,11 +1343,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
         callConfirmationDialog = new MaterialDialog(this, cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
+        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + number + "?");
         callConfirmationDialog.showDialog();
-
     }
 
     private void getSMSData() {
@@ -1480,11 +1476,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 }
             }
 //            rContactApplication.setArrayListSmsLogType(smsDataTypeArrayList);
-
-        } else {
         }
-
-
     }
 
 
@@ -1514,7 +1506,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             e.printStackTrace();
         }
 
-
         return contactName;
     }
 
@@ -1522,27 +1513,26 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         switch (type) {
 
             case Telephony.Sms.MESSAGE_TYPE_DRAFT:
-                return "Draft";
+                return getString(R.string.msg_draft);
 
             case Telephony.Sms.MESSAGE_TYPE_FAILED:
-                return "Failed";
+                return getString(R.string.msg_failed);
 
             case Telephony.Sms.MESSAGE_TYPE_INBOX:
-                return "Received";
+                return getString(R.string.msg_received);
 
             case Telephony.Sms.MESSAGE_TYPE_OUTBOX:
-                return "Outbox";
+                return getString(R.string.msg_outbox);
 
             case Telephony.Sms.MESSAGE_TYPE_QUEUED:
-                return "Queued";
+                return getString(R.string.msg_queued);
 
             case Telephony.Sms.MESSAGE_TYPE_SENT:
-                return "Sent";
+                return getString(R.string.msg_sent);
 
         }
-        return "Other";
+        return getString(R.string.type_other);
     }
-
 
     private String getPhotoUrlFromNumber(String phoneNumber) {
         String photoThumbUrl = "";
@@ -1574,9 +1564,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             e.printStackTrace();
         }
 
-
         return photoThumbUrl;
     }
-
-
 }

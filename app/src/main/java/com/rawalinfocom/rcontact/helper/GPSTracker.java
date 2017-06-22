@@ -228,11 +228,11 @@ public class GPSTracker extends Service implements LocationListener {
 
         dialogGps = new MaterialDialog(mContext, rippleClickListener);
 
-        dialogGps.setDialogTitle("GPS is disabled!");
-        dialogGps.setDialogBody("GPS is not enabled. Do you want to go to settings menu?");
+        dialogGps.setDialogTitle(mContext.getString(R.string.str_gps_disable));
+        dialogGps.setDialogBody(mContext.getString(R.string.str_gps_not_enable));
 
-        dialogGps.setLeftButtonText("CANCEL");
-        dialogGps.setRightButtonText("SETTINGS");
+        dialogGps.setLeftButtonText(mContext.getString(R.string.str_cancel));
+        dialogGps.setRightButtonText(mContext.getString(R.string.str_settings));
 /*
         View.OnClickListener cancelClickListener = new View.OnClickListener() {
 
