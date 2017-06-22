@@ -181,7 +181,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_registration);
         ButterKnife.bind(this);
-
+        FacebookSdk.sdkInitialize(getApplicationContext());
         userProfile = (UserProfile) Utils.getObjectPreference(ProfileRegistrationActivity.this,
                 AppConstants.PREF_REGS_USER_OBJECT, UserProfile.class);
         if (userProfile == null) {
@@ -314,11 +314,9 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
                 if (firstName.equalsIgnoreCase("") || lastName.equalsIgnoreCase("")) {
-                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "Please add " +
-                            "First Name and Last Name");
+                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R.string.str_valid_both_name));
                 } else if (emailId.length() > 0 && !emailId.matches(emailPattern)) {
-                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, "Please enter " +
-                            "valid email");
+                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R.string.str_valid_email));
                 } else {
                     profileRegistration(firstName, lastName, emailId, null, "", "",
                             IntegerConstants.REGISTRATION_VIA_EMAIL);
@@ -341,7 +339,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     registerFacebookCallback();
 
                     LoginManager.getInstance().logInWithReadPermissions(ProfileRegistrationActivity
-                            .this, Arrays.asList("public_profile", "email"));
+                            .this, Arrays.asList(getString(R.string.str_public_profile),
+                            getString(R.string.str_small_cap_email)));
 
                 }
                 break;
@@ -401,7 +400,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 registerFacebookCallback();
 
                 LoginManager.getInstance().logInWithReadPermissions(ProfileRegistrationActivity
-                        .this, Arrays.asList("public_profile", "email"));
+                        .this, Arrays.asList(getString(R.string.str_public_profile),
+                        getString(R.string.str_small_cap_email)));
                 break;
             case GOOGLE_LOGIN_PERMISSION:
                 setLoginVia = IntegerConstants.REGISTRATION_VIA_GOOGLE;
@@ -1078,7 +1078,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     @Override
                     public void onCancel() {
                         Utils.showErrorSnackBar(ProfileRegistrationActivity.this,
-                                relativeRootProfileRegistration, "Facebook Login Cancelled!!");
+                                relativeRootProfileRegistration, getString(R.string.error_facebook_login_cancelled));
                     }
 
                     @Override
@@ -1184,7 +1184,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         } else {
             // Signed out.
             Utils.showErrorSnackBar(ProfileRegistrationActivity.this,
-                    relativeRootProfileRegistration, "Error in Retrieving Details!");
+                    relativeRootProfileRegistration, getString(R.string.error_retrieving_details));
         }
     }
 
@@ -1244,6 +1244,5 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             }
         });
     }
-
     //</editor-fold>
 }

@@ -2,8 +2,11 @@ package com.rawalinfocom.rcontact.contacts;
 
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -109,10 +112,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     ProgressWheel progressAllContact;
     @BindView(R.id.text_empty_view)
     TextView textEmptyView;
-    /*    @BindView(R.id.scroller_all_contact)
-        VerticalRecyclerViewFastScroller scrollerAllContact;
-        @BindView(R.id.title_indicator)
-        ColorGroupSectionTitleIndicator titleIndicator;*/
     @BindView(R.id.text_total_contacts)
     TextView textTotalContacts;
 
@@ -120,9 +119,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     ArrayList<String> arrayListContactHeaders;
     ArrayList<ProfileData> arrayListUserContact = new ArrayList<>();
     ArrayList<ProfileData> arrayListSyncUserContact = new ArrayList<>();
-    ArrayList<String> arrayListContactId;
-    ArrayList<String> arrayListContactNumbers;
-    ArrayList<String> arrayListContactEmails;
     ArrayList<String> arrayListFavouriteContacts;
 
     LongSparseArray<ProfileData> array = new LongSparseArray<>();
@@ -163,7 +159,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         phoneBookContacts = new PhoneBookContacts(getActivity());
-
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
         Utils.setBooleanPreference(getActivity(), AppConstants
                 .PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, true);
@@ -183,7 +178,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             arrayListFavouriteContacts = new ArrayList<>();
 
             arrayListContactHeaders.add(" ");
-            arrayListPhoneBookContacts.add("My Profile");
+            arrayListPhoneBookContacts.add(getActivity().getString(R.string.title_my_profile));
 
             ProfileData myProfileData = new ProfileData();
 
@@ -221,7 +216,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             arrayListOperation.add(myOperation);
             myProfileData.setOperation(arrayListOperation);*/
             arrayListPhoneBookContacts.add(myProfileData);
-            arrayListPhoneBookContacts.add("My Contacts");
+            arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
 
@@ -393,7 +388,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             }
 
                             Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                    "All Contact Synced");
+                                    getActivity().getString(R.string.str_all_contact_sync));
                             Utils.setStringPreference(getActivity(), AppConstants
                                     .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System
                                     .currentTimeMillis() - 10000));
@@ -492,7 +487,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
                             (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                         Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                "Invitation sent successfully");
+                                getActivity().getString(R.string.invitation_sent));
                     } else {
                         if (inviteContactResponse != null) {
                             Log.e("error response", inviteContactResponse.getMessage());
@@ -971,35 +966,37 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
 
         while (data.moveToNext()) {
+            try {
+                long id = data.getLong(idIdx);
+                ProfileData profileData = array.get(id);
 
-            long id = data.getLong(idIdx);
-            ProfileData profileData = array.get(id);
+                if (profileData == null) {
+                    profileData = new ProfileData();
+                    array.put(id, profileData);
+                    arrayListUserContact.add(profileData);
+                }
 
-            if (profileData == null) {
-                profileData = new ProfileData();
-                array.put(id, profileData);
-                arrayListUserContact.add(profileData);
+                profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+                profileData.setRawContactId(data.getString(rawIdIdx));
+
+                switch (data.getString(mimeTypeIdx)) {
+                    case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
+                        profileData.setTempNumber(data.getString(phoneIdx));
+                        profileData.setProfileUrl(data.getString(photoURIIdx));
+                        break;
+                    case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
+                        profileData.setTempFirstName(data.getString(givenNameIdx));
+                        profileData.setTempLastName(data.getString(familyNameIdx));
+                        profileData.setTempPrefix(data.getString(prefixNameIdx));
+                        profileData.setTempSufix(data.getString(suffixNameIdx));
+                        profileData.setTempMiddleName(data.getString(middleNameIdx));
+                        profileData.setName(data.getString(givenNameIdx) + data.getString
+                                (familyNameIdx));
+                        break;
+                }
+            } catch (Exception E) {
+                Log.i("AllContacts", "Crash occured when displaying contacts" + E.toString());
             }
-
-            profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
-            profileData.setRawContactId(data.getString(rawIdIdx));
-
-            switch (data.getString(mimeTypeIdx)) {
-                case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
-                    profileData.setTempNumber(data.getString(phoneIdx));
-                    profileData.setProfileUrl(data.getString(photoURIIdx));
-                    break;
-                case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
-                    profileData.setTempFirstName(data.getString(givenNameIdx));
-                    profileData.setTempLastName(data.getString(familyNameIdx));
-                    profileData.setTempPrefix(data.getString(prefixNameIdx));
-                    profileData.setTempSufix(data.getString(suffixNameIdx));
-                    profileData.setTempMiddleName(data.getString(middleNameIdx));
-                    profileData.setName(data.getString(givenNameIdx) + data.getString
-                            (familyNameIdx));
-                    break;
-            }
-        }
 //        ArrayList contactsWithNoName = new ArrayList<>();
 //        String lastDisplayName = "XXX", lastRawId = "XXX";
 //
@@ -1026,6 +1023,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 //            }
 //        }
 //        arrayListPhoneBookContacts.addAll(contactsWithNoName);
+
+        }
     }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
@@ -1585,9 +1584,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + callNumber + "?");
+        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + callNumber + "?");
 
         callConfirmationDialog.showDialog();
 
@@ -1638,19 +1637,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         String message = "";
         switch (permissionType) {
             case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS:
-                message = "Contact read permission is required of this app. Do you want to try " +
-                        "again?";
+                message = getActivity().getString(R.string.contact_read_permission);
                 break;
             case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL:
-                message = "Calling permission is required to make the call. Do you want to try " +
-                        "again?";
+                message = getActivity().getString(R.string.calling_permission);
                 break;
         }
 
         permissionConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText("Cancel");
-        permissionConfirmationDialog.setRightButtonText("OK");
+        permissionConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+        permissionConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_ok));
         permissionConfirmationDialog.setDialogBody(message);
 
         permissionConfirmationDialog.showDialog();
@@ -2149,7 +2146,5 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     .getString(R.string.msg_no_network));
         }
     }
-
     //</editor-fold>
-
 }

@@ -261,7 +261,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private void configureFooterViewHolder(ContactFooterViewHolder holder, int position) {
 //        String letter = (String) arrayListUserContact.get(position);
         holder.textTotalContacts.setText(arrayListUserProfile.size() - arrayListContactHeader
-                .size() + " Contacts");
+                .size() + " " + context.getString(R.string.contacts));
     }
 
     //</editor-fold>

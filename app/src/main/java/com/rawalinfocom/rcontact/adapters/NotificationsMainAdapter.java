@@ -52,14 +52,15 @@ public class NotificationsMainAdapter extends RecyclerView.Adapter<Notifications
         int count = item.getNotificationItemCount();
         if (count > 0) {
             holder.textNotificationsCount.setText(String.valueOf(count));
-            holder.textNotificationDetail.setText("You have " + count + " unread notification");
+            holder.textNotificationDetail.setText(context.getString(R.string.str_unread_notification_hint_1) + count
+                    + context.getString(R.string.str_unread_notification_hint_2));
         } else {
             holder.textNotificationsCount.setVisibility(View.GONE);
-            holder.textNotificationDetail.setText("You have no unread notification");
+            holder.textNotificationDetail.setText(context.getString(R.string.str_unread_notification_hint_3));
         }
 
 
-        holder.buttonViewMore.setText("View More");
+        holder.buttonViewMore.setText(context.getString(R.string.str_view_more));
         holder.buttonViewMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

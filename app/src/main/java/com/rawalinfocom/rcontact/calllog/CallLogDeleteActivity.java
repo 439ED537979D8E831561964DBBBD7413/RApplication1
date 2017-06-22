@@ -30,7 +30,6 @@ import butterknife.ButterKnife;
 public class CallLogDeleteActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener {
 
-
     @BindView(R.id.include_toolbar)
     Toolbar includeToolbar;
     TextView textToolbarTitle;
@@ -67,9 +66,7 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
             case R.id.ripple_action_delete:
                 fetchDataToDelete();
                 break;
-
         }
-
     }
 
     @Override
@@ -87,7 +84,6 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
         }
     }
 
-
     private void init() {
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
@@ -95,7 +91,7 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
         rippleActionToolbarDelete = ButterKnife.findById(includeToolbar, R.id.ripple_action_delete);
         deleteCallLogListAdapter = new DeleteCallLogListAdapter(this, arrayListCallLogType);
         textToolbarTitle.setTypeface(Utils.typefaceSemiBold(this));
-        textToolbarTitle.setText("Delete");
+        textToolbarTitle.setText(getString(R.string.action_delete));
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionToolbarDelete.setOnRippleCompleteListener(this);
         checkboxSelectAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -110,7 +106,6 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
         });
 
         setAdapter();
-
     }
 
     private void setAdapter() {
@@ -123,9 +118,9 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
                     DeleteCallLogListAdapter(this, arrayListCallLogType);
             recycleViewDeleteCallLog.setAdapter(deleteCallLogListAdapter);
             setRecyclerViewLayoutManager(recycleViewDeleteCallLog);
-        }else{
+        } else {
             textNoRecordToDisplay.setVisibility(View.VISIBLE);
-            textNoRecordToDisplay.setText("No history to delete");
+            textNoRecordToDisplay.setText(getString(R.string.no_history_delete));
             checkboxSelectAll.setEnabled(false);
             rippleActionToolbarDelete.setEnabled(false);
         }
@@ -135,19 +130,19 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
         ArrayList<CallLogType> listToDelete = deleteCallLogListAdapter.getArrayListToDelete();
         boolean selectAll = deleteCallLogListAdapter.isSelectedAll;
         if (listToDelete.size() > 0) {
-           for(int i = 0; i<listToDelete.size(); i++){
-               CallLogType callLogType = listToDelete.get(i);
-               String number = callLogType.getHistoryNumber();
-               long dateAndTime = callLogType.getHistoryDate();
-               // delete operation
-               String where = CallLog.Calls.NUMBER + " =?" + " AND " + CallLog.Calls.DATE + " =?";
-               String[] selectionArguments = new String[]{number, String.valueOf(dateAndTime)};
-               int value = this.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where, selectionArguments);
-               if (value > 0) {
-                   arrayListCallLogType.remove(callLogType);
-                   deleteCallLogListAdapter.notifyDataSetChanged();
-               }
-           }
+            for (int i = 0; i < listToDelete.size(); i++) {
+                CallLogType callLogType = listToDelete.get(i);
+                String number = callLogType.getHistoryNumber();
+                long dateAndTime = callLogType.getHistoryDate();
+                // delete operation
+                String where = CallLog.Calls.NUMBER + " =?" + " AND " + CallLog.Calls.DATE + " =?";
+                String[] selectionArguments = new String[]{number, String.valueOf(dateAndTime)};
+                int value = this.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where, selectionArguments);
+                if (value > 0) {
+                    arrayListCallLogType.remove(callLogType);
+                    deleteCallLogListAdapter.notifyDataSetChanged();
+                }
+            }
 
             if (arrayListCallLogType.size() <= 0) {
                 recycleViewDeleteCallLog.setVisibility(View.GONE);
@@ -164,10 +159,8 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
             overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
 
         } else {
-            Toast.makeText(this, "Please select call history to delete", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.please_select_history_to_delete), Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
     /**
@@ -185,6 +178,4 @@ public class CallLogDeleteActivity extends BaseActivity implements RippleView
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.scrollToPosition(scrollPosition);
     }
-
-
 }

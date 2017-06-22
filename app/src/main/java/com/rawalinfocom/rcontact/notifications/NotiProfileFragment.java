@@ -42,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -385,10 +386,12 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
             if (listType == 0) {
 
                 item.setProfileNotiType(0);
-                item.setNotiInfo(item.getPersonName() + " Requested for your " + request.getPpmTag());
+                item.setNotiInfo(item.getPersonName() + getActivity().getString(R.string.str_requested_for_your)
+                        + request.getPpmTag());
             } else {
                 item.setProfileNotiType(1);
-                item.setNotiInfo(item.getPersonName() + " confirmed your request for " + request.getPpmTag());
+                item.setNotiInfo(item.getPersonName() + getActivity().getString(R.string.str_confirmed_your_request_for)
+                        + request.getPpmTag());
             }
             item.setRcpUserPmId(pmId + "");
             item.setCardCloudId(request.getCarId());
@@ -400,7 +403,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
     }
 
     private String getDate(int dayToAddorSub) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd", Locale.getDefault());
         Date date = new Date();
         date.setTime(date.getTime() + dayToAddorSub * 24 * 60 * 60 * 1000);
         return sdf.format(date);

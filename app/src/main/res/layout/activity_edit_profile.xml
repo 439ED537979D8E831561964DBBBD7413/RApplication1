@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/relative_root_edit_profile"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="com.rawalinfocom.rcontact.contacts.EditProfileActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_root_edit_profile"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rawalinfocom.rcontact.contacts.EditProfileActivity">
 
 
     <include
         android:id="@+id/include_toolbar"
         layout="@layout/layout_toolbar_edit_profile_details"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
+        android:layout_height="?attr/actionBarSize" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
                 android:layout_height="130dp"
                 android:layout_centerHorizontal="true"
                 android:contentDescription="@string/str_content_description"
-                tools:src="@mipmap/ic_launcher"/>
+                tools:src="@mipmap/ic_launcher" />
 
             <TextView
                 android:id="@+id/text_label_profile_image"
@@ -39,7 +39,7 @@
                 android:layout_below="@id/image_profile"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/margin_tiny"
-                android:text="Change Profile Picture"/>
+                android:text="@string/str_change_profile_picture" />
 
             <LinearLayout
                 android:id="@+id/linear_name"
@@ -60,16 +60,15 @@
                         android:layout_height="1dp"
                         android:layout_above="@+id/text_label_name"
                         android:layout_marginBottom="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray">
-                    </View>
+                        android:background="@color/colorDarkGray"/>
 
                     <TextView
                         android:id="@+id/text_label_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:text="Name"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:text="@string/str_name"
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_name_expand"
@@ -78,15 +77,14 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_name_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray">
-                    </View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -101,7 +99,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:hint="@string/hint_first_name"
-                        android:inputType="textPersonName|textCapWords"/>
+                        android:inputType="textPersonName|textCapWords" />
 
                     <EditText
                         android:id="@+id/input_last_name"
@@ -109,7 +107,7 @@
                         android:layout_height="match_parent"
                         android:layout_below="@+id/input_first_name"
                         android:hint="@string/hint_last_name"
-                        android:inputType="textPersonName|textCapWords"/>
+                        android:inputType="textPersonName|textCapWords" />
 
                 </RelativeLayout>
 
@@ -129,7 +127,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_cornor_green_background"
                         android:text="@string/update"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_name_cancel"
@@ -140,7 +138,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corner_light_gray_background"
                         android:text="@string/cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
                 </LinearLayout>
 
@@ -166,8 +164,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:text="Phone"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:text="@string/str_phone"
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_phone_expand"
@@ -176,15 +174,14 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_phone_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray">
-                    </View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -212,7 +209,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/background_rounded_border_green"
                         android:text="@string/add_field"
-                        android:textColor="@color/colorAccent"/>
+                        android:textColor="@color/colorAccent" />
 
                     <Button
                         android:id="@+id/button_phone_update"
@@ -224,7 +221,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_cornor_green_background"
                         android:text="@string/update"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_phone_cancel"
@@ -235,8 +232,8 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corner_light_gray_background"
                         android:text="@string/cancel"
-                        android:textColor="@color/colorWhite"/>
-                    ]
+                        android:textColor="@color/colorWhite" />
+
                 </LinearLayout>
 
             </LinearLayout>
@@ -260,8 +257,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:text="Email"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:text="@string/str_email"
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_email_expand"
@@ -270,15 +267,14 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_email_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray">
-                    </View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -306,7 +302,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/background_rounded_border_green"
                         android:text="@string/add_field"
-                        android:textColor="@color/colorAccent"/>
+                        android:textColor="@color/colorAccent" />
 
                     <Button
                         android:id="@+id/button_email_update"
@@ -318,7 +314,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_cornor_green_background"
                         android:text="@string/update"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_email_cancel"
@@ -329,7 +325,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corner_light_gray_background"
                         android:text="@string/cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
 
                 </LinearLayout>
@@ -357,7 +353,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="@string/str_organization"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_organization_expand"
@@ -366,15 +362,14 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_organization_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray">
-                    </View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -404,7 +399,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/background_rounded_border_green"
                         android:text="@string/add_field"
-                        android:textColor="@color/colorAccent"/>
+                        android:textColor="@color/colorAccent" />
 
                     <Button
                         android:id="@+id/button_organization_update"
@@ -416,7 +411,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_cornor_green_background"
                         android:text="@string/update"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_organization_cancel"
@@ -427,7 +422,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corner_light_gray_background"
                         android:text="@string/cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
 
                 </LinearLayout>
@@ -454,7 +449,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="@string/str_website"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_website_expand"
@@ -463,15 +458,14 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_website_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray">
-                    </View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -499,7 +493,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/background_rounded_border_green"
                         android:text="@string/add_field"
-                        android:textColor="@color/colorAccent"/>
+                        android:textColor="@color/colorAccent" />
 
                     <Button
                         android:id="@+id/button_website_update"
@@ -511,7 +505,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_cornor_green_background"
                         android:text="@string/update"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_website_cancel"
@@ -522,7 +516,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corner_light_gray_background"
                         android:text="@string/cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
 
                 </LinearLayout>
@@ -549,7 +543,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="@string/str_address"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_address_expand"
@@ -558,15 +552,14 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_address_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray">
-                    </View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -594,7 +587,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/background_rounded_border_green"
                         android:text="@string/add_field"
-                        android:textColor="@color/colorAccent"/>
+                        android:textColor="@color/colorAccent" />
 
                     <Button
                         android:id="@+id/button_address_update"
@@ -606,7 +599,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_cornor_green_background"
                         android:text="@string/update"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_address_cancel"
@@ -617,7 +610,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corner_light_gray_background"
                         android:text="@string/cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
 
                 </LinearLayout>
@@ -643,8 +636,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:text="Social Connect"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:text="@string/str_social_connect"
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_social_contact_expand"
@@ -653,15 +646,14 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_social_contact_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray">
-                    </View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -689,7 +681,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/background_rounded_border_green"
                         android:text="@string/add_field"
-                        android:textColor="@color/colorAccent"/>
+                        android:textColor="@color/colorAccent" />
 
                     <Button
                         android:id="@+id/button_social_contact_update"
@@ -701,7 +693,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_cornor_green_background"
                         android:text="@string/update"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_social_contact_cancel"
@@ -712,7 +704,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corner_light_gray_background"
                         android:text="@string/cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
 
                 </LinearLayout>
@@ -739,7 +731,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="@string/str_event"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_event_expand"
@@ -748,15 +740,14 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_event_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray">
-                    </View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -784,7 +775,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/background_rounded_border_green"
                         android:text="@string/add_field"
-                        android:textColor="@color/colorAccent"/>
+                        android:textColor="@color/colorAccent" />
 
                     <Button
                         android:id="@+id/button_event_update"
@@ -796,7 +787,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_cornor_green_background"
                         android:text="@string/update"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_event_cancel"
@@ -807,7 +798,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corner_light_gray_background"
                         android:text="@string/cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
 
                 </LinearLayout>
@@ -835,7 +826,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:text="@string/str_gender"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:textAppearance="?android:textAppearanceMedium" />
 
                     <ImageView
                         android:id="@+id/image_gender_expand"
@@ -844,15 +835,14 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_arrow_bottom"/>
+                        android:src="@drawable/ic_arrow_bottom" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_gender_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray">
-                    </View>
+                        android:background="@color/colorDarkGray"/>
 
                 </RelativeLayout>
 
@@ -887,14 +877,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:textSize="@dimen/text_size_45sp"
-                                tools:text="@string/im_gender_male"/>
+                                tools:text="@string/im_gender_male" />
 
                             <TextView
                                 android:id="@+id/text_male"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
-                                android:text="@string/str_male"/>
+                                android:text="@string/str_male" />
 
                         </LinearLayout>
 
@@ -911,14 +901,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:textSize="@dimen/text_size_45sp"
-                                tools:text="@string/im_female"/>
+                                tools:text="@string/im_female" />
 
                             <TextView
                                 android:id="@+id/text_female"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
-                                android:text="@string/str_female"/>
+                                android:text="@string/str_female" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -942,7 +932,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_cornor_green_background"
                         android:text="@string/update"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/button_gender_cancel"
@@ -953,7 +943,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corner_light_gray_background"
                         android:text="@string/cancel"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/colorWhite" />
 
                 </LinearLayout>
 

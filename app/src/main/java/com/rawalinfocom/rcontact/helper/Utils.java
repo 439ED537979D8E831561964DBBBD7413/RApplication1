@@ -46,6 +46,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.model.CallLogType;
@@ -66,6 +67,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -237,7 +239,7 @@ public class Utils {
 
     public static void setArrayListPreference(Context context, String key, @Nullable ArrayList
             arrayList) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
+        SharedPreferences sharedpreferences = RContactApplication.getInstance().getSharedPreferences(AppConstants
                 .KEY_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         Gson gson = new Gson();
@@ -255,7 +257,6 @@ public class Utils {
         }.getType();
         return gson.fromJson(json, type);
     }
-
 
     public static void setIntegerPreference(Context context, String key, int value) {
         SharedPreferences sharedpreferences = context.getSharedPreferences(AppConstants
@@ -745,11 +746,11 @@ public class Utils {
 
     public static String getLocalTimeFromUTCTime(String timeStamp) {
         try {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
             Date value = formatter.parse(timeStamp);
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             dateFormatter.setTimeZone(TimeZone.getDefault());
             timeStamp = dateFormatter.format(value);
         } catch (Exception e) {
@@ -760,15 +761,14 @@ public class Utils {
 
     public static String formatDateTime(String timeStamp, String format) {
         try {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             Date value = formatter.parse(timeStamp);
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(format, Locale.getDefault());
             timeStamp = dateFormatter.format(value);
         } catch (Exception e) {
             timeStamp = "";
         }
         return timeStamp;
     }
-
 }

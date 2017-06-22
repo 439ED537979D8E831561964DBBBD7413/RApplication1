@@ -97,5 +97,4 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
         super.onPostExecute(result);
         wsResponseListener.onDeliveryResponse(serviceType, result, error);
     }
-
 }

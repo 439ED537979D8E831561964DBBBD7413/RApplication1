@@ -83,6 +83,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -321,7 +322,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 .ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
 
-        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase(getString(R.string.unknown))) {
             fetchAllCallLogHistory(contactName);
         } else {
             if (!TextUtils.isEmpty(profileContactNumber)) {
@@ -377,7 +378,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 if (profileRatingResponse != null && StringUtils.equalsIgnoreCase
                         (profileRatingResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail, "Rating Submitted");
+                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail, getString(R.string.rating_submit));
 
                     if (profileRatingResponse.getProfileRating() != null) {
 
@@ -511,9 +512,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                     CallConfirmationListDialog callConfirmationListDialog = new
                                             CallConfirmationListDialog(this, listPhoneNumber,
                                             false);
-                                    callConfirmationListDialog.setDialogTitle("Please select a " +
-                                            "number to " +
-                                            "view sms-log");
+                                    callConfirmationListDialog.setDialogTitle(getString(R.string.please_select_number_view_sms_log));
                                     callConfirmationListDialog.showDialog();
 
                                 } else {
@@ -556,9 +555,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
                                 CallConfirmationListDialog callConfirmationListDialog = new
                                         CallConfirmationListDialog(this, listPhoneNumber, false);
-                                callConfirmationListDialog.setDialogTitle("Please select a number" +
-                                        " to " +
-                                        "view sms-log");
+                                callConfirmationListDialog.setDialogTitle(getString(R.string.please_select_number_view_sms_log));
                                 callConfirmationListDialog.showDialog();
 
                             } else {
@@ -603,8 +600,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
                             CallConfirmationListDialog callConfirmationListDialog = new
                                     CallConfirmationListDialog(this, listPhoneNumber, true);
-                            callConfirmationListDialog.setDialogTitle("Please select a number to " +
-                                    "call");
+                            callConfirmationListDialog.setDialogTitle(getString(R.string.please_select_number_call));
                             callConfirmationListDialog.showDialog();
 
                         } else {
@@ -633,8 +629,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
                     int updateStatus = phoneBookContacts.setFavouriteStatus(phoneBookId, favStatus);
                     if (updateStatus != 1) {
-                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, "Error while " +
-                                "updating favourite status!");
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R.string.error_update_favorite_status));
                     }
 
                     ArrayList<ProfileData> arrayListFavourites = new ArrayList<>();
@@ -726,7 +721,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase
                     ("[Unknown]")*/) {
                         ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
-                                        .getString(R.string.edit), "View in AC",
+                                        .getString(R.string.edit), this.getString(R.string.view_in_ac),
                                 /*this.getString(R.string.view_in_ac), this.getString(R.string
                                 .view_in_rc),
                                 this.getString(R.string.call_reminder),
@@ -955,9 +950,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
             buttonRight.setTypeface(Utils.typefaceSemiBold(this));
 
-            textDialogTitle.setText("Rate " + contactName);
-            textRemainingCharacters.setText(getResources().getInteger(R.integer
-                    .max_comment_length) + " characters left");
+            textDialogTitle.setText(String.format("%s%s", this.getString(R.string.text_rate), contactName));
+            textRemainingCharacters.setText(String.format(Locale.getDefault(), "%d%s", getResources().getInteger(R.integer
+                    .max_comment_length), this.getString(R.string.characters_left)));
 
             buttonRight.setText(R.string.action_submit);
             buttonLeft.setText(R.string.action_cancel);
@@ -978,7 +973,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         dialog.dismiss();
                     } else {
                         Utils.showErrorSnackBar(CallHistoryDetailsActivity.this,
-                                relativeRootRatingDialog, "Please fill appropriate stars!");
+                                relativeRootRatingDialog, getString(R.string.please_fill_stars));
                     }
                 }
             });
@@ -993,8 +988,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     int characters = getResources().getInteger(R.integer.max_comment_length) -
                             charSequence.toString().length();
-                    textRemainingCharacters.setText(characters + (characters == 1 ? " character" :
-                            " characters" + " left"));
+                    textRemainingCharacters.setText(String.format(Locale.getDefault(), "%d%s", characters, characters == 1
+                            ? getString(R.string.text_character) : getString(R.string.characters_left)));
                 }
 
                 @Override
@@ -1065,7 +1060,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
     private String getPhotoUrlFromNumber() {
         String phoneNumber = "";
-        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase(getString(R.string.unknown))) {
             ArrayList<CallLogType> listOfNumbers = getNumbersFromName(contactName);
             if (listOfNumbers != null && listOfNumbers.size() > 0) {
                 for (int i = 0; i < listOfNumbers.size(); i++) {
@@ -1111,11 +1106,14 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
     private void setCallLogHistoryDetails() {
         if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase("[Unknown]")*/) {
-            textToolbarTitle.setText(contactName);
-
+//            textToolbarTitle.setText(contactName);
+            //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
+            textToolbarTitle.setText(getString(R.string.str_profile_deails));
         } else {
             if (!TextUtils.isEmpty(profileContactNumber)) {
-                textToolbarTitle.setText(profileContactNumber);
+//                textToolbarTitle.setText(profileContactNumber);
+                //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
+                textToolbarTitle.setText(getString(R.string.str_profile_deails));
             }
 
         }
@@ -1777,11 +1775,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
         callConfirmationDialog = new MaterialDialog(this, cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + formattedNumber + "?");
+        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + formattedNumber + "?");
         callConfirmationDialog.showDialog();
-
     }
 
     private void submitRating(String ratingStar, String comment) {
@@ -1850,7 +1847,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             textNoHistoryToShow.setVisibility(View.GONE);
             recyclerCallHistory.setVisibility(View.VISIBLE);
             rippleViewOldRecords.setVisibility(View.VISIBLE);
-            callHistoryListAdapter = new CallHistoryListAdapter(arrayListHistory);
+            callHistoryListAdapter = new CallHistoryListAdapter(getApplicationContext(), arrayListHistory);
             recyclerCallHistory.setAdapter(callHistoryListAdapter);
             recyclerCallHistory.setFocusable(false);
             setRecyclerViewLayoutManager(recyclerCallHistory);
@@ -2084,67 +2081,67 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     private String getPhoneNumberType(int type) {
         switch (type) {
             case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
-                return "Home";
+                return getString(R.string.type_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
-                return "Mobile";
+                return getString(R.string.type_mobile);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
-                return "Work";
+                return getString(R.string.type_work);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
-                return "Fax Work";
+                return getString(R.string.type_fax_work);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
-                return "Fax Home";
+                return getString(R.string.type_fax_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_PAGER:
-                return "Pager";
+                return getString(R.string.type_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
-                return "Other";
+                return getString(R.string.type_other);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK:
-                return "Callback";
+                return getString(R.string.type_callback);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CAR:
-                return "Car";
+                return getString(R.string.type_car);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
-                return "Company Main";
+                return getString(R.string.type_company_main);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
-                return "ISDN";
+                return getString(R.string.type_isdn);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
-                return "Main";
+                return getString(R.string.type_main);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX:
-                return "Other Fax";
+                return getString(R.string.type_other_fax);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_RADIO:
-                return "Radio";
+                return getString(R.string.type_radio);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TELEX:
-                return "Telex";
+                return getString(R.string.type_telex);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD:
-                return "Tty Tdd";
+                return getString(R.string.type_tty_tdd);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
-                return "Work Mobile";
+                return getString(R.string.type_work_mobile);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER:
-                return "Work Pager";
+                return getString(R.string.type_work_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT:
-                return "Assistant";
+                return getString(R.string.type_assistant);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
-                return "MMS";
+                return getString(R.string.type_mms);
 
         }
-        return "Other";
+        return getString(R.string.type_other);
     }
 
 

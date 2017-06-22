@@ -31,7 +31,7 @@ public class AppConstants {
     public static final int ORGANIZATION = 7;
     public static final int PROFILE_IMAGE = 8;
     public static final int NAME = 9;
-    public static boolean isRecentCallFromSMSTab =  false;
+    public static boolean isRecentCallFromSMSTab = false;
     //</editor-fold>
 
     //<editor-fold desc="App Specific final constants">
@@ -118,6 +118,7 @@ public class AppConstants {
     public static String EXTRA_LONGITUDE = "extra_longitude";
     public static String EXTRA_CONTACT_PROFILE_IMAGE = "extra_contact_profile_image";
     public static String EXTRA_IS_FROM_FAVOURITE = "extra_is_from_favourite";
+    public static String EXTRA_GLOBAL_PUBLIC_PROFILE_URL = "extra_global_public_profile_url";
 
 
     //</editor-fold>
@@ -246,7 +247,7 @@ public class AppConstants {
     public static boolean isFromReceiver = false;
     public static boolean isSMSFromReceiver = false;
     public static boolean isComposingSMS = false;
-    public static  boolean isFromSearchActivity = false;
+    public static boolean isFromSearchActivity = false;
 
     //<editor-fold desc="Call-log constants">
     public static final int READ_LOGS = 725;
@@ -277,10 +278,10 @@ public class AppConstants {
     //<editor-fold desc="Otp constants">
 
     // SMS provider identification
-    public static final String SMS_ORIGIN = "NOTICE";
+    public static final String SMS_ORIGIN = "RCNTCT";
 
     // special character to prefix the otp.
-    public static final String OTP_DELIMITER = "is ";
+    public static final String OTP_DELIMITER = "is:";
 
     //<editor-fold desc="Notification constants">
 

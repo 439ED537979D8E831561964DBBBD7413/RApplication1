@@ -26,6 +26,7 @@ import com.rawalinfocom.rcontact.model.CallLogType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -94,7 +95,6 @@ public class BlockContactListActivity extends BaseActivity implements RippleView
                 profileMenuOptionDialog.showDialog();
 
                 break;
-
         }
     }
 
@@ -161,10 +161,9 @@ public class BlockContactListActivity extends BaseActivity implements RippleView
             if (listOfBlockContact != null && listOfBlockContact.size() > 0) {
                 int count = listOfBlockContact.size();
                 textTotalContacts.setVisibility(View.VISIBLE);
-                textTotalContacts.setText(count + " Contacts");
+                textTotalContacts.setText(String.format(Locale.getDefault(), "%d " + getString(R.string.contacts), count));
             }
         }
-
     }
 
     /**

@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +13,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +35,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -47,6 +50,7 @@ import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.PhoneBookSMSLogs;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
@@ -121,6 +125,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     RelativeLayout rlGlobalContentMain;
     @BindView(R.id.text_no_records)
     TextView textNoRecords;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
     private String[] requiredPermissions = {Manifest
             .permission.READ_CALL_LOG, Manifest.permission.READ_SMS};
     MaterialDialog permissionConfirmationDialog;
@@ -129,6 +135,11 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     GlobalSearchAdapter globalSearchAdapter;
     LinearLayoutManager mLinearLayoutManager;
     ArrayList<GlobalSearchType> globalSearchTypeArrayListMain;
+    private SyncCallLogAsyncTask syncCallLogAsyncTask;
+    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
+    int count = 0;
+    int maxRecords = 5;
+    int startAt = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +154,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     @Override
     protected void onDestroy() {
         AppConstants.isFromSearchActivity = false;
+        if (syncCallLogAsyncTask != null)
+            syncCallLogAsyncTask.cancel(true);
+        if (syncSmsLogAsyncTask != null)
+            syncSmsLogAsyncTask.cancel(true);
         super.onDestroy();
     }
 
@@ -162,7 +177,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
                     } else {
-                        getCallLogData();
+                        syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                        syncCallLogAsyncTask.execute();
+
                     }
                 }
             }
@@ -175,7 +192,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
                     } else {
-                        getSMSData();
+                        syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                        syncSmsLogAsyncTask.execute();
                     }
                 }
             }
@@ -212,8 +230,11 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         if (logs || sms) {
             requestPermissions(permissions, requestCode);
         } else {
-            getCallLogData();
-            getSMSData();
+            syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+            syncCallLogAsyncTask.execute();
+
+            syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+            syncSmsLogAsyncTask.execute();
         }
     }
 
@@ -244,10 +265,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
         permissionConfirmationDialog = new MaterialDialog(SearchActivity.this, cancelListener);
         permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText("Cancel");
-        permissionConfirmationDialog.setRightButtonText("OK");
-        permissionConfirmationDialog.setDialogBody("Call log permission is required. Do you want " +
-                "to try again?");
+        permissionConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        permissionConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
+        permissionConfirmationDialog.setDialogBody(getString(R.string.call_log_permission));
 
         permissionConfirmationDialog.showDialog();
 
@@ -264,8 +284,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
                         (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     Utils.showSuccessSnackBar(SearchActivity.this, rlSearchRoot,
-                            "Invitation" +
-                                    " sent successfully");
+                            getString(R.string.invitation_sent));
                 } else {
                     if (inviteContactResponse != null) {
                         Log.e("error response", inviteContactResponse.getMessage());
@@ -284,34 +303,72 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 if (globalSearchRecordsResponse != null && StringUtils.endsWithIgnoreCase
                         (globalSearchRecordsResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    ArrayList<GlobalSearchType> globalSearchTypeArrayList = globalSearchRecordsResponse.
+                    final ArrayList<GlobalSearchType> globalSearchTypeArrayList = globalSearchRecordsResponse.
                             getGlobalSearchTypeArrayList();
-
+                    progressBar.setVisibility(View.GONE);
                     if (globalSearchTypeArrayList != null && globalSearchTypeArrayList.size() > 0) {
+                        count = count + 1;
+                        startAt =  startAt + globalSearchTypeArrayList.size();
                         globalSearchTypeArrayListMain.addAll(globalSearchTypeArrayList);
                         recycleViewGlobalContact.setVisibility(View.VISIBLE);
-                        rippleViewMoreGlobalContacts.setVisibility(View.VISIBLE);
+                        if (count > 9)
+                            rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                        else {
+                            rippleViewMoreGlobalContacts.setVisibility(View.VISIBLE);
+                            if (globalSearchAdapter != null) {
+//                                recycleViewGlobalContact.scrollToPosition(globalSearchAdapter.getItemCount() - 1);
+                            }
+                        }
                         rippleViewSearchOnGlobal.setVisibility(View.GONE);
                         textGlobalText.setVisibility(View.GONE);
-                        if(globalSearchCount>0){
-                            globalSearchCount =  globalSearchCount + globalSearchTypeArrayList.size();
-                        }else
-                        {
+                        textNoRecords.setVisibility(View.GONE);
+                        if (globalSearchCount > 0) {
+                            globalSearchCount = globalSearchCount + globalSearchTypeArrayList.size();
+                        } else {
                             globalSearchCount = globalSearchTypeArrayList.size();
                         }
 
-                        textGlobalSearchCount.setText(globalSearchCount+"");
+                        textGlobalSearchCount.setText(globalSearchCount + "");
 
-                        if(globalSearchAdapter == null){
+                        if (globalSearchAdapter == null) {
                             setGlobalSearchAdapter();
-                        }else{
+                        } else {
                             globalSearchAdapter.notifyDataSetChanged();
                         }
 
-                    }else{
-                        recycleViewGlobalContact.setVisibility(View.GONE);
-                        rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                        initSwipeForGlobal();
+
+                    } else {
+                        if(globalSearchTypeArrayListMain != null && globalSearchTypeArrayListMain.size()>0){
+                            if(globalSearchRecordsResponse!=null){
+                                String responseMessage =  globalSearchRecordsResponse.getMessage();
+                                if(!StringUtils.isEmpty(responseMessage)){
+                                    Utils.showSuccessSnackBar(SearchActivity.this, rlSearchRoot,
+                                           responseMessage);
+                                }
+                            }
+
+                        }else{
+                            recycleViewGlobalContact.setVisibility(View.GONE);
+                            rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                            textNoRecords.setVisibility(View.VISIBLE);
+                            textNoRecords.setTypeface(Utils.typefaceRegular(this));
+                        }
+
                     }
+                } else {
+                    if (globalSearchRecordsResponse != null) {
+                        Log.e("error response", globalSearchRecordsResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "uploadContactResponse null");
+                        Utils.showErrorSnackBar(SearchActivity.this, rlSearchRoot,
+                                getString(R
+                                        .string.msg_try_later));
+                    }
+                    progressBar.setVisibility(View.GONE);
+                    rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
+                    textGlobalText.setVisibility(View.VISIBLE);
+
                 }
             }
             //</editor-fold>
@@ -321,10 +378,28 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         }
     }
 
-    private void setGlobalSearchAdapter(){
-        if(globalSearchTypeArrayListMain!=null && globalSearchTypeArrayListMain.size()>0){
-            globalSearchAdapter = new GlobalSearchAdapter(SearchActivity.this,globalSearchTypeArrayListMain);
+    private void setGlobalSearchAdapter() {
+        if (globalSearchTypeArrayListMain != null && globalSearchTypeArrayListMain.size() > 0) {
+            globalSearchAdapter = new GlobalSearchAdapter(SearchActivity.this, globalSearchTypeArrayListMain);
             recycleViewGlobalContact.setAdapter(globalSearchAdapter);
+        }
+    }
+
+    private class SyncCallLogAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            getCallLogData();
+            return null;
+        }
+    }
+
+    private class SyncSmsLogAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            getSMSData();
+            return null;
         }
     }
 
@@ -346,7 +421,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recycleViewPbContact.setLayoutManager(linearLayoutManager);
 
-        globalSearchTypeArrayListMain =  new ArrayList<>();
+        globalSearchTypeArrayListMain = new ArrayList<>();
         mLinearLayoutManager = new LinearLayoutManager(this);
         recycleViewGlobalContact.setLayoutManager(mLinearLayoutManager);
 
@@ -359,7 +434,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
             } else {
-                getCallLogData();
+                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                syncCallLogAsyncTask.execute();
             }
         }
 
@@ -369,9 +445,37 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
             } else {
-                getSMSData();
+                syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                syncSmsLogAsyncTask.execute();
             }
         }
+
+
+        recycleViewGlobalContact.addOnItemTouchListener(new RecyclerItemClickListener(
+                SearchActivity.this, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                String previousId =  "";
+                if(globalSearchTypeArrayListMain!=null && globalSearchTypeArrayListMain.size()>0){
+                    GlobalSearchType globalSearchType =  globalSearchTypeArrayListMain.get(position);
+                    if(globalSearchType!=null){
+                        int isRcpVerified =  globalSearchType.getIsRcpVerified();
+                        String currentId =  globalSearchType.getRcpPmId();
+                        if(isRcpVerified == 1 && !(currentId.equalsIgnoreCase(previousId))){
+                            String publicUrl = globalSearchType.getPublicProfileUrl();
+                            if(!StringUtils.isEmpty(publicUrl)){
+                                previousId =  globalSearchType.getRcpPmId();
+                                Intent intent = new Intent(SearchActivity.this, PublicProfileOfGlobalContactActivity.class);
+                                intent.putExtra(AppConstants.EXTRA_GLOBAL_PUBLIC_PROFILE_URL,publicUrl);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.enter, R.anim.exit);
+                            }
+                        }
+                    }
+                }
+            }
+        }));
+
 
     }
 
@@ -382,6 +486,22 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 if (search.getText().toString().length() > 0) {
                     search.clearFocus();
                     search.setText("");
+                    if(globalSearchAdapter==null && globalSearchTypeArrayListMain.size()<=0){
+                        textNoRecords.setVisibility(View.GONE);
+                        rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
+                        textGlobalText.setVisibility(View.VISIBLE);
+                    }else{
+                        globalSearchTypeArrayListMain = new ArrayList<GlobalSearchType>();
+                        globalSearchAdapter =null;
+                        recycleViewGlobalContact.setVisibility(View.GONE);
+                        rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
+                        textGlobalText.setVisibility(View.VISIBLE);
+                        count =0;
+                        startAt = 0;
+                        globalSearchCount=0;
+                        textGlobalSearchCount.setText("");
+                        rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                    }
                 } else {
                     finish();
                     if (!isTaskRoot()) {
@@ -397,15 +517,29 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         switch (rippleView.getId()) {
             case R.id.ripple_view_search_on_global:
                 String searchQuery = search.getText().toString();
-                if(!StringUtils.isEmpty(searchQuery))
-                    getGlobalDataWebServiceCall(searchQuery);
-            break;
+                if (!StringUtils.isEmpty(searchQuery))
+                {
+                    getGlobalDataWebServiceCall(searchQuery,maxRecords,0);
+                    rippleViewSearchOnGlobal.setVisibility(View.GONE);
+                    textGlobalText.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+                else
+                    Utils.showSuccessSnackBar(SearchActivity.this,rlSearchRoot,getString(R.string.search_query_validation));
+
+                break;
 
             case R.id.ripple_view_more_global_contacts:
                 String searchQuery1 = search.getText().toString();
-                if(!StringUtils.isEmpty(searchQuery1))
-                    getGlobalDataWebServiceCall(searchQuery1);
-            break;
+                if (!StringUtils.isEmpty(searchQuery1)){
+                    getGlobalDataWebServiceCall(searchQuery1,maxRecords,startAt);
+                    rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+                else
+                    Utils.showSuccessSnackBar(SearchActivity.this,rlSearchRoot,getString(R.string.search_query_validation));
+
+                break;
         }
     }
 
@@ -428,6 +562,11 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             public void afterTextChanged(Editable arg0) {
                 // TODO Auto-generated method stub
                 if (arg0.length() > 0) {
+                    if(globalSearchTypeArrayListMain.size()<=0 && globalSearchAdapter==null){
+                        textNoRecords.setVisibility(View.GONE);
+                        rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
+                        textGlobalText.setVisibility(View.VISIBLE);
+                    }
                     Pattern numberPat = Pattern.compile("\\d+");
                     Matcher matcher1 = numberPat.matcher(arg0);
                     if (matcher1.find()) {
@@ -587,6 +726,23 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                     recycleViewPbContact.setAdapter(null);
                     rlTitle.setVisibility(View.GONE);
                     textSearchCount.setText("");
+                    if(globalSearchAdapter == null && globalSearchTypeArrayListMain.size()<=0){
+                        textNoRecords.setVisibility(View.GONE);
+                        rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
+                        textGlobalText.setVisibility(View.VISIBLE);
+                    }else{
+                        globalSearchTypeArrayListMain = new ArrayList<GlobalSearchType>();
+                        globalSearchAdapter =null;
+                        recycleViewGlobalContact.setVisibility(View.GONE);
+                        rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
+                        textGlobalText.setVisibility(View.VISIBLE);
+                        count =0;
+                        startAt = 0;
+                        globalSearchCount=0;
+                        textGlobalSearchCount.setText("");
+                        rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                    }
+
                 }
 
                 initSwipe();
@@ -606,10 +762,12 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         });
     }
 
-    private void getGlobalDataWebServiceCall(String searchQuery) {
+    private void getGlobalDataWebServiceCall(String searchQuery,int maxRecords, int startAt) {
         if (Utils.isNetworkAvailable(this)) {
             WsRequestObject deviceDetailObject = new WsRequestObject();
             deviceDetailObject.setSearchQuery(searchQuery);
+            deviceDetailObject.setSearchStartAt(startAt);
+            deviceDetailObject.setSearchMaxRecord(maxRecords);
             if (Utils.isNetworkAvailable(this)) {
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         deviceDetailObject, null, WsResponseObject.class, WsConstants
@@ -664,6 +822,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
 
                         while (cursor.moveToNext()) {
+
+                            if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.isCancelled())
+                                return;
+
                             CallLogType log = new CallLogType(this);
                             log.setNumber(cursor.getString(number));
                             String userName = cursor.getString(name);
@@ -703,67 +865,67 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     private String getPhoneNumberType(int type) {
         switch (type) {
             case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
-                return "Home";
+                return getString(R.string.type_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
-                return "Mobile";
+                return getString(R.string.type_mobile);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
-                return "Work";
+                return getString(R.string.type_work);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
-                return "Fax Work";
+                return getString(R.string.type_fax_work);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
-                return "Fax Home";
+                return getString(R.string.type_fax_home);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_PAGER:
-                return "Pager";
+                return getString(R.string.type_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
-                return "Other";
+                return getString(R.string.type_other);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK:
-                return "Callback";
+                return getString(R.string.type_callback);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_CAR:
-                return "Car";
+                return getString(R.string.type_car);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
-                return "Company Main";
+                return getString(R.string.type_company_main);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
-                return "ISDN";
+                return getString(R.string.type_isdn);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
-                return "Main";
+                return getString(R.string.type_main);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX:
-                return "Other Fax";
+                return getString(R.string.type_other_fax);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_RADIO:
-                return "Radio";
+                return getString(R.string.type_radio);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TELEX:
-                return "Telex";
+                return getString(R.string.type_telex);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD:
-                return "Tty Tdd";
+                return getString(R.string.type_tty_tdd);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
-                return "Work Mobile";
+                return getString(R.string.type_work_mobile);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER:
-                return "Work Pager";
+                return getString(R.string.type_work_pager);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT:
-                return "Assistant";
+                return getString(R.string.type_assistant);
 
             case ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
-                return "MMS";
+                return getString(R.string.type_mms);
 
         }
-        return "Other";
+        return getString(R.string.type_other);
     }
 
     private String getStarredStatusFromNumber(String phoneNumber) {
@@ -801,7 +963,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     }
 
 
-    private void initSwipe() {
+    private void initSwipeForGlobal() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
                 .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -816,33 +978,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 int position = viewHolder.getAdapterPosition();
                 String numberToSend = "";
                 String actionNumber = "";
-                if (allContactAdapter != null && simpleCallLogListAdapter != null) {
-                    if (allContactAdapter.getSearchCount() == 0) {
-                        if (simpleCallLogListAdapter.getSearchCount() == 0) {
-                            actionNumber = StringUtils.defaultString(((SmsListAdapter
-                                    .SMSViewHolder) viewHolder).textNumber.getText()
-                                    .toString());
-                            Pattern numberPat = Pattern.compile("\\d+");
-                            Matcher matcher1 = numberPat.matcher(actionNumber);
-                            if (matcher1.find()) {
-                                numberToSend = actionNumber;
-                            } else {
-                                numberToSend = getNumberFromName(actionNumber);
-                                if (TextUtils.isEmpty(numberToSend)) {
-                                    numberToSend = actionNumber;
-                                }
-                            }
-                        } else {
-                            numberToSend = StringUtils.defaultString(((SimpleCallLogListAdapter
-                                    .CallLogViewHolder) viewHolder).textTempNumber.getText()
-                                    .toString());
-                        }
-
-                    } else {
-                        numberToSend = StringUtils.defaultString(((AllContactAdapter
-                                .AllContactViewHolder) viewHolder).textContactNumber.getText()
-                                .toString());
-                    }
+                if (globalSearchAdapter != null) {
+                    numberToSend = StringUtils.defaultString(((GlobalSearchAdapter
+                            .GlobalSearchViewHolder) viewHolder).textContactNumber.getText()
+                            .toString());
                 }
 
 
@@ -855,9 +994,168 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                     startActivity(smsIntent);
 
                 } else {
-                    if (allContactAdapter != null && simpleCallLogListAdapter != null) {
+                   showCallConfirmationDialog(numberToSend);
+                }
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        globalSearchAdapter.notifyDataSetChanged();
+                    }
+                }, 1500);
+            }
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                /* Disable swiping in headers */
+                /*if (viewHolder instanceof SimpleCallLogListAdapter.CallLogViewHolder) {
+                    return 0;
+                }*/
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder
+                    viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                Bitmap icon;
+                Paint p = new Paint();
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+                    View itemView = viewHolder.itemView;
+                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                    float width = height / 3;
+
+                    if (dX > 0) {
+                        p.setColor(ContextCompat.getColor(SearchActivity.this, R.color
+                                .darkModerateLimeGreen));
+                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView
+                                .getTop(), dX, (float) itemView.getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable
+                                .ic_action_call);
+                        RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
+                                itemView.getTop() + width, (float) itemView.getLeft() + 2 *
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    } else {
+                        p.setColor(ContextCompat.getColor(SearchActivity.this, R.color.brightOrange));
+                        RectF background = new RectF((float) itemView.getRight() + dX, (float)
+                                itemView.getTop(), (float) itemView.getRight(), (float) itemView
+                                .getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable
+                                .ic_action_sms);
+                        RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width,
+                                (float) itemView.getTop() + width, (float) itemView.getRight() -
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState,
+                        isCurrentlyActive);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recycleViewGlobalContact);
+    }
+
+
+    private void initSwipe() {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
+                .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                String numberToSend = "";
+                String actionNumber = "";
+                try{
+                    int position = viewHolder.getAdapterPosition();
+                    if (allContactAdapter != null ) {
                         if (allContactAdapter.getSearchCount() == 0) {
-                            if (simpleCallLogListAdapter.getSearchCount() == 0) {
+                            if (simpleCallLogListAdapter != null && simpleCallLogListAdapter.getSearchCount() == 0) {
+                                actionNumber = StringUtils.defaultString(((SmsListAdapter
+                                        .SMSViewHolder) viewHolder).textNumber.getText()
+                                        .toString());
+                                Pattern numberPat = Pattern.compile("\\d+");
+                                Matcher matcher1 = numberPat.matcher(actionNumber);
+                                if (matcher1.find()) {
+                                    numberToSend = actionNumber;
+                                } else {
+                                    numberToSend = getNumberFromName(actionNumber);
+                                    if (TextUtils.isEmpty(numberToSend)) {
+                                        numberToSend = actionNumber;
+                                    }
+                                }
+                            } else {
+                                if(smsListAdapter!=null && smsListAdapter.getSearchCount()>0){
+                                    actionNumber = StringUtils.defaultString(((SmsListAdapter
+                                            .SMSViewHolder) viewHolder).textNumber.getText()
+                                            .toString());
+                                    Pattern numberPat = Pattern.compile("\\d+");
+                                    Matcher matcher1 = numberPat.matcher(actionNumber);
+                                    if (matcher1.find()) {
+                                        numberToSend = actionNumber;
+                                    } else {
+                                        numberToSend = getNumberFromName(actionNumber);
+                                        if (TextUtils.isEmpty(numberToSend)) {
+                                            numberToSend = actionNumber;
+                                        }
+                                    }
+                                }else{
+                                    numberToSend = StringUtils.defaultString(((SimpleCallLogListAdapter
+                                            .CallLogViewHolder) viewHolder).textTempNumber.getText()
+                                            .toString());
+                                }
+                            }
+
+                        } else {
+                            if(smsListAdapter!=null && smsListAdapter.getSearchCount()>0){
+                                actionNumber = StringUtils.defaultString(((SmsListAdapter
+                                        .SMSViewHolder) viewHolder).textNumber.getText()
+                                        .toString());
+                                Pattern numberPat = Pattern.compile("\\d+");
+                                Matcher matcher1 = numberPat.matcher(actionNumber);
+                                if (matcher1.find()) {
+                                    numberToSend = actionNumber;
+                                } else {
+                                    numberToSend = getNumberFromName(actionNumber);
+                                    if (TextUtils.isEmpty(numberToSend)) {
+                                        numberToSend = actionNumber;
+                                    }
+                                }
+                            }else{
+                                numberToSend = StringUtils.defaultString(((AllContactAdapter
+                                        .AllContactViewHolder) viewHolder).textContactNumber.getText()
+                                        .toString());
+                            }
+
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+
+                if (direction == ItemTouchHelper.LEFT) {
+                    /* SMS */
+                    Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                    smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                    smsIntent.setType("vnd.android-dir/mms-sms");
+                    smsIntent.setData(Uri.parse("sms:" + numberToSend));
+                    startActivity(smsIntent);
+
+                } else {
+                    if (allContactAdapter != null) {
+                        if (allContactAdapter.getSearchCount() == 0) {
+                            if (simpleCallLogListAdapter != null && simpleCallLogListAdapter.getSearchCount() == 0) {
                                 showCallConfirmationDialog(numberToSend, actionNumber);
                             } else {
                                 showCallConfirmationDialog(numberToSend);
@@ -871,19 +1169,25 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (allContactAdapter != null && simpleCallLogListAdapter != null) {
+                        if (allContactAdapter != null ) {
                             if (allContactAdapter.getSearchCount() == 0) {
-                                if (simpleCallLogListAdapter.getSearchCount() == 0) {
+                                if (simpleCallLogListAdapter != null && simpleCallLogListAdapter.getSearchCount() == 0) {
                                     if (smsListAdapter != null && smsListAdapter.getSearchCount() > 0)
                                         smsListAdapter.notifyDataSetChanged();
                                 } else {
-                                    if (simpleCallLogListAdapter != null && simpleCallLogListAdapter.getSearchCount() > 0) {
+                                    if (smsListAdapter != null && smsListAdapter.getSearchCount() > 0)
+                                        smsListAdapter.notifyDataSetChanged();
+                                    else if (simpleCallLogListAdapter != null
+                                            && simpleCallLogListAdapter.getSearchCount() > 0) {
                                         simpleCallLogListAdapter.notifyDataSetChanged();
                                     }
                                 }
 
                             } else {
-                                allContactAdapter.notifyDataSetChanged();
+                                if (smsListAdapter != null && smsListAdapter.getSearchCount() > 0)
+                                    smsListAdapter.notifyDataSetChanged();
+                                else
+                                    allContactAdapter.notifyDataSetChanged();
                             }
                         }
                     }
@@ -977,11 +1281,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
         callConfirmationDialog = new MaterialDialog(SearchActivity.this, cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + name + "?");
+        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + name + "?");
         callConfirmationDialog.showDialog();
-
     }
 
     private String getNumberFromName(String name) {
@@ -1045,11 +1348,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
         callConfirmationDialog = new MaterialDialog(this, cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
-        callConfirmationDialog.setDialogBody("Call " + number + "?");
+        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + number + "?");
         callConfirmationDialog.showDialog();
-
     }
 
     private void getSMSData() {
@@ -1093,6 +1395,9 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             int type = cursor.getColumnIndexOrThrow(Telephony.Sms.TYPE);
                             int thread_id = cursor.getColumnIndexOrThrow(Telephony.Sms.THREAD_ID);
                             while (cursor.moveToNext()) {
+                                if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask
+                                        .isCancelled())
+                                    return;
                                 SmsDataType smsDataType = new SmsDataType();
                                 String address = cursor.getString(number);
                                 String contactNumber = "";
@@ -1176,11 +1481,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 }
             }
 //            rContactApplication.setArrayListSmsLogType(smsDataTypeArrayList);
-
-        } else {
         }
-
-
     }
 
 
@@ -1210,7 +1511,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             e.printStackTrace();
         }
 
-
         return contactName;
     }
 
@@ -1218,27 +1518,26 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         switch (type) {
 
             case Telephony.Sms.MESSAGE_TYPE_DRAFT:
-                return "Draft";
+                return getString(R.string.msg_draft);
 
             case Telephony.Sms.MESSAGE_TYPE_FAILED:
-                return "Failed";
+                return getString(R.string.msg_failed);
 
             case Telephony.Sms.MESSAGE_TYPE_INBOX:
-                return "Received";
+                return getString(R.string.msg_received);
 
             case Telephony.Sms.MESSAGE_TYPE_OUTBOX:
-                return "Outbox";
+                return getString(R.string.msg_outbox);
 
             case Telephony.Sms.MESSAGE_TYPE_QUEUED:
-                return "Queued";
+                return getString(R.string.msg_queued);
 
             case Telephony.Sms.MESSAGE_TYPE_SENT:
-                return "Sent";
+                return getString(R.string.msg_sent);
 
         }
-        return "Other";
+        return getString(R.string.type_other);
     }
-
 
     private String getPhotoUrlFromNumber(String phoneNumber) {
         String photoThumbUrl = "";

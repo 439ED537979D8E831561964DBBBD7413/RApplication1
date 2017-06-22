@@ -1,4 +1,6 @@
-<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -32,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/description_action_back"
                 android:padding="@dimen/activity_half_horizontal_margin"
-                android:src="@drawable/ic_action_back" />
+                android:src="@drawable/ic_action_back"/>
 
         </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -47,7 +49,7 @@
             android:textColor="@color/colorWhite"
             android:singleLine="true"
             android:ellipsize="end"
-            tools:text="@string/str_title" />
+            tools:text="Title"/>
 
     </RelativeLayout>
 

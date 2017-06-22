@@ -85,7 +85,8 @@ class WebServicePost {
                             (context, AppConstants.PREF_ACCESS_TOKEN, ""));
                 }
                 urlConnection.connect();
-
+                Log.i("SyncService", "access-token" + Utils.getStringPreference
+                        (context, AppConstants.PREF_ACCESS_TOKEN, ""));
                 ObjectWriter writer = getMapper().writer();
 
 
@@ -94,6 +95,7 @@ class WebServicePost {
                      * Json string passed as request
                      */
                     jsonObject = writer.writeValueAsString(request);
+                    Log.i("SyncService", jsonObject);
 //					 FileUtilities utilities = new FileUtilities();
 //					 utilities.write("Filter file", jsonObject);
                 }
@@ -112,7 +114,14 @@ class WebServicePost {
                     inputStream = new BufferedInputStream(urlConnection.getInputStream());
                     String responseString = convertInputStreamToString(inputStream);
                     response = getMapper().readValue(responseString, responseType);
+                    Log.i("MAULIK", "response" + response);
                 } else if (statusCode == HttpsURLConnection.HTTP_BAD_REQUEST) {
+//                    ((Activity) context).runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+////                            Toast.makeText(context, "Bad Request", Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
                     Log.e("Status Code: ", HttpsURLConnection.HTTP_BAD_REQUEST + " : Bad Request " +
                             ": Due to user error");
                     response = null;

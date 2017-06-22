@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,17 +85,17 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
 
         long logDate1 = callLogType.getHistoryDate();
         Date date1 = new Date(logDate1);
-        String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
+        String logDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date1);
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
         Date yesDate;
         yesDate = cal.getTime();
-        String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd").format(yesDate);
+        String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(yesDate);
 
         Calendar c = Calendar.getInstance();
         Date cDate = c.getTime();
-        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cDate);
 
         String finalDate;
         if (logDate.equalsIgnoreCase(currentDate)) {
@@ -102,7 +103,7 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
         } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
             finalDate = "Yesterday";
         } else {
-            finalDate = new SimpleDateFormat("EEE,dd/MM").format(date1);
+            finalDate = new SimpleDateFormat("EEE,dd/MM", Locale.getDefault()).format(date1);
         }
         holder.textHistroyDate.setText(finalDate);
 
@@ -129,7 +130,7 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
         holder.textHistroyDurationValue.setText(duration);
 
         Date historyDate = new Date(callLogType.getHistoryDate());
-        String callTime = new SimpleDateFormat("hh:mm a").format(historyDate);
+        String callTime = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(historyDate);
         holder.textHistroyCallTime.setText(callTime);
 
         holder.checkboxSelectCallHistory.setTag(position);
@@ -151,14 +152,14 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (!arrayListCheckedPositions.contains((Integer) buttonView.getTag())) {
+                    if (!arrayListCheckedPositions.contains(buttonView.getTag())) {
                         arrayListCheckedPositions.add((Integer) buttonView.getTag());
                         arrayListToDelete.add(callLogType);
                         setArrayListToDelete(arrayListToDelete);
                     }
                 } else {
-                    if (arrayListCheckedPositions.contains((Integer) buttonView.getTag())) {
-                        arrayListCheckedPositions.remove((Integer) buttonView.getTag());
+                    if (arrayListCheckedPositions.contains(buttonView.getTag())) {
+                        arrayListCheckedPositions.remove(buttonView.getTag());
                         arrayListToDelete.remove(callLogType);
                         setArrayListToDelete(arrayListToDelete);
 
@@ -166,8 +167,6 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
                 }
             }
         });
-
-
     }
 
     @Override
@@ -207,7 +206,6 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
         callLogViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-
         }
     }
 
@@ -228,10 +226,7 @@ public class DeleteCallLogListAdapter extends RecyclerView.Adapter<DeleteCallLog
         notifyDataSetChanged();
     }
 
-
     public ArrayList<Integer> getArrayListCheckedPositions() {
         return arrayListCheckedPositions;
     }
-
-
 }

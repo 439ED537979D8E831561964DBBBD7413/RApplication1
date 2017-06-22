@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
-    android:background="@drawable/side_nav_bar"
-    android:gravity="bottom"
+    android:background="#EFEFEF"
+    android:gravity="center|bottom"
     android:orientation="horizontal"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
@@ -15,13 +14,15 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:orientation="horizontal">
 
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_launcher"/>
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_launcher" />
 
         <LinearLayout
             android:id="@+id/userInfo"
@@ -37,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:text="Samir Aggarwal"
                 android:textColor="#007564"
-                android:textSize="22sp"/>
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/text_number"
@@ -45,12 +46,13 @@
                 android:layout_height="wrap_content"
                 android:text="+917845963258"
                 android:textColor="#007564"
-                android:textSize="18sp"/>
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:id="@+id/ll_user_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
@@ -59,12 +61,16 @@
                     android:layout_height="wrap_content"
                     android:text="123456"
                     android:textColor="#007564"
-                    android:textSize="18sp"/>
+                    android:textSize="16sp" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_person"/>
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginStart="4dp"
+                    android:src="@drawable/ic_person" />
 
                 <RatingBar
                     android:id="@+id/rating_user"
@@ -74,10 +80,9 @@
                     android:layout_gravity="center"
                     android:isIndicator="true"
                     android:stepSize="1"
-                    tools:rating="5"/>
+                    tools:rating="5" />
 
             </LinearLayout>
-
 
         </LinearLayout>
 

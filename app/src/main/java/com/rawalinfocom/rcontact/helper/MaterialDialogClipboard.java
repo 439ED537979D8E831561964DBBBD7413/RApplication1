@@ -46,7 +46,7 @@ public class MaterialDialogClipboard {
 
         tvDialogTitle.setTypeface(Utils.typefaceBold(context));
         tvDialogBody.setTypeface(Utils.typefaceRegular(context));
-        numberToCopy =  number;
+        numberToCopy = number;
         tvDialogTitle.setText(number);
         tvDialogBody.setText(context.getString(R.string.copy_to_clipboard));
 
@@ -58,10 +58,10 @@ public class MaterialDialogClipboard {
         rippleRow.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
             public void onComplete(RippleView rippleView) {
-                Utils.copyToClipboard(context, "Copied Number", numberToCopy);
+                Utils.copyToClipboard(context, context.getString(R.string.str_copy_number), numberToCopy);
                /* Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
                         .getRelativeRootProfileDetail(), "Number copied to Clipboard");*/
-                Toast.makeText(context,"Number copied to Clipboard",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getString(R.string.str_copy_number_clip_board), Toast.LENGTH_SHORT).show();
                 dismissDialog();
             }
         });

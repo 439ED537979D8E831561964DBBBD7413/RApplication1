@@ -54,11 +54,11 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final int VIEW_TYPE_LOADING = 1;
     private RecyclerView recyclerViewSmsLogs;
 
-    private OnLoadMoreListener onLoadMoreListener;
     private boolean isLoading;
     private boolean isMoreData = false;
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
+    private OnLoadMoreListener onLoadMoreListener;
     ArrayList<String> arrayListForKnownContact;
     ArrayList<SmsDataType> arrayList;
     private int searchCount;
@@ -92,10 +92,10 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.context = context;
 //        this.typeArrayList = SmsListAdapter;
         this.recyclerViewSmsLogs = recyclerView;
-        if(AppConstants.isFromSearchActivity){
+        if (AppConstants.isFromSearchActivity) {
             this.typeArrayList = new ArrayList<>();
             this.typeArrayList.addAll(SmsListAdapter);
-        }else{
+        } else {
             this.typeArrayList = SmsListAdapter;
         }
 
@@ -251,6 +251,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             } else {
                 userViewHolder.icon.setImageResource(R.drawable.home_screen_profile);
             }
+
             userViewHolder.llContent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -264,6 +265,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     intent.putExtra("finishActivityOnSaveCompleted", true);
                     context.startActivity(intent);
 
+//                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", add, null)));
 
                 }
             });
@@ -278,11 +280,13 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     Pattern numberPat = Pattern.compile("\\d+");
                     Matcher matcher1 = numberPat.matcher(address);
                     if (matcher1.find()) {
-                        arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + address, context.getString(R.string.add_to_contact),
+                        arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
+                                        + " " + address, context.getString(R.string.add_to_contact),
                                 context.getString(R.string.add_to_existing_contact),
                                 context.getString(R.string.copy_phone_number) /*,context.getString(R.string.delete)*/));
                     } else {
-                        arrayListForKnownContact = new ArrayList<>(Arrays.asList("Call " + address,
+                        arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
+                                        + " " + address,
                                 context.getString(R.string.copy_phone_number) /*, context.getString(R.string.delete)*/));
                     }
 
@@ -351,7 +355,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (arrayList.get(i) instanceof SmsDataType) {
                         SmsDataType profileData = (SmsDataType) arrayList.get(i);
                         if (!StringUtils.isEmpty(profileData.getAddress())) {
-                            if (StringUtils.containsIgnoreCase(profileData.getAddress(),charText) ) {
+                            if (StringUtils.containsIgnoreCase(profileData.getAddress(), charText)) {
                                 typeArrayList.add(profileData);
                             }
                         }
@@ -360,7 +364,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             }
 
-        }else{
+        } else {
             charText = charText.toLowerCase(Locale.getDefault());
             typeArrayList.clear();
             if (charText.length() == 0) {
@@ -369,10 +373,10 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 for (int i = 0; i < arrayList.size(); i++) {
                     if (arrayList.get(i) instanceof SmsDataType) {
                         SmsDataType profileData = arrayList.get(i);
-                        String address =  profileData.getAddress();
+                        String address = profileData.getAddress();
                         if (!StringUtils.isEmpty(address)) {
 //                            if (address.contains(charText)) {
-                            if (StringUtils.containsIgnoreCase(address,charText)) {
+                            if (StringUtils.containsIgnoreCase(address, charText)) {
                                 typeArrayList.add(profileData);
                             }
                         }
@@ -382,12 +386,10 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         }
 
-        if (typeArrayList.size() > 0)
-        {
+        if (typeArrayList.size() > 0) {
             setTypeArrayList(typeArrayList);
             setSearchCount(typeArrayList.size());
-        }
-        else
+        } else
             setSearchCount(arrayList.size());
 
         notifyDataSetChanged();

@@ -350,7 +350,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 //        holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
 
-        boolean showPineGreen;
+        boolean showPineGreen = false;
 
         String contactDisplayName = "";
         String prefix = profileData.getTempPrefix();
@@ -377,7 +377,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         contactDisplayName = StringUtils.trimToEmpty(contactDisplayName);
 
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
-                "[Unknown]");
+                context.getString(R.string.unknown));
 
          /* Hide Divider if row is last in Section */
         if ((position + 1) < arrayListUserContact.size()) {
@@ -395,8 +395,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 showPineGreen = true;
             } else {
                 holder.textCloudContactName.setVisibility(View.VISIBLE);
-                holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
-                showPineGreen = false;
+                if(!StringUtils.isEmpty(profileData.getTempRcpName())){
+                    holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
+                    showPineGreen = false;
+                }
             }
             holder.rippleInvite.setVisibility(View.GONE);
             holder.relativeRowAllContact.setTag(profileData.getTempRcpId());
@@ -823,12 +825,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void configureFooterViewHolder(ContactFooterViewHolder holder) {
 //        String letter = (String) arrayListUserContact.get(position);
         if (fragment instanceof AllContactsListFragment) {
-            holder.textTotalContacts.setText((arrayListUserContact.size() - arrayListContactHeader
-                    .size() - 2) + " Contacts");
+            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s", arrayListUserContact.size()
+                    - arrayListContactHeader.size() - 2, context.getString(R.string.contacts)));
         } else if (fragment instanceof FavoritesFragment) {
-            holder.textTotalContacts.setText((arrayListUserContact.size() -
-                    arrayListContactHeader
-                            .size()) + " Contacts");
+            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s", arrayListUserContact.size() -
+                    arrayListContactHeader.size(), context.getString(R.string.contacts)));
 
         }
     }
@@ -1124,7 +1125,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
         TextView textSheetHeader = ButterKnife.findById(view, R.id.text_sheet_header);
 
-        textSheetHeader.setText("Social Media");
+        textSheetHeader.setText(context.getString(R.string.social_media));
         textSheetHeader.setTypeface(Utils.typefaceBold(context));
 
         BottomSheetSocialMediaAdapter adapter = new BottomSheetSocialMediaAdapter(context);
@@ -1147,7 +1148,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                      ArrayList<ProfileDataOperationEmail> emailIds) {
 
         final ArrayList<Object> arrayList = new ArrayList<>();
-        arrayList.add("All");
+        arrayList.add(context.getString(R.string.str_all));
         arrayList.addAll(phoneNumbers);
         arrayList.addAll(emailIds);
 
@@ -1166,7 +1167,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
                 .relative_root_dialog_list);
         TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        textDialogTitle.setText("Invite " + contactName);
+        textDialogTitle.setText(String.format(Locale.getDefault(), "%s%s", context.getString(R.string.str_invite),
+                contactName));
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(context));
 
         Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
@@ -1177,7 +1179,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         buttonRight.setTypeface(Utils.typefaceRegular(context));
         buttonRight.setText(R.string.action_cancel);
         buttonLeft.setTypeface(Utils.typefaceRegular(context));
-        buttonLeft.setText("Invite");
+        buttonLeft.setText(context.getString(R.string.str_invite));
 
         rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
@@ -1218,8 +1220,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                     inviteContact(numbers, emails);
                 } else {
-                    Utils.showErrorSnackBar(context, relativeRootDialogList, "Please select at" +
-                            " least one!");
+                    Utils.showErrorSnackBar(context, relativeRootDialogList, context.getString(R.string.please_select_one));
                 }
             }
         });
@@ -1371,14 +1372,14 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         callConfirmationDialog = new MaterialDialog(context, cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText("Cancel");
-        callConfirmationDialog.setRightButtonText("Call");
+        callConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(context.getString(R.string.action_call));
         if (fragment instanceof AllContactsListFragment) {
-            callConfirmationDialog.setDialogBody("Call " + ((AllContactsListFragment) fragment)
-                    .callNumber + "?");
+            callConfirmationDialog.setDialogBody(context.getString(R.string.action_call)
+                    + " " + ((AllContactsListFragment) fragment).callNumber + "?");
         } else if (fragment instanceof FavoritesFragment) {
-            callConfirmationDialog.setDialogBody("Call " + ((FavoritesFragment) fragment)
-                    .callNumber + "?");
+            callConfirmationDialog.setDialogBody(context.getString(R.string.action_call)
+                   +" " + ((FavoritesFragment) fragment).callNumber + "?");
         }
 
         callConfirmationDialog.showDialog();
@@ -1575,6 +1576,4 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     //</editor-fold>
-
-
 }

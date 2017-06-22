@@ -194,7 +194,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 objAddress = (ReverseGeocodingAddress) data;
 
                 if (objAddress == null) {
-                    Utils.showErrorSnackBar(this, relativeRootMap, "No Location Found");
+                    Utils.showErrorSnackBar(this, relativeRootMap, getString(R.string.str_no_location_found));
                 } else {
                     try {
                         if (place != null) {
@@ -224,13 +224,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                                 overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
                             }
                         } else {
-                            Utils.showErrorSnackBar(this, relativeRootMap, "Unable to find " +
-                                    "Location");
+                            Utils.showErrorSnackBar(this, relativeRootMap, getString(R.string.str_unable_location_found));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Utils.showErrorSnackBar(this, relativeRootMap, "Unable to find Location! " +
-                                "Please try again.");
+                        Utils.showErrorSnackBar(this, relativeRootMap, getString(R.string.str_unable_location_found));
 
                     }
                 }
@@ -253,8 +251,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
 
                 } else if (getGoogleLocationResponse.getStatus().equalsIgnoreCase
                         ("OVER_QUERY_LIMIT")) {
-                    Utils.showErrorSnackBar(this, relativeRootMap, "You have exceeded your daily " +
-                            "request quota for this API.");
+                    Utils.showErrorSnackBar(this, relativeRootMap, getString(R.string.str_daily_limit_warning));
                 } else {
                     Log.e(serviceType + "response", "fail");
                 }
@@ -279,7 +276,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                     asyncGeoCodingFetch.execute(null, String.valueOf(latitude), String.valueOf
                             (longitude));
                 } else {
-                    Utils.showErrorSnackBar(this, relativeRootMap, "Please search any location!");
+                    Utils.showErrorSnackBar(this, relativeRootMap, getString(R.string.str_hint_search_location));
                 }
                 break;
 
@@ -397,8 +394,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                             asyncGeoCoding.execute(StringUtils.trim(inputSearchLocation.getText()
                                     .toString()));
                         } else {
-                            Utils.showErrorSnackBar(MapsActivity.this, relativeRootMap, "Please " +
-                                    "add Address to search");
+                            Utils.showErrorSnackBar(MapsActivity.this, relativeRootMap, getString(R.string.str_hint_search_address));
                         }
                     }
                 })
@@ -537,7 +533,5 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                     .msg_no_network));
         }
     }
-
     //</editor-fold>
-
 }
