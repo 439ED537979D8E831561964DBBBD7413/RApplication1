@@ -178,6 +178,11 @@
             android:name=".EnterPasswordActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".PublicProfileOfGlobalContactActivity"
+            android:screenOrientation="portrait" />
+
+
         <!--receiver-->
 
         <receiver android:name=".receivers.OtpReceiver">
@@ -221,10 +226,8 @@
 
         <service
             android:name=".services.CallLogIdFetchService"
-            android:enabled="true"
-            android:exported="true"/>
+            android:enabled="true" />
 
-        <activity android:name=".PublicProfileOfGlobalContactActivity"></activity>
     </application>
 
 </manifest>
