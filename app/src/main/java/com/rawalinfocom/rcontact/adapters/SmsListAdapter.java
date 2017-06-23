@@ -277,14 +277,25 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     setSelectedSmsType(smsDataType);
                     setSelectedPosition(position);
 
-                    Pattern numberPat = Pattern.compile("\\d+");
+                    /*Pattern numberPat = Pattern.compile("\\d+");
                     Matcher matcher1 = numberPat.matcher(address);
                     if (matcher1.find()) {
                         arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
                                         + " " + address, context.getString(R.string.add_to_contact),
                                 context.getString(R.string.add_to_existing_contact),
-                                context.getString(R.string.copy_phone_number) /*,context.getString(R.string.delete)*/));
+                                context.getString(R.string.copy_phone_number) *//*,context.getString(R.string.delete)*//*));
                     } else {
+                        arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
+                                        + " " + address,
+                                context.getString(R.string.copy_phone_number) *//*, context.getString(R.string.delete)*//*));
+                    }*/
+
+                    if(StringUtils.containsOnly(address,"\\d+")){
+                        arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
+                                        + " " + address, context.getString(R.string.add_to_contact),
+                                context.getString(R.string.add_to_existing_contact),
+                                context.getString(R.string.copy_phone_number) /*,context.getString(R.string.delete)*/));
+                    }else{
                         arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
                                         + " " + address,
                                 context.getString(R.string.copy_phone_number) /*, context.getString(R.string.delete)*/));
