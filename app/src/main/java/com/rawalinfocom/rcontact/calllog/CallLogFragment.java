@@ -2460,7 +2460,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private String getNameFromNumber(String phoneNumber) {
         String contactName = "";
         try {
-
             contactName = "";
             ContentResolver contentResolver = getActivity().getContentResolver();
 
