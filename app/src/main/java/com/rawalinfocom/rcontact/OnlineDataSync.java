@@ -49,9 +49,9 @@ public class OnlineDataSync {
         syncOfflineProfileViews();
         if (Utils.getBooleanPreference(context, AppConstants.PREF_CONTACT_SYNCED, false)) {
             if (Utils.getBooleanPreference(context, AppConstants.PREF_CALL_LOG_SYNCED,
-                    true)) {
+                    false)) {
                 if (Utils.getBooleanPreference(context, AppConstants.PREF_SMS_SYNCED,
-                        true)) {
+                        false)) {
                     AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
