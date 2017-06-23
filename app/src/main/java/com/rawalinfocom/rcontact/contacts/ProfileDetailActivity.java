@@ -1787,25 +1787,28 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     imageProfile.setImageResource(R.drawable.home_screen_profile);
                 }
             }
-
-            if (StringUtils.length(cloudContactName) > 0) {
-                textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
-                textName.setText(cloudContactName);
-                linearBasicDetailRating.setVisibility(View.VISIBLE);
-                rippleInvite.setVisibility(View.GONE);
-            } else {
-                if (StringUtils.equalsIgnoreCase(pmId, "-1")) {
-                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
-                            .colorBlack));
-                    linearBasicDetailRating.setVisibility(View.GONE);
-                    rippleInvite.setVisibility(View.VISIBLE);
-                } else {
-                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
-                            .colorAccent));
+            if (Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)) {
+                if (StringUtils.length(cloudContactName) > 0) {
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                    textName.setText(cloudContactName);
                     linearBasicDetailRating.setVisibility(View.VISIBLE);
                     rippleInvite.setVisibility(View.GONE);
+                } else {
+                    if (StringUtils.equalsIgnoreCase(pmId, "-1")) {
+                        textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
+                                .colorBlack));
+                        linearBasicDetailRating.setVisibility(View.GONE);
+                        rippleInvite.setVisibility(View.VISIBLE);
+                    } else {
+                        textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
+                                .colorAccent));
+                        linearBasicDetailRating.setVisibility(View.VISIBLE);
+                        rippleInvite.setVisibility(View.GONE);
+                    }
+                    textName.setVisibility(View.GONE);
                 }
-                textName.setVisibility(View.GONE);
+            } else {
+                rippleInvite.setVisibility(View.GONE);
             }
 
             imageRightCenter.setImageResource(R.drawable.ic_action_share);
