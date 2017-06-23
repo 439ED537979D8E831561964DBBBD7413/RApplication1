@@ -180,8 +180,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             MobileNumber mobileNumber = tableMobileMaster.getOwnVerifiedMobileNumbersFromPmId
                     (getActivity());
 
-            myProfileData.setTempFirstName(userProfile.getPmFirstName());
-            myProfileData.setTempLastName(userProfile.getPmLastName());
+            /*myProfileData.setTempFirstName(userProfile.getPmFirstName());
+            myProfileData.setTempLastName(userProfile.getPmLastName());*/
+            myProfileData.setName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
             myProfileData.setProfileUrl(userProfile.getPmProfileImage());
             myProfileData.setTempNumber(mobileNumber.getMnmMobileNumber());
             myProfileData.setTempIsRcp(true);
