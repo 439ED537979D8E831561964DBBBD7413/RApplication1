@@ -46,6 +46,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.BaseFragment;
+import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.SimpleCallLogListAdapter;
@@ -146,6 +147,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     public static boolean isIdsFetchedFirstTime = false;
     boolean noOfIdsToFetch = false;
     boolean isCallLogFragment = false;
+    private boolean isResumeCalled = false;
 
 //    LoadsCallLogsInBackground loadsCallLogsInBackgroundAsyncTask = new
 // LoadsCallLogsInBackground();
@@ -244,17 +246,17 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     public void onResume() {
         super.onResume();
         try {
-
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-
                     if (AppConstants.isFromReceiver) {
                         AppConstants.isFromReceiver = false;
+                        isResumeCalled = true;
                         final CallLogType callLogType = new CallLogType(getActivity());
                         if (callLogTypeReceiver.getNumber() != null) {
-                            String name = callLogType.findNameByNumber(callLogTypeReceiver.getNumber());
+//                            String name = callLogType.findNameByNumber(callLogTypeReceiver.getNumber());
+                            String name = getNameFromNumber(callLogTypeReceiver.getNumber());
                             if (!TextUtils.isEmpty(name))
                                 callLogTypeReceiver.setName(name);
                             String photoThumbNail = getPhotoUrlFromNumber(callLogTypeReceiver.getNumber());
@@ -447,7 +449,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         registerLocalbroadcast();
     }
 
@@ -457,6 +458,17 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         super.onPause();
         isFirstTime = false;
         AppConstants.isFromReceiver = false;
+        //23/06/2017 for Misbehaviour of call-log (like all call-logs not displaying,
+        // repeated call-logs displaying, etc.
+        isIdsFetchedFirstTime = false;
+        isFirstChuck =  false;
+        logsDisplayed =0;
+        isLastRecord =  false;
+        noOfIdsToFetch =  false;
+        Utils.setBooleanPreference(getActivity(), AppConstants
+                .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
+        rContactApplication.setArrayListCallLogType(null);
+        arrayListCallLogs  = new ArrayList<>();
 
         LocalBroadcastManager localBroadcastManagerTabChange = LocalBroadcastManager.getInstance
                 (getActivity());
@@ -784,6 +796,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 .ACTION_LOCAL_BROADCAST_PROFILE_BLOCK);
         localBroadcastManagerBlock.registerReceiver(localBroadcastReceiverBlock, intentFilter4);
 
+        LocalBroadcastManager localBroadcastManagerReceiveRecentCalls =  LocalBroadcastManager.getInstance
+                (getActivity());
+        IntentFilter intentFilter5 = new IntentFilter(AppConstants
+                .ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_CALLS);
+        localBroadcastManagerReceiveRecentCalls.registerReceiver
+                (localBroadcastReceiverRecentCalls, intentFilter5);
+
 
     }
 
@@ -804,6 +823,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         LocalBroadcastManager localBroadcastManagerProfileBlock = LocalBroadcastManager
                 .getInstance(getActivity());
         localBroadcastManagerProfileBlock.unregisterReceiver(localBroadcastReceiverBlock);
+
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiverRecentCalls);
+
 
         /*LocalBroadcastManager localBroadcastManagerReceiveRecentCalls = LocalBroadcastManager
                 .getInstance(getActivity());
@@ -2435,6 +2457,37 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         return listNumber;
     }
 
+    private String getNameFromNumber(String phoneNumber) {
+        String contactName = "";
+        try {
+
+            contactName = "";
+            ContentResolver contentResolver = getActivity().getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return contactName;
+    }
+
+
     //</editor-fold>
 
     //<editor-fold desc="Local Broadcast Receivers">
@@ -2858,6 +2911,97 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         }
     };
+
+    private BroadcastReceiver localBroadcastReceiverRecentCalls = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+            try {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(isResumeCalled){
+                            isResumeCalled = false;
+                            return;
+                        }else{
+                            if(AppConstants.isFromReceiver){
+                                AppConstants.isFromReceiver = false;
+                                final CallLogType callLogType = new CallLogType(getActivity());
+                                if (callLogTypeReceiver.getNumber() != null) {
+//                                    String name = callLogType.findNameByNumber(callLogTypeReceiver.getNumber());
+                                    String name =  getNameFromNumber(callLogTypeReceiver.getNumber());
+                                    if (!TextUtils.isEmpty(name))
+                                        callLogTypeReceiver.setName(name);
+                                    String photoThumbNail = getPhotoUrlFromNumber(callLogTypeReceiver.getNumber());
+                                    if (!TextUtils.isEmpty(photoThumbNail)) {
+                                        callLogTypeReceiver.setProfileImage(photoThumbNail);
+                                    } else {
+                                        callLogTypeReceiver.setProfileImage("");
+                                    }
+                                    final ArrayList<CallLogType> arrayListHistroy = callLogHistory
+                                            (callLogTypeReceiver.getNumber());
+                                    callLogTypeReceiver.setArrayListCallHistory(arrayListHistroy);
+                                    String receiverDate = "Today";
+                                    PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(getActivity());
+                                    Cursor cursor = phoneBookCallLogs.getAllCallLogId();
+                                    String id = "";
+                                    if (cursor != null) {
+                                        int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
+                                        while (cursor.moveToFirst()) {
+                                            id = cursor.getString(rowId);
+                                            callLogTypeReceiver.setUniqueContactId(id);
+                                            String uniquePhoneBookId = getStarredStatusFromNumber(callLogTypeReceiver
+                                                    .getNumber());
+                                            if (!TextUtils.isEmpty(uniquePhoneBookId))
+                                                callLogTypeReceiver.setLocalPbRowId(uniquePhoneBookId);
+                                            else
+                                                callLogTypeReceiver.setLocalPbRowId(" ");
+
+                                            Date dateFromReceiver1 = callLogTypeReceiver.getCallReceiverDate();
+                                            if (dateFromReceiver1 != null) {
+                                                long dateFromReceiver = dateFromReceiver1.getTime();
+                                                callLogTypeReceiver.setDate(dateFromReceiver);
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    if (!TextUtils.isEmpty(id)) {
+                                        listOfIds.add(0, id);
+                                        Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOGS_ID_SET,
+                                                listOfIds);
+                                    }
+                                    arrayListCallLogs.add(0, callLogTypeReceiver);
+                                    rContactApplication.setArrayListCallLogType(arrayListCallLogs);
+                                    tempList.add(0, callLogTypeReceiver);
+                                    if (simpleCallLogListAdapter != null)
+                                        simpleCallLogListAdapter.notifyItemInserted(0);
+                                    else {
+                                        setSimpleListAdapter();
+                                    }
+                                    recyclerCallLogs.scrollToPosition(0);
+                                    ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
+                                    callLogTypeArrayList.add(callLogTypeReceiver);
+                                    if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED,
+                                            false) &&
+                                            Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED,
+                                                    false)) {
+                                        if (!TextUtils.isEmpty(callLogTypeReceiver.getNumber()))
+                                            insertServiceCall(callLogTypeArrayList);
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }, 2500);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
 
     //</editor-fold>
 
