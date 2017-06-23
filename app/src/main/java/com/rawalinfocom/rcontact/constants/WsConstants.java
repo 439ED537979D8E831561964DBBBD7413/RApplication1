@@ -51,7 +51,7 @@ public class WsConstants {
     // Web Server
     //public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
 
-    // QA Server
+    // Staging Env
     //public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
 
     // QA Server
