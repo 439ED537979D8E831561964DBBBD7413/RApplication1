@@ -4,10 +4,13 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
+import com.crashlytics.android.Crashlytics;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 
 import java.util.ArrayList;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by Monal on 20/10/16.
@@ -65,12 +68,10 @@ public class RContactApplication extends Application {
         mInstance = this;
 
 //         Fabric Initialization
-//        Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
 
         arrayListAllPhoneBookContacts = new ArrayList<>();
 //        arrayListAllContactHeaders = new ArrayList<>();
-        arrayListFavPhoneBookContacts = new ArrayList<>();
-//        arrayListFavContactHeaders = new ArrayList<>();
 
 //        arrayListcallLogsHeaders = new ArrayList<>();
         arrayListObjectCallLogs = new ArrayList<>();

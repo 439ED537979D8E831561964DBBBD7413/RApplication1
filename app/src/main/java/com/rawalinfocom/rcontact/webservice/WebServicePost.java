@@ -114,7 +114,6 @@ class WebServicePost {
                     inputStream = new BufferedInputStream(urlConnection.getInputStream());
                     String responseString = convertInputStreamToString(inputStream);
                     response = getMapper().readValue(responseString, responseType);
-                    Log.i("MAULIK", "response" + response);
                 } else if (statusCode == HttpsURLConnection.HTTP_BAD_REQUEST) {
 //                    ((Activity) context).runOnUiThread(new Runnable() {
 //                        @Override
