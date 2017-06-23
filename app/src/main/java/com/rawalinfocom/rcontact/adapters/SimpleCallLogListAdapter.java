@@ -28,6 +28,8 @@ import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransforma
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.ProfileData;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -362,19 +364,32 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
                 } else {
                     if (!TextUtils.isEmpty(name)) {
-                        Pattern numberPat = Pattern.compile("\\d+");
+                        /*Pattern numberPat = Pattern.compile("\\d+");
                         Matcher matcher1 = numberPat.matcher(name);
                         if (matcher1.find()) {
                             arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)+
                                             " " + name, context.getString(R.string.add_to_contact),
                                     context.getString(R.string.add_to_existing_contact)
                                     , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
-                                    context.getString(R.string.copy_phone_number)/*,context.getString(R.string.call_reminder), context.getString(R.string.block)*/));
+                                    context.getString(R.string.copy_phone_number)*//*,context.getString(R.string.call_reminder), context.getString(R.string.block)*//*));
                         } else {
                             arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)+
                                             " " + name, context.getString(R.string.send_sms),
-                                    context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number)/*,
-                                    context.getString(R.string.call_reminder), context.getString(R.string.block)*/));
+                                    context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number)*//*,
+                                    context.getString(R.string.call_reminder), context.getString(R.string.block)*//*));
+                        }*/
+                        if(StringUtils.containsOnly(name,"\\d+")){
+                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)+
+                                            " " + name, context.getString(R.string.add_to_contact),
+                                    context.getString(R.string.add_to_existing_contact)
+                                    , context.getString(R.string.send_sms), context.getString(R.string.remove_from_call_log),
+                                    context.getString(R.string.copy_phone_number)/*,context.getString(R.string.call_reminder), context.getString(R.string.block)*/));
+
+                        }else{
+                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)+
+                                            " " + name, context.getString(R.string.send_sms),
+                                    context.getString(R.string.remove_from_call_log), context.getString(R.string.copy_phone_number)
+                                    /*context.getString(R.string.call_reminder), context.getString(R.string.block)*/));
                         }
 
                         materialListDialog = new MaterialListDialog(context, arrayListForKnownContact, number, date, name, uniqueRowID, "");
