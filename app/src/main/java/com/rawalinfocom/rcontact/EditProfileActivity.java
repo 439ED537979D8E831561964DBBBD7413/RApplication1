@@ -346,6 +346,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     MaterialDialog backConfirmationDialog;
 
     ColorStateList defaultMarkerColor;
+    boolean isAddressModified = false;
 
     //<editor-fold desc="Override Methods">
 
@@ -1331,6 +1332,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         @Override
         public void afterTextChanged(Editable editable) {
             textImageMapMarker.setTextColor(defaultMarkerColor);
+            isAddressModified = true;
+            isUpdated = true;
         }
     };
 
@@ -2155,12 +2158,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             for (int i = 0; i < arrayListAddressObject.size(); i++) {
                 addAddressView(arrayListAddressObject.get(i), i);
             }
-            inputCountry.addTextChangedListener(valueTextWatcher);
+           /* inputCountry.addTextChangedListener(valueTextWatcher);
             inputState.addTextChangedListener(valueTextWatcher);
             inputCity.addTextChangedListener(valueTextWatcher);
             inputStreet.addTextChangedListener(valueTextWatcher);
             inputNeighborhood.addTextChangedListener(valueTextWatcher);
-            inputPinCode.addTextChangedListener(valueTextWatcher);
+            inputPinCode.addTextChangedListener(valueTextWatcher);*/
+            inputCountry.addTextChangedListener(addressTextWatcher);
+            inputState.addTextChangedListener(addressTextWatcher);
+            inputCity.addTextChangedListener(addressTextWatcher);
+            inputStreet.addTextChangedListener(addressTextWatcher);
+            inputNeighborhood.addTextChangedListener(addressTextWatcher);
+            inputPinCode.addTextChangedListener(addressTextWatcher);
         } else {
             addAddressView(null, 0);
         }
@@ -2667,11 +2676,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         defaultMarkerColor = textImageMapMarker.getTextColors();
 
-        inputCountry.addTextChangedListener(addressTextWatcher);
+       /* inputCountry.addTextChangedListener(addressTextWatcher);
         inputState.addTextChangedListener(addressTextWatcher);
         inputCity.addTextChangedListener(addressTextWatcher);
         inputStreet.addTextChangedListener(addressTextWatcher);
-        inputPinCode.addTextChangedListener(addressTextWatcher);
+        inputNeighborhood.addTextChangedListener(addressTextWatcher);
+        inputPinCode.addTextChangedListener(addressTextWatcher);*/
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, R.layout
                 .list_item_spinner, getResources().getStringArray(R.array.types_email_address));
@@ -2763,11 +2773,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     intent.putExtra(AppConstants.EXTRA_LATITUDE, mapLatitude);
                     intent.putExtra(AppConstants.EXTRA_LONGITUDE, mapLongitude);*/
 
-                      /*  intent.putExtra(AppConstants.EXTRA_LATITUDE, Double.parseDouble
-                      (StringUtils
-                                .defaultIfEmpty(textLatitude.getText().toString(), "0")));
-                        intent.putExtra(AppConstants.EXTRA_LONGITUDE, Double.parseDouble(StringUtils
-                                .defaultIfEmpty(textLongitude.getText().toString(), "0")));*/
+                        if (!isAddressModified) {
+                            intent.putExtra(AppConstants.EXTRA_LATITUDE, Double.parseDouble
+                                    (StringUtils.defaultIfEmpty(textLatitude.getText().toString(),
+                                            "0")));
+                            intent.putExtra(AppConstants.EXTRA_LONGITUDE, Double.parseDouble
+                                    (StringUtils.defaultIfEmpty(textLongitude.getText().toString(),
+                                            "0")));
+                        }
                         String formattedAddress = Utils.setFormattedAddress(streetName,
                                 neighborhoodName, cityName, stateName, countryName, pinCodeName);
                         if (StringUtils.length(formattedAddress) > 0) {
