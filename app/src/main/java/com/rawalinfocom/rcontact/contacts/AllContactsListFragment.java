@@ -997,10 +997,21 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         instanceof AllContactAdapter.ContactFooterViewHolder) {
                     return 0;
                 }
-                 /* Disable swiping in multiple RC case */
+
                 if (viewHolder instanceof AllContactAdapter.AllContactViewHolder) {
+                    /* Disable swiping in multiple RC case */
                     if (((AllContactAdapter.AllContactViewHolder) viewHolder)
                             .recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
+                        return 0;
+                    }
+                    /* Disable swiping for My Profile */
+                    if (Integer.parseInt(((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .textContactName.getTag().toString()) == 1) {
+                        return 0;
+                    }
+                    /* Disable swiping for No number */
+                    if (StringUtils.length(((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .textContactNumber.getText().toString()) <= 0) {
                         return 0;
                     }
                 }

@@ -182,7 +182,6 @@
             android:name=".PublicProfileOfGlobalContactActivity"
             android:screenOrientation="portrait" />
 
-
         <!--receiver-->
 
         <receiver android:name=".receivers.OtpReceiver">
@@ -229,5 +228,4 @@
             android:enabled="true" />
 
     </application>
-
 </manifest>
