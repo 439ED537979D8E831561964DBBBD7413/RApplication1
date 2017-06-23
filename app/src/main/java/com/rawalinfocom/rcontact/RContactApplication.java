@@ -72,8 +72,6 @@ public class RContactApplication extends Application {
 
         arrayListAllPhoneBookContacts = new ArrayList<>();
 //        arrayListAllContactHeaders = new ArrayList<>();
-        arrayListFavPhoneBookContacts = new ArrayList<>();
-//        arrayListFavContactHeaders = new ArrayList<>();
 
 //        arrayListcallLogsHeaders = new ArrayList<>();
         arrayListObjectCallLogs = new ArrayList<>();

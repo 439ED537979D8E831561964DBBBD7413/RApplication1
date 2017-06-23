@@ -63,8 +63,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 }
 
                 onCallStateChanged(context, state, number);
-
-
             }
 
         } catch (Exception e) {

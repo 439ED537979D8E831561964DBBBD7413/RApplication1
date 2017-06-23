@@ -62,8 +62,6 @@ public class OnlineDataSync {
                 }
             }
         }
-
-
     }
 
     private void syncOfflineProfileViews() {
