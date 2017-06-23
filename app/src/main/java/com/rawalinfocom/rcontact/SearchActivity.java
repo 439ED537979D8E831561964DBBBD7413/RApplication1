@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
 import com.rawalinfocom.rcontact.adapters.GlobalSearchAdapter;
@@ -50,6 +51,7 @@ import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.PhoneBookSMSLogs;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.MaterialListDialog;
 import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -63,6 +65,7 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -140,6 +143,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     int count = 0;
     int maxRecords = 5;
     int startAt = 0;
+    GlobalSearchType globalSearchType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -454,24 +458,79 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         recycleViewGlobalContact.addOnItemTouchListener(new RecyclerItemClickListener(
                 SearchActivity.this, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position) {
-                String previousId =  "";
-                if(globalSearchTypeArrayListMain!=null && globalSearchTypeArrayListMain.size()>0){
-                    GlobalSearchType globalSearchType =  globalSearchTypeArrayListMain.get(position);
-                    if(globalSearchType!=null){
-                        int isRcpVerified =  globalSearchType.getIsRcpVerified();
-                        String currentId =  globalSearchType.getRcpPmId();
-                        if(isRcpVerified == 1 && !(currentId.equalsIgnoreCase(previousId))){
-                            String publicUrl = globalSearchType.getPublicProfileUrl();
-                            if(!StringUtils.isEmpty(publicUrl)){
-                                previousId =  globalSearchType.getRcpPmId();
-                                Intent intent = new Intent(SearchActivity.this, PublicProfileOfGlobalContactActivity.class);
-                                intent.putExtra(AppConstants.EXTRA_GLOBAL_PUBLIC_PROFILE_URL,publicUrl);
-                                startActivity(intent);
-                                overridePendingTransition(R.anim.enter, R.anim.exit);
+            public void onItemClick(final View view, final int position) {
+                if(view != null){
+                    if(globalSearchTypeArrayListMain!=null && globalSearchTypeArrayListMain.size()>0)
+                         globalSearchType = globalSearchTypeArrayListMain.get(position);
+
+                    view.findViewById(R.id.image_3dots_call_log).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(globalSearchTypeArrayListMain!=null && globalSearchTypeArrayListMain.size()>0) {
+//                                GlobalSearchType globalSearchType = globalSearchTypeArrayListMain.get(position);
+                                String formattedNumber = globalSearchType.getMobileNumber();
+                                String nameToPass = "";
+                                String firstName =  globalSearchType.getFirstName();
+                                String lastName = globalSearchType.getLastName();
+                                if(!StringUtils.isEmpty(firstName) && !StringUtils.isEmpty(lastName)){
+                                    nameToPass = firstName +" "+ lastName;
+                                }else if(!StringUtils.isEmpty(firstName) && StringUtils.isEmpty(lastName)){
+                                    nameToPass =  firstName;
+                                }else if(StringUtils.isEmpty(firstName) && !StringUtils.isEmpty(lastName)){
+                                    nameToPass = lastName;
+                                }else {
+                                    nameToPass = "";
+                                }
+
+                                if(!StringUtils.isEmpty(formattedNumber)){
+                                    String subString =  StringUtils.substring(formattedNumber,0,2);
+                                    if(subString.equalsIgnoreCase("91")){
+                                        formattedNumber =  "+" + formattedNumber;
+                                    }
+                                    ArrayList<String>arrayListForUnknownContact = new ArrayList<>(Arrays.asList("Call " + formattedNumber,
+                                            getString(R.string.add_to_contact),
+                                            getString(R.string.add_to_existing_contact),
+                                            getString(R.string.send_sms),
+                                            getString(R.string.copy_phone_number)));
+
+                                    MaterialListDialog materialListDialog = new MaterialListDialog(SearchActivity.this,
+                                            arrayListForUnknownContact,
+                                            formattedNumber, 0, nameToPass, "", "");
+                                    if(!StringUtils.isEmpty(nameToPass))
+                                        materialListDialog.setDialogTitle(nameToPass);
+                                    else{
+                                        materialListDialog.setDialogTitle(formattedNumber);
+                                    }
+                                    materialListDialog.showDialog();
+                                }
+                            }
+
+                        }
+                    });
+
+                    view.findViewById(R.id.relative_row_main).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String previousId =  "";
+                            if(globalSearchTypeArrayListMain!=null && globalSearchTypeArrayListMain.size()>0){
+//                                GlobalSearchType globalSearchType =  globalSearchTypeArrayListMain.get(position);
+                                if(globalSearchType!=null){
+                                    int isRcpVerified =  globalSearchType.getIsRcpVerified();
+                                    String currentId =  globalSearchType.getRcpPmId();
+                                    if(isRcpVerified == 1 && !(currentId.equalsIgnoreCase(previousId))){
+                                        String publicUrl = globalSearchType.getPublicProfileUrl();
+                                        if(!StringUtils.isEmpty(publicUrl)){
+                                            previousId =  globalSearchType.getRcpPmId();
+                                            Intent intent = new Intent(SearchActivity.this, PublicProfileOfGlobalContactActivity.class);
+                                            intent.putExtra(AppConstants.EXTRA_GLOBAL_PUBLIC_PROFILE_URL,publicUrl);
+                                            startActivity(intent);
+                                            overridePendingTransition(R.anim.enter, R.anim.exit);
+                                        }
+                                    }
+                                }
                             }
                         }
-                    }
+                    });
                 }
             }
         }));
