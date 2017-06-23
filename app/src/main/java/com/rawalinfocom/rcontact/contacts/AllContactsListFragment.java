@@ -389,7 +389,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-       // Log.i("MAULIK-->", "on xreate loader" + System.currentTimeMillis());
+        // Log.i("MAULIK-->", "on xreate loader" + System.currentTimeMillis());
 //        allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
 //        recyclerViewContactList.setAdapter(allContactListAdapter);
         Set<String> set = new HashSet<>();
@@ -492,7 +492,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
      */
     public void setRecyclerViewLayoutManager() {
 
-         allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
+        allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);
         rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
         getRcpDetail();
@@ -1537,15 +1537,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     public class SyncingTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            syncContacts();
-            return null;
-        }
-    }
-
-    public class ContactDisplayTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
