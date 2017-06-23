@@ -395,7 +395,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 showPineGreen = true;
             } else {
                 holder.textCloudContactName.setVisibility(View.VISIBLE);
-                if(!StringUtils.isEmpty(profileData.getTempRcpName())){
+                if (!StringUtils.isEmpty(profileData.getTempRcpName())) {
                     holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
                     showPineGreen = false;
                 }
@@ -820,8 +820,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void configureFooterViewHolder(ContactFooterViewHolder holder) {
 //        String letter = (String) arrayListUserContact.get(position);
         if (fragment instanceof AllContactsListFragment) {
-            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s", arrayListUserContact.size()
-                    - arrayListContactHeader.size() - 2, context.getString(R.string.contacts)));
+            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s", arrayListUserContact.size() - 3, context.getString(R.string.contacts)));
         } else if (fragment instanceof FavoritesFragment) {
             holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s", arrayListUserContact.size() -
                     arrayListContactHeader.size(), context.getString(R.string.contacts)));
