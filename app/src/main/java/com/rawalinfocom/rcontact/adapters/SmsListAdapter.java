@@ -306,6 +306,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     smsMenuOptionsDialog.setDialogTitle(address);
                     smsMenuOptionsDialog.showDialog();
 
+
                 }
             });
 
