@@ -131,10 +131,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Utils.copyToClipboard(context, context.getString(R.string.str_copy_number), ((TextView) view).getText()
+                Utils.copyToClipboard(context, context.getString(R.string.str_copy_number), (
+                        (TextView) view).getText()
                         .toString());
                 Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
-                        .getRelativeRootProfileDetail(), context.getString(R.string.str_copy_number_clip_board));
+                        .getRelativeRootProfileDetail(), context.getString(R.string
+                        .str_copy_number_clip_board));
                 return false;
             }
         });
@@ -213,17 +215,20 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public void onClick(View view) {
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
                         holder.getTextMain(isOwnProfile).getText()));
-                context.startActivity(Intent.createChooser(emailIntent, context.getString(R.string.str_send_email)));
+                context.startActivity(Intent.createChooser(emailIntent, context.getString(R
+                        .string.str_send_email)));
             }
         });
 
         holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Utils.copyToClipboard(context, context.getString(R.string.str_copy_email), ((TextView) view).getText()
+                Utils.copyToClipboard(context, context.getString(R.string.str_copy_email), (
+                        (TextView) view).getText()
                         .toString());
                 Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
-                        .getRelativeRootProfileDetail(),context.getString(R.string.str_copy_email_clip_board));
+                        .getRelativeRootProfileDetail(), context.getString(R.string
+                        .str_copy_email_clip_board));
                 return false;
             }
         });
@@ -323,10 +328,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Utils.copyToClipboard(context, context.getString(R.string.str_copy_website), ((TextView) view).getText()
+                Utils.copyToClipboard(context, context.getString(R.string.str_copy_website), (
+                        (TextView) view).getText()
                         .toString());
                 Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
-                        .getRelativeRootProfileDetail(), context.getString(R.string.str_copy_website_clip_board));
+                        .getRelativeRootProfileDetail(), context.getString(R.string
+                        .str_copy_website_clip_board));
                 return false;
             }
         });
@@ -352,20 +359,43 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.imageView1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_VIEW,
+                /*Intent intent = new Intent(Intent.ACTION_VIEW,
                         Uri.parse("google.navigation:q=" + holder.getTextMain(isOwnProfile)
                                 .getText()));
-                context.startActivity(intent);
+                context.startActivity(intent);*/
+                if (address.getGoogleLatLong() != null) {
+                    ArrayList<String> arrayListLatLong = new ArrayList<>();
+                    arrayListLatLong.addAll(address.getGoogleLatLong());
+                    String latitude = arrayListLatLong.get(1);
+                    String longitude = arrayListLatLong.get(0);
+                   /* Uri gmmIntentUri = Uri.parse("geo:" + latitude + "," + longitude);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+                        context.startActivity(mapIntent);
+                    }*/
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("google.navigation:q=" + latitude + "," + longitude));
+                    context.startActivity(intent);
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("google.navigation:q=" + holder.getTextMain(isOwnProfile)
+                                    .getText()));
+                    context.startActivity(intent);
+                }
+
             }
         });
 
         holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Utils.copyToClipboard(context, context.getString(R.string.str_copy_address), ((TextView) view).getText()
+                Utils.copyToClipboard(context, context.getString(R.string.str_copy_address), (
+                        (TextView) view).getText()
                         .toString());
                 Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
-                        .getRelativeRootProfileDetail(), context.getString(R.string.str_copy_address_clip_board));
+                        .getRelativeRootProfileDetail(), context.getString(R.string
+                        .str_copy_address_clip_board));
                 return false;
             }
         });

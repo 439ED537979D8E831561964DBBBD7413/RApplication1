@@ -1039,142 +1039,151 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
             // <editor-fold desc="button_address_update">
             case R.id.button_address_update:
-                if (!isAddressModified) {
-                    ArrayList<ProfileDataOperationAddress> arrayListNewAddress = new ArrayList<>();
-                    isValid = true;
-                    for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
-                        ProfileDataOperationAddress address = new ProfileDataOperationAddress();
-                        View linearAddress = linearAddressDetails.getChildAt(i);
-                        Spinner addressType = (Spinner) linearAddress.findViewById(R.id
-                                .spinner_type);
+//                if (!isAddressModified) {
+                ArrayList<ProfileDataOperationAddress> arrayListNewAddress = new ArrayList<>();
+                isValid = true;
+                for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
+                    ProfileDataOperationAddress address = new ProfileDataOperationAddress();
+                    View linearAddress = linearAddressDetails.getChildAt(i);
+                    Spinner addressType = (Spinner) linearAddress.findViewById(R.id
+                            .spinner_type);
 
-                        EditText country = (EditText) linearAddress.findViewById(R.id
-                                .input_country);
-                        EditText state = (EditText) linearAddress.findViewById(R.id.input_state);
-                        EditText city = (EditText) linearAddress.findViewById(R.id.input_city);
-                        EditText street = (EditText) linearAddress.findViewById(R.id.input_street);
-                        EditText neighborhood = (EditText) linearAddress.findViewById(R.id
-                                .input_neighborhood);
-                        EditText pinCode = (EditText) linearAddress.findViewById(R.id
-                                .input_pin_code);
-                        RelativeLayout relativeRowEditProfile = (RelativeLayout) linearAddress
-                                .findViewById(R.id.relative_row_edit_profile);
-                        TextView textLatitude = (TextView) linearAddress.findViewById(R.id
-                                .input_latitude);
-                        TextView textLongitude = (TextView) linearAddress.findViewById(R.id
-                                .input_longitude);
-                        TextView textGoogleAddress = (TextView) linearAddress.findViewById(R.id
-                                .input_google_address);
-                        TextView textIsPublic = (TextView) linearAddress.findViewById(R.id
-                                .text_is_public);
+                    EditText country = (EditText) linearAddress.findViewById(R.id
+                            .input_country);
+                    EditText state = (EditText) linearAddress.findViewById(R.id.input_state);
+                    EditText city = (EditText) linearAddress.findViewById(R.id.input_city);
+                    EditText street = (EditText) linearAddress.findViewById(R.id.input_street);
+                    EditText neighborhood = (EditText) linearAddress.findViewById(R.id
+                            .input_neighborhood);
+                    EditText pinCode = (EditText) linearAddress.findViewById(R.id
+                            .input_pin_code);
+                    RelativeLayout relativeRowEditProfile = (RelativeLayout) linearAddress
+                            .findViewById(R.id.relative_row_edit_profile);
+                    TextView textLatitude = (TextView) linearAddress.findViewById(R.id
+                            .input_latitude);
+                    TextView textLongitude = (TextView) linearAddress.findViewById(R.id
+                            .input_longitude);
+                    TextView textGoogleAddress = (TextView) linearAddress.findViewById(R.id
+                            .input_google_address);
+                    TextView textIsPublic = (TextView) linearAddress.findViewById(R.id
+                            .text_is_public);
 
-                        String countryName = country.getText().toString();
-                        String stateName = state.getText().toString();
-                        String cityName = city.getText().toString();
-                        String streetName = street.getText().toString();
-                        String neighborhoodName = neighborhood.getText().toString();
-                        String pinCodeName = pinCode.getText().toString();
+                    String countryName = country.getText().toString();
+                    String stateName = state.getText().toString();
+                    String cityName = city.getText().toString();
+                    String streetName = street.getText().toString();
+                    String neighborhoodName = neighborhood.getText().toString();
+                    String pinCodeName = pinCode.getText().toString();
 
-                        address.setCountry(countryName);
-                        address.setState(stateName);
-                        address.setCity(cityName);
-                        address.setStreet(streetName);
-                        address.setNeighborhood(neighborhoodName);
-                        address.setPostCode(pinCodeName);
-                        address.setFormattedAddress(Utils.setFormattedAddress(streetName,
-                                neighborhoodName, cityName, stateName, countryName, pinCodeName));
-                        address.setAddressType((String) addressType.getSelectedItem());
-                        address.setGoogleAddress(textGoogleAddress.getText().toString());
-                        ArrayList<String> arrayListLatLong = new ArrayList<>();
-                        arrayListLatLong.add(textLongitude.getText().toString());
-                        arrayListLatLong.add(textLatitude.getText().toString());
-                        address.setGoogleLatLong(arrayListLatLong);
-                        address.setAddId((String) relativeRowEditProfile.getTag());
-                        if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
-                            address.setAddPublic(Integer.parseInt(textIsPublic.getText().toString
-                                    ()));
-                        } else {
-                            address.setAddPublic(IntegerConstants.PRIVACY_MY_CONTACT);
-                        }
+                    address.setCountry(countryName);
+                    address.setState(stateName);
+                    address.setCity(cityName);
+                    address.setStreet(streetName);
+                    address.setNeighborhood(neighborhoodName);
+                    address.setPostCode(pinCodeName);
+                    address.setFormattedAddress(Utils.setFormattedAddress(streetName,
+                            neighborhoodName, cityName, stateName, countryName, pinCodeName));
+                    address.setAddressType((String) addressType.getSelectedItem());
+                    address.setGoogleAddress(textGoogleAddress.getText().toString());
+                    ArrayList<String> arrayListLatLong = new ArrayList<>();
+                    arrayListLatLong.add(textLongitude.getText().toString());
+                    arrayListLatLong.add(textLatitude.getText().toString());
+                    address.setGoogleLatLong(arrayListLatLong);
+                    address.setAddId((String) relativeRowEditProfile.getTag());
+                    if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
+                        address.setAddPublic(Integer.parseInt(textIsPublic.getText().toString
+                                ()));
+                    } else {
+                        address.setAddPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    }
 
-                        if (StringUtils.length(address.getCountry()) > 0 || StringUtils.length
-                                (address.getState()) > 0 || StringUtils.length(address.getCity())
-                                > 0
-                                || StringUtils.length(address.getStreet()) > 0) {
-                            if (StringUtils.length(address.getCountry()) > 0) {
-                                if (StringUtils.length(address.getState()) > 0) {
-                                    if (StringUtils.length(address.getCity()) > 0) {
-                                        if (StringUtils.length(address.getStreet()) > 0) {
-                                            if (StringUtils.length(address.getGoogleLatLong().get
-                                                    (0))
-                                                    > 0
-                                                    && StringUtils.length(address.getGoogleLatLong()
-                                                    .get(1)
-                                            ) > 0) {
+                    if (StringUtils.length(address.getCountry()) > 0 || StringUtils.length
+                            (address.getState()) > 0 || StringUtils.length(address.getCity())
+                            > 0 || StringUtils.length(address.getStreet()) > 0 ||
+                            !isAddressModified) {
+                        if (StringUtils.length(address.getCountry()) > 0) {
+                            if (StringUtils.length(address.getState()) > 0) {
+                                if (StringUtils.length(address.getCity()) > 0) {
+                                    if (StringUtils.length(address.getStreet()) > 0) {
+                                        if (StringUtils.length(address.getGoogleLatLong().get(0))
+                                                > 0 && StringUtils.length(address
+                                                .getGoogleLatLong().get(1)) > 0) {
+                                            if (!isAddressModified) {
                                                 arrayListNewAddress.add(address);
                                             } else {
                                                 Utils.showErrorSnackBar(this,
                                                         relativeRootEditProfile,
                                                         "Address mapping on Map is required!");
                                                 textImageMapMarker.setTextColor(ContextCompat
-                                                        .getColor(this, R.color
-                                                                .colorSnackBarNegative));
+                                                        .getColor(EditProfileActivity
+                                                        .this, R.color.colorSnackBarNegative));
                                                 isValid = false;
                                                 break;
                                             }
                                         } else {
-                                            Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                                    "Street is required!");
-                                            street.requestFocus();
+                                            Utils.showErrorSnackBar(this,
+                                                    relativeRootEditProfile,
+                                                    "Address mapping on Map is required!");
+                                            textImageMapMarker.setTextColor(ContextCompat
+                                                    .getColor(this, R.color
+                                                            .colorSnackBarNegative));
                                             isValid = false;
                                             break;
                                         }
                                     } else {
                                         Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                                "City is required!");
-                                        city.requestFocus();
+                                                "Street is required!");
+                                        street.requestFocus();
                                         isValid = false;
                                         break;
                                     }
                                 } else {
                                     Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                            "State is required!");
-                                    state.requestFocus();
+                                            "City is required!");
+                                    city.requestFocus();
                                     isValid = false;
                                     break;
                                 }
                             } else {
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                        "Country is required!");
-                                country.requestFocus();
+                                        "State is required!");
+                                state.requestFocus();
                                 isValid = false;
                                 break;
                             }
                         } else {
-                            if (i != 0) {
-                                Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                        "Country name is required!");
-                                country.requestFocus();
-                                isValid = false;
-                            }
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                    "Country is required!");
+                            country.requestFocus();
+                            isValid = false;
                             break;
                         }
+                    } else {
+                        if (i != 0) {
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                    "Country name is required!");
+                            country.requestFocus();
+                            isValid = false;
+                        }
+                        break;
                     }
-                    if (isValid) {
-                        if (arrayListNewAddress.size() > 0) {
+                }
+                if (isValid) {
+                    if (arrayListNewAddress.size() > 0) {
+                        profileDataOperation.setPbAddress(arrayListNewAddress);
+                        editProfile(profileDataOperation, AppConstants.ADDRESS);
+                    } else {
+                        if (arrayListAddressObject.size() > 0) {
                             profileDataOperation.setPbAddress(arrayListNewAddress);
                             editProfile(profileDataOperation, AppConstants.ADDRESS);
-                        } else {
-                            if (arrayListAddressObject.size() > 0) {
-                                profileDataOperation.setPbAddress(arrayListNewAddress);
-                                editProfile(profileDataOperation, AppConstants.ADDRESS);
-                            }
                         }
                     }
-                } else {
+                }
+              /*  }
+                else {
                     textImageMapMarker.setTextColor(ContextCompat.getColor(EditProfileActivity
                             .this, R.color.colorSnackBarNegative));
-                }
+                }*/
                 break;
             //</editor-fold>
 
