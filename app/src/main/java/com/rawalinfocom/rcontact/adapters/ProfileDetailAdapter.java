@@ -366,7 +366,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 if (address.getGoogleLatLong() != null) {
                     ArrayList<String> arrayListLatLong = new ArrayList<>();
                     arrayListLatLong.addAll(address.getGoogleLatLong());
-                    if(arrayListLatLong!=null && arrayListLatLong.size()>0){
+//                    if(arrayListLatLong!=null && arrayListLatLong.size()>0){
                         String latitude = arrayListLatLong.get(1);
                         String longitude = arrayListLatLong.get(0);
                    /* Uri gmmIntentUri = Uri.parse("geo:" + latitude + "," + longitude);
@@ -378,8 +378,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         Intent intent = new Intent(Intent.ACTION_VIEW,
                                 Uri.parse("google.navigation:q=" + latitude + "," + longitude));
                         context.startActivity(intent);
-                    }
-
+//                    }
                 } else {
                     Intent intent = new Intent(Intent.ACTION_VIEW,
                             Uri.parse("google.navigation:q=" + holder.getTextMain(isOwnProfile)
