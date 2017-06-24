@@ -298,10 +298,19 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         mSectionPositions.add(i);
                     }
                 } else {
-                    String section = String.valueOf(contactDisplayName.charAt(0)).toUpperCase();
-                    if (!sections.contains(section)) {
-                        sections.add(section);
-                        mSectionPositions.add(i);
+                    int start = contactDisplayName.charAt(0);
+                    if (('a' <= start && start <= 'z') || ('A' <= start && start <= 'Z')) {
+                        String section = String.valueOf(contactDisplayName.charAt(0)).toUpperCase();
+                        if (!sections.contains(section)) {
+                            sections.add(section);
+                            mSectionPositions.add(i);
+                        }
+                    } else {
+                        String section = "#";
+                        if (!sections.contains(section)) {
+                            sections.add(section);
+                            mSectionPositions.add(i);
+                        }
                     }
                 }
             }

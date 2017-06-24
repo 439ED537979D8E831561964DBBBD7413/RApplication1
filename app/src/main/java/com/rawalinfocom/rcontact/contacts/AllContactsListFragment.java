@@ -180,8 +180,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             MobileNumber mobileNumber = tableMobileMaster.getOwnVerifiedMobileNumbersFromPmId
                     (getActivity());
 
-            /*myProfileData.setTempFirstName(userProfile.getPmFirstName());
-            myProfileData.setTempLastName(userProfile.getPmLastName());*/
             myProfileData.setName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
             myProfileData.setProfileUrl(userProfile.getPmProfileImage());
             myProfileData.setTempNumber(mobileNumber.getMnmMobileNumber());
@@ -390,9 +388,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // Log.i("MAULIK-->", "on xreate loader" + System.currentTimeMillis());
-//        allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
-//        recyclerViewContactList.setAdapter(allContactListAdapter);
         Set<String> set = new HashSet<>();
         set.add(ContactsContract.Data.MIMETYPE);
         set.add(ContactsContract.Data.CONTACT_ID);
@@ -424,10 +419,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
-        //Log.i("MAULIK-->", "onLoadFinished" + System.currentTimeMillis());
         getContactsFromPhoneBook(data);
         data.close();
-        //Log.i("MAULIK-->", "getContactsFromPhoneBook" + System.currentTimeMillis());
         setRecyclerViewLayoutManager();
         initSwipe();
 
@@ -552,13 +545,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     private void getContactsFromPhoneBook(Cursor data) {
-//        String prefix = "";
-//        boolean needInChunk = false;
-//        boolean isFirstTime = true;
-//        boolean needToUpdate = false;
-//        if (data.getCount() > 2) {
-//            needInChunk = true;
-//        }
         final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
         final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
@@ -593,33 +579,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         break;
                     case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
                         profileData.setName(data.getString(display));
-//                        if (isFirstTime) {
-//                            if (profileData.getName() != null) {
-//                                prefix = String.valueOf(profileData.getName().charAt(0));
-//                                isFirstTime = false;
-//                            }
-//                        }
                         break;
                 }
-//                if (needInChunk && !StringUtils.startsWithIgnoreCase(profileData.getName(), prefix)) {
-//                    needToUpdate = true;
-//                    if (profileData.getName() != null) {
-//                        prefix = String.valueOf(profileData.getName().charAt(0));
-//                    } else {
-//                        prefix = "";
-//                    }
-//                }
             } catch (Exception E) {
-                //Log.i("AllContacts", "Crash occured when displaying contacts" + E.toString());
+                Log.i("AllContacts", "Crash occurred when displaying contacts" + E.toString());
             }
-//            if (needToUpdate) {
-//                allContactListAdapter.notifyItemChanged(allContactListAdapter.getItemCount() - 1);
-////                allContactListAdapter.notifyItemRangeInserted(allContactListAdapter.getItemCount(),arrayListPhoneBookContacts.size());
-//                Log.i("AllContacts", "Notify data chabge");
-//            }
         }
 
-//        allContactListAdapter.notifyItemChanged(0);
     }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
