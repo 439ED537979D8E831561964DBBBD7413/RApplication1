@@ -515,7 +515,7 @@
     <string name="str_no_sim">No sim detected</string>
 
     <!-- Favorite -->
-    <string name="str_no_favorite">No favorites</string>
+    <string name="str_no_favorite">No favorites contacts</string>
 
     <!-- Maps -->
     <string name="str_no_location_found">No Location Found</string>
