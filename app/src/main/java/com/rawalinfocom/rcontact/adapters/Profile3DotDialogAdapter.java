@@ -102,14 +102,20 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     Utils.addToContact(context, numberToCall);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.edit))) {
-                    Intent intent = new Intent(Intent.ACTION_EDIT);
-                    Uri lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
-                            .CONTENT_LOOKUP_URI, key);
-                    Uri res = ContactsContract.Contacts.lookupContact(context.getContentResolver(),
-                            lookupUri);
-                    intent.setData(res);
-                    context.startActivity(intent);
-                    ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
+                    try{
+                        Intent intent = new Intent(Intent.ACTION_EDIT);
+                        Uri lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
+                                .CONTENT_LOOKUP_URI, key);
+                        Uri res = ContactsContract.Contacts.lookupContact(context.getContentResolver(),
+                                lookupUri);
+                        intent.setData(res);
+                        context.startActivity(intent);
+                        ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        Toast.makeText(context, "Unable to open activity", Toast.LENGTH_SHORT).show();
+                    }
+
                 } else if (value.equalsIgnoreCase(context.getString(R.string
                         .add_to_existing_contact))) {
                     Utils.addToExistingContact(context, numberToCall);
