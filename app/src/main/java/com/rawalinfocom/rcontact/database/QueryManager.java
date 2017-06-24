@@ -311,6 +311,8 @@ public class QueryManager {
         String addressQuery = "SELECT address." + TableAddressMaster.COLUMN_AM_FORMATTED_ADDRESS
                 + ", address." + TableAddressMaster.COLUMN_AM_ADDRESS_TYPE + ", address." +
                 TableAddressMaster.COLUMN_AM_IS_PRIVATE + ", address." +
+                TableAddressMaster.COLUMN_AM_GOOGLE_LATITUDE + ", address." +
+                TableAddressMaster.COLUMN_AM_GOOGLE_LONGITUDE + ", address." +
                 TableAddressMaster.COLUMN_AM_RECORD_INDEX_ID + ", address." +
                 TableAddressMaster.COLUMN_AM_ADDRESS_PRIVACY + " FROM " + TableAddressMaster
                 .TABLE_RC_ADDRESS_MASTER + " address WHERE address." + TableAddressMaster
@@ -338,6 +340,14 @@ public class QueryManager {
                 address.setAddId(StringUtils.defaultString(addressCursor.getString
                         (addressCursor.getColumnIndex(TableAddressMaster
                                 .COLUMN_AM_RECORD_INDEX_ID))));
+                ArrayList<String> arrayListLatLng = new ArrayList<>();
+                arrayListLatLng.add(StringUtils.defaultString(addressCursor.getString
+                        (addressCursor.getColumnIndex(TableAddressMaster
+                                .COLUMN_AM_GOOGLE_LONGITUDE)), "0.0"));
+                arrayListLatLng.add(StringUtils.defaultString(addressCursor.getString
+                        (addressCursor.getColumnIndex(TableAddressMaster
+                                .COLUMN_AM_GOOGLE_LATITUDE)), "0.0"));
+                address.setGoogleLatLong(arrayListLatLng);
                 address.setRcpType(String.valueOf(IntegerConstants.RCP_TYPE_CLOUD_PHONE_BOOK));
                 arrayListAddress.add(address);
             } while (addressCursor.moveToNext());
