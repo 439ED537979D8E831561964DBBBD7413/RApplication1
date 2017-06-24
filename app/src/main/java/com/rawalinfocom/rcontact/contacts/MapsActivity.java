@@ -212,12 +212,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                             LatLng latLng = place.getLatLng();
                             latitude = latLng.latitude;
                             longitude = latLng.longitude;
-                        } else {
+                        } /*else {
                             latitude = Double.parseDouble(StringUtils.defaultString(objAddress
                                     .getLatitude(), "0"));
                             longitude = Double.parseDouble(StringUtils.defaultString(objAddress
                                     .getLongitude(), "0"));
-                        }
+                        }*/
                         if (latitude != 0 && longitude != 0) {
                             if (serviceType.contains("_TRUE")) {
                                 addMapMarker();
@@ -228,9 +228,15 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                                     objAddress.setLatitude(String.valueOf(latitude));
                                     objAddress.setLongitude(String.valueOf(longitude));
                                     objAddress.setAddress(String.valueOf(place.getAddress()));
+                                } else {
+                                    objAddress.setLatitude(String.valueOf(latitude));
+                                    objAddress.setLongitude(String.valueOf(longitude));
                                 }
                                 intent.putExtra(AppConstants.EXTRA_OBJECT_ADDRESS, objAddress);
-                                setResult(AppConstants.RESULT_CODE_MAP_LOCATION_SELECTION, intent);
+                                /*Toast.makeText(this, objAddress.getLatitude() + ", " + objAddress
+                                        .getLongitude(), Toast.LENGTH_LONG).show();*/
+                                setResult(AppConstants.RESULT_CODE_MAP_LOCATION_SELECTION,
+                                        intent);
                                 finish();
                                 overridePendingTransition(R.anim.pop_enter, R.anim.pop_exit);
                             }
