@@ -1765,6 +1765,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .error(R.drawable.home_screen_profile)
                             .bitmapTransform(new CropCircleTransformation(this))
 //                        .override(400, 400)
+                            .override(512, 512)
                             .into(imageProfile);
 
                 } else {
@@ -1781,6 +1782,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .error(R.drawable.home_screen_profile)
                             .bitmapTransform(new CropCircleTransformation(this))
 //                        .override(400, 400)
+                            .override(512, 512)
                             .into(imageProfile);
 
                 } else {
@@ -1994,7 +1996,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     .placeholder(R.drawable.home_screen_profile)
                     .error(R.drawable.home_screen_profile)
                     .bitmapTransform(new CropCircleTransformation(ProfileDetailActivity.this))
-                    .override(200, 200)
+                    .override(512, 512)
                     .into(imageProfile);
         } else {
             imageProfile.setImageResource(R.drawable.home_screen_profile);
