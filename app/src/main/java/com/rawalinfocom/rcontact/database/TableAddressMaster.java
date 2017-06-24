@@ -38,8 +38,8 @@ public class TableAddressMaster {
     private static final String COLUMN_AM_STATE = "am_state";
     private static final String COLUMN_AM_STREET = "am_street";
     static final String COLUMN_AM_ADDRESS_TYPE = "am_address_type";
-    private static final String COLUMN_AM_GOOGLE_LATITUDE = "am_google_latitude";
-    private static final String COLUMN_AM_GOOGLE_LONGITUDE = "am_google_longitude";
+    static final String COLUMN_AM_GOOGLE_LATITUDE = "am_google_latitude";
+    static final String COLUMN_AM_GOOGLE_LONGITUDE = "am_google_longitude";
     private static final String COLUMN_AM_GOOGLE_ADDRESS = "am_google_address";
     static final String COLUMN_AM_ADDRESS_PRIVACY = "am_address_privacy";
     static final String COLUMN_AM_IS_PRIVATE = "am_is_private";
