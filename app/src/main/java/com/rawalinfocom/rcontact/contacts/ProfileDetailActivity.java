@@ -1787,7 +1787,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     imageProfile.setImageResource(R.drawable.home_screen_profile);
                 }
             }
-
             if (StringUtils.length(cloudContactName) > 0) {
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 textName.setText(cloudContactName);
@@ -1798,7 +1797,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                             .colorBlack));
                     linearBasicDetailRating.setVisibility(View.GONE);
-                    rippleInvite.setVisibility(View.VISIBLE);
+                    if (Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)) {
+                        rippleInvite.setVisibility(View.VISIBLE);
+                    } else {
+                        rippleInvite.setVisibility(View.GONE);
+                    }
                 } else {
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                             .colorAccent));
