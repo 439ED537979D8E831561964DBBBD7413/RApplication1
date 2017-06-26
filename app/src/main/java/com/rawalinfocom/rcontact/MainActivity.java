@@ -1279,8 +1279,17 @@ public class MainActivity extends BaseActivity implements NavigationView
     private BroadcastReceiver localBroadcastReceiverCallLogSync = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
-            syncCallLogDataToServer(callLogTypeArrayListMain);
+            if (callLogTypeArrayListMain != null && callLogTypeArrayListMain.size() > 0)
+                syncCallLogDataToServer(callLogTypeArrayListMain);
+            else {
+                if (Utils.isNetworkAvailable(MainActivity.this)
+                        && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
+                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                    syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                    syncCallLogAsyncTask.execute();
+                }
+            }
         }
     };
 
@@ -1291,11 +1300,9 @@ public class MainActivity extends BaseActivity implements NavigationView
             if (smsLogTypeArrayListMain != null && smsLogTypeArrayListMain.size() > 0)
                 syncSMSLogDataToServer(smsLogTypeArrayListMain);
             else {
-                if (Utils.isNetworkAvailable(MainActivity.this) && Utils.getBooleanPreference
-                        (MainActivity.this,
-                                AppConstants.PREF_CALL_LOG_SYNCED, false)
-                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants
-                        .PREF_SMS_SYNCED, false)) {
+                if (Utils.isNetworkAvailable(MainActivity.this)
+                        && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
                     syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                     syncSmsLogAsyncTask.execute();
                 }
