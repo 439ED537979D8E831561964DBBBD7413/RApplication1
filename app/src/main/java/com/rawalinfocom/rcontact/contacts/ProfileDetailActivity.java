@@ -1765,6 +1765,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .error(R.drawable.home_screen_profile)
                             .bitmapTransform(new CropCircleTransformation(this))
 //                        .override(400, 400)
+                            .override(512, 512)
                             .into(imageProfile);
 
                 } else {
@@ -1781,13 +1782,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .error(R.drawable.home_screen_profile)
                             .bitmapTransform(new CropCircleTransformation(this))
 //                        .override(400, 400)
+                            .override(512, 512)
                             .into(imageProfile);
 
                 } else {
                     imageProfile.setImageResource(R.drawable.home_screen_profile);
                 }
             }
-
             if (StringUtils.length(cloudContactName) > 0) {
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 textName.setText(cloudContactName);
@@ -1798,7 +1799,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                             .colorBlack));
                     linearBasicDetailRating.setVisibility(View.GONE);
-                    rippleInvite.setVisibility(View.VISIBLE);
+                    if (Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)) {
+                        rippleInvite.setVisibility(View.VISIBLE);
+                    } else {
+                        rippleInvite.setVisibility(View.GONE);
+                    }
                 } else {
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                             .colorAccent));
@@ -1991,7 +1996,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     .placeholder(R.drawable.home_screen_profile)
                     .error(R.drawable.home_screen_profile)
                     .bitmapTransform(new CropCircleTransformation(ProfileDetailActivity.this))
-                    .override(200, 200)
+                    .override(512, 512)
                     .into(imageProfile);
         } else {
             imageProfile.setImageResource(R.drawable.home_screen_profile);
