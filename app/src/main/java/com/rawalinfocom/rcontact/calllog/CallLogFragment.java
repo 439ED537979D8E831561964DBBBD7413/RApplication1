@@ -204,7 +204,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         // Inflate the layout for this fragment
         mainView = inflater.inflate(R.layout.fragment_call_log, container, false);
         ButterKnife.bind(this, mainView);
-
 //        ALL_CALLS = getActivity().getString(R.string.str_all);
 
         return mainView;

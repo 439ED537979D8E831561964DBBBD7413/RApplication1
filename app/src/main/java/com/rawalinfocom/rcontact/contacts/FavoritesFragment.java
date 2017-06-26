@@ -393,7 +393,6 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
             arrayListContactHeaders = rContactApplication.getArrayListFavContactHeaders();
             populateRecyclerView();
         }
-
     }
 
     private void initSwipe() {
