@@ -763,7 +763,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + callNumber + "?");
+        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
+                + callNumber + "?");
 
         callConfirmationDialog.showDialog();
     }

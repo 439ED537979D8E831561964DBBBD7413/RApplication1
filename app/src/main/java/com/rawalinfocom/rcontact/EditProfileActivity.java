@@ -378,6 +378,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             Glide.with(this)
                     .load(fileUri)
                     .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                    .override(512, 512)
                     .into(imageProfile);
 
             if (selectedBitmap != null) {
@@ -420,6 +421,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 Glide.with(this)
                         .load(mFileTemp)
                         .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                        .override(512, 512)
                         .into(imageProfile);
 
                 BitmapFactory.Options options = new BitmapFactory.Options();
@@ -1116,7 +1118,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                                         "Address mapping on Map is required!");
                                                 textImageMapMarker.setTextColor(ContextCompat
                                                         .getColor(EditProfileActivity
-                                                        .this, R.color.colorSnackBarNegative));
+                                                                .this, R.color
+                                                                .colorSnackBarNegative));
                                                 isValid = false;
                                                 break;
                                             }
@@ -1944,7 +1947,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         .placeholder(R.drawable.home_screen_profile)
                         .error(R.drawable.home_screen_profile)
                         .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
-                        .override(200, 200)
+                        .override(512, 512)
                         .into(imageProfile);
             }
 
