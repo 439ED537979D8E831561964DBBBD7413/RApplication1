@@ -169,7 +169,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         } else {
             if (Utils.isNetworkAvailable(this)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
-                    && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                    && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
+                    false)) {
                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                 syncCallLogAsyncTask.execute();
             }
@@ -283,9 +284,11 @@ public class MainActivity extends BaseActivity implements NavigationView
                     emailIntent.setType("vnd.android.cursor.dir/email");
                     emailIntent.putExtra(Intent.EXTRA_STREAM, path);
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
-                    startActivity(Intent.createChooser(emailIntent, getString(R.string.str_send_email)));
+                    startActivity(Intent.createChooser(emailIntent, getString(R.string
+                            .str_send_email)));
                 } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.db_dump_failed), Toast.LENGTH_SHORT)
+                    Toast.makeText(getApplicationContext(), getString(R.string.db_dump_failed),
+                            Toast.LENGTH_SHORT)
                             .show();
                 }
             }
@@ -1233,11 +1236,13 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 log.setCallSimNumber(simNumber);
                                 long tempdate = tempCallLogType.getHistoryDate();
                                 Date objDate1 = new Date(tempdate);
-                                String arrayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format
+                                String arrayDate = new SimpleDateFormat("yyyy-MM-dd", Locale
+                                        .getDefault()).format
                                         (objDate1);
                                 long callLogDate = log.getDate();
                                 Date intentDate1 = new Date(callLogDate);
-                                String intentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format
+                                String intentDate = new SimpleDateFormat("yyyy-MM-dd", Locale
+                                        .getDefault()).format
                                         (intentDate1);
                                 if (intentDate.equalsIgnoreCase(arrayDate)) {
                                     arrayListHistoryCount.add(tempCallLogType);
@@ -1255,7 +1260,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 log.setTypeOfCall(tempCallLogType.getTypeOfCall());
                                 log.setDurationToPass(tempCallLogType.getDurationToPass());
                                 if (!StringUtils.isEmpty(tempCallLogType.getHistoryCallSimNumber()))
-                                    log.setHistoryCallSimNumber(tempCallLogType.getHistoryCallSimNumber());
+                                    log.setHistoryCallSimNumber(tempCallLogType
+                                            .getHistoryCallSimNumber());
                                 else
                                     log.setHistoryCallSimNumber(" ");
                                 // 16/06/2017 changed done end
@@ -1284,11 +1290,14 @@ public class MainActivity extends BaseActivity implements NavigationView
             else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute();
-                }else{
+                } else {
                     if (Utils.isNetworkAvailable(MainActivity.this)
-                            && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CONTACT_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CALL_LOG_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_SMS_SYNCED, false)) {
                         syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                         syncCallLogAsyncTask.execute();
                     }
@@ -1306,10 +1315,12 @@ public class MainActivity extends BaseActivity implements NavigationView
             else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute();
-                }else{
+                } else {
                     if (Utils.isNetworkAvailable(MainActivity.this)
-                            && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CALL_LOG_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_SMS_SYNCED, false)) {
                         syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                         syncSmsLogAsyncTask.execute();
                     }
@@ -1555,10 +1566,10 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
     private String getRawContactIdFromNumber(String phoneNumber) {
-        String numberId = "";
+        String numberId, rawId = "";
         try {
 
-            numberId = "";
+//            numberId = "";
             ContentResolver contentResolver = this.getContentResolver();
 
             Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
@@ -1571,10 +1582,30 @@ public class MainActivity extends BaseActivity implements NavigationView
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                    String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                   /* String contactName = cursor.getString(cursor.getColumnIndexOrThrow
                             (ContactsContract.PhoneLookup.DISPLAY_NAME));
                     numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.LOOKUP_KEY));*/
+                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
                             .PhoneLookup.LOOKUP_KEY));
+                    Uri uri1 = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                    String[] projection1 = new String[]{
+                            ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
+                            ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID
+                    };
+
+                    String selection = ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ?";
+                    String[] selectionArgs = new String[]{numberId};
+
+                    Cursor cursor1 = getContentResolver().query(uri1, projection1, selection,
+                            selectionArgs, null);
+                    if (cursor1 != null) {
+                        while (cursor1.moveToNext()) {
+                            rawId = cursor1.getString(cursor1.getColumnIndexOrThrow
+                                    (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID));
+                        }
+                        cursor1.close();
+                    }
                 }
                 cursor.close();
             }
@@ -1583,7 +1614,7 @@ public class MainActivity extends BaseActivity implements NavigationView
             e.printStackTrace();
         }
 
-        return numberId;
+        return rawId;
     }
 
     private ArrayList callLogHistory(String number) {
