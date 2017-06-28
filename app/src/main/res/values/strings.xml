@@ -75,7 +75,13 @@
     <string name="str_last">Last</string>
     <string name="str_organization">Organization</string>
     <string name="str_company_name">Company Name</string>
-    <string name="str_designation">Designation</string>
+    <!--<string name="str_designation">Designation</string>-->
+
+    <!-- 27/06/2017 Modified as Suggested by Mainank-->
+    <string name="str_tab_r_contact">RContacts</string>
+    <string name="text_tab_rcontact">RContacts</string>
+    <string name="tab_r_contact">RContacts</string>
+    <string name="str_designation">Current Designation</string>
 
     <string-array name="phonebook_contact_array_share">
         <item>Share all</item>
@@ -164,7 +170,7 @@
     <string name="text_tab_request">Requests</string>
     <string name="text_tab_response">Response</string>
     <string name="text_tab_comments">Comments</string>
-    <string name="text_tab_rcontact">RContact</string>
+    <!--<string name="text_tab_rcontact">RContact</string>-->
     <string name="text_notifications">Notifications</string>
     <string name="text_you_rated">You rated</string>
     <string name="text_rated_you">Rated you</string>
@@ -314,7 +320,7 @@
     <string name="tab_sms">SMS</string>
 
     <string name="tab_all_contact">All Contacts</string>
-    <string name="tab_r_contact">R Contacts</string>
+    <!--<string name="tab_r_contact">R Contacts</string>-->
     <string name="tab_favorites">Favorites</string>
 
     <string name="data_lost_hint_1">If you switch, your current data will be lost.</string>
@@ -401,7 +407,7 @@
     <string name="str_tab_profile">Profile</string>
     <string name="str_tab_rating">Rating</string>
     <string name="str_tab_comment">Comment</string>
-    <string name="str_tab_r_contact">RContact</string>
+    <!--<string name="str_tab_r_contact">RContact</string>-->
 
     <string name="str_requested_for_your">Requested for your </string>
     <string name="str_confirmed_your_request_for">confirmed your request for </string>

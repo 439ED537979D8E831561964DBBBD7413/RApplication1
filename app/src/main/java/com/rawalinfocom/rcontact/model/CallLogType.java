@@ -24,6 +24,22 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CallLogType implements Serializable {
 
+    @JsonIgnore
+    private boolean isRcpUser;
+    @JsonIgnore
+    private String rcpFirstName;
+    @JsonIgnore
+    private String rcpLastName;
+    @JsonIgnore
+    private String rcpId;
+    @JsonIgnore
+    private int recordPosition;
+    @JsonIgnore
+    private String prefix;
+    @JsonIgnore
+    private String suffix;
+    @JsonIgnore
+    private String middleName;
 
     @JsonIgnore
     private long date;
@@ -492,5 +508,69 @@ public class CallLogType implements Serializable {
 
     public void setHistoryCallTime(String historyCallTime) {
         this.historyCallTime = historyCallTime;
+    }
+
+    public boolean isRcpUser() {
+        return isRcpUser;
+    }
+
+    public void setRcpUser(boolean rcpUser) {
+        isRcpUser = rcpUser;
+    }
+
+    public String getRcpFirstName() {
+        return rcpFirstName;
+    }
+
+    public void setRcpFirstName(String rcpFirstName) {
+        this.rcpFirstName = rcpFirstName;
+    }
+
+    public String getRcpLastName() {
+        return rcpLastName;
+    }
+
+    public void setRcpLastName(String rcpLastName) {
+        this.rcpLastName = rcpLastName;
+    }
+
+    public String getRcpId() {
+        return rcpId;
+    }
+
+    public void setRcpId(String rcpId) {
+        this.rcpId = rcpId;
+    }
+
+    public int getRecordPosition() {
+        return recordPosition;
+    }
+
+    public void setRecordPosition(int recordPosition) {
+        this.recordPosition = recordPosition;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 }

@@ -290,7 +290,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 //                if (StringUtils.length(suffix) > 0) {
 //                    contactDisplayName = contactDisplayName + suffix;
 //                }
-                contactDisplayName = /*StringUtils.trimToEmpty(contactDisplayName);*/StringUtils.defaultIfEmpty(profileData.getName(), "");
+                contactDisplayName = /*StringUtils.trimToEmpty(contactDisplayName);*/StringUtils
+                        .defaultIfEmpty(profileData.getName(), "");
                 if (contactDisplayName == null || contactDisplayName.length() == 0) {
                     String section = "#";
                     if (!sections.contains(section)) {
@@ -383,7 +384,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (StringUtils.length(suffix) > 0) {
             contactDisplayName = contactDisplayName + suffix;
         }
-        contactDisplayName = /*StringUtils.trimToEmpty(contactDisplayName);*/StringUtils.defaultIfEmpty(profileData.getName(), "");
+        contactDisplayName = /*StringUtils.trimToEmpty(contactDisplayName);*/StringUtils
+                .defaultIfEmpty(profileData.getName(), "");
 
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
                 context.getString(R.string.unknown));
@@ -834,9 +836,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void configureFooterViewHolder(ContactFooterViewHolder holder) {
 //        String letter = (String) arrayListUserContact.get(position);
         if (fragment instanceof AllContactsListFragment) {
-            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s", arrayListUserContact.size() - 3, context.getString(R.string.contacts)));
+            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s",
+                    arrayListUserContact.size() - 3, context.getString(R.string.contacts)));
         } else if (fragment instanceof FavoritesFragment) {
-            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s", arrayListUserContact.size() -
+            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s",
+                    arrayListUserContact.size() -
                     arrayListContactHeader.size(), context.getString(R.string.contacts)));
 
         }
@@ -1175,7 +1179,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
                 .relative_root_dialog_list);
         TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        textDialogTitle.setText(String.format(Locale.getDefault(), "%s%s", context.getString(R.string.str_invite),
+        textDialogTitle.setText(String.format(Locale.getDefault(), "%s%s", context.getString(R
+                        .string.str_invite),
                 contactName));
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(context));
 
@@ -1228,7 +1233,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                     inviteContact(numbers, emails);
                 } else {
-                    Utils.showErrorSnackBar(context, relativeRootDialogList, context.getString(R.string.please_select_one));
+                    Utils.showErrorSnackBar(context, relativeRootDialogList, context.getString(R
+                            .string.please_select_one));
                 }
             }
         });
@@ -1267,7 +1273,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     if (fragment instanceof AllContactsListFragment) {
                         ((AllContactsListFragment) fragment).callNumber = actionNumber;
                     } else if (fragment instanceof FavoritesFragment) {
-                        ((FavoritesFragment) fragment).callNumber = actionNumber;
+//                        ((FavoritesFragment) fragment).callNumber = actionNumber;
                     }
                     showCallConfirmationDialog();
                 }
@@ -1369,8 +1375,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 Utils.callIntent(context, ((AllContactsListFragment) fragment)
                                         .callNumber);
                             } else if (fragment instanceof FavoritesFragment) {
-                                Utils.callIntent(context, ((FavoritesFragment) fragment)
-                                        .callNumber);
+                               /* Utils.callIntent(context, ((FavoritesFragment) fragment)
+                                        .callNumber);*/
                             }
                         }
                         break;
@@ -1386,8 +1392,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             callConfirmationDialog.setDialogBody(context.getString(R.string.action_call)
                     + " " + ((AllContactsListFragment) fragment).callNumber + "?");
         } else if (fragment instanceof FavoritesFragment) {
-            callConfirmationDialog.setDialogBody(context.getString(R.string.action_call)
-                    + " " + ((FavoritesFragment) fragment).callNumber + "?");
+           /* callConfirmationDialog.setDialogBody(context.getString(R.string.action_call)
+                    + " " + ((FavoritesFragment) fragment).callNumber + "?");*/
         }
 
         callConfirmationDialog.showDialog();

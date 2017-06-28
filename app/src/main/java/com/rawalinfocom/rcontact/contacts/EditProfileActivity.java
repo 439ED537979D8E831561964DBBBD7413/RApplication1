@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact;
+package com.rawalinfocom.rcontact.contacts;
 
 import android.Manifest;
 import android.app.Activity;
@@ -40,6 +40,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
@@ -378,6 +380,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             Glide.with(this)
                     .load(fileUri)
                     .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                    .override(512, 512)
                     .into(imageProfile);
 
             if (selectedBitmap != null) {
@@ -420,6 +423,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 Glide.with(this)
                         .load(mFileTemp)
                         .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
+                        .override(512, 512)
                         .into(imageProfile);
 
                 BitmapFactory.Options options = new BitmapFactory.Options();
@@ -1116,7 +1120,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                                         "Address mapping on Map is required!");
                                                 textImageMapMarker.setTextColor(ContextCompat
                                                         .getColor(EditProfileActivity
-                                                        .this, R.color.colorSnackBarNegative));
+                                                                .this, R.color
+                                                                .colorSnackBarNegative));
                                                 isValid = false;
                                                 break;
                                             }
@@ -1944,7 +1949,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         .placeholder(R.drawable.home_screen_profile)
                         .error(R.drawable.home_screen_profile)
                         .bitmapTransform(new CropCircleTransformation(EditProfileActivity.this))
-                        .override(200, 200)
+                        .override(512, 512)
                         .into(imageProfile);
             }
 

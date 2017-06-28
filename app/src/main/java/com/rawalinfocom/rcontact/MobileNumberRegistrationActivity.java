@@ -141,11 +141,9 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
     @TargetApi(Build.VERSION_CODES.M)
     private void checkPermissionToExecute(String[] permissions, int requestCode) {
         boolean READ_SMS = ContextCompat.checkSelfPermission(MobileNumberRegistrationActivity
-                .this, permissions[0]) !=
-                PackageManager.PERMISSION_GRANTED;
+                .this, permissions[0]) != PackageManager.PERMISSION_GRANTED;
         boolean RECEIVE_SMS = ContextCompat.checkSelfPermission(MobileNumberRegistrationActivity
-                .this, permissions[1]) !=
-                PackageManager.PERMISSION_GRANTED;
+                .this, permissions[1]) != PackageManager.PERMISSION_GRANTED;
         if (READ_SMS || RECEIVE_SMS) {
             requestPermissions(permissions, requestCode);
         } else {
@@ -301,5 +299,6 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                     .getString(R.string.msg_no_network));
         }
     }
+
     //</editor-fold>
 }

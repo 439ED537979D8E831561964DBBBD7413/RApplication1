@@ -379,7 +379,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
         set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
-        set.add(ContactsContract.Contacts.LOOKUP_KEY);
+//        set.add(ContactsContract.Contacts.LOOKUP_KEY);
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
 
         Uri uri = ContactsContract.Data.CONTENT_URI;
@@ -557,7 +557,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
 
-        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
+//        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
         final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
                 .PHOTO_THUMBNAIL_URI);
 
@@ -577,7 +577,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     arrayListPhoneBookContacts.add(profileData);
                 }
 
-                profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+                profileData.setLocalPhoneBookId(data.getString(rawIdIdx));
                 profileData.setRawContactId(data.getString(rawIdIdx));
 
                 switch (data.getString(mimeTypeIdx)) {

@@ -70,7 +70,6 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
     ArrayList<CallLogType> arrayList;
     private int searchCount;
 
-
     public int getSelectedPosition() {
         return selectedPosition;
     }
@@ -146,16 +145,60 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             holder.textContactName.setTypeface(Utils.typefaceBold(context));
             holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                     .colorBlack));
-            holder.textContactName.setText(name);
+            if(callLogType.isRcpUser()){
+                String contactDisplayName = "";
+                String prefix = callLogType.getPrefix();
+                String firstName = callLogType.getRcpFirstName();
+                String lastName = callLogType.getRcpLastName();
+                String middleName = callLogType.getMiddleName();
+                String suffix = callLogType.getSuffix();
+               /* if (StringUtils.length(prefix) > 0) {
+                    contactDisplayName = prefix + " ";
+                }*/
+                if (StringUtils.length(firstName) > 0) {
+                    contactDisplayName = contactDisplayName + firstName + " ";
+                }
+               /* if (StringUtils.length(middleName) > 0) {
+                    contactDisplayName = contactDisplayName + middleName + " ";
+                }*/
+                if (StringUtils.length(lastName) > 0) {
+                    contactDisplayName = contactDisplayName + lastName + "";
+                }
+                /*if (StringUtils.length(suffix) > 0) {
+                    contactDisplayName = contactDisplayName + suffix;
+                }*/
+
+                if(StringUtils.equalsIgnoreCase(name,contactDisplayName)){
+                    holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
+                            .colorAccent));
+                    holder.textCloudContactName.setVisibility(View.GONE);
+                    holder.textContactName.setText(name);
+                }else{
+                    holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
+                            .colorBlack));
+                    holder.textCloudContactName.setVisibility(View.VISIBLE);
+                    holder.textCloudContactName.setTextColor(ContextCompat.getColor(context, R.color
+                            .colorAccent));
+                    holder.textContactName.setText(name + " ");
+                    holder.textCloudContactName.setText("("+contactDisplayName+")");
+                }
+
+            }else{
+                holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
+                        .colorBlack));
+                holder.textCloudContactName.setVisibility(View.GONE);
+                holder.textContactName.setText(name);
+            }
             Pattern numberPat = Pattern.compile("\\d+");
             Matcher matcher1 = numberPat.matcher(name);
-            if (matcher1.find()) {
+            if (StringUtils.containsOnly(name,"\\d+")) {
                 holder.textContactNumber.setText(context.getString(R.string.str_unsaved));
             } else {
                 holder.textContactNumber.setText(String.format("%s,", formattedNumber));
             }
 
         } else {
+            holder.textCloudContactName.setVisibility(View.GONE);
             if (!TextUtils.isEmpty(number)) {
                 holder.textContactName.setTypeface(Utils.typefaceBold(context));
                 holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
@@ -327,7 +370,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     if (!TextUtils.isEmpty(name)) {
                         Pattern numberPat = Pattern.compile("\\d+");
                         Matcher matcher1 = numberPat.matcher(name);
-                        if (matcher1.find()) {
+                        if (StringUtils.containsOnly(name,"\\d+")) {
                             arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
                                     + " " + name, context.getString(R.string.add_to_contact),
                                     context.getString(R.string.add_to_existing_contact)
@@ -431,6 +474,25 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     key = callLogType.getUniqueContactId();
                 }
 
+                boolean isRcpUser =  selectedCallLogData.isRcpUser();
+                String firstName =  selectedCallLogData.getRcpFirstName();
+                String lastName =  selectedCallLogData.getRcpLastName();
+                String name =  selectedCallLogData.getName();
+                String cloudName = "";
+                String contactDisplayName = "";
+
+                if(isRcpUser){
+                    if (StringUtils.length(firstName) > 0) {
+                        contactDisplayName = contactDisplayName + firstName + " ";
+                    }
+                    if (StringUtils.length(lastName) > 0) {
+                        contactDisplayName = contactDisplayName + lastName + "";
+                    }
+                    if(!StringUtils.equalsIgnoreCase(name,contactDisplayName))
+                    {
+                        cloudName =  contactDisplayName;
+                    }
+                }
 
                 if (date == 0) {
                     selectedLogDate = dateFromReceiver;
@@ -451,6 +513,8 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                 intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, key);
                 intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueRowID);
                 intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, thumbnailUrl);
+                intent.putExtra(AppConstants.EXTRA_IS_RCP_USER,isRcpUser);
+                intent.putExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME, cloudName);
                 context.startActivity(intent);
                 ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
             }

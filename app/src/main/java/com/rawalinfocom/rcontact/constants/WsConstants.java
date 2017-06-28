@@ -49,13 +49,13 @@ public class WsConstants {
 
 
     // Web Server
-    //public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
+    public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
 
     // Staging Env
     //public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
 
     // QA Server
-    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
+//    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
 
     public static final String RESPONSE_STATUS_TRUE = "true";
 

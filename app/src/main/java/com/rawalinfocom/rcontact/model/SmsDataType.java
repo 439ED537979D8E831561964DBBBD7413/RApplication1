@@ -24,6 +24,24 @@ public class SmsDataType implements Serializable {
     @JsonIgnore
     int flag;
 
+    @JsonIgnore
+    int recordPosition;
+    @JsonIgnore
+    private boolean isRcpUser;
+    @JsonIgnore
+    private String rcpFirstName;
+    @JsonIgnore
+    private String rcpLastName;
+    @JsonIgnore
+    private String rcpId;
+    @JsonIgnore
+    private String prefix;
+    @JsonIgnore
+    private String suffix;
+    @JsonIgnore
+    private String middleName;
+
+
     @JsonProperty("sms_row_id")
     String uniqueRowId ;
     @JsonProperty("sms_thread_id")
@@ -125,5 +143,69 @@ public class SmsDataType implements Serializable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public int getRecordPosition() {
+        return recordPosition;
+    }
+
+    public void setRecordPosition(int recordPosition) {
+        this.recordPosition = recordPosition;
+    }
+
+    public boolean isRcpUser() {
+        return isRcpUser;
+    }
+
+    public void setRcpUser(boolean rcpUser) {
+        isRcpUser = rcpUser;
+    }
+
+    public String getRcpFirstName() {
+        return rcpFirstName;
+    }
+
+    public void setRcpFirstName(String rcpFirstName) {
+        this.rcpFirstName = rcpFirstName;
+    }
+
+    public String getRcpLastName() {
+        return rcpLastName;
+    }
+
+    public void setRcpLastName(String rcpLastName) {
+        this.rcpLastName = rcpLastName;
+    }
+
+    public String getRcpId() {
+        return rcpId;
+    }
+
+    public void setRcpId(String rcpId) {
+        this.rcpId = rcpId;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 }
