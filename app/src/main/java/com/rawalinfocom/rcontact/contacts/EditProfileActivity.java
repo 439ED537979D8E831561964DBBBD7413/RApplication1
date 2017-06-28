@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact;
+package com.rawalinfocom.rcontact.contacts;
 
 import android.Manifest;
 import android.app.Activity;
@@ -40,6 +40,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.rawalinfocom.rcontact.BaseActivity;
+import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
