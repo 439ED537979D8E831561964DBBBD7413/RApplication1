@@ -263,7 +263,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RippleView rippleInvite;
     @BindView(R.id.button_invite)
     Button buttonInvite;
-
+    String callLogCloudName;
+    boolean isCallLogRcpUser;
 
     RelativeLayout relativeRootRatingDialog;
 
@@ -1680,6 +1681,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 profileThumbnail = intent.getStringExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE);
             }
 
+            if(intent.hasExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME)){
+                callLogCloudName =  intent.getStringExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME);
+            }
+
+            if(intent.hasExtra(AppConstants.EXTRA_IS_RCP_USER)){
+                isCallLogRcpUser =  intent.getBooleanExtra(AppConstants.EXTRA_IS_RCP_USER,false);
+            }
+
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
                 if (!pmId.equalsIgnoreCase("-1") && !pmId.equalsIgnoreCase(getUserPmId())) {
@@ -1975,7 +1984,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (!TextUtils.isEmpty(historyName)) {
             Pattern numberPat = Pattern.compile("\\d+");
             Matcher matcher1 = numberPat.matcher(historyName);
-            if (matcher1.find()) {
+            if (StringUtils.containsOnly(historyName,"\\d+")) {
 //                textToolbarTitle.setText("Unknown number");
 //                textToolbarTitle.setText(historyName);
                 //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
@@ -1988,8 +1997,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 textToolbarTitle.setText(getString(R.string.str_profile_deails));
             }
             textFullScreenText.setTypeface(Utils.typefaceBold(this));
-            textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
-            textFullScreenText.setText(historyName);
+            if(isCallLogRcpUser){
+                rippleInvite.setVisibility(View.GONE);
+                if(StringUtils.isEmpty(callLogCloudName)){
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                    textFullScreenText.setText(historyName);
+                }else{
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                    textFullScreenText.setText(historyName);
+                    textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                    textName.setText(callLogCloudName);
+                }
+            }else{
+                rippleInvite.setVisibility(View.VISIBLE);
+                textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                textFullScreenText.setText(historyName);
+            }
+
 
         } else {
             if (!TextUtils.isEmpty(historyNumber)) {

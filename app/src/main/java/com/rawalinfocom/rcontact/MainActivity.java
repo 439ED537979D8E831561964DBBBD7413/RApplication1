@@ -126,7 +126,6 @@ public class MainActivity extends BaseActivity implements NavigationView
     ImageView imageNotification;
     LinearLayout badgeLayout;
     TextView badgeTextView;
-    //    TextView textImageNotification;
     FloatingActionButton fab;
     DrawerLayout drawer;
     NavigationView navigationView;
@@ -161,33 +160,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         setContentView(R.layout.activity_contacts_main);
 
         ButterKnife.bind(this);
-
-        /*Intent contactIdFetchService = new Intent(this, ContactSyncService.class);
-        startService(contactIdFetchService);*/
-
-
-        /*if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT,
-                IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
-                .LAUNCH_MOBILE_REGISTRATION) {
-            finish();
-            startActivityIntent(this, MobileNumberRegistrationActivity.class, null);
-        } else if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT,
-                IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
-                .LAUNCH_OTP_VERIFICATION) {
-            finish();
-            startActivityIntent(this, OtpVerificationActivity.class, null);
-        } else if (Utils.getIntegerPreference(this, AppConstants.PREF_LAUNCH_SCREEN_INT,
-                IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
-                .LAUNCH_PROFILE_REGISTRATION) {
-            *//*UserProfile userProfile = (UserProfile) Utils.getObjectPreference(this, AppConstants
-                    .PREF_REGS_USER_OBJECT, UserProfile.class);
-            if (userProfile != null && StringUtils.equalsIgnoreCase(userProfile
-                    .getIsAlreadyVerified(), String.valueOf(getResources().getInteger(R.integer
-                    .profile_not_verified)))) {*//*
-            finish();
-            startActivityIntent(this, ProfileRegistrationActivity.class, null);
-//            }
-        } else {*/
         rContactApplication = (RContactApplication) getApplicationContext();
         callLogTypeArrayListMain = new ArrayList<>();
         smsLogTypeArrayListMain = new ArrayList<>();
@@ -195,71 +167,34 @@ public class MainActivity extends BaseActivity implements NavigationView
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermissionToExecute();
         } else {
-               /* AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        getCallLogsByRawId();
-                    }
-                });*/
-
-            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants
-                    .PREF_CALL_LOG_SYNCED, false)) {
+            if (Utils.isNetworkAvailable(this)
+                    && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
+                    && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
+                    false)) {
                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                 syncCallLogAsyncTask.execute();
             }
 
-            if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants
-                    .PREF_CALL_LOG_SYNCED, false)
+            if (Utils.isNetworkAvailable(this)
+                    && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
+                    && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
                     && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                 syncSmsLogAsyncTask.execute();
             }
-
         }
-        checkPermissionToExecute();
-
-        registerLocalBroadCastReceiver();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         networkConnectionReceiver = new NetworkConnectionReceiver();
-
         init();
         registerBroadcastReceiver();
-//        }
+        registerLocalBroadCastReceiver();
 
     }
 
     @TargetApi(Build.VERSION_CODES.M)
     private void checkPermissionToExecute() {
-
-        /*int permissionReadContact = ContextCompat.checkSelfPermission(this, Manifest.permission
-                .READ_CONTACTS);
-        int permissionReadCallLog = ContextCompat.checkSelfPermission(this, Manifest.permission
-                .READ_CALL_LOG);
-
-        List<String> listPermissionsNeeded = new ArrayList<>();
-
-        if (permissionReadContact != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.READ_CONTACTS);
-        }
-        if (permissionReadCallLog != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.READ_CALL_LOG);
-        }
-
-        if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new
-                    String[listPermissionsNeeded.size()]), AppConstants
-                    .MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-            return false;
-        }
-
-        return true;*/
-
-       /* boolean contacts = ContextCompat.checkSelfPermission(MainActivity.this,
-       requiredPermissions[0]) !=
-                PackageManager.PERMISSION_GRANTED;*/
         boolean logs = ContextCompat.checkSelfPermission(MainActivity.this,
                 requiredPermissions[1]) ==
                 PackageManager.PERMISSION_GRANTED;
@@ -267,14 +202,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                 requiredPermissions[2]) ==
                 PackageManager.PERMISSION_GRANTED;
         if (logs) {
-            /*Intent callLogIdFetchService = new Intent(this, CallLogIdFetchService.class);
-            startService(callLogIdFetchService);*/
-            /*AsyncTask.execute(new Runnable() {
-                @Override
-                public void run() {
-                    getCallLogsByRawId();
-                }
-            });*/
             if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants
                     .PREF_CALL_LOG_SYNCED, false)) {
                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
@@ -282,7 +209,6 @@ public class MainActivity extends BaseActivity implements NavigationView
             }
 
         }
-
         if (smsLogs) {
             if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants
                     .PREF_CALL_LOG_SYNCED, false)
@@ -290,20 +216,17 @@ public class MainActivity extends BaseActivity implements NavigationView
                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                 syncSmsLogAsyncTask.execute();
             }
-
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        checkPermissionToExecute();
         updateNotificationCount();
 
     }
@@ -341,15 +264,11 @@ public class MainActivity extends BaseActivity implements NavigationView
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.nav_share) {
             Intent sharingIntent = new Intent(Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
-//                String shareBody = "Here is the share content body";
             String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName();
-//                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Share Contact Via");
             sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
             startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
         } else if (id == R.id.nav_invite) {
@@ -365,9 +284,11 @@ public class MainActivity extends BaseActivity implements NavigationView
                     emailIntent.setType("vnd.android.cursor.dir/email");
                     emailIntent.putExtra(Intent.EXTRA_STREAM, path);
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
-                    startActivity(Intent.createChooser(emailIntent, getString(R.string.str_send_email)));
+                    startActivity(Intent.createChooser(emailIntent, getString(R.string
+                            .str_send_email)));
                 } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.db_dump_failed), Toast.LENGTH_SHORT)
+                    Toast.makeText(getApplicationContext(), getString(R.string.db_dump_failed),
+                            Toast.LENGTH_SHORT)
                             .show();
                 }
             }
@@ -375,12 +296,9 @@ public class MainActivity extends BaseActivity implements NavigationView
             startActivityIntent(MainActivity.this, TimelineActivity.class, null);
         } else if (id == R.id.nav_user_events) {
             startActivityIntent(MainActivity.this, EventsActivity.class, null);
-        } /*else if (id == R.id.nav_blocked_contacts) {
-            startActivityIntent(this, BlockContactListActivity.class, new Bundle());
-        } */ else if (id == R.id.nav_user_rating_history) {
+        } else if (id == R.id.nav_user_rating_history) {
             startActivityIntent(this, RatingHistory.class, new Bundle());
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -549,21 +467,11 @@ public class MainActivity extends BaseActivity implements NavigationView
 
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
-//        if (!Utils.isArraylistNullOrEmpty(arrayListContactNumbers)) {
         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
                 (databaseHandler);
         ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new ArrayList<>();
-//            for (int i = 0; i < arrayListContactNumbers.size(); i++) {
-           /* if (!tableProfileMobileMapping.getIsMobileNumberExists(arrayListContactNumbers
-                    .get(i))) {*/
-
-//                ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
-//                profileMobileMapping.setMpmMobileNumber(arrayListContactNumbers.get(i));
-//                profileMobileMapping.setMpmIsRcp("0");
         if (!Utils.isArraylistNullOrEmpty(profileData)) {
             for (int j = 0; j < profileData.size(); j++) {
-                /*if (!tableProfileMobileMapping.getIsMobileNumberExists(profileData.get(j)
-                        .getVerifiedMobileNumber())) {*/
                 ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
                 profileMobileMapping.setMpmMobileNumber("+" + profileData.get(j)
                         .getVerifiedMobileNumber());
@@ -572,36 +480,19 @@ public class MainActivity extends BaseActivity implements NavigationView
                 profileMobileMapping.setMpmCloudPmId(profileData.get(j).getRcpPmId());
                 profileMobileMapping.setMpmIsRcp("1");
                 arrayListProfileMobileMapping.add(profileMobileMapping);
-//                }
             }
         }
-               /* arrayListProfileMobileMapping.add(profileMobileMapping);
-            }*/
-//            }
         tableProfileMobileMapping.addArrayProfileMobileMapping(arrayListProfileMobileMapping);
-       /* int count = tableProfileMobileMapping.getProfileMobileMappingCount();
-        Log.i("storeToMobileMapping: ", String.valueOf(count));*/
-//        }
     }
 
     private void storeToEmailMapping(ArrayList<ProfileDataOperation> profileData) {
-//        if (!Utils.isArraylistNullOrEmpty(arrayListContactEmails)) {
         TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping
                 (databaseHandler);
         ArrayList<ProfileEmailMapping> arrayListProfileEmailMapping = new ArrayList<>();
-//            for (int i = 0; i < arrayListContactEmails.size(); i++) {
-//            if (!tableProfileEmailMapping.getIsEmailIdExists(arrayListContactEmails.get(i))) {
-
-//                    ProfileEmailMapping profileEmailMapping = new ProfileEmailMapping();
-//                    profileEmailMapping.setEpmEmailId(arrayListContactEmails.get(i));
-//                profileEmailMapping.setEpmIsRcp("0");
         if (!Utils.isArraylistNullOrEmpty(profileData)) {
             for (int j = 0; j < profileData.size(); j++) {
                 if (!Utils.isArraylistNullOrEmpty(profileData.get(j).getVerifiedEmailIds())) {
                     for (int k = 0; k < profileData.get(j).getVerifiedEmailIds().size(); k++) {
-                               /* if (StringUtils.equalsIgnoreCase(arrayListContactEmails.get(i),
-                                        profileData.get(j).getVerifiedEmailIds().get(k)
-                                                .getEmEmailId())) {*/
                         if (!tableProfileEmailMapping.getIsEmailIdExists(profileData.get(j)
                                 .getVerifiedEmailIds().get(k).getEmEmailId())) {
                             ProfileEmailMapping profileEmailMapping = new ProfileEmailMapping();
@@ -612,20 +503,16 @@ public class MainActivity extends BaseActivity implements NavigationView
                             profileEmailMapping.setEpmCloudPmId(profileData.get(j).getRcpPmId
                                     ());
                             profileEmailMapping.setEpmIsRcp("1");
-//                                }
+
                             arrayListProfileEmailMapping.add(profileEmailMapping);
                         }
                     }
-//                            }
+
                 }
             }
 
-//                    arrayListProfileEmailMapping.add(profileEmailMapping);
         }
-//            }
         tableProfileEmailMapping.addArrayProfileEmailMapping(arrayListProfileEmailMapping);
-//            }
-//        }
     }
 
     private void storeProfileDataToDb(ArrayList<ProfileDataOperation> profileData,
@@ -635,7 +522,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         HashMap<String, String> mapLocalRcpId = new HashMap<>();
 
         for (int i = 0; i < mapping.size(); i++) {
-//            if (mapping.get(i).getRcpPmId().size() > 0) {
             for (int j = 0; j < mapping.get(i).getRcpPmId().size(); j++) {
                 String phonebookRawId;
                 if (mapLocalRcpId.containsKey(mapping.get(i).getRcpPmId().get(j))) {
@@ -679,8 +565,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                 userProfile.setPmRawId(mapLocalRcpId.get(profileData.get(i).getRcpPmId()));
             }
 
-//            if (tableProfileMaster.getRcpIdCount(Integer.parseInt(userProfile.getPmRcpId())) <=
-// 0) {
             String existingRawId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt
                     (userProfile.getPmRcpId()));
             if (StringUtils.length(existingRawId) <= 0) {
@@ -712,7 +596,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                         mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
                                 .RCP_TYPE_SECONDARY));
                     }
-//                arrayListPhoneNumber.get(j).
                     arrayListMobileNumber.add(mobileNumber);
                 }
 
@@ -745,12 +628,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 if (StringUtils.equalsIgnoreCase(profileData.get(i)
                                         .getVerifiedEmailIds().get(k).getEmEmailId(), email
                                         .getEmEmailAddress())) {
-//                                email.setEmIsPrimary(String.valueOf(getActivity().getResources()
-//                                        .getInteger(R.integer.rcp_type_primary)));
                                     email.setEmIsVerified("1");
                                 } else {
-//                                email.setEmIsPrimary(String.valueOf(getActivity().getResources()
-//                                        .getInteger(R.integer.rcp_type_secondary)));
                                     email.setEmIsVerified("0");
                                 }
                             }
@@ -777,15 +656,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                         organization.setOmOrganizationCompany(arrayListOrganization.get(j)
                                 .getOrgName
                                         ());
-//                    organization.setOmOrganizationType(arrayListOrganization.get(j).getOrgType());
-//                    organization.setOmOrganizationTitle(arrayListOrganization.get(j).getOrgName
-// ());
-//                    organization.setOmOrganizationDepartment(arrayListOrganization.get(j)
-//                            .getOrgDepartment());
-//                    organization.setOmJobDescription(arrayListOrganization.get(j)
-//                            .getOrgJobTitle());
-//                    organization.setOmOfficeLocation(arrayListOrganization.get(j)
-//                            .getOrgOfficeLocation());
                         organization.setOmOrganizationDesignation(arrayListOrganization.get(j)
                                 .getOrgJobTitle());
                         organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(j)
@@ -803,7 +673,6 @@ public class MainActivity extends BaseActivity implements NavigationView
 
                 // <editor-fold desc="Website Master">
                 if (!Utils.isArraylistNullOrEmpty(profileData.get(i).getPbWebAddress())) {
-//                ArrayList<String> arrayListWebsite = profileData.get(i).getPbWebAddress();
                     ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileData
                             .get(i)
                             .getPbWebAddress();
@@ -841,11 +710,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                         address.setAmPoBox(arrayListAddress.get(j).getPoBox());
                         address.setAmStreet(arrayListAddress.get(j).getStreet());
                         address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-                      /*  address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude
-                                ());
-                        address.setAmGoogleLongitude(arrayListAddress.get(j)
-                                .getGoogleLongitude());*/
-//                    address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                         address.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
                         address.setAmIsPrivate(arrayListAddress.get(j).getIsPrivate());
                         address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j)
@@ -868,7 +732,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                     for (int j = 0; j < arrayListImAccount.size(); j++) {
                         ImAccount imAccount = new ImAccount();
                         imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
-//                    imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
                         imAccount.setImImProtocol(arrayListImAccount.get(j)
                                 .getIMAccountProtocol());
                         imAccount.setImImDetail(arrayListImAccount.get(j)
@@ -957,11 +820,7 @@ public class MainActivity extends BaseActivity implements NavigationView
             ArrayList<String> existingRcpIds = tableProfileMaster.getAllRcpIdFromRawId(rawId);
             existingRcpIds.removeAll(newRcpIds);
 
-//            Log.i("MAULIK", "We are here::rawId" + rawId);
-//            Log.i("MAULIK", "We are here::existingRcpIds.toString()" + existingRcpIds.toString());
-
             for (int k = 0; k < existingRcpIds.size(); k++) {
-//                Log.i("MAULIK", "We are here::" + existingRcpIds.get(k));
                 QueryManager queryManager = new QueryManager(databaseHandler);
                 queryManager.updateRcProfileDetail(this, Integer.parseInt(existingRcpIds.get(k)),
                         rawId);
@@ -975,64 +834,6 @@ public class MainActivity extends BaseActivity implements NavigationView
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-/*        if (requestCode == AppConstants.READ_LOGS && permissions[0].equals(Manifest.permission
-                .READ_CONTACTS) && permissions[1].equals(Manifest.permission.READ_CALL_LOG)) {
-            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED && grantResults[1] ==
-                    PermissionChecker.PERMISSION_GRANTED) {
-
-                Intent callLogIdFetchService = new Intent(this, CallLogIdFetchService.class);
-                startService(callLogIdFetchService);
-
-                AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        getCallLogsByRawId();
-                    }
-                });
-
-            } else {
-                showPermissionConfirmationDialog();
-            }
-        }*/
-
-       /* switch (requestCode) {
-            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
-                Map<String, Integer> perms = new HashMap<>();
-                perms.put(Manifest.permission.READ_CALL_LOG, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.READ_CONTACTS, PackageManager.PERMISSION_GRANTED);
-
-                if (grantResults.length > 0) {
-                    for (int i = 0; i < permissions.length; i++)
-                        perms.put(permissions[i], grantResults[i]);
-                    // Check for both permissions
-                   *//* if (perms.get(Manifest.permission.READ_CALL_LOG) != PackageManager
-                            .PERMISSION_GRANTED || perms.get(Manifest.permission.READ_CONTACTS)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        Log.d(TAG, "Some permissions are not granted ask again ");
-                    }*//*
-                    if (perms.get(Manifest.permission.READ_CONTACTS) != PackageManager
-                            .PERMISSION_GRANTED) {
-
-                    }
-                    if (perms.get(Manifest.permission.READ_CALL_LOG) != PackageManager
-                            .PERMISSION_GRANTED) {
-                        Intent callLogIdFetchService = new Intent(this, CallLogIdFetchService
-                                .class);
-                        startService(callLogIdFetchService);
-
-                        AsyncTask.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                getCallLogsByRawId();
-                            }
-                        });
-                    }
-                }
-
-            }
-        }*/
-
     }
 
     @Override
@@ -1065,16 +866,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         ImageView imageViewSearch = (ImageView) toolbar.findViewById(R.id.image_search);
         badgeLayout = (LinearLayout) toolbar.findViewById(R.id.badge_layout);
         badgeTextView = (TextView) toolbar.findViewById(R.id.badge_count);
-
-//        textImageNotification = (TextView) toolbar.findViewById(R.id.text_image_notification);
-//        textImageNotification.setTypeface(Utils.typefaceIcons(this));
-//        textImageNotification.setText(Html.fromHtml(getResources().getString(R.string.im_bell)));
-        /*textImageNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityIntent(MainActivity.this, NotificationsActivity.class, null);
-            }
-        });*/
         imageNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1085,10 +876,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         imageViewSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(MainActivity.this,"Open Search Activity",Toast.LENGTH_SHORT)
-// .show();
                 startActivityIntent(MainActivity.this, SearchActivity.class, null);
-
             }
         });
 
@@ -1096,15 +884,12 @@ public class MainActivity extends BaseActivity implements NavigationView
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Dial Pad", Snackbar.LENGTH_SHORT).show();
                 if (!isCompaseIcon)
                     openDialer();
                 else {
                     AppConstants.isComposingSMS = true;
                     openSMSComposerPage();
                 }
-//                    Toast.makeText(MainActivity.this,"open compose sms page",Toast
-// .LENGTH_SHORT).show();
             }
         });
 
@@ -1368,8 +1153,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                 while (cursor.moveToNext()) {
                     callLogsIdsList.add(cursor.getString(rowId));
                 }
+                cursor.close();
             }
-            cursor.close();
             Utils.setArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET, callLogsIdsList);
         }
 
@@ -1441,16 +1226,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 log.setLocalPbRowId(uniquePhoneBookId);
                             else
                                 log.setLocalPbRowId(" ");
-
-//                            log.setFlag(7);
                             ArrayList<CallLogType> arrayListHistory;
-                   /* if (!TextUtils.isEmpty(userName)) {
-                        arrayListHistory = callLogHistory(userName);
-                    } else {*/
                             arrayListHistory = callLogHistory(userNumber);
-//                    }
-//                            log.setArrayListCallHistory(arrayListHistory);
-
                             ArrayList<CallLogType> arrayListHistoryCount = new ArrayList<>();
                             for (int j = 0; j < arrayListHistory.size(); j++) {
                                 CallLogType tempCallLogType = arrayListHistory.get(j);
@@ -1459,11 +1236,13 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 log.setCallSimNumber(simNumber);
                                 long tempdate = tempCallLogType.getHistoryDate();
                                 Date objDate1 = new Date(tempdate);
-                                String arrayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format
+                                String arrayDate = new SimpleDateFormat("yyyy-MM-dd", Locale
+                                        .getDefault()).format
                                         (objDate1);
                                 long callLogDate = log.getDate();
                                 Date intentDate1 = new Date(callLogDate);
-                                String intentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format
+                                String intentDate = new SimpleDateFormat("yyyy-MM-dd", Locale
+                                        .getDefault()).format
                                         (intentDate1);
                                 if (intentDate.equalsIgnoreCase(arrayDate)) {
                                     arrayListHistoryCount.add(tempCallLogType);
@@ -1481,7 +1260,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                                 log.setTypeOfCall(tempCallLogType.getTypeOfCall());
                                 log.setDurationToPass(tempCallLogType.getDurationToPass());
                                 if (!StringUtils.isEmpty(tempCallLogType.getHistoryCallSimNumber()))
-                                    log.setHistoryCallSimNumber(tempCallLogType.getHistoryCallSimNumber());
+                                    log.setHistoryCallSimNumber(tempCallLogType
+                                            .getHistoryCallSimNumber());
                                 else
                                     log.setHistoryCallSimNumber(" ");
                                 // 16/06/2017 changed done end
@@ -1505,8 +1285,24 @@ public class MainActivity extends BaseActivity implements NavigationView
     private BroadcastReceiver localBroadcastReceiverCallLogSync = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
-            syncCallLogDataToServer(callLogTypeArrayListMain);
+            if (callLogTypeArrayListMain != null && callLogTypeArrayListMain.size() > 0)
+                syncCallLogDataToServer(callLogTypeArrayListMain);
+            else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkPermissionToExecute();
+                } else {
+                    if (Utils.isNetworkAvailable(MainActivity.this)
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CONTACT_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CALL_LOG_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_SMS_SYNCED, false)) {
+                        syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                        syncCallLogAsyncTask.execute();
+                    }
+                }
+            }
         }
     };
 
@@ -1517,15 +1313,18 @@ public class MainActivity extends BaseActivity implements NavigationView
             if (smsLogTypeArrayListMain != null && smsLogTypeArrayListMain.size() > 0)
                 syncSMSLogDataToServer(smsLogTypeArrayListMain);
             else {
-                if (Utils.isNetworkAvailable(MainActivity.this) && Utils.getBooleanPreference
-                        (MainActivity.this,
-                                AppConstants.PREF_CALL_LOG_SYNCED, false)
-                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants
-                        .PREF_SMS_SYNCED, false)) {
-                    syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                    syncSmsLogAsyncTask.execute();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkPermissionToExecute();
+                } else {
+                    if (Utils.isNetworkAvailable(MainActivity.this)
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CALL_LOG_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_SMS_SYNCED, false)) {
+                        syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                        syncSmsLogAsyncTask.execute();
+                    }
                 }
-
             }
         }
     };
@@ -1767,10 +1566,10 @@ public class MainActivity extends BaseActivity implements NavigationView
     }
 
     private String getRawContactIdFromNumber(String phoneNumber) {
-        String numberId = "";
+        String numberId, rawId = "";
         try {
 
-            numberId = "";
+//            numberId = "";
             ContentResolver contentResolver = this.getContentResolver();
 
             Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
@@ -1783,55 +1582,30 @@ public class MainActivity extends BaseActivity implements NavigationView
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                    String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                   /* String contactName = cursor.getString(cursor.getColumnIndexOrThrow
                             (ContactsContract.PhoneLookup.DISPLAY_NAME));
                     numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
-                            .PhoneLookup.LOOKUP_KEY));
-//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
-                }
-                cursor.close();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        return numberId;
-
-        /*String numberId = "";
-        try {
-
-            numberId = "";
-            ContentResolver contentResolver = this.getContentResolver();
-
-           *//* Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
-                    .encode(phoneNumber));*//*
-            Uri uri = ContactsContract.Data.CONTENT_URI;
-
-            String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone
-            .RAW_CONTACT_ID,
-                    ContactsContract.CommonDataKinds.Phone.NUMBER};
-
-//            String selection = ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?";
-//            String[] selectionArgs = new String[]{phoneNumber};
-
-            String selection = ContactsContract.Data.MIMETYPE + " in (?) AND " +
-                    ContactsContract.CommonDataKinds.Phone.NUMBER + "=?";
-            String[] selectionArgs = {
-                    ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE, phoneNumber};
-
-            Cursor cursor =
-                    contentResolver.query(uri, projection, selection, selectionArgs, null);
-
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    *//*String contactName = cursor.getString(cursor.getColumnIndexOrThrow
-                            (ContactsContract.PhoneLookup.DISPLAY_NAME));*//*
+                            .PhoneLookup.LOOKUP_KEY));*/
                     numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
-                    .CommonDataKinds.
-                            Phone.RAW_CONTACT_ID));
-                Log.d("LocalPBId", "contactMatch id: " + numberId);
+                            .PhoneLookup.LOOKUP_KEY));
+                    Uri uri1 = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                    String[] projection1 = new String[]{
+                            ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
+                            ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID
+                    };
+
+                    String selection = ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ?";
+                    String[] selectionArgs = new String[]{numberId};
+
+                    Cursor cursor1 = getContentResolver().query(uri1, projection1, selection,
+                            selectionArgs, null);
+                    if (cursor1 != null) {
+                        while (cursor1.moveToNext()) {
+                            rawId = cursor1.getString(cursor1.getColumnIndexOrThrow
+                                    (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID));
+                        }
+                        cursor1.close();
+                    }
                 }
                 cursor.close();
             }
@@ -1840,12 +1614,10 @@ public class MainActivity extends BaseActivity implements NavigationView
             e.printStackTrace();
         }
 
-
-        return numberId;*/
+        return rawId;
     }
 
     private ArrayList callLogHistory(String number) {
-        String numberToSearch = number;
         ArrayList<CallLogType> callDetails = new ArrayList<>();
         Cursor cursor;
 
@@ -1891,9 +1663,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                         if (!TextUtils.isEmpty(accountName))
                             Log.e("Sim Name", accountName);
 
-//                        String userImage = cursor.getString(profileImage);
-//                        if (userImage != null)
-//                            Log.e("User Image", userImage);
                     } else {
                         if (account_id > 0) {
                             accountId = cursor.getString(account_id);
@@ -2048,7 +1817,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                     fetchSMSDataById(partition);
                 }
             } else {
-//                    fetchSMSDataById(tempIdsList);
                 if (tempIdsList.size() <= 0)
                     fetchSMSDataById(listOfIds);
                 else {

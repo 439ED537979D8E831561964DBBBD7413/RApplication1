@@ -43,11 +43,16 @@ import com.rawalinfocom.rcontact.adapters.SimpleCallLogListAdapter;
 import com.rawalinfocom.rcontact.adapters.SmsListAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookSMSLogs;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.listener.OnLoadMoreListener;
+import com.rawalinfocom.rcontact.model.CallLogType;
+import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.SmsDataType;
+import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -572,6 +577,8 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
 
     private void makeSimpleDataThreadWise(ArrayList<SmsDataType> filteredList) {
+
+        ArrayList<SmsDataType> savedContactList = new ArrayList<>();
         if (filteredList != null && filteredList.size() > 0) {
             recyclerSmsLogs.setVisibility(View.VISIBLE);
             textNoSmsFound.setVisibility(View.GONE);
@@ -600,6 +607,69 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     if (!isNumberExists) {
                         smsDataTypeArrayList.add(smsDataType);
                     }
+                }
+            }
+
+            if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
+                for (int i = 0; i < smsDataTypeArrayList.size(); i++) {
+                    SmsDataType smsDataType = smsDataTypeArrayList.get(i);
+                    String address = smsDataType.getAddress();
+                    if(!StringUtils.containsOnly(address,"\\d+")){
+                        String name =  address;
+                        if (!StringUtils.isEmpty(name)) {
+                            smsDataType.setRecordPosition(i);
+                            savedContactList.add(smsDataType);
+                        }
+                    }
+                }
+            }
+
+            if (savedContactList != null && savedContactList.size() > 0) {
+                for (int i = 0; i < savedContactList.size(); i++) {
+                    SmsDataType smsDataType = savedContactList.get(i);
+                    String number = "";
+                    String address = smsDataType.getAddress();
+                    if(StringUtils.containsOnly(address,"\\d+")){
+
+                    }
+                    /*if (!StringUtils.isEmpty(number)) {
+                        TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping(getDatabaseHandler());
+                        ProfileMobileMapping profileMobileMapping = tableProfileMobileMapping.
+                                getCloudPmIdFromProfileMappingFromNumber(number);
+                        if (profileMobileMapping != null) {
+                            String cloudPmId = profileMobileMapping.getMpmCloudPmId();
+                            // To do
+                            // Pass this cloudId to fetch FirstName and Last Name from ProfileMasterTable
+                            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+                            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(cloudPmId));
+                            String firstName = userProfile.getPmFirstName();
+                            String lastName = userProfile.getPmLastName();
+                            String rcpId = userProfile.getPmRcpId();
+                            String imagePath = userProfile.getPmProfileImage();
+                            String suffix = userProfile.getPmSuffix();
+                            String prefix = userProfile.getPmPrefix();
+                            String middleName = userProfile.getPmMiddleName();
+
+                            if (!StringUtils.isEmpty(firstName))
+                                smsDataType.setRcpFirstName(firstName);
+                            if (!StringUtils.isEmpty(lastName))
+                                smsDataType.setRcpLastName(lastName);
+                            if (!StringUtils.isEmpty(rcpId))
+                                smsDataType.setRcpId(rcpId);
+                            if (!StringUtils.isEmpty(imagePath))
+                                smsDataType.setProfileImage(imagePath);
+                            if (!StringUtils.isEmpty(middleName))
+                                smsDataType.setMiddleName(middleName);
+                            if (!StringUtils.isEmpty(suffix))
+                                smsDataType.setSuffix(suffix);
+                            if (!StringUtils.isEmpty(prefix))
+                                smsDataType.setPrefix(prefix);
+
+                            smsDataType.setRcpUser(true);
+                            int positionToReplace = smsDataType.getRecordPosition();
+                            smsDataTypeArrayList.set(positionToReplace, smsDataType);
+                        }
+                    }*/
                 }
             }
 

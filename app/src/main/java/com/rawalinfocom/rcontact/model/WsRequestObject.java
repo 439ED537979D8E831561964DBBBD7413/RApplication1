@@ -18,10 +18,10 @@ import java.util.List;
 public class WsRequestObject {
 
     @JsonProperty("car_id")
-    private int carId;
+    private Integer carId;
 
     @JsonProperty("car_pm_id_to")
-    private int carPmIdTo;
+    private Integer carPmIdTo;
 
     @JsonProperty("car_filed_type")
     private String carFiledType;
@@ -30,7 +30,7 @@ public class WsRequestObject {
     private String carMongoDbRecordIndex;
 
     @JsonProperty("car_status")
-    private int carStatus;
+    private Integer carStatus;
 
     @JsonProperty("date")
     private String date;
@@ -39,7 +39,7 @@ public class WsRequestObject {
     private String comment;
 
     @JsonProperty("to_pm_id")
-    private int toPmId;
+    private Integer toPmId;
 
     @JsonProperty("event_record_index_id")
     private String eventRecordIndexId;
@@ -50,131 +50,18 @@ public class WsRequestObject {
     @JsonProperty("reply")
     private String reply;
 
-    int flag;
-
-
-    private List<PrivacyDataItem> privacyData;
+    @JsonProperty("flag")
+    private Integer flag;
 
     @JsonProperty("privacy_data")
-    public List<PrivacyDataItem> getPrivacyData() {
-        return privacyData;
-    }
-
-    public void setPrivacyData(List<PrivacyDataItem> privacyData) {
-        this.privacyData = privacyData;
-    }
-
-    public int getCarPmIdTo() {
-        return carPmIdTo;
-    }
-
-    public void setCarPmIdTo(int carPmIdTo) {
-        this.carPmIdTo = carPmIdTo;
-    }
-
-    public String getCarFiledType() {
-        return carFiledType;
-    }
-
-    public void setCarFiledType(String carFiledType) {
-        this.carFiledType = carFiledType;
-    }
-
-    public String getCarMongoDbRecordIndex() {
-        return carMongoDbRecordIndex;
-    }
-
-    public void setCarMongoDbRecordIndex(String carMongoDbRecordIndex) {
-        this.carMongoDbRecordIndex = carMongoDbRecordIndex;
-    }
-
-    public int getCarId() {
-        return carId;
-    }
-
-    public void setCarId(int carId) {
-        this.carId = carId;
-    }
-
-    public int getCarStatus() {
-        return carStatus;
-    }
-
-    public void setCarStatus(int carStatus) {
-        this.carStatus = carStatus;
-    }
-
-    public void setToPmId(int toPmId) {
-        this.toPmId = toPmId;
-    }
-
-    public String getCommentId() {
-        return commentId;
-    }
-
-    public void setCommentId(String commentId) {
-        this.commentId = commentId;
-    }
-
-    public String getReply() {
-        return reply;
-    }
-
-    public void setReply(String reply) {
-        this.reply = reply;
-    }
-
-    public String getEvmRecordIndexId() {
-        return eventRecordIndexId;
-    }
-
-    public void setEvmRecordIndexId(String eventRecordIndexId) {
-        this.eventRecordIndexId = eventRecordIndexId;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Integer getToPmId() {
-        return toPmId;
-    }
-
-    public void setToPmId(Integer toPmId) {
-        this.toPmId = toPmId;
-    }
-
-    public ArrayList<Rating> getRatings() {
-        return ratings;
-    }
-
-    public void setRatings(ArrayList<Rating> ratings) {
-        this.ratings = ratings;
-    }
+    private List<PrivacyDataItem> privacyData;
 
     private String countryCode;
     private String mobileNumber;
-    private int pmId;
+
+    @JsonProperty("pm_id")
+    private Integer pmId;
+
     private String cmId;
     private String otp;
     private String otpGenerationTime;
@@ -197,10 +84,11 @@ public class WsRequestObject {
     private String prComment;
     private String prRatingStars;
     private String prStatus;
-    private int prToPmId;
+    private Integer prToPmId;
 
-    private int sendProfileType;
-    private int pmIdWhose;
+    private Integer sendProfileType;
+
+    private Integer pmIdWhose;
     private ContactReceiver receiver;
 
     private String dmModel;
@@ -220,17 +108,21 @@ public class WsRequestObject {
 
     private ArrayList<ProfileVisit> arrayListProfileVisit;
 
-    //    private ArrayList<ProfileDataOperation> profileEdit;
     private ProfileDataOperation profileEdit;
 
     private ArrayList<CallLogHistoryType> historyTypeArrayList;
+
     private ArrayList<SmsDataType> arrayListSmsDataType;
 
     private ArrayList<GlobalSearchType> globalSearchTypeArrayList;
 
     private String searchQuery;
-    private int searchStartAt;
-    private int searchMaxRecord;
+
+    @JsonProperty("startAt")
+    private Integer searchStartAt;
+
+    @JsonProperty("maxRecords")
+    private Integer searchMaxRecord;
 
     @JsonProperty("pr_reply")
     private String prReply;
@@ -276,12 +168,11 @@ public class WsRequestObject {
         this.mobileNumber = mobileNumber;
     }
 
-    @JsonProperty("pm_id")
-    public int getPmId() {
+    public Integer getPmId() {
         return pmId;
     }
 
-    public void setPmId(int pmId) {
+    public void setPmId(Integer pmId) {
         this.pmId = pmId;
     }
 
@@ -357,14 +248,9 @@ public class WsRequestObject {
         this.emailId = emailId;
     }
 
-//    @JsonProperty("type")
-//    public String getType() {
-//        return type;
-//    }
-
-    //public void setType(String type) {
-    //    this.type = type;
-    //}
+    public Integer getSearchMaxRecord() {
+        return searchMaxRecord;
+    }
 
     @JsonProperty("device_id")
     public String getDeviceId() {
@@ -457,21 +343,20 @@ public class WsRequestObject {
     }
 
     @JsonProperty("pr_to_pm_id")
-    public int getPrToPmId() {
+    public Integer getPrToPmId() {
         return prToPmId;
     }
 
-    public void setPrToPmId(int prToPmId) {
+    public void setPrToPmId(Integer prToPmId) {
         this.prToPmId = prToPmId;
     }
 
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     @JsonProperty("send_profile_type")
-    public int getSendProfileType() {
+    public Integer getSendProfileType() {
         return sendProfileType;
     }
 
-    public void setSendProfileType(int sendProfileType) {
+    public void setSendProfileType(Integer sendProfileType) {
         this.sendProfileType = sendProfileType;
     }
 
@@ -484,13 +369,12 @@ public class WsRequestObject {
         this.contactData = contactData;
     }
 
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     @JsonProperty("pm_id_whose")
-    public int getPmIdWhose() {
+    public Integer getPmIdWhose() {
         return pmIdWhose;
     }
 
-    public void setPmIdWhose(int pmIdWhose) {
+    public void setPmIdWhose(Integer pmIdWhose) {
         this.pmIdWhose = pmIdWhose;
     }
 
@@ -584,12 +468,11 @@ public class WsRequestObject {
         this.arrayListProfileVisit = arrayListProfileVisit;
     }
 
-    @JsonProperty("flag")
-    public int getFlag() {
+    public Integer getFlag() {
         return flag;
     }
 
-    public void setFlag(int flag) {
+    public void setFlag(Integer flag) {
         this.flag = flag;
     }
 
@@ -657,30 +540,136 @@ public class WsRequestObject {
     }
 
 
-
     @JsonProperty("search")
     public String getSearchQuery() {
         return searchQuery;
     }
+
     public void setSearchQuery(String searchQuery) {
         this.searchQuery = searchQuery;
     }
 
-    @JsonProperty("startAt")
-    public int getSearchStartAt() {
+    public Integer getSearchStartAt() {
         return searchStartAt;
     }
 
-    public void setSearchStartAt(int searchStartAt) {
+    public void setSearchStartAt(Integer searchStartAt) {
         this.searchStartAt = searchStartAt;
     }
 
-    @JsonProperty("maxRecords")
-    public int getSearchMaxRecord() {
-        return searchMaxRecord;
+    public void setSearchMaxRecord(Integer searchMaxRecord) {
+        this.searchMaxRecord = searchMaxRecord;
     }
 
-    public void setSearchMaxRecord(int searchMaxRecord) {
-        this.searchMaxRecord = searchMaxRecord;
+    public List<PrivacyDataItem> getPrivacyData() {
+        return privacyData;
+    }
+
+    public void setPrivacyData(List<PrivacyDataItem> privacyData) {
+        this.privacyData = privacyData;
+    }
+
+    public Integer getCarPmIdTo() {
+        return carPmIdTo;
+    }
+
+    public void setCarPmIdTo(Integer carPmIdTo) {
+        this.carPmIdTo = carPmIdTo;
+    }
+
+    public String getCarFiledType() {
+        return carFiledType;
+    }
+
+    public void setCarFiledType(String carFiledType) {
+        this.carFiledType = carFiledType;
+    }
+
+    public String getCarMongoDbRecordIndex() {
+        return carMongoDbRecordIndex;
+    }
+
+    public void setCarMongoDbRecordIndex(String carMongoDbRecordIndex) {
+        this.carMongoDbRecordIndex = carMongoDbRecordIndex;
+    }
+
+    public Integer getCarId() {
+        return carId;
+    }
+
+    public void setCarId(Integer carId) {
+        this.carId = carId;
+    }
+
+    public Integer getCarStatus() {
+        return carStatus;
+    }
+
+    public void setCarStatus(Integer carStatus) {
+        this.carStatus = carStatus;
+    }
+
+    public String getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
+    }
+
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
+
+    public String getEvmRecordIndexId() {
+        return eventRecordIndexId;
+    }
+
+    public void setEvmRecordIndexId(String eventRecordIndexId) {
+        this.eventRecordIndexId = eventRecordIndexId;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getToPmId() {
+        return toPmId;
+    }
+
+    public void setToPmId(Integer toPmId) {
+        this.toPmId = toPmId;
+    }
+
+    public ArrayList<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(ArrayList<Rating> ratings) {
+        this.ratings = ratings;
     }
 }

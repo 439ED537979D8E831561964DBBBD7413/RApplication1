@@ -165,6 +165,29 @@ public class TableProfileMobileMapping {
         return arrayListProfileMapping;
     }
 
+    public ProfileMobileMapping getCloudPmIdFromProfileMappingFromNumber(String mobileNumber) {
+
+        ProfileMobileMapping profileMobileMapping =  new ProfileMobileMapping();
+        String cloudPmId ="";
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+
+        String query = "SELECT " + COLUMN_MPM_CLOUD_PM_ID +
+                " FROM " + TABLE_PB_PROFILE_MOBILE_MAPPING + " where " + COLUMN_MPM_MOBILE_NUMBER + " = \"" +  mobileNumber + "\"" ;
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        // looping through all rows and adding to list
+        if(cursor!=null && cursor.getCount()>0){
+            cursor.moveToFirst();
+            profileMobileMapping.setMpmCloudPmId(cursor.getString(0));
+        }else{
+            profileMobileMapping =  null;
+        }
+        cursor.close();
+        db.close();
+        return profileMobileMapping;
+    }
+
     // Getting Profile Mobile Mapping from pm id
     public ArrayList<ProfileMobileMapping> getProfileMobileMappingPmId(int pmId) {
 

@@ -102,18 +102,20 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     Utils.addToContact(context, numberToCall);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.edit))) {
-                    try{
+                    try {
                         Intent intent = new Intent(Intent.ACTION_EDIT);
                         Uri lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
                                 .CONTENT_LOOKUP_URI, key);
-                        Uri res = ContactsContract.Contacts.lookupContact(context.getContentResolver(),
+                        Uri res = ContactsContract.Contacts.lookupContact(context
+                                        .getContentResolver(),
                                 lookupUri);
                         intent.setData(res);
                         context.startActivity(intent);
                         ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(context, "Unable to open activity", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Unable to open activity", Toast.LENGTH_SHORT)
+                                .show();
                     }
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string
@@ -288,7 +290,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                 } else {
 
-                    Toast.makeText(context, context.getString(R.string.please_select_one), Toast.LENGTH_SHORT)
+                    Toast.makeText(context, context.getString(R.string.please_select_one), Toast
+                            .LENGTH_SHORT)
                             .show();
                 }
 
@@ -342,10 +345,10 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     }
 
     private String getStarredStatusFromNumber(String phoneNumber) {
-        String numberId = "";
+        String numberId, rawId = "";
         try {
 
-            numberId = "";
+//            numberId = "";
             ContentResolver contentResolver = context.getContentResolver();
 
             Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
@@ -358,11 +361,30 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                    String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                   /* String contactName = cursor.getString(cursor.getColumnIndexOrThrow
                             (ContactsContract.PhoneLookup.DISPLAY_NAME));
                     numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.LOOKUP_KEY));*/
+                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
                             .PhoneLookup.LOOKUP_KEY));
-//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
+                    Uri uri1 = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                    String[] projection1 = new String[]{
+                            ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
+                            ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID
+                    };
+
+                    String selection = ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ?";
+                    String[] selectionArgs = new String[]{numberId};
+
+                    Cursor cursor1 = contentResolver.query(uri1, projection1, selection,
+                            selectionArgs, null);
+                    if (cursor1 != null) {
+                        while (cursor1.moveToNext()) {
+                            rawId = cursor1.getString(cursor1.getColumnIndexOrThrow
+                                    (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID));
+                        }
+                        cursor1.close();
+                    }
                 }
                 cursor.close();
             }
@@ -372,7 +394,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
         }
 
 
-        return numberId;
+        return rawId;
     }
 
     private void deleteCallLogByNumber(String number) {
@@ -431,7 +453,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
             if (value > 0) {
                 Log.i("Delete Query value", value + "");
-                Toast.makeText(context, value + context.getString(R.string.call_logs_deleted), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, value + context.getString(R.string.call_logs_deleted),
+                        Toast.LENGTH_SHORT).show();
 
                 Intent localBroadcastIntent = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_PROFILE);
@@ -465,7 +488,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     selectionArguments);
             if (value > 0) {
                 Log.i("Delete Query value", value + "");
-                Toast.makeText(context, value + context.getString(R.string.call_logs_deleted), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, value + context.getString(R.string.call_logs_deleted),
+                        Toast.LENGTH_SHORT).show();
 
                 Intent localBroadcastIntent = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_PROFILE);
@@ -504,7 +528,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     selectionArguments);
             if (value > 0) {
                 Log.i("Delete Query value", value + "");
-                Toast.makeText(context, value + context.getString(R.string.call_logs_deleted), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, value + context.getString(R.string.call_logs_deleted),
+                        Toast.LENGTH_SHORT).show();
 
                 Intent localBroadcastIntent = new Intent(AppConstants
                         .ACTION_LOCAL_BROADCAST_PROFILE);
@@ -590,7 +615,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(context.getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " + number + "?");
+        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " +
+                number + "?");
         callConfirmationDialog.showDialog();
 
     }
