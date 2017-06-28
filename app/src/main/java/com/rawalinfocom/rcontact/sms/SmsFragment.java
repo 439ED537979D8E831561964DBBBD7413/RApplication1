@@ -610,11 +610,11 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 }
             }
 
-            if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
+            /*if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
                 for (int i = 0; i < smsDataTypeArrayList.size(); i++) {
                     SmsDataType smsDataType = smsDataTypeArrayList.get(i);
                     String address = smsDataType.getAddress();
-                    if(!StringUtils.containsOnly(address,"\\d+")){
+                    if(!StringUtils.containsOnly(address,"[0-9]+")){
                         String name =  address;
                         if (!StringUtils.isEmpty(name)) {
                             smsDataType.setRecordPosition(i);
@@ -622,17 +622,18 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                         }
                     }
                 }
-            }
+            }*/
 
-            if (savedContactList != null && savedContactList.size() > 0) {
-                for (int i = 0; i < savedContactList.size(); i++) {
-                    SmsDataType smsDataType = savedContactList.get(i);
+            if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
+                for (int i = 0; i < smsDataTypeArrayList.size(); i++) {
+                    SmsDataType smsDataType = smsDataTypeArrayList.get(i);
                     String number = "";
+                    smsDataType.setRecordPosition(i);
                     String address = smsDataType.getAddress();
-                    if(StringUtils.containsOnly(address,"\\d+")){
-
-                    }
-                    /*if (!StringUtils.isEmpty(number)) {
+                    String savedNumber = getNumberFromName(address);
+                    if(!StringUtils.isEmpty(savedNumber))
+                        number =  Utils.getFormattedNumber(getActivity(),savedNumber);
+                    if (!StringUtils.isEmpty(number)) {
                         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping(getDatabaseHandler());
                         ProfileMobileMapping profileMobileMapping = tableProfileMobileMapping.
                                 getCloudPmIdFromProfileMappingFromNumber(number);
@@ -669,7 +670,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                             int positionToReplace = smsDataType.getRecordPosition();
                             smsDataTypeArrayList.set(positionToReplace, smsDataType);
                         }
-                    }*/
+                    }
                 }
             }
 

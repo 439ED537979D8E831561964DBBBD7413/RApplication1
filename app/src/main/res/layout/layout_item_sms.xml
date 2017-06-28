@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="10dp">
 
     <RelativeLayout
@@ -28,11 +29,27 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/text_number"
-                android:text="+917788445510" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/text_number"
+                    android:text="+917788445510" />
+
+                <TextView
+                    android:id="@+id/text_cloud_contact_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    tools:text=" (Aniruddh Pal)" />
+
+            </LinearLayout>
+
 
             <TextView
                 android:layout_width="match_parent"
