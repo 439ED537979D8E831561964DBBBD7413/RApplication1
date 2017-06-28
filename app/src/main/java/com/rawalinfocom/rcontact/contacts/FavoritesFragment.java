@@ -201,7 +201,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         set.add(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME);
         set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
         set.add(ContactsContract.Contacts.PHOTO_ID);
-        set.add(ContactsContract.Contacts.LOOKUP_KEY);
+//        set.add(ContactsContract.Contacts.LOOKUP_KEY);
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
         String[] projection = set.toArray(new String[0]);
 
@@ -581,7 +581,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 .StructuredName.SUFFIX);
         final int prefixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
                 .StructuredName.PREFIX);
-        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
+//        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
         final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
                 .PHOTO_THUMBNAIL_URI);
 
@@ -600,7 +600,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 arrayListUserContact.add(profileData);
             }
 
-            profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+            profileData.setLocalPhoneBookId(data.getString(rawIdIdx));
             profileData.setRawContactId(data.getString(rawIdIdx));
 
             switch (data.getString(mimeTypeIdx)) {
@@ -614,8 +614,13 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                     profileData.setTempPrefix(data.getString(prefixNameIdx));
                     profileData.setTempSufix(data.getString(suffixNameIdx));
                     profileData.setTempMiddleName(data.getString(middleNameIdx));
-                    profileData.setName(data.getString(givenNameIdx) + data.getString
-                            (familyNameIdx));
+                    if (StringUtils.length(data.getString(familyNameIdx)) > 0) {
+                        profileData.setName(data.getString(givenNameIdx) + " " + data.getString
+                                (familyNameIdx));
+                    } else {
+                        profileData.setName(StringUtils.defaultString(data.getString
+                                (givenNameIdx)));
+                    }
                     break;
             }
         }
