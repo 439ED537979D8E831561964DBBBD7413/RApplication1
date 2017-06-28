@@ -39,7 +39,6 @@ import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
@@ -58,6 +57,7 @@ import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -68,28 +68,21 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
     ProgressWheel progressFavoriteContact;
     @BindView(R.id.recycler_view_contact_list)
     RecyclerView recyclerViewContactList;
-    /*@BindView(R.id.relative_scroller)
-    RelativeLayout relativeScroller;
-    @BindView(R.id.scroller_favorite_contact)
-    VerticalRecyclerViewFastScroller scrollerFavoriteContact;
-    @BindView(R.id.title_indicator)
-    ColorGroupSectionTitleIndicator titleIndicator;*/
-    @BindView(R.id.text_total_contacts)
-    TextView textTotalContacts;
     @BindView(R.id.relative_root_favourite)
     RelativeLayout relativeRootFavourite;
     @BindView(R.id.layout_empty_view)
     LinearLayout layoutEmptyView;
     LongSparseArray<ProfileData> array = new LongSparseArray<>();
-    TextView textEmptyView;
 
-    PhoneBookContacts phoneBookContacts;
-
-    //    AllContactListAdapter allContactListAdapter;
     AllContactAdapter allContactListAdapter;
     ArrayList<ProfileData> arrayListUserContact = new ArrayList<>();
     ArrayList<Object> arrayListPhoneBookContacts;
     ArrayList<String> arrayListContactHeaders;
+    @BindView(R.id.text_total_contacts)
+    TextView textTotalContacts;
+    @BindView(R.id.text_empty_view)
+    TextView textEmptyView;
+    Unbinder unbinder;
 
     private View rootView;
     private boolean isReload = false;
@@ -143,6 +136,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
             rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
             ButterKnife.bind(this, rootView);
         }
+        unbinder = ButterKnife.bind(this, rootView);
         return rootView;
     }
 
@@ -161,7 +155,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         if (isFromSettings) {
             isFromSettings = false;
             if (settingRequestPermission == AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS) {
-                if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
                         .READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
                     if (!isReload) {
                         init();
@@ -207,7 +201,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         set.add(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME);
         set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
         set.add(ContactsContract.Contacts.PHOTO_ID);
-        set.add(ContactsContract.Contacts.LOOKUP_KEY);
+//        set.add(ContactsContract.Contacts.LOOKUP_KEY);
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
         String[] projection = set.toArray(new String[0]);
 
@@ -343,10 +337,11 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
     private void init() {
 
-        textEmptyView = ButterKnife.findById(layoutEmptyView, R.id.text_empty_view);
+//        textEmptyView = ButterKnife.findById(layoutEmptyView, R.id.text_empty_view);
 
         textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
         textTotalContacts.setVisibility(View.GONE);
+        layoutEmptyView.setVisibility(View.GONE);
 
        /* // Connect the recycler to the scroller (to let the scroller scroll the list)
         scrollerFavoriteContact.setRecyclerView(recyclerViewContactList);
@@ -379,21 +374,27 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 //        initSwipe();
 
         progressFavoriteContact.setVisibility(View.GONE);
-
-        if (rContactApplication.getArrayListFavPhoneBookContacts().size() <= 0) {
+        if (rContactApplication.getArrayListFavPhoneBookContacts() != null) {
+            relativeRootFavourite.setVisibility(View.VISIBLE);
+            if (rContactApplication.getArrayListFavPhoneBookContacts().size() <= 0) {
 //            getFavouriteContacts();
-            if (getLoaderManager().getLoader(0) == null) {
-                getLoaderManager().initLoader(0, null, this);
-            } else {
-                getLoaderManager().restartLoader(0, null, this);
-            }
+                if (getLoaderManager().getLoader(0) == null) {
+                    getLoaderManager().initLoader(0, null, this);
+                } else {
+                    getLoaderManager().restartLoader(0, null, this);
+                }
 //            getLoaderManager().initLoader(0, null, this);
+            } else {
+                arrayListPhoneBookContacts = rContactApplication.getArrayListFavPhoneBookContacts();
+                arrayListContactHeaders = rContactApplication.getArrayListFavContactHeaders();
+                populateRecyclerView();
+            }
         } else {
-            arrayListPhoneBookContacts = rContactApplication.getArrayListFavPhoneBookContacts();
-            arrayListContactHeaders = rContactApplication.getArrayListFavContactHeaders();
-            populateRecyclerView();
+            relativeRootFavourite.setVisibility(View.GONE);
+            layoutEmptyView.setVisibility(View.VISIBLE);
+            textEmptyView.setVisibility(View.VISIBLE);
+            textEmptyView.setText(getString(R.string.str_no_favorite));
         }
-
     }
 
     private void initSwipe() {
@@ -580,7 +581,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 .StructuredName.SUFFIX);
         final int prefixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
                 .StructuredName.PREFIX);
-        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
+//        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
         final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
                 .PHOTO_THUMBNAIL_URI);
 
@@ -599,7 +600,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 arrayListUserContact.add(profileData);
             }
 
-            profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+            profileData.setLocalPhoneBookId(data.getString(rawIdIdx));
             profileData.setRawContactId(data.getString(rawIdIdx));
 
             switch (data.getString(mimeTypeIdx)) {
@@ -613,8 +614,13 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                     profileData.setTempPrefix(data.getString(prefixNameIdx));
                     profileData.setTempSufix(data.getString(suffixNameIdx));
                     profileData.setTempMiddleName(data.getString(middleNameIdx));
-                    profileData.setName(data.getString(givenNameIdx) + data.getString
-                            (familyNameIdx));
+                    if (StringUtils.length(data.getString(familyNameIdx)) > 0) {
+                        profileData.setName(data.getString(givenNameIdx) + " " + data.getString
+                                (familyNameIdx));
+                    } else {
+                        profileData.setName(StringUtils.defaultString(data.getString
+                                (givenNameIdx)));
+                    }
                     break;
             }
         }
@@ -742,7 +748,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
-                        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest
+                        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
                                 .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                             requestPermissions(new String[]{Manifest.permission
                                     .CALL_PHONE}, AppConstants
@@ -844,6 +850,12 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
         permissionConfirmationDialog.showDialog();
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     //</editor-fold>

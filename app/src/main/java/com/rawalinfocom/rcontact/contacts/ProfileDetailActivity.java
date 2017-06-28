@@ -526,7 +526,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     CallConfirmationListDialog callConfirmationListDialog = new
                                             CallConfirmationListDialog(this, listPhoneNumber,
                                             false);
-                                    callConfirmationListDialog.setDialogTitle(getString(R.string.please_select_number_view_sms_log));
+                                    callConfirmationListDialog.setDialogTitle(getString(R.string
+                                            .please_select_number_view_sms_log));
                                     callConfirmationListDialog.showDialog();
 
                                 } else {
@@ -575,7 +576,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                                 CallConfirmationListDialog callConfirmationListDialog = new
                                         CallConfirmationListDialog(this, listPhoneNumber, false);
-                                callConfirmationListDialog.setDialogTitle(getString(R.string.please_select_number_view_sms_log));
+                                callConfirmationListDialog.setDialogTitle(getString(R.string
+                                        .please_select_number_view_sms_log));
                                 callConfirmationListDialog.showDialog();
 
                             } else {
@@ -662,7 +664,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             favStatus);
 
                     if (updateStatus != 1) {
-                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R.string.error_update_favorite_status));
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
+                                .string.error_update_favorite_status));
                     }
                     ArrayList<ProfileData> arrayListFavourites = new ArrayList<>();
                     ProfileData favouriteStatus = new ProfileData();
@@ -684,8 +687,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_EDIT)) {
                     /*startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
                             null);*/
-                    startActivityIntent(ProfileDetailActivity.this, com.rawalinfocom.rcontact
-                            .EditProfileActivity.class, null);
+                    startActivityIntent(ProfileDetailActivity.this, EditProfileActivity.class,
+                            null);
                     /*Intent i = new Intent(ProfileDetailActivity.this, EditProfileActivity.class);
                     startActivityForResult(i, 1);
                     overridePendingTransition(R.anim.enter, R.anim.exit);*/
@@ -722,7 +725,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     if (!TextUtils.isEmpty(blockedNumber)) {
                         if (!TextUtils.isEmpty(historyName)) {
                             ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
-                                            .getString(R.string.edit), getString(R.string.view_in_ac),
+                                            .getString(R.string.edit), getString(R.string
+                                            .view_in_ac),
                                     /*this.getString(R.string.view_in_ac), this.getString(R
                                     .string.view_in_rc),
                                     this.getString(R.string.call_reminder),
@@ -916,7 +920,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
                 .relative_root_dialog_list);
         TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        textDialogTitle.setText(String.format("%s %s", getString(R.string.str_invite), contactName));
+        textDialogTitle.setText(String.format("%s %s", getString(R.string.str_invite),
+                contactName));
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
 
         Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
@@ -1010,7 +1015,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
                 .relative_root_dialog_list);
         TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        textDialogTitle.setText(String.format("%s %s", getString(R.string.str_invite), contactName));
+        textDialogTitle.setText(String.format("%s %s", getString(R.string.str_invite),
+                contactName));
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
 
         Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
@@ -1226,7 +1232,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (profileRatingResponse != null && StringUtils.equalsIgnoreCase
                         (profileRatingResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail, getString(R.string.rating_submit));
+                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail, getString(R.string
+                            .rating_submit));
 
                     if (profileRatingResponse.getProfileRating() != null) {
 
@@ -1347,7 +1354,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     ProfileDataOperation profileDetail = editProfileResponse.getProfileDetail();
                     savePrivacySettingToDb(profileDetail);
 
-                    Toast.makeText(ProfileDetailActivity.this, getString(R.string.str_privacy_setting_update),
+                    Toast.makeText(ProfileDetailActivity.this, getString(R.string
+                                    .str_privacy_setting_update),
                             Toast.LENGTH_SHORT).show();
                     Utils.hideProgressDialog();
                 } else {
@@ -1372,7 +1380,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         Toast.makeText(ProfileDetailActivity.this, editProfileResponse.getMessage
                                 (), Toast.LENGTH_SHORT).show();
                     else
-                        Toast.makeText(ProfileDetailActivity.this, getString(R.string.str_request_sending_fail),
+                        Toast.makeText(ProfileDetailActivity.this, getString(R.string
+                                        .str_request_sending_fail),
                                 Toast.LENGTH_SHORT).show();
                     Utils.hideProgressDialog();
                 }
@@ -1571,8 +1580,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
             buttonRight.setTypeface(Utils.typefaceSemiBold(this));
 
-            textDialogTitle.setText(String.format("%s %s", getString(R.string.text_rate), contactName));
-            textRemainingCharacters.setText(String.format("%d %s", getResources().getInteger(R.integer
+            textDialogTitle.setText(String.format("%s %s", getString(R.string.text_rate),
+                    contactName));
+            textRemainingCharacters.setText(String.format("%d %s", getResources().getInteger(R
+                    .integer
                     .max_comment_length), getString(R.string.characters_left)));
 
             buttonRight.setText(R.string.action_submit);
@@ -1609,7 +1620,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     int characters = getResources().getInteger(R.integer.max_comment_length) -
                             charSequence.toString().length();
-                    textRemainingCharacters.setText(String.format(Locale.getDefault(), "%d%s", characters, characters == 1 ?
+                    textRemainingCharacters.setText(String.format(Locale.getDefault(), "%d%s",
+                            characters, characters == 1 ?
                             " " + getString(R.string.text_character) :
                             " " + getString(R.string.characters_left)));
                 }
@@ -1966,11 +1978,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (matcher1.find()) {
 //                textToolbarTitle.setText("Unknown number");
 //                textToolbarTitle.setText(historyName);
-                //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
+                //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
+                // suggestion
                 textToolbarTitle.setText(getString(R.string.str_profile_deails));
             } else {
 //                textToolbarTitle.setText(historyName);
-                //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
+                //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
+                // suggestion
                 textToolbarTitle.setText(getString(R.string.str_profile_deails));
             }
             textFullScreenText.setTypeface(Utils.typefaceBold(this));
@@ -1984,7 +1998,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 textFullScreenText.setText(historyNumber);
 //                textToolbarTitle.setText("Unknown number");
 //                textToolbarTitle.setText(historyNumber);
-                //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
+                //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
+                // suggestion
                 textToolbarTitle.setText(getString(R.string.str_profile_deails));
             }
 
@@ -2892,7 +2907,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textFromSocialMedia.setTypeface(Utils.typefaceRegular(this));
         buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
 
-        textDialogTitle.setText(getString(R.string.str_share) + " " + contactName + getString(R.string.str_s_profile));
+        textDialogTitle.setText(getString(R.string.str_share) + " " + contactName + getString(R
+                .string.str_s_profile));
 
         buttonLeft.setText(R.string.action_cancel);
         textRemovePhoto.setVisibility(View.GONE);
@@ -2915,7 +2931,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     String shareBody = WsConstants.WS_PROFILE_VIEW_ROOT + firstName
                             + "." + lastName + "." + pmId;
                     sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                    startActivity(Intent.createChooser(sharingIntent, getString(R.string.str_share_contact_via)));
+                    startActivity(Intent.createChooser(sharingIntent, getString(R.string
+                            .str_share_contact_via)));
                 } else {
                     // Non-Rcp profile
                     shareContact();
@@ -2985,7 +3002,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             textNoHistoryToShow.setVisibility(View.GONE);
             rippleViewOldRecords.setVisibility(View.VISIBLE);
             recyclerCallHistory.setVisibility(View.VISIBLE);
-            callHistoryListAdapter = new CallHistoryListAdapter(getApplicationContext(), arrayListHistory);
+            callHistoryListAdapter = new CallHistoryListAdapter(getApplicationContext(),
+                    arrayListHistory);
             recyclerCallHistory.setAdapter(callHistoryListAdapter);
             recyclerCallHistory.setFocusable(false);
 //            setRecyclerViewLayoutManager(recyclerCallHistory);
