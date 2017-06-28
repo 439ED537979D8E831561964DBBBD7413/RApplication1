@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.contacts;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -164,39 +165,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         lastSyncedData = Utils.getIntegerPreference(getActivity(), AppConstants
                 .PREF_SYNCED_CONTACTS, 0);
 
-        if (arrayListPhoneBookContacts == null) {
-
-            arrayListPhoneBookContacts = new ArrayList<>();
-            arrayListFavouriteContacts = new ArrayList<>();
-            arrayListPhoneBookContacts.add(getActivity().getString(R.string.title_my_profile));
-
-            ProfileData myProfileData = new ProfileData();
-
-            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
-            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt((
-                    (BaseActivity) getActivity()).getUserPmId()));
-
-            TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
-            MobileNumber mobileNumber = tableMobileMaster.getOwnVerifiedMobileNumbersFromPmId
-                    (getActivity());
-
-            myProfileData.setName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
-            myProfileData.setProfileUrl(userProfile.getPmProfileImage());
-            myProfileData.setTempNumber(mobileNumber.getMnmMobileNumber());
-            myProfileData.setTempIsRcp(true);
-            myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
-
-            arrayListPhoneBookContacts.add(myProfileData);
-            arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));
-
-            phoneBookContacts = new PhoneBookContacts(getActivity());
-
-            isReload = false;
-
-        } else {
-            isReload = true;
-        }
-
     }
 
     @Override
@@ -213,6 +181,24 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 }
             }
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onDetach() {
+        if (syncingTask != null) {
+            syncingTask.cancel(true);
+        }
+        super.onDetach();
     }
 
     @Override
@@ -233,7 +219,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission
                 .READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{android.Manifest.permission.READ_CONTACTS},
@@ -394,7 +379,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
         set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
-        set.add(ContactsContract.Contacts.LOOKUP_KEY);
+//        set.add(ContactsContract.Contacts.LOOKUP_KEY);
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
 
         Uri uri = ContactsContract.Data.CONTENT_URI;
@@ -418,6 +403,37 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (arrayListPhoneBookContacts == null) {
+
+            arrayListPhoneBookContacts = new ArrayList<>();
+            arrayListFavouriteContacts = new ArrayList<>();
+            arrayListPhoneBookContacts.add(getActivity().getString(R.string.title_my_profile));
+
+            ProfileData myProfileData = new ProfileData();
+
+            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt((
+                    (BaseActivity) getActivity()).getUserPmId()));
+
+            TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
+            MobileNumber mobileNumber = tableMobileMaster.getOwnVerifiedMobileNumbersFromPmId
+                    (getActivity());
+
+            myProfileData.setName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+            myProfileData.setProfileUrl(userProfile.getPmProfileImage());
+            myProfileData.setTempNumber(mobileNumber.getMnmMobileNumber());
+            myProfileData.setTempIsRcp(true);
+            myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
+
+            arrayListPhoneBookContacts.add(myProfileData);
+            arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));
+
+            phoneBookContacts = new PhoneBookContacts(getActivity());
+            isReload = false;
+
+        } else {
+            isReload = true;
+        }
 
         getContactsFromPhoneBook(data);
         data.close();
@@ -436,14 +452,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
-    }
-
-    @Override
-    public void onDetach() {
-        if (syncingTask != null) {
-            syncingTask.cancel(true);
-        }
-        super.onDetach();
     }
 
     @Override
@@ -549,7 +557,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
 
-        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
+//        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
         final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
                 .PHOTO_THUMBNAIL_URI);
 
@@ -569,7 +577,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     arrayListPhoneBookContacts.add(profileData);
                 }
 
-                profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
+                profileData.setLocalPhoneBookId(data.getString(rawIdIdx));
                 profileData.setRawContactId(data.getString(rawIdIdx));
 
                 switch (data.getString(mimeTypeIdx)) {
@@ -585,7 +593,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 Log.i("AllContacts", "Crash occurred when displaying contacts" + E.toString());
             }
         }
-
     }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
