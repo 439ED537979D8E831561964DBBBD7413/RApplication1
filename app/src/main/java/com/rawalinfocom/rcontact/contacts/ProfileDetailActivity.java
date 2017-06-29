@@ -3234,7 +3234,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void setFavouriteStatus(ArrayList<ProfileData> favourites) {
 
         WsRequestObject favouriteStatusObject = new WsRequestObject();
-        favouriteStatusObject.setPmId(Integer.parseInt(getUserPmId()));
+//        favouriteStatusObject.setPmId(Integer.parseInt(getUserPmId()));
         favouriteStatusObject.setFavourites(favourites);
 
         if (Utils.isNetworkAvailable(this)) {
@@ -3251,7 +3251,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void submitRating(String ratingStar, String comment) {
 
         WsRequestObject ratingObject = new WsRequestObject();
-        ratingObject.setPmId(Integer.parseInt(getUserPmId()));
+//        ratingObject.setPmId(Integer.parseInt(getUserPmId()));
         ratingObject.setPrComment(comment);
         ratingObject.setPrRatingStars(ratingStar);
         ratingObject.setPrStatus(String.valueOf(IntegerConstants.RATING_DONE));
@@ -3270,7 +3270,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void shareContact() {
 
         WsRequestObject uploadContactObject = new WsRequestObject();
-        uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
+//        uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
         uploadContactObject.setSendProfileType(IntegerConstants.SEND_PROFILE_NON_RCP_SOCIAL);
         uploadContactObject.setContactData(profileDataOperationVcard);
 

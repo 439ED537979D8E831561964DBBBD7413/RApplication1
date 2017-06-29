@@ -11,8 +11,8 @@ public class Event {
     private String evmStartDate;
     private String evmEventType;
     private String evmEventPrivacy;
-    private int evmIsPrivate;
-    private int evmIsYearHidden;
+    private Integer evmIsPrivate;
+    private Integer evmIsYearHidden;
     private String rcProfileMasterPmId;
 
     //    private String evmCustomType;
@@ -65,19 +65,19 @@ public class Event {
         this.evmRecordIndexId = evmRecordIndexId;
     }
 
-    public int getEvmIsYearHidden() {
+    public Integer getEvmIsYearHidden() {
         return evmIsYearHidden;
     }
 
-    public void setEvmIsYearHidden(int evmIsYearHidden) {
+    public void setEvmIsYearHidden(Integer evmIsYearHidden) {
         this.evmIsYearHidden = evmIsYearHidden;
     }
 
-    public int getEvmIsPrivate() {
+    public Integer getEvmIsPrivate() {
         return evmIsPrivate;
     }
 
-    public void setEvmIsPrivate(int evmIsPrivate) {
+    public void setEvmIsPrivate(Integer evmIsPrivate) {
         this.evmIsPrivate = evmIsPrivate;
     }
 }

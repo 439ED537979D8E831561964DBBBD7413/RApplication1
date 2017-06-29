@@ -46,10 +46,12 @@
     <string name="action_resend">Resend</string>
     <string name="msg_otp_verification_success">OTP Verified Successfully</string>
     <string name="error_otp_verification_fail">OTP doesn\'t match</string>
+    <string name="msg_otp_error">Please enter valid OTP</string>
     <string name="error_otp_length_incorrect">Please add %1$d digit OTP!</string>
     <string name="msg_success_otp_request">OTP Request sent successfully!</string>
     <string name="error_otp_expired">This OTP is expired. Please try again!</string>
     <string name="action_register">Register</string>
+    <string name="action_continue">Continue</string>
     <string name="hint_first_name">First Name</string>
     <string name="hint_last_name">Last Name</string>
     <string name="hint_email_id">Email ID</string>
@@ -230,6 +232,7 @@
     <string name="check_text_donot_show_year">Don\'t Show Year</string>
     <string name="myprofile_toolbar_title">Edit My Profile</string>
     <string name="set_password">Set Password</string>
+    <string name="password_verification">Password Verification</string>
     <string name="title_confirm_password">Configure Password</string>
     <string name="msg_enter_password">To prevent unauthorized access please set password.</string>
     <string name="str_password">Password</string>

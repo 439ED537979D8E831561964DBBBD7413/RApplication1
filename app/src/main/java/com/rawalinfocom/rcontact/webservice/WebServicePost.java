@@ -2,13 +2,16 @@ package com.rawalinfocom.rcontact.webservice;
 
 import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.rawalinfocom.rcontact.ReLoginEnterPasswordActivity;
+import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
 
@@ -38,7 +41,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 class WebServicePost {
 
-
     private String jsonObject = "";
     private String url;
     private int requestType = 0;
@@ -46,13 +48,13 @@ class WebServicePost {
     private static final String TAG_LOG = "WebServicePost";
     private final Lock lock = new ReentrantLock();
     private boolean setHeader = false;
-    private Context context;
+    private Activity activity;
 
-    WebServicePost(Context context, String url, int requestType, boolean setHeader) {
+    WebServicePost(Activity activity, String url, int requestType, boolean setHeader) {
         this.url = url;
         this.requestType = requestType;
         this.setHeader = setHeader;
-        this.context = context;
+        this.activity = activity;
     }
 
     public <Request, Response> Response execute(
@@ -71,6 +73,9 @@ class WebServicePost {
             System.setProperty("http.keepAlive", "false");
 
             URL url = new URL(this.url);
+
+//            System.out.println("RContact url --> " + url);
+
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
 
@@ -79,23 +84,22 @@ class WebServicePost {
                 urlConnection.setRequestProperty("Content-Type", "application/json");
                 urlConnection.setRequestProperty("Accept", "application/json");
                 if (setHeader) {
-                    urlConnection.addRequestProperty("pm-id", Utils.getStringPreference(context,
-                            AppConstants.PREF_USER_PM_ID, "0"));
-                    urlConnection.addRequestProperty("access-token", Utils.getStringPreference
-                            (context, AppConstants.PREF_ACCESS_TOKEN, ""));
+                    urlConnection.addRequestProperty("rcAuthToken", Utils.getStringPreference
+                            (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
                 }
-                urlConnection.connect();
-                Log.i("SyncService", "access-token" + Utils.getStringPreference
-                        (context, AppConstants.PREF_ACCESS_TOKEN, ""));
-                ObjectWriter writer = getMapper().writer();
 
+                System.out.println("RContact token -->  " + Utils.getStringPreference
+                        (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
+
+                urlConnection.connect();
+                ObjectWriter writer = getMapper().writer();
 
                 if (request != null) {
                     /**
                      * Json string passed as request
                      */
                     jsonObject = writer.writeValueAsString(request);
-                    Log.i("SyncService", jsonObject);
+                    System.out.println("RContact param -->  " + jsonObject);
 //					 FileUtilities utilities = new FileUtilities();
 //					 utilities.write("Filter file", jsonObject);
                 }
@@ -111,16 +115,23 @@ class WebServicePost {
 
             /* 200 represents HTTP OK */
                 if (statusCode == HttpsURLConnection.HTTP_OK) {
+
+//                    String header = urlConnection.getHeaderField("rc-auth-token");
+                    String header = urlConnection.getHeaderField("rcAuthToken");
+                    System.out.println("RContact header--> " + header);
+
+//                    if (header != null)
+//                        Utils.setStringPreference(activity, AppConstants.PREF_ACCESS_TOKEN, header);
+
+                    if (url.toString().endsWith("save-password") || url.toString().endsWith("check-login")
+                            || url.toString().endsWith("confirm-otp")) {
+                        Utils.setStringPreference(activity, AppConstants.PREF_ACCESS_TOKEN, header);
+                    }
+
                     inputStream = new BufferedInputStream(urlConnection.getInputStream());
                     String responseString = convertInputStreamToString(inputStream);
                     response = getMapper().readValue(responseString, responseType);
                 } else if (statusCode == HttpsURLConnection.HTTP_BAD_REQUEST) {
-//                    ((Activity) context).runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-////                            Toast.makeText(context, "Bad Request", Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
                     Log.e("Status Code: ", HttpsURLConnection.HTTP_BAD_REQUEST + " : Bad Request " +
                             ": Due to user error");
                     response = null;
@@ -137,6 +148,21 @@ class WebServicePost {
                             "Unauthorised Access :  Due to invalid credentials or invalid access " +
                             "token or expired token");
                     response = null;
+
+                    Utils.setIntegerPreference(activity,
+                            AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
+                                    .LAUNCH_RE_LOGIN_PASSWORD);
+
+                    // Redirect to MobileNumberRegistrationActivity
+                    Intent intent = new Intent(activity, ReLoginEnterPasswordActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    intent.putExtra("from", "forgot_pass");
+                    activity.startActivity(intent);
+                    activity.overridePendingTransition(R.anim.enter, R.anim.exit);
+                    activity.finish();
+
                 } else if (statusCode == 429) {
                     Log.e("Status Code: ", 429 + " :  Too many request :  Due to API throttling");
                     response = null;

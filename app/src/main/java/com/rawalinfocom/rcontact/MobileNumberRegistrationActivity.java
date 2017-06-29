@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.rawalinfocom.rcontact.asynctasks.AsyncGetDeviceToken;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
@@ -70,7 +71,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
     RippleView rippleSubmit;
 
     Country selectedCountry;
-    private String[] requiredPermissions = {android.Manifest.permission.READ_SMS, Manifest
+    private String[] requiredPermissions = {Manifest.permission.READ_SMS, Manifest
             .permission.RECEIVE_SMS};
 
     //<editor-fold desc="Override Methods">
@@ -83,6 +84,8 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         // Hide the status bar.
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager
                 .LayoutParams.FLAG_FULLSCREEN);
+
+//        new AsyncGetDeviceToken(this).execute();
 
         init();
 
@@ -141,9 +144,11 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
     @TargetApi(Build.VERSION_CODES.M)
     private void checkPermissionToExecute(String[] permissions, int requestCode) {
         boolean READ_SMS = ContextCompat.checkSelfPermission(MobileNumberRegistrationActivity
-                .this, permissions[0]) != PackageManager.PERMISSION_GRANTED;
+                .this, permissions[0]) !=
+                PackageManager.PERMISSION_GRANTED;
         boolean RECEIVE_SMS = ContextCompat.checkSelfPermission(MobileNumberRegistrationActivity
-                .this, permissions[1]) != PackageManager.PERMISSION_GRANTED;
+                .this, permissions[1]) !=
+                PackageManager.PERMISSION_GRANTED;
         if (READ_SMS || RECEIVE_SMS) {
             requestPermissions(permissions, requestCode);
         } else {
@@ -166,49 +171,12 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         if (error == null) {
 
             //<editor-fold desc="REQ_SEND_OTP">
-            if (serviceType.equalsIgnoreCase(WsConstants.REQ_SEND_OTP)) {
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_CHECK_NUMBER)) {
                 WsResponseObject otpDetailResponse = (WsResponseObject) data;
                 Utils.hideProgressDialog();
+
                 if (otpDetailResponse != null && StringUtils.equalsIgnoreCase(otpDetailResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
-                    OtpLog otpLogResponse = otpDetailResponse.getOtpLog();
-
-                    TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(databaseHandler);
-
-                    Log.i("OTP: ", otpLogResponse.getOldOtp());
-                    Toast.makeText(this, otpLogResponse.getOldOtp(), Toast.LENGTH_LONG).show();
-
-                    if (tableOtpLogDetails.getOtpCount() > 0 && tableOtpLogDetails
-                            .getLastOtpDetails().getOldOtp().equalsIgnoreCase
-                                    (otpLogResponse.getOldOtp())) {
-                        // Update OTP validation Timing
-                        OtpLog otpLog = new OtpLog();
-                        otpLog.setOldId(tableOtpLogDetails.getLastOtpDetails().getOldId());
-                        otpLog.setOldOtp(tableOtpLogDetails.getLastOtpDetails()
-                                .getOldOtp());
-                        otpLog.setOldGeneratedAt(tableOtpLogDetails.getLastOtpDetails()
-                                .getOldGeneratedAt());
-                        otpLog.setOldValidUpto(Utils.getOtpExpirationTime(otpLog
-                                .getOldGeneratedAt()));
-                        otpLog.setOldValidityFlag("1");
-                        otpLog.setRcProfileMasterPmId(tableOtpLogDetails.getLastOtpDetails()
-                                .getRcProfileMasterPmId());
-
-                        tableOtpLogDetails.updateOtp(otpLog);
-
-                    } else {
-                        // Add data to OTP table
-                        OtpLog otpLog = new OtpLog();
-                        otpLog.setOldOtp(otpLogResponse.getOldOtp());
-                        otpLog.setOldGeneratedAt(otpLogResponse.getOldGeneratedAt());
-                        otpLog.setOldValidUpto(Utils.getOtpExpirationTime(otpLog
-                                .getOldGeneratedAt()));
-                        otpLog.setOldValidityFlag("1");
-                        otpLog.setRcProfileMasterPmId(otpLogResponse.getRcProfileMasterPmId());
-
-                        tableOtpLogDetails.addOtp(otpLog);
-                    }
 
                     Utils.setObjectPreference(MobileNumberRegistrationActivity.this, AppConstants
                             .PREF_SELECTED_COUNTRY_OBJECT, selectedCountry);
@@ -219,16 +187,21 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                     // set launch screen as OtpVerificationActivity
                     Utils.setIntegerPreference(MobileNumberRegistrationActivity.this,
                             AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
-                                    .LAUNCH_OTP_VERIFICATION);
+                                    .LAUNCH_MOBILE_REGISTRATION);
 
-                    // Redirect to OtpVerificationActivity
-                    Bundle bundle = new Bundle();
-                    /*bundle.putSerializable(AppConstants.EXTRA_OBJECT_COUNTRY, selectedCountry);
-                    bundle.putString(AppConstants.EXTRA_MOBILE_NUMBER, inputNumber.getText()
-                            .toString());*/
-                    bundle.putBoolean(AppConstants.EXTRA_IS_FROM_MOBILE_REGIS, true);
-                    startActivityIntent(MobileNumberRegistrationActivity.this,
-                            OtpVerificationActivity.class, bundle);
+                    if (otpDetailResponse.getFlag() == 0) {
+
+                        // Redirect to OtpVerificationActivity
+                        Bundle bundle = new Bundle();
+                        bundle.putString(AppConstants.EXTRA_IS_FROM, "mobile");
+                        startActivityIntent(MobileNumberRegistrationActivity.this,
+                                OtpVerificationActivity.class, bundle);
+
+                    } else {
+
+                        startActivity(new Intent(MobileNumberRegistrationActivity.this,
+                                EnterPasswordActivity.class));
+                    }
 
                 } else {
                     if (otpDetailResponse != null) {
@@ -287,18 +260,17 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         WsRequestObject otpObject = new WsRequestObject();
         otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
         otpObject.setMobileNumber(inputNumber.getText().toString());
-        otpObject.setCmId(selectedCountry.getCountryId());
+//        otpObject.setCmId(selectedCountry.getCountryId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
-                    null, WsResponseObject.class, WsConstants.REQ_SEND_OTP, getString(R.string
-                    .msg_please_wait), false).execute(WsConstants.WS_ROOT + WsConstants
-                    .REQ_SEND_OTP);
+                    null, WsResponseObject.class, WsConstants.REQ_CHECK_NUMBER, getString(R.string
+                    .msg_please_wait), false)
+                    .execute(WsConstants.WS_ROOT + WsConstants.REQ_CHECK_NUMBER);
         } else {
             Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources()
                     .getString(R.string.msg_no_network));
         }
     }
-
     //</editor-fold>
 }

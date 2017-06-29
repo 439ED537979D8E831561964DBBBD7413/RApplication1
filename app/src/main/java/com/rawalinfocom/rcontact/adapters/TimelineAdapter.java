@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.LayerDrawable;
 import android.support.v4.content.ContextCompat;
@@ -33,12 +34,12 @@ import butterknife.ButterKnife;
 public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyViewHolder> {
 
     private List<TimelineItem> list;
-    private Context context;
+    private Activity activity;
     private int recyclerPosition;
 
-    public TimelineAdapter(Context context, List<TimelineItem> list, int recyclerPosition) {
+    public TimelineAdapter(Activity activity, List<TimelineItem> list, int recyclerPosition) {
         this.list = list;
-        this.context = context;
+        this.activity = activity;
         this.recyclerPosition = recyclerPosition;
     }
 
@@ -59,7 +60,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         String userComment = item.getUserComment();
 
         int notiType = 0;
-        if (context.getResources().getString(R.string.str_tab_rating).equalsIgnoreCase(item.getCrmType()))
+        if (activity.getResources().getString(R.string.str_tab_rating).equalsIgnoreCase(item.getCrmType()))
             notiType = 1;
         if (wisherComment != null && wisherComment.length() > 0) {
             holder.textWisherComment.setVisibility(View.VISIBLE);
@@ -98,12 +99,12 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             holder.givenRatingBar.setRating(Float.parseFloat(item.getCrmRating()));
             LayerDrawable stars = (LayerDrawable) holder.givenRatingBar.getProgressDrawable();
             // Filled stars
-            Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(context, R.color
+            Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(activity, R.color
                     .vivid_yellow));
-            Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(context, android.R
+            Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(activity, android.R
                     .color.darker_gray));
             // Empty stars
-            Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(context, android.R
+            Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(activity, android.R
                     .color.darker_gray));
             holder.textEventDetailInfo.setVisibility(View.GONE);
         } else {
@@ -119,7 +120,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
                     TimelineActivity.selectedRecyclerItem = position;
                     addReplyonComment(item.getCrmType(), item.getCrmCloudPrId(), userComment, AppConstants.COMMENT_STATUS_RECEIVED, item.getEvmRecordIndexId());
                 } else {
-                    Toast.makeText(context, context.getResources().getString(R.string.msg_please_enter_some_comment), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, activity.getResources().getString(R.string.msg_please_enter_some_comment), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -128,7 +129,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
     private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int commentStatusReceived, String evmRecordIndexId) {
 
         WsRequestObject addCommentObject = new WsRequestObject();
-        if (crmType.equalsIgnoreCase(context.getResources().getString(R.string.str_tab_rating))) {
+        if (crmType.equalsIgnoreCase(activity.getResources().getString(R.string.str_tab_rating))) {
             addCommentObject.setPrId(crmCloudPrId);
             addCommentObject.setPrReply(userComment);
             addCommentObject.setPrStatus(commentStatusReceived + "");
@@ -139,21 +140,21 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             addCommentObject.setEvmRecordIndexId(evmRecordIndexId);
             addCommentObject.setStatus(commentStatusReceived + "");
         }
-        if (Utils.isNetworkAvailable(context)) {
-            if (crmType.equalsIgnoreCase(context.getResources().getString(R.string.str_tab_rating))) {
-                new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+        if (Utils.isNetworkAvailable(activity)) {
+            if (crmType.equalsIgnoreCase(activity.getResources().getString(R.string.str_tab_rating))) {
+                new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
-                        .REQ_PROFILE_RATING, context.getResources().getString(R.string.msg_please_wait), true).execute
+                        .REQ_PROFILE_RATING, activity.getResources().getString(R.string.msg_please_wait), true).execute
                         (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
             } else {
-                new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
-                        .REQ_ADD_EVENT_COMMENT, context.getResources().getString(R.string.msg_please_wait), true).execute
+                        .REQ_ADD_EVENT_COMMENT, activity.getResources().getString(R.string.msg_please_wait), true).execute
                         (WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
             }
         } else {
             //show no toast
-            Toast.makeText(context, context.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -225,21 +226,21 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         public MyViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
-            textWisherName.setTypeface(Utils.typefaceRegular(context));
+            textWisherName.setTypeface(Utils.typefaceRegular(activity));
 
-            textEventName.setTypeface(Utils.typefaceRegular(context));
-            textTimelineNotiTime.setTypeface(Utils.typefaceRegular(context));
+            textEventName.setTypeface(Utils.typefaceRegular(activity));
+            textTimelineNotiTime.setTypeface(Utils.typefaceRegular(activity));
 
-            textEventDetailInfo.setTypeface(Utils.typefaceRegular(context));
-            textRatingGiven.setTypeface(Utils.typefaceRegular(context));
+            textEventDetailInfo.setTypeface(Utils.typefaceRegular(activity));
+            textRatingGiven.setTypeface(Utils.typefaceRegular(activity));
 
 
-            textWisherComment.setTypeface(Utils.typefaceRegular(context));
-            textWisherCommentTime.setTypeface(Utils.typefaceRegular(context));
+            textWisherComment.setTypeface(Utils.typefaceRegular(activity));
+            textWisherCommentTime.setTypeface(Utils.typefaceRegular(activity));
 
-            edittextUserComment.setTypeface(Utils.typefaceRegular(context));
-            textUserComment.setTypeface(Utils.typefaceRegular(context));
-            textUserCommentTime.setTypeface(Utils.typefaceRegular(context));
+            edittextUserComment.setTypeface(Utils.typefaceRegular(activity));
+            textUserComment.setTypeface(Utils.typefaceRegular(activity));
+            textUserCommentTime.setTypeface(Utils.typefaceRegular(activity));
         }
     }
 

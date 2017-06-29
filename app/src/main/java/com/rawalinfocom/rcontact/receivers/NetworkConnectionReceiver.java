@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.receivers;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,16 +14,16 @@ import com.rawalinfocom.rcontact.OnlineDataSync;
 public class NetworkConnectionReceiver extends BroadcastReceiver {
 
     OnlineDataSync onlineDataSync;
-    Context context;
+    Activity activity;
 
     public NetworkConnectionReceiver() {
     }
 
     @Override
     public void onReceive(final Context context, Intent intent) {
+        this.activity = (Activity) context;
         ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        this.context = context;
+                (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
@@ -30,7 +31,7 @@ public class NetworkConnectionReceiver extends BroadcastReceiver {
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
-                    onlineDataSync = new OnlineDataSync(context);
+                    onlineDataSync = new OnlineDataSync(activity);
                 }
             });
 

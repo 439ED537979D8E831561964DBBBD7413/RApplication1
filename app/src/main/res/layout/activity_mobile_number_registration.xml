@@ -12,7 +12,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.rawalinfocom.rcontact.MobileNumberRegistrationActivity">
 
-
     <ImageView
         android:id="@+id/image_registration_logo"
         android:layout_width="wrap_content"
@@ -63,8 +62,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/activity_half_horizontal_margin"
-            android:focusableInTouchMode="false"
             android:enabled="false"
+            android:focusableInTouchMode="false"
             android:inputType="number"
             android:singleLine="true"
             android:text="(IN)+91"
@@ -85,6 +84,7 @@
             android:layout_toRightOf="@id/input_country_code"
             android:hint="@string/str_mobile_number"
             android:inputType="number"
+            android:maxLength="10"
             android:singleLine="true" />
 
     </LinearLayout>

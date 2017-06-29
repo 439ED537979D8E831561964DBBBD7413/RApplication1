@@ -22,7 +22,7 @@ public class PrivacyDataItem {
     @JsonProperty("pb_address")
     private ArrayList<PrivacyEntityItem> pbAddress;
     @JsonProperty("is_hide")
-    private int isHide;
+    private Integer isHide;
 
 
     public ArrayList<PrivacyEntityItem> getPbPhoneNumber() {
@@ -65,11 +65,11 @@ public class PrivacyDataItem {
         this.pbAddress = pbAddress;
     }
 
-    public int getIsHide() {
+    public Integer getIsHide() {
         return isHide;
     }
 
-    public void setIsHide(int isHide) {
+    public void setIsHide(Integer isHide) {
         this.isHide = isHide;
     }
 }
