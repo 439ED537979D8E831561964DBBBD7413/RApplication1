@@ -45,6 +45,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
@@ -733,7 +734,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     for (int i = 0; i < callLogs.size(); i++) {
                         tempList = new ArrayList<>();
                         CallLogType callLogType = callLogs.get(i);
-                        int callfilter = callLogType.getType();
+                        int callfilter = MoreObjects.firstNonNull(callLogType.getType(), 0);
                         if (callfilter == AppConstants.MISSED) {
                             filteredList.add(callLogType);
                         }
@@ -742,7 +743,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     for (int i = 0; i < callLogs.size(); i++) {
                         tempList = new ArrayList<>();
                         CallLogType callLogType = callLogs.get(i);
-                        int callfilter = callLogType.getType();
+                        int callfilter = MoreObjects.firstNonNull(callLogType.getType(), 0);
                         if (callfilter == AppConstants.INCOMING) {
                             filteredList.add(callLogType);
                         }
@@ -751,7 +752,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     for (int i = 0; i < callLogs.size(); i++) {
                         tempList = new ArrayList<>();
                         CallLogType callLogType = callLogs.get(i);
-                        int callfilter = callLogType.getType();
+                        int callfilter =MoreObjects.firstNonNull(callLogType.getType(), 0);
                         if (callfilter == AppConstants.OUTGOING) {
                             filteredList.add(callLogType);
                         }

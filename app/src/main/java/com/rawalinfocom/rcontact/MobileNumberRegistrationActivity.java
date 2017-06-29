@@ -196,11 +196,13 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
                         bundle.putString(AppConstants.EXTRA_IS_FROM, "mobile");
                         startActivityIntent(MobileNumberRegistrationActivity.this,
                                 OtpVerificationActivity.class, bundle);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
 
                     } else {
 
                         startActivity(new Intent(MobileNumberRegistrationActivity.this,
                                 EnterPasswordActivity.class));
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
                     }
 
                 } else {

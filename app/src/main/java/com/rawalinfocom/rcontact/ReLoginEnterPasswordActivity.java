@@ -81,7 +81,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
     RippleView rippleForgetPassword;
     @BindView(R.id.relativeRootEnterPassword)
     RelativeLayout relativeRootEnterPassword;
-    private String mobileNumber;
+    private String mobileNumber, isFrom = "";
     private Country selectedCountry;
 
     @Override
@@ -113,9 +113,9 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
             textNumber.setText(mobileNumber);
         }
 
-        String isFrom = getIntent().getStringExtra("from");
+        isFrom = getIntent().getStringExtra("from");
 
-        if (isFrom.equals("forgot_pass")) {
+        if (isFrom.equals("forgot_pass") || isFrom.equals("re_login")) {
             textToolbarTitle.setText(getResources().getString(R.string.password_verification));
         } else {
             textToolbarTitle.setText(getResources().getString(R.string.str_enter_password));
@@ -145,6 +145,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     bundle.putString(AppConstants.EXTRA_IS_FROM, "forgot_pass");
                     startActivityIntent(ReLoginEnterPasswordActivity.this,
                             OtpVerificationActivity.class, bundle);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
 
                 } else {
                     if (otpDetailResponse != null) {
@@ -175,8 +176,10 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                             .PREF_REGS_USER_OBJECT, profileDetail);
 
                     Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID, profileDetail.getRcpPmId());
-
                     storeProfileDataToDb(profileDetail);
+
+//                    if (isFrom.equals("re_login")) {
+//                    }
 
                     // Redirect to MainActivity
                     Intent intent = new Intent(this, MainActivity.class);
@@ -250,7 +253,11 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         WsRequestObject enterPassWordObject = new WsRequestObject();
         enterPassWordObject.setMobileNumber(mobileNumber.replace("+", ""));
         enterPassWordObject.setPassword(StringUtils.trimToEmpty(password));
-        enterPassWordObject.setCreatedBy("2"); // For Android Devices
+        if (isFrom.equals("re_login")) {
+            enterPassWordObject.setReAuthenticate(1); // For Android Devices
+        } else {
+            enterPassWordObject.setCreatedBy("2"); // For Android Devices
+        }
         enterPassWordObject.setGcmToken(getDeviceTokenId());
         enterPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings.Secure
                 .ANDROID_ID));

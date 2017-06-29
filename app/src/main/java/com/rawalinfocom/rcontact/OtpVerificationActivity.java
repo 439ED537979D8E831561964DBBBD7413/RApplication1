@@ -187,12 +187,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
                     UserProfile userProfile = confirmOtpResponse.getUserProfile();
 
-                    Utils.setObjectPreference(OtpVerificationActivity.this, AppConstants
-                            .PREF_REGS_USER_OBJECT, userProfile);
-                    Utils.setStringPreference(OtpVerificationActivity.this, AppConstants
-                            .PREF_USER_PM_ID, userProfile.getPmId());
-//                    Utils.setStringPreference(OtpVerificationActivity.this, AppConstants
-//                            .PREF_ACCESS_TOKEN, getDeviceTokenId() + "_" + userProfile.getPmId());
+                    Utils.setObjectPreference(OtpVerificationActivity.this,
+                            AppConstants.PREF_REGS_USER_OBJECT, userProfile);
 
                     LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
@@ -213,13 +209,6 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                         startActivity(intent);
                         overridePendingTransition(R.anim.enter, R.anim.exit);
                         finish();
-
-//                        Intent intent = new Intent(this, SetPasswordActivity.class);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//                        startActivity(intent);
-//                        overridePendingTransition(R.anim.enter, R.anim.exit);
 
                     } else {
 
