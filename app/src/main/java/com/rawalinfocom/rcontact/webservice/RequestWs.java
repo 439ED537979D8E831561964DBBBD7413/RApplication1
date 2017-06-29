@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.webservice;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 
@@ -23,10 +24,10 @@ public class RequestWs {
     /**
      * Post HttpUrlConnection Request
      **/
-    public <CLS> CLS getPostRequest(Context context, String url, int requestType, Object reqCls,
+    public <CLS> CLS getPostRequest(Activity activity, String url, int requestType, Object reqCls,
                                     Class<CLS> cls, ContentValues contentValues, boolean
                                             setHeader) throws Exception {
-        return new WebServicePost(context, url, requestType, setHeader).execute(cls, reqCls,
+        return new WebServicePost(activity, url, requestType, setHeader).execute(cls, reqCls,
                 contentValues);
     }
 

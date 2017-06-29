@@ -43,6 +43,7 @@ public class WsResponseObject {
 
     private String status;
     private String message;
+    private Integer flag;
 
     private OtpLog otpLog;
     private UserProfile userProfile;
@@ -53,8 +54,8 @@ public class WsResponseObject {
     private ArrayList<ProfileDataOperation> arrayListUserRcProfile;
     private ArrayList<ProfileData> arrayListMapping;
 
-    private  ArrayList<CallLogType> arrayListCallLogHistory;
-    private  ArrayList<GlobalSearchType> globalSearchTypeArrayList;
+    private ArrayList<CallLogType> arrayListCallLogHistory;
+    private ArrayList<GlobalSearchType> globalSearchTypeArrayList;
 
     private String profileSharingData;
 
@@ -112,6 +113,15 @@ public class WsResponseObject {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @JsonProperty("flag")
+    public Integer getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
     }
 
     @JsonProperty("country_list")
@@ -185,6 +195,7 @@ public class WsResponseObject {
     public void setArrayListMapping(ArrayList<ProfileData> arrayListMapping) {
         this.arrayListMapping = arrayListMapping;
     }
+
     @JsonProperty("call_history")
     public ArrayList<CallLogType> getArrayListCallLogHistory() {
         return arrayListCallLogHistory;

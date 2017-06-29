@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -55,17 +54,13 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class EnterPasswordActivity extends BaseActivity implements RippleView
+public class ReLoginEnterPasswordActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
 
-    @BindView(R.id.image_action_back)
-    ImageView imageActionBack;
-    @BindView(R.id.ripple_action_back)
-    RippleView rippleActionBack;
+    @BindView(R.id.text_number)
+    TextView textNumber;
     @BindView(R.id.text_toolbar_title)
     TextView textToolbarTitle;
-    @BindView(R.id.relative_action_back)
-    RelativeLayout relativeActionBack;
     @BindView(R.id.image_set_password_logo)
     ImageView imageSetPasswordLogo;
     @BindView(R.id.text_password_protected)
@@ -92,17 +87,16 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_enter_password);
+        setContentView(R.layout.activity_forgot_enter_password);
         ButterKnife.bind(this);
         init();
     }
 
     private void init() {
-        rippleActionBack.setOnRippleCompleteListener(this);
+
         rippleForgetPassword.setOnRippleCompleteListener(this);
         rippleLogin.setOnRippleCompleteListener(this);
 
-        textToolbarTitle.setText(getResources().getString(R.string.str_enter_password));
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
         textPasswordProtected.setTypeface(Utils.typefaceRegular(this));
         textMsgEnterPassword.setTypeface(Utils.typefaceRegular(this));
@@ -110,10 +104,22 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         buttonLogin.setTypeface(Utils.typefaceRegular(this));
         buttonForgotPassword.setTypeface(Utils.typefaceRegular(this));
 
-        mobileNumber = Utils.getStringPreference(EnterPasswordActivity.this, AppConstants
+        mobileNumber = Utils.getStringPreference(ReLoginEnterPasswordActivity.this, AppConstants
                 .PREF_REGS_MOBILE_NUMBER, "");
-        selectedCountry = (Country) Utils.getObjectPreference(EnterPasswordActivity.this,
+        selectedCountry = (Country) Utils.getObjectPreference(ReLoginEnterPasswordActivity.this,
                 AppConstants.PREF_SELECTED_COUNTRY_OBJECT, Country.class);
+
+        if (selectedCountry != null) {
+            textNumber.setText(mobileNumber);
+        }
+
+        String isFrom = getIntent().getStringExtra("from");
+
+        if (isFrom.equals("forgot_pass")) {
+            textToolbarTitle.setText(getResources().getString(R.string.password_verification));
+        } else {
+            textToolbarTitle.setText(getResources().getString(R.string.str_enter_password));
+        }
     }
 
     @Override
@@ -130,14 +136,14 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     // set launch screen as OtpVerificationActivity
-                    Utils.setIntegerPreference(EnterPasswordActivity.this,
+                    Utils.setIntegerPreference(ReLoginEnterPasswordActivity.this,
                             AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
                                     .LAUNCH_MOBILE_REGISTRATION);
 
                     // Redirect to OtpVerificationActivity
                     Bundle bundle = new Bundle();
                     bundle.putString(AppConstants.EXTRA_IS_FROM, "forgot_pass");
-                    startActivityIntent(EnterPasswordActivity.this,
+                    startActivityIntent(ReLoginEnterPasswordActivity.this,
                             OtpVerificationActivity.class, bundle);
 
                 } else {
@@ -168,8 +174,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     Utils.setObjectPreference(this, AppConstants
                             .PREF_REGS_USER_OBJECT, profileDetail);
 
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
-                            profileDetail.getRcpPmId());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID, profileDetail.getRcpPmId());
 
                     storeProfileDataToDb(profileDetail);
 
@@ -195,7 +200,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
         } else {
 //            AppUtils.hideProgressDialog();
-            Utils.showErrorSnackBar(this, relativeRootEnterPassword, "" + error.getLocalizedMessage());
+            Utils.showErrorSnackBar(this, relativeRootEnterPassword, "" + error
+                    .getLocalizedMessage());
         }
 
     }
@@ -203,9 +209,6 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
     @Override
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
-            case R.id.ripple_action_back:
-                finish();
-                break;
 
             case R.id.ripple_login:
 
@@ -229,8 +232,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
         WsRequestObject otpObject = new WsRequestObject();
         otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
-        otpObject.setMobileNumber(mobileNumber.replace("+91", ""));
-        otpObject.setForgotPassword(1);
+        otpObject.setMobileNumber(mobileNumber);
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
@@ -256,8 +258,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), enterPassWordObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_LOGIN, getString(R.string
-                    .msg_please_wait), false)
-                    .execute(WsConstants.WS_ROOT + WsConstants.REQ_CHECK_LOGIN);
+                    .msg_please_wait), false).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_CHECK_LOGIN);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEnterPassword, getResources()
                     .getString(R.string.msg_no_network));

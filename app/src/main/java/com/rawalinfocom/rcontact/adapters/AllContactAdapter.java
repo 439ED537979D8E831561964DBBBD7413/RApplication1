@@ -91,7 +91,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      * own profile: 0
      */
 
-    private Context context;
+    private Activity activity;
     private Fragment fragment;
     /* phone book contacts */
     private ArrayList<Object> arrayListUserContact;
@@ -118,7 +118,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     //<editor-fold desc="Constructor">
     public AllContactAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
                              ArrayList<String> arrayListContactHeader) {
-        this.context = fragment.getActivity();
+        this.activity = fragment.getActivity();
         this.fragment = fragment;
         this.arrayListUserContact = arrayListUserContact;
         this.arrayListContactHeader = arrayListContactHeader;
@@ -129,20 +129,20 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         arrayListExpandedPositions = new ArrayList<>();
 
-        colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
-        colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
+        colorBlack = ContextCompat.getColor(activity, R.color.colorBlack);
+        colorPineGreen = ContextCompat.getColor(activity, R.color.colorAccent);
 
-        tableProfileMaster = new TableProfileMaster(((BaseActivity) context).databaseHandler);
-        tableProfileMobileMapping = new TableProfileMobileMapping(((BaseActivity) context)
+        tableProfileMaster = new TableProfileMaster(((BaseActivity) activity).databaseHandler);
+        tableProfileMobileMapping = new TableProfileMobileMapping(((BaseActivity) activity)
                 .databaseHandler);
-        tableProfileEmailMapping = new TableProfileEmailMapping(((BaseActivity) context)
+        tableProfileEmailMapping = new TableProfileEmailMapping(((BaseActivity) activity)
                 .databaseHandler);
 
-        phoneBookContacts = new PhoneBookContacts(context);
+        phoneBookContacts = new PhoneBookContacts(activity);
     }
 
     public AllContactAdapter(Activity activity, ArrayList<Object> arrayListUserContact) {
-        this.context = activity;
+        this.activity = activity;
         this.fragment = fragment;
 //        this.arrayListUserContact = arrayListUserContact;
         this.arrayListUserContact = new ArrayList<>();
@@ -155,16 +155,16 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         arrayListExpandedPositions = new ArrayList<>();
 
-        colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
-        colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
+        colorBlack = ContextCompat.getColor(activity, R.color.colorBlack);
+        colorPineGreen = ContextCompat.getColor(activity, R.color.colorAccent);
 
-        tableProfileMaster = new TableProfileMaster(((BaseActivity) context).databaseHandler);
-        tableProfileMobileMapping = new TableProfileMobileMapping(((BaseActivity) context)
+        tableProfileMaster = new TableProfileMaster(((BaseActivity) activity).databaseHandler);
+        tableProfileMobileMapping = new TableProfileMobileMapping(((BaseActivity) activity)
                 .databaseHandler);
-        tableProfileEmailMapping = new TableProfileEmailMapping(((BaseActivity) context)
+        tableProfileEmailMapping = new TableProfileEmailMapping(((BaseActivity) activity)
                 .databaseHandler);
 
-        phoneBookContacts = new PhoneBookContacts(context);
+        phoneBookContacts = new PhoneBookContacts(activity);
     }
     //</editor-fold>
 
@@ -226,7 +226,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public int getItemViewType(int position) {
 //        if (position == arrayListUserContact.size() && fragment!=null) {
-        if (position == arrayListUserContact.size() && !(context instanceof SearchActivity)) {
+        if (position == arrayListUserContact.size() && !(activity instanceof SearchActivity)) {
             return FOOTER;
         } else if (arrayListUserContact.get(position) instanceof ProfileData) {
             return CONTACT;
@@ -239,7 +239,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public int getItemCount() {
 //        if(fragment!=null){
-        if (!(context instanceof SearchActivity)) {
+        if (!(activity instanceof SearchActivity)) {
             return (arrayListUserContact.size() + 1);
         } else {
             return arrayListUserContact.size();
@@ -339,11 +339,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         final ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
         final String thumbnailUrl = profileData.getProfileUrl();
         if (!TextUtils.isEmpty(thumbnailUrl)) {
-            Glide.with(context)
+            Glide.with(activity)
                     .load(thumbnailUrl)
                     .placeholder(R.drawable.home_screen_profile)
                     .error(R.drawable.home_screen_profile)
-                    .bitmapTransform(new CropCircleTransformation(context))
+                    .bitmapTransform(new CropCircleTransformation(activity))
                     .override(500, 500)
                     .into(holder.imageProfile);
 
@@ -388,7 +388,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 .defaultIfEmpty(profileData.getName(), "");
 
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
-                context.getString(R.string.unknown));
+                activity.getString(R.string.unknown));
 
          /* Hide Divider if row is last in Section */
         if ((position + 1) < arrayListUserContact.size()) {
@@ -424,7 +424,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.relativeRowAllContact.setTag("-1");
             holder.textCloudContactName.setVisibility(View.GONE);
             holder.textCloudContactName.setText("");
-            if (Utils.getBooleanPreference(context, AppConstants.PREF_CONTACT_SYNCED, false)) {
+            if (Utils.getBooleanPreference(activity, AppConstants.PREF_CONTACT_SYNCED, false)) {
                 holder.rippleInvite.setVisibility(View.VISIBLE);
                 if (StringUtils.length(profileData.getTempNumber()) > 0) {
                     holder.rippleInvite.setVisibility(View.VISIBLE);
@@ -467,7 +467,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 //        }
 
-        holder.textContactNumber.setText(Utils.getFormattedNumber(context, profileData
+        holder.textContactNumber.setText(Utils.getFormattedNumber(activity, profileData
                 .getTempNumber()));
 
         //<editor-fold desc="relativeRowAllContact Click">
@@ -485,13 +485,13 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     if (StringUtils.contains(String.valueOf(v.getTag()), ",")) {
                         // Multiple RCP
                         holder.recyclerViewMultipleRc.setVisibility(View.VISIBLE);
-                        QueryManager queryManager = new QueryManager(((BaseActivity) context)
+                        QueryManager queryManager = new QueryManager(((BaseActivity) activity)
                                 .databaseHandler);
                         ArrayList<ProfileData> arrayList = new ArrayList<>();
                         arrayList.addAll(queryManager.getRcpNumberName(String.valueOf(v.getTag())));
                         holder.recyclerViewMultipleRc.setLayoutManager(new LinearLayoutManager
-                                (context));
-                        expandableAdapter = new ContactListExpandAdapter(context,
+                                (activity));
+                        expandableAdapter = new ContactListExpandAdapter(activity,
                                 arrayList, profileData.getLocalPhoneBookId(), holder
                                 .textContactName.getText().toString());
                         holder.recyclerViewMultipleRc.setAdapter(expandableAdapter);
@@ -527,26 +527,26 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         }
 //                        bundle.putString(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileImage);
                         if (fragment instanceof AllContactsListFragment) {
-                            Intent intent = new Intent(context, ProfileDetailActivity.class);
+                            Intent intent = new Intent(activity, ProfileDetailActivity.class);
                             intent.putExtras(bundle);
                             fragment.startActivityForResult(intent, AppConstants
                                     .REQUEST_CODE_PROFILE_DETAIL);
-                            ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
+                            ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
                                     .anim.exit);
                         } else if (fragment instanceof FavoritesFragment) {
-                            Intent intent = new Intent(context, ProfileDetailActivity.class);
+                            Intent intent = new Intent(activity, ProfileDetailActivity.class);
                             bundle.putBoolean(AppConstants.EXTRA_IS_FROM_FAVOURITE, true);
                             intent.putExtras(bundle);
                             fragment.startActivityForResult(intent, AppConstants
                                     .REQUEST_CODE_PROFILE_DETAIL);
-                            ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
+                            ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
                                     .anim.exit);
                         } else {
-                            if (context instanceof SearchActivity) {
-                                Intent intent = new Intent(context, ProfileDetailActivity.class);
+                            if (activity instanceof SearchActivity) {
+                                Intent intent = new Intent(activity, ProfileDetailActivity.class);
                                 intent.putExtras(bundle);
-                                context.startActivity(intent);
-                                ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
+                                activity.startActivity(intent);
+                                ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
                                         .anim.exit);
                             }
                         }
@@ -581,7 +581,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                         ProfileDataOperationPhoneNumber phoneNumber = new
                                 ProfileDataOperationPhoneNumber();
-                        phoneNumber.setPhoneNumber(Utils.getFormattedNumber(context,
+                        phoneNumber.setPhoneNumber(Utils.getFormattedNumber(activity,
                                 contactNumberCursor.getString(contactNumberCursor.getColumnIndex
                                         (ContactsContract.CommonDataKinds.Phone.NUMBER))));
                         phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
@@ -646,7 +646,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                         ProfileDataOperationPhoneNumber phoneNumber = new
                                 ProfileDataOperationPhoneNumber();
-                        phoneNumber.setPhoneNumber(Utils.getFormattedNumber(context,
+                        phoneNumber.setPhoneNumber(Utils.getFormattedNumber(activity,
                                 contactNumberCursor.getString(contactNumberCursor.getColumnIndex
                                         (ContactsContract.CommonDataKinds.Phone.NUMBER))));
                         phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
@@ -719,11 +719,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         final String profileImage =  profileData.getProfileUrl();
         if(!TextUtils.isEmpty(profileImage)){
-            Glide.with(context)
+            Glide.with(activity)
                     .load(profileImage)
                     .placeholder(R.drawable.home_screen_profile)
                     .error(R.drawable.home_screen_profile)
-                    .bitmapTransform(new CropCircleTransformation(context))
+                    .bitmapTransform(new CropCircleTransformation(activity))
                     .override(200, 200)
                     .into(holder.imageProfile);
         }else{
@@ -743,7 +743,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 if (StringUtils.equalsIgnoreCase(view.getTag().toString(), "0")) {
                     // Display own profile
-                    bundle.putString(AppConstants.EXTRA_PM_ID, ((BaseActivity) context)
+                    bundle.putString(AppConstants.EXTRA_PM_ID, ((BaseActivity) activity)
                             .getUserPmId());
                     bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
                 } else if (!StringUtils.equalsIgnoreCase(view.getTag().toString(), "-1")) {
@@ -782,7 +782,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 .getText().toString());
                     }
                     bundle.putString(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE,profileImage);
-                    ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
+                    ((BaseActivity) activity).startActivityIntent(activity, ProfileDetailActivity
                             .class, bundle);
                 }
             }
@@ -837,11 +837,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 //        String letter = (String) arrayListUserContact.get(position);
         if (fragment instanceof AllContactsListFragment) {
             holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s",
-                    arrayListUserContact.size() - 3, context.getString(R.string.contacts)));
+                    arrayListUserContact.size() - 3, activity.getString(R.string.contacts)));
         } else if (fragment instanceof FavoritesFragment) {
             holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s",
                     arrayListUserContact.size() -
-                    arrayListContactHeader.size(), context.getString(R.string.contacts)));
+                    arrayListContactHeader.size(), activity.getString(R.string.contacts)));
 
         }
     }
@@ -957,7 +957,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             isRcp = false;
         }
 
-        displayNumber = Utils.getFormattedNumber(context, displayNumber);
+        displayNumber = Utils.getFormattedNumber(activity, displayNumber);
 
         holder.textCloudContactName.setText(displayName);
         holder.textContactNumber.setText(displayNumber);
@@ -988,7 +988,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                                     arrayListDbMobileNumbers, String
                                                     contactDisplayName, String phonebookId) {
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
         recyclerViewMultipleRc.setLayoutManager(linearLayoutManager);
 
         ExpandableContactListAdapter adapter = new ExpandableContactListAdapter(fragment,
@@ -1001,7 +1001,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                            ArrayList<ProfileEmailMapping> arrayListDbEmailIds,
                                            String contactDisplayName, String phonebookId) {
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
         recyclerViewMultipleRc.setLayoutManager(linearLayoutManager);
 
         ExpandableContactListAdapter adapter = new ExpandableContactListAdapter(fragment, null,
@@ -1013,7 +1013,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void displayEmail(AllContactViewHolder holder, ProfileData profileData, String
             displayNumber, String contactDisplayName, int position) {
         /*TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping((
-                (BaseActivity) context).databaseHandler);*/
+                (BaseActivity) activity).databaseHandler);*/
 
        /* ArrayList<String> arrayListEmails = new ArrayList<>();
         for (int i = 0; i < profileData.getOperation().get(0).getPbEmailId().size(); i++) {
@@ -1130,22 +1130,22 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void showBottomSheet() {
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(activity, 3);
 
-        View view = ((Activity) context).getLayoutInflater().inflate(R.layout
+        View view = ((Activity) activity).getLayoutInflater().inflate(R.layout
                 .layout_bottom_sheet, null);
         RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
         TextView textSheetHeader = ButterKnife.findById(view, R.id.text_sheet_header);
 
-        textSheetHeader.setText(context.getString(R.string.social_media));
-        textSheetHeader.setTypeface(Utils.typefaceBold(context));
+        textSheetHeader.setText(activity.getString(R.string.social_media));
+        textSheetHeader.setTypeface(Utils.typefaceBold(activity));
 
-        BottomSheetSocialMediaAdapter adapter = new BottomSheetSocialMediaAdapter(context);
+        BottomSheetSocialMediaAdapter adapter = new BottomSheetSocialMediaAdapter(activity);
 
         recyclerViewShare.setLayoutManager(gridLayoutManager);
         recyclerViewShare.setAdapter(adapter);
 
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(activity);
         bottomSheetDialog.setContentView(view);
         bottomSheetDialog.show();
 
@@ -1160,18 +1160,18 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                      ArrayList<ProfileDataOperationEmail> emailIds) {
 
         final ArrayList<Object> arrayList = new ArrayList<>();
-        arrayList.add(context.getString(R.string.str_all));
+        arrayList.add(activity.getString(R.string.str_all));
         arrayList.addAll(phoneNumbers);
         arrayList.addAll(emailIds);
 
-        final Dialog dialog = new Dialog(context);
+        final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_all_organization);
         dialog.setCancelable(false);
 
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         layoutParams.copyFrom(dialog.getWindow().getAttributes());
-        layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.width = (int) (activity.getResources().getDisplayMetrics().widthPixels * 0.90);
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
         dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
@@ -1179,20 +1179,20 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
                 .relative_root_dialog_list);
         TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        textDialogTitle.setText(String.format(Locale.getDefault(), "%s%s", context.getString(R
+        textDialogTitle.setText(String.format(Locale.getDefault(), "%s%s", activity.getString(R
                         .string.str_invite),
                 contactName));
-        textDialogTitle.setTypeface(Utils.typefaceSemiBold(context));
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(activity));
 
         Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
         Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
         RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
         RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
 
-        buttonRight.setTypeface(Utils.typefaceRegular(context));
+        buttonRight.setTypeface(Utils.typefaceRegular(activity));
         buttonRight.setText(R.string.action_cancel);
-        buttonLeft.setTypeface(Utils.typefaceRegular(context));
-        buttonLeft.setText(context.getString(R.string.str_invite));
+        buttonLeft.setTypeface(Utils.typefaceRegular(activity));
+        buttonLeft.setText(activity.getString(R.string.str_invite));
 
         rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
@@ -1204,9 +1204,9 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
                 .recycler_view_dialog_list);
-        recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(context));
+        recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(activity));
 
-        final PhoneBookContactDetailAdapter adapter = new PhoneBookContactDetailAdapter(context,
+        final PhoneBookContactDetailAdapter adapter = new PhoneBookContactDetailAdapter(activity,
                 arrayList);
         recyclerViewDialogList.setAdapter(adapter);
 
@@ -1233,7 +1233,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                     inviteContact(numbers, emails);
                 } else {
-                    Utils.showErrorSnackBar(context, relativeRootDialogList, context.getString(R
+                    Utils.showErrorSnackBar(activity, relativeRootDialogList, activity.getString(R
                             .string.please_select_one));
                 }
             }
@@ -1267,7 +1267,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             arrayListPhoneBookContacts.get(position)).getOperation().get(0)
                             .getPbPhoneNumber().get(0).getPhoneNumber()));*/
                     smsIntent.setData(Uri.parse("sms:" + actionNumber));
-                    context.startActivity(smsIntent);
+                    activity.startActivity(smsIntent);
 
                 } else {
                     if (fragment instanceof AllContactsListFragment) {
@@ -1316,24 +1316,24 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     float width = height / 3;
 
                     if (dX > 0) {
-                        p.setColor(ContextCompat.getColor(context, R.color
+                        p.setColor(ContextCompat.getColor(activity, R.color
                                 .darkModerateLimeGreen));
                         RectF background = new RectF((float) itemView.getLeft(), (float) itemView
                                 .getTop(), dX, (float) itemView.getBottom());
                         c.drawRect(background, p);
-                        icon = BitmapFactory.decodeResource(context.getResources(), R.drawable
+                        icon = BitmapFactory.decodeResource(activity.getResources(), R.drawable
                                 .ic_action_call);
                         RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
                                 itemView.getTop() + width, (float) itemView.getLeft() + 2 *
                                 width, (float) itemView.getBottom() - width);
                         c.drawBitmap(icon, null, icon_dest, p);
                     } else {
-                        p.setColor(ContextCompat.getColor(context, R.color.brightOrange));
+                        p.setColor(ContextCompat.getColor(activity, R.color.brightOrange));
                         RectF background = new RectF((float) itemView.getRight() + dX, (float)
                                 itemView.getTop(), (float) itemView.getRight(), (float) itemView
                                 .getBottom());
                         c.drawRect(background, p);
-                        icon = BitmapFactory.decodeResource(context.getResources(), R.drawable
+                        icon = BitmapFactory.decodeResource(activity.getResources(), R.drawable
                                 .ic_action_sms);
                         RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width,
                                 (float) itemView.getTop() + width, (float) itemView.getRight() -
@@ -1363,7 +1363,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
-                        if (ContextCompat.checkSelfPermission(context, android.Manifest
+                        if (ContextCompat.checkSelfPermission(activity, android.Manifest
                                 .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                             fragment.requestPermissions(new String[]{Manifest.permission
                                     .CALL_PHONE}, AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL);
@@ -1372,10 +1372,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                     callNumber));
                             startActivity(intent);*/
                             if (fragment instanceof AllContactsListFragment) {
-                                Utils.callIntent(context, ((AllContactsListFragment) fragment)
+                                Utils.callIntent(activity, ((AllContactsListFragment) fragment)
                                         .callNumber);
                             } else if (fragment instanceof FavoritesFragment) {
-                               /* Utils.callIntent(context, ((FavoritesFragment) fragment)
+                               /* Utils.callIntent(activity, ((FavoritesFragment) fragment)
                                         .callNumber);*/
                             }
                         }
@@ -1384,15 +1384,15 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         };
 
-        callConfirmationDialog = new MaterialDialog(context, cancelListener);
+        callConfirmationDialog = new MaterialDialog(activity, cancelListener);
         callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(context.getString(R.string.action_call));
+        callConfirmationDialog.setLeftButtonText(activity.getString(R.string.action_cancel));
+        callConfirmationDialog.setRightButtonText(activity.getString(R.string.action_call));
         if (fragment instanceof AllContactsListFragment) {
-            callConfirmationDialog.setDialogBody(context.getString(R.string.action_call)
+            callConfirmationDialog.setDialogBody(activity.getString(R.string.action_call)
                     + " " + ((AllContactsListFragment) fragment).callNumber + "?");
         } else if (fragment instanceof FavoritesFragment) {
-           /* callConfirmationDialog.setDialogBody(context.getString(R.string.action_call)
+           /* callConfirmationDialog.setDialogBody(activity.getString(R.string.action_call)
                     + " " + ((FavoritesFragment) fragment).callNumber + "?");*/
         }
 
@@ -1438,10 +1438,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textContactName.setTypeface(Utils.typefaceSemiBold(context));
-            textCloudContactName.setTypeface(Utils.typefaceSemiBold(context));
-            textContactNumber.setTypeface(Utils.typefaceRegular(context));
-            textRatingUserCount.setTypeface(Utils.typefaceRegular(context));
+            textContactName.setTypeface(Utils.typefaceSemiBold(activity));
+            textCloudContactName.setTypeface(Utils.typefaceSemiBold(activity));
+            textContactNumber.setTypeface(Utils.typefaceRegular(activity));
+            textRatingUserCount.setTypeface(Utils.typefaceRegular(activity));
 
             textContactName.setTextColor(colorBlack);
             textContactNumber.setTextColor(colorBlack);
@@ -1453,25 +1453,25 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             imageSocialMedia.setVisibility(View.GONE);
 //            buttonInvite.setVisibility(View.GONE);
 
-            Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor(context, R
-                    .color.colorAccent), 5, 0, ContextCompat.getColor(context, R.color
+            Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor(activity, R
+                    .color.colorAccent), 5, 0, ContextCompat.getColor(activity, R.color
                     .colorAccent));
 
             LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
             // Filled stars
-            Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(context, R
+            Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(activity, R
                     .color.vivid_yellow));
             // half stars
-            Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(context,
+            Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(activity,
                     android.R.color.darker_gray));
             // Empty stars
-            Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(context,
+            Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(activity,
                     android.R.color.darker_gray));
 
 //            textRatingUserCount.setText("0");
 
-            /*textContactName.setMaxWidth(Utils.getDeviceWidth(context) / 2);
-            textCloudContactName.setMaxWidth(Utils.getDeviceWidth(context) / 2);*/
+            /*textContactName.setMaxWidth(Utils.getDeviceWidth(activity) / 2);
+            textCloudContactName.setMaxWidth(Utils.getDeviceWidth(activity) / 2);*/
 
             initSwipe(recyclerViewMultipleRc);
 
@@ -1487,7 +1487,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textHeader.setTypeface(Utils.typefaceSemiBold(context));
+            textHeader.setTypeface(Utils.typefaceSemiBold(activity));
 
         }
     }
@@ -1501,7 +1501,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textTotalContacts.setTypeface(Utils.typefaceSemiBold(context));
+            textTotalContacts.setTypeface(Utils.typefaceSemiBold(activity));
 
         }
     }
@@ -1517,15 +1517,15 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         inviteContactObject.setArrayListContactNumber(arrayListContactNumber);
         inviteContactObject.setArrayListEmailAddress(arrayListEmail);
 
-        if (Utils.isNetworkAvailable(context)) {
+        if (Utils.isNetworkAvailable(activity)) {
             if (fragment != null) {
                 new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         inviteContactObject, null, WsResponseObject.class, WsConstants
                         .REQ_SEND_INVITATION, null, true).execute
                         (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
             } else {
-                if (context instanceof SearchActivity) {
-                    new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                if (activity instanceof SearchActivity) {
+                    new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                             inviteContactObject, null, WsResponseObject.class, WsConstants
                             .REQ_SEND_INVITATION, null, true).execute
                             (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);

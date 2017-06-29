@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.notifications;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.os.Bundle;
@@ -130,11 +131,11 @@ public class RatingHistory extends BaseActivity implements RippleView
         // getAllEventRatingReceived(RatingHistory.this);
     }
 
-    private void getAllEventRatingReceived(Context context) {
+    private void getAllEventRatingReceived(Activity activity) {
         WsRequestObject addCommentObject = new WsRequestObject();
 
-        if (Utils.isNetworkAvailable(context)) {
-            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+        if (Utils.isNetworkAvailable(activity)) {
+            new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_EVENT_COMMENT, getResources().getString(R.string.msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
