@@ -56,5 +56,4 @@ public class IntegerConstants {
     public static int PRIVACY_PRIVATE = 3;
     public static int IS_PRIVATE = 1;
     public static int IS_YEAR_HIDDEN = 1;
-
 }

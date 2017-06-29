@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -118,8 +119,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 displayGender(holder, position);
                 break;
         }
-
-
     }
 
     private void displayPhoneNumber(ProfileDetailViewHolder holder, final int position) {
@@ -153,7 +152,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.getTextMain(isOwnProfile).setText(number);
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
             if (isOwnProfile) {
-                switch (phoneNumber.getPhonePublic()) {
+                switch ((MoreObjects.firstNonNull(phoneNumber.getPhonePublic(), 2))) {
                     case 1:
                         //everyone
                         holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
@@ -172,7 +171,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (phoneNumber.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                 }
@@ -202,7 +201,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.getTextMain(isOwnProfile).setText(number);
             holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         }
-
     }
 
     private void displayEmail(final ProfileDetailViewHolder holder, final int position) {
@@ -245,7 +243,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.getTextMain(isOwnProfile).setText(emailId);
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
             if (isOwnProfile) {
-                switch (email.getEmPublic()) {
+                switch ((MoreObjects.firstNonNull(email.getEmPublic(), 2))) {
                     case 1:
                         //everyone
                         holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
@@ -263,7 +261,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.buttonPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (email.getEmIsPrivate() == IntegerConstants.IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                 }
@@ -293,8 +291,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.getTextMain(isOwnProfile).setText(emailId);
             holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         }
-
-
     }
 
     private void displayWebsite(final ProfileDetailViewHolder holder, final int position) {
@@ -346,8 +342,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         } else {
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
         }
-
-
     }
 
     private void displayAddress(final ProfileDetailViewHolder holder, final int position) {
@@ -368,17 +362,17 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     ArrayList<String> arrayListLatLong = new ArrayList<>();
                     arrayListLatLong.addAll(address.getGoogleLatLong());
 //                    if(arrayListLatLong!=null && arrayListLatLong.size()>0){
-                        String latitude = arrayListLatLong.get(1);
-                        String longitude = arrayListLatLong.get(0);
+                    String latitude = arrayListLatLong.get(1);
+                    String longitude = arrayListLatLong.get(0);
                    /* Uri gmmIntentUri = Uri.parse("geo:" + latitude + "," + longitude);
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");
                     if (mapIntent.resolveActivity(activity.getPackageManager()) != null) {
                         activity.startActivity(mapIntent);
                     }*/
-                        Intent intent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("google.navigation:q=" + latitude + "," + longitude));
-                        activity.startActivity(intent);
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("google.navigation:q=" + latitude + "," + longitude));
+                    activity.startActivity(intent);
 //                    }
                 } else {
                     Intent intent = new Intent(Intent.ACTION_VIEW,
@@ -412,7 +406,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
             if (isOwnProfile) {
 
-                switch (address.getAddPublic()) {
+                switch ((MoreObjects.firstNonNull(address.getAddPublic(), 2))) {
                     case 1:
                         //everyone
                         holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
@@ -429,7 +423,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.buttonPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (address.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                 }
@@ -456,8 +450,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             });
         }
-
-
     }
 
     private void displayImAccount(final ProfileDetailViewHolder holder, final int position) {
@@ -478,7 +470,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             final ProfileDetailViewHolder viewHodler = holder;
             if (isOwnProfile) {
                 holder.buttonPrivacy.setVisibility(View.VISIBLE);
-                switch (imAccount.getIMAccountPublic()) {
+                switch ((MoreObjects.firstNonNull(imAccount.getIMAccountPublic(), 2))) {
                     case 1:
                         //everyone
                         holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
@@ -495,7 +487,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (imAccount.getIMAccountIsPrivate() == IntegerConstants.IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                 }
@@ -548,7 +540,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             }
         });
-
     }
 
     private void displayEvent(ProfileDetailViewHolder holder, final int position) {
@@ -565,15 +556,17 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                             "MMM, yyyy");
         }
         if (!isOwnProfile) {
-            if (event.getIsYearHidden() == IntegerConstants.IS_YEAR_HIDDEN) {
+            if (MoreObjects.firstNonNull(event.getIsYearHidden(), 0) == IntegerConstants.IS_YEAR_HIDDEN) {
                 convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "MM-dd",
                         "dd'th' " +
                                 "MMM");
             }
         }
-        if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
+
+        if (MoreObjects.firstNonNull(event.getIsPrivate(), 0) == IntegerConstants.IS_PRIVATE) {
             convertedDate = event.getEventDateTime();
         }
+
         holder.getTextMain(isOwnProfile).setText(convertedDate);
         holder.getTextSub(isOwnProfile).setText(event.getEventType());
         holder.getTextSub(isOwnProfile).setVisibility(View.VISIBLE);
@@ -633,7 +626,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             });
         }
-
     }
 
     private void displayGender(ProfileDetailViewHolder holder, final int position) {
@@ -790,7 +782,5 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             textMain2.setTypeface(Utils.typefaceRegular(activity));
             textSub2.setTypeface(Utils.typefaceRegular(activity));
         }
-
     }
-
 }

@@ -15,7 +15,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
 
     // Monal
-    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 //    public static final String WS_ROOT = "http://54.202.191.41/api/v1/";
 //    public static final String WS_ROOT = "http://10.0.21.123/api/v1/";
 
@@ -27,6 +27,9 @@ public class WsConstants {
 
     // Darshan
 //    public static final String WS_ROOT = "http://10.0.21.202/api/v1/";
+
+    // Hardik
+    public static final String WS_ROOT = "http://10.0.30.11/api/v1/";
 
     // Shailesh
 //    public static final String WS_ROOT = "http://10.0.21.14:8001/api/v1/";
@@ -63,6 +66,8 @@ public class WsConstants {
 
     public static final String REQ_GOOGLE_TEXT_BY_LOCATIONS = "https://maps.googleapis" +
             ".com/maps/api/place/textsearch/json?";
+
+    public static final String REQ_HEADER = "rcAuthToken";
 
     // New Registration
     public static final String REQ_CHECK_NUMBER = "check-number";  // working

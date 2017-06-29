@@ -79,7 +79,8 @@ public class WsRequestObject {
     private String deviceId;
     private String socialMediaTokenId;
     private String createdBy;
-    private String gcm_token;
+    private String gcmToken;
+    private Integer reAuthenticate;
 
     private String password;
     private String password_confirmation;
@@ -276,13 +277,22 @@ public class WsRequestObject {
         this.createdBy = createdBy;
     }
 
-    @JsonProperty("gcm_token")
-    public String getGcmToken() {
-        return gcm_token;
+    @JsonProperty("re_authenticate")
+    public Integer getReAuthenticate() {
+        return reAuthenticate;
     }
 
-    public void setGcmToken(String gcm_token) {
-        this.gcm_token = gcm_token;
+    public void setReAuthenticate(Integer reAuthenticate) {
+        this.reAuthenticate = reAuthenticate;
+    }
+
+    @JsonProperty("gcm_token")
+    public String getGcmToken() {
+        return gcmToken;
+    }
+
+    public void setGcmToken(String gcmToken) {
+        this.gcmToken = gcmToken;
     }
 
     @JsonProperty("device_id")

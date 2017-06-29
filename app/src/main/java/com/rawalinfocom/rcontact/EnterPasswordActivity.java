@@ -139,6 +139,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     bundle.putString(AppConstants.EXTRA_IS_FROM, "forgot_pass");
                     startActivityIntent(EnterPasswordActivity.this,
                             OtpVerificationActivity.class, bundle);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
 
                 } else {
                     if (otpDetailResponse != null) {

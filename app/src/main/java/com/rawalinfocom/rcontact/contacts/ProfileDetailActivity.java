@@ -2635,7 +2635,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 arrayListEvent.addAll(profileDetail.getPbEvent());
             }
 
-            // From PhoneBook
+            // From PhoneBook Event
             Cursor contactEventCursor = phoneBookContacts.getContactEvent(phoneBookId);
             ArrayList<ProfileDataOperationEvent> arrayListPhoneBookEvent = new ArrayList<>();
             ArrayList<ProfileDataOperationEvent> arrayListPhoneBookEventOperation = new

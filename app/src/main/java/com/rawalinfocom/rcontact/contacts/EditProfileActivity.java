@@ -40,6 +40,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -952,7 +953,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }
                 boolean isCurrentSelected = false;
                 for (int i = 0; i < arrayListNewOrganization.size(); i++) {
-                    if (arrayListNewOrganization.get(i).getIsCurrent() == 1) {
+                    if ((MoreObjects.firstNonNull(arrayListNewOrganization.get(i).getIsCurrent(), 0)) == 1) {
                         isCurrentSelected = true;
                         break;
                     }
@@ -2517,7 +2518,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             linearLayout.removeView(relativeRowEditProfile);
                         } else if (linearEmailDetails.getChildCount() == 1) {
 //                            inputValue.setText("");
-                            inputValue.getText().clear(); ;
+                            inputValue.getText().clear();
+                            ;
                         }
                         break;
 

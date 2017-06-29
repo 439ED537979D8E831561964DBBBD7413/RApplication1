@@ -12,6 +12,7 @@ import com.rawalinfocom.rcontact.ReLoginEnterPasswordActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
 
@@ -74,8 +75,6 @@ class WebServicePost {
 
             URL url = new URL(this.url);
 
-//            System.out.println("RContact url --> " + url);
-
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
 
@@ -84,12 +83,9 @@ class WebServicePost {
                 urlConnection.setRequestProperty("Content-Type", "application/json");
                 urlConnection.setRequestProperty("Accept", "application/json");
                 if (setHeader) {
-                    urlConnection.addRequestProperty("rcAuthToken", Utils.getStringPreference
+                    urlConnection.addRequestProperty(WsConstants.REQ_HEADER, Utils.getStringPreference
                             (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
                 }
-
-                System.out.println("RContact token -->  " + Utils.getStringPreference
-                        (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
 
                 urlConnection.connect();
                 ObjectWriter writer = getMapper().writer();
@@ -117,14 +113,11 @@ class WebServicePost {
                 if (statusCode == HttpsURLConnection.HTTP_OK) {
 
 //                    String header = urlConnection.getHeaderField("rc-auth-token");
-                    String header = urlConnection.getHeaderField("rcAuthToken");
-                    System.out.println("RContact header--> " + header);
+                    String header = urlConnection.getHeaderField(WsConstants.REQ_HEADER);
 
-//                    if (header != null)
-//                        Utils.setStringPreference(activity, AppConstants.PREF_ACCESS_TOKEN, header);
-
-                    if (url.toString().endsWith("save-password") || url.toString().endsWith("check-login")
-                            || url.toString().endsWith("confirm-otp")) {
+                    if (url.toString().endsWith(WsConstants.REQ_SAVE_PASSWORD)
+                            || url.toString().endsWith(WsConstants.REQ_CHECK_LOGIN)
+                            || url.toString().endsWith(WsConstants.REQ_OTP_CONFIRMED)) {
                         Utils.setStringPreference(activity, AppConstants.PREF_ACCESS_TOKEN, header);
                     }
 
@@ -158,7 +151,7 @@ class WebServicePost {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    intent.putExtra("from", "forgot_pass");
+                    intent.putExtra("from", "re_login");
                     activity.startActivity(intent);
                     activity.overridePendingTransition(R.anim.enter, R.anim.exit);
                     activity.finish();
