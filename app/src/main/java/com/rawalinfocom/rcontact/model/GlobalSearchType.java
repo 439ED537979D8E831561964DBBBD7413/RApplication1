@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class GlobalSearchType implements Serializable {
 
     @JsonProperty("pb_rcp_verify")
-    private int isRcpVerified;
+    private Integer isRcpVerified;
     @JsonProperty("pb_name_first")
     private String firstName;
     @JsonProperty("pb_name_last")
@@ -33,11 +33,11 @@ public class GlobalSearchType implements Serializable {
     @JsonProperty("rcp_pm_id")
     private String rcpPmId;
 
-    public int getIsRcpVerified() {
+    public Integer getIsRcpVerified() {
         return isRcpVerified;
     }
 
-    public void setIsRcpVerified(int isRcpVerified) {
+    public void setIsRcpVerified(Integer isRcpVerified) {
         this.isRcpVerified = isRcpVerified;
     }
 

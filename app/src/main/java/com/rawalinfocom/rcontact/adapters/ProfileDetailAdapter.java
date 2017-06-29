@@ -707,7 +707,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         }
         privacyItems.add(privacyDataItem);
         wsRequestObject.setPrivacyData(privacyItems);
-        wsRequestObject.setPmId(pmId);
+//        wsRequestObject.setPmId(pmId);
         if (Utils.isNetworkAvailable(activity)) {
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     wsRequestObject, null, WsResponseObject.class, WsConstants

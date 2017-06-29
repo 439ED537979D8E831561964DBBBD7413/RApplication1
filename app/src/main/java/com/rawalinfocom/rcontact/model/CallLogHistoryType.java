@@ -10,7 +10,7 @@ public class CallLogHistoryType implements Serializable{
 
     String historyNumber;
 //    String historyDate;
-    long historyDate;
+    Long historyDate;
 
     public String getHistoryNumber() {
         return historyNumber;
@@ -20,11 +20,11 @@ public class CallLogHistoryType implements Serializable{
         this.historyNumber = historyNumber;
     }
 
-    public long getHistoryDate() {
+    public Long getHistoryDate() {
         return historyDate;
     }
 
-    public void setHistoryDate(long historyDate) {
+    public void setHistoryDate(Long historyDate) {
         this.historyDate = historyDate;
     }
 }

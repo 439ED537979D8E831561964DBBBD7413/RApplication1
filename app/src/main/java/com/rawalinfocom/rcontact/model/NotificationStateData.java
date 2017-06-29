@@ -6,8 +6,8 @@ package com.rawalinfocom.rcontact.model;
 
 public class NotificationStateData {
 
-    private int notificationState;
-    private int notificationType;
+    private Integer notificationState;
+    private Integer notificationType;
     private String cloudNotificationId;
     private String createdAt;
     private String updatedAt;
@@ -21,19 +21,19 @@ public class NotificationStateData {
         this.notificationMasterId = notificationMasterId;
     }
 
-    public int getNotificationState() {
+    public Integer getNotificationState() {
         return notificationState;
     }
 
-    public void setNotificationState(int notificationState) {
+    public void setNotificationState(Integer notificationState) {
         this.notificationState = notificationState;
     }
 
-    public int getNotificationType() {
+    public Integer getNotificationType() {
         return notificationType;
     }
 
-    public void setNotificationType(int notificationType) {
+    public void setNotificationType(Integer notificationType) {
         this.notificationType = notificationType;
     }
 

@@ -16,10 +16,10 @@ public class ProfileDataOperationEvent implements Serializable {
     private String eventType;
     private String eventDateTime;
     private String eventDate;
-    private int eventPublic;
+    private Integer eventPublic;
     private String eventRcType;
-    private int isYearHidden;
-    private int isPrivate;
+    private Integer isYearHidden;
+    private Integer isPrivate;
 
     @JsonProperty("event_id")
     public String getEventId() {
@@ -49,11 +49,11 @@ public class ProfileDataOperationEvent implements Serializable {
     }
 
     @JsonProperty("event_public")
-    public int getEventPublic() {
+    public Integer getEventPublic() {
         return this.eventPublic;
     }
 
-    public void setEventPublic(int eventPublic) {
+    public void setEventPublic(Integer eventPublic) {
         this.eventPublic = eventPublic;
     }
 
@@ -67,11 +67,11 @@ public class ProfileDataOperationEvent implements Serializable {
         this.eventDate = eventDate;
     }
 
-    /*public int getEventRcType() {
+    /*public Integer getEventRcType() {
         return eventRcType;
     }
 
-    public void setEventRcType(int eventRcType) {
+    public void setEventRcType(Integer eventRcType) {
         this.eventRcType = eventRcType;
     }*/
 
@@ -84,20 +84,20 @@ public class ProfileDataOperationEvent implements Serializable {
     }
 
     @JsonProperty("is_year_hidden")
-    public int getIsYearHidden() {
+    public Integer getIsYearHidden() {
         return isYearHidden;
     }
 
-    public void setIsYearHidden(int isYearHidden) {
+    public void setIsYearHidden(Integer isYearHidden) {
         this.isYearHidden = isYearHidden;
     }
 
     @JsonProperty("is_private")
-    public int getIsPrivate() {
+    public Integer getIsPrivate() {
         return isPrivate;
     }
 
-    public void setIsPrivate(int isPrivate) {
+    public void setIsPrivate(Integer isPrivate) {
         this.isPrivate = isPrivate;
     }
 }

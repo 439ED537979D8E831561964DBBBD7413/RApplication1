@@ -28,7 +28,7 @@ public class AsyncGetDeviceToken extends AsyncTask<Void, Void, String> {
         super();
         this.context = context;
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
-        Utils.showProgressDialog(context, context.getString(R.string.msg_please_wait), false);
+//        Utils.showProgressDialog(context, context.getString(R.string.msg_please_wait), false);
     }
 
     @Override
@@ -56,6 +56,6 @@ public class AsyncGetDeviceToken extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        Utils.hideProgressDialog();
+//        Utils.hideProgressDialog();
     }
 }

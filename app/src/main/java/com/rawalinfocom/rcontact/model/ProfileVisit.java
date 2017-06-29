@@ -13,23 +13,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ProfileVisit {
 
     @JsonProperty("visitor_pm_id")
-    private int visitorPmId;
+    private Integer visitorPmId;
     @JsonProperty("visit_count")
-    private int visitCount;
+    private Integer visitCount;
 
-    public int getVisitorPmId() {
+    public Integer getVisitorPmId() {
         return visitorPmId;
     }
 
-    public void setVisitorPmId(int visitorPmId) {
+    public void setVisitorPmId(Integer visitorPmId) {
         this.visitorPmId = visitorPmId;
     }
 
-    public int getVisitCount() {
+    public Integer getVisitCount() {
         return visitCount;
     }
 
-    public void setVisitCount(int visitCount) {
+    public void setVisitCount(Integer visitCount) {
         this.visitCount = visitCount;
     }
 }
