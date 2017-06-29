@@ -201,16 +201,18 @@ public class MainActivity extends BaseActivity implements NavigationView
                 requiredPermissions[2]) ==
                 PackageManager.PERMISSION_GRANTED;
         if (logs) {
-            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants
-                    .PREF_CALL_LOG_SYNCED, false)) {
+            if (Utils.isNetworkAvailable(this)
+                    && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
+                    && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                 syncCallLogAsyncTask.execute();
             }
 
         }
         if (smsLogs) {
-            if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants
-                    .PREF_CALL_LOG_SYNCED, false)
+            if (Utils.isNetworkAvailable(this)
+                    && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
+                    && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
                     && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                 syncSmsLogAsyncTask.execute();
@@ -1284,11 +1286,10 @@ public class MainActivity extends BaseActivity implements NavigationView
             else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute();
-                }else{
+                } else {
                     if (Utils.isNetworkAvailable(MainActivity.this)
                             && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
                         syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                         syncCallLogAsyncTask.execute();
                     }
@@ -1306,8 +1307,9 @@ public class MainActivity extends BaseActivity implements NavigationView
             else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute();
-                }else{
+                } else {
                     if (Utils.isNetworkAvailable(MainActivity.this)
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
                             && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
                             && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
                         syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
