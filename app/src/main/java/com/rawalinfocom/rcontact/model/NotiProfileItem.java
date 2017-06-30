@@ -9,7 +9,7 @@ public class NotiProfileItem {
     private String personName;
     private String notiInfo;
     private String notiRequestTime;
-    private int profileNotiType;
+    private Integer profileNotiType;
 
     public String getRcpUserPmId() {
         return rcpUserPmId;
@@ -22,21 +22,21 @@ public class NotiProfileItem {
     private String rcpUserPmId;
 
 
-    public int getCardCloudId() {
+    public Integer getCardCloudId() {
         return cardCloudId;
     }
 
-    public void setCardCloudId(int cardCloudId) {
+    public void setCardCloudId(Integer cardCloudId) {
         this.cardCloudId = cardCloudId;
     }
 
-    private int cardCloudId;
+    private Integer cardCloudId;
 
-    public int getProfileNotiType() {
+    public Integer getProfileNotiType() {
         return profileNotiType;
     }
 
-    public void setProfileNotiType(int profileNotiType) {
+    public void setProfileNotiType(Integer profileNotiType) {
         this.profileNotiType = profileNotiType;
     }
 

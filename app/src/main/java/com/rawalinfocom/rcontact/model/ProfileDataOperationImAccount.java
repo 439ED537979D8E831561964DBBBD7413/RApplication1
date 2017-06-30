@@ -16,10 +16,10 @@ public class ProfileDataOperationImAccount implements Serializable {
     private String IMAccountType;
     private String IMAccountDetails;
     private String IMAccountProtocol;
-    private int IMAccountPublic;
-    private int IMAccountIsPrivate;
+    private Integer IMAccountPublic;
+    private Integer IMAccountIsPrivate;
 
-    //    private int IMRcpType;
+    //    private Integer IMRcpType;
     private String IMRcpType;
 
     @JsonProperty("im_id")
@@ -50,11 +50,11 @@ public class ProfileDataOperationImAccount implements Serializable {
     }
 
     @JsonProperty("im_account_public")
-    public int getIMAccountPublic() {
+    public Integer getIMAccountPublic() {
         return this.IMAccountPublic;
     }
 
-    public void setIMAccountPublic(int IMAccountPublic) {
+    public void setIMAccountPublic(Integer IMAccountPublic) {
         this.IMAccountPublic = IMAccountPublic;
     }
 
@@ -67,11 +67,11 @@ public class ProfileDataOperationImAccount implements Serializable {
         this.IMAccountProtocol = IMAccountProtocol;
     }
 
-   /* public int getIMRcpType() {
+   /* public Integer getIMRcpType() {
         return IMRcpType;
     }
 
-    public void setIMRcpType(int IMRcpType) {
+    public void setIMRcpType(Integer IMRcpType) {
         this.IMRcpType = IMRcpType;
     }*/
 
@@ -84,11 +84,11 @@ public class ProfileDataOperationImAccount implements Serializable {
     }
 
     @JsonProperty("is_private")
-    public int getIMAccountIsPrivate() {
+    public Integer getIMAccountIsPrivate() {
         return IMAccountIsPrivate;
     }
 
-    public void setIMAccountIsPrivate(int IMAccountIsPrivate) {
+    public void setIMAccountIsPrivate(Integer IMAccountIsPrivate) {
         this.IMAccountIsPrivate = IMAccountIsPrivate;
     }
 }

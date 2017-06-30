@@ -10,9 +10,13 @@ public class IntegerConstants {
     public static int LAUNCH_MOBILE_REGISTRATION = 0;
     public static int LAUNCH_OTP_VERIFICATION = 1;
     public static int LAUNCH_PROFILE_REGISTRATION = 2;
-    public static int LAUNCH_MAIN_ACTIVITY = 3;
+    public static int LAUNCH_RE_LOGIN_PASSWORD = 3;
+    public static int LAUNCH_ENTER_PASSWORD = 4;
+    public static int LAUNCH_SET_PASSWORD = 5;
+    public static int LAUNCH_MAIN_ACTIVITY = 6;
 
     // Profile Registration Constants
+    public static int REGISTRATION_VIA = 0;
     public static int REGISTRATION_VIA_EMAIL = 0;
     public static int REGISTRATION_VIA_FACEBOOK = 1;
     public static int REGISTRATION_VIA_GOOGLE = 2;
@@ -52,5 +56,4 @@ public class IntegerConstants {
     public static int PRIVACY_PRIVATE = 3;
     public static int IS_PRIVATE = 1;
     public static int IS_YEAR_HIDDEN = 1;
-
 }

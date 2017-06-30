@@ -29,6 +29,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.util.LongSparseArray;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -110,7 +111,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -120,6 +123,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends BaseActivity implements NavigationView
         .OnNavigationItemSelectedListener, WsResponseListener {
 
+    private static final String TAG = "MainActivity";
     @BindView(R.id.relative_root_contacts_main)
     RelativeLayout relativeRootContactsMain;
     Toolbar toolbar;
@@ -134,10 +138,11 @@ public class MainActivity extends BaseActivity implements NavigationView
     ContactsFragment contactsFragment;
     CallLogFragment callLogFragment;
     SmsFragment smsFragment;
-
+    private PhoneBookContacts phoneBookContacts;
     NetworkConnectionReceiver networkConnectionReceiver;
     RContactApplication rContactApplication;
-
+    private ArrayList<ProfileData> arrayListReSyncUserContact;
+    private String currentStamp;
     int LIST_PARTITION_COUNT = 10;
     private ArrayList<CallLogType> callLogTypeArrayListMain;
     ArrayList<CallLogType> callLogsListbyChunck;
@@ -149,6 +154,7 @@ public class MainActivity extends BaseActivity implements NavigationView
             .permission.READ_CALL_LOG, Manifest.permission.READ_SMS};
     boolean isCompaseIcon = false;
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
+    private ReSyncContactAsyncTask reSyncContactAsyncTask;
     private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
     private ArrayList<SmsDataType> smsLogTypeArrayListMain;
     ArrayList<SmsDataType> smsLogsListbyChunck;
@@ -161,20 +167,39 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         ButterKnife.bind(this);
         rContactApplication = (RContactApplication) getApplicationContext();
+        phoneBookContacts = new PhoneBookContacts(this);
         callLogTypeArrayListMain = new ArrayList<>();
         smsLogTypeArrayListMain = new ArrayList<>();
         CallLogFragment.callLogTypeReceiver = new CallLogType();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkPermissionToExecute();
-        } else {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        networkConnectionReceiver = new NetworkConnectionReceiver();
+        init();
+        registerBroadcastReceiver();
+        registerLocalBroadCastReceiver();
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute() {
+        boolean contacts = ContextCompat.checkSelfPermission(MainActivity.this,
+                requiredPermissions[0]) ==
+                PackageManager.PERMISSION_GRANTED;
+        boolean logs = ContextCompat.checkSelfPermission(MainActivity.this,
+                requiredPermissions[1]) ==
+                PackageManager.PERMISSION_GRANTED;
+        boolean smsLogs = ContextCompat.checkSelfPermission(MainActivity.this,
+                requiredPermissions[2]) ==
+                PackageManager.PERMISSION_GRANTED;
+        if (logs) {
             if (Utils.isNetworkAvailable(this)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
-                    && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
-                    false)) {
+                    && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                 syncCallLogAsyncTask.execute();
             }
 
+        }
+        if (smsLogs) {
             if (Utils.isNetworkAvailable(this)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
@@ -183,40 +208,16 @@ public class MainActivity extends BaseActivity implements NavigationView
                 syncSmsLogAsyncTask.execute();
             }
         }
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        networkConnectionReceiver = new NetworkConnectionReceiver();
-        init();
-        registerBroadcastReceiver();
-        registerLocalBroadCastReceiver();
-
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void checkPermissionToExecute() {
-        boolean logs = ContextCompat.checkSelfPermission(MainActivity.this,
-                requiredPermissions[1]) ==
-                PackageManager.PERMISSION_GRANTED;
-        boolean smsLogs = ContextCompat.checkSelfPermission(MainActivity.this,
-                requiredPermissions[2]) ==
-                PackageManager.PERMISSION_GRANTED;
-        if (logs) {
-            if (Utils.isNetworkAvailable(this) && !Utils.getBooleanPreference(this, AppConstants
-                    .PREF_CALL_LOG_SYNCED, false)) {
-                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                syncCallLogAsyncTask.execute();
-            }
-
-        }
-        if (smsLogs) {
-            if (Utils.isNetworkAvailable(this) && Utils.getBooleanPreference(this, AppConstants
-                    .PREF_CALL_LOG_SYNCED, false)
-                    && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
-                syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                syncSmsLogAsyncTask.execute();
+        if (contacts) {
+            if (Utils.isNetworkAvailable(this)
+                    && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
+                    && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+                    && Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
+                reSyncContactAsyncTask = new ReSyncContactAsyncTask();
+                reSyncContactAsyncTask.execute();
             }
         }
+
     }
 
     @Override
@@ -352,19 +353,19 @@ public class MainActivity extends BaseActivity implements NavigationView
                         removeRemovedDataFromDb(uploadContactResponse
                                 .getArrayListMapping());
                     }
-                    Log.i("uploadContactResponse", "Sync Successful");
+                    Log.i(TAG, "Sync Successful");
 
                     String currentTimeStamp = (StringUtils.split(serviceType, "_"))[1];
-                    Log.i("uploadContactResponse", "currentTimeStamp" + currentTimeStamp);
+//                    Log.i("MAULIK", "currentTimeStamp" + currentTimeStamp);
                     PhoneBookContacts phoneBookContacts = new PhoneBookContacts(this);
                     phoneBookContacts.saveRawIdsToPref();
                     Utils.setStringPreference(this, AppConstants.PREF_CONTACT_LAST_SYNC_TIME,
                             currentTimeStamp);
                 } else {
                     if (uploadContactResponse != null) {
-                        Log.e("error response", uploadContactResponse.getMessage());
+                        Log.e(TAG, uploadContactResponse.getMessage());
                     } else {
-                        Log.e("onDeliveryResponse: ", "uploadContactResponse null");
+                        Log.e(TAG, "uploadContactResponse null");
                     }
                 }
             }
@@ -842,6 +843,8 @@ public class MainActivity extends BaseActivity implements NavigationView
             syncCallLogAsyncTask.cancel(true);
         if (syncSmsLogAsyncTask != null)
             syncSmsLogAsyncTask.cancel(true);
+        if (reSyncContactAsyncTask != null)
+            reSyncContactAsyncTask.cancel(true);
         if (networkConnectionReceiver != null) {
             unregisterBroadcastReceiver();
         }
@@ -1127,6 +1130,12 @@ public class MainActivity extends BaseActivity implements NavigationView
         localBroadcastManagerUpdateNotificationCount.registerReceiver
                 (localBroadCastReceiverUpdateCount, intentFilterUpdateCount);
 
+        LocalBroadcastManager contactDisplayed = LocalBroadcastManager.getInstance(MainActivity.this);
+        IntentFilter intentFilterContactDisplayed = new IntentFilter(AppConstants
+                .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
+        contactDisplayed.registerReceiver
+                (localBroadcastReceiverContactDisplayed, intentFilterContactDisplayed);
+
     }
 
     private void unRegisterLocalBroadCastReceiver() {
@@ -1138,6 +1147,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         localBroadcastManager.unregisterReceiver(localBroadCastReceiverRecentSMS);
         localBroadcastManager.unregisterReceiver(localBroadcastReceiverSmsLogSync);
         localBroadcastManager.unregisterReceiver(localBroadCastReceiverUpdateCount);
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiverContactDisplayed);
     }
 
     private void getCallLogsByRawId() {
@@ -1179,6 +1189,11 @@ public class MainActivity extends BaseActivity implements NavigationView
         } else {
             Utils.setBooleanPreference(this, AppConstants
                     .PREF_CALL_LOG_SYNCED, true);
+            Intent localBroadcastIntent = new Intent(AppConstants
+                    .ACTION_LOCAL_BROADCAST_SYNC_SMS);
+            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                    .getInstance(MainActivity.this);
+            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
         }
     }
 
@@ -1292,12 +1307,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                     checkPermissionToExecute();
                 } else {
                     if (Utils.isNetworkAvailable(MainActivity.this)
-                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                            .PREF_CONTACT_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
-                            .PREF_CALL_LOG_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
-                            .PREF_SMS_SYNCED, false)) {
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
                         syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                         syncCallLogAsyncTask.execute();
                     }
@@ -1317,10 +1328,9 @@ public class MainActivity extends BaseActivity implements NavigationView
                     checkPermissionToExecute();
                 } else {
                     if (Utils.isNetworkAvailable(MainActivity.this)
-                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                            .PREF_CALL_LOG_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
-                            .PREF_SMS_SYNCED, false)) {
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
                         syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                         syncSmsLogAsyncTask.execute();
                     }
@@ -1406,7 +1416,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayListMain,
                 LIST_PARTITION_COUNT)) {
             // do something with partition
-            Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+//            Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
             callLogsListbyChunck.addAll(partition);
             callLogTypeArrayListMain.removeAll(partition);
             break;
@@ -1420,7 +1430,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         for (ArrayList<SmsDataType> partition : choppedSmsLog(smsLogTypeArrayListMain,
                 LIST_PARTITION_COUNT)) {
             // do something with partition
-            Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+//            Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
             smsLogsListbyChunck.addAll(partition);
             smsLogTypeArrayListMain.removeAll(partition);
             break;
@@ -1438,7 +1448,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 for (ArrayList<SmsDataType> partition : choppedSmsLog(list,
                         LIST_PARTITION_COUNT)) {
                     // do something with partition
-                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+//                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
                     smsLogsListbyChunck.addAll(partition);
                     newSmsList.removeAll(partition);
                     break;
@@ -1464,7 +1474,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 for (ArrayList<CallLogType> partition : choppedCallLog(list,
                         LIST_PARTITION_COUNT)) {
                     // do something with partition
-                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+//                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
                     callLogsListbyChunck.addAll(partition);
                     newList.removeAll(partition);
                     break;
@@ -1656,17 +1666,17 @@ public class MainActivity extends BaseActivity implements NavigationView
                     String accountId = " ";
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         accountId = cursor.getString(account_id);
-                        if (!TextUtils.isEmpty(accountId) && account_id > 0)
-                            Log.e("Sim Type", accountId);
+//                        if (!TextUtils.isEmpty(accountId) && account_id > 0)
+//                            Log.e("Sim Type", accountId);
 
                         String accountName = cursor.getString(account);
-                        if (!TextUtils.isEmpty(accountName))
-                            Log.e("Sim Name", accountName);
+//                        if (!TextUtils.isEmpty(accountName))
+//                            Log.e("Sim Name", accountName);
 
                     } else {
                         if (account_id > 0) {
                             accountId = cursor.getString(account_id);
-                            Log.e("Sim Type", accountId);
+//                            Log.e("Sim Type", accountId);
                         }
                     }
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
@@ -1770,6 +1780,15 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     //</editor-fold>
 
+
+    private class ReSyncContactAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            reSyncPhoneBookContactList();
+            return null;
+        }
+    }
 
     private class SyncCallLogAsyncTask extends AsyncTask<Void, Void, Void> {
 
@@ -2038,10 +2057,54 @@ public class MainActivity extends BaseActivity implements NavigationView
         return getString(R.string.type_other);
     }
 
+    private BroadcastReceiver localBroadcastReceiverContactDisplayed = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+//            Log.i("MAULIK", "onReceive() of localBroadcastReceiverContactDisplayed");
+            try {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            checkPermissionToExecute();
+                        } else {
+                            if (Utils.isNetworkAvailable(MainActivity.this)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
+                                    && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                                syncCallLogAsyncTask.execute();
+                            }
+
+                            if (Utils.isNetworkAvailable(MainActivity.this)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+                                    && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                                syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                                syncSmsLogAsyncTask.execute();
+                            }
+                            if (Utils.isNetworkAvailable(MainActivity.this)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+//                                Log.i("MAULIK", " looking for updated contacts");
+                                reSyncContactAsyncTask = new ReSyncContactAsyncTask();
+                                reSyncContactAsyncTask.execute();
+                            }
+                        }
+                    }
+                }, 200);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
     private BroadcastReceiver localBroadcastReceiverRecentCalls = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+//            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
             try {
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -2151,5 +2214,445 @@ public class MainActivity extends BaseActivity implements NavigationView
                 (databaseHandler);
         return notificationStateMaster.getTotalUnreadCountByType(AppConstants
                 .NOTIFICATION_TYPE_TIMELINE);
+    }
+
+    private void reSyncPhoneBookContactList() {
+        currentStamp = String.valueOf(System.currentTimeMillis());
+//        Log.i("MAULIK", "reSyncPhoneBookContactList.currentStamp: " + currentStamp);
+        String lastStamp = Utils.getStringPreference(this, AppConstants
+                .PREF_CONTACT_LAST_SYNC_TIME, currentStamp);
+
+        Cursor cursor = phoneBookContacts.getUpdatedRawId(lastStamp);
+
+        if (Utils.getArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET) == null)
+            return;
+
+        Set<String> updatedContactIds = new HashSet<>();
+        while (cursor.moveToNext()) {
+            String rawId = cursor.getString(cursor.getColumnIndex
+                    (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID));
+            updatedContactIds.add(rawId);
+        }
+        cursor.close();
+
+        Set<String> arrayListOldContactIds = new HashSet<>();
+        arrayListOldContactIds.addAll(Utils.getArrayListPreference(this, AppConstants
+                .PREF_CONTACT_ID_SET));
+//        Log.i("MAULIK", " getAllContactRawId");
+
+        Cursor contactNameCursor = phoneBookContacts.getAllContactRawId();
+
+        Set<String> arrayListNewContactId = new HashSet<>();
+        while (contactNameCursor.moveToNext()) {
+            arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
+                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
+        }
+
+        contactNameCursor.close();
+//        Log.i("MAULIK", " getAllContactRawId Complete");
+
+        Set<String> removedContactIds = new HashSet<>(arrayListOldContactIds);
+        Set<String> insertedContactIds = new HashSet<>(arrayListNewContactId);
+        removedContactIds.removeAll(insertedContactIds);
+        insertedContactIds.removeAll(arrayListOldContactIds);
+
+//        Log.i("MAULIK", "inserted" + insertedContactIds.toString());
+//
+//        Log.i("MAULIK", "removed" + removedContactIds.toString());
+
+        updatedContactIds.removeAll(insertedContactIds);
+//        Log.i("MAULIK", "updated" + updatedContactIds.toString());
+
+        arrayListReSyncUserContact = new ArrayList<>();
+
+        if (removedContactIds.size() > 0) {
+            // deleted 5
+            ArrayList<String> list = new ArrayList<>(removedContactIds);
+            prepareForDeletion(list);
+        }
+        if (updatedContactIds.size() > 0) {
+            //updated 6
+            ArrayList<String> list = new ArrayList<>(updatedContactIds);
+            String inClause = list.toString();
+            inClause = inClause.replace("[", "(");
+            inClause = inClause.replace("]", ")");
+//            Log.i("MAULIK", "updated inCaluse:" + inClause);
+            prepareData(IntegerConstants.SYNC_UPDATE_CONTACT, inClause);
+        }
+        if (insertedContactIds.size() > 0) {
+            //inserted 1
+            ArrayList<String> list = new ArrayList<>(insertedContactIds);
+            String inClause = list.toString();
+            inClause = inClause.replace("[", "(");
+            inClause = inClause.replace("]", ")");
+//            Log.i("MAULIK", "inserted inCaluse:" + inClause);
+            prepareData(IntegerConstants.SYNC_INSERT_CONTACT, inClause);
+
+        }
+//        Log.i("MAULIK", "arrayListReSyncUserContact.size: " + arrayListReSyncUserContact.size());
+        if (Utils.isNetworkAvailable(this) && arrayListReSyncUserContact.size() > 0) {
+            if (arrayListReSyncUserContact.size() <= 100) {
+                Log.i(TAG, "sending updated contacts to server");
+                uploadContacts();
+            } else {
+
+                Log.i(TAG, "need to apply resync mechanism:");
+            }
+        }
+    }
+
+    private void prepareData(int flag, String inCaluse) {
+
+        LongSparseArray<ProfileDataOperation> profileDetailSparseArray = new LongSparseArray<>();
+
+        //<editor-fold desc="Create Cursor">
+        String[] projection = {
+                ContactsContract.Data.MIMETYPE,
+                ContactsContract.Data.CONTACT_ID,
+                ContactsContract.Contacts.STARRED,
+
+                ContactsContract.CommonDataKinds.StructuredName.PREFIX,
+                ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.SUFFIX,
+                ContactsContract.CommonDataKinds.StructuredName.PHONETIC_GIVEN_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.PHONETIC_MIDDLE_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.PHONETIC_FAMILY_NAME,
+
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Phone.TYPE,
+                ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
+
+                ContactsContract.CommonDataKinds.Email.ADDRESS,
+                ContactsContract.CommonDataKinds.Email.TYPE,
+
+                ContactsContract.CommonDataKinds.Website.TYPE,
+                ContactsContract.CommonDataKinds.Website.URL,
+
+                ContactsContract.CommonDataKinds.Organization.COMPANY,
+                ContactsContract.CommonDataKinds.Organization.TITLE,
+                ContactsContract.CommonDataKinds.Organization.TYPE,
+                ContactsContract.CommonDataKinds.Organization.DEPARTMENT,
+                ContactsContract.CommonDataKinds.Organization.JOB_DESCRIPTION,
+                ContactsContract.CommonDataKinds.Organization.OFFICE_LOCATION,
+
+                ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS,
+                ContactsContract.CommonDataKinds.StructuredPostal.CITY,
+                ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY,
+                ContactsContract.CommonDataKinds.StructuredPostal.NEIGHBORHOOD,
+                ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE,
+                ContactsContract.CommonDataKinds.StructuredPostal.POBOX,
+                ContactsContract.CommonDataKinds.StructuredPostal.STREET,
+                ContactsContract.CommonDataKinds.StructuredPostal.TYPE,
+
+                ContactsContract.CommonDataKinds.Im.TYPE,
+                ContactsContract.CommonDataKinds.Im.DATA1,
+                ContactsContract.CommonDataKinds.Im.PROTOCOL,
+
+                ContactsContract.CommonDataKinds.Event.TYPE,
+                ContactsContract.CommonDataKinds.Event.START_DATE,
+
+        };
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " + ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID + " in " + inCaluse;
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+                // starred contact not accessible
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
+        };
+        //  String sortOrder = ContactsContract.Contacts.SORT_KEY_ALTERNATIVE;
+        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
+        Uri uri = ContactsContract.Data.CONTENT_URI;
+//        if (syncingTask != null && syncingTask.isCancelled()) {
+//            return;
+//        }
+        Cursor cursor = getContentResolver().query(uri, projection, selection,
+                selectionArgs, sortOrder);
+        //</editor-fold>
+
+        //<editor-fold desc="Data Read from Cursor">
+        if (cursor != null) {
+            final int mimeTypeIdx = cursor.getColumnIndex(ContactsContract.Data.MIMETYPE);
+            final int idIdx = cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID);
+
+            while (cursor.moveToNext()) {
+//                if (syncingTask != null && syncingTask.isCancelled()) {
+//                    return;
+//                }
+                //ProfileDataOperation operation = new ProfileDataOperation();
+                //operation.setFlag(flag);
+                long id = cursor.getLong(idIdx);
+                ProfileDataOperation phoneBookContact = profileDetailSparseArray.get(id);
+                if (phoneBookContact == null) {
+                    phoneBookContact = new ProfileDataOperation(id);
+                    profileDetailSparseArray.put(id, phoneBookContact);
+//                    profileDataList.add(phoneBookContact);
+                }
+                phoneBookContact.setLookupKey(cursor.getString(cursor.getColumnIndex
+                        (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
+                phoneBookContact.setIsFavourite(cursor.getString(cursor.getColumnIndex
+                        (ContactsContract.Contacts.STARRED)));
+                String mimeType = cursor.getString(mimeTypeIdx);
+                switch (mimeType) {
+                    case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
+
+                        phoneBookContact.setPbNamePrefix(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.StructuredName.PREFIX)));
+                        phoneBookContact.setPbNameFirst(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.StructuredName.GIVEN_NAME)));
+                        phoneBookContact.setPbNameMiddle(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.StructuredName.MIDDLE_NAME)));
+                        phoneBookContact.setPbNameLast(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.StructuredName.FAMILY_NAME)));
+                        phoneBookContact.setPbNameSuffix(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.StructuredName.SUFFIX)));
+                        phoneBookContact.setPbPhoneticNameFirst(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.StructuredName.PHONETIC_GIVEN_NAME)));
+                        phoneBookContact.setPbPhoneticNameMiddle(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.StructuredName.PHONETIC_MIDDLE_NAME)));
+                        phoneBookContact.setPbPhoneticNameLast(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.StructuredName.PHONETIC_FAMILY_NAME)));
+                        break;
+                    case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
+                        ProfileDataOperationPhoneNumber phoneNumber = new
+                                ProfileDataOperationPhoneNumber();
+
+                        phoneNumber.setPhoneNumber(Utils.getFormattedNumber(this, cursor
+                                .getString(cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.Phone.NUMBER))));
+                        phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
+                                (cursor.getInt(cursor.getColumnIndex
+                                        (ContactsContract.CommonDataKinds.Phone.TYPE))));
+                        phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_EVERYONE);
+
+                        phoneBookContact.addPhone(phoneNumber);
+                        break;
+                    case ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE:
+                        ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
+
+                        emailId.setEmEmailId(cursor.getString(cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+                        emailId.setEmType(phoneBookContacts.getEmailType(cursor,
+                                cursor.getInt
+                                        (cursor.getColumnIndex(ContactsContract
+                                                .CommonDataKinds.Email.TYPE))));
+                        emailId.setEmPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+
+                        phoneBookContact.addEmail(emailId);
+                        break;
+                    case ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE:
+                        ProfileDataOperationWebAddress webAddress = new
+                                ProfileDataOperationWebAddress();
+
+                        webAddress.setWebAddress(cursor.getString(cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
+                        webAddress.setWebType(phoneBookContacts.getWebsiteType(cursor, (cursor
+                                .getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds
+                                        .Website.TYPE)))));
+                        webAddress.setWebPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+                        phoneBookContact.addWebsite(webAddress);
+
+                        break;
+                    case ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE:
+                        ProfileDataOperationOrganization organization = new
+                                ProfileDataOperationOrganization();
+
+                        organization.setOrgName(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.Organization.COMPANY)));
+                        organization.setOrgJobTitle(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.Organization.TITLE)));
+                        organization.setOrgDepartment(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.Organization.DEPARTMENT)));
+                        organization.setOrgType(phoneBookContacts.getOrganizationType(cursor,
+                                cursor.getInt((cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.Organization.TYPE)))));
+                        organization.setOrgJobDescription(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.Organization.JOB_DESCRIPTION)));
+                        organization.setOrgOfficeLocation(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.Organization.OFFICE_LOCATION)));
+                        organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+                        phoneBookContact.addOrganization(organization);
+                        break;
+                    case ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE:
+                        ProfileDataOperationAddress address = new ProfileDataOperationAddress();
+
+                        address.setFormattedAddress(cursor.getString
+                                (cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS)));
+                        address.setCity(cursor.getString(cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                        .CITY)));
+                        address.setCountry(cursor.getString(cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                        .COUNTRY)));
+                        address.setNeighborhood(cursor.getString(cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                        .NEIGHBORHOOD)));
+                        address.setPostCode(cursor.getString(cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                        .POSTCODE)));
+                        address.setPoBox(cursor.getString(cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                        .POBOX)));
+                        address.setStreet(cursor.getString(cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                        .STREET)));
+                        address.setAddressType(phoneBookContacts.getAddressType(cursor, cursor
+                                .getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds
+                                        .StructuredPostal.TYPE))));
+                        address.setAddPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+                        phoneBookContact.addAddress(address);
+                        break;
+                    case ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE:
+                        ProfileDataOperationImAccount imAccount = new
+                                ProfileDataOperationImAccount();
+
+
+                        imAccount.setIMAccountDetails(cursor.getString(cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Im.DATA1)));
+
+                        imAccount.setIMAccountType(phoneBookContacts.getImAccountType(cursor,
+                                cursor.getInt(cursor.getColumnIndex(ContactsContract
+                                        .CommonDataKinds.Im.TYPE))));
+
+                        imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
+                                (cursor.getInt((cursor.getColumnIndex
+                                        (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
+
+                        imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+
+                        phoneBookContact.addImAccount(imAccount);
+                        break;
+                    case ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE:
+
+                        ProfileDataOperationEvent event = new ProfileDataOperationEvent();
+
+                        event.setEventType(phoneBookContacts.getEventType(cursor, cursor.getInt
+                                (cursor.getColumnIndex(ContactsContract.CommonDataKinds.Event
+                                        .TYPE))));
+
+                        String eventDate = cursor.getString(cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Event
+                                        .START_DATE));
+
+                        if (StringUtils.startsWith(eventDate, "--")) {
+                            eventDate = "1900" + eventDate.substring(1, StringUtils.length
+                                    (eventDate));
+                        }
+
+                        event.setEventDateTime(eventDate);
+
+                        event.setEventPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+                        phoneBookContact.addEvent(event);
+                        break;
+                }
+            }
+            cursor.close();
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Prepare Data">
+        for (int i = 0; i < profileDetailSparseArray.size(); i++) {
+//            if (syncingTask != null && syncingTask.isCancelled()) {
+//                return;
+//            }
+//            AddressBookContact bookContact = profileDetailSparseArray.valueAt(i);
+            ProfileDataOperation profileContact = profileDetailSparseArray.valueAt(i);
+
+            ArrayList<ProfileDataOperation> arrayListOperation = new ArrayList<>();
+
+            ProfileData profileData = new ProfileData();
+            profileData.setLocalPhoneBookId(profileContact.getLookupKey());
+
+            ProfileDataOperation operation = new ProfileDataOperation();
+
+            operation.setFlag(flag);
+            //operation.setIsFirst(1);
+
+            operation.setPbNamePrefix(profileContact.getPbNamePrefix());
+            operation.setPbNameFirst(profileContact.getPbNameFirst());
+            operation.setPbNameMiddle(profileContact.getPbNameMiddle());
+            operation.setPbNameLast(profileContact.getPbNameLast());
+            operation.setPbNameSuffix(profileContact.getPbNameSuffix());
+            operation.setPbPhoneticNameFirst(profileContact.getPbPhoneticNameFirst());
+            operation.setPbPhoneticNameMiddle(profileContact.getPbPhoneticNameMiddle());
+            operation.setPbPhoneticNameLast(profileContact.getPbPhoneticNameLast());
+
+            operation.setIsFavourite(String.valueOf(profileContact.getIsFavourite()));
+
+            operation.setPbPhoneNumber(profileContact.getPbPhoneNumber());
+            operation.setPbEmailId(profileContact.getPbEmailId());
+            operation.setPbWebAddress(profileContact.getPbWebAddress());
+            operation.setPbOrganization(profileContact.getPbOrganization());
+            operation.setPbAddress(profileContact.getPbAddress());
+            operation.setPbIMAccounts(profileContact.getPbIMAccounts());
+            operation.setPbEvent(profileContact.getPbEvent());
+
+            arrayListOperation.add(operation);
+            profileData.setOperation(arrayListOperation);
+
+            arrayListReSyncUserContact.add(profileData);
+        }
+        //</editor-fold>
+
+
+    }
+
+    private void prepareForDeletion(ArrayList<String> list) {
+        for (String deletedRawId : list) {
+//            Log.i("MAULIK", "actually deleted" + deletedRawId);
+
+            ProfileData profileData = new ProfileData();
+            profileData.setLocalPhoneBookId(deletedRawId);
+
+            ArrayList<ProfileDataOperation> arrayListOperations = new ArrayList<>();
+
+            ProfileDataOperation operation = new ProfileDataOperation();
+            operation.setFlag(IntegerConstants.SYNC_DELETE_CONTACT);
+
+            arrayListOperations.add(operation);
+
+            profileData.setOperation(arrayListOperations);
+
+            arrayListReSyncUserContact.add(profileData);
+        }
+    }
+
+    private void uploadContacts() {
+
+        WsRequestObject uploadContactObject = new WsRequestObject();
+        uploadContactObject.setPmId(Integer.parseInt(Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0")));
+        uploadContactObject.setProfileData(arrayListReSyncUserContact);
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    uploadContactObject, null, WsResponseObject.class, WsConstants
+                    .REQ_UPLOAD_CONTACTS + "_" + currentStamp, null, true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
+        }
     }
 }

@@ -34,12 +34,12 @@ import butterknife.ButterKnife;
 
 public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.MyViewHolder> {
 
-    private Fragment context;
+    private Fragment activity;
     private List<NotiProfileItem> list;
     private int recyclerPosition;
 
-    public NotiProfileAdapter(Fragment context, List<NotiProfileItem> list, int recyclerPosition) {
-        this.context = context;
+    public NotiProfileAdapter(Fragment activity, List<NotiProfileItem> list, int recyclerPosition) {
+        this.activity = activity;
         this.list = list;
         this.recyclerPosition = recyclerPosition;
     }
@@ -84,11 +84,11 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
         holder.textRequestDetailInfo.setText(item.getNotiInfo());
         holder.buttonRequestConfirm.setAllCaps(true);
         if (item.getProfileNotiType() == 0) {
-            holder.buttonRequestConfirm.setText(context.getString(R.string.str_confirm));
+            holder.buttonRequestConfirm.setText(activity.getString(R.string.str_confirm));
             holder.buttonRequestReject.setVisibility(View.VISIBLE);
-            holder.buttonRequestReject.setText(context.getString(R.string.str_reject));
+            holder.buttonRequestReject.setText(activity.getString(R.string.str_reject));
         } else {
-            holder.buttonRequestConfirm.setText(context.getString(R.string.view_profile));
+            holder.buttonRequestConfirm.setText(activity.getString(R.string.view_profile));
             holder.buttonRequestReject.setVisibility(View.GONE);
         }
         if (recyclerPosition == 1) {
@@ -109,7 +109,7 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
                     bundle.putString(AppConstants.EXTRA_PM_ID, item.getRcpUserPmId());
                     bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
                     bundle.putString(AppConstants.EXTRA_CONTACT_NAME, item.getPersonName());
-                    ((BaseActivity) (context.getActivity())).startActivityIntent(context.getActivity(), ProfileDetailActivity
+                    ((BaseActivity) (activity.getActivity())).startActivityIntent(activity.getActivity(), ProfileDetailActivity
                             .class, bundle);
                 }
             }
@@ -128,14 +128,14 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
         WsRequestObject requestObj = new WsRequestObject();
         requestObj.setCarStatus(status);
         requestObj.setCarId(cardCloudId);
-        if (Utils.isNetworkAvailable(context.getActivity())) {
-            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+        if (Utils.isNetworkAvailable(activity.getActivity())) {
+            new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     requestObj, null, WsResponseObject.class, WsConstants
-                    .REQ_PROFILE_PRIVACY_REQUEST, context.getResources().getString(R.string.msg_please_wait), true).execute
+                    .REQ_PROFILE_PRIVACY_REQUEST, activity.getResources().getString(R.string.msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
         } else {
             //show no net
-            Toast.makeText(context.getActivity(), context.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity.getActivity(), activity.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
         }
     }
 

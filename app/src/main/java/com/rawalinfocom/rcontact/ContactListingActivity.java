@@ -413,7 +413,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
     private void shareContactRcp(ContactReceiver receiver) {
 
         WsRequestObject uploadContactObject = new WsRequestObject();
-        uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
+//        uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
         uploadContactObject.setSendProfileType(IntegerConstants.SEND_PROFILE_RCP);
         uploadContactObject.setPmIdWhose(Integer.parseInt(pmId));
         uploadContactObject.setReceiver(receiver);
@@ -433,7 +433,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
     private void shareContactNonRcp(ContactReceiver receiver) {
 
         WsRequestObject uploadContactObject = new WsRequestObject();
-        uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
+//        uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
         uploadContactObject.setSendProfileType(IntegerConstants.SEND_PROFILE_NON_RCP);
         uploadContactObject.setReceiver(receiver);
         uploadContactObject.setContactData(profileDataOperationVcard);

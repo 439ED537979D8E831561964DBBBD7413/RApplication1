@@ -19,11 +19,11 @@ public class ProfileDataOperationOrganization implements Serializable {
     private String orgType;
     private String orgJobDescription;
     private String orgOfficeLocation;
-    private int isCurrent;
-    private int orgPublic;
-    private int isPrivate;
+    private Integer isCurrent;
+    private Integer orgPublic;
+    private Integer isPrivate;
 
-    //    private int orgRcpType;
+    //    private Integer orgRcpType;
     private String orgRcpType;
 
     @JsonProperty("org_id")
@@ -90,20 +90,20 @@ public class ProfileDataOperationOrganization implements Serializable {
     }
 
     @JsonProperty("is_current")
-    public int getIsCurrent() {
+    public Integer getIsCurrent() {
         return isCurrent;
     }
 
-    public void setIsCurrent(int isCurrent) {
+    public void setIsCurrent(Integer isCurrent) {
         this.isCurrent = isCurrent;
     }
 
     @JsonProperty("org_public")
-    public int getOrgPublic() {
+    public Integer getOrgPublic() {
         return orgPublic;
     }
 
-    public void setOrgPublic(int orgPublic) {
+    public void setOrgPublic(Integer orgPublic) {
         this.orgPublic = orgPublic;
     }
 
@@ -116,11 +116,11 @@ public class ProfileDataOperationOrganization implements Serializable {
     }
 
     @JsonProperty("is_private")
-    public int getIsPrivate() {
+    public Integer getIsPrivate() {
         return isPrivate;
     }
 
-    public void setIsPrivate(int isPrivate) {
+    public void setIsPrivate(Integer isPrivate) {
         this.isPrivate = isPrivate;
     }
 }

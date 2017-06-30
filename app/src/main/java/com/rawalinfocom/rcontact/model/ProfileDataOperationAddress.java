@@ -27,8 +27,8 @@ public class ProfileDataOperationAddress implements Serializable {
     private String PoBox;
     //    private String googleLatitude;
     private String formattedAddress;
-    private int addPublic;
-    private int isPrivate;
+    private Integer addPublic;
+    private Integer isPrivate;
 
     private String rcpType;
 
@@ -141,11 +141,11 @@ public class ProfileDataOperationAddress implements Serializable {
     }
 
     @JsonProperty("add_public")
-    public int getAddPublic() {
+    public Integer getAddPublic() {
         return addPublic;
     }
 
-    public void setAddPublic(int addPublic) {
+    public void setAddPublic(Integer addPublic) {
         this.addPublic = addPublic;
     }
 
@@ -158,11 +158,11 @@ public class ProfileDataOperationAddress implements Serializable {
     }
 
     @JsonProperty("is_private")
-    public int getIsPrivate() {
+    public Integer getIsPrivate() {
         return isPrivate;
     }
 
-    public void setIsPrivate(int isPrivate) {
+    public void setIsPrivate(Integer isPrivate) {
         this.isPrivate = isPrivate;
     }
 }

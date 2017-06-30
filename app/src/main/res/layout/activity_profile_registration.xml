@@ -48,31 +48,11 @@
                 android:hint="@string/hint_email_id"
                 android:inputType="textEmailAddress" />
 
-            <com.rawalinfocom.rcontact.helper.RippleView
-                android:id="@+id/ripple_register"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/input_email_id"
-                android:layout_marginTop="@dimen/activity_double_vertical_margin"
-                app:rv_alpha="@integer/alpha_ripple"
-                app:rv_color="@color/colorWhite"
-                app:rv_rippleDuration="@integer/duration_ripple">
-
-                <Button
-                    android:id="@+id/button_register"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorAccent"
-                    android:text="@string/action_register"
-                    android:textColor="@color/colorWhite" />
-
-            </com.rawalinfocom.rcontact.helper.RippleView>
-
             <RelativeLayout
                 android:id="@+id/relative_or"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/ripple_register"
+                android:layout_below="@id/input_email_id"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="@dimen/activity_double_vertical_margin"
                 android:layout_marginTop="@dimen/activity_double_vertical_margin">
@@ -134,6 +114,7 @@
             </com.rawalinfocom.rcontact.helper.RippleView>
 
             <LinearLayout
+                android:id="@+id/ll_other_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ripple_facebook"
@@ -189,6 +170,26 @@
                 </com.rawalinfocom.rcontact.helper.RippleView>
 
             </LinearLayout>
+
+            <com.rawalinfocom.rcontact.helper.RippleView
+                android:id="@+id/ripple_continue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ll_other_login"
+                android:layout_marginTop="@dimen/activity_double_vertical_margin"
+                app:rv_alpha="@integer/alpha_ripple"
+                app:rv_color="@color/colorWhite"
+                app:rv_rippleDuration="@integer/duration_ripple">
+
+                <Button
+                    android:id="@+id/button_continue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorAccent"
+                    android:text="@string/action_continue"
+                    android:textColor="@color/colorWhite" />
+
+            </com.rawalinfocom.rcontact.helper.RippleView>
 
         </RelativeLayout>
     </ScrollView>

@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
@@ -43,34 +44,63 @@ public class SplashActivity extends BaseActivity {
                                 .PREF_LAUNCH_SCREEN_INT,
                         IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
                         .LAUNCH_MOBILE_REGISTRATION) {
-                    startActivityIntent(SplashActivity.this, MobileNumberRegistrationActivity
-                            .class, null);
+
+                    startActivityIntent(SplashActivity.this, MobileNumberRegistrationActivity.class, null);
                     finish();
-                } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
-                                .PREF_LAUNCH_SCREEN_INT,
-                        IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
-                        .LAUNCH_OTP_VERIFICATION) {
-                    startActivityIntent(SplashActivity.this, OtpVerificationActivity.class, null);
-                    finish();
-                } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
+
+                }
+//                else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
+//                                .PREF_LAUNCH_SCREEN_INT,
+//                        IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
+//                        .LAUNCH_OTP_VERIFICATION) {
+//
+//                    Bundle bundle = new Bundle();
+//                    bundle.putBoolean(AppConstants.EXTRA_IS_FROM_MOBILE_REGIS, false);
+//                    startActivityIntent(SplashActivity.this, OtpVerificationActivity.class, bundle);
+//                    finish();
+//
+//                }
+                else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
                                 .PREF_LAUNCH_SCREEN_INT,
                         IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
                         .LAUNCH_PROFILE_REGISTRATION) {
-            /*UserProfile userProfile = (UserProfile) Utils.getObjectPreference(SplashActivity
-            .this, AppConstants
-                    .PREF_REGS_USER_OBJECT, UserProfile.class);
-            if (userProfile != null && StringUtils.equalsIgnoreCase(userProfile
-                    .getIsAlreadyVerified(), String.valueOf(getResources().getInteger(R.integer
-                    .profile_not_verified)))) {*/
-                    startActivityIntent(SplashActivity.this, ProfileRegistrationActivity.class,
-                            null);
+
+                    startActivityIntent(SplashActivity.this, ProfileRegistrationActivity.class, null);
                     finish();
-//            }
+
+                } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
+                                .PREF_LAUNCH_SCREEN_INT,
+                        IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
+                        .LAUNCH_SET_PASSWORD) {
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString(AppConstants.EXTRA_IS_FROM, "splash");
+                    startActivityIntent(SplashActivity.this, SetPasswordActivity.class, bundle);
+                    finish();
+
+                } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
+                                .PREF_LAUNCH_SCREEN_INT,
+                        IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
+                        .LAUNCH_ENTER_PASSWORD) {
+
+                    startActivityIntent(SplashActivity.this, EnterPasswordActivity.class, null);
+                    finish();
+
+                } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
+                                .PREF_LAUNCH_SCREEN_INT,
+                        IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
+                        .LAUNCH_RE_LOGIN_PASSWORD) {
+
+                    Intent intent = new Intent(SplashActivity.this, ReLoginEnterPasswordActivity.class);
+                    intent.putExtra("from", "forgot_pass");
+                    startActivity(intent);
+                    finish();
+
                 } else {
+
                     startActivityIntent(SplashActivity.this, MainActivity.class, null);
                     finish();
                 }
-
             }
         }, SPLASH_TIME_OUT);
     }

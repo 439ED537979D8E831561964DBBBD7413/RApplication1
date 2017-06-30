@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,12 +32,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 
 
     private List<EventItem> list;
-    private Context context;
+    private Activity activity;
     private int recyclerPosition;
 
-    public EventAdapter(Context context, List<EventItem> list, int recyclerPosition) {
+    public EventAdapter(Activity activity, List<EventItem> list, int recyclerPosition) {
         this.list = list;
-        this.context = context;
+        this.activity = activity;
         this.recyclerPosition = recyclerPosition;
     }
 
@@ -54,7 +55,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         holder.textEventName.setText(item.getEventName());
         holder.textEventCommentTime.setText(Utils.formatDateTime(item.getCommentTime(), "dd-MM hh:mm a"));
         int notiType = item.getEventType();
-        String on = context.getResources().getString(R.string.text_on);
+        String on = activity.getResources().getString(R.string.text_on);
         String eventDetail = "";
         if (item.getEventDetail().length() != 0) {
             eventDetail = item.getEventDetail() + ", ";
@@ -69,7 +70,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         if (recyclerPosition != 2) {
             if (!item.isEventCommentPending()) {
                 holder.textUserComment.setVisibility(View.VISIBLE);
-                holder.textUserComment.setText(context.getResources().getString(R.string.text_you_wrote_on_timeline, item.getPersonFirstName()));
+                holder.textUserComment.setText(activity.getResources().getString(R.string.text_you_wrote_on_timeline, item.getPersonFirstName()));
                 holder.layoutUserCommentPending.setVisibility(View.GONE);
             } else {
                 holder.textUserComment.setVisibility(View.GONE);
@@ -91,7 +92,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
                     EventsActivity.selectedRecyclerItem = position;
                     addEventComment(item.getEventName(), item.getPersonRcpPmId(), userComment, item.getEventDate(), AppConstants.COMMENT_STATUS_SENT, item.getEventRecordIndexId());
                 } else {
-                    Toast.makeText(context, context.getResources().getString(R.string.msg_please_enter_some_comment), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, activity.getResources().getString(R.string.msg_please_enter_some_comment), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -131,15 +132,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         public MyViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
-            textPersonName.setTypeface(Utils.typefaceRegular(context));
+            textPersonName.setTypeface(Utils.typefaceRegular(activity));
 
-            textEventName.setTypeface(Utils.typefaceRegular(context));
-            textEventCommentTime.setTypeface(Utils.typefaceRegular(context));
+            textEventName.setTypeface(Utils.typefaceRegular(activity));
+            textEventCommentTime.setTypeface(Utils.typefaceRegular(activity));
 
-            textEventDetailInfo.setTypeface(Utils.typefaceRegular(context));
+            textEventDetailInfo.setTypeface(Utils.typefaceRegular(activity));
 
-            edittextUserComment.setTypeface(Utils.typefaceRegular(context));
-            textUserComment.setTypeface(Utils.typefaceRegular(context));
+            edittextUserComment.setTypeface(Utils.typefaceRegular(activity));
+            textUserComment.setTypeface(Utils.typefaceRegular(activity));
 
         }
 
@@ -156,14 +157,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         addCommentObject.setEvmRecordIndexId(eventRecordIndexId);
         addCommentObject.setStatus(status + "");
 
-        if (Utils.isNetworkAvailable(context)) {
-            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+        if (Utils.isNetworkAvailable(activity)) {
+            new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
-                    .REQ_ADD_EVENT_COMMENT, context.getResources().getString(R.string.msg_please_wait), true).execute
+                    .REQ_ADD_EVENT_COMMENT, activity.getResources().getString(R.string.msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
         } else {
             //show no toast
-            Toast.makeText(context, context.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
         }
     }
 }

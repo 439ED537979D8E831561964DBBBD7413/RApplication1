@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -50,7 +52,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         .ProfileDetailViewHolder> implements PrivacySettingPopupDialog.DialogCallback {
 
 
-    private Context context;
+    private Activity activity;
     private ArrayList<Object> arrayList;
     private int profileDetailType;
 
@@ -59,14 +61,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
     private boolean isOwnProfile = false;
     private String pmId;
 
-    public ProfileDetailAdapter(Context context, ArrayList<Object> arrayList, int
+    public ProfileDetailAdapter(Activity activity, ArrayList<Object> arrayList, int
             profileDetailType, boolean isOwnProfile, String pmId) {
-        this.context = context;
+        this.activity = activity;
         this.profileDetailType = profileDetailType;
         this.arrayList = arrayList;
         this.isOwnProfile = isOwnProfile;
-        colorBlack = ContextCompat.getColor(context, R.color.colorBlack);
-        colorPineGreen = ContextCompat.getColor(context, R.color.colorAccent);
+        colorBlack = ContextCompat.getColor(activity, R.color.colorBlack);
+        colorPineGreen = ContextCompat.getColor(activity, R.color.colorAccent);
         this.pmId = pmId;
         listner = this;
 
@@ -117,8 +119,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 displayGender(holder, position);
                 break;
         }
-
-
     }
 
     private void displayPhoneNumber(ProfileDetailViewHolder holder, final int position) {
@@ -131,11 +131,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Utils.copyToClipboard(context, context.getString(R.string.str_copy_number), (
+                Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_number), (
                         (TextView) view).getText()
                         .toString());
-                Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
-                        .getRelativeRootProfileDetail(), context.getString(R.string
+                Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
+                        .getRelativeRootProfileDetail(), activity.getString(R.string
                         .str_copy_number_clip_board));
                 return false;
             }
@@ -152,7 +152,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.getTextMain(isOwnProfile).setText(number);
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
             if (isOwnProfile) {
-                switch (phoneNumber.getPhonePublic()) {
+                switch ((MoreObjects.firstNonNull(phoneNumber.getPhonePublic(), 2))) {
                     case 1:
                         //everyone
                         holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
@@ -171,7 +171,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (phoneNumber.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                 }
@@ -180,10 +180,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 @Override
                 public void onClick(View v) {
                     PrivacySettingPopupDialog privacySettingPopupDialog = new
-                            PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants
+                            PrivacySettingPopupDialog(viewHodler, activity, listner, AppConstants
                             .PHONE_NUMBER,
                             position, phoneNumber.getPhonePublic(), phoneNumber.getPhoneId());
-                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R
+                    privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
                             .string.privacy_dialog_title));
                     privacySettingPopupDialog.showDialog();
                 }
@@ -191,7 +191,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //Toast.makeText(context, "requesting profile", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(activity, "requesting profile", Toast.LENGTH_SHORT).show();
                     int pmTo = Integer.parseInt(pmId);
                     // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
                     sendAccessRequest(pmTo, "pb_phone_number", phoneNumber.getPhoneId());
@@ -201,7 +201,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.getTextMain(isOwnProfile).setText(number);
             holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         }
-
     }
 
     private void displayEmail(final ProfileDetailViewHolder holder, final int position) {
@@ -215,7 +214,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             public void onClick(View view) {
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
                         holder.getTextMain(isOwnProfile).getText()));
-                context.startActivity(Intent.createChooser(emailIntent, context.getString(R
+                activity.startActivity(Intent.createChooser(emailIntent, activity.getString(R
                         .string.str_send_email)));
             }
         });
@@ -223,11 +222,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Utils.copyToClipboard(context, context.getString(R.string.str_copy_email), (
+                Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_email), (
                         (TextView) view).getText()
                         .toString());
-                Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
-                        .getRelativeRootProfileDetail(), context.getString(R.string
+                Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
+                        .getRelativeRootProfileDetail(), activity.getString(R.string
                         .str_copy_email_clip_board));
                 return false;
             }
@@ -244,7 +243,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.getTextMain(isOwnProfile).setText(emailId);
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
             if (isOwnProfile) {
-                switch (email.getEmPublic()) {
+                switch ((MoreObjects.firstNonNull(email.getEmPublic(), 2))) {
                     case 1:
                         //everyone
                         holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
@@ -262,7 +261,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.buttonPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (email.getEmIsPrivate() == IntegerConstants.IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                 }
@@ -271,10 +270,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 @Override
                 public void onClick(View v) {
                     PrivacySettingPopupDialog privacySettingPopupDialog = new
-                            PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants
+                            PrivacySettingPopupDialog(viewHodler, activity, listner, AppConstants
                             .EMAIL,
                             position, email.getEmPublic(), email.getEmId());
-                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R
+                    privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
                             .string.privacy_dialog_title));
                     privacySettingPopupDialog.showDialog();
                 }
@@ -282,7 +281,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //Toast.makeText(context, "requesting profile", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(activity, "requesting profile", Toast.LENGTH_SHORT).show();
                     int pmTo = Integer.parseInt(pmId);
                     // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
                     sendAccessRequest(pmTo, "pb_email_id", email.getEmId());
@@ -292,8 +291,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.getTextMain(isOwnProfile).setText(emailId);
             holder.getTextMain(isOwnProfile).setTextColor(colorBlack);
         }
-
-
     }
 
     private void displayWebsite(final ProfileDetailViewHolder holder, final int position) {
@@ -321,18 +318,18 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     url = "http://" + url;
                 }
                 intent.setData(Uri.parse(url));
-                context.startActivity(intent);
+                activity.startActivity(intent);
             }
         });
 
         holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Utils.copyToClipboard(context, context.getString(R.string.str_copy_website), (
+                Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_website), (
                         (TextView) view).getText()
                         .toString());
-                Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
-                        .getRelativeRootProfileDetail(), context.getString(R.string
+                Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
+                        .getRelativeRootProfileDetail(), activity.getString(R.string
                         .str_copy_website_clip_board));
                 return false;
             }
@@ -345,8 +342,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         } else {
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
         }
-
-
     }
 
     private void displayAddress(final ProfileDetailViewHolder holder, final int position) {
@@ -362,28 +357,28 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 /*Intent intent = new Intent(Intent.ACTION_VIEW,
                         Uri.parse("google.navigation:q=" + holder.getTextMain(isOwnProfile)
                                 .getText()));
-                context.startActivity(intent);*/
+                activity.startActivity(intent);*/
                 if (address.getGoogleLatLong() != null) {
                     ArrayList<String> arrayListLatLong = new ArrayList<>();
                     arrayListLatLong.addAll(address.getGoogleLatLong());
 //                    if(arrayListLatLong!=null && arrayListLatLong.size()>0){
-                        String latitude = arrayListLatLong.get(1);
-                        String longitude = arrayListLatLong.get(0);
+                    String latitude = arrayListLatLong.get(1);
+                    String longitude = arrayListLatLong.get(0);
                    /* Uri gmmIntentUri = Uri.parse("geo:" + latitude + "," + longitude);
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");
-                    if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
-                        context.startActivity(mapIntent);
+                    if (mapIntent.resolveActivity(activity.getPackageManager()) != null) {
+                        activity.startActivity(mapIntent);
                     }*/
-                        Intent intent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("google.navigation:q=" + latitude + "," + longitude));
-                        context.startActivity(intent);
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("google.navigation:q=" + latitude + "," + longitude));
+                    activity.startActivity(intent);
 //                    }
                 } else {
                     Intent intent = new Intent(Intent.ACTION_VIEW,
                             Uri.parse("google.navigation:q=" + holder.getTextMain(isOwnProfile)
                                     .getText()));
-                    context.startActivity(intent);
+                    activity.startActivity(intent);
                 }
 
             }
@@ -392,11 +387,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Utils.copyToClipboard(context, context.getString(R.string.str_copy_address), (
+                Utils.copyToClipboard(activity, activity.getString(R.string.str_copy_address), (
                         (TextView) view).getText()
                         .toString());
-                Utils.showSuccessSnackBar(context, ((ProfileDetailActivity) context)
-                        .getRelativeRootProfileDetail(), context.getString(R.string
+                Utils.showSuccessSnackBar(activity, ((ProfileDetailActivity) activity)
+                        .getRelativeRootProfileDetail(), activity.getString(R.string
                         .str_copy_address_clip_board));
                 return false;
             }
@@ -411,7 +406,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
             if (isOwnProfile) {
 
-                switch (address.getAddPublic()) {
+                switch ((MoreObjects.firstNonNull(address.getAddPublic(), 2))) {
                     case 1:
                         //everyone
                         holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
@@ -428,7 +423,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.buttonPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (address.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                 }
@@ -437,10 +432,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 @Override
                 public void onClick(View v) {
                     PrivacySettingPopupDialog privacySettingPopupDialog = new
-                            PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants
+                            PrivacySettingPopupDialog(viewHodler, activity, listner, AppConstants
                             .ADDRESS,
                             position, address.getAddPublic(), address.getAddId());
-                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R
+                    privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
                             .string.privacy_dialog_title));
                     privacySettingPopupDialog.showDialog();
                 }
@@ -448,15 +443,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //Toast.makeText(context, "requesting profile", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(activity, "requesting profile", Toast.LENGTH_SHORT).show();
                     int pmTo = Integer.parseInt(pmId);
                     // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
                     sendAccessRequest(pmTo, "pb_address", address.getAddId());
                 }
             });
         }
-
-
     }
 
     private void displayImAccount(final ProfileDetailViewHolder holder, final int position) {
@@ -477,7 +470,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             final ProfileDetailViewHolder viewHodler = holder;
             if (isOwnProfile) {
                 holder.buttonPrivacy.setVisibility(View.VISIBLE);
-                switch (imAccount.getIMAccountPublic()) {
+                switch ((MoreObjects.firstNonNull(imAccount.getIMAccountPublic(), 2))) {
                     case 1:
                         //everyone
                         holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
@@ -494,7 +487,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 }
             } else {
                 holder.buttonPrivacy.setVisibility(View.GONE);
-                if (imAccount.getIMAccountIsPrivate() == IntegerConstants.IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
                     holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                 }
@@ -503,10 +496,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 @Override
                 public void onClick(View v) {
                     PrivacySettingPopupDialog privacySettingPopupDialog = new
-                            PrivacySettingPopupDialog(viewHodler, context, listner,
+                            PrivacySettingPopupDialog(viewHodler, activity, listner,
                             AppConstants.IM_ACCOUNT, position, imAccount.getIMAccountPublic(),
                             imAccount.getIMId());
-                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R
+                    privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
                             .string.privacy_dialog_title));
                     privacySettingPopupDialog.showDialog();
                 }
@@ -514,7 +507,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //Toast.makeText(context, "requesting profile", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(activity, "requesting profile", Toast.LENGTH_SHORT).show();
                     int pmTo = Integer.parseInt(pmId);
                     // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
                     sendAccessRequest(pmTo, "pb_im_accounts", imAccount.getIMId());
@@ -542,12 +535,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     if (url != null) {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse(url));
-                        context.startActivity(intent);
+                        activity.startActivity(intent);
                     }
                 }
             }
         });
-
     }
 
     private void displayEvent(ProfileDetailViewHolder holder, final int position) {
@@ -564,15 +556,17 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                             "MMM, yyyy");
         }
         if (!isOwnProfile) {
-            if (event.getIsYearHidden() == IntegerConstants.IS_YEAR_HIDDEN) {
+            if (MoreObjects.firstNonNull(event.getIsYearHidden(), 0) == IntegerConstants.IS_YEAR_HIDDEN) {
                 convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "MM-dd",
                         "dd'th' " +
                                 "MMM");
             }
         }
-        if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
+
+        if (MoreObjects.firstNonNull(event.getIsPrivate(), 0) == IntegerConstants.IS_PRIVATE) {
             convertedDate = event.getEventDateTime();
         }
+
         holder.getTextMain(isOwnProfile).setText(convertedDate);
         holder.getTextSub(isOwnProfile).setText(event.getEventType());
         holder.getTextSub(isOwnProfile).setVisibility(View.VISIBLE);
@@ -614,10 +608,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 @Override
                 public void onClick(View v) {
                     PrivacySettingPopupDialog privacySettingPopupDialog = new
-                            PrivacySettingPopupDialog(viewHodler, context, listner, AppConstants
+                            PrivacySettingPopupDialog(viewHodler, activity, listner, AppConstants
                             .EVENT, position,
                             event.getEventPublic(), event.getEventId());
-                    privacySettingPopupDialog.setDialogTitle(context.getResources().getString(R
+                    privacySettingPopupDialog.setDialogTitle(activity.getResources().getString(R
                             .string.privacy_dialog_title));
                     privacySettingPopupDialog.showDialog();
                 }
@@ -625,14 +619,13 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.buttonRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //Toast.makeText(context, "requesting profile", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(activity, "requesting profile", Toast.LENGTH_SHORT).show();
                     int pmTo = Integer.parseInt(pmId);
                     // sendAccessRequest(int toPMId, String carFiledType, String recordIndexId)
                     sendAccessRequest(pmTo, "pb_event", event.getEventId());
                 }
             });
         }
-
     }
 
     private void displayGender(ProfileDetailViewHolder holder, final int position) {
@@ -672,7 +665,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 break;
 
         }
-        int pmId = Integer.parseInt(((BaseActivity) context).getUserPmId());
+        int pmId = Integer.parseInt(((BaseActivity) activity).getUserPmId());
         ;
         WsRequestObject wsRequestObject = new WsRequestObject();
 
@@ -706,16 +699,16 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         }
         privacyItems.add(privacyDataItem);
         wsRequestObject.setPrivacyData(privacyItems);
-        wsRequestObject.setPmId(pmId);
-        if (Utils.isNetworkAvailable(context)) {
-            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+//        wsRequestObject.setPmId(pmId);
+        if (Utils.isNetworkAvailable(activity)) {
+            new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     wsRequestObject, null, WsResponseObject.class, WsConstants
-                    .REQ_SET_PRIVACY_SETTING, context.getResources().getString(R.string
+                    .REQ_SET_PRIVACY_SETTING, activity.getResources().getString(R.string
                     .msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_SET_PRIVACY_SETTING);
         } else {
             //show no toast
-            Toast.makeText(context, context.getResources().getString(R.string.msg_no_network),
+            Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -728,15 +721,15 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         requestObj.setCarStatus(0);
         requestObj.setCarMongoDbRecordIndex(recordIndexId);
 
-        if (Utils.isNetworkAvailable(context)) {
-            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+        if (Utils.isNetworkAvailable(activity)) {
+            new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     requestObj, null, WsResponseObject.class, WsConstants
-                    .REQ_PROFILE_PRIVACY_REQUEST, context.getResources().getString(R.string
+                    .REQ_PROFILE_PRIVACY_REQUEST, activity.getResources().getString(R.string
                     .msg_please_wait), true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
         } else {
             //show no net
-            Toast.makeText(context, context.getResources().getString(R.string.msg_no_network),
+            Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -784,12 +777,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textMain1.setTypeface(Utils.typefaceRegular(context));
-            textSub1.setTypeface(Utils.typefaceRegular(context));
-            textMain2.setTypeface(Utils.typefaceRegular(context));
-            textSub2.setTypeface(Utils.typefaceRegular(context));
+            textMain1.setTypeface(Utils.typefaceRegular(activity));
+            textSub1.setTypeface(Utils.typefaceRegular(activity));
+            textMain2.setTypeface(Utils.typefaceRegular(activity));
+            textSub2.setTypeface(Utils.typefaceRegular(activity));
         }
-
     }
-
 }

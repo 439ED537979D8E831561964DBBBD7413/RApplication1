@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.ContactRequestData;
 
@@ -83,7 +84,7 @@ public class TableAddressMaster {
         values.put(COLUMN_AM_FORMATTED_ADDRESS, address.getAmFormattedAddress());
         values.put(COLUMN_AM_NEIGHBORHOOD, address.getAmNeighborhood());
         values.put(COLUMN_AM_POST_CODE, address.getAmPostCode());
-        values.put(COLUMN_AM_IS_PRIVATE, address.getAmIsPrivate());
+        values.put(COLUMN_AM_IS_PRIVATE, MoreObjects.firstNonNull(address.getAmIsPrivate(), 0));
         values.put(COLUMN_AM_PO_BOX, address.getAmPoBox());
         values.put(COLUMN_AM_STATE, address.getAmState());
         values.put(COLUMN_AM_STREET, address.getAmStreet());
@@ -118,7 +119,7 @@ public class TableAddressMaster {
             values.put(COLUMN_AM_PO_BOX, arrayListAddress.get(i).getAmPoBox());
             values.put(COLUMN_AM_STATE, arrayListAddress.get(i).getAmState());
             values.put(COLUMN_AM_STREET, arrayListAddress.get(i).getAmStreet());
-            values.put(COLUMN_AM_IS_PRIVATE, arrayListAddress.get(i).getAmIsPrivate());
+            values.put(COLUMN_AM_IS_PRIVATE, MoreObjects.firstNonNull(arrayListAddress.get(i).getAmIsPrivate(), 0));
             values.put(COLUMN_AM_ADDRESS_TYPE, arrayListAddress.get(i).getAmAddressType());
             values.put(COLUMN_AM_GOOGLE_LATITUDE, arrayListAddress.get(i).getAmGoogleLatitude());
             values.put(COLUMN_AM_GOOGLE_LONGITUDE, arrayListAddress.get(i).getAmGoogleLongitude());
@@ -341,7 +342,7 @@ public class TableAddressMaster {
         values.put(COLUMN_AM_PO_BOX, address.getAmPoBox());
         values.put(COLUMN_AM_STATE, address.getAmState());
         values.put(COLUMN_AM_STREET, address.getAmStreet());
-        values.put(COLUMN_AM_IS_PRIVATE, address.getAmIsPrivate());
+        values.put(COLUMN_AM_IS_PRIVATE, MoreObjects.firstNonNull(address.getAmIsPrivate(), 0));
         values.put(COLUMN_AM_ADDRESS_TYPE, address.getAmAddressType());
         values.put(COLUMN_AM_GOOGLE_LATITUDE, address.getAmGoogleLatitude());
         values.put(COLUMN_AM_GOOGLE_LONGITUDE, address.getAmGoogleLongitude());
