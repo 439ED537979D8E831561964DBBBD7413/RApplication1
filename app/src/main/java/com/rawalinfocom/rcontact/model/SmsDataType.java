@@ -22,10 +22,10 @@ public class SmsDataType implements Serializable {
     @JsonIgnore
     String profileImage;
     @JsonIgnore
-    int flag;
+    Integer flag;
 
     @JsonIgnore
-    int recordPosition;
+    Integer recordPosition;
     @JsonIgnore
     private boolean isRcpUser;
     @JsonIgnore
@@ -129,11 +129,11 @@ public class SmsDataType implements Serializable {
         this.uniqueRowId = uniqueRowId;
     }
 
-    public int getFlag() {
+    public Integer getFlag() {
         return flag;
     }
 
-    public void setFlag(int flag) {
+    public void setFlag(Integer flag) {
         this.flag = flag;
     }
 
@@ -145,11 +145,11 @@ public class SmsDataType implements Serializable {
         this.address = address;
     }
 
-    public int getRecordPosition() {
+    public Integer getRecordPosition() {
         return recordPosition;
     }
 
-    public void setRecordPosition(int recordPosition) {
+    public void setRecordPosition(Integer recordPosition) {
         this.recordPosition = recordPosition;
     }
 

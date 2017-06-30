@@ -1798,7 +1798,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     private void submitRating(String ratingStar, String comment) {
 
         WsRequestObject ratingObject = new WsRequestObject();
-        ratingObject.setPmId(Integer.parseInt(getUserPmId()));
+//        ratingObject.setPmId(Integer.parseInt(getUserPmId()));
         ratingObject.setPrComment(comment);
         ratingObject.setPrRatingStars(ratingStar);
         ratingObject.setPrStatus(String.valueOf(IntegerConstants.RATING_DONE));
@@ -1833,7 +1833,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     private void setFavouriteStatus(ArrayList<ProfileData> favourites) {
 
         WsRequestObject favouriteStatusObject = new WsRequestObject();
-        favouriteStatusObject.setPmId(Integer.parseInt(getUserPmId()));
+//        favouriteStatusObject.setPmId(Integer.parseInt(getUserPmId()));
         favouriteStatusObject.setFavourites(favourites);
 
         if (Utils.isNetworkAvailable(this)) {

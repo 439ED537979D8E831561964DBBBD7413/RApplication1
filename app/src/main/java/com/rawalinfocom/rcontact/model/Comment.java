@@ -6,12 +6,12 @@ package com.rawalinfocom.rcontact.model;
 
 public class Comment {
 
-    private int crmId;
-    private int crmStatus; //1. Sent, 2. Received
+    private Integer crmId;
+    private Integer crmStatus; //1. Sent, 2. Received
     private String crmRating;
     private String crmType; // "eventName" "birthday" ,"anniversary" , "become father"
     private String crmCloudPrId;
-    private int rcProfileMasterPmId;
+    private Integer rcProfileMasterPmId;
     private String crmComment;
     private String crmReply;
     private String crmCreatedAt;
@@ -19,19 +19,19 @@ public class Comment {
     private String crmUpdatedAt;
     private String evmRecordIndexId;
 
-    public int getCrmId() {
+    public Integer getCrmId() {
         return crmId;
     }
 
-    public void setCrmId(int crmId) {
+    public void setCrmId(Integer crmId) {
         this.crmId = crmId;
     }
 
-    public int getCrmStatus() {
+    public Integer getCrmStatus() {
         return crmStatus;
     }
 
-    public void setCrmStatus(int crmStatus) {
+    public void setCrmStatus(Integer crmStatus) {
         this.crmStatus = crmStatus;
     }
 
@@ -59,11 +59,11 @@ public class Comment {
         this.crmCloudPrId = crmCloudPrId;
     }
 
-    public int getRcProfileMasterPmId() {
+    public Integer getRcProfileMasterPmId() {
         return rcProfileMasterPmId;
     }
 
-    public void setRcProfileMasterPmId(int rcProfileMasterPmId) {
+    public void setRcProfileMasterPmId(Integer rcProfileMasterPmId) {
         this.rcProfileMasterPmId = rcProfileMasterPmId;
     }
 

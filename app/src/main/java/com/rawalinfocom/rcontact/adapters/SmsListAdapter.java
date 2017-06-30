@@ -10,7 +10,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +23,9 @@ import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.SMSMenuOptionsDialog;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.listener.OnLoadMoreListener;
-import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,11 +38,14 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import butterknife.BindView;
+
 /**
  * Created by Aniruddh on 21/04/17.
  */
 
 public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
 
 
     private Context context;
@@ -188,20 +190,68 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             final String add;
             if (!TextUtils.isEmpty(number)) {
                 add = number;
+                if (smsDataType.isRcpUser()) {
+                    userViewHolder.textCloudContactName.setVisibility(View.VISIBLE);
+                    String contactDisplayName = "";
+                    String prefix = smsDataType.getPrefix();
+                    String firstName = smsDataType.getRcpFirstName();
+                    String lastName = smsDataType.getRcpLastName();
+                    String middleName = smsDataType.getMiddleName();
+                    String suffix = smsDataType.getSuffix();
+               /* if (StringUtils.length(prefix) > 0) {
+                    contactDisplayName = prefix + " ";
+                }*/
+                    if (StringUtils.length(firstName) > 0) {
+                        contactDisplayName = contactDisplayName + firstName + " ";
+                    }
+               /* if (StringUtils.length(middleName) > 0) {
+                    contactDisplayName = contactDisplayName + middleName + " ";
+                }*/
+                    if (StringUtils.length(lastName) > 0) {
+                        contactDisplayName = contactDisplayName + lastName + "";
+                    }
+                /*if (StringUtils.length(suffix) > 0) {
+                    contactDisplayName = contactDisplayName + suffix;
+                }*/
+
+                    if (StringUtils.equalsIgnoreCase(add, contactDisplayName)) {
+                        userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
+                                .colorAccent));
+                        userViewHolder.textCloudContactName.setVisibility(View.GONE);
+                        userViewHolder.textNumber.setText(add);
+                    } else {
+                        userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
+                                .colorBlack));
+                        userViewHolder.textCloudContactName.setVisibility(View.VISIBLE);
+                        userViewHolder.textCloudContactName.setTextColor(ContextCompat.getColor(context, R.color
+                                .colorAccent));
+                        userViewHolder.textNumber.setText(add);
+                        userViewHolder.textCloudContactName.setText(" " + "(" + contactDisplayName + ")");
+                    }
+
+                } else {
+                    userViewHolder.textCloudContactName.setVisibility(View.GONE);
+                    userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
+                            .colorBlack));
+                    userViewHolder.textCloudContactName.setVisibility(View.GONE);
+                    userViewHolder.textNumber.setText(add);
+                }
+
             } else {
+                userViewHolder.textCloudContactName.setVisibility(View.GONE);
                 add = address;
             }
             if (!TextUtils.isEmpty(address)) {
                 if (isRead.equalsIgnoreCase("0")) {
                     userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
                             .colorBlack));
-                    userViewHolder.textNumber.setTypeface(null, Typeface.BOLD);
+                    userViewHolder.textNumber.setTypeface(Utils.typefaceBold(context));
                     userViewHolder.textNumber.setText(address);
 
                 } else {
                     userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
                             .colorBlack));
-                    userViewHolder.textNumber.setTypeface(null, Typeface.NORMAL);
+                    userViewHolder.textNumber.setTypeface(Utils.typefaceRegular(context));
                     userViewHolder.textNumber.setText(address);
                 }
             } else {
@@ -212,9 +262,9 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (!TextUtils.isEmpty(body)) {
                 if (isRead.equalsIgnoreCase("0")) {
                     userViewHolder.textBody.setText(body);
-                    userViewHolder.textBody.setTypeface(null, Typeface.BOLD);
+                    userViewHolder.textBody.setTypeface(Utils.typefaceBold(context));
                 } else {
-                    userViewHolder.textBody.setTypeface(null, Typeface.NORMAL);
+                    userViewHolder.textBody.setTypeface(Utils.typefaceRegular(context));
                     userViewHolder.textBody.setText(body);
                 }
             } else {
@@ -228,9 +278,9 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 String logDate = new SimpleDateFormat("dd MMM,yy hh:mm:ss a").format(date1);
                 if (isRead.equalsIgnoreCase("0")) {
                     userViewHolder.textDateNTime.setText(logDate);
-                    userViewHolder.textDateNTime.setTypeface(null, Typeface.BOLD);
+                    userViewHolder.textDateNTime.setTypeface(Utils.typefaceBold(context));
                 } else {
-                    userViewHolder.textDateNTime.setTypeface(null, Typeface.NORMAL);
+                    userViewHolder.textDateNTime.setTypeface(Utils.typefaceRegular(context));
                     userViewHolder.textDateNTime.setText(logDate);
                 }
             } else {
@@ -259,6 +309,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     setSelectedSmsType(smsDataType);
                     setSelectedPosition(position);
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", add, null));
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         intent.setPackage(Telephony.Sms.getDefaultSmsPackage(context));
                     }
@@ -290,12 +341,12 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 context.getString(R.string.copy_phone_number) *//*, context.getString(R.string.delete)*//*));
                     }*/
 
-                    if(StringUtils.containsOnly(address,"\\d+")){
+                    if (StringUtils.containsOnly(address, "\\d+")) {
                         arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
                                         + " " + address, context.getString(R.string.add_to_contact),
                                 context.getString(R.string.add_to_existing_contact),
                                 context.getString(R.string.copy_phone_number) /*,context.getString(R.string.delete)*/));
-                    }else{
+                    } else {
                         arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
                                         + " " + address,
                                 context.getString(R.string.copy_phone_number) /*, context.getString(R.string.delete)*/));
@@ -331,6 +382,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         LinearLayout llContent;
         ImageView image3dotsSmsLog;
         RelativeLayout llMain;
+        TextView textCloudContactName;
 
 
         SMSViewHolder(View itemView) {
@@ -342,6 +394,12 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             llContent = (LinearLayout) itemView.findViewById(R.id.llContent);
             llMain = (RelativeLayout) itemView.findViewById(R.id.llMain);
             image3dotsSmsLog = (ImageView) itemView.findViewById(R.id.image_3dots_sms_log);
+            textCloudContactName = (TextView) itemView.findViewById(R.id.text_cloud_contact_name);
+            textBody.setTypeface(Utils.typefaceRegular(context));
+            textNumber.setTypeface(Utils.typefaceRegular(context));
+            textDateNTime.setTypeface(Utils.typefaceRegular(context));
+            textCloudContactName.setTypeface(Utils.typefaceRegular(context));
+
         }
     }
 

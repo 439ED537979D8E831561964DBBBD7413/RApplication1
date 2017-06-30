@@ -1,7 +1,10 @@
 package com.rawalinfocom.rcontact.contacts;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -12,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -58,6 +62,7 @@ public class RContactsFragment extends BaseFragment {
     ColorGroupSectionTitleIndicator titleIndicator;*/
 
     ArrayList<String> arrayListContactHeaders;
+    private ArrayList<UserProfile> arrayListDisplayProfile;
     public static ArrayList<Object> arrayListRContact;
 
     RContactListAdapter rContactListAdapter;
@@ -103,7 +108,7 @@ public class RContactsFragment extends BaseFragment {
             rootView = inflater.inflate(R.layout.fragment_r_contacts, container, false);
             ButterKnife.bind(this, rootView);
         }
-
+        registerLocalBroadCast();
         return rootView;
     }
 
@@ -116,6 +121,51 @@ public class RContactsFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterLocalBroadCast();
+    }
+
+    private void registerLocalBroadCast() {
+        // rating update broadcast receiver register
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(localBroadcastReceiverRatingUpdate,
+                new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_RATING_UPDATE));
+    }
+
+    private void unregisterLocalBroadCast() {
+        //  rating update broadcast receiver unregister
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(localBroadcastReceiverRatingUpdate);
+    }
+
+    // rating update broadcast receiver
+    boolean ratingUpdate;
+    private BroadcastReceiver localBroadcastReceiverRatingUpdate = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, final Intent intent) {
+
+            ratingUpdate = intent.getBooleanExtra(AppConstants.EXTRA_RATING_UPDATE, false);
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (ratingUpdate) {
+                        getRContactFromDB();
+                        int pos = intent.getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0);
+                        rContactListAdapter.updateList(pos, arrayListRContact);
+                    }
+                }
+            }, 100);
+        }
+    };
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
@@ -126,8 +176,6 @@ public class RContactsFragment extends BaseFragment {
                     OptionMenuDialog.IS_CONTACT_DELETED = false;
                     init();
                 }
-                /*Toast.makeText(getActivity(), "Called: " + allContactListAdapter
-                        .getListClickedPosition(), Toast.LENGTH_SHORT).show();*/
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -142,58 +190,33 @@ public class RContactsFragment extends BaseFragment {
         textTotalContacts.setTypeface(Utils.typefaceSemiBold(getActivity()));
         textTotalContacts.setVisibility(View.GONE);
 
-        /*// Connect the recycler to the scroller (to let the scroller scroll the list)
-        scrollerAllContact.setRecyclerView(recyclerViewContactList);
-
-        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
-        recyclerViewContactList.setOnScrollListener(scrollerAllContact.getOnScrollListener());
-
-        // Connect the section indicator to the scroller
-        scrollerAllContact.setSectionIndicator(titleIndicator);
-
-        setRecyclerViewLayoutManager(recyclerViewContactList);
-//        recyclerViewContactList.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        recyclerViewContactList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (Utils.isLastItemDisplaying(recyclerViewContactList)) {
-                    relativeScroller.setVisibility(View.GONE);
-                } else {
-                    relativeScroller.setVisibility(View.VISIBLE);
-                }
-            }
-        });*/
-
         setRecyclerViewLayoutManager(recyclerViewContactList);
 
         initSwipe();
 
         progressRContact.setVisibility(View.GONE);
-        TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
-                (getDatabaseHandler());
 
-        ArrayList<UserProfile> arrayListDisplayProfile = tableProfileMobileMapping
-                .getRContactList();
-        arrayListRContact = new ArrayList<>();
+        getRContactFromDB();
+
         if (arrayListDisplayProfile.size() > 0) {
-            /*for (int i = 0; i < arrayListDisplayProfile.size(); i++) {
-                String headerLetter = StringUtils.upperCase(StringUtils.substring
-                        (arrayListDisplayProfile.get(i).getPmFirstName(), 0, 1));
-                if (!arrayListRContact.contains(headerLetter)) {
-                    arrayListRContact.add(headerLetter);
-                    arrayListContactHeaders.add(headerLetter);
-                }
-                arrayListRContact.add(arrayListDisplayProfile.get(i));
-            }*/
-            arrayListRContact.addAll(arrayListDisplayProfile);
             rContactListAdapter = new RContactListAdapter(this, arrayListRContact,
                     arrayListContactHeaders);
             recyclerViewContactList.setAdapter(rContactListAdapter);
-
         }
+    }
 
+    private void getRContactFromDB() {
+
+        TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
+                (getDatabaseHandler());
+
+        arrayListDisplayProfile = tableProfileMobileMapping
+                .getRContactList();
+
+        arrayListRContact = new ArrayList<>();
+        if (arrayListDisplayProfile.size() > 0) {
+            arrayListRContact.addAll(arrayListDisplayProfile);
+        }
     }
 
     private void initSwipe() {

@@ -2,10 +2,13 @@ package com.rawalinfocom.rcontact.services;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -16,6 +19,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
@@ -24,18 +28,29 @@ import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableImMaster;
 import com.rawalinfocom.rcontact.database.TableMobileMaster;
 import com.rawalinfocom.rcontact.database.TableNotificationStateMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.database.TableRCContactRequest;
 import com.rawalinfocom.rcontact.database.TableRCNotificationUpdates;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.Comment;
 import com.rawalinfocom.rcontact.model.ContactRequestData;
+import com.rawalinfocom.rcontact.model.MobileNumber;
 import com.rawalinfocom.rcontact.model.NotificationData;
 import com.rawalinfocom.rcontact.model.NotificationStateData;
+import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
+import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.notifications.NotificationsDetailActivity;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -76,8 +91,6 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         notificationStateMaster.addNotificationState(notificationStateData);
                         sendNotification(obj.getDetails(), AppConstants.NOTIFICATION_TYPE_RUPDATE);
                         updateNotificationCount(databaseHandler);
-//                        int badgeCount = 1;
-//                        ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
                         return;
                     }
                 } catch (IOException e) {
@@ -92,7 +105,75 @@ public class NotificationFCMService extends FirebaseMessagingService {
             }
             String msg = m.get("msg");
             if (api.equalsIgnoreCase("newUserRegistration")) {
-                sendNotification(msg, -1);
+                String first_name = m.get("first_name");
+                String last_name = m.get("last_name");
+                String mobile_num = "+" + m.get("mobile_number");
+                String rcp_pm_id = m.get("rcp_pm_id");
+                String mnm_id = m.get("mnm_id");
+                String pb_profile_photo = m.get("pb_profile_photo");
+                String total_profile_rate_user = m.get("total_profile_rate_user");
+
+                ArrayList<String> rcpIds = getRawIdFromNumber(mobile_num);
+
+                if (!(rcpIds.size() > 0)) {
+                    return;
+                }
+
+                // Hashmap with key as rcpId and value as rawId/s
+                HashMap<String, String> mapLocalRcpId = new HashMap<>();
+                for (int i = 0; i < rcpIds.size(); i++) {
+                    String phonebookRawId;
+                    if (mapLocalRcpId.containsKey(rcp_pm_id)) {
+                        phonebookRawId = mapLocalRcpId.get(rcp_pm_id) +
+                                "," + rcpIds.get(i);
+                    } else {
+                        phonebookRawId = rcpIds.get(i);
+                    }
+                    mapLocalRcpId.put(rcp_pm_id, phonebookRawId);
+                }
+
+                // Basic Profile Data
+                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                ArrayList<UserProfile> arrayListUserProfile = new ArrayList<>();
+                UserProfile userProfile = new UserProfile();
+                userProfile.setPmFirstName(first_name);
+                userProfile.setPmLastName(last_name);
+                userProfile.setPmRcpId(rcp_pm_id);
+                userProfile.setPmProfileImage(pb_profile_photo);
+                userProfile.setTotalProfileRateUser(total_profile_rate_user);
+                if (mapLocalRcpId.containsKey(rcp_pm_id)) {
+                    userProfile.setPmRawId(mapLocalRcpId.get(rcp_pm_id));
+                }
+
+                String existingRawId = tableProfileMaster.getRawIdFromRcpId(Integer.parseInt(userProfile.getPmRcpId()));
+                if (StringUtils.length(existingRawId) <= 0) {
+                    arrayListUserProfile.add(userProfile);
+                    tableProfileMaster.addArrayProfile(arrayListUserProfile);
+
+                    TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping(databaseHandler);
+                    ArrayList<ProfileMobileMapping> arrayListProfileMobileMapping = new ArrayList<>();
+                    ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
+                    profileMobileMapping.setMpmMobileNumber(mobile_num);
+                    profileMobileMapping.setMpmCloudMnmId(mnm_id);
+                    profileMobileMapping.setMpmCloudPmId(rcp_pm_id);
+                    profileMobileMapping.setMpmIsRcp("1");
+                    arrayListProfileMobileMapping.add(profileMobileMapping);
+                    tableProfileMobileMapping.addArrayProfileMobileMapping(arrayListProfileMobileMapping);
+
+                    TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+                    ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
+                    MobileNumber mobileNumber = new MobileNumber();
+                    mobileNumber.setMnmRecordIndexId(mnm_id);
+                    mobileNumber.setMnmMobileNumber(mobile_num);
+                    mobileNumber.setMnmNumberType(getString(R.string.type_mobile));
+                    mobileNumber.setMnmNumberPrivacy(String.valueOf(1));
+                    mobileNumber.setMnmIsPrivate(0);
+                    mobileNumber.setRcProfileMasterPmId(rcp_pm_id);
+                    mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants.RCP_TYPE_PRIMARY));
+                    arrayListMobileNumber.add(mobileNumber);
+                    tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
+                    Log.i(TAG, "Name:" + first_name + " " + last_name + " Number: " + mobile_num + "become RCP");
+                }
                 return;
             }
 
@@ -135,8 +216,6 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         notificationStateData.setNotificationMasterId(m.get("pr_id"));
                         notificationStateMaster.addNotificationState(notificationStateData);
                         sendNotification(msg, AppConstants.NOTIFICATION_TYPE_RATE);
-//                        int badgeCount = 1;
-//                        ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
                     }
                     break;
                 case "eventComment":
@@ -154,11 +233,8 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         notificationStateData.setUpdatedAt(m.get("created_date"));
                         notificationStateData.setNotificationType(AppConstants.NOTIFICATION_TYPE_TIMELINE);
                         notificationStateData.setNotificationMasterId(m.get("id"));
-
                         notificationStateMaster.addNotificationState(notificationStateData);
                         sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
-//                        int badgeCount = 1;
-//                        ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
 
                     }
                     break;
@@ -170,11 +246,8 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         notificationStateData.setUpdatedAt(m.get("reply_date"));
                         notificationStateData.setNotificationType(AppConstants.NOTIFICATION_TYPE_COMMENTS);
                         notificationStateData.setNotificationMasterId(m.get("id"));
-
                         notificationStateMaster.addNotificationState(notificationStateData);
                         sendNotification(msg, AppConstants.NOTIFICATION_TYPE_COMMENTS);
-//                        int badgeCount = 1;
-//                        ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
                     }
                     break;
                 case "sendContactRequest":
@@ -193,11 +266,8 @@ public class NotificationFCMService extends FirebaseMessagingService {
                             notificationStateData.setUpdatedAt(m.get("created_at"));
                             notificationStateData.setNotificationType(AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
                             notificationStateData.setNotificationMasterId(m.get("car_id"));
-
                             notificationStateMaster.addNotificationState(notificationStateData);
                             sendNotification(msg, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
-//                            int badgeCount = 1;
-//                            ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
                         }
                     }
                     break;
@@ -218,15 +288,12 @@ public class NotificationFCMService extends FirebaseMessagingService {
                             notificationStateData.setNotificationType(AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
                             notificationStateData.setNotificationMasterId(m.get("car_id"));
                             notificationStateMaster.addNotificationState(notificationStateData);
-
                             ObjectMapper mapper = new ObjectMapper();
                             String data = m.get("car_contact");
                             try {
                                 ContactRequestData obj = mapper.readValue(data, ContactRequestData.class);
                                 updatePrivacySetting(m.get("car_ppm_particular"), m.get("car_mongodb_record_index"), obj, databaseHandler);
                                 sendNotification(msg, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
-//                                int badgeCount = 1;
-//                                ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -237,6 +304,54 @@ public class NotificationFCMService extends FirebaseMessagingService {
 
             updateNotificationCount(databaseHandler);
         }
+    }
+
+    private ArrayList<String> getRawIdFromNumber(String phoneNumber) {
+        String numberId = "";
+        Set<String> set = new HashSet<>();
+        try {
+
+            ContentResolver contentResolver = this.getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.LOOKUP_KEY));
+                    Uri uri1 = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                    String[] projection1 = new String[]{
+                            ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
+                            ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID
+                    };
+
+                    String selection = ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ?";
+                    String[] selectionArgs = new String[]{numberId};
+
+                    Cursor cursor1 = getContentResolver().query(uri1, projection1, selection,
+                            selectionArgs, null);
+                    if (cursor1 != null) {
+                        while (cursor1.moveToNext()) {
+                            String rawId = cursor1.getString(cursor1.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID));
+                            set.add(rawId);
+                        }
+                        cursor1.close();
+                    }
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<>(set);
     }
 
     private void updateNotificationCount(DatabaseHandler databaseHandler) {

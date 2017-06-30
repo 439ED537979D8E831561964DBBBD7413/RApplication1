@@ -186,7 +186,7 @@ public class BlockContactListActivity extends BaseActivity implements RippleView
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+            // Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
             listOfBlockContact = new ArrayList<>();
             makeListToPass();
             setAdapter();

@@ -834,16 +834,14 @@ public class PhoneBookContacts {
     }
 
     public void saveRawIdsToPref() {
-        ArrayList<String> arrayListNewContactId = new ArrayList<>();
+        Set<String> arrayListNewContactId = new HashSet<>();
         Cursor contactNameCursor = getAllContactRawId();
         while (contactNameCursor.moveToNext()) {
             arrayListNewContactId.add(contactNameCursor.getString(contactNameCursor
                     .getColumnIndex(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
         }
-
         contactNameCursor.close();
-        Set<String> newContactIds = new HashSet<>(arrayListNewContactId);
-        ArrayList<String> firstTimeList = new ArrayList<>(newContactIds);
+        ArrayList<String> firstTimeList = new ArrayList<>(arrayListNewContactId);
         Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
                 firstTimeList);
     }

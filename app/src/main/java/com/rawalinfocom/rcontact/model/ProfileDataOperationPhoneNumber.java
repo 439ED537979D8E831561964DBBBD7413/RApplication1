@@ -15,10 +15,10 @@ public class ProfileDataOperationPhoneNumber implements Serializable {
 
     private String phoneType;
     private String phoneNumber;
-    private int phonePublic;
+    private Integer phonePublic;
     private String phoneId;
     private String pbRcpType;
-    private int isPrivate;
+    private Integer isPrivate;
 
     @JsonProperty("ph_type")
     public String getPhoneType() {
@@ -39,11 +39,11 @@ public class ProfileDataOperationPhoneNumber implements Serializable {
     }
 
     @JsonProperty("ph_public")
-    public int getPhonePublic() {
+    public Integer getPhonePublic() {
         return this.phonePublic;
     }
 
-    public void setPhonePublic(int phonePublic) {
+    public void setPhonePublic(Integer phonePublic) {
         this.phonePublic = phonePublic;
     }
 
@@ -67,11 +67,11 @@ public class ProfileDataOperationPhoneNumber implements Serializable {
     }
 
     @JsonProperty("is_private")
-    public int getIsPrivate() {
+    public Integer getIsPrivate() {
         return isPrivate;
     }
 
-    public void setIsPrivate(int isPrivate) {
+    public void setIsPrivate(Integer isPrivate) {
         this.isPrivate = isPrivate;
     }
 }

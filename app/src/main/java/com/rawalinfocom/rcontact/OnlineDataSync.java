@@ -1,9 +1,9 @@
 package com.rawalinfocom.rcontact;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.support.v4.util.LongSparseArray;
 
@@ -38,37 +38,37 @@ import java.util.Set;
 
 public class OnlineDataSync {
 
-    private Context context;
+    private Activity activity;
     private PhoneBookContacts phoneBookContacts;
     private ArrayList<ProfileData> arrayListSyncUserContact;
     private String currentStamp;
 
-    public OnlineDataSync(Context context) {
-        this.context = context;
-        phoneBookContacts = new PhoneBookContacts(context);
+    public OnlineDataSync(Activity activity) {
+        this.activity = activity;
+        phoneBookContacts = new PhoneBookContacts(activity);
         syncOfflineProfileViews();
-        if (Utils.getBooleanPreference(context, AppConstants.PREF_CONTACT_SYNCED, false)) {
-            if (Utils.getBooleanPreference(context, AppConstants.PREF_CALL_LOG_SYNCED,
-                    false)) {
-                if (Utils.getBooleanPreference(context, AppConstants.PREF_SMS_SYNCED,
-                        false)) {
-                    AsyncTask.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            syncPhoneBookContactList();
-                        }
-                    });
-
-                }
-            }
-        }
+//        if (Utils.getBooleanPreference(context, AppConstants.PREF_CONTACT_SYNCED, false)) {
+//            if (Utils.getBooleanPreference(context, AppConstants.PREF_CALL_LOG_SYNCED,
+//                    false)) {
+//                if (Utils.getBooleanPreference(context, AppConstants.PREF_SMS_SYNCED,
+//                        false)) {
+//                    AsyncTask.execute(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            syncPhoneBookContactList();
+//                        }
+//                    });
+//
+//                }
+//            }
+//        }
     }
 
     private void syncOfflineProfileViews() {
         HashMap<String, String> mapProfileViews = new HashMap<>();
-        if (Utils.getHashMapPreference(context, AppConstants
+        if (Utils.getHashMapPreference(activity, AppConstants
                 .PREF_PROFILE_VIEWS) != null) {
-            mapProfileViews.putAll(Utils.getHashMapPreference(context, AppConstants
+            mapProfileViews.putAll(Utils.getHashMapPreference(activity, AppConstants
                     .PREF_PROFILE_VIEWS));
 
             ArrayList<ProfileVisit> arrayListProfileVisit = new ArrayList<>();
@@ -91,8 +91,8 @@ public class OnlineDataSync {
     }
 
     private void sendToCloud(WsRequestObject requestObject, String requestApi) {
-        if (Utils.isNetworkAvailable(context)) {
-            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+        if (Utils.isNetworkAvailable(activity)) {
+            new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     requestObject, null, WsResponseObject.class, requestApi, null, true).execute
                     (WsConstants.WS_ROOT + requestApi);
         }
@@ -100,12 +100,12 @@ public class OnlineDataSync {
 
     private void syncPhoneBookContactList() {
         currentStamp = String.valueOf(System.currentTimeMillis());
-        String lastStamp = Utils.getStringPreference(context, AppConstants
+        String lastStamp = Utils.getStringPreference(activity, AppConstants
                 .PREF_CONTACT_LAST_SYNC_TIME, currentStamp);
 
         Cursor cursor = phoneBookContacts.getUpdatedRawId(lastStamp);
 
-        if (Utils.getArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET) == null)
+        if (Utils.getArrayListPreference(activity, AppConstants.PREF_CONTACT_ID_SET) == null)
             return;
 
         ArrayList<String> rawIdsUpdated = new ArrayList<>();
@@ -120,7 +120,7 @@ public class OnlineDataSync {
         Set<String> updatedContactIds = new HashSet<>(rawIdsUpdated);
 
         ArrayList<String> arrayListContactIds = new ArrayList<>();
-        arrayListContactIds.addAll(Utils.getArrayListPreference(context, AppConstants
+        arrayListContactIds.addAll(Utils.getArrayListPreference(activity, AppConstants
                 .PREF_CONTACT_ID_SET));
 
         Cursor contactNameCursor = phoneBookContacts.getAllContactRawId();
@@ -176,13 +176,13 @@ public class OnlineDataSync {
 
         }
 //        Log.i("MAULIK", "arrayListSyncUserContact.size: " + arrayListSyncUserContact.size());
-        if (context != null && Utils.isNetworkAvailable(context) && arrayListSyncUserContact.size() > 0) {
+        if (activity != null && Utils.isNetworkAvailable(activity) && arrayListSyncUserContact.size() > 0) {
             uploadContacts();
         }
 
-//        Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
+//        Utils.setArrayListPreference(activity, AppConstants.PREF_CONTACT_ID_SET,
 //                saveContactIds);
-//        Utils.setStringPreference(context, AppConstants
+//        Utils.setStringPreference(activity, AppConstants
 //                .PREF_CONTACT_LAST_SYNC_TIME, currentStamp);
     }
 
@@ -257,7 +257,7 @@ public class OnlineDataSync {
 //        if (syncingTask != null && syncingTask.isCancelled()) {
 //            return;
 //        }
-        Cursor cursor = context.getContentResolver().query(uri, projection, selection,
+        Cursor cursor = activity.getContentResolver().query(uri, projection, selection,
                 selectionArgs, sortOrder);
         //</editor-fold>
 
@@ -316,7 +316,7 @@ public class OnlineDataSync {
                         ProfileDataOperationPhoneNumber phoneNumber = new
                                 ProfileDataOperationPhoneNumber();
 
-                        phoneNumber.setPhoneNumber(Utils.getFormattedNumber(context, cursor
+                        phoneNumber.setPhoneNumber(Utils.getFormattedNumber(activity, cursor
                                 .getString(cursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Phone.NUMBER))));
                         phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
@@ -531,12 +531,12 @@ public class OnlineDataSync {
     private void uploadContacts() {
 
         WsRequestObject uploadContactObject = new WsRequestObject();
-        uploadContactObject.setPmId(Integer.parseInt(Utils.getStringPreference(context, AppConstants.PREF_USER_PM_ID, "0")));
+        uploadContactObject.setPmId(Integer.parseInt(Utils.getStringPreference(activity, AppConstants.PREF_USER_PM_ID, "0")));
 
         uploadContactObject.setProfileData(arrayListSyncUserContact);
 //        Log.i("MAULIK", "uploadContactObject::");
-        if (Utils.isNetworkAvailable(context)) {
-            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+        if (Utils.isNetworkAvailable(activity)) {
+            new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_UPLOAD_CONTACTS + "_" + currentStamp, null, true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
