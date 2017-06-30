@@ -3,7 +3,6 @@ package com.rawalinfocom.rcontact.adapters;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -841,7 +840,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         } else if (fragment instanceof FavoritesFragment) {
             holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s",
                     arrayListUserContact.size() -
-                    arrayListContactHeader.size(), activity.getString(R.string.contacts)));
+                            arrayListContactHeader.size(), activity.getString(R.string.contacts)));
 
         }
     }
@@ -1550,7 +1549,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (charText.length() == 0) {
                 arrayListUserContact.addAll(arraylist);
             } else {
-                for (int i = 0; i < arraylist.size(); i++) {
+                for (int i = 2; i < arraylist.size(); i++) {
                     if (arraylist.get(i) instanceof ProfileData) {
                         ProfileData profileData = (ProfileData) arraylist.get(i);
                         if (!TextUtils.isEmpty(profileData.getTempNumber())) {
@@ -1570,7 +1569,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 arrayListUserContact.addAll(arraylist);
             } else {
 
-                for (int i = 0; i < arraylist.size(); i++) {
+                for (int i = 2; i < arraylist.size(); i++) {
                     if (arraylist.get(i) instanceof ProfileData) {
                         ProfileData profileData = (ProfileData) arraylist.get(i);
                         if (!TextUtils.isEmpty(profileData.getName())) {

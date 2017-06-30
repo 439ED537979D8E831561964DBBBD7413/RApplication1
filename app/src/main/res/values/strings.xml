@@ -251,7 +251,7 @@
     <string name="add_contacts_to_block_list">Add contacts to block list</string>
     <string name="unblock_All">Unblock All</string>
     <string name="block_action_title">Blocked contacts list</string>
-    <string name="contacts">Contacts</string>
+    <string name="contacts"> Contacts</string>
 
     <!-- Call History Details -->
     <string name="sms">SMS</string>
