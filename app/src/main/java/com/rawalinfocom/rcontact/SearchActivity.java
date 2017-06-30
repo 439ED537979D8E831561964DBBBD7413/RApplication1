@@ -313,6 +313,11 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             getGlobalSearchTypeArrayList();
                     progressBar.setVisibility(View.GONE);
                     if (globalSearchTypeArrayList != null && globalSearchTypeArrayList.size() > 0) {
+                        if(globalSearchTypeArrayList.size()<5){
+                            rippleViewMoreGlobalContacts.setVisibility(View.GONE);
+                        }else{
+                            rippleViewMoreGlobalContacts.setVisibility(View.VISIBLE);
+                        }
                         count = count + 1;
                         startAt = startAt + globalSearchTypeArrayList.size();
                         globalSearchTypeArrayListMain.addAll(globalSearchTypeArrayList);

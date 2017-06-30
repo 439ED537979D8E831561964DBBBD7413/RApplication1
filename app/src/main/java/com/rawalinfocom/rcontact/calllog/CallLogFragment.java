@@ -1180,6 +1180,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                                 listOfIds = new ArrayList<>();
                                                 arrayListCallLogs =  new ArrayList<>();
                                                 rContactApplication.setArrayListCallLogType(arrayListCallLogs);
+                                                logsDisplayed = 0;
                                                 Utils.setArrayListPreference(getActivity(), AppConstants
                                                                 .PREF_CALL_LOGS_ID_SET,
                                                         listOfIds);
