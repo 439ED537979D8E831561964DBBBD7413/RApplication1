@@ -843,6 +843,8 @@ public class MainActivity extends BaseActivity implements NavigationView
             syncCallLogAsyncTask.cancel(true);
         if (syncSmsLogAsyncTask != null)
             syncSmsLogAsyncTask.cancel(true);
+        if (reSyncContactAsyncTask != null)
+            reSyncContactAsyncTask.cancel(true);
         if (networkConnectionReceiver != null) {
             unregisterBroadcastReceiver();
         }
