@@ -109,7 +109,7 @@ public class AppConstants {
     public static String EXTRA_CLEAR_CALL_LOGS = "extra_clear_call_logs";
     public static String EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS =
             "extra_clear_call_logs_from_contacts";
-//    public static String EXTRA_OBJECT_LOCATION = "extra_object_location";
+    //    public static String EXTRA_OBJECT_LOCATION = "extra_object_location";
     public static String EXTRA_OBJECT_ADDRESS = "extra_object_address";
     public static String EXTRA_CALL_UNIQUE_ID = "extra_call_unique_id";
     public static String EXTRA_UNIQUE_CONTACT_ID = "extra_unique_contact_id";
@@ -156,6 +156,7 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER = "action_local_broadcast_delete_sms_receiver";
     public static String ACTION_LOCAL_BROADCAST_SYNC_SMS = "action_local_broadcast_sync_sms";
     public static String ACTION_LOCAL_BROADCAST_UPDATE_NOTIFICATION_COUNT = "action_local_broadcast_update_notification_count";
+    public static String ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED = "action_local_broadcast_contact_displayed";
 
     //</editor-fold>
 

@@ -1,6 +1,5 @@
 package com.rawalinfocom.rcontact.webservice;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
@@ -71,6 +70,7 @@ class WebServicePost {
             System.setProperty("http.keepAlive", "false");
 
             URL url = new URL(this.url);
+            Log.i("WebServicePost", url.toString());
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
 
@@ -85,8 +85,8 @@ class WebServicePost {
                             (context, AppConstants.PREF_ACCESS_TOKEN, ""));
                 }
                 urlConnection.connect();
-                Log.i("SyncService", "access-token" + Utils.getStringPreference
-                        (context, AppConstants.PREF_ACCESS_TOKEN, ""));
+//                Log.i("WebServicePost", "access-token" + Utils.getStringPreference
+//                        (context, AppConstants.PREF_ACCESS_TOKEN, ""));
                 ObjectWriter writer = getMapper().writer();
 
 
@@ -95,7 +95,7 @@ class WebServicePost {
                      * Json string passed as request
                      */
                     jsonObject = writer.writeValueAsString(request);
-                    Log.i("SyncService", jsonObject);
+//                    Log.i("WebServicePost", jsonObject);
 //					 FileUtilities utilities = new FileUtilities();
 //					 utilities.write("Filter file", jsonObject);
                 }
