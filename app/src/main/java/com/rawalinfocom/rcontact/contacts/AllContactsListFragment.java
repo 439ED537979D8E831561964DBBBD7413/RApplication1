@@ -447,6 +447,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             syncingTask = new SyncingTask();
             syncingTask.execute();
         }
+        Intent localBroadcastIntent = new Intent(AppConstants
+                .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
+        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
     }
 
     @Override
@@ -1462,6 +1466,20 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 return;
             }
             backgroundSync(false, null);
+        } else if (arrayListSyncUserContact.size() == 0) {
+            Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
+                    getActivity().getString(R.string.str_all_contact_sync));
+            Utils.setStringPreference(getActivity(), AppConstants
+                    .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System
+                    .currentTimeMillis() - 10000));
+            Utils.setBooleanPreference(getActivity(), AppConstants
+                    .PREF_CONTACT_SYNCED, true);
+            phoneBookContacts.saveRawIdsToPref();
+            Intent localBroadcastIntent = new Intent(AppConstants
+                    .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
+            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                    .getInstance(getActivity());
+            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
         }
 
 

@@ -158,6 +158,7 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER = "action_local_broadcast_delete_sms_receiver";
     public static String ACTION_LOCAL_BROADCAST_SYNC_SMS = "action_local_broadcast_sync_sms";
     public static String ACTION_LOCAL_BROADCAST_UPDATE_NOTIFICATION_COUNT = "action_local_broadcast_update_notification_count";
+    public static String ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED = "action_local_broadcast_contact_displayed";
 
     //</editor-fold>
 

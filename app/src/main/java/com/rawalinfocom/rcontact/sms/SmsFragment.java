@@ -610,20 +610,6 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 }
             }
 
-            /*if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
-                for (int i = 0; i < smsDataTypeArrayList.size(); i++) {
-                    SmsDataType smsDataType = smsDataTypeArrayList.get(i);
-                    String address = smsDataType.getAddress();
-                    if(!StringUtils.containsOnly(address,"[0-9]+")){
-                        String name =  address;
-                        if (!StringUtils.isEmpty(name)) {
-                            smsDataType.setRecordPosition(i);
-                            savedContactList.add(smsDataType);
-                        }
-                    }
-                }
-            }*/
-
             if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
                 for (int i = 0; i < smsDataTypeArrayList.size(); i++) {
                     SmsDataType smsDataType = smsDataTypeArrayList.get(i);

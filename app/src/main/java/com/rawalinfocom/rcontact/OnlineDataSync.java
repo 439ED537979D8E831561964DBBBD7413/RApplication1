@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.support.v4.util.LongSparseArray;
 
@@ -48,21 +47,21 @@ public class OnlineDataSync {
         this.activity = activity;
         phoneBookContacts = new PhoneBookContacts(activity);
         syncOfflineProfileViews();
-        if (Utils.getBooleanPreference(activity, AppConstants.PREF_CONTACT_SYNCED, false)) {
-            if (Utils.getBooleanPreference(activity, AppConstants.PREF_CALL_LOG_SYNCED,
-                    false)) {
-                if (Utils.getBooleanPreference(activity, AppConstants.PREF_SMS_SYNCED,
-                        false)) {
-                    AsyncTask.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            syncPhoneBookContactList();
-                        }
-                    });
-
-                }
-            }
-        }
+//        if (Utils.getBooleanPreference(context, AppConstants.PREF_CONTACT_SYNCED, false)) {
+//            if (Utils.getBooleanPreference(context, AppConstants.PREF_CALL_LOG_SYNCED,
+//                    false)) {
+//                if (Utils.getBooleanPreference(context, AppConstants.PREF_SMS_SYNCED,
+//                        false)) {
+//                    AsyncTask.execute(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            syncPhoneBookContactList();
+//                        }
+//                    });
+//
+//                }
+//            }
+//        }
     }
 
     private void syncOfflineProfileViews() {
