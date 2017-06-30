@@ -303,11 +303,15 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
         init();
 
-        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
-            fetchAllCallLogHistory(contactName);
+        if (!StringUtils.isEmpty(historyNumber)) {
+            fetchAllCallLogHistory(historyNumber);
         } else {
-            if (!TextUtils.isEmpty(profileContactNumber)) {
-                fetchAllCallLogHistory(profileContactNumber);
+            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+                fetchAllCallLogHistory(contactName);
+            } else {
+                if (!TextUtils.isEmpty(profileContactNumber)) {
+                    fetchAllCallLogHistory(profileContactNumber);
+                }
             }
         }
 
@@ -322,12 +326,15 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 .ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
 
-        if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase(getString(R.string
-                .unknown))) {
-            fetchAllCallLogHistory(contactName);
+        if (!StringUtils.isEmpty(historyNumber)) {
+            fetchAllCallLogHistory(historyNumber);
         } else {
-            if (!TextUtils.isEmpty(profileContactNumber)) {
-                fetchAllCallLogHistory(profileContactNumber);
+            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+                fetchAllCallLogHistory(contactName);
+            } else {
+                if (!TextUtils.isEmpty(profileContactNumber)) {
+                    fetchAllCallLogHistory(profileContactNumber);
+                }
             }
         }
     }
