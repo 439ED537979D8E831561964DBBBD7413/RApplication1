@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -153,11 +152,13 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
             }
             //</editor-fold>
 
+            //<editor-fold desc="REQ_CHECK_LOGIN">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_CHECK_LOGIN)) {
                 WsResponseObject enterPassWordResponse = (WsResponseObject) data;
-                Utils.hideProgressDialog();
+//                Utils.hideProgressDialog();
 
-                if (enterPassWordResponse != null && StringUtils.equalsIgnoreCase(enterPassWordResponse
+                if (enterPassWordResponse != null && StringUtils.equalsIgnoreCase
+                        (enterPassWordResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     // set launch screen as MainActivity
@@ -173,6 +174,29 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                             profileDetail.getRcpPmId());
 
                     storeProfileDataToDb(profileDetail);
+
+                    deviceDetail();
+
+                } else {
+                    if (enterPassWordResponse != null) {
+                        Log.e("error response", enterPassWordResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "enterPassWordResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
+            // <editor-fold desc="REQ_STORE_DEVICE_DETAILS">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_STORE_DEVICE_DETAILS)) {
+                WsResponseObject enterPassWordResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+
+                if (enterPassWordResponse != null && StringUtils.equalsIgnoreCase
+                        (enterPassWordResponse
+                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     // Redirect to MainActivity
                     Intent intent = new Intent(this, MainActivity.class);
@@ -193,10 +217,12 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     }
                 }
             }
+            //</editor-fold>
 
         } else {
 //            AppUtils.hideProgressDialog();
-            Utils.showErrorSnackBar(this, relativeRootEnterPassword, "" + error.getLocalizedMessage());
+            Utils.showErrorSnackBar(this, relativeRootEnterPassword, "" + error
+                    .getLocalizedMessage());
         }
 
     }
@@ -251,11 +277,13 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         enterPassWordObject.setPassword(StringUtils.trimToEmpty(password));
         enterPassWordObject.setCreatedBy("2"); // For Android Devices
         enterPassWordObject.setGcmToken(getDeviceTokenId());
-        enterPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings.Secure
+        enterPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings
+                .Secure
                 .ANDROID_ID));
 
         if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), enterPassWordObject,
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    enterPassWordObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_LOGIN, getString(R.string
                     .msg_please_wait), false)
                     .execute(WsConstants.WS_ROOT + WsConstants.REQ_CHECK_LOGIN);
@@ -445,5 +473,34 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
             tableEventMaster.addArrayEvent(eventList);
         }
         //</editor-fold>
+    }
+
+    private void deviceDetail() {
+
+        String model = android.os.Build.MODEL;
+        String androidVersion = android.os.Build.VERSION.RELEASE;
+        String brand = android.os.Build.BRAND;
+        String device = android.os.Build.DEVICE;
+        String secureAndroidId = Settings.Secure.getString(getContentResolver(), Settings.Secure
+                .ANDROID_ID);
+
+        WsRequestObject deviceDetailObject = new WsRequestObject();
+        deviceDetailObject.setDmModel(StringUtils.defaultString(model));
+        deviceDetailObject.setDmVersion(StringUtils.defaultString(androidVersion));
+        deviceDetailObject.setDmBrand(StringUtils.defaultString(brand));
+        deviceDetailObject.setDmDevice(StringUtils.defaultString(device));
+        deviceDetailObject.setDmUniqueid(StringUtils.defaultString(secureAndroidId));
+//        deviceDetailObject.setDmLocation(StringUtils.defaultString(locationString));
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    deviceDetailObject, null, WsResponseObject.class, WsConstants
+                    .REQ_STORE_DEVICE_DETAILS, null, true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
+        }
+        /*else {
+            Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
+                    .getString(R.string.msg_no_network));
+        }*/
     }
 }

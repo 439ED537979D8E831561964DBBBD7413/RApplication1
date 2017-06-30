@@ -160,7 +160,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     public static boolean isFromSettings;
 
-    GPSTracker gpsTracker;
+//    GPSTracker gpsTracker;
 
     // Facebook Callback Manager
     CallbackManager callbackManager;
@@ -199,7 +199,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
         init();
 
-        gpsTracker = new GPSTracker(this, null);
+       /* gpsTracker = new GPSTracker(this, null);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission
                 .ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -208,19 +208,19 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             } else {
                 gpsTracker.showSettingsAlert();
             }
-        }
+        }*/
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (isFromSettings) {
+        /*if (isFromSettings) {
             isFromSettings = false;
             if (Utils.isLocationEnabled(this)) {
                 getLocationDetail();
             }
-        }
+        }*/
     }
 
     @Override
@@ -455,7 +455,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             //</editor-fold>
 
             //<editor-fold desc="REQ_REVERSE_GEO_CODING_ADDRESS">
-            else if (serviceType.equalsIgnoreCase(WsConstants.REQ_REVERSE_GEO_CODING_ADDRESS)) {
+         /*   else if (serviceType.equalsIgnoreCase(WsConstants.REQ_REVERSE_GEO_CODING_ADDRESS)) {
                 ReverseGeocodingAddress objAddress = (ReverseGeocodingAddress) data;
                 if (objAddress == null) {
                     if (locationCall < 2) {
@@ -470,7 +470,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                         e.printStackTrace();
                     }
                 }
-            }
+            }*/
             //</editor-fold>
 
         } else {
@@ -485,7 +485,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case AppConstants.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+            /*case AppConstants.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -498,7 +498,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     }
                 }
             }
-            break;
+            break;*/
             case FACEBOOK_LOGIN_PERMISSION:
             case GOOGLE_LOGIN_PERMISSION:
             case LINKEDIN_LOGIN_PERMISSION:
@@ -679,7 +679,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 //
 //    }
 
-    private void getLocationDetail() {
+    /*private void getLocationDetail() {
         gpsTracker = new GPSTracker(this, null);
         latitude = gpsTracker.getLatitude();
         longitude = gpsTracker.getLongitude();
@@ -688,7 +688,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 .REQ_REVERSE_GEO_CODING_ADDRESS, false);
         asyncReverseGeoCoding.execute(new LatLng(latitude, longitude));
 
-    }
+    }*/
 
     /**
      * To get key hash
