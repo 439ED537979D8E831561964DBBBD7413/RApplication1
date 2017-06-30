@@ -243,17 +243,20 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
             long dateToCompare = 0;
             long nextDate = 0;
             Date objDate1 = new Date(callLogDateToDelete);
-            String dateToDelete = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(objDate1);
+            String dateToDelete = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format
+                    (objDate1);
 
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DATE, 1);
             Date TomoDate;
             TomoDate = cal.getTime();
-            String tomorrowDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(TomoDate);
+            String tomorrowDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format
+                    (TomoDate);
 
             long callLogDate = callLogHistory(number);
             Date date = new Date(callLogDate);
-            String dateToCompare1 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date);
+            String dateToCompare1 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    .format(date);
 
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -366,7 +369,8 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(context.getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " + number + "?");
+        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " +
+                number + "?");
         callConfirmationDialog.showDialog();
 
     }
@@ -422,10 +426,10 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
     }
 
     private String getStarredStatusFromNumber(String phoneNumber) {
-        String numberId = "";
+        String numberId, rawId = "";
         try {
 
-            numberId = "";
+//            numberId = "";
             ContentResolver contentResolver = context.getContentResolver();
 
             Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
@@ -438,11 +442,30 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                    String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                   /* String contactName = cursor.getString(cursor.getColumnIndexOrThrow
                             (ContactsContract.PhoneLookup.DISPLAY_NAME));
                     numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.LOOKUP_KEY));*/
+                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
                             .PhoneLookup.LOOKUP_KEY));
-//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
+                    Uri uri1 = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                    String[] projection1 = new String[]{
+                            ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
+                            ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID
+                    };
+
+                    String selection = ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ?";
+                    String[] selectionArgs = new String[]{numberId};
+
+                    Cursor cursor1 = contentResolver.query(uri1, projection1, selection,
+                            selectionArgs, null);
+                    if (cursor1 != null) {
+                        while (cursor1.moveToNext()) {
+                            rawId = cursor1.getString(cursor1.getColumnIndexOrThrow
+                                    (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID));
+                        }
+                        cursor1.close();
+                    }
                 }
                 cursor.close();
             }
@@ -451,7 +474,7 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
             e.printStackTrace();
         }
 
-        return numberId;
+        return rawId;
     }
 
     private long callLogHistory(String number) {
