@@ -233,6 +233,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         holder.relativeRowAllContact.setTag(position);
+
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -249,6 +250,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         .getPmProfileImage());
                /* ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
                         .class, bundle);*/
+                bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NUMBER, userProfile.getMobileNumber());
                 Intent intent = new Intent(context, ProfileDetailActivity.class);
                 intent.putExtras(bundle);
                 fragment.startActivityForResult(intent, AppConstants

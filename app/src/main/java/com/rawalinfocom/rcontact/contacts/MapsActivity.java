@@ -209,9 +209,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                 } else {
                     try {
                         if (place != null) {
-                            LatLng latLng = place.getLatLng();
-                            latitude = latLng.latitude;
-                            longitude = latLng.longitude;
+                            if (latitude == 0 && longitude == 0) {
+                                LatLng latLng = place.getLatLng();
+                                latitude = latLng.latitude;
+                                longitude = latLng.longitude;
+                            }
                         } /*else {
                             latitude = Double.parseDouble(StringUtils.defaultString(objAddress
                                     .getLatitude(), "0"));
