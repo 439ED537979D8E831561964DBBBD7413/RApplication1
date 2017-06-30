@@ -651,7 +651,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     for (int i = 0; i < callLogs.size(); i++) {
                         tempList = new ArrayList<>();
                         CallLogType callLogType = callLogs.get(i);
-                        int callfilter =MoreObjects.firstNonNull(callLogType.getType(), 0);
+                        int callfilter = MoreObjects.firstNonNull(callLogType.getType(), 0);
                         if (callfilter == AppConstants.OUTGOING) {
                             filteredList.add(callLogType);
                         }
@@ -1134,7 +1134,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 final String value = parent.getSelectedItem().toString();
                 if (!TextUtils.isEmpty(value)) {
-                    Log.i("callType", value);
+                    // Log.i("callType", value);
                     selectedCallType = value;
 
                     Handler handler = new Handler();
@@ -1356,7 +1356,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         callLogsListbyChunck = new ArrayList<>();
         for (ArrayList<CallLogType> partition : choppedCallLog(tempList, LIST_PARTITION_COUNT)) {
             // do something with partition
-            Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+            // Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
             callLogsListbyChunck.addAll(partition);
             tempList.removeAll(partition);
             break;
@@ -1373,7 +1373,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 for (ArrayList<CallLogType> partition : choppedCallLog(list,
                         LIST_PARTITION_COUNT)) {
                     // do something with partition
-                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+                    // Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
                     callLogsListbyChunck.addAll(partition);
                     newList.removeAll(partition);
                     break;
@@ -1518,19 +1518,19 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         long logDate1 = callLogType.getDate();
                         Date date1 = new Date(logDate1);
                         String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
-                        Log.i("Call Log date", logDate);
+                        // Log.i("Call Log date", logDate);
 
                         Calendar cal = Calendar.getInstance();
                         cal.add(Calendar.DATE, -1);
                         Date yesDate;
                         yesDate = cal.getTime();
                         String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd").format(yesDate);
-                        Log.i("Call yesterday date", yesterdayDate);
+                        // Log.i("Call yesterday date", yesterdayDate);
 
                         Calendar c = Calendar.getInstance();
                         Date cDate = c.getTime();
                         String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
-                        Log.i("Call Current date", currentDate);
+                        // Log.i("Call Current date", currentDate);
 
                         String finalDate;
                         if (logDate.equalsIgnoreCase(currentDate)) {
@@ -1844,13 +1844,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     log.setDate(cursor.getLong(date));
                     log.setUniqueContactId(cursor.getString(rowId));
                     String numberTypeLog = getPhoneNumberType(cursor.getInt(numberType));
-                    Log.i("Number Type", numberTypeLog + " of number " + cursor.getString(number));
-                    Log.i("Number Log Type", getLogType(cursor.getInt(type)) + " of number " +
-                            cursor.getString(number));
+                    // Log.i("Number Type", numberTypeLog + " of number " + cursor.getString(number));
+                    // Log.i("Number Log Type", getLogType(cursor.getInt(type)) + " of number " +
+//                            cursor.getString(number));
                     log.setNumberType(numberTypeLog);
                     String userNumber = cursor.getString(number);
                     String uniquePhoneBookId = getStarredStatusFromNumber(userNumber);
-                    Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" + userNumber);
+                    // Log.i("Unique PhoneBook Id", uniquePhoneBookId + " of no.:" + userNumber);
                     if (!TextUtils.isEmpty(uniquePhoneBookId))
                         log.setLocalPbRowId(uniquePhoneBookId);
                     else
@@ -1882,8 +1882,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     }
                     int logCount = arrayListHistoryCount.size();
                     log.setHistoryLogCount(logCount);
-                    Log.i("History size ", logCount + "" + " of " + cursor.getString(number));
-                    Log.i("History", "----------------------------------");
+                    // Log.i("History size ", logCount + "" + " of " + cursor.getString(number));
+                    // Log.i("History", "----------------------------------");
                     logs.add(log);
                 }
                 cursor.close();
@@ -2664,7 +2664,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+            // Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
             clearLogs = intent.getBooleanExtra(AppConstants.EXTRA_CLEAR_CALL_LOGS, false);
             clearLogsFromContacts = intent.getBooleanExtra(AppConstants
                     .EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS, false);
@@ -3083,7 +3083,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private BroadcastReceiver localBroadcastReceiverRecentCalls = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+            // Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
             try {
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {

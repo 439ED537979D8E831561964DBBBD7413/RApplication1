@@ -264,7 +264,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @BindView(R.id.button_invite)
     Button buttonInvite;
     String callLogCloudName;
-    boolean isCallLogRcpUser;
+    boolean isCallLogRcpUser, isRatingUpdate = false;
 
     RelativeLayout relativeRootRatingDialog;
 
@@ -716,7 +716,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     }
                     if (callLogTypeList != null) {
                         for (int j = 0; j < callLogTypeList.size(); j++) {
-                            Log.i("value", callLogTypeList.get(j) + "");
+                            // Log.i("value", callLogTypeList.get(j) + "");
                             String tempNumber = callLogTypeList.get(j).getNumber();
                             if (tempNumber.equalsIgnoreCase(historyNumber)) {
                                 blockedNumber = tempNumber;
@@ -833,6 +833,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     @Override
     public void onBackPressed() {
+
+        if (isRatingUpdate) {
+
+            Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_RATING_UPDATE);
+            localBroadcastIntent1.putExtra(AppConstants.EXTRA_RCONTACT_POSITION, getIntent().getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0));
+            localBroadcastIntent1.putExtra(AppConstants.EXTRA_RATING_UPDATE, isRatingUpdate);
+            LocalBroadcastManager.getInstance(ProfileDetailActivity.this).sendBroadcast(localBroadcastIntent1);
+        }
+
         Intent backIntent = getIntent();
         setResult(RESULT_OK, backIntent);
         finish();
@@ -1122,7 +1131,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private void fetchOldRecordsServiceCall(ArrayList<CallLogHistoryType> callLogTypeArrayList) {
-        Log.i("HistoryServiceCalled", "Service Started");
+        // Log.i("HistoryServiceCalled", "Service Started");
         WsRequestObject deviceDetailObject = new WsRequestObject();
         deviceDetailObject.setHistoryTypeArrayList(callLogTypeArrayList);
         if (Utils.isNetworkAvailable(this)) {
@@ -1310,7 +1319,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             // for call history
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST)) {
-                Log.i("HistoryServiceCalled", "Call received");
+                // Log.i("HistoryServiceCalled", "Call received");
                 WsResponseObject callHistoryResponse = (WsResponseObject) data;
                 progressBarLoadCallLogs.setVisibility(View.GONE);
                 if (callHistoryResponse != null && StringUtils.equalsIgnoreCase
@@ -1319,14 +1328,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     ArrayList<CallLogType> oldHistoryList = callHistoryResponse
                             .getArrayListCallLogHistory();
                     if (oldHistoryList != null && oldHistoryList.size() > 0) {
-                        Log.i("HistoryServiceCalled", "Data Received");
+                        // Log.i("HistoryServiceCalled", "Data Received");
                         rippleViewOldRecords.setVisibility(View.VISIBLE);
                         arrayListHistory.addAll(oldHistoryList);
                         if (callHistoryListAdapter != null) {
                             callHistoryListAdapter.notifyDataSetChanged();
                         }
                     } else {
-                        Log.i("HistoryServiceCalled", "Message Received");
+                        // Log.i("HistoryServiceCalled", "Message Received");
                         rippleViewOldRecords.setVisibility(View.GONE);
                         Utils.showSuccessSnackBar(this, relativeRootProfileDetail,
                                 callHistoryResponse.getMessage());
@@ -1604,6 +1613,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         submitRating(String.valueOf(ratingUser.getRating()), inputComment.getText
                                 ().toString());
                         dialog.dismiss();
+
+                        isRatingUpdate = true;
+
                     } else {
                         Utils.showErrorSnackBar(ProfileDetailActivity.this,
                                 relativeRootRatingDialog, getString(R.string.please_fill_stars));
@@ -1623,8 +1635,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             charSequence.toString().length();
                     textRemainingCharacters.setText(String.format(Locale.getDefault(), "%d%s",
                             characters, characters == 1 ?
-                            " " + getString(R.string.text_character) :
-                            " " + getString(R.string.characters_left)));
+                                    " " + getString(R.string.text_character) :
+                                    " " + getString(R.string.characters_left)));
                 }
 
                 @Override
@@ -1681,12 +1693,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 profileThumbnail = intent.getStringExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE);
             }
 
-            if(intent.hasExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME)){
-                callLogCloudName =  intent.getStringExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME);
+            if (intent.hasExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME)) {
+                callLogCloudName = intent.getStringExtra(AppConstants.EXTRA_CALL_LOG_CLOUD_NAME);
             }
 
-            if(intent.hasExtra(AppConstants.EXTRA_IS_RCP_USER)){
-                isCallLogRcpUser =  intent.getBooleanExtra(AppConstants.EXTRA_IS_RCP_USER,false);
+            if (intent.hasExtra(AppConstants.EXTRA_IS_RCP_USER)) {
+                isCallLogRcpUser = intent.getBooleanExtra(AppConstants.EXTRA_IS_RCP_USER, false);
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
@@ -1984,7 +1996,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (!TextUtils.isEmpty(historyName)) {
             Pattern numberPat = Pattern.compile("\\d+");
             Matcher matcher1 = numberPat.matcher(historyName);
-            if (StringUtils.containsOnly(historyName,"\\d+")) {
+            if (StringUtils.containsOnly(historyName, "\\d+")) {
 //                textToolbarTitle.setText("Unknown number");
 //                textToolbarTitle.setText(historyName);
                 //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
@@ -1997,18 +2009,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 textToolbarTitle.setText(getString(R.string.str_profile_deails));
             }
             textFullScreenText.setTypeface(Utils.typefaceBold(this));
-            if(isCallLogRcpUser){
+            if (isCallLogRcpUser) {
                 rippleInvite.setVisibility(View.GONE);
-                if(StringUtils.isEmpty(callLogCloudName)){
+                if (StringUtils.isEmpty(callLogCloudName)) {
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
                     textFullScreenText.setText(historyName);
-                }else{
+                } else {
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                     textFullScreenText.setText(historyName);
                     textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
                     textName.setText(callLogCloudName);
                 }
-            }else{
+            } else {
                 rippleInvite.setVisibility(View.VISIBLE);
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 textFullScreenText.setText(historyName);
@@ -2989,7 +3001,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         arrayListHistory = new ArrayList<>();
         if (!TextUtils.isEmpty(value)) {
             tempList = callLogHistory(value);
-            Log.i("History size  ", tempList.size() + "" + " of  " + value);
+            // Log.i("History size  ", tempList.size() + "" + " of  " + value);
         }
         for (int i = 0; i < tempList.size(); i++) {
             CallLogType callLogTypeHistory = tempList.get(i);
@@ -3015,7 +3027,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void fetchAllCallLogHistory(String value) {
         if (!TextUtils.isEmpty(value)) {
             arrayListHistory = callLogHistory(value);
-            Log.i("History size  ", arrayListHistory.size() + "" + " of  " + value);
+            // Log.i("History size  ", arrayListHistory.size() + "" + " of  " + value);
         }
         setHistoryAdapter();
     }

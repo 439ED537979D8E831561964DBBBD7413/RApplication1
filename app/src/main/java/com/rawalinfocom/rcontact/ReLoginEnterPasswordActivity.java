@@ -255,9 +255,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         enterPassWordObject.setPassword(StringUtils.trimToEmpty(password));
         if (isFrom.equals("re_login")) {
             enterPassWordObject.setReAuthenticate(1); // For Android Devices
-        } else {
-            enterPassWordObject.setCreatedBy("2"); // For Android Devices
         }
+        enterPassWordObject.setCreatedBy("2"); // For Android Devices
         enterPassWordObject.setGcmToken(getDeviceTokenId());
         enterPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings.Secure
                 .ANDROID_ID));
