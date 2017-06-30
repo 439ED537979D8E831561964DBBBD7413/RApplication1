@@ -679,7 +679,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
 
                 if (phoneNumbers.size() + emailIds.size() > 1) {
-                    selectContactDialog(profileData.getTempFirstName(), phoneNumbers, emailIds);
+                    selectContactDialog(profileData.getName(), phoneNumbers, emailIds);
                 } else {
                     if (phoneNumbers.size() > 0) {
                         ArrayList<String> numbers = new ArrayList<>();
@@ -835,10 +835,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void configureFooterViewHolder(ContactFooterViewHolder holder) {
 //        String letter = (String) arrayListUserContact.get(position);
         if (fragment instanceof AllContactsListFragment) {
-            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s",
+            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d %s",
                     arrayListUserContact.size() - 3, activity.getString(R.string.contacts)));
         } else if (fragment instanceof FavoritesFragment) {
-            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d%s",
+            holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d %s",
                     arrayListUserContact.size() -
                             arrayListContactHeader.size(), activity.getString(R.string.contacts)));
 
@@ -1178,9 +1178,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
                 .relative_root_dialog_list);
         TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        textDialogTitle.setText(String.format(Locale.getDefault(), "%s%s", activity.getString(R
-                        .string.str_invite),
-                contactName));
+        textDialogTitle.setText(String.format(Locale.getDefault(), "%s %s", activity.getString(R
+                .string.str_invite), contactName));
         textDialogTitle.setTypeface(Utils.typefaceSemiBold(activity));
 
         Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
