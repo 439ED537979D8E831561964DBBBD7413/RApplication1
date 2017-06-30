@@ -89,6 +89,7 @@ public class AppConstants {
     public static String EXTRA_PROFILE_IMAGE_URL = "profile_image_url";
     public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
     public static String EXTRA_CONTACT_POSITION = "contact_position";
+    public static String EXTRA_RCONTACT_POSITION = "rcontact_position";
     public static String EXTRA_FAVOURITE_POSITION = "extra_favourite_position";
     public static String EXTRA_OBJECT_CONTACT = "extra_object_contact";
     public static String EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE = "extra_call_instance";

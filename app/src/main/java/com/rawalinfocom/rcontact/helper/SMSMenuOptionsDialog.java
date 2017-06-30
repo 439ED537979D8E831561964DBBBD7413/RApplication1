@@ -128,7 +128,7 @@ public class SMSMenuOptionsDialog {
     private BroadcastReceiver localBroadcastReceiverDialog = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("CallLogFragment","onReceive() of LocalBroadcast");
+            // Log.i("CallLogFragment","onReceive() of LocalBroadcast");
             dismissDialog();
 
         }
