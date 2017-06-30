@@ -60,6 +60,11 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.arrayListUserProfile = arrayListUserProfile;
         this.arrayListContactHeader = arrayListContactHeader;
     }
+
+    public void updateList(int pos, ArrayList<Object> arrayListUserProfile) {
+        this.arrayListUserProfile = arrayListUserProfile;
+        notifyItemChanged(pos);
+    }
     //</editor-fold>
 
     //<editor-fold desc="Override Methods">
@@ -227,10 +232,13 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
 
+        holder.relativeRowAllContact.setTag(position);
+
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
+                bundle.putInt(AppConstants.EXTRA_RCONTACT_POSITION, (int) view.getTag());
                 bundle.putString(AppConstants.EXTRA_PM_ID, userProfile.getPmId());
                 bundle.putString(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, userProfile
                         .getPmRawId());
@@ -242,6 +250,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         .getPmProfileImage());
                /* ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
                         .class, bundle);*/
+                bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NUMBER, userProfile.getMobileNumber());
                 Intent intent = new Intent(context, ProfileDetailActivity.class);
                 intent.putExtras(bundle);
                 fragment.startActivityForResult(intent, AppConstants

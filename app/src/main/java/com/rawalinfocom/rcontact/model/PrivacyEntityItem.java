@@ -11,7 +11,7 @@ public class PrivacyEntityItem {
     @JsonProperty("id")
     private String id;
     @JsonProperty("value")
-    private int value;
+    private Integer value;
 
     public String getId() {
         return id;
@@ -21,11 +21,11 @@ public class PrivacyEntityItem {
         this.id = id;
     }
 
-    public int getValue() {
+    public Integer getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Integer value) {
         this.value = value;
     }
 }

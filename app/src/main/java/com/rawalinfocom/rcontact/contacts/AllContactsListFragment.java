@@ -1544,7 +1544,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             return;
         }
         WsRequestObject uploadContactObject = new WsRequestObject();
-        uploadContactObject.setPmId(Integer.parseInt(((BaseActivity) getActivity()).getUserPmId()));
+//        uploadContactObject.setPmId(Integer.parseInt(((BaseActivity) getActivity()).getUserPmId()));
         uploadContactObject.setProfileData(arrayListUserContact);
 
         if (Utils.isNetworkAvailable(getActivity())) {

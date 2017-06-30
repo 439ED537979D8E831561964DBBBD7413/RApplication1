@@ -51,13 +51,13 @@ public class EventComment {
     private String replyAt;
 
     @JsonProperty("to_pm_id")
-    private int toPmId;
+    private Integer toPmId;
 
     @JsonProperty("type")
     private String type;
 
     @JsonProperty("from_pm_id")
-    private int fromPmId;
+    private Integer fromPmId;
 
     @JsonProperty("comment")
     private String comment;
@@ -123,11 +123,11 @@ public class EventComment {
         this.replyAt = replyAt;
     }
 
-    public int getToPmId() {
+    public Integer getToPmId() {
         return toPmId;
     }
 
-    public void setToPmId(int toPmId) {
+    public void setToPmId(Integer toPmId) {
         this.toPmId = toPmId;
     }
 
@@ -139,11 +139,11 @@ public class EventComment {
         this.type = type;
     }
 
-    public int getFromPmId() {
+    public Integer getFromPmId() {
         return fromPmId;
     }
 
-    public void setFromPmId(int fromPmId) {
+    public void setFromPmId(Integer fromPmId) {
         this.fromPmId = fromPmId;
     }
 

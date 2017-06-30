@@ -14,8 +14,8 @@ public class EventItem {
     private String commentTime;
     private String eventDetail;
     private String userComment;
-    private int eventType;
-    private int personRcpPmId;
+    private Integer eventType;
+    private Integer personRcpPmId;
     private String eventDate;
     private String eventRecordIndexId;
     private boolean eventCommentPending;
@@ -76,19 +76,19 @@ public class EventItem {
         this.userComment = userComment;
     }
 
-    public int getEventType() {
+    public Integer getEventType() {
         return eventType;
     }
 
-    public void setEventType(int eventType) {
+    public void setEventType(Integer eventType) {
         this.eventType = eventType;
     }
 
-    public int getPersonRcpPmId() {
+    public Integer getPersonRcpPmId() {
         return personRcpPmId;
     }
 
-    public void setPersonRcpPmId(int personRcpPmId) {
+    public void setPersonRcpPmId(Integer personRcpPmId) {
         this.personRcpPmId = personRcpPmId;
     }
 

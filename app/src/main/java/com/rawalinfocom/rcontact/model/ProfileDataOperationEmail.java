@@ -15,10 +15,10 @@ public class ProfileDataOperationEmail implements Serializable {
     private String emId;
     private String emEmailId;
     private String emType;
-    private int emPublic;
+    private Integer emPublic;
     private String emRcpType;
     private String emIsVerified;
-    private int emIsPrivate;
+    private Integer emIsPrivate;
 
     @JsonProperty("em_id")
     public String getEmId() {
@@ -48,11 +48,11 @@ public class ProfileDataOperationEmail implements Serializable {
     }
 
     @JsonProperty("em_public")
-    public int getEmPublic() {
+    public Integer getEmPublic() {
         return this.emPublic;
     }
 
-    public void setEmPublic(int emPublic) {
+    public void setEmPublic(Integer emPublic) {
         this.emPublic = emPublic;
     }
 
@@ -76,11 +76,11 @@ public class ProfileDataOperationEmail implements Serializable {
     }*/
 
     @JsonProperty("is_private")
-    public int getEmIsPrivate() {
+    public Integer getEmIsPrivate() {
         return emIsPrivate;
     }
 
-    public void setEmIsPrivate(int emIsPrivate) {
+    public void setEmIsPrivate(Integer emIsPrivate) {
         this.emIsPrivate = emIsPrivate;
     }
 }

@@ -16,8 +16,8 @@ import java.util.ArrayList;
 public class ProfileDataOperation implements Serializable {
 
     private ArrayList<ProfileDataOperationPhoneNumber> pbPhoneNumber;
-    private int flag;
-    private int isFirst;
+    private Integer flag;
+    private Integer isFirst;
     private ArrayList<ProfileDataOperationWebAddress> pbWebAddress;
     private ArrayList<ProfileDataOperationEvent> pbEvent;
     private String pbNameSuffix;
@@ -72,20 +72,20 @@ public class ProfileDataOperation implements Serializable {
     }
 
     @JsonProperty("flag")
-    public int getFlag() {
+    public Integer getFlag() {
         return this.flag;
     }
 
-    public void setFlag(int flag) {
+    public void setFlag(Integer flag) {
         this.flag = flag;
     }
 
     @JsonProperty("is_first")
-    public int getIsFirst() {
+    public Integer getIsFirst() {
         return isFirst;
     }
 
-    public void setIsFirst(int isFirst) {
+    public void setIsFirst(Integer isFirst) {
         this.isFirst = isFirst;
     }
 
@@ -423,7 +423,7 @@ public class ProfileDataOperation implements Serializable {
         pbAddress.add(address);
     }
 
-  /*  public int getAddressSize() {
+  /*  public Integer getAddressSize() {
         if (pbAddress == null) {
             pbAddress = new ArrayList<>();
         }

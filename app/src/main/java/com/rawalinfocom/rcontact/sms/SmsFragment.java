@@ -412,7 +412,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         if (isFirstChuck) {
             for (ArrayList<String> partition : chopped(listOfIds, LIST_PARTITION_COUNT)) {
                 // do something with partition
-                Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+                // Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
                 listOfIds.removeAll(partition);
                 break;
             }
@@ -420,7 +420,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
         for (ArrayList<String> partition : chopped(listOfIds, LIST_PARTITION_COUNT)) {
             // do something with partition
-            Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+            // Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
             smsLogIdsListByChunck.addAll(partition);
             listOfIds.removeAll(partition);
             break;
@@ -686,19 +686,19 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     long logDate1 = callLogType.getDataAndTime();
                     Date date1 = new Date(logDate1);
                     String logDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date1);
-                    Log.i("Call Log date", logDate);
+                    // Log.i("Call Log date", logDate);
 
                     Calendar cal = Calendar.getInstance();
                     cal.add(Calendar.DATE, -1);
                     Date yesDate;
                     yesDate = cal.getTime();
                     String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(yesDate);
-                    Log.i("Call yesterday date", yesterdayDate);
+                    // Log.i("Call yesterday date", yesterdayDate);
 
                     Calendar c = Calendar.getInstance();
                     Date cDate = c.getTime();
                     String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cDate);
-                    Log.i("Call Current date", currentDate);
+                    // Log.i("Call Current date", currentDate);
                     String number = callLogType.getThreadId();
                     String finalDate;
                     if (logDate.equalsIgnoreCase(currentDate)) {
@@ -990,7 +990,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     private BroadcastReceiver localBroadcastSmsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("SmsFragment", "onReceive() of LocalBroadcast");
+            // Log.i("SmsFragment", "onReceive() of LocalBroadcast");
             try {
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -1003,7 +1003,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                             String address = smsDataTypeReceiver.getAddress();
                             String body = smsDataTypeReceiver.getBody();
                             long dateAndTime = smsDataTypeReceiver.getDataAndTime();
-                            Log.i("Sms Receiver details", address + " " + body);
+                            // Log.i("Sms Receiver details", address + " " + body);
                             if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
                                 for (int i = 0; i < smsDataTypeArrayList.size(); i++) {
                                     SmsDataType smsDataType = smsDataTypeArrayList.get(i);
@@ -1108,7 +1108,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     private BroadcastReceiver localBroadcastReceiverDeleteSMS = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("SmsFragment", "onReceive() of LocalBroadcast");
+            // Log.i("SmsFragment", "onReceive() of LocalBroadcast");
             try {
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {

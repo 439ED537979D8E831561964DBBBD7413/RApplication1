@@ -82,12 +82,14 @@ public class AppConstants {
     public static String EXTRA_MOBILE_NUMBER = "extra_mobile_number";
     public static String EXTRA_OTP_SERVICE_END_TIME = "extra_otp_service_end_time";
     public static String EXTRA_CALL_MSP_SERVER = "extra_call_msp_server";
-    public static String EXTRA_IS_FROM_MOBILE_REGIS = "extra_is_from_mobile_regis";
+    //    public static String EXTRA_IS_FROM_MOBILE_REGIS = "extra_is_from_mobile_regis";
+    public static String EXTRA_IS_FROM = "extra_is_from";
     public static String EXTRA_LOCAL_BROADCAST_MESSAGE = "message";
     public static String EXTRA_CONTACT_NAME = "contact_name";
     public static String EXTRA_PROFILE_IMAGE_URL = "profile_image_url";
     public static String EXTRA_CLOUD_CONTACT_NAME = "cloud_contact_name";
     public static String EXTRA_CONTACT_POSITION = "contact_position";
+    public static String EXTRA_RCONTACT_POSITION = "rcontact_position";
     public static String EXTRA_FAVOURITE_POSITION = "extra_favourite_position";
     public static String EXTRA_OBJECT_CONTACT = "extra_object_contact";
     public static String EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE = "extra_call_instance";
@@ -106,6 +108,7 @@ public class AppConstants {
     public static String EXTRA_CALL_ARRAY_LIST = "extra_call_array_list";
     public static String EXTRA_DELETE_ALL_CALL_LOGS = "extra_delete_all_call_logs";
     public static String EXTRA_REMOVE_CALL_LOGS = "extra_remove_call_logs";
+    public static String EXTRA_RATING_UPDATE = "extra_rating_update";
     public static String EXTRA_CLEAR_CALL_LOGS = "extra_clear_call_logs";
     public static String EXTRA_CLEAR_CALL_LOGS_FROM_CONTACTS =
             "extra_clear_call_logs_from_contacts";
@@ -135,8 +138,8 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_TABCHANGE = "action_local_broadcast_tab_change";
     public static String ACTION_LOCAL_BROADCAST_PROFILE = "action_local_broadcast_profile";
     public static String ACTION_LOCAL_BROADCAST_DELETE_LOGS = "action_local_broadcast_delete_logs";
-    public static String ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS =
-            "action_local_broadcast_remove_call_logs";
+    public static String ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS = "action_local_broadcast_remove_call_logs";
+    public static String ACTION_LOCAL_BROADCAST_RATING_UPDATE = "action_local_broadcast_rating_update";
     public static String ACTION_LOCAL_BROADCAST_PROFILE_BLOCK =
             "action_local_broadcast_profile_block";
     public static String ACTION_LOCAL_BROADCAST_UNBLOCK = "action_local_broadcast_unblock";

@@ -58,6 +58,7 @@ public class WsRequestObject {
 
     private String countryCode;
     private String mobileNumber;
+    private Integer forgotPassword;
 
     @JsonProperty("pm_id")
     private Integer pmId;
@@ -78,6 +79,11 @@ public class WsRequestObject {
     private String deviceId;
     private String socialMediaTokenId;
     private String createdBy;
+    private String gcmToken;
+    private Integer reAuthenticate;
+
+    private String password;
+    private String password_confirmation;
 
     private String profileImage;
 
@@ -168,6 +174,15 @@ public class WsRequestObject {
         this.mobileNumber = mobileNumber;
     }
 
+    @JsonProperty("forgot_password")
+    public Integer getForgotPassword() {
+        return forgotPassword;
+    }
+
+    public void setForgotPassword(Integer forgotPassword) {
+        this.forgotPassword = forgotPassword;
+    }
+
     public Integer getPmId() {
         return pmId;
     }
@@ -252,6 +267,34 @@ public class WsRequestObject {
         return searchMaxRecord;
     }
 
+
+    @JsonProperty("created_by")
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @JsonProperty("re_authenticate")
+    public Integer getReAuthenticate() {
+        return reAuthenticate;
+    }
+
+    public void setReAuthenticate(Integer reAuthenticate) {
+        this.reAuthenticate = reAuthenticate;
+    }
+
+    @JsonProperty("gcm_token")
+    public String getGcmToken() {
+        return gcmToken;
+    }
+
+    public void setGcmToken(String gcmToken) {
+        this.gcmToken = gcmToken;
+    }
+
     @JsonProperty("device_id")
     public String getDeviceId() {
         return deviceId;
@@ -261,6 +304,25 @@ public class WsRequestObject {
         this.deviceId = deviceId;
     }
 
+    // Set Password
+    @JsonProperty("password")
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @JsonProperty("password_confirmation")
+    public String getPassword_confirmation() {
+        return password_confirmation;
+    }
+
+    public void setPassword_confirmation(String password_confirmation) {
+        this.password_confirmation = password_confirmation;
+    }
+
     @JsonProperty("social_media_token_id")
     public String getSocialMediaTokenId() {
         return socialMediaTokenId;
@@ -268,6 +330,15 @@ public class WsRequestObject {
 
     public void setSocialMediaTokenId(String socialMediaTokenId) {
         this.socialMediaTokenId = socialMediaTokenId;
+    }
+
+    @JsonProperty("type")
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @JsonProperty("pb_social_id")
@@ -503,15 +574,6 @@ public class WsRequestObject {
         this.profileEdit = profileEdit;
     }
 
-    @JsonProperty("created_by")
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
     @JsonProperty("call_history")
     public ArrayList<CallLogHistoryType> getHistoryTypeArrayList() {
         return historyTypeArrayList;
@@ -649,13 +711,6 @@ public class WsRequestObject {
         this.comment = comment;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public Integer getToPmId() {
         return toPmId;

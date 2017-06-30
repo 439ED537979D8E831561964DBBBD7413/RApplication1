@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.observer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -40,15 +41,15 @@ import java.util.Set;
 
 public class PhoneContentObserver extends ContentObserver {
 
-    private Context context;
+    private Activity activity;
     private ArrayList<ProfileData> arrayListUserContact;
     private ArrayList<ProfileData> arrayListDeletedUserContact;
     private PhoneBookContacts phoneBookContacts;
 
-    public PhoneContentObserver(Context context, Handler handler) {
+    public PhoneContentObserver(Activity activity, Handler handler) {
         super(handler);
-        this.context = context;
-        phoneBookContacts = new PhoneBookContacts(context);
+        this.activity = activity;
+        phoneBookContacts = new PhoneBookContacts(activity);
         arrayListDeletedUserContact = new ArrayList<>();
     }
 
@@ -77,14 +78,14 @@ public class PhoneContentObserver extends ContentObserver {
             cursor.close();
 
             ArrayList<String> arrayListContactIds = new ArrayList<>();
-            arrayListContactIds.addAll(Utils.getArrayListPreference(context, AppConstants
+            arrayListContactIds.addAll(Utils.getArrayListPreference(activity, AppConstants
                     .PREF_CONTACT_ID_SET));
 
             if (arrayListContactIds.contains(rawId)) {
 
                 // Update
 
-                phoneBookOperations(rawId, String.valueOf(context.getResources().getInteger(R
+                phoneBookOperations(rawId, String.valueOf(activity.getResources().getInteger(R
                         .integer.sync_update)));
 
             } else if (rawId.equalsIgnoreCase("-1")) {
@@ -103,7 +104,7 @@ public class PhoneContentObserver extends ContentObserver {
 
                 contactNameCursor.close();
 
-                Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
+                Utils.setArrayListPreference(activity, AppConstants.PREF_CONTACT_ID_SET,
                         arrayListNewContactId);
 
                 Set<String> oldContactIds = new HashSet<>(arrayListContactIds);
@@ -117,7 +118,7 @@ public class PhoneContentObserver extends ContentObserver {
 
                     ArrayList<ProfileDataOperation> arrayListOperations = new ArrayList<>();
                     ProfileDataOperation profileDataOperation = new ProfileDataOperation();
-                    profileDataOperation.setFlag(context.getResources().getInteger(R.integer
+                    profileDataOperation.setFlag(activity.getResources().getInteger(R.integer
                             .sync_delete));
                     arrayListOperations.add(profileDataOperation);
 
@@ -145,9 +146,9 @@ public class PhoneContentObserver extends ContentObserver {
 
                     contactNameCursor.close();
 
-                    Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
+                    Utils.setArrayListPreference(activity, AppConstants.PREF_CONTACT_ID_SET,
                             arrayListNewContactId);
-                    phoneBookOperations(rawId, String.valueOf(context
+                    phoneBookOperations(rawId, String.valueOf(activity
                             .getResources().getInteger(R.integer.sync_insert)));
                 }
 
@@ -155,14 +156,14 @@ public class PhoneContentObserver extends ContentObserver {
 
               *//*  if (!arrayListContactIds.contains(rawId)) {
                     arrayListContactIds.add(rawId);
-                    Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
+                    Utils.setArrayListPreference(activity, AppConstants.PREF_CONTACT_ID_SET,
                             arrayListContactIds);
-                    phoneBookOperations(rawId, String.valueOf(context
+                    phoneBookOperations(rawId, String.valueOf(activity
                             .getResources().getInteger(R.integer.sync_insert)));
                 }*//*
             }
 
-            RContactApplication rContactApplication = (RContactApplication) context
+            RContactApplication rContactApplication = (RContactApplication) activity
                     .getApplicationContext();
             rContactApplication.setArrayListAllPhoneBookContacts(new ArrayList<>());
             rContactApplication.setArrayListFavPhoneBookContacts(new ArrayList<>());
@@ -249,7 +250,7 @@ public class PhoneContentObserver extends ContentObserver {
                         ProfileDataOperationPhoneNumber();
 
                 phoneNumber.setPhoneId(String.valueOf(++numberCount));
-                phoneNumber.setPhoneNumber(Utils.getFormattedNumber(context,
+                phoneNumber.setPhoneNumber(Utils.getFormattedNumber(activity,
                         contactNumberCursor.getString(contactNumberCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.Phone.NUMBER))));
                 phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
@@ -499,8 +500,8 @@ public class PhoneContentObserver extends ContentObserver {
         WsRequestObject uploadContactObject = new WsRequestObject();
         uploadContactObject.setProfileData(arrayListUserContact);
 
-        if (Utils.isNetworkAvailable(context)) {
-            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+        if (Utils.isNetworkAvailable(activity)) {
+            new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_UPLOAD_CONTACTS, null, true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
@@ -512,8 +513,8 @@ public class PhoneContentObserver extends ContentObserver {
         WsRequestObject uploadContactObject = new WsRequestObject();
         uploadContactObject.setProfileData(arrayListDeletedUserContact);
 
-        if (Utils.isNetworkAvailable(context)) {
-            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+        if (Utils.isNetworkAvailable(activity)) {
+            new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_UPLOAD_CONTACTS, null, true).execute
                     (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);

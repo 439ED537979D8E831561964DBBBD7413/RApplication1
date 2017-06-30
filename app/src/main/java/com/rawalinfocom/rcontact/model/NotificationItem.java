@@ -7,11 +7,11 @@ package com.rawalinfocom.rcontact.model;
 public class NotificationItem {
 
     private String notificationItemTitle;
-    private int notificationItemCount;
-    private int notificationItemType;
+    private Integer notificationItemCount;
+    private Integer notificationItemType;
 
-    public NotificationItem(String notificationItemTitle, int notificationItemCount
-            , int notificationItemType) {
+    public NotificationItem(String notificationItemTitle, Integer notificationItemCount
+            , Integer notificationItemType) {
         this.notificationItemTitle = notificationItemTitle;
         this.notificationItemCount = notificationItemCount;
         this.notificationItemType = notificationItemType;
@@ -21,11 +21,11 @@ public class NotificationItem {
         return notificationItemTitle;
     }
 
-    public int getNotificationItemCount() {
+    public Integer getNotificationItemCount() {
         return notificationItemCount;
     }
 
-    public int getNotificationItemType() {
+    public Integer getNotificationItemType() {
         return notificationItemType;
     }
     // 1= > Timeline

@@ -25,7 +25,7 @@ import java.util.Date;
 public class CallLogType implements Serializable {
 
     @JsonIgnore
-    private boolean isRcpUser;
+    private Boolean isRcpUser;
     @JsonIgnore
     private String rcpFirstName;
     @JsonIgnore
@@ -33,7 +33,7 @@ public class CallLogType implements Serializable {
     @JsonIgnore
     private String rcpId;
     @JsonIgnore
-    private int recordPosition;
+    private Integer recordPosition;
     @JsonIgnore
     private String prefix;
     @JsonIgnore
@@ -42,11 +42,11 @@ public class CallLogType implements Serializable {
     private String middleName;
 
     @JsonIgnore
-    private long date;
+    private Long date;
     @JsonIgnore
-    private int duration;
+    private Integer duration;
     @JsonIgnore
-    private int type;
+    private Integer type;
     @JsonIgnore
     private Context context;
     @JsonIgnore
@@ -63,29 +63,29 @@ public class CallLogType implements Serializable {
     private String historyNumber;
     @JsonIgnore
 //    @JsonProperty("historyDate")
-    private long historyDate;
+    private Long historyDate;
 
     @JsonProperty("historyDuration")
     private String historyCallTime;
         @JsonIgnore
    // @JsonProperty("historyType")
-    private int historyType;
+    private Integer historyType;
     //    @JsonIgnore
     @JsonProperty("historyNumberType")
     private String historyNumberType;
 
     @JsonIgnore
-    private int historyDuration;
+    private Integer historyDuration;
     @JsonIgnore
-    private int historyLogCount;
+    private Integer historyLogCount;
     @JsonIgnore
     private Date callReceiverDate;
     @JsonIgnore
-    int blockedType = 0;
+    Integer blockedType = 0;
 
     //    @JsonProperty("flag")
 //    @JsonIgnore
-    private int flag = 0;
+    private Integer flag = 0;
     @JsonProperty("local_pb_row_id")
     private String localPbRowId;
     @JsonProperty("call_log_row_id")
@@ -97,7 +97,7 @@ public class CallLogType implements Serializable {
     @JsonProperty("name")
     private String name;
     @JsonProperty("call_history_id")
-    private int historyId;
+    private Integer historyId;
     @JsonProperty("call_date_and_time")
     private String callDateAndTime;
     @JsonProperty("call_type")
@@ -144,11 +144,11 @@ public class CallLogType implements Serializable {
     }
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    public int getFlag() {
+    public Integer getFlag() {
         return flag;
     }
 
-    public void setFlag(int flag) {
+    public void setFlag(Integer flag) {
         this.flag = flag;
     }
 
@@ -200,27 +200,27 @@ public class CallLogType implements Serializable {
         this.number = number;
     }
 
-    public long getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(long date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 
-    public int getDuration() {
+    public Integer getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(Integer duration) {
         this.duration = duration;
     }
 
-    public int getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
@@ -260,11 +260,11 @@ public class CallLogType implements Serializable {
     }
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    public int getHistoryId() {
+    public Integer getHistoryId() {
         return historyId;
     }
 
-    public void setHistoryId(int historyId) {
+    public void setHistoryId(Integer historyId) {
         this.historyId = historyId;
     }
 
@@ -285,28 +285,28 @@ public class CallLogType implements Serializable {
     }
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    public long getHistoryDate() {
+    public Long getHistoryDate() {
         return historyDate;
     }
 
-    public void setHistoryDate(long historyDate) {
+    public void setHistoryDate(Long historyDate) {
         this.historyDate = historyDate;
     }
 
-    public int getHistoryDuration() {
+    public Integer getHistoryDuration() {
         return historyDuration;
     }
 
-    public void setHistoryDuration(int historyDuration) {
+    public void setHistoryDuration(Integer historyDuration) {
         this.historyDuration = historyDuration;
     }
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    public int getHistoryType() {
+    public Integer getHistoryType() {
         return historyType;
     }
 
-    public void setHistoryType(int historyType) {
+    public void setHistoryType(Integer historyType) {
         this.historyType = historyType;
     }
 
@@ -326,11 +326,11 @@ public class CallLogType implements Serializable {
         this.historyNumberType = historyNumberType;
     }
 
-    public int getHistoryLogCount() {
+    public Integer getHistoryLogCount() {
         return historyLogCount;
     }
 
-    public void setHistoryLogCount(int historyLogCount) {
+    public void setHistoryLogCount(Integer historyLogCount) {
         this.historyLogCount = historyLogCount;
     }
 
@@ -494,11 +494,11 @@ public class CallLogType implements Serializable {
 
     }
 
-    public int getBlockedType() {
+    public Integer getBlockedType() {
         return blockedType;
     }
 
-    public void setBlockedType(int blockedType) {
+    public void setBlockedType(Integer blockedType) {
         this.blockedType = blockedType;
     }
 
@@ -510,11 +510,11 @@ public class CallLogType implements Serializable {
         this.historyCallTime = historyCallTime;
     }
 
-    public boolean isRcpUser() {
+    public Boolean isRcpUser() {
         return isRcpUser;
     }
 
-    public void setRcpUser(boolean rcpUser) {
+    public void setRcpUser(Boolean rcpUser) {
         isRcpUser = rcpUser;
     }
 
@@ -542,11 +542,11 @@ public class CallLogType implements Serializable {
         this.rcpId = rcpId;
     }
 
-    public int getRecordPosition() {
+    public Integer getRecordPosition() {
         return recordPosition;
     }
 
-    public void setRecordPosition(int recordPosition) {
+    public void setRecordPosition(Integer recordPosition) {
         this.recordPosition = recordPosition;
     }
 

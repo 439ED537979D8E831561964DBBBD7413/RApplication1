@@ -145,7 +145,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     String uniqueContactId = "";
                     if (!TextUtils.isEmpty(dialogName)) {
                         listToBlock = getNumbersFromName(dialogName);
-                        Log.i("block list size =", listToBlock.size() + "");
+                        // Log.i("block list size =", listToBlock.size() + "");
                         for (int i = 0; i < listToBlock.size(); i++) {
                             CallLogType callLogType = listToBlock.get(i);
                             uniqueContactId = callLogType.getUniqueContactId();
@@ -153,13 +153,13 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                     } else {
 
-                        Log.i("Number to block", numberToCall);
+                        // Log.i("Number to block", numberToCall);
                         CallLogType callLogType = new CallLogType();
                         uniqueContactId = uniqueRowId;
                         callLogType.setUniqueContactId(uniqueContactId);
                         callLogType.setNumber(numberToCall);
                         listToBlock.add(callLogType);
-                        Log.i("block list size =", listToBlock.size() + "");
+                        // Log.i("block list size =", listToBlock.size() + "");
                     }
 
                     if (Utils.getHashMapPreferenceForBlock(context, AppConstants
@@ -452,7 +452,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
             Log.i("Delete Query value", value + "");*/
 
             if (value > 0) {
-                Log.i("Delete Query value", value + "");
+                // Log.i("Delete Query value", value + "");
                 Toast.makeText(context, value + context.getString(R.string.call_logs_deleted),
                         Toast.LENGTH_SHORT).show();
 
@@ -487,7 +487,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
             int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
                     selectionArguments);
             if (value > 0) {
-                Log.i("Delete Query value", value + "");
+                // Log.i("Delete Query value", value + "");
                 Toast.makeText(context, value + context.getString(R.string.call_logs_deleted),
                         Toast.LENGTH_SHORT).show();
 
@@ -527,7 +527,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
             int value = context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, where,
                     selectionArguments);
             if (value > 0) {
-                Log.i("Delete Query value", value + "");
+                // Log.i("Delete Query value", value + "");
                 Toast.makeText(context, value + context.getString(R.string.call_logs_deleted),
                         Toast.LENGTH_SHORT).show();
 
