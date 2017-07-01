@@ -303,10 +303,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
         init();
 
-
-        if(!StringUtils.isEmpty(historyNumber)){
+        if (!StringUtils.isEmpty(historyNumber)) {
             fetchAllCallLogHistory(historyNumber);
-        }else{
+        } else {
             if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
                 fetchAllCallLogHistory(contactName);
             } else {
@@ -327,12 +326,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 .ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
 
-        if(!StringUtils.isEmpty(historyNumber)){
+        if (!StringUtils.isEmpty(historyNumber)) {
             fetchAllCallLogHistory(historyNumber);
-
-        }else{
-            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase(getString(R.string
-                    .unknown))) {
+        } else {
+            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
                 fetchAllCallLogHistory(contactName);
             } else {
                 if (!TextUtils.isEmpty(profileContactNumber)) {
@@ -340,7 +337,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 }
             }
         }
-
     }
 
     @Override
@@ -1809,7 +1805,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     private void submitRating(String ratingStar, String comment) {
 
         WsRequestObject ratingObject = new WsRequestObject();
-        ratingObject.setPmId(Integer.parseInt(getUserPmId()));
+//        ratingObject.setPmId(Integer.parseInt(getUserPmId()));
         ratingObject.setPrComment(comment);
         ratingObject.setPrRatingStars(ratingStar);
         ratingObject.setPrStatus(String.valueOf(IntegerConstants.RATING_DONE));
@@ -1844,7 +1840,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     private void setFavouriteStatus(ArrayList<ProfileData> favourites) {
 
         WsRequestObject favouriteStatusObject = new WsRequestObject();
-        favouriteStatusObject.setPmId(Integer.parseInt(getUserPmId()));
+//        favouriteStatusObject.setPmId(Integer.parseInt(getUserPmId()));
         favouriteStatusObject.setFavourites(favourites);
 
         if (Utils.isNetworkAvailable(this)) {

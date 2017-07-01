@@ -11,7 +11,7 @@ public class MobileNumber {
     private String mnmMobileNumber;
     private String mnmNumberType;
     private String mnmIsPrimary;
-    private int mnmIsPrivate;
+    private Integer mnmIsPrivate;
     private String mnmNumberPrivacy;
     private String mnmMobileServiceProvider;
     private String mnmCircleOfService;
@@ -103,11 +103,11 @@ public class MobileNumber {
         this.mnmRecordIndexId = mnmRecordIndexId;
     }
 
-    public int getMnmIsPrivate() {
+    public Integer getMnmIsPrivate() {
         return mnmIsPrivate;
     }
 
-    public void setMnmIsPrivate(int mnmIsPrivate) {
+    public void setMnmIsPrivate(Integer mnmIsPrivate) {
         this.mnmIsPrivate = mnmIsPrivate;
     }
 }

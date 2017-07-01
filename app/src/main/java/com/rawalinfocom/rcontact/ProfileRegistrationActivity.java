@@ -127,9 +127,9 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     EditText inputLastName;
     @BindView(R.id.input_email_id)
     EditText inputEmailId;
-    @BindView(R.id.button_register)
-    Button buttonRegister;
-    @BindView(R.id.ripple_register)
+    @BindView(R.id.button_continue)
+    Button buttonContinue;
+    @BindView(R.id.ripple_continue)
     RippleView rippleRegister;
     @BindView(R.id.text_or)
     TextView textOr;
@@ -153,13 +153,14 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     UserProfile userProfile;
     UserProfile userProfileRegistered;
 
-    int setLoginVia = 0;
+    //    int setLoginVia = 0;
     int locationCall = 0;
     String locationString;
+    private String firstName, lastName, email;
 
     public static boolean isFromSettings;
 
-    GPSTracker gpsTracker;
+//    GPSTracker gpsTracker;
 
     // Facebook Callback Manager
     CallbackManager callbackManager;
@@ -194,86 +195,47 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi
                 (Auth.GOOGLE_SIGN_IN_API, gso).build();
 
+        IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_EMAIL;
+
         init();
 
-        gpsTracker = new GPSTracker(this, null);
+       /* gpsTracker = new GPSTracker(this, null);
 
-       /* if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
-                .ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission
-                    .ACCESS_FINE_LOCATION}, AppConstants
-                    .MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        } else {
-            if (Utils.isLocationEnabled(this)) {
-               *//* latitude = gpsTracker.getLatitude();
-                longitude = gpsTracker.getLongitude();
-                getCityName();*//*
-                getLocationDetail();
-            } else {
-                gpsTracker.showSettingsAlert();
-            }
-        } */
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission
                 .ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             if (Utils.isLocationEnabled(this)) {
-                       /* latitude = gpsTracker.getLatitude();
-                        longitude = gpsTracker.getLongitude();
-                        getCityName();*/
                 getLocationDetail();
             } else {
                 gpsTracker.showSettingsAlert();
             }
-        }
+        }*/
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (isFromSettings) {
+        /*if (isFromSettings) {
             isFromSettings = false;
             if (Utils.isLocationEnabled(this)) {
-               /* gpsTracker = new GPSTracker(this, null);
-                latitude = gpsTracker.getLatitude();
-                longitude = gpsTracker.getLongitude();
-                getCityName();*/
                 getLocationDetail();
             }
-        }
+        }*/
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-       /* OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn
-                (googleApiClient);
-        if (opr.isDone()) {
-            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-            // and the GoogleSignInResult will be available instantly.
-            Log.d("On Start", "Got cached sign-in");
-            GoogleSignInResult result = opr.get();
-            handleSignInResult(result);
-        } else {
-            // If the user has not previously signed in on this device or the sign-in has expired,
-            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-            // single sign-on will occur in this branch.
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-                    handleSignInResult(googleSignInResult);
-                }
-            });
-        }*/
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (setLoginVia == IntegerConstants.REGISTRATION_VIA_FACEBOOK) {
+        if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_FACEBOOK) {
             // Facebook Callback
             callbackManager.onActivityResult(requestCode, resultCode, data);
-        } else if (setLoginVia == IntegerConstants.REGISTRATION_VIA_LINED_IN) {
+        } else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_LINED_IN) {
             // LinkedIn Callback
             LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
                     requestCode, resultCode, data);
@@ -284,8 +246,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
-
-
     }
 
     @Override
@@ -305,21 +265,19 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 break;
             //</editor-fold>
 
-            //<editor-fold desc="ripple_register">
-            case R.id.ripple_register:
-//                verifyOtp();
-                String firstName = inputFirstName.getText().toString();
-                String lastName = inputLastName.getText().toString();
-                String emailId = inputEmailId.getText().toString();
+            //<editor-fold desc="ripple_continue">
+            case R.id.ripple_continue:
+                firstName = inputFirstName.getText().toString();
+                lastName = inputLastName.getText().toString();
+                email = inputEmailId.getText().toString();
                 String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
                 if (firstName.equalsIgnoreCase("") || lastName.equalsIgnoreCase("")) {
                     Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R.string.str_valid_both_name));
-                } else if (emailId.length() > 0 && !emailId.matches(emailPattern)) {
+                } else if (email.length() > 0 && !email.matches(emailPattern)) {
                     Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R.string.str_valid_email));
                 } else {
-                    profileRegistration(firstName, lastName, emailId, null, "", "",
-                            IntegerConstants.REGISTRATION_VIA_EMAIL);
+                    profileRegistration(firstName, lastName, email, IntegerConstants.REGISTRATION_VIA);
                 }
                 break;
             //</editor-fold>
@@ -329,7 +287,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute(requiredPermissions, FACEBOOK_LOGIN_PERMISSION);
                 } else {
-                    setLoginVia = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
 
                     // Facebook Initialization
                     FacebookSdk.sdkInitialize(getApplicationContext());
@@ -351,7 +309,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute(requiredPermissions, GOOGLE_LOGIN_PERMISSION);
                 } else {
-                    setLoginVia = IntegerConstants.REGISTRATION_VIA_GOOGLE;
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
                     googleSignIn();
                 }
                 break;
@@ -362,7 +320,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     checkPermissionToExecute(requiredPermissions, LINKEDIN_LOGIN_PERMISSION);
                 } else {
-                    setLoginVia = IntegerConstants.REGISTRATION_VIA_LINED_IN;
+                    IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_LINED_IN;
                     linkedInSignIn();
                 }
                 break;
@@ -390,7 +348,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     private void prepareToLoginUsingSocialMedia(int requestCode) {
         switch (requestCode) {
             case FACEBOOK_LOGIN_PERMISSION:
-                setLoginVia = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
 
                 // Facebook Initialization
                 FacebookSdk.sdkInitialize(getApplicationContext());
@@ -404,11 +362,11 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                         getString(R.string.str_small_cap_email)));
                 break;
             case GOOGLE_LOGIN_PERMISSION:
-                setLoginVia = IntegerConstants.REGISTRATION_VIA_GOOGLE;
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
                 googleSignIn();
                 break;
             case LINKEDIN_LOGIN_PERMISSION:
-                setLoginVia = IntegerConstants.REGISTRATION_VIA_LINED_IN;
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_LINED_IN;
                 linkedInSignIn();
                 break;
         }
@@ -423,35 +381,37 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_REGISTRATION)) {
                 WsResponseObject userProfileResponse = (WsResponseObject) data;
-//                Utils.hideProgressDialog();
+                Utils.hideProgressDialog();
+
                 if (userProfileResponse != null && StringUtils.equalsIgnoreCase(userProfileResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    // set launch screen as MainActivity
+                    // set launch screen as SetPassword
                     Utils.setIntegerPreference(ProfileRegistrationActivity.this,
                             AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
-                                    .LAUNCH_MAIN_ACTIVITY);
+                                    .LAUNCH_SET_PASSWORD);
 
-                    if (userProfileRegistered != null) {
-                        Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
-                                userProfileRegistered.getPmId());
-                    }
+                    userProfileRegistered = new UserProfile();
+                    userProfileRegistered.setPmFirstName(inputFirstName.getText().toString());
+                    userProfileRegistered.setPmLastName(inputLastName.getText().toString());
+                    userProfileRegistered.setEmailId(inputEmailId.getText().toString());
 
-                    ProfileDataOperation profileDetail = userProfileResponse.getProfileDetail();
-                    Utils.setObjectPreference(ProfileRegistrationActivity.this, AppConstants
-                            .PREF_REGS_USER_OBJECT, profileDetail);
+                    Utils.setObjectPreference(ProfileRegistrationActivity.this,
+                            AppConstants.PREF_REGS_USER_OBJECT, userProfileRegistered);
 
-                    storeProfileDataToDb(profileDetail);
+//                    if (userProfileRegistered != null) {
+//                        Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
+//                                userProfileRegistered.getPmId());
+//                    }
 
-                    deviceDetail();
+                    // Redirect to SetPasswordActivity
 
-                    // Redirect to MainActivity
-                  /*  Intent intent = new Intent(this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.enter, R.anim.exit);*/
+                    Bundle bundle = new Bundle();
+                    bundle.putString(AppConstants.EXTRA_IS_FROM, "profile");
+                    startActivityIntent(ProfileRegistrationActivity.this, SetPasswordActivity.class, bundle);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+
+                    //deviceDetail();
 
                 } else {
                     if (userProfileResponse != null) {
@@ -467,35 +427,35 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
             // <editor-fold desc="REQ_STORE_DEVICE_DETAILS">
 
-            if (serviceType.equalsIgnoreCase(WsConstants.REQ_STORE_DEVICE_DETAILS)) {
-                WsResponseObject deviceDetailResponse = (WsResponseObject) data;
-                Utils.hideProgressDialog();
-                if (deviceDetailResponse != null && StringUtils.equalsIgnoreCase
-                        (deviceDetailResponse
-                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
-                    // Redirect to MainActivity
-                    Intent intent = new Intent(this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.enter, R.anim.exit);
-
-                } else {
-                    if (deviceDetailResponse != null) {
-                        Log.e("error response", deviceDetailResponse.getMessage());
-                    } else {
-                        Log.e("onDeliveryResponse: ", "deviceDetailResponse null");
-                        Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R
-                                .string.msg_try_later));
-                    }
-                }
-            }
+//            if (serviceType.equalsIgnoreCase(WsConstants.REQ_STORE_DEVICE_DETAILS)) {
+//                WsResponseObject deviceDetailResponse = (WsResponseObject) data;
+//                Utils.hideProgressDialog();
+//                if (deviceDetailResponse != null && StringUtils.equalsIgnoreCase
+//                        (deviceDetailResponse
+//                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+//
+//                    // Redirect to MainActivity
+//                    Intent intent = new Intent(this, MainActivity.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//                    startActivity(intent);
+//                    overridePendingTransition(R.anim.enter, R.anim.exit);
+//
+//                } else {
+//                    if (deviceDetailResponse != null) {
+//                        Log.e("error response", deviceDetailResponse.getMessage());
+//                    } else {
+//                        Log.e("onDeliveryResponse: ", "deviceDetailResponse null");
+//                        Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R
+//                                .string.msg_try_later));
+//                    }
+//                }
+//            }
             //</editor-fold>
 
             //<editor-fold desc="REQ_REVERSE_GEO_CODING_ADDRESS">
-            else if (serviceType.equalsIgnoreCase(WsConstants.REQ_REVERSE_GEO_CODING_ADDRESS)) {
+         /*   else if (serviceType.equalsIgnoreCase(WsConstants.REQ_REVERSE_GEO_CODING_ADDRESS)) {
                 ReverseGeocodingAddress objAddress = (ReverseGeocodingAddress) data;
                 if (objAddress == null) {
                     if (locationCall < 2) {
@@ -510,7 +470,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                         e.printStackTrace();
                     }
                 }
-            }
+            }*/
             //</editor-fold>
 
         } else {
@@ -525,33 +485,20 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case AppConstants.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+            /*case AppConstants.MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     // Permission Granted
-
                     if (Utils.isLocationEnabled(this)) {
-                      /*  gpsTracker = new GPSTracker(this, null);
-                        latitude = gpsTracker.getLatitude();
-                        longitude = gpsTracker.getLongitude();
-                        getCityName();
-                        Log.i("onCreate", latitude + ":" + longitude);*/
                         getLocationDetail();
                     } else {
                         gpsTracker.showSettingsAlert();
                     }
-
-
-                } else {
-
-                    // Permission Denied
-
-
                 }
             }
-            break;
+            break;*/
             case FACEBOOK_LOGIN_PERMISSION:
             case GOOGLE_LOGIN_PERMISSION:
             case LINKEDIN_LOGIN_PERMISSION:
@@ -561,7 +508,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     prepareToLoginUsingSocialMedia(requestCode);
                 }
                 break;
-
         }
     }
 
@@ -586,7 +532,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         inputFirstName.setTypeface(Utils.typefaceRegular(this));
         inputLastName.setTypeface(Utils.typefaceRegular(this));
         inputEmailId.setTypeface(Utils.typefaceRegular(this));
-        buttonRegister.setTypeface(Utils.typefaceSemiBold(this));
+        buttonContinue.setTypeface(Utils.typefaceSemiBold(this));
         buttonFacebook.setTypeface(Utils.typefaceSemiBold(this));
         buttonGoogle.setTypeface(Utils.typefaceSemiBold(this));
         buttonLinkedIn.setTypeface(Utils.typefaceSemiBold(this));
@@ -599,342 +545,141 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     }
 
-    private void getFacebookBitmapFromUrl(final Bundle facebookData, final LoginResult
-            loginResult) {
+//    private void getFacebookBitmapFromUrl(final Bundle facebookData, final LoginResult
+//            loginResult) {
+//
+//        SimpleTarget facebookTarget = new SimpleTarget<Bitmap>() {
+//            @Override
+//            public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+//                FileUtils fileUtils = new FileUtils(bitmap);
+//                if (fileUtils.saveImageToDirectory()) {
+//                    Log.i("file absolute path: ", fileUtils.getrContactDir().getAbsolutePath());
+//                    String imageToBase64 = Utils.convertBitmapToBase64(BitmapFactory.decodeFile
+//                            (fileUtils.getrContactDir().getAbsolutePath()));
+//                    profileRegistration(facebookData.getString(FIRST_NAME), facebookData
+//                                    .getString(LAST_NAME), facebookData.getString(EMAIL_ID),
+//                            imageToBase64, facebookData.getString(SOCIAL_ID), loginResult
+//                                    .getAccessToken().getToken(), IntegerConstants
+//                                    .REGISTRATION_VIA_FACEBOOK);
+//                } else {
+//                    Log.e("onResourceReady: ", "There is some error in storing Image!");
+//                    profileRegistration(facebookData.getString(FIRST_NAME), facebookData
+//                                    .getString(LAST_NAME), facebookData.getString(EMAIL_ID),
+//                            null, facebookData.getString(SOCIAL_ID), loginResult.getAccessToken()
+//                                    .getToken(), IntegerConstants.REGISTRATION_VIA_FACEBOOK);
+//                }
+//            }
+//        };
+//
+//        Glide.with(this)
+//                .load(facebookData.getString(PROFILE_IMAGE))
+//                .asBitmap()
+//                .into(facebookTarget);
+//
+//    }
 
-        SimpleTarget facebookTarget = new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                FileUtils fileUtils = new FileUtils(bitmap);
-                if (fileUtils.saveImageToDirectory()) {
-                    Log.i("file absolute path: ", fileUtils.getrContactDir().getAbsolutePath());
-                    String imageToBase64 = Utils.convertBitmapToBase64(BitmapFactory.decodeFile
-                            (fileUtils.getrContactDir().getAbsolutePath()));
-                    profileRegistration(facebookData.getString(FIRST_NAME), facebookData
-                                    .getString(LAST_NAME), facebookData.getString(EMAIL_ID),
-                            imageToBase64, facebookData.getString(SOCIAL_ID), loginResult
-                                    .getAccessToken().getToken(), IntegerConstants
-                                    .REGISTRATION_VIA_FACEBOOK);
-                } else {
-                    Log.e("onResourceReady: ", "There is some error in storing Image!");
-                    profileRegistration(facebookData.getString(FIRST_NAME), facebookData
-                                    .getString(LAST_NAME), facebookData.getString(EMAIL_ID),
-                            null, facebookData.getString(SOCIAL_ID), loginResult.getAccessToken()
-                                    .getToken(), IntegerConstants.REGISTRATION_VIA_FACEBOOK);
-                }
-            }
-        };
+//    private void getGoogleBitmapFromUrl(GoogleSignInAccount acct) {
+//
+//        String personPhotoUrl = "";
+//        String givenName = StringUtils.defaultString(acct.getGivenName());
+//        if (StringUtils.contains(givenName, " ")) {
+//            String[] names = givenName.split(" ");
+//            givenName = names[0];
+//        }
+//        final String firstName = givenName;
+//        final String lastName = StringUtils.defaultString(acct.getFamilyName());
+//        final String email = StringUtils.defaultString(acct.getEmail());
+//        final String personId = StringUtils.defaultString(acct.getId());
+//        if (acct.getPhotoUrl() != null) {
+//            personPhotoUrl = StringUtils.defaultString(acct.getPhotoUrl().toString());
+//        } else {
+//            profileRegistration(firstName, lastName, email, null, personId, null,
+//                    IntegerConstants.REGISTRATION_VIA_GOOGLE);
+//        }
+//
+//        SimpleTarget googleTarget = new SimpleTarget<Bitmap>() {
+//            @Override
+//            public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+//                FileUtils fileUtils = new FileUtils(bitmap);
+//                if (fileUtils.saveImageToDirectory()) {
+//                    Log.i("file absolute path: ", fileUtils.getrContactDir().getAbsolutePath());
+//                    String imageToBase64 = Utils.convertBitmapToBase64(BitmapFactory.decodeFile
+//                            (fileUtils.getrContactDir().getAbsolutePath()));
+//
+//                    profileRegistration(firstName, lastName, email, imageToBase64, personId, null,
+//                            IntegerConstants.REGISTRATION_VIA_GOOGLE);
+//                } else {
+//                    Log.e("onResourceReady: ", "There is some error in storing Image!");
+//                    profileRegistration(firstName, lastName, email, null, personId, null,
+//                            IntegerConstants.REGISTRATION_VIA_GOOGLE);
+//                }
+//            }
+//        };
+//
+//        Glide.with(this)
+//                .load(personPhotoUrl)
+//                .asBitmap()
+//                .into(googleTarget);
+//
+//    }
 
-        Glide.with(this)
-                .load(facebookData.getString(PROFILE_IMAGE))
-                .asBitmap()
-                .into(facebookTarget);
+//    private void getLinkedInBitmapFromUrl(final JSONObject response) {
+//
+//        String id, firstName, lastName, emailAddress, pictureUrl;
+//
+//        try {
+//            id = response.get("id").toString();
+//            firstName = response.get("firstName").toString();
+//            lastName = response.get("lastName").toString();
+//            emailAddress = response.get("emailAddress").toString();
+//            pictureUrl = response.get("pictureUrl").toString();
+//        } catch (JSONException e) {
+//            id = "";
+//            firstName = "";
+//            lastName = "";
+//            emailAddress = "";
+//            pictureUrl = "";
+//            e.printStackTrace();
+//        }
+//
+//        final String finalFirstName = firstName;
+//        final String finalLastName = lastName;
+//        final String finalEmailAddress = emailAddress;
+//        final String finalId = id;
+//
+//        SimpleTarget googleTarget = new SimpleTarget<Bitmap>() {
+//            @Override
+//            public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+//                FileUtils fileUtils = new FileUtils(bitmap);
+//                if (fileUtils.saveImageToDirectory()) {
+//                    Log.i("file absolute path: ", fileUtils.getrContactDir().getAbsolutePath());
+//                    String imageToBase64 = Utils.convertBitmapToBase64(BitmapFactory.decodeFile
+//                            (fileUtils.getrContactDir().getAbsolutePath()));
+//
+//                    // TODO: 09/02/17 social id
+//                    profileRegistration(finalFirstName, finalLastName, finalEmailAddress,
+//                            imageToBase64, finalId, null, IntegerConstants
+//                                    .REGISTRATION_VIA_LINED_IN);
+//
+//                } else {
+//
+//                    // TODO: 09/02/17 social id
+//                    Log.e("onResourceReady: ", "There is some error in storing Image!");
+//                    profileRegistration(finalFirstName, finalLastName, finalEmailAddress, null,
+//                            finalId, null, IntegerConstants.REGISTRATION_VIA_LINED_IN);
+//
+//                }
+//            }
+//        };
+//
+//        Glide.with(this)
+//                .load(pictureUrl)
+//                .asBitmap()
+//                .into(googleTarget);
+//
+//    }
 
-    }
-
-    private void getGoogleBitmapFromUrl(GoogleSignInAccount acct) {
-
-        String personPhotoUrl = "";
-        String givenName = StringUtils.defaultString(acct.getGivenName());
-        if (StringUtils.contains(givenName, " ")) {
-            String[] names = givenName.split(" ");
-            givenName = names[0];
-        }
-        final String firstName = givenName;
-        final String lastName = StringUtils.defaultString(acct.getFamilyName());
-        final String email = StringUtils.defaultString(acct.getEmail());
-        final String personId = StringUtils.defaultString(acct.getId());
-        if (acct.getPhotoUrl() != null) {
-            personPhotoUrl = StringUtils.defaultString(acct.getPhotoUrl().toString());
-        } else {
-            profileRegistration(firstName, lastName, email, null, personId, null,
-                    IntegerConstants.REGISTRATION_VIA_GOOGLE);
-        }
-
-        SimpleTarget googleTarget = new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                FileUtils fileUtils = new FileUtils(bitmap);
-                if (fileUtils.saveImageToDirectory()) {
-                    Log.i("file absolute path: ", fileUtils.getrContactDir().getAbsolutePath());
-                    String imageToBase64 = Utils.convertBitmapToBase64(BitmapFactory.decodeFile
-                            (fileUtils.getrContactDir().getAbsolutePath()));
-
-                    profileRegistration(firstName, lastName, email, imageToBase64, personId, null,
-                            IntegerConstants.REGISTRATION_VIA_GOOGLE);
-                } else {
-                    Log.e("onResourceReady: ", "There is some error in storing Image!");
-                    profileRegistration(firstName, lastName, email, null, personId, null,
-                            IntegerConstants.REGISTRATION_VIA_GOOGLE);
-                }
-            }
-        };
-
-        Glide.with(this)
-                .load(personPhotoUrl)
-                .asBitmap()
-                .into(googleTarget);
-
-    }
-
-    private void getLinkedInBitmapFromUrl(final JSONObject response) {
-
-        String id, firstName, lastName, emailAddress, pictureUrl;
-
-        try {
-            id = response.get("id").toString();
-            firstName = response.get("firstName").toString();
-            lastName = response.get("lastName").toString();
-            emailAddress = response.get("emailAddress").toString();
-            pictureUrl = response.get("pictureUrl").toString();
-        } catch (JSONException e) {
-            id = "";
-            firstName = "";
-            lastName = "";
-            emailAddress = "";
-            pictureUrl = "";
-            e.printStackTrace();
-        }
-
-        final String finalFirstName = firstName;
-        final String finalLastName = lastName;
-        final String finalEmailAddress = emailAddress;
-        final String finalId = id;
-
-        SimpleTarget googleTarget = new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                FileUtils fileUtils = new FileUtils(bitmap);
-                if (fileUtils.saveImageToDirectory()) {
-                    Log.i("file absolute path: ", fileUtils.getrContactDir().getAbsolutePath());
-                    String imageToBase64 = Utils.convertBitmapToBase64(BitmapFactory.decodeFile
-                            (fileUtils.getrContactDir().getAbsolutePath()));
-
-                    // TODO: 09/02/17 social id
-                    profileRegistration(finalFirstName, finalLastName, finalEmailAddress,
-                            imageToBase64, finalId, null, IntegerConstants
-                                    .REGISTRATION_VIA_LINED_IN);
-
-                } else {
-
-                    // TODO: 09/02/17 social id
-                    Log.e("onResourceReady: ", "There is some error in storing Image!");
-                    profileRegistration(finalFirstName, finalLastName, finalEmailAddress, null,
-                            finalId, null, IntegerConstants.REGISTRATION_VIA_LINED_IN);
-
-                }
-            }
-        };
-
-        Glide.with(this)
-                .load(pictureUrl)
-                .asBitmap()
-                .into(googleTarget);
-
-    }
-
-    private void storeProfileDataToDb(ProfileDataOperation profileDetail) {
-
-        //<editor-fold desc="Basic Details">
-        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-
-        UserProfile userProfile = new UserProfile();
-        userProfile.setPmRcpId(userProfileRegistered.getPmId());
-        userProfile.setPmPrefix(profileDetail.getPbNamePrefix());
-        userProfile.setPmFirstName(profileDetail.getPbNameFirst());
-        userProfile.setPmMiddleName(profileDetail.getPbNameMiddle());
-        userProfile.setPmLastName(profileDetail.getPbNameLast());
-        userProfile.setPmSuffix(profileDetail.getPbNameSuffix());
-        userProfile.setPmNickName(profileDetail.getPbNickname());
-        userProfile.setPmPhoneticFirstName(profileDetail.getPbPhoneticNameFirst());
-        userProfile.setPmPhoneticMiddleName(profileDetail.getPbPhoneticNameMiddle());
-        userProfile.setPmPhoneticLastName(profileDetail.getPbPhoneticNameLast());
-        userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
-        userProfile.setPmNotes(profileDetail.getPbNote());
-        userProfile.setProfileRating(profileDetail.getProfileRating());
-        userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
-        userProfile.setPmIsFavourite(profileDetail.getIsFavourite());
-        userProfile.setPmNosqlMasterId(profileDetail.getNoSqlMasterId());
-        userProfile.setPmJoiningDate(profileDetail.getJoiningDate());
-        userProfile.setPmGender(profileDetail.getPbGender());
-
-        tableProfileMaster.addProfile(userProfile);
-        //</editor-fold>
-
-        //<editor-fold desc="Mobile Number">
-        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
-
-        ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
-        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber =
-                profileDetail.getPbPhoneNumber();
-        if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber)) {
-            for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
-                MobileNumber mobileNumber = new MobileNumber();
-                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i)
-                        .getPhoneId());
-                mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i)
-                        .getPhoneType());
-                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i)
-                        .getPhoneNumber());
-                mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
-                        .get(i).getPhonePublic()));
-                mobileNumber.setMnmIsPrimary(arrayListPhoneNumber.get(i).getPbRcpType());
-                mobileNumber.setRcProfileMasterPmId(userProfileRegistered.getPmId());
-                arrayListMobileNumber.add(mobileNumber);
-            }
-            tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Email Master">
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
-            ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
-            ArrayList<Email> arrayListEmail = new ArrayList<>();
-            for (int i = 0; i < arrayListEmailId.size(); i++) {
-                Email email = new Email();
-                email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
-                email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
-                email.setEmEmailType(arrayListEmailId.get(i).getEmType());
-                email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
-                email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
-//                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
-                email.setRcProfileMasterPmId(userProfileRegistered.getPmId());
-                arrayListEmail.add(email);
-            }
-
-            TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
-            tableEmailMaster.addArrayEmail(arrayListEmail);
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Organization Master">
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
-            ArrayList<ProfileDataOperationOrganization> arrayListOrganization = profileDetail
-                    .getPbOrganization();
-            ArrayList<Organization> organizationList = new ArrayList<>();
-            for (int i = 0; i < arrayListOrganization.size(); i++) {
-                Organization organization = new Organization();
-                organization.setOmRecordIndexId(arrayListOrganization.get(i).getOrgId());
-                organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName
-                        ());
-               /* organization.setOmOrganizationType(arrayListOrganization.get(i).getOrgType());
-                organization.setOmOrganizationTitle(arrayListOrganization.get(i).getOrgName());
-                organization.setOmOrganizationDepartment(arrayListOrganization.get(i)
-                        .getOrgDepartment());
-                organization.setOmJobDescription(arrayListOrganization.get(i)
-                        .getOrgJobTitle());
-                organization.setOmOfficeLocation(arrayListOrganization.get(i)
-                        .getOrgOfficeLocation());*/
-                organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
-                        .getOrgJobTitle());
-                organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
-                        .getIsCurrent()));
-                organization.setRcProfileMasterPmId(userProfileRegistered.getPmId());
-                organizationList.add(organization);
-            }
-
-            TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
-                    (databaseHandler);
-            tableOrganizationMaster.addArrayOrganization(organizationList);
-        }
-        //</editor-fold>
-
-        // <editor-fold desc="Website Master">
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
-//            ArrayList<String> arrayListWebsite = profileDetail.getPbWebAddress();
-            ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileDetail
-                    .getPbWebAddress();
-            ArrayList<Website> websiteList = new ArrayList<>();
-            for (int j = 0; j < arrayListWebsite.size(); j++) {
-                Website website = new Website();
-                website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
-                website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
-                website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
-                website.setRcProfileMasterPmId(userProfileRegistered.getPmId());
-                websiteList.add(website);
-            }
-
-            TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
-            tableWebsiteMaster.addArrayWebsite(websiteList);
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Address Master">
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
-            ArrayList<ProfileDataOperationAddress> arrayListAddress = profileDetail.getPbAddress();
-            ArrayList<Address> addressList = new ArrayList<>();
-            for (int j = 0; j < arrayListAddress.size(); j++) {
-                Address address = new Address();
-                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
-                address.setAmCity(arrayListAddress.get(j).getCity());
-                address.setAmState(arrayListAddress.get(j).getState());
-                address.setAmCountry(arrayListAddress.get(j).getCountry());
-                address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
-                address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
-                address.setAmPostCode(arrayListAddress.get(j).getPostCode());
-                address.setAmPoBox(arrayListAddress.get(j).getPoBox());
-                address.setAmStreet(arrayListAddress.get(j).getStreet());
-                address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-                if (arrayListAddress.get(j).getGoogleLatLong() != null && arrayListAddress.get(j)
-                        .getGoogleLatLong().size() == 2) {
-                    address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatLong().get(1));
-                    address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLatLong().get(0));
-                }
-                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
-                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
-                address.setRcProfileMasterPmId(userProfileRegistered.getPmId());
-                addressList.add(address);
-            }
-
-            TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
-            tableAddressMaster.addArrayAddress(addressList);
-        }
-        //</editor-fold>
-
-        // <editor-fold desc="Im Account Master">
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
-            ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileDetail
-                    .getPbIMAccounts();
-            ArrayList<ImAccount> imAccountsList = new ArrayList<>();
-            for (int j = 0; j < arrayListImAccount.size(); j++) {
-                ImAccount imAccount = new ImAccount();
-                imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
-                imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
-                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
-                        .getIMAccountPublic()));
-                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
-//                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
-                imAccount.setRcProfileMasterPmId(userProfileRegistered.getPmId());
-                imAccountsList.add(imAccount);
-            }
-
-            TableImMaster tableImMaster = new TableImMaster(databaseHandler);
-            tableImMaster.addArrayImAccount(imAccountsList);
-        }
-        //</editor-fold>
-
-        // <editor-fold desc="Event Master">
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
-            ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail.getPbEvent();
-            ArrayList<Event> eventList = new ArrayList<>();
-            for (int j = 0; j < arrayListEvent.size(); j++) {
-                Event event = new Event();
-                event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
-                event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
-                event.setEvmEventType(arrayListEvent.get(j).getEventType());
-                event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
-//                event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
-                event.setRcProfileMasterPmId(userProfileRegistered.getPmId());
-                eventList.add(event);
-            }
-
-            TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
-            tableEventMaster.addArrayEvent(eventList);
-        }
-        //</editor-fold>
-    }
-
-    private void getLocationDetail() {
+    /*private void getLocationDetail() {
         gpsTracker = new GPSTracker(this, null);
         latitude = gpsTracker.getLatitude();
         longitude = gpsTracker.getLongitude();
@@ -943,7 +688,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 .REQ_REVERSE_GEO_CODING_ADDRESS, false);
         asyncReverseGeoCoding.execute(new LatLng(latitude, longitude));
 
-    }
+    }*/
 
     /**
      * To get key hash
@@ -969,29 +714,27 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     //</editor-fold>
 
-    //<editor-fold desc="Web Service Call">
+    //<editor-fold desc="Web Service Call">w
 
-    private void profileRegistration(String firstName, String lastName, String emailId, String
-            profileImage, String socialMediaId, String socialMediaToken, int type) {
+    private void profileRegistration(String firstName, String lastName, String emailId, int type) {
 
         WsRequestObject profileRegistrationObject = new WsRequestObject();
         profileRegistrationObject.setFirstName(StringUtils.trimToEmpty(firstName));
         profileRegistrationObject.setLastName(StringUtils.trimToEmpty(lastName));
         profileRegistrationObject.setEmailId(StringUtils.trimToEmpty(emailId));
-        profileRegistrationObject.setPmId(Integer.parseInt(userProfile.getPmId()));
-        profileRegistrationObject.setPbSocialId(socialMediaId);
-        profileRegistrationObject.setProfileImage(profileImage);
-        profileRegistrationObject.setType(String.valueOf(type));
-        profileRegistrationObject.setSocialMediaTokenId(socialMediaToken);
-        profileRegistrationObject.setDeviceId(getDeviceTokenId());
         profileRegistrationObject.setCreatedBy("2"); // For Android Devices
+        profileRegistrationObject.setType(String.valueOf(type));
+//        profileRegistrationObject.setGcmToken(Utils.getStringPreference(ProfileRegistrationActivity.this,
+//                AppConstants.PREF_DEVICE_TOKEN_ID, ""));
 
-        userProfileRegistered = new UserProfile();
-        userProfileRegistered.setPmId(userProfile.getPmId());
-        userProfileRegistered.setPmFirstName(profileRegistrationObject.getFirstName());
-        userProfileRegistered.setPmLastName(profileRegistrationObject.getLastName());
-        userProfileRegistered.setPmSignupSocialMediaType(String.valueOf(type));
-        userProfileRegistered.setPmAccessToken(getDeviceTokenId() + "_" + userProfile.getPmId());
+        profileRegistrationObject.setGcmToken(getDeviceTokenId());
+
+//        userProfileRegistered = new UserProfile();
+//        userProfileRegistered.setPmId(userProfile.getPmId());
+//        userProfileRegistered.setPmFirstName(profileRegistrationObject.getFirstName());
+//        userProfileRegistered.setPmLastName(profileRegistrationObject.getLastName());
+//        userProfileRegistered.setPmSignupSocialMediaType(String.valueOf(type));
+//        userProfileRegistered.setPmAccessToken(getDeviceTokenId() + "_" + userProfile.getPmId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
@@ -1004,33 +747,33 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         }
     }
 
-    private void deviceDetail() {
-
-        String model = android.os.Build.MODEL;
-        String androidVersion = android.os.Build.VERSION.RELEASE;
-        String brand = android.os.Build.BRAND;
-        String device = android.os.Build.DEVICE;
-        String secureAndroidId = Settings.Secure.getString(getContentResolver(), Settings.Secure
-                .ANDROID_ID);
-
-        WsRequestObject deviceDetailObject = new WsRequestObject();
-        deviceDetailObject.setDmModel(StringUtils.defaultString(model));
-        deviceDetailObject.setDmVersion(StringUtils.defaultString(androidVersion));
-        deviceDetailObject.setDmBrand(StringUtils.defaultString(brand));
-        deviceDetailObject.setDmDevice(StringUtils.defaultString(device));
-        deviceDetailObject.setDmUniqueid(StringUtils.defaultString(secureAndroidId));
-        deviceDetailObject.setDmLocation(StringUtils.defaultString(locationString));
-
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_STORE_DEVICE_DETAILS, null, true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
-        } else {
-            Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
-                    .getString(R.string.msg_no_network));
-        }
-    }
+//    private void deviceDetail() {
+//
+//        String model = android.os.Build.MODEL;
+//        String androidVersion = android.os.Build.VERSION.RELEASE;
+//        String brand = android.os.Build.BRAND;
+//        String device = android.os.Build.DEVICE;
+//        String secureAndroidId = Settings.Secure.getString(getContentResolver(), Settings.Secure
+//                .ANDROID_ID);
+//
+//        WsRequestObject deviceDetailObject = new WsRequestObject();
+//        deviceDetailObject.setDmModel(StringUtils.defaultString(model));
+//        deviceDetailObject.setDmVersion(StringUtils.defaultString(androidVersion));
+//        deviceDetailObject.setDmBrand(StringUtils.defaultString(brand));
+//        deviceDetailObject.setDmDevice(StringUtils.defaultString(device));
+//        deviceDetailObject.setDmUniqueid(StringUtils.defaultString(secureAndroidId));
+//        deviceDetailObject.setDmLocation(StringUtils.defaultString(locationString));
+//
+//        if (Utils.isNetworkAvailable(this)) {
+//            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+//                    deviceDetailObject, null, WsResponseObject.class, WsConstants
+//                    .REQ_STORE_DEVICE_DETAILS, null, true).execute
+//                    (WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
+//        } else {
+//            Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
+//                    .getString(R.string.msg_no_network));
+//        }
+//    }
 
     //</editor-fold>
 
@@ -1052,17 +795,22 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                                 if (facebookData != null) {
 
-                                    if (StringUtils.length(facebookData.getString(PROFILE_IMAGE))
-                                            > 0) {
-                                        getFacebookBitmapFromUrl(facebookData, loginResult);
-                                    } else {
-                                        profileRegistration(facebookData.getString(FIRST_NAME),
-                                                facebookData.getString(LAST_NAME), facebookData
-                                                        .getString(EMAIL_ID), null, facebookData
-                                                        .getString(SOCIAL_ID), loginResult
-                                                        .getAccessToken().getToken(),
-                                                IntegerConstants.REGISTRATION_VIA_FACEBOOK);
-                                    }
+                                    firstName = facebookData.getString(FIRST_NAME);
+                                    lastName = facebookData.getString(LAST_NAME);
+                                    email = facebookData.getString(EMAIL_ID);
+
+                                    inputFirstName.setText(firstName);
+                                    inputLastName.setText(lastName);
+                                    inputEmailId.setText(email);
+
+                                    inputEmailId.setEnabled(false);
+
+                                    profileRegistration(firstName, lastName, email, IntegerConstants.REGISTRATION_VIA_FACEBOOK);
+
+//                                    if (StringUtils.length(facebookData.getString(PROFILE_IMAGE))
+//                                            > 0) {
+//                                        getFacebookBitmapFromUrl(facebookData, loginResult);
+//                                    } else {}
                                 }
 
                             }
@@ -1168,18 +916,21 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
             if (acct != null) {
 
-             /*   String firstName = StringUtils.defaultString(acct.getGivenName());
-                String lastName = StringUtils.defaultString(acct.getFamilyName());
-                String personPhotoUrl = StringUtils.defaultString(acct.getPhotoUrl().toString());
-                String email = StringUtils.defaultString(acct.getEmail());
+                firstName = StringUtils.defaultString(acct.getGivenName());
+                lastName = StringUtils.defaultString(acct.getFamilyName());
+                email = StringUtils.defaultString(acct.getEmail());
 
-                profileRegistration(firstName, lastName, email, null, getResources().getInteger(R
-                        .integer.registration_via_google));*/
+                inputFirstName.setText(firstName);
+                inputLastName.setText(lastName);
+                inputEmailId.setText(email);
 
-                getGoogleBitmapFromUrl(acct);
+                inputEmailId.setEnabled(false);
+
+                profileRegistration(firstName, lastName, email, IntegerConstants.REGISTRATION_VIA_GOOGLE);
+
+//                getGoogleBitmapFromUrl(acct);
 
             }
-
 
         } else {
             // Signed out.
@@ -1226,16 +977,29 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 try {
 
                     JSONObject response = result.getResponseDataAsJson();
-/*
-                    profileRegistration(response.get("firstName").toString(), response.get
-                                    ("lastName").toString(), response.get("emailAddress")
-                                    .toString(), null,
-                            getResources().getInteger(R.integer.registration_via_lined_in));*/
-                    getLinkedInBitmapFromUrl(response);
+
+                    firstName = response.get("firstName").toString();
+                    lastName = response.get("lastName").toString();
+                    email = response.get("emailAddress").toString();
+
+                    inputFirstName.setText(firstName);
+                    inputLastName.setText(lastName);
+                    inputEmailId.setText(email);
+
+                    inputEmailId.setEnabled(false);
+
+                    profileRegistration(firstName, lastName, email, IntegerConstants.REGISTRATION_VIA_LINED_IN);
+
+//                    profileRegistration(response.get("firstName").toString(), response.get
+//                                    ("lastName").toString(), response.get("emailAddress")
+//                                    .toString(), null,
+//                            getResources().getInteger(R.integer.registration_via_lined_in));
+
+//                    getLinkedInBitmapFromUrl(response);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override

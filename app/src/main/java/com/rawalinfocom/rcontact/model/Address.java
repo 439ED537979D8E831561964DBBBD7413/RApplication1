@@ -18,7 +18,7 @@ public class Address {
     private String amPoBox;
     private String amState;
     private String amStreet;
-    private int amIsPrivate;
+    private Integer amIsPrivate;
     private String amAddressType;
     private String amGoogleAddress;
     private String amGoogleLatitude;
@@ -148,11 +148,11 @@ public class Address {
         this.amRecordIndexId = amRecordIndexId;
     }
 
-    public int getAmIsPrivate() {
+    public Integer getAmIsPrivate() {
         return amIsPrivate;
     }
 
-    public void setAmIsPrivate(int amIsPrivate) {
+    public void setAmIsPrivate(Integer amIsPrivate) {
         this.amIsPrivate = amIsPrivate;
     }
 

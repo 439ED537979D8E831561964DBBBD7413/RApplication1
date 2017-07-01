@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.SMSMenuOptionsDialog;
@@ -45,7 +46,6 @@ import butterknife.BindView;
  */
 
 public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
 
 
     private Context context;
@@ -188,9 +188,27 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             final String address = smsDataType.getAddress();
             final String number = smsDataType.getNumber();
             final String add;
+
+            if (!TextUtils.isEmpty(address)) {
+                if (isRead.equalsIgnoreCase("0")) {
+                    userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
+                            .colorBlack));
+                    userViewHolder.textNumber.setTypeface(Utils.typefaceBold(context));
+                    userViewHolder.textNumber.setText(address);
+
+                } else {
+                    userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
+                            .colorBlack));
+                    userViewHolder.textNumber.setTypeface(Utils.typefaceRegular(context));
+                    userViewHolder.textNumber.setText(address);
+                }
+            } else {
+                userViewHolder.textNumber.setText(" ");
+            }
+
             if (!TextUtils.isEmpty(number)) {
                 add = number;
-                if (smsDataType.isRcpUser()) {
+                if (MoreObjects.firstNonNull(smsDataType.isRcpUser(), false)) {
                     userViewHolder.textCloudContactName.setVisibility(View.VISIBLE);
                     String contactDisplayName = "";
                     String prefix = smsDataType.getPrefix();
@@ -213,20 +231,36 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 /*if (StringUtils.length(suffix) > 0) {
                     contactDisplayName = contactDisplayName + suffix;
                 }*/
-
-                    if (StringUtils.equalsIgnoreCase(add, contactDisplayName)) {
-                        userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
-                                .colorAccent));
-                        userViewHolder.textCloudContactName.setVisibility(View.GONE);
-                        userViewHolder.textNumber.setText(add);
+                    if (address != null && address.matches("^[\\p{L} .'-]+$")) {
+                        if (StringUtils.equalsIgnoreCase(address, contactDisplayName)) {
+                            userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
+                                    .colorAccent));
+                            userViewHolder.textCloudContactName.setVisibility(View.GONE);
+                            userViewHolder.textNumber.setText(address);
+                        } else {
+                            userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
+                                    .colorBlack));
+                            userViewHolder.textCloudContactName.setVisibility(View.VISIBLE);
+                            userViewHolder.textCloudContactName.setTextColor(ContextCompat.getColor(context, R.color
+                                    .colorAccent));
+                            userViewHolder.textNumber.setText(address);
+                            userViewHolder.textCloudContactName.setText(" " + "(" + contactDisplayName + ")");
+                        }
                     } else {
-                        userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
-                                .colorBlack));
-                        userViewHolder.textCloudContactName.setVisibility(View.VISIBLE);
-                        userViewHolder.textCloudContactName.setTextColor(ContextCompat.getColor(context, R.color
-                                .colorAccent));
-                        userViewHolder.textNumber.setText(add);
-                        userViewHolder.textCloudContactName.setText(" " + "(" + contactDisplayName + ")");
+                        if (StringUtils.equalsIgnoreCase(add, contactDisplayName)) {
+                            userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
+                                    .colorAccent));
+                            userViewHolder.textCloudContactName.setVisibility(View.GONE);
+                            userViewHolder.textNumber.setText(add);
+                        } else {
+                            userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
+                                    .colorBlack));
+                            userViewHolder.textCloudContactName.setVisibility(View.VISIBLE);
+                            userViewHolder.textCloudContactName.setTextColor(ContextCompat.getColor(context, R.color
+                                    .colorAccent));
+                            userViewHolder.textNumber.setText(add);
+                            userViewHolder.textCloudContactName.setText(" " + "(" + contactDisplayName + ")");
+                        }
                     }
 
                 } else {
@@ -241,22 +275,6 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 userViewHolder.textCloudContactName.setVisibility(View.GONE);
                 add = address;
             }
-            if (!TextUtils.isEmpty(address)) {
-                if (isRead.equalsIgnoreCase("0")) {
-                    userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
-                            .colorBlack));
-                    userViewHolder.textNumber.setTypeface(Utils.typefaceBold(context));
-                    userViewHolder.textNumber.setText(address);
-
-                } else {
-                    userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
-                            .colorBlack));
-                    userViewHolder.textNumber.setTypeface(Utils.typefaceRegular(context));
-                    userViewHolder.textNumber.setText(address);
-                }
-            } else {
-                userViewHolder.textNumber.setText(" ");
-            }
 
             String body = smsDataType.getBody();
             if (!TextUtils.isEmpty(body)) {
@@ -269,7 +287,6 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             } else {
                 userViewHolder.textBody.setText(" ");
-
             }
 
             long date = smsDataType.getDataAndTime();

@@ -9,21 +9,25 @@ package com.rawalinfocom.rcontact.constants;
 public class WsConstants {
 
     // Staging Env
-//    public static final String WS_ROOT = "http://appstaging.rcontacts.in/api/v1/";
+//    public static final String WS_ROOT = "http://apistaging.rcontacts.in";
 
     // QA Server
-//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
 
     // Monal
 //    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
-//    public static final String WS_ROOT = "http://54.202.191.41/api/v1/";
-//    public static final String WS_ROOT = "http://10.0.21.123/api/v1/";
 
     // Aniruddh
 //    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
 
     //    Maulik
-    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
+
+    // Darshan
+//    public static final String WS_ROOT = "http://10.0.21.202/api/v1/";
+
+    // Hardik
+//    public static final String WS_ROOT = "http://10.0.30.11/api/v1/";
 
     // Shailesh
 //    public static final String WS_ROOT = "http://10.0.21.14:8001/api/v1/";
@@ -42,7 +46,8 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://10.0.51.101:/api/v1/";
 
     // Swati
-//    public static final String WS_ROOT = "http://10.0.21.131/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.131/api/v1/";// QA Server
+//    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
 
     // Vijay
 //     public static final String WS_ROOT = "http://10.0.21.16/api/v1/";
@@ -52,22 +57,27 @@ public class WsConstants {
     public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
 
     // Staging Env
-    //public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
+//    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
 
-    // QA Server
-//    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
 
     public static final String RESPONSE_STATUS_TRUE = "true";
 
     public static final String REQ_GOOGLE_TEXT_BY_LOCATIONS = "https://maps.googleapis" +
             ".com/maps/api/place/textsearch/json?";
 
+    public static final String REQ_HEADER = "rcAuthToken";
+
+    // New Registration
+    public static final String REQ_CHECK_NUMBER = "check-number";  // working
+    public static final String REQ_OTP_CONFIRMED = "confirm-otp"; // working
+    public static final String REQ_PROFILE_REGISTRATION = "profile-registration"; // working
+    public static final String REQ_SAVE_PASSWORD = "save-password"; // working
+    public static final String REQ_CHECK_LOGIN = "check-login"; // working
+
     public static final String REQ_COUNTRY_CODE_DETAIL = "country-code-detail"; // not used
-    public static final String REQ_SEND_OTP = "send_otp";  // working
+    //    public static final String REQ_SEND_OTP = "send_otp";  // working
     public static final String REQ_MSP_DELIVERY_TIME = "msp-delivery-time"; // not required to test
-    public static final String REQ_OTP_CONFIRMED = "otp_confirmed"; // working
     public static final String REQ_STORE_DEVICE_DETAILS = "store-device-details"; //working
-    public static final String REQ_PROFILE_REGISTRATION = "profile_registration"; // working
     public static final String REQ_UPLOAD_CONTACTS = "uploadContacts"; //working
     public static final String REQ_UPLOAD_CALL_LOGS = "sync-call-log"; // working
     public static final String REQ_UPLOAD_SMS_LOGS = "sync-sms-log";   // working
