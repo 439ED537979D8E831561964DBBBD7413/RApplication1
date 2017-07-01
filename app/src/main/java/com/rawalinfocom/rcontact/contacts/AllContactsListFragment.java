@@ -379,7 +379,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
         set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
-//        set.add(ContactsContract.Contacts.LOOKUP_KEY);
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
 
         Uri uri = ContactsContract.Data.CONTENT_URI;

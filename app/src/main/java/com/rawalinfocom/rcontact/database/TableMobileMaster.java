@@ -153,6 +153,34 @@ public class TableMobileMaster {
         db.close(); // Closing database connection
     }
 
+    public String getUserMobileNumber(String pm_id) {
+
+        String mobileNumber = "";
+        SQLiteDatabase db = databaseHandler.getReadableDatabase();
+
+        String query = "SELECT " + COLUMN_MNM_MOBILE_NUMBER + " FROM " + TABLE_RC_MOBILE_NUMBER_MASTER +
+                " where " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = \"" + pm_id + "\" and " + COLUMN_MNM_IS_PRIMARY
+                + " = 1 ";
+
+        System.out.println("RContact query --> " + query);
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        // looping through all rows and adding to list
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            mobileNumber = cursor.getString(0);
+        } else {
+            mobileNumber = "";
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
+        db.close();
+
+        return mobileNumber;
+    }
+
     // Getting single Mobile Number
     public MobileNumber getMobileNumber(int mnmId) {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();

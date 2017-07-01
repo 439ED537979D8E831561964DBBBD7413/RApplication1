@@ -114,7 +114,6 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         init();
         getContactData();
         setupView();
-
     }
 
     @Override
@@ -239,8 +238,6 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
         imageRightLeft = ButterKnife.findById(includeToolbar, R.id.image_right_left);
-//        rippleActionRightLeft = ButterKnife.findById(includeToolbar, R.id
-// .ripple_action_right_left);
         rippleActionRightCenter = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_center);
         inputSearch = ButterKnife.findById(includeToolbar, R.id.input_search);

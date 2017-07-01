@@ -1190,25 +1190,24 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_PROFILE_DETAILS)) {
                 WsResponseObject getProfileResponse = (WsResponseObject) data;
                 Utils.hideProgressDialog();
-                if (getProfileResponse != null && StringUtils.equalsIgnoreCase(getProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                    if (getProfileResponse != null) {
+                if (getProfileResponse != null && StringUtils.equalsIgnoreCase(getProfileResponse.getStatus(),
+                        WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                        ProfileDataOperation profileDetail = getProfileResponse.getProfileDetail();
-                        storeProfileDataToDb(profileDetail);
-                        setUpView(profileDetail);
+                    ProfileDataOperation profileDetail = getProfileResponse.getProfileDetail();
+                    storeProfileDataToDb(profileDetail);
+                    setUpView(profileDetail);
 
-                        ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
-                        ProfileVisit profileVisit = new ProfileVisit();
-                        profileVisit.setVisitorPmId(Integer.parseInt(pmId));
-                        profileVisit.setVisitCount(1);
-                        profileVisits.add(profileVisit);
-                        profileVisit(profileVisits);
+                    ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
+                    ProfileVisit profileVisit = new ProfileVisit();
+                    profileVisit.setVisitorPmId(Integer.parseInt(pmId));
+                    profileVisit.setVisitCount(1);
+                    profileVisits.add(profileVisit);
+                    profileVisit(profileVisits);
 
-                    } else {
-                        Log.e("onDeliveryResponse: ", "otpDetailResponse null");
-                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
-                                .string.msg_try_later));
-                    }
+                } else {
+                    Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                    Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
+                            .string.msg_try_later));
                 }
             }
             //</editor-fold>

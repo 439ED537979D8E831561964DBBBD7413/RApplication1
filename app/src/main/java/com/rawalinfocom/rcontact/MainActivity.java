@@ -41,10 +41,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
@@ -72,6 +74,7 @@ import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.CallLogType;
@@ -906,6 +909,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        setNavigationHeaderData();
+
         if (BuildConfig.DEBUG) {
             Menu menu = navigationView.getMenu();
             menu.findItem(R.id.nav_db_export).setVisible(true);
@@ -917,6 +922,42 @@ public class MainActivity extends BaseActivity implements NavigationView
         setupTabLayout();
         Utils.changeTabsFont(this, tabMain);
 
+    }
+
+    private void setNavigationHeaderData() {
+
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView text_user_name = (TextView) headerView.findViewById(R.id.text_user_name);
+        TextView text_number = (TextView) headerView.findViewById(R.id.text_number);
+        TextView text_rating_count = (TextView) headerView.findViewById(R.id.text_rating_count);
+        RatingBar rating_user = (RatingBar) headerView.findViewById(R.id.rating_user);
+        ImageView userProfileImage = (ImageView) headerView.findViewById(R.id.userProfileImage);
+
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
+
+        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+        String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
+
+        text_user_name.setText(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+        text_number.setText(number);
+        text_rating_count.setText(userProfile.getTotalProfileRateUser());
+        rating_user.setRating(Float.parseFloat(userProfile.getProfileRating()));
+
+        final String thumbnailUrl = userProfile.getPmProfileImage();
+        if (!TextUtils.isEmpty(thumbnailUrl)) {
+            Glide.with(MainActivity.this)
+                    .load(thumbnailUrl)
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(MainActivity.this))
+                    .override(500, 500)
+                    .into(userProfileImage);
+
+        } else {
+            userProfileImage.setImageResource(R.drawable.home_screen_profile);
+        }
     }
 
     private void openDialer() {
