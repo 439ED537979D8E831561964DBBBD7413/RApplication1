@@ -161,10 +161,10 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_CHECK_LOGIN)) {
                 WsResponseObject enterPassWordResponse = (WsResponseObject) data;
-                Utils.hideProgressDialog();
 
-                if (enterPassWordResponse != null && StringUtils.equalsIgnoreCase(enterPassWordResponse
-                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                if (enterPassWordResponse != null && StringUtils.equalsIgnoreCase
+                        (enterPassWordResponse
+                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     // set launch screen as MainActivity
                     Utils.setIntegerPreference(this,
@@ -175,13 +175,46 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     Utils.setObjectPreference(this, AppConstants
                             .PREF_REGS_USER_OBJECT, profileDetail);
 
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID, profileDetail.getRcpPmId());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID, profileDetail
+                            .getRcpPmId());
                     storeProfileDataToDb(profileDetail);
 
 //                    if (isFrom.equals("re_login")) {
 //                    }
 
                     // Redirect to MainActivity
+                    if (isFrom.equals("re_login")) {
+                        Utils.hideProgressDialog();
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                        finish();
+                    } else {
+                        deviceDetail();
+                    }
+
+                } else {
+                    if (enterPassWordResponse != null) {
+                        Log.e("error response", enterPassWordResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "enterPassWordResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+            }
+
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_STORE_DEVICE_DETAILS)) {
+                WsResponseObject enterPassWordResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (enterPassWordResponse != null && StringUtils.equalsIgnoreCase
+                        (enterPassWordResponse
+                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+
                     Intent intent = new Intent(this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -189,6 +222,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     startActivity(intent);
                     overridePendingTransition(R.anim.enter, R.anim.exit);
                     finish();
+
 
                 } else {
                     if (enterPassWordResponse != null) {
@@ -258,11 +292,13 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         }
         enterPassWordObject.setCreatedBy("2"); // For Android Devices
         enterPassWordObject.setGcmToken(getDeviceTokenId());
-        enterPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings.Secure
+        enterPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings
+                .Secure
                 .ANDROID_ID));
 
         if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), enterPassWordObject,
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    enterPassWordObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_LOGIN, getString(R.string
                     .msg_please_wait), false).execute(WsConstants.WS_ROOT + WsConstants
                     .REQ_CHECK_LOGIN);
@@ -452,5 +488,34 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
             tableEventMaster.addArrayEvent(eventList);
         }
         //</editor-fold>
+    }
+
+    private void deviceDetail() {
+
+        String model = android.os.Build.MODEL;
+        String androidVersion = android.os.Build.VERSION.RELEASE;
+        String brand = android.os.Build.BRAND;
+        String device = android.os.Build.DEVICE;
+        String secureAndroidId = Settings.Secure.getString(getContentResolver(), Settings.Secure
+                .ANDROID_ID);
+
+        WsRequestObject deviceDetailObject = new WsRequestObject();
+        deviceDetailObject.setDmModel(StringUtils.defaultString(model));
+        deviceDetailObject.setDmVersion(StringUtils.defaultString(androidVersion));
+        deviceDetailObject.setDmBrand(StringUtils.defaultString(brand));
+        deviceDetailObject.setDmDevice(StringUtils.defaultString(device));
+        deviceDetailObject.setDmUniqueid(StringUtils.defaultString(secureAndroidId));
+//        deviceDetailObject.setDmLocation(StringUtils.defaultString(locationString));
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    deviceDetailObject, null, WsResponseObject.class, WsConstants
+                    .REQ_STORE_DEVICE_DETAILS, null, true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
+        }
+        /*else {
+            Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
+                    .getString(R.string.msg_no_network));
+        }*/
     }
 }

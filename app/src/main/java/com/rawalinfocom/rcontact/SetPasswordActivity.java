@@ -137,15 +137,14 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         if (error == null) {
 
             //<editor-fold desc="SET_PASSWORD">
-
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_SAVE_PASSWORD)) {
                 WsResponseObject setPasswordResponse = (WsResponseObject) data;
-                Utils.hideProgressDialog();
+
                 if (setPasswordResponse != null && StringUtils.equalsIgnoreCase(setPasswordResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     if (isFrom.equals("forgot_pass")) {
-
+                        Utils.hideProgressDialog();
                         // Redirect to MobileNumberRegistrationActivity
                         Intent intent = new Intent(this, ReLoginEnterPasswordActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -172,14 +171,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
 
                         storeProfileDataToDb(profileDetail);
 
-                        // Redirect to MainActivity
-                        Intent intent = new Intent(this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.enter, R.anim.exit);
-                        finish();
+                        deviceDetail();
                     }
 
                 } else {
@@ -187,10 +179,39 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                         Log.e("error response", setPasswordResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "setPassword null");
-                        Utils.showErrorSnackBar(this, layoutRoot, getString(R.string.msg_try_later));
+                        Utils.showErrorSnackBar(this, layoutRoot, getString(R.string
+                                .msg_try_later));
                     }
                 }
             }
+            //</editor-fold>
+            // <editor-fold desc="SET_PASSWORD">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_STORE_DEVICE_DETAILS)) {
+                WsResponseObject setPasswordResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (setPasswordResponse != null && StringUtils.equalsIgnoreCase(setPasswordResponse
+                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    // Redirect to MainActivity
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                    finish();
+
+                } else {
+                    if (setPasswordResponse != null) {
+                        Log.e("error response", setPasswordResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "setPassword null");
+                        Utils.showErrorSnackBar(this, layoutRoot, getString(R.string
+                                .msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
         } else {
 //            AppUtils.hideProgressDialog();
             Utils.showErrorSnackBar(this, layoutRoot, "" + error.getLocalizedMessage());
@@ -203,10 +224,12 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
             case R.id.ripple_action_back:
 
                 if (isFrom.equals("forgot_pass")) {
-                    startActivity(new Intent(SetPasswordActivity.this, OtpVerificationActivity.class));
+                    startActivity(new Intent(SetPasswordActivity.this, OtpVerificationActivity
+                            .class));
                     finish();
                 } else {
-                    startActivity(new Intent(SetPasswordActivity.this, ProfileRegistrationActivity.class));
+                    startActivity(new Intent(SetPasswordActivity.this,
+                            ProfileRegistrationActivity.class));
                     finish();
                 }
                 break;
@@ -220,22 +243,26 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         String password = inputSetPassword.getText().toString();
         String confirmPassword = inputSetConfirmPassword.getText().toString();
         if (StringUtils.isEmpty(password)) {
-            Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string.err_msg_please_enter_password));
+            Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string
+                    .err_msg_please_enter_password));
             return;
         }
         if (StringUtils.isEmpty(confirmPassword)) {
-            Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string.err_msg_please_confirm_password));
+            Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string
+                    .err_msg_please_confirm_password));
             return;
         }
         if (!password.equalsIgnoreCase(confirmPassword)) {
-            Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string.err_msg_password_not_match));
+            Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string
+                    .err_msg_password_not_match));
             return;
         }
         if (password.equalsIgnoreCase(confirmPassword)) {
             if (isPasswordValid(password)) {
                 SavePassword(password, confirmPassword);
             } else {
-                Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string.msg_tip_password));
+                Utils.showErrorSnackBar(this, layoutRoot, getResources().getString(R.string
+                        .msg_tip_password));
             }
         }
     }
@@ -245,14 +272,16 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         WsRequestObject setPassWordObject = new WsRequestObject();
         setPassWordObject.setPassword(StringUtils.trimToEmpty(password));
         setPassWordObject.setPassword_confirmation(StringUtils.trimToEmpty(confirmPassword));
-        setPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings.Secure
+        setPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings
+                .Secure
                 .ANDROID_ID));
         setPassWordObject.setCreatedBy("2"); // For Android Devices
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     setPassWordObject, null, WsResponseObject.class, WsConstants.REQ_SAVE_PASSWORD,
-                    getString(R.string.msg_please_wait), true).execute(WsConstants.WS_ROOT + WsConstants.REQ_SAVE_PASSWORD);
+                    getString(R.string.msg_please_wait), true).execute(WsConstants.WS_ROOT +
+                    WsConstants.REQ_SAVE_PASSWORD);
         } else {
             Utils.showErrorSnackBar(this, layoutRoot, getResources()
                     .getString(R.string.msg_no_network));
@@ -439,5 +468,34 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
             tableEventMaster.addArrayEvent(eventList);
         }
         //</editor-fold>
+    }
+
+    private void deviceDetail() {
+
+        String model = android.os.Build.MODEL;
+        String androidVersion = android.os.Build.VERSION.RELEASE;
+        String brand = android.os.Build.BRAND;
+        String device = android.os.Build.DEVICE;
+        String secureAndroidId = Settings.Secure.getString(getContentResolver(), Settings.Secure
+                .ANDROID_ID);
+
+        WsRequestObject deviceDetailObject = new WsRequestObject();
+        deviceDetailObject.setDmModel(StringUtils.defaultString(model));
+        deviceDetailObject.setDmVersion(StringUtils.defaultString(androidVersion));
+        deviceDetailObject.setDmBrand(StringUtils.defaultString(brand));
+        deviceDetailObject.setDmDevice(StringUtils.defaultString(device));
+        deviceDetailObject.setDmUniqueid(StringUtils.defaultString(secureAndroidId));
+//        deviceDetailObject.setDmLocation(StringUtils.defaultString(locationString));
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    deviceDetailObject, null, WsResponseObject.class, WsConstants
+                    .REQ_STORE_DEVICE_DETAILS, null, true).execute
+                    (WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
+        }
+        /*else {
+            Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
+                    .getString(R.string.msg_no_network));
+        }*/
     }
 }

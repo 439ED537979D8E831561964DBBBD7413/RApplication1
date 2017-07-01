@@ -27,7 +27,7 @@ public class SmsDataType implements Serializable {
     @JsonIgnore
     Integer recordPosition;
     @JsonIgnore
-    private boolean isRcpUser;
+    private Boolean isRcpUser;
     @JsonIgnore
     private String rcpFirstName;
     @JsonIgnore
@@ -153,11 +153,11 @@ public class SmsDataType implements Serializable {
         this.recordPosition = recordPosition;
     }
 
-    public boolean isRcpUser() {
+    public Boolean isRcpUser() {
         return isRcpUser;
     }
 
-    public void setRcpUser(boolean rcpUser) {
+    public void setRcpUser(Boolean rcpUser) {
         isRcpUser = rcpUser;
     }
 
