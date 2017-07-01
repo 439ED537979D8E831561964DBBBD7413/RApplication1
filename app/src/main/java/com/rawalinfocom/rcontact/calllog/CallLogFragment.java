@@ -391,7 +391,17 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 }
                             }
                             if (!TextUtils.isEmpty(id)) {
-                                listOfIds.add(0, id);
+                                listOfIds =  new ArrayList<>();
+                                PhoneBookCallLogs phoneBookCallLogs1 = new PhoneBookCallLogs(getActivity());
+                                Cursor cursor1 = phoneBookCallLogs1.getAllCallLogId();
+                                if (cursor1!= null) {
+                                    int rowId = cursor1.getColumnIndex(CallLog.Calls._ID);
+                                    while (cursor1.moveToNext()) {
+                                        listOfIds.add(cursor1.getString(rowId));
+                                    }
+                                }
+                                cursor.close();
+//                                listOfIds.add(0, id);
                                 Utils.setArrayListPreference(getActivity(), AppConstants
                                                 .PREF_CALL_LOGS_ID_SET,
                                         listOfIds);

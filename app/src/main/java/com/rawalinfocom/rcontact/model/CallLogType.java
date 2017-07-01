@@ -25,7 +25,7 @@ import java.util.Date;
 public class CallLogType implements Serializable {
 
     @JsonIgnore
-    private boolean isRcpUser;
+    private Boolean isRcpUser;
     @JsonIgnore
     private String rcpFirstName;
     @JsonIgnore
@@ -510,10 +510,10 @@ public class CallLogType implements Serializable {
         this.historyCallTime = historyCallTime;
     }
 
+    @JsonIgnore
     public boolean isRcpUser() {
         return isRcpUser;
     }
-
     public void setRcpUser(boolean rcpUser) {
         isRcpUser = rcpUser;
     }

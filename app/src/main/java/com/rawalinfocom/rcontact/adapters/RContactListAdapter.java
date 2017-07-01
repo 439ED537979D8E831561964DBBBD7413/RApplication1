@@ -240,6 +240,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
                 bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, userProfile
                         .getPmProfileImage());
+                bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NUMBER, userProfile.getMobileNumber());
+
                /* ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
                         .class, bundle);*/
                 Intent intent = new Intent(context, ProfileDetailActivity.class);
