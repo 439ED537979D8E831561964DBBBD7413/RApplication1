@@ -141,9 +141,12 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
     }
 
     private void setUpTabLayout() {
-        tabProfile.addTab(tabProfile.newTab().setText(getResources().getString(R.string.text_tab_request)), true);
-        tabProfile.addTab(tabProfile.newTab().setText(getResources().getString(R.string.text_tab_response)));
-        tabProfile.getTabAt(tab).select();
+        if (tabProfile != null) {
+            tabProfile.addTab(tabProfile.newTab().setText(getResources().getString(R.string.text_tab_request)), true);
+            tabProfile.addTab(tabProfile.newTab().setText(getResources().getString(R.string.text_tab_response)));
+        }
+        if (tabProfile != null)
+            tabProfile.getTabAt(tab).select();
         tabIndex = tab;
     }
 
