@@ -462,7 +462,7 @@ public class MainActivity extends BaseActivity implements NavigationView
             }
             //</editor-fold>
         } else {
-            Log.e("error", error.getMessage());
+            Log.e("error", error.toString());
         }
     }
 
