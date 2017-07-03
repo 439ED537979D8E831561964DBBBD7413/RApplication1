@@ -153,6 +153,7 @@ public class SmsDataType implements Serializable {
         this.recordPosition = recordPosition;
     }
 
+    @JsonIgnore
     public Boolean isRcpUser() {
         return isRcpUser;
     }
