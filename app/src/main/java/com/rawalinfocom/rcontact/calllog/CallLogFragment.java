@@ -386,31 +386,31 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                         callLogTypeReceiver.setPrefix(prefix);
 
                                     callLogTypeReceiver.setRcpUser(true);
-                                    if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
-                                        arrayListCallLogs.remove(0);
+//                                    if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
+//                                        arrayListCallLogs.remove(0);
                                         arrayListCallLogs.add(0, callLogTypeReceiver);
                                         rContactApplication.setArrayListCallLogType(arrayListCallLogs);
                                         tempList.add(0, callLogTypeReceiver);
-                                    }
+//                                    }
                                 } else {
-                                    if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
-                                        arrayListCallLogs.remove(0);
+//                                    if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
+//                                        arrayListCallLogs.remove(0);
                                         arrayListCallLogs.add(0, callLogTypeReceiver);
                                         rContactApplication.setArrayListCallLogType(arrayListCallLogs);
                                         tempList.add(0, callLogTypeReceiver);
-                                    }
+//                                    }
                                 }
                             } else {
-                                if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
-                                    arrayListCallLogs.remove(0);
+//                                if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
+//                                    arrayListCallLogs.remove(0);
                                     arrayListCallLogs.add(0, callLogTypeReceiver);
                                     rContactApplication.setArrayListCallLogType(arrayListCallLogs);
                                     tempList.add(0, callLogTypeReceiver);
-                                }else{
+                                /*}else{
                                     arrayListCallLogs.add(0, callLogTypeReceiver);
                                     rContactApplication.setArrayListCallLogType(arrayListCallLogs);
                                     tempList.add(0, callLogTypeReceiver);
-                                }
+                                }*/
                             }
 
                             if (simpleCallLogListAdapter != null)
@@ -3170,35 +3170,35 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                                 callLogTypeReceiver.setPrefix(prefix);
 
                                             callLogTypeReceiver.setRcpUser(true);
-                                            if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
-                                                arrayListCallLogs.remove(0);
+//                                            if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
+//                                                arrayListCallLogs.remove(0);
                                                 arrayListCallLogs.add(0, callLogTypeReceiver);
                                                 rContactApplication.setArrayListCallLogType
                                                         (arrayListCallLogs);
                                                 tempList.add(0, callLogTypeReceiver);
-                                            }
+//                                            }
                                         } else {
-                                            if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
-                                                arrayListCallLogs.remove(0);
+//                                            if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
+//                                                arrayListCallLogs.remove(0);
                                                 arrayListCallLogs.add(0, callLogTypeReceiver);
                                                 rContactApplication.setArrayListCallLogType
                                                         (arrayListCallLogs);
                                                 tempList.add(0, callLogTypeReceiver);
-                                            }
+//                                            }
                                         }
                                     } else {
-                                        if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
-                                            arrayListCallLogs.remove(0);
+//                                        if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
+//                                            arrayListCallLogs.remove(0);
                                             arrayListCallLogs.add(0, callLogTypeReceiver);
                                             rContactApplication.setArrayListCallLogType
                                                     (arrayListCallLogs);
                                             tempList.add(0, callLogTypeReceiver);
-                                        }else {
+                                        /*}else {
                                             arrayListCallLogs.add(0, callLogTypeReceiver);
                                             rContactApplication.setArrayListCallLogType
                                                     (arrayListCallLogs);
                                             tempList.add(0, callLogTypeReceiver);
-                                        }
+                                        }*/
                                     }
 
                                     if (simpleCallLogListAdapter != null)
