@@ -47,7 +47,6 @@ public class UserProfile implements Serializable {
     private String profileRating;
     private String totalProfileRateUser;
 
-
     @JsonProperty("first_name")
     public String getPmFirstName() {
         return StringUtils.defaultString(pmFirstName);

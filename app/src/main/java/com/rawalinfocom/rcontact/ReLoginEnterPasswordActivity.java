@@ -131,7 +131,6 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_CHECK_NUMBER)) {
                 WsResponseObject otpDetailResponse = (WsResponseObject) data;
                 Utils.hideProgressDialog();
-
                 if (otpDetailResponse != null && StringUtils.equalsIgnoreCase(otpDetailResponse
                         .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
@@ -179,9 +178,6 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                             .getRcpPmId());
                     storeProfileDataToDb(profileDetail);
 
-//                    if (isFrom.equals("re_login")) {
-//                    }
-
                     // Redirect to MainActivity
                     if (isFrom.equals("re_login")) {
                         Utils.hideProgressDialog();
@@ -197,6 +193,9 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     }
 
                 } else {
+
+                    Utils.hideProgressDialog();
+
                     if (enterPassWordResponse != null) {
                         Log.e("error response", enterPassWordResponse.getMessage());
                     } else {
@@ -214,7 +213,6 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                         (enterPassWordResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-
                     Intent intent = new Intent(this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -223,8 +221,10 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     overridePendingTransition(R.anim.enter, R.anim.exit);
                     finish();
 
-
                 } else {
+
+                    Utils.hideProgressDialog();
+
                     if (enterPassWordResponse != null) {
                         Log.e("error response", enterPassWordResponse.getMessage());
                     } else {
