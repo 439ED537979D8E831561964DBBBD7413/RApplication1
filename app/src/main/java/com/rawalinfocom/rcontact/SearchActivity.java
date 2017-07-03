@@ -733,9 +733,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                             if (matcher11.find()) {
                                 if (simpleCallLogListAdapter != null) {
                                     if (simpleCallLogListAdapter.getSearchCount() > 0) {
-//                                        simpleCallLogListAdapter.filter(arg0.toString());
-//                                        ArrayList<CallLogType> tempList =
-// simpleCallLogListAdapter.getArrayList();
+//
                                         if (callLogTypeArrayListMain != null &&
                                                 callLogTypeArrayListMain.size() > 0) {
                                             AppConstants.isFromSearchActivity = true;
