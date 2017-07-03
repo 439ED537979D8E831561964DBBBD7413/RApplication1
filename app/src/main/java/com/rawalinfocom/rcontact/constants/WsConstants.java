@@ -9,9 +9,7 @@ package com.rawalinfocom.rcontact.constants;
 public class WsConstants {
 
     // Staging Env
-//    public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
-
-//    public static final String WS_ROOT = "http://appstaging.rcontacts.in/api/v1/";
+    public static final String WS_ROOT = "http://apistaging.rcontacts.in";
 
     // QA Server
 //    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
@@ -56,13 +54,14 @@ public class WsConstants {
 
 
     // Web Server
-    public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
-
-    // Staging Env
-//    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
+//    public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
 
     // QA Server
 //    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
+
+    // Staging Env
+    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
+
 
     public static final String RESPONSE_STATUS_TRUE = "true";
 

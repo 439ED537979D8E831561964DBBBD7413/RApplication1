@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -252,7 +251,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                /* ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
                         .class, bundle);*/
-                bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NUMBER, userProfile.getMobileNumber());
+                bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NUMBER, userProfile
+                        .getMobileNumber());
                 Intent intent = new Intent(context, ProfileDetailActivity.class);
                 intent.putExtras(bundle);
                 fragment.startActivityForResult(intent, AppConstants
@@ -283,8 +283,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
-        @BindView(R.id.image_social_media)
-        ImageView imageSocialMedia;
+        /*@BindView(R.id.image_social_media)
+        ImageView imageSocialMedia;*/
         @BindView(R.id.text_contact_name)
         TextView textContactName;
         @BindView(R.id.text_cloud_contact_name)
@@ -299,8 +299,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         TextView textRatingUserCount;
         @BindView(R.id.rating_user)
         RatingBar ratingUser;
-        @BindView(R.id.button_invite)
-        Button buttonInvite;
+
         @BindView(R.id.linear_rating)
         LinearLayout linearRating;
 
@@ -319,8 +318,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             textCloudContactName.setVisibility(View.GONE);
 
-            buttonInvite.setVisibility(View.GONE);
-            imageSocialMedia.setVisibility(View.GONE);
 //            linearRating.setVisibility(View.GONE);
 
         }
