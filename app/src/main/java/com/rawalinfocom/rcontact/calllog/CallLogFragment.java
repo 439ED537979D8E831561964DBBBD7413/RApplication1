@@ -152,8 +152,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     boolean noOfIdsToFetch = false;
     boolean isCallLogFragment = false;
     private boolean isResumeCalled = false;
-    boolean isSpinnerAllCall =  false;
-    int allCalldisplayDataCount =0;
+    boolean isSpinnerAllCall = false;
+    int allCalldisplayDataCount = 0;
 
 
 //    LoadsCallLogsInBackground loadsCallLogsInBackgroundAsyncTask = new
@@ -418,9 +418,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                     String lastName = userProfile.getPmLastName();
                                     String rcpId = userProfile.getPmRcpId();
                                     String imagePath = userProfile.getPmProfileImage();
-                                    String suffix = userProfile.getPmSuffix();
-                                    String prefix = userProfile.getPmPrefix();
-                                    String middleName = userProfile.getPmMiddleName();
+//                                    String suffix = userProfile.getPmSuffix();
+//                                    String prefix = userProfile.getPmPrefix();
+//                                    String middleName = userProfile.getPmMiddleName();
 
                                     if (!StringUtils.isEmpty(firstName))
                                         callLogTypeReceiver.setRcpFirstName(firstName);
@@ -430,12 +430,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                         callLogTypeReceiver.setRcpId(rcpId);
                                     if (!StringUtils.isEmpty(imagePath))
                                         callLogTypeReceiver.setProfileImage(imagePath);
-                                    if (!StringUtils.isEmpty(middleName))
-                                        callLogTypeReceiver.setMiddleName(middleName);
-                                    if (!StringUtils.isEmpty(suffix))
-                                        callLogTypeReceiver.setSuffix(suffix);
-                                    if (!StringUtils.isEmpty(prefix))
-                                        callLogTypeReceiver.setPrefix(prefix);
+//                                    if (!StringUtils.isEmpty(middleName))
+//                                        callLogTypeReceiver.setMiddleName(middleName);
+//                                    if (!StringUtils.isEmpty(suffix))
+//                                        callLogTypeReceiver.setSuffix(suffix);
+//                                    if (!StringUtils.isEmpty(prefix))
+//                                        callLogTypeReceiver.setPrefix(prefix);
 
                                     callLogTypeReceiver.setRcpUser(true);
                                     arrayListCallLogs.add(0, callLogTypeReceiver);
@@ -523,12 +523,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     @Override
     public void onPause() {
         super.onPause();
-        if(isFirstTime){
+        if (isFirstTime) {
             isFirstTime = false;
         }
         AppConstants.isFromReceiver = false;
-        if(isLastRecord)
-            allCalldisplayDataCount =0;
+        if (isLastRecord)
+            allCalldisplayDataCount = 0;
         //23/06/2017 for Misbehaviour of call-log (like all call-logs not displaying,
         // repeated call-logs displaying, etc.
         /*isIdsFetchedFirstTime = false;
@@ -659,11 +659,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 } else {
 //                    tempList = new ArrayList<>();
                     if (spinnerCount > 0) {
-                        if(selectedCallType.equalsIgnoreCase(ALL_CALLS)){
-                            allCalldisplayDataCount =  allCalldisplayDataCount +1;
-                            if(isSpinnerAllCall){
+                        if (selectedCallType.equalsIgnoreCase(ALL_CALLS)) {
+                            allCalldisplayDataCount = allCalldisplayDataCount + 1;
+                            if (isSpinnerAllCall) {
                                 isSpinnerAllCall = false;
-                                allCalldisplayDataCount =0;
+                                allCalldisplayDataCount = 0;
                                 tempList = new ArrayList<>();
                             }
                         }
@@ -705,9 +705,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 String lastName = userProfile.getPmLastName();
                                 String rcpId = userProfile.getPmRcpId();
                                 String imagePath = userProfile.getPmProfileImage();
-                                String suffix = userProfile.getPmSuffix();
-                                String prefix = userProfile.getPmPrefix();
-                                String middleName = userProfile.getPmMiddleName();
+//                                String suffix = userProfile.getPmSuffix();
+//                                String prefix = userProfile.getPmPrefix();
+//                                String middleName = userProfile.getPmMiddleName();
 
                                 if (!StringUtils.isEmpty(firstName))
                                     callLogType.setRcpFirstName(firstName);
@@ -717,12 +717,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                     callLogType.setRcpId(rcpId);
                                 if (!StringUtils.isEmpty(imagePath))
                                     callLogType.setProfileImage(imagePath);
-                                if (!StringUtils.isEmpty(middleName))
-                                    callLogType.setMiddleName(middleName);
-                                if (!StringUtils.isEmpty(suffix))
-                                    callLogType.setSuffix(suffix);
-                                if (!StringUtils.isEmpty(prefix))
-                                    callLogType.setPrefix(prefix);
+//                                if (!StringUtils.isEmpty(middleName))
+//                                    callLogType.setMiddleName(middleName);
+//                                if (!StringUtils.isEmpty(suffix))
+//                                    callLogType.setSuffix(suffix);
+//                                if (!StringUtils.isEmpty(prefix))
+//                                    callLogType.setPrefix(prefix);
 
                                 callLogType.setRcpUser(true);
                                 int positionToReplace = callLogType.getRecordPosition();
@@ -748,9 +748,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 } else {
 //                simpleCallLogListAdapter.notifyItemRangeInserted(logsDisplayed, tempList.size());
 //                recyclerCallLogs.scrollToPosition(callLogListAdapter.getItemCount() - 1);1
-                    if(spinnerCount > 0 && selectedCallType.equalsIgnoreCase(ALL_CALLS) && allCalldisplayDataCount == 0){
+                    if (spinnerCount > 0 && selectedCallType.equalsIgnoreCase(ALL_CALLS) && allCalldisplayDataCount == 0) {
                         setSimpleListAdapter();
-                    }else{
+                    } else {
                         simpleCallLogListAdapter.notifyDataSetChanged();
                     }
 //                    adapterSetCount = 1;
@@ -911,7 +911,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     Log.i("RecyclerView scrolled: ", "scroll up!");
                 else {
                     Log.i("RecyclerView scrolled: ", "scroll down!");
-                    if(selectedCallType.equalsIgnoreCase(ALL_CALLS)){
+                    if (selectedCallType.equalsIgnoreCase(ALL_CALLS)) {
                         if (!isLastRecord && newState == 0) {
                             if (isFirstTime) {
 //                            progressBarLoadCallLogs.setVisibility(View.VISIBLE);
@@ -957,7 +957,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                 if (dy > 0) //check for scroll down
                 {
-                    if(selectedCallType.equalsIgnoreCase(ALL_CALLS)){
+                    if (selectedCallType.equalsIgnoreCase(ALL_CALLS)) {
                         int visibleItemCount = mLinearLayoutManager.getChildCount();
                         int totalItemCount = mLinearLayoutManager.getItemCount();
                         int pastVisiblesItems = mLinearLayoutManager.findFirstVisibleItemPosition();
@@ -1122,8 +1122,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             count = 0;
         }
 
-        if(listOfIds!=null && listOfIds.size()==0){
-            if(listOfIds!=null && listOfIds.size()==0){
+        if (listOfIds != null && listOfIds.size() == 0) {
+            if (listOfIds != null && listOfIds.size() == 0) {
                 PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(getActivity());
 //            listOfIds = new ArrayList<>();
                 Cursor cursor = phoneBookCallLogs.getAllCallLogId();
@@ -1158,7 +1158,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         @Override
                         public void run() {
                             if (isFirstTime) {
-                                if(value.equalsIgnoreCase(ALL_CALLS) && spinnerCount>0){
+                                if (value.equalsIgnoreCase(ALL_CALLS) && spinnerCount > 0) {
                                     isSpinnerAllCall = true;
                                 }
                                 if (AppConstants.isFirstTime()) {
@@ -1171,7 +1171,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 } else {
                                     if (!value.equalsIgnoreCase(ALL_CALLS)) {
                                         spinnerCount = spinnerCount + 1;
-                                    }else{
+                                    } else {
 //                                        spinnerCount =0;
                                     }
 
@@ -1189,13 +1189,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                                 .getArrayListCallLogType();
                                         makeSimpleData(selectedCallType, arrayListCallLogs);
                                         initSwipe();
-                                    }else{
+                                    } else {
 //                                        spinnerCount =0;
-                                        if(value.equalsIgnoreCase(ALL_CALLS) && spinnerCount>0){
+                                        if (value.equalsIgnoreCase(ALL_CALLS) && spinnerCount > 0) {
                                             isSpinnerAllCall = true;
                                             if (listOfIds != null) {
                                                 listOfIds = new ArrayList<>();
-                                                arrayListCallLogs =  new ArrayList<>();
+                                                arrayListCallLogs = new ArrayList<>();
                                                 rContactApplication.setArrayListCallLogType(arrayListCallLogs);
                                                 logsDisplayed = 0;
                                                 Utils.setArrayListPreference(getActivity(), AppConstants
@@ -1216,7 +1216,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                                         listOfIds);
                                             }
                                             loadLogs(selectedCallType);
-                                        }else{
+                                        } else {
                                             if (listOfIds != null) {
                                                 listOfIds = new ArrayList<>();
                                                 Utils.setArrayListPreference(getActivity(), AppConstants
@@ -1283,7 +1283,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                             1) {
                                         if (!value.equalsIgnoreCase(ALL_CALLS)) {
                                             spinnerCount = spinnerCount + 1;
-                                        }else {
+                                        } else {
                                             arrayListCallLogs = new ArrayList<CallLogType>();
                                             tempList = new ArrayList<CallLogType>();
                                             PhoneBookCallLogs phoneBookCallLogs = new
@@ -1307,11 +1307,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                         }
 
                                     } else {
-                                        if (arrayListCallLogs != null && arrayListCallLogs.size()>0 ){
+                                        if (arrayListCallLogs != null && arrayListCallLogs.size() > 0) {
                                             if (!value.equalsIgnoreCase(ALL_CALLS)) {
                                                 spinnerCount = spinnerCount + 1;
-                                            }else{
-                                                if(value.equalsIgnoreCase(ALL_CALLS) && spinnerCount>0){
+                                            } else {
+                                                if (value.equalsIgnoreCase(ALL_CALLS) && spinnerCount > 0) {
                                                     isSpinnerAllCall = true;
 
                                                 }
@@ -1344,25 +1344,25 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
        /* if(listOfIds!= null && listOfIds.size()<=10){
             listOfIds = null;
         }else{*/
-            if (listOfIds != null && listOfIds.size() > 0) {
-                int size = listOfIds.size();
-                if (isFirstChuck) {
-                    for (ArrayList<String> partition : chopped(listOfIds, LIST_PARTITION_COUNT)) {
-                        // do something with partition
-                        Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
-                        listOfIds.removeAll(partition);
-                        break;
-                    }
-                }
-
+        if (listOfIds != null && listOfIds.size() > 0) {
+            int size = listOfIds.size();
+            if (isFirstChuck) {
                 for (ArrayList<String> partition : chopped(listOfIds, LIST_PARTITION_COUNT)) {
                     // do something with partition
                     Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
-                    callLogIdsListByChunck.addAll(partition);
                     listOfIds.removeAll(partition);
                     break;
                 }
             }
+
+            for (ArrayList<String> partition : chopped(listOfIds, LIST_PARTITION_COUNT)) {
+                // do something with partition
+                Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+                callLogIdsListByChunck.addAll(partition);
+                listOfIds.removeAll(partition);
+                break;
+            }
+        }
 //        }
         return callLogIdsListByChunck;
     }
@@ -1465,14 +1465,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     break;
                 }
             } else {
-                if (tempIdsList.size() <= 0){
-                    if(logsDisplayed == listOfIds.size()){
+                if (tempIdsList.size() <= 0) {
+                    if (logsDisplayed == listOfIds.size()) {
                         // Same records will be appended in the list
-                    }else{
+                    } else {
                         fetchCallLogsFromIds(listOfIds);
                     }
-                }
-                else {
+                } else {
                     fetchCallLogsFromIds(tempIdsList);
                 }
             }
@@ -3186,9 +3185,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                             String lastName = userProfile.getPmLastName();
                                             String rcpId = userProfile.getPmRcpId();
                                             String imagePath = userProfile.getPmProfileImage();
-                                            String suffix = userProfile.getPmSuffix();
-                                            String prefix = userProfile.getPmPrefix();
-                                            String middleName = userProfile.getPmMiddleName();
+//                                            String suffix = userProfile.getPmSuffix();
+//                                            String prefix = userProfile.getPmPrefix();
+//                                            String middleName = userProfile.getPmMiddleName();
 
                                             if (!StringUtils.isEmpty(firstName))
                                                 callLogTypeReceiver.setRcpFirstName(firstName);
@@ -3198,12 +3197,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                                 callLogTypeReceiver.setRcpId(rcpId);
                                             if (!StringUtils.isEmpty(imagePath))
                                                 callLogTypeReceiver.setProfileImage(imagePath);
-                                            if (!StringUtils.isEmpty(middleName))
-                                                callLogTypeReceiver.setMiddleName(middleName);
-                                            if (!StringUtils.isEmpty(suffix))
-                                                callLogTypeReceiver.setSuffix(suffix);
-                                            if (!StringUtils.isEmpty(prefix))
-                                                callLogTypeReceiver.setPrefix(prefix);
+//                                            if (!StringUtils.isEmpty(middleName))
+//                                                callLogTypeReceiver.setMiddleName(middleName);
+//                                            if (!StringUtils.isEmpty(suffix))
+//                                                callLogTypeReceiver.setSuffix(suffix);
+//                                            if (!StringUtils.isEmpty(prefix))
+//                                                callLogTypeReceiver.setPrefix(prefix);
 
                                             callLogTypeReceiver.setRcpUser(true);
                                             arrayListCallLogs.add(0, callLogTypeReceiver);

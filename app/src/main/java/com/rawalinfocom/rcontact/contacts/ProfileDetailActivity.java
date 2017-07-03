@@ -1195,7 +1195,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                     ProfileDataOperation profileDetail = getProfileResponse.getProfileDetail();
                     storeProfileDataToDb(profileDetail);
-                    setUpView(profileDetail);
+
+                    getDataFromDB();
 
                     ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
                     ProfileVisit profileVisit = new ProfileVisit();
@@ -1995,27 +1996,31 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(this, android.R
                 .color.darker_gray));
 
-        if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
-            // RC Profile
-            if (Utils.isNetworkAvailable(ProfileDetailActivity.this)) {
-                //call service
-                getProfileDetails();
-            } else {
-                ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
-                        (this, pmId);
-                setUpView(profileDataOperation);
-            }
+        if (!displayOwnProfile)
+            if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
+                // RC Profile
+                if (Utils.isNetworkAvailable(ProfileDetailActivity.this)) {
+                    //call service
+                    getProfileDetails();
+                } else {
+                    getDataFromDB();
+                }
 //            }
-        } else {
-            // Non-RC Profile
-//            textJoiningDate.setVisibility(View.GONE);
-            setUpView(null);
-        }
+            } else {
+                // Non-RC Profile
+                setUpView(null);
+            }
 
         layoutVisibility();
 
         initSwipe();
 
+    }
+
+    private void getDataFromDB() {
+        ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
+                (this, pmId);
+        setUpView(profileDataOperation);
     }
 
     private void setCallLogHistoryDetails() {
@@ -3407,7 +3412,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 mobileNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListMobileNumber.add(mobileNumber);
             }
-            tableMobileMaster.addUpdateArrayMobileNumber(arrayListMobileNumber);
+            tableMobileMaster.addUpdateArrayMobileNumber(arrayListMobileNumber, profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3422,13 +3427,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
-//                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
                 email.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListEmail.add(email);
             }
 
             TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
-            tableEmailMaster.addUpdateArrayEmail(arrayListEmail);
+            tableEmailMaster.addUpdateArrayEmail(arrayListEmail, profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3440,19 +3444,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             for (int i = 0; i < arrayListOrganization.size(); i++) {
                 Organization organization = new Organization();
                 organization.setOmRecordIndexId(arrayListOrganization.get(i).getOrgId());
-                organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName
-                        ());
-                organization.setOmOrganizationDesignation(arrayListOrganization.get(i)
-                        .getOrgJobTitle());
-                organization.setOmIsCurrent(String.valueOf(arrayListOrganization.get(i)
-                        .getIsCurrent()));
+                organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName());
+                organization.setOmOrganizationDesignation(arrayListOrganization.get(i).getOrgJobTitle());
+                organization.setOmIsPrivate(arrayListOrganization.get(i).getOrgPublic());
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
             }
 
             TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
                     (databaseHandler);
-            tableOrganizationMaster.addArrayOrganization(organizationList);
+            tableOrganizationMaster.addUpdateArrayOrganization(organizationList, profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3467,12 +3468,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
                 website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
                 website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
+                website.setWmIsPrivate(arrayListWebsite.get(j).getWebPublic());
                 website.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 websiteList.add(website);
             }
 
             TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
-            tableWebsiteMaster.addUpdateArrayWebsite(websiteList);
+            tableWebsiteMaster.addUpdateArrayWebsite(websiteList, profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3482,29 +3484,31 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             ArrayList<Address> addressList = new ArrayList<>();
             for (int j = 0; j < arrayListAddress.size(); j++) {
                 Address address = new Address();
-                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
+
+//                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
+                address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
                 address.setAmCity(arrayListAddress.get(j).getCity());
                 address.setAmState(arrayListAddress.get(j).getState());
                 address.setAmCountry(arrayListAddress.get(j).getCountry());
-                address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
+                address.setAmStreet(arrayListAddress.get(j).getStreet());
+                address.setAmPoBox(arrayListAddress.get(j).getPoBox());
                 address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
                 address.setAmPostCode(arrayListAddress.get(j).getPostCode());
-                address.setAmPoBox(arrayListAddress.get(j).getPoBox());
-                address.setAmStreet(arrayListAddress.get(j).getStreet());
-                address.setAmAddressType(arrayListAddress.get(j).getAddressType());
+
                 if (arrayListAddress.get(j).getGoogleLatLong() != null && arrayListAddress.get(j)
                         .getGoogleLatLong().size() == 2) {
                     address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatLong().get(1));
                     address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLatLong().get(0));
                 }
-                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
+//                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
                 address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
+                address.setAmIsPrivate(arrayListAddress.get(j).getIsPrivate());
                 address.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 addressList.add(address);
             }
 
             TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
-            tableAddressMaster.addUpdateArrayAddress(addressList);
+            tableAddressMaster.addUpdateArrayAddress(addressList, profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3515,18 +3519,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             ArrayList<ImAccount> imAccountsList = new ArrayList<>();
             for (int j = 0; j < arrayListImAccount.size(); j++) {
                 ImAccount imAccount = new ImAccount();
+
                 imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
-                imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
-                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
-                        .getIMAccountPublic()));
                 imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
-//                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+                imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
+                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j).getIMAccountPublic()));
                 imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+
                 imAccountsList.add(imAccount);
             }
 
             TableImMaster tableImMaster = new TableImMaster(databaseHandler);
-            tableImMaster.addUpdateArrayImAccount(imAccountsList);
+            tableImMaster.addUpdateArrayImAccount(imAccountsList, profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3539,14 +3543,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
                 event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                 event.setEvmEventType(arrayListEvent.get(j).getEventType());
-                event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
-//                event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+                event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
                 event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 eventList.add(event);
             }
 
             TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
-            tableEventMaster.addUpdateArrayEvent(eventList);
+            tableEventMaster.addUpdateArrayEvent(eventList, profileDetail.getRcpPmId());
         }
         //</editor-fold>
     }

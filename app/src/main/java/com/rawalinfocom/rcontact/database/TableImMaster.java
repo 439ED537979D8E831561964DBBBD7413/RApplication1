@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.model.ContactRequestData;
 import com.rawalinfocom.rcontact.model.ImAccount;
 
@@ -92,39 +93,47 @@ public class TableImMaster {
     }
 
     // Adding or Updating array Im Account
-    public void addUpdateArrayImAccount(ArrayList<ImAccount> arrayListImAccount) {
+    public void addUpdateArrayImAccount(ArrayList<ImAccount> arrayListImAccount, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_IM_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
 
 //        ContentValues values = new ContentValues();
         for (int i = 0; i < arrayListImAccount.size(); i++) {
             ContentValues values = new ContentValues();
+
             values.put(COLUMN_IM_ID, arrayListImAccount.get(i).getImId());
             values.put(COLUMN_IM_RECORD_INDEX_ID, arrayListImAccount.get(i).getImRecordIndexId());
             values.put(COLUMN_IM_DETAIL, arrayListImAccount.get(i).getImImDetail());
             values.put(COLUMN_IM_PROTOCOL, arrayListImAccount.get(i).getImImProtocol());
-            values.put(COLUMN_IM_PRIVACY, arrayListImAccount.get(i).getImImPrivacy());
+            values.put(COLUMN_IM_PRIVACY, MoreObjects.firstNonNull(
+                    Integer.parseInt(arrayListImAccount.get(i).getImImPrivacy()), 0));
             values.put(COLUMN_IM_IS_PRIVATE, arrayListImAccount.get(i).getImIsPrivate());
-            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListImAccount.get(i)
-                    .getRcProfileMasterPmId());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListImAccount.get(i).getRcProfileMasterPmId());
 
-            int count = 0;
-            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_IM_MASTER + " " +
-                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
-                    arrayListImAccount.get(i).getRcProfileMasterPmId(), null);
-            if (mCount != null) {
-                mCount.moveToFirst();
-                count = mCount.getInt(0);
-                mCount.close();
-            }
+            // Inserting Row
+            db.insert(TABLE_RC_IM_MASTER, null, values);
 
-            if (count > 0) {
-                // Update if already exists
-                db.update(TABLE_RC_IM_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
-                        new String[]{arrayListImAccount.get(i).getRcProfileMasterPmId()});
-            } else {
-                // Inserting Row
-                db.insert(TABLE_RC_IM_MASTER, null, values);
-            }
+//            int count = 0;
+//            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_IM_MASTER + " " +
+//                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                    arrayListImAccount.get(i).getRcProfileMasterPmId(), null);
+//            if (mCount != null) {
+//                mCount.moveToFirst();
+//                count = mCount.getInt(0);
+//                mCount.close();
+//            }
+//
+//            if (count > 0) {
+//                // Update if already exists
+//                db.update(TABLE_RC_IM_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                        arrayListImAccount.get(i).getRcProfileMasterPmId(), null);
+//            } else {
+//                // Inserting Row
+//                values.put(COLUMN_IM_ID, arrayListImAccount.get(i).getImId());
+//                db.insert(TABLE_RC_IM_MASTER, null, values);
+//            }
         }
         db.close(); // Closing database connection
     }

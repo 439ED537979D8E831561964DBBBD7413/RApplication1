@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -118,12 +119,9 @@ public class TableMobileMaster {
             values.put(COLUMN_MNM_NUMBER_TYPE, arrayListMobileNumber.get(i).getMnmNumberType());
             values.put(COLUMN_MNM_IS_PRIMARY, arrayListMobileNumber.get(i).getMnmIsPrimary());
             values.put(COLUMN_MNM_IS_PRIVATE, arrayListMobileNumber.get(i).getMnmIsPrivate());
-            values.put(COLUMN_MNM_NUMBER_PRIVACY, arrayListMobileNumber.get(i)
-                    .getMnmNumberPrivacy());
-            values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, arrayListMobileNumber.get(i)
-                    .getMnmMobileServiceProvider());
-            values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, arrayListMobileNumber.get(i)
-                    .getMnmCircleOfService());
+            values.put(COLUMN_MNM_NUMBER_PRIVACY, arrayListMobileNumber.get(i).getMnmNumberPrivacy());
+            values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, arrayListMobileNumber.get(i).getMnmMobileServiceProvider());
+            values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, arrayListMobileNumber.get(i).getMnmCircleOfService());
             values.put(COLUMN_MNM_SPAM_COUNT, arrayListMobileNumber.get(i).getMnmSpamCount());
             values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListMobileNumber.get(i)
                     .getRcProfileMasterPmId());
@@ -135,10 +133,12 @@ public class TableMobileMaster {
     }
 
     // Add or update RCP user mobile data
-    public void addUpdateArrayMobileNumber(ArrayList<MobileNumber> arrayListMobileNumber) {
+    public void addUpdateArrayMobileNumber(ArrayList<MobileNumber> arrayListMobileNumber, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
-//        ContentValues values = new ContentValues();
+        int count = db.delete(TABLE_RC_MOBILE_NUMBER_MASTER, COLUMN_MNM_RECORD_INDEX_ID + " = " + RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
         for (int i = 0; i < arrayListMobileNumber.size(); i++) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_MNM_ID, arrayListMobileNumber.get(i).getMnmId());
@@ -148,34 +148,15 @@ public class TableMobileMaster {
             values.put(COLUMN_MNM_NUMBER_TYPE, arrayListMobileNumber.get(i).getMnmNumberType());
             values.put(COLUMN_MNM_IS_PRIMARY, arrayListMobileNumber.get(i).getMnmIsPrimary());
             values.put(COLUMN_MNM_IS_PRIVATE, arrayListMobileNumber.get(i).getMnmIsPrivate());
-            values.put(COLUMN_MNM_NUMBER_PRIVACY, arrayListMobileNumber.get(i)
-                    .getMnmNumberPrivacy());
-            values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, arrayListMobileNumber.get(i)
-                    .getMnmMobileServiceProvider());
-            values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, arrayListMobileNumber.get(i)
-                    .getMnmCircleOfService());
+            values.put(COLUMN_MNM_NUMBER_PRIVACY, arrayListMobileNumber.get(i).getMnmNumberPrivacy());
+            values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, arrayListMobileNumber.get(i).getMnmMobileServiceProvider());
+            values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, arrayListMobileNumber.get(i).getMnmCircleOfService());
             values.put(COLUMN_MNM_SPAM_COUNT, arrayListMobileNumber.get(i).getMnmSpamCount());
-            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListMobileNumber.get(i)
-                    .getRcProfileMasterPmId());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListMobileNumber.get(i).getRcProfileMasterPmId());
 
-            int count = 0;
-            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_MOBILE_NUMBER_MASTER + " " +
-                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
-                    arrayListMobileNumber.get(i).getRcProfileMasterPmId(), null);
-            if (mCount != null) {
-                mCount.moveToFirst();
-                count = mCount.getInt(0);
-                mCount.close();
-            }
-
-            if (count > 0) {
-                // Update if already exists
-                db.update(TABLE_RC_MOBILE_NUMBER_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
-                        new String[]{arrayListMobileNumber.get(i).getRcProfileMasterPmId()});
-            } else {
-                // Inserting Row
-                db.insert(TABLE_RC_MOBILE_NUMBER_MASTER, null, values);
-            }
+            values.put(COLUMN_MNM_ID, arrayListMobileNumber.get(i).getMnmId());
+            // Inserting Row
+            db.insert(TABLE_RC_MOBILE_NUMBER_MASTER, null, values);
         }
         db.close(); // Closing database connection
     }

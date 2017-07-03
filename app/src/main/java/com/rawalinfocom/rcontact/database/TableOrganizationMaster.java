@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.model.Organization;
 
 import java.util.ArrayList;
@@ -101,49 +102,44 @@ public class TableOrganizationMaster {
     }
 
     // Adding or Updating array Org
-    public void addUpdateArrayOrganization(ArrayList<Organization> arrayListOrganization) {
+    public void addUpdateArrayOrganization(ArrayList<Organization> arrayListOrganization, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_ORGANIZATION_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
 
 //        ContentValues values = new ContentValues();
         for (int i = 0; i < arrayListOrganization.size(); i++) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_OM_ID, arrayListOrganization.get(i).getOmId());
-            values.put(COLUMN_OM_RECORD_INDEX_ID, arrayListOrganization.get(i).getOmRecordIndexId
-                    ());
-            values.put(COLUMN_OM_ORGANIZATION_COMPANY, arrayListOrganization.get(i)
-                    .getOmOrganizationCompany());
-            values.put(COLUMN_OM_ORGANIZATION_DESIGNATION, arrayListOrganization.get(i)
-                    .getOmOrganizationDesignation());
-            values.put(COLUMN_OM_ORGANIZATION_IS_CURRENT, arrayListOrganization.get(i)
-                    .getOmIsCurrent());
-            values.put(COLUMN_OM_ORGANIZATION_IS_PRIVATE, arrayListOrganization.get(i)
-                    .getOmIsPrivate());
-            values.put(COLUMN_OM_ORGANIZATION_PRIVACY, arrayListOrganization.get(i)
-                    .getOmOrganizationPrivacy());
-            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListOrganization.get(i)
-                    .getRcProfileMasterPmId());
+            values.put(COLUMN_OM_RECORD_INDEX_ID, arrayListOrganization.get(i).getOmRecordIndexId());
+            values.put(COLUMN_OM_ORGANIZATION_COMPANY, arrayListOrganization.get(i).getOmOrganizationCompany());
+            values.put(COLUMN_OM_ORGANIZATION_DESIGNATION, arrayListOrganization.get(i).getOmOrganizationDesignation());
+            values.put(COLUMN_OM_ORGANIZATION_IS_PRIVATE,
+                    MoreObjects.firstNonNull(arrayListOrganization.get(i).getOmIsPrivate(), 0));
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListOrganization.get(i).getRcProfileMasterPmId());
 
             // Inserting Row
-//            db.insert(TABLE_RC_ORGANIZATION_MASTER, null, values);
+            db.insert(TABLE_RC_ORGANIZATION_MASTER, null, values);
 
-            int count = 0;
-            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_ORGANIZATION_MASTER + " " +
-                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
-                    arrayListOrganization.get(i).getRcProfileMasterPmId(), null);
-            if (mCount != null) {
-                mCount.moveToFirst();
-                count = mCount.getInt(0);
-                mCount.close();
-            }
-
-            if (count > 0) {
-                // Update if already exists
-                db.update(TABLE_RC_ORGANIZATION_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
-                        new String[]{arrayListOrganization.get(i).getRcProfileMasterPmId()});
-            } else {
-                // Inserting Row
-                db.insert(TABLE_RC_ORGANIZATION_MASTER, null, values);
-            }
+//            int count = 0;
+//            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_ORGANIZATION_MASTER + " " +
+//                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                    arrayListOrganization.get(i).getRcProfileMasterPmId(), null);
+//            if (mCount != null) {
+//                mCount.moveToFirst();
+//                count = mCount.getInt(0);
+//                mCount.close();
+//            }
+//
+//            if (count > 0) {
+//                // Update if already exists
+//                db.update(TABLE_RC_ORGANIZATION_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                        arrayListOrganization.get(i).getRcProfileMasterPmId(), null);
+//            } else {
+//                // Inserting Row
+//                db.insert(TABLE_RC_ORGANIZATION_MASTER, null, values);
+//            }
         }
 
         db.close(); // Closing database connection

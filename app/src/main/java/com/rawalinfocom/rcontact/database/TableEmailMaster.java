@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.model.ContactRequestData;
 import com.rawalinfocom.rcontact.model.Email;
 
@@ -100,12 +101,16 @@ public class TableEmailMaster {
     }
 
     // Adding or Updating array Email
-    public void addUpdateArrayEmail(ArrayList<Email> arrayListEmail) {
+    public void addUpdateArrayEmail(ArrayList<Email> arrayListEmail, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_EMAIL_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
 
 //        ContentValues values = new ContentValues();
         for (int i = 0; i < arrayListEmail.size(); i++) {
             ContentValues values = new ContentValues();
+
             values.put(COLUMN_EM_ID, arrayListEmail.get(i).getEmId());
             values.put(COLUMN_EM_EMAIL_ADDRESS, arrayListEmail.get(i).getEmEmailAddress());
             values.put(COLUMN_EM_EMAIL_TYPE, arrayListEmail.get(i).getEmEmailType());
@@ -117,26 +122,24 @@ public class TableEmailMaster {
                     .getRcProfileMasterPmId());
 
             // Inserting Row
-//            db.insert(TABLE_RC_EMAIL_MASTER, null, values);
+            db.insert(TABLE_RC_EMAIL_MASTER, null, values);
 
-            int count = 0;
-            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_EMAIL_MASTER + " " +
-                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
-                    arrayListEmail.get(i).getRcProfileMasterPmId(), null);
-            if (mCount != null) {
-                mCount.moveToFirst();
-                count = mCount.getInt(0);
-                mCount.close();
-            }
-
-            if (count > 0) {
-                // Update if already exists
-                db.update(TABLE_RC_EMAIL_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
-                        new String[]{String.valueOf(arrayListEmail.get(i).getRcProfileMasterPmId())});
-            } else {
-                // Inserting Row
-                db.insert(TABLE_RC_EMAIL_MASTER, null, values);
-            }
+//            int count = 0;
+//            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_EMAIL_MASTER + " " +
+//                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                    arrayListEmail.get(i).getRcProfileMasterPmId(), null);
+//            if (mCount != null) {
+//                mCount.moveToFirst();
+//                count = mCount.getInt(0);
+//                mCount.close();
+//            }
+//
+//            if (count > 0) {
+//                // Update if already exists
+//                db.update(TABLE_RC_EMAIL_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                        arrayListEmail.get(i).getRcProfileMasterPmId(), null);
+//            } else {
+//            }
         }
         db.close(); // Closing database connection
     }
