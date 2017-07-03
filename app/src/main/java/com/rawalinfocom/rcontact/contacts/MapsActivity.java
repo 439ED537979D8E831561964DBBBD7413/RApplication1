@@ -208,18 +208,18 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                             .str_no_location_found));
                 } else {
                     try {
-                        if (place != null) {
-                            if (latitude == 0 && longitude == 0) {
+                        if (latitude == 0 && longitude == 0) {
+                            if (place != null) {
                                 LatLng latLng = place.getLatLng();
                                 latitude = latLng.latitude;
                                 longitude = latLng.longitude;
+                            } else {
+                                latitude = Double.parseDouble(StringUtils.defaultString(objAddress
+                                        .getLatitude(), "0"));
+                                longitude = Double.parseDouble(StringUtils.defaultString(objAddress
+                                        .getLongitude(), "0"));
                             }
-                        } /*else {
-                            latitude = Double.parseDouble(StringUtils.defaultString(objAddress
-                                    .getLatitude(), "0"));
-                            longitude = Double.parseDouble(StringUtils.defaultString(objAddress
-                                    .getLongitude(), "0"));
-                        }*/
+                        }
                         if (latitude != 0 && longitude != 0) {
                             if (serviceType.contains("_TRUE")) {
                                 addMapMarker();
