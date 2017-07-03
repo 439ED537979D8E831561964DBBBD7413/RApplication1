@@ -1984,7 +1984,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
         });
 
-
         LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
         // Filled stars
         Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(this, R.color
@@ -1998,15 +1997,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
             // RC Profile
-//            getProfileDetail();
-//            if (displayOwnProfile) {
-//                ProfileDataOperation profileDataOperation = (ProfileDataOperation) Utils
-//                        .getObjectPreference(this, AppConstants.PREF_REGS_USER_OBJECT,
-//                                ProfileDataOperation.class);
-//                setUpView(profileDataOperation);
-//            } else {
-//                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-//            QueryManager queryManager = new QueryManager(databaseHandler);
             if (Utils.isNetworkAvailable(ProfileDetailActivity.this)) {
                 //call service
                 getProfileDetails();
@@ -3417,7 +3407,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 mobileNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListMobileNumber.add(mobileNumber);
             }
-            tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
+            tableMobileMaster.addUpdateArrayMobileNumber(arrayListMobileNumber);
         }
         //</editor-fold>
 
@@ -3438,7 +3428,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
-            tableEmailMaster.addArrayEmail(arrayListEmail);
+            tableEmailMaster.addUpdateArrayEmail(arrayListEmail);
         }
         //</editor-fold>
 
@@ -3482,7 +3472,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
-            tableWebsiteMaster.addArrayWebsite(websiteList);
+            tableWebsiteMaster.addUpdateArrayWebsite(websiteList);
         }
         //</editor-fold>
 
@@ -3514,7 +3504,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
-            tableAddressMaster.addArrayAddress(addressList);
+            tableAddressMaster.addUpdateArrayAddress(addressList);
         }
         //</editor-fold>
 
@@ -3536,7 +3526,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             TableImMaster tableImMaster = new TableImMaster(databaseHandler);
-            tableImMaster.addArrayImAccount(imAccountsList);
+            tableImMaster.addUpdateArrayImAccount(imAccountsList);
         }
         //</editor-fold>
 
@@ -3556,7 +3546,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
 
             TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
-            tableEventMaster.addArrayEvent(eventList);
+            tableEventMaster.addUpdateArrayEvent(eventList);
         }
         //</editor-fold>
     }

@@ -2277,8 +2277,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         cursor.close();
 
         Set<String> arrayListOldContactIds = new HashSet<>();
-        arrayListOldContactIds.addAll(Utils.getArrayListPreference(this, AppConstants
-                .PREF_CONTACT_ID_SET));
+        arrayListOldContactIds.addAll(Utils.getArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET));
 //        Log.i("MAULIK", " getAllContactRawId");
 
         Cursor contactNameCursor = phoneBookContacts.getAllContactRawId();

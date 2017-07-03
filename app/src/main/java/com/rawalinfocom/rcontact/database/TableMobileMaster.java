@@ -130,25 +130,52 @@ public class TableMobileMaster {
 
             // Inserting Row
             db.insert(TABLE_RC_MOBILE_NUMBER_MASTER, null, values);
+        }
+        db.close(); // Closing database connection
+    }
 
-//            int count = 0;
-//            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_PROFILE_MASTER + " " +
-//                    "WHERE " + COLUMN_PM_RCP_ID + " = " + arrayListUserProfile.get(i).getPmRcpId
-//                    (), null);
-//            if (mCount != null) {
-//                mCount.moveToFirst();
-//                count = mCount.getInt(0);
-//                mCount.close();
-//            }
-//
-//            if (count > 0) {
-//                // Update if already exists
-//               /* db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
-//                        new String[]{String.valueOf(arrayListUserProfile.get(i).getPmRcpId())});*/
-//            } else {
-//                // Inserting Row
-//                db.insert(TABLE_RC_MOBILE_NUMBER_MASTER, null, values);
-//            }
+    // Add or update RCP user mobile data
+    public void addUpdateArrayMobileNumber(ArrayList<MobileNumber> arrayListMobileNumber) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+//        ContentValues values = new ContentValues();
+        for (int i = 0; i < arrayListMobileNumber.size(); i++) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_MNM_ID, arrayListMobileNumber.get(i).getMnmId());
+            values.put(COLUMN_MNM_RECORD_INDEX_ID, arrayListMobileNumber.get(i)
+                    .getMnmRecordIndexId());
+            values.put(COLUMN_MNM_MOBILE_NUMBER, arrayListMobileNumber.get(i).getMnmMobileNumber());
+            values.put(COLUMN_MNM_NUMBER_TYPE, arrayListMobileNumber.get(i).getMnmNumberType());
+            values.put(COLUMN_MNM_IS_PRIMARY, arrayListMobileNumber.get(i).getMnmIsPrimary());
+            values.put(COLUMN_MNM_IS_PRIVATE, arrayListMobileNumber.get(i).getMnmIsPrivate());
+            values.put(COLUMN_MNM_NUMBER_PRIVACY, arrayListMobileNumber.get(i)
+                    .getMnmNumberPrivacy());
+            values.put(COLUMN_MNM_MOBILE_SERVICE_PROVIDER, arrayListMobileNumber.get(i)
+                    .getMnmMobileServiceProvider());
+            values.put(COLUMN_MNM_CIRCLE_OF_SERVICE, arrayListMobileNumber.get(i)
+                    .getMnmCircleOfService());
+            values.put(COLUMN_MNM_SPAM_COUNT, arrayListMobileNumber.get(i).getMnmSpamCount());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListMobileNumber.get(i)
+                    .getRcProfileMasterPmId());
+
+            int count = 0;
+            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_MOBILE_NUMBER_MASTER + " " +
+                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                    arrayListMobileNumber.get(i).getRcProfileMasterPmId(), null);
+            if (mCount != null) {
+                mCount.moveToFirst();
+                count = mCount.getInt(0);
+                mCount.close();
+            }
+
+            if (count > 0) {
+                // Update if already exists
+                db.update(TABLE_RC_MOBILE_NUMBER_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = ?",
+                        new String[]{arrayListMobileNumber.get(i).getRcProfileMasterPmId()});
+            } else {
+                // Inserting Row
+                db.insert(TABLE_RC_MOBILE_NUMBER_MASTER, null, values);
+            }
         }
         db.close(); // Closing database connection
     }

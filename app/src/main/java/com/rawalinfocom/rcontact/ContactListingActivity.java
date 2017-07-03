@@ -1,8 +1,14 @@
 package com.rawalinfocom.rcontact;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -39,12 +45,14 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ContactListingActivity extends BaseActivity implements RippleView
-        .OnRippleCompleteListener, WsResponseListener {
+        .OnRippleCompleteListener, WsResponseListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     @BindView(R.id.include_toolbar)
     Toolbar includeToolbar;
@@ -112,7 +120,6 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         }
 
         init();
-        getContactData();
         setupView();
     }
 
@@ -232,8 +239,6 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
     //</editor-fold>
 
-    //<editor-fold desc="Private Methods">
-
     private void init() {
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
@@ -280,10 +285,67 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
             }
         });
-
     }
 
-    private void getContactData() {
+    //<editor-fold desc="Private Methods">
+    private void setupView() {
+
+        ArrayAdapter<String> spinnerAdapter;
+        if (!pmId.equalsIgnoreCase("-1")) {
+            spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, getResources()
+                    .getStringArray(R.array.phonebook_contact_array_share));
+        } else if (profileDataOperationVcard == null) {
+            spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, getResources()
+                    .getStringArray(R.array.phonebook_contact_array_invite));
+        } else {
+            spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, getResources()
+                    .getStringArray(R.array.phonebook_contact_array_share));
+        }
+
+        spinnerShareVia.setAdapter(spinnerAdapter);
+
+        arrayListFilteredUserProfile = new ArrayList<>();
+        arrayListUserProfile.addAll(arrayListFilteredUserProfile);
+
+        recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
+
+        phoneBookContactListAdapter = new PhoneBookContactListAdapter(this,
+                arrayListFilteredUserProfile);
+
+        recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
+
+        inputSearch.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                try {
+                    phoneBookContactListAdapter.filter(s.toString());
+                    recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
+                    if (phoneBookContactListAdapter.getItemCount() < 1) {
+                        recyclerViewContacts.setVisibility(View.GONE);
+                    } else {
+                        recyclerViewContacts.setVisibility(View.VISIBLE);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+//        getLoaderManager().initLoader(0, null, this);
+    }
+
+//    private void getContactData() {
 
       /*  ArrayList<String> arrayListContactIds = Utils.getArrayListPreference(this, AppConstants
                 .PREF_CONTACT_ID_SET);*/
@@ -339,67 +401,39 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             }
             //</editor-fold>
         }*/
+//    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Set<String> set = new HashSet<>();
+        set.add(ContactsContract.Data.MIMETYPE);
+        set.add(ContactsContract.Data.CONTACT_ID);
+        set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
+        set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
+
+        Uri uri = ContactsContract.Data.CONTENT_URI;
+        String[] projection = set.toArray(new String[0]);
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)";
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+        };
+        String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC";
+
+        // Starts the query
+        return new CursorLoader(ContactListingActivity.this, uri, projection, selection, selectionArgs, sortOrder);
     }
 
-    private void setupView() {
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+//        getContactsFromPhoneBook(data);
+        data.close();
+    }
 
-        ArrayAdapter<String> spinnerAdapter;
-        if (!pmId.equalsIgnoreCase("-1")) {
-            spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, getResources()
-                    .getStringArray(R.array.phonebook_contact_array_share));
-        } else if (profileDataOperationVcard == null) {
-            spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, getResources()
-                    .getStringArray(R.array.phonebook_contact_array_invite));
-        } else {
-            spinnerAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner, getResources()
-                    .getStringArray(R.array.phonebook_contact_array_share));
-        }
-
-        spinnerShareVia.setAdapter(spinnerAdapter);
-
-        arrayListFilteredUserProfile = new ArrayList<>();
-        arrayListUserProfile.addAll(arrayListFilteredUserProfile);
-
-        recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
-
-        /*arrayListTempUserProfile = new ArrayList<>();
-        arrayListTempUserProfile.addAll(arrayListFilteredUserProfile);*/
-        phoneBookContactListAdapter = new PhoneBookContactListAdapter(this,
-                arrayListFilteredUserProfile);
-
-        recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
-
-        inputSearch.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                try {
-                    phoneBookContactListAdapter.filter(s.toString());
-                    recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
-                    if (phoneBookContactListAdapter.getItemCount() < 1) {
-//                        textEmptyCountry.setVisibility(View.VISIBLE);
-                        recyclerViewContacts.setVisibility(View.GONE);
-                    } else {
-//                        textEmptyCountry.setVisibility(View.GONE);
-                        recyclerViewContacts.setVisibility(View.VISIBLE);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    /*Utils.showErrorSnackBar(ContactListingActivity.this,
-                            root, "No Country Found");*/
-                }
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
 
     }
 
