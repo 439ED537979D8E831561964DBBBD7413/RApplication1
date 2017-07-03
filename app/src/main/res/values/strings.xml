@@ -204,6 +204,7 @@
     <string name="no_records_found">No Contact Found</string>
     <string name="public_profile_toolbar_title">Public Profile</string>
     <string name="search_query_validation">Please enter some text to search</string>
+    <string name="no_records_found_local">No Record Found</string>
 
     <!--edit-profile-text-->
     <string name="add_field">+ ADD FIELD</string>
