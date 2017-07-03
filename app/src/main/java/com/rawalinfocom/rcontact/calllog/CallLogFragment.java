@@ -608,7 +608,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         AppConstants.setIsFirstTime(true);
         logsDisplayed = 0;
         spinnerCount = 0;
-        listOfIds = new ArrayList<>();
+        listOfIds.clear();
 //        callLogListAdapter = null;
         simpleCallLogListAdapter = null;
 //        newCallLogListAdapter =null;
@@ -1122,6 +1122,22 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             count = 0;
         }
 
+        if(listOfIds!=null && listOfIds.size()==0){
+            if(listOfIds!=null && listOfIds.size()==0){
+                PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(getActivity());
+//            listOfIds = new ArrayList<>();
+                Cursor cursor = phoneBookCallLogs.getAllCallLogId();
+                if (cursor != null) {
+                    int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
+                    while (cursor.moveToNext()) {
+                        listOfIds.add(cursor.getString(rowId));
+                    }
+                }
+                cursor.close();
+                Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOGS_ID_SET,
+                        listOfIds);
+            }
+        }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout
                 .simple_spinner_item, spinnerArray);

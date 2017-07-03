@@ -509,7 +509,7 @@ public class CallLogType implements Serializable {
     public void setHistoryCallTime(String historyCallTime) {
         this.historyCallTime = historyCallTime;
     }
-    @JsonIgnore
+
     public Boolean isRcpUser() {
         return isRcpUser;
     }

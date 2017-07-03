@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -15,7 +14,6 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -410,20 +408,18 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     showPineGreen = false;
                 }
             }
-            holder.rippleInvite.setVisibility(View.GONE);
             holder.relativeRowAllContact.setTag(profileData.getTempRcpId());
             if (StringUtils.contains(profileData.getTempRcpName(), ",")) {
                 holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
                 holder.textCloudContactName.setText(" (" + String.valueOf(StringUtils.countMatches
                         (profileData.getTempRcpName(), ",") + 1) + " RC)");
-                holder.rippleInvite.setVisibility(View.GONE);
             }
         } else {
             showPineGreen = false;
             holder.relativeRowAllContact.setTag("-1");
             holder.textCloudContactName.setVisibility(View.GONE);
             holder.textCloudContactName.setText("");
-            if (Utils.getBooleanPreference(activity, AppConstants.PREF_CONTACT_SYNCED, false)) {
+           /* if (Utils.getBooleanPreference(activity, AppConstants.PREF_CONTACT_SYNCED, false)) {
                 holder.rippleInvite.setVisibility(View.VISIBLE);
                 if (StringUtils.length(profileData.getTempNumber()) > 0) {
                     holder.rippleInvite.setVisibility(View.VISIBLE);
@@ -432,7 +428,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             } else {
                 holder.rippleInvite.setVisibility(View.GONE);
-            }
+            }*/
         }
 
         /*if (fragment instanceof AllContactsListFragment) {
@@ -557,15 +553,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
         //</editor-fold>
 
-        //<editor-fold desc="imageSocialMedia Click">
-        holder.imageSocialMedia.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showBottomSheet();
-            }
-        });
-        //</editor-fold>
-
         //<editor-fold desc="buttonInvite Click">
       /*  holder.buttonInvite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -633,7 +620,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         });*/
 
-        holder.rippleInvite.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+        /*holder.rippleInvite.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener
+        () {
             @Override
             public void onComplete(RippleView rippleView) {
                 ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
@@ -696,7 +684,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                 }
             }
-        });
+        });*/
 
         //</editor-fold>
 
@@ -1406,8 +1394,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
-        @BindView(R.id.image_social_media)
-        ImageView imageSocialMedia;
+        /* @BindView(R.id.image_social_media)
+         ImageView imageSocialMedia;*/
         @BindView(R.id.text_contact_name)
         public TextView textContactName;
         @BindView(R.id.text_cloud_contact_name)
@@ -1426,10 +1414,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         LinearLayout linearRating;
         @BindView(R.id.recycler_view_multiple_rc)
         public RecyclerView recyclerViewMultipleRc;
-        @BindView(R.id.button_invite)
+      /*  @BindView(R.id.button_invite)
         Button buttonInvite;
         @BindView(R.id.ripple_invite)
-        RippleView rippleInvite;
+        RippleView rippleInvite;*/
 
 
         AllContactViewHolder(View itemView) {
@@ -1448,12 +1436,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             recyclerViewMultipleRc.setVisibility(View.GONE);
             linearRating.setVisibility(View.GONE);
-            imageSocialMedia.setVisibility(View.GONE);
-//            buttonInvite.setVisibility(View.GONE);
 
-            Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor(activity, R
+          /*  Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor(activity, R
                     .color.colorAccent), 5, 0, ContextCompat.getColor(activity, R.color
-                    .colorAccent));
+                    .colorAccent));*/
 
             LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
             // Filled stars
