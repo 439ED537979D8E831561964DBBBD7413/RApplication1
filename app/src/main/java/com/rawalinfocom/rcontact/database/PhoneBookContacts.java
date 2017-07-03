@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.database;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -429,15 +430,16 @@ public class PhoneBookContacts {
     }*/
 
     public void deleteContact(String contactId) {
-        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+//        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        Uri uri = ContactsContract.RawContacts.CONTENT_URI;
 
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                Uri lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
-                        .CONTENT_LOOKUP_URI, contactId);
+                Uri contactUri = ContentUris.withAppendedId(ContactsContract.RawContacts
+                        .CONTENT_URI, Long.parseLong(contactId));
 
-                context.getContentResolver().delete(lookupUri, null, null);
+                context.getContentResolver().delete(contactUri, null, null);
 
             }
             cursor.close();

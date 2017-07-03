@@ -259,7 +259,7 @@
     <string name="text_no_history">No history to show</string>
     <string name="view_old_records">View old records</string>
     <string name="rating_submit">Rating Submitted</string>
-    <string name="please_select_number_view_sms_log">FFct a number to view sms-log</string>
+    <string name="please_select_number_view_sms_log">Please select a number to view sms-log</string>
     <string name="please_select_number_call">Please select a number to call</string>
     <string name="error_update_favorite_status">Error while updating favourite status!</string>
     <string name="add_to_contact">Add to Contact</string>
