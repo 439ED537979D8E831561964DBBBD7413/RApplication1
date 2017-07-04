@@ -40,8 +40,7 @@ public class TableOrganizationMaster {
     // Table Create Statements
     static final String CREATE_TABLE_RC_ORGANIZATION_MASTER = "CREATE TABLE " +
             TABLE_RC_ORGANIZATION_MASTER + " (" +
-            " " + COLUMN_OM_ID + " integer NOT NULL CONSTRAINT rc_organization_master_pk PRIMARY " +
-            "KEY," +
+            " " + COLUMN_OM_ID + " integer NOT NULL CONSTRAINT rc_organization_master_pk PRIMARY " + "KEY," +
             " " + COLUMN_OM_RECORD_INDEX_ID + " text," +
             " " + COLUMN_OM_ORGANIZATION_COMPANY + " text NOT NULL," +
             " " + COLUMN_OM_ORGANIZATION_DESIGNATION + " text," +

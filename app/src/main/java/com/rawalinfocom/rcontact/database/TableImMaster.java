@@ -109,7 +109,8 @@ public class TableImMaster {
             values.put(COLUMN_IM_PROTOCOL, arrayListImAccount.get(i).getImImProtocol());
             values.put(COLUMN_IM_PRIVACY, MoreObjects.firstNonNull(
                     Integer.parseInt(arrayListImAccount.get(i).getImImPrivacy()), 0));
-            values.put(COLUMN_IM_IS_PRIVATE, arrayListImAccount.get(i).getImIsPrivate());
+            values.put(COLUMN_IM_IS_PRIVATE,
+                    MoreObjects.firstNonNull(arrayListImAccount.get(i).getImIsPrivate(), 0));
             values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListImAccount.get(i).getRcProfileMasterPmId());
 
             // Inserting Row

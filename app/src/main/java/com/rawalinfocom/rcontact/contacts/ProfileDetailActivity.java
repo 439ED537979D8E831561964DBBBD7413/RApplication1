@@ -2363,8 +2363,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     ())) {
                 arrayListEmail.addAll(profileDetail.getPbEmailId());
                 for (int i = 0; i < arrayListEmail.size(); i++) {
-                    String email = arrayListEmail.get(i).getEmEmailId();
-                    arrayListCloudEmail.add(email);
+                    arrayListCloudEmail.add(arrayListEmail.get(i).getEmEmailId());
                 }
             }
 
@@ -3400,15 +3399,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber)) {
             for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
                 MobileNumber mobileNumber = new MobileNumber();
-                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i)
-                        .getPhoneId());
-                mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i)
-                        .getPhoneType());
-                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i)
-                        .getPhoneNumber());
-                mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
-                        .get(i).getPhonePublic()));
+                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i).getPhoneId());
+                mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i).getPhoneType());
+                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+                mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(i).getPhonePublic()));
                 mobileNumber.setMnmIsPrimary(arrayListPhoneNumber.get(i).getPbRcpType());
+                mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(i).getIsPrivate());
                 mobileNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListMobileNumber.add(mobileNumber);
             }
@@ -3426,6 +3422,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
+                email.setEmIsPrivate(arrayListEmailId.get(i).getEmIsPrivate());
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
                 email.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListEmail.add(email);
@@ -3446,7 +3443,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 organization.setOmRecordIndexId(arrayListOrganization.get(i).getOrgId());
                 organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName());
                 organization.setOmOrganizationDesignation(arrayListOrganization.get(i).getOrgJobTitle());
-                organization.setOmIsPrivate(arrayListOrganization.get(i).getOrgPublic());
+                organization.setOmIsPrivate(arrayListOrganization.get(i).getIsPrivate());
                 organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 organizationList.add(organization);
             }
@@ -3468,7 +3465,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
                 website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
                 website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
-                website.setWmIsPrivate(arrayListWebsite.get(j).getWebPublic());
+                website.setWmIsPrivate(arrayListWebsite.get(j).getWebIsPrivate());
                 website.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 websiteList.add(website);
             }
@@ -3494,6 +3491,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 address.setAmPoBox(arrayListAddress.get(j).getPoBox());
                 address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
                 address.setAmPostCode(arrayListAddress.get(j).getPostCode());
+                address.setAmAddressType(arrayListAddress.get(j).getAddressType());
 
                 if (arrayListAddress.get(j).getGoogleLatLong() != null && arrayListAddress.get(j)
                         .getGoogleLatLong().size() == 2) {
@@ -3524,6 +3522,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
                 imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
                 imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j).getIMAccountPublic()));
+                imAccount.setImIsPrivate(arrayListImAccount.get(j).getIMAccountIsPrivate());
                 imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
 
                 imAccountsList.add(imAccount);

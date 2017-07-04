@@ -42,7 +42,6 @@ public class TableEmailMaster {
     //    static final String COLUMN_EM_IS_PRIMARY = "em_is_primary";
     //    private static final String COLUMN_EM_IS_DEFAULT = "em_is_default";
 
-
     // Table Create Statements
     static final String CREATE_TABLE_RC_EMAIL_MASTER = "CREATE TABLE " +
             TABLE_RC_EMAIL_MASTER + " (" +

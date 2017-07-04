@@ -111,7 +111,7 @@ public class TableEventMaster {
             values.put(COLUMN_EVM_START_DATE, arrayListEvent.get(i).getEvmStartDate());
             values.put(COLUMN_EVM_EVENT_TYPE, arrayListEvent.get(i).getEvmEventType());
             values.put(COLUMN_EVM_IS_YEAR_HIDDEN, arrayListEvent.get(i).getEvmIsYearHidden());
-            values.put(COLUMN_EVM_EVENT_PRIVACY, MoreObjects.firstNonNull(arrayListEvent.get(i).getEvmIsPrivate(), 0));
+            values.put(COLUMN_EVM_IS_PRIVATE, MoreObjects.firstNonNull(arrayListEvent.get(i).getEvmIsPrivate(), 0));
             values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListEvent.get(i).getRcProfileMasterPmId());
 
             // Inserting Row

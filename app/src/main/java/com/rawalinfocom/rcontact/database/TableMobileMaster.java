@@ -136,7 +136,7 @@ public class TableMobileMaster {
     public void addUpdateArrayMobileNumber(ArrayList<MobileNumber> arrayListMobileNumber, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
-        int count = db.delete(TABLE_RC_MOBILE_NUMBER_MASTER, COLUMN_MNM_RECORD_INDEX_ID + " = " + RcpPmId, null);
+        int count = db.delete(TABLE_RC_MOBILE_NUMBER_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
         if (count > 0) System.out.println("RContact data delete ");
 
         for (int i = 0; i < arrayListMobileNumber.size(); i++) {

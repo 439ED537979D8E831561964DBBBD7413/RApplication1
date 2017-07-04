@@ -95,8 +95,7 @@ public class TableProfileMaster {
             " " + COLUMN_PM_PROFILE_RATING + " integer," +
             " " + COLUMN_PM_PROFILE_RATE_USER + " integer," +
             " " + COLUMN_PM_IS_FAVOURITE + " integer," +
-            " " + COLUMN_PM_NOSQL_MASTER_ID + " text," +
-            ");";
+            " " + COLUMN_PM_NOSQL_MASTER_ID + " text" + ");";
 
     // Adding new Profile
     public void addProfile(UserProfile userProfile) {

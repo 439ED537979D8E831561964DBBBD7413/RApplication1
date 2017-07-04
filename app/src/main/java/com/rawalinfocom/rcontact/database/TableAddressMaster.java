@@ -156,7 +156,7 @@ public class TableAddressMaster {
             values.put(COLUMN_AM_STATE, arrayListAddress.get(i).getAmState());
             values.put(COLUMN_AM_STREET, arrayListAddress.get(i).getAmStreet());
             values.put(COLUMN_AM_IS_PRIVATE, MoreObjects.firstNonNull(arrayListAddress.get(i).getAmIsPrivate(), 0));
-//            values.put(COLUMN_AM_ADDRESS_TYPE, arrayListAddress.get(i).getAmAddressType());
+            values.put(COLUMN_AM_ADDRESS_TYPE, arrayListAddress.get(i).getAmAddressType());
             values.put(COLUMN_AM_GOOGLE_LATITUDE, arrayListAddress.get(i).getAmGoogleLatitude());
             values.put(COLUMN_AM_GOOGLE_LONGITUDE, arrayListAddress.get(i).getAmGoogleLongitude());
             values.put(COLUMN_AM_GOOGLE_ADDRESS, arrayListAddress.get(i).getAmGoogleAddress());
