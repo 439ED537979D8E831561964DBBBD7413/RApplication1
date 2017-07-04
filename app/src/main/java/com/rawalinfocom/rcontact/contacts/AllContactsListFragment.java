@@ -379,7 +379,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
         set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
-//        set.add(ContactsContract.Contacts.LOOKUP_KEY);
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
 
         Uri uri = ContactsContract.Data.CONTENT_URI;
@@ -674,17 +673,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             //<editor-fold desc="Profile Master">
             UserProfile userProfile = new UserProfile();
-            userProfile.setPmSuffix(profileData.get(i).getPbNameSuffix());
-            userProfile.setPmPrefix(profileData.get(i).getPbNamePrefix());
+//            userProfile.setPmSuffix(profileData.get(i).getPbNameSuffix());
+//            userProfile.setPmPrefix(profileData.get(i).getPbNamePrefix());
             userProfile.setPmFirstName(profileData.get(i).getPbNameFirst());
-            userProfile.setPmMiddleName(profileData.get(i).getPbNameMiddle());
+//            userProfile.setPmMiddleName(profileData.get(i).getPbNameMiddle());
             userProfile.setPmLastName(profileData.get(i).getPbNameLast());
-            userProfile.setPmPhoneticFirstName(profileData.get(i).getPbPhoneticNameFirst());
-            userProfile.setPmPhoneticMiddleName(profileData.get(i).getPbPhoneticNameMiddle());
-            userProfile.setPmPhoneticLastName(profileData.get(i).getPbPhoneticNameLast());
+//            userProfile.setPmPhoneticFirstName(profileData.get(i).getPbPhoneticNameFirst());
+//            userProfile.setPmPhoneticMiddleName(profileData.get(i).getPbPhoneticNameMiddle());
+//            userProfile.setPmPhoneticLastName(profileData.get(i).getPbPhoneticNameLast());
             userProfile.setPmIsFavourite(profileData.get(i).getIsFavourite());
-            userProfile.setPmNotes(profileData.get(i).getPbNote());
-            userProfile.setPmNickName(profileData.get(i).getPbNickname());
+//            userProfile.setPmNotes(profileData.get(i).getPbNote());
+//            userProfile.setPmNickName(profileData.get(i).getPbNickname());
             userProfile.setPmRcpId(profileData.get(i).getRcpPmId());
             userProfile.setPmNosqlMasterId(profileData.get(i).getNoSqlMasterId());
             userProfile.setProfileRating(profileData.get(i).getProfileRating());

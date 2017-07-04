@@ -110,6 +110,50 @@ public class TableWebsiteMaster {
 
             // Inserting Row
             db.insert(TABLE_RC_WEBSITE_MASTER, null, values);
+
+
+        }
+        db.close(); // Closing database connection
+    }
+
+    // Adding or Updating array website
+    public void addUpdateArrayWebsite(ArrayList<Website> arrayListWebsite, String RcpPmId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_WEBSITE_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
+//        ContentValues values = new ContentValues();
+        for (int i = 0; i < arrayListWebsite.size(); i++) {
+            ContentValues values = new ContentValues();
+
+            values.put(COLUMN_WM_ID, arrayListWebsite.get(i).getWmId());
+            values.put(COLUMN_WM_RECORD_INDEX_ID, arrayListWebsite.get(i).getWmRecordIndexId());
+            values.put(COLUMN_WM_WEBSITE_URL, arrayListWebsite.get(i).getWmWebsiteUrl());
+            values.put(COLUMN_WM_WEBSITE_TYPE, arrayListWebsite.get(i).getWmWebsiteType());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListWebsite.get(i).getRcProfileMasterPmId());
+
+            // Inserting Row
+            db.insert(TABLE_RC_WEBSITE_MASTER, null, values);
+
+//            int count = 0;
+//            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_WEBSITE_MASTER + " " +
+//                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                    arrayListWebsite.get(i).getRcProfileMasterPmId(), null);
+//            if (mCount != null) {
+//                mCount.moveToFirst();
+//                count = mCount.getInt(0);
+//                mCount.close();
+//            }
+//
+//            if (count > 0) {
+//                // Update if already exists
+//                db.update(TABLE_RC_WEBSITE_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                        arrayListWebsite.get(i).getRcProfileMasterPmId(), null);
+//            } else {
+//                // Inserting Row
+//                db.insert(TABLE_RC_WEBSITE_MASTER, null, values);
+//            }
         }
         db.close(); // Closing database connection
     }

@@ -633,9 +633,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                             String lastName = userProfile.getPmLastName();
                             String rcpId = userProfile.getPmRcpId();
                             String imagePath = userProfile.getPmProfileImage();
-                            String suffix = userProfile.getPmSuffix();
-                            String prefix = userProfile.getPmPrefix();
-                            String middleName = userProfile.getPmMiddleName();
+//                            String suffix = userProfile.getPmSuffix();
+//                            String prefix = userProfile.getPmPrefix();
+//                            String middleName = userProfile.getPmMiddleName();
 
                             if (!StringUtils.isEmpty(firstName))
                                 smsDataType.setRcpFirstName(firstName);
@@ -645,12 +645,12 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                 smsDataType.setRcpId(rcpId);
                             if (!StringUtils.isEmpty(imagePath))
                                 smsDataType.setProfileImage(imagePath);
-                            if (!StringUtils.isEmpty(middleName))
-                                smsDataType.setMiddleName(middleName);
-                            if (!StringUtils.isEmpty(suffix))
-                                smsDataType.setSuffix(suffix);
-                            if (!StringUtils.isEmpty(prefix))
-                                smsDataType.setPrefix(prefix);
+//                            if (!StringUtils.isEmpty(middleName))
+//                                smsDataType.setMiddleName(middleName);
+//                            if (!StringUtils.isEmpty(suffix))
+//                                smsDataType.setSuffix(suffix);
+//                            if (!StringUtils.isEmpty(prefix))
+//                                smsDataType.setPrefix(prefix);
 
                             smsDataType.setRcpUser(true);
                             int positionToReplace = smsDataType.getRecordPosition();

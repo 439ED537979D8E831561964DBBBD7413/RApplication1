@@ -145,7 +145,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
         final ProfileDetailViewHolder viewHodler = holder;
         if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
-            holder.getTextMain(isOwnProfile).setText(number + " ◊");
+            holder.getTextMain(isOwnProfile).setText(String.format("%s ◊", number));
             holder.getTextMain(isOwnProfile).setTextColor(colorPineGreen);
             holder.buttonPrivacy.setVisibility(View.GONE);
         } else if (pbRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
@@ -547,7 +547,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 .get(position);
 
         String convertedDate;
-        if (StringUtils.startsWith(event.getEventDateTime(), "--")) {
+        if (StringUtils.startsWith(event.getEventDateTime(), "XXX")) {
+            convertedDate = event.getEventDateTime();
+        } else if (StringUtils.startsWith(event.getEventDateTime(), "--")) {
             convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "--MM-dd", "dd'th' " +
                     "MMM");
         } else {
