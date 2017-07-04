@@ -130,7 +130,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                 finish();
 
 //                if (isFrom.equals("mobile")) {
-//                } else if (isFrom.equals("forgot_pass")) {
+//                } else if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD)) {
 //                }
 
                 break;
@@ -192,7 +192,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
                     LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
-                    if (isFrom.equals("forgot_pass")) {
+                    if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD)) {
 
                         // set launch screen as OtpVerificationActivity
                         Utils.setIntegerPreference(OtpVerificationActivity.this,
@@ -200,7 +200,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
                         // Redirect to SetPassWordActivity
                         Bundle bundle = new Bundle();
-                        bundle.putString(AppConstants.EXTRA_IS_FROM, "forgot_pass");
+                        bundle.putString(AppConstants.EXTRA_IS_FROM, AppConstants.PREF_FORGOT_PASSWORD);
                         Intent intent = new Intent(this, SetPasswordActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -270,80 +270,15 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         rippleSubmit.setOnRippleCompleteListener(this);
     }
 
-//    private void startOtpService() {
-//        otpServiceIntent = new Intent(this, OtpTimerService.class);
-//        otpServiceIntent.putExtra(AppConstants.EXTRA_MOBILE_NUMBER, mobileNumber);
-//        otpServiceIntent.putExtra(AppConstants.EXTRA_OTP_SERVICE_END_TIME, (long) (AppConstants
-//                .OTP_VALIDITY_DURATION * 60 * 1000));
-//        otpServiceIntent.putExtra(AppConstants.EXTRA_CALL_MSP_SERVER, true);
-//        startService(otpServiceIntent);
-//    }
-
-//    private void verifyOtp(String message) {
-//        if (StringUtils.length(message) == AppConstants.OTP_LENGTH) {
-//            TableOtpLogDetails tableOtpLogDetails = new TableOtpLogDetails(databaseHandler);
-//            OtpLog otpLog = tableOtpLogDetails.getLastOtpDetails();
-//            if (otpLog.getOldValidityFlag().equalsIgnoreCase("1")) {
-//                if (otpLog.getOldOtp().equals(message)) {
-//                    stopService(new Intent(OtpVerificationActivity.this, OtpTimerService.class));
-//                    otpConfirmed(otpLog);
-//                } else {
-//                    Utils.hideSoftKeyboard(this, inputOtp);
-//                    Utils.showErrorSnackBar(OtpVerificationActivity.this,
-//                            relativeRootOtpVerification, getString(R.string
-//                                    .error_otp_verification_fail));
-//                }
-//            } else {
-//                Utils.showErrorSnackBar(OtpVerificationActivity.this,
-//                        relativeRootOtpVerification, getString(R.string.error_otp_expired));
-//            }
-//        } else {
-//            Utils.showErrorSnackBar(OtpVerificationActivity.this,
-//                    relativeRootOtpVerification, getString(R.string
-//                            .error_otp_length_incorrect, AppConstants.OTP_LENGTH));
-//        }
-//    }
-
-    private boolean checkPlayServices() {
-
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Log.i("Reg key Error", "This device is not supported.");
-                // finish();
-            }
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean isOtpServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer
-                .MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     //</editor-fold>
 
     //<editor-fold desc="Web Service Call">
 
     private void sendOtp() {
 
-//        Utils.showProgressDialog(OtpVerificationActivity.this, getString(R.string.msg_please_wait), false);
-
         WsRequestObject otpObject = new WsRequestObject();
         otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
-        otpObject.setMobileNumber(mobileNumber);
+        otpObject.setMobileNumber(mobileNumber.replace("+", ""));
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
@@ -361,13 +296,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
     private void otpConfirmed(String otp) {
 
         WsRequestObject otpObject = new WsRequestObject();
-//        otpObject.setPmId(Integer.parseInt(otpLog.getRcProfileMasterPmId()));
-//        otpObject.setStatus(AppConstants.OTP_CONFIRMED_STATUS);
-//        otpObject.setLdOtpDeliveredTimeFromCloudToDevice(otpLog.getOldMspDeliveryTime());
-//        otpObject.setOtpGenerationTime(otpLog.getOldGeneratedAt());
         otpObject.setOtp(otp);
-        otpObject.setMobileNumber(mobileNumber);
-//        otpObject.setAccessToken(getDeviceTokenId() + "_" + otpLog.getRcProfileMasterPmId());
+        otpObject.setMobileNumber(mobileNumber.replace("+91", ""));
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,

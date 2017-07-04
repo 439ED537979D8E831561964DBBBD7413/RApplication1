@@ -652,23 +652,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         if (oldPrivacy == newPrivacy + 1) {
             return;
         }
-        switch (newPrivacy) {
-            case 0:
-                //everyone
-                viewHolder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
-                break;
-            case 1:
-                //my contacts
-                viewHolder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_my_contact);
-                break;
-            case 2:
-                //only me
-                viewHolder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_onlyme);
-                break;
 
-        }
-        int pmId = Integer.parseInt(((BaseActivity) activity).getUserPmId());
-        ;
         WsRequestObject wsRequestObject = new WsRequestObject();
 
         PrivacyEntityItem privacyEntityItem = new PrivacyEntityItem();

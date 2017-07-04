@@ -113,9 +113,9 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
             textNumber.setText(mobileNumber);
         }
 
-        isFrom = getIntent().getStringExtra("from");
+        isFrom = getIntent().getStringExtra(AppConstants.PREF_IS_FROM);
 
-        if (isFrom.equals("forgot_pass") || isFrom.equals("re_login")) {
+        if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD) || isFrom.equals(AppConstants.PREF_RE_LOGIN)) {
             textToolbarTitle.setText(getResources().getString(R.string.password_verification));
         } else {
             textToolbarTitle.setText(getResources().getString(R.string.str_enter_password));
@@ -141,9 +141,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
                     // Redirect to OtpVerificationActivity
                     Bundle bundle = new Bundle();
-                    bundle.putString(AppConstants.EXTRA_IS_FROM, "forgot_pass");
-                    startActivityIntent(ReLoginEnterPasswordActivity.this,
-                            OtpVerificationActivity.class, bundle);
+                    bundle.putString(AppConstants.EXTRA_IS_FROM, AppConstants.PREF_FORGOT_PASSWORD);
+                    startActivityIntent(ReLoginEnterPasswordActivity.this, OtpVerificationActivity.class, bundle);
                     overridePendingTransition(R.anim.enter, R.anim.exit);
 
                 } else {
@@ -179,8 +178,9 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     storeProfileDataToDb(profileDetail);
 
                     // Redirect to MainActivity
-                    if (isFrom.equals("re_login")) {
+                    if (isFrom.equals(AppConstants.PREF_RE_LOGIN)) {
                         Utils.hideProgressDialog();
+                        Utils.setBooleanPreference(ReLoginEnterPasswordActivity.this, AppConstants.PREF_TEMP_LOGOUT, false);
                         Intent intent = new Intent(this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -287,7 +287,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         WsRequestObject enterPassWordObject = new WsRequestObject();
         enterPassWordObject.setMobileNumber(mobileNumber.replace("+", ""));
         enterPassWordObject.setPassword(StringUtils.trimToEmpty(password));
-        if (isFrom.equals("re_login")) {
+        if (isFrom.equals(AppConstants.PREF_RE_LOGIN) || Utils.getBooleanPreference(ReLoginEnterPasswordActivity.this,
+                AppConstants.PREF_TEMP_LOGOUT, false)) {
             enterPassWordObject.setReAuthenticate(1); // For Android Devices
         }
         enterPassWordObject.setCreatedBy("2"); // For Android Devices
@@ -300,8 +301,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     enterPassWordObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_LOGIN, getString(R.string
-                    .msg_please_wait), false).execute(WsConstants.WS_ROOT + WsConstants
-                    .REQ_CHECK_LOGIN);
+                    .msg_please_wait), false)
+                    .execute(WsConstants.WS_ROOT + WsConstants.REQ_CHECK_LOGIN);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEnterPassword, getResources()
                     .getString(R.string.msg_no_network));

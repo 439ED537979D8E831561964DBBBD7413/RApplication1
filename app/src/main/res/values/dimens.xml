@@ -49,7 +49,6 @@
     <dimen name="margin_3dp">3dp</dimen>
 
 
-
     <!--call dialer-->
     <dimen name="padding_12dp">12dp</dimen>
     <dimen name="text_size_32sp">32sp</dimen>

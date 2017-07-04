@@ -1397,10 +1397,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     ProfileDataOperation profileDetail = editProfileResponse.getProfileDetail();
                     savePrivacySettingToDb(profileDetail);
 
+                    getDataFromDB();
+
+                    Utils.hideProgressDialog();
                     Toast.makeText(ProfileDetailActivity.this, getString(R.string
                                     .str_privacy_setting_update),
                             Toast.LENGTH_SHORT).show();
-                    Utils.hideProgressDialog();
                 } else {
                     if (editProfileResponse != null) {
                         Log.e("error response", editProfileResponse.getMessage());
@@ -1992,16 +1994,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
         });
 
-        LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
-        // Filled stars
-        Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(this, R.color
-                .vivid_yellow));
-        // half stars
-        Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(this, android.R
-                .color.darker_gray));
-        // Empty stars
-        Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(this, android.R
-                .color.darker_gray));
+        Utils.setRatingColor(ProfileDetailActivity.this,ratingUser);
+
+//        LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
+//        // Filled stars
+//        Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(this, R.color
+//                .vivid_yellow));
+//        // half stars
+//        Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(this, android.R
+//                .color.darker_gray));
+//        // Empty stars
+//        Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(this, android.R
+//                .color.darker_gray));
 
         if (!displayOwnProfile)
             if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
