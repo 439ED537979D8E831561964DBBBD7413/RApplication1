@@ -5,5 +5,5 @@
         android:duration="@android:integer/config_shortAnimTime"
         android:fromXDelta="0"
         android:interpolator="@android:anim/accelerate_interpolator"
-        android:toXDelta="-100%"/>
+        android:toXDelta="-100%" />
 </set>

@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-   <integer name="max_comment_length">200</integer>
+    <integer name="max_comment_length">200</integer>
 
-  <!--   &lt;!&ndash; Launcher Screen Constants &ndash;&gt;
-    <integer name="launch_mobile_registration">0</integer>
-    <integer name="launch_otp_verification">1</integer>
-    <integer name="launch_profile_registration">2</integer>
-    <integer name="launch_main_activity">3</integer>
+    <!--   &lt;!&ndash; Launcher Screen Constants &ndash;&gt;
+      <integer name="launch_mobile_registration">0</integer>
+      <integer name="launch_otp_verification">1</integer>
+      <integer name="launch_profile_registration">2</integer>
+      <integer name="launch_main_activity">3</integer>
 
-    &lt;!&ndash; Profile Registration Constants &ndash;&gt;
-    <integer name="registration_via_email">0</integer>
-    <integer name="registration_via_facebook">1</integer>
-    <integer name="registration_via_google">2</integer>
-    <integer name="registration_via_lined_in">3</integer>
+      &lt;!&ndash; Profile Registration Constants &ndash;&gt;
+      <integer name="registration_via_email">0</integer>
+      <integer name="registration_via_facebook">1</integer>
+      <integer name="registration_via_google">2</integer>
+      <integer name="registration_via_lined_in">3</integer>
 
-    &lt;!&ndash; User Profile Verification Constants &ndash;&gt;
-    <integer name="profile_not_verified">0</integer>
-    <integer name="profile_already_verified">1</integer>
+      &lt;!&ndash; User Profile Verification Constants &ndash;&gt;
+      <integer name="profile_not_verified">0</integer>
+      <integer name="profile_already_verified">1</integer>
 
-    &lt;!&ndash; RCP Type Constants (For Mobile Number and Email Id) &ndash;&gt;
-    <integer name="rcp_type_cloud_phone_book">0</integer>
-    <integer name="rcp_type_primary">1</integer> &lt;!&ndash; verified &ndash;&gt;
-    <integer name="rcp_type_secondary">2</integer>
-    <integer name="rcp_type_local_phone_book">3</integer>
+      &lt;!&ndash; RCP Type Constants (For Mobile Number and Email Id) &ndash;&gt;
+      <integer name="rcp_type_cloud_phone_book">0</integer>
+      <integer name="rcp_type_primary">1</integer> &lt;!&ndash; verified &ndash;&gt;
+      <integer name="rcp_type_secondary">2</integer>
+      <integer name="rcp_type_local_phone_book">3</integer>
 
-    &lt;!&ndash; Rating Status Constants &ndash;&gt;
-    <integer name="rating_done">1</integer> &lt;!&ndash; sent &ndash;&gt;
-    <integer name="rating_received">2</integer> &lt;!&ndash; received &ndash;&gt;
+      &lt;!&ndash; Rating Status Constants &ndash;&gt;
+      <integer name="rating_done">1</integer> &lt;!&ndash; sent &ndash;&gt;
+      <integer name="rating_received">2</integer> &lt;!&ndash; received &ndash;&gt;
 
-    &lt;!&ndash; Send Profile Type &ndash;&gt;
-    <integer name="send_profile_rcp">1</integer>
-    <integer name="send_profile_non_rcp_social">2</integer>
-    <integer name="send_profile_non_rcp">3</integer>
+      &lt;!&ndash; Send Profile Type &ndash;&gt;
+      <integer name="send_profile_rcp">1</integer>
+      <integer name="send_profile_non_rcp_social">2</integer>
+      <integer name="send_profile_non_rcp">3</integer>
 
-    &lt;!&ndash; Contact sync status flags &ndash;&gt;
-    <integer name="sync_insert">1</integer>
-    <integer name="sync_update_insert">2</integer>
-    <integer name="sync_update_update">3</integer>
-    <integer name="sync_update_delete">4</integer>
-    <integer name="sync_delete">5</integer>
-    <integer name="sync_update">6</integer>
+      &lt;!&ndash; Contact sync status flags &ndash;&gt;
+      <integer name="sync_insert">1</integer>
+      <integer name="sync_update_insert">2</integer>
+      <integer name="sync_update_update">3</integer>
+      <integer name="sync_update_delete">4</integer>
+      <integer name="sync_delete">5</integer>
+      <integer name="sync_update">6</integer>
 
-    &lt;!&ndash; Privacy &ndash;&gt;
-    <integer name="privacy_everyone">1</integer>
-    <integer name="privacy_my_contact">2</integer>
-    <integer name="privacy_private">3</integer>-->
+      &lt;!&ndash; Privacy &ndash;&gt;
+      <integer name="privacy_everyone">1</integer>
+      <integer name="privacy_my_contact">2</integer>
+      <integer name="privacy_private">3</integer>-->
 
 </resources>

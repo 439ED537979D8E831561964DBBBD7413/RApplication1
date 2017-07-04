@@ -383,7 +383,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = set.toArray(new String[0]);
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)";
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and " +
+                ContactsContract.Contacts.HAS_PHONE_NUMBER + " >0";
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
@@ -1196,7 +1197,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 ContactsContract.CommonDataKinds.Event.START_DATE,
 
         };
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?)";
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and "
+                + ContactsContract.Contacts.HAS_PHONE_NUMBER + " >0";
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
                 // starred contact not accessible
