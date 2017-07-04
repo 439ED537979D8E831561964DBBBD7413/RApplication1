@@ -47,7 +47,6 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.contacts.MapsActivity;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
@@ -765,7 +764,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .text_is_public);
                     RelativeLayout relativeRowEditProfile = (RelativeLayout) linearEmail
                             .findViewById(R.id.relative_row_edit_profile);
-                    email.setEmEmailId(emailId.getText().toString());
+                    email.setEmEmailId(StringUtils.trim(emailId.getText().toString()));
                     email.setEmType((String) emailType.getSelectedItem());
                     email.setEmId((String) relativeRowEditProfile.getTag());
                     if (StringUtils.length(textIsPublic.getText().toString()) > 0) {
@@ -953,7 +952,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }
                 boolean isCurrentSelected = false;
                 for (int i = 0; i < arrayListNewOrganization.size(); i++) {
-                    if ((MoreObjects.firstNonNull(arrayListNewOrganization.get(i).getIsCurrent(), 0)) == 1) {
+                    if ((MoreObjects.firstNonNull(arrayListNewOrganization.get(i).getIsCurrent(),
+                            0)) == 1) {
                         isCurrentSelected = true;
                         break;
                     }
@@ -2348,7 +2348,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 spinnerEmailAdapter = new ArrayAdapter<>(this, R.layout
                         .list_item_spinner, typeList);
                 spinnerType.setAdapter(spinnerEmailAdapter);
-                inputValue.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                inputValue.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS | InputType
+                        .TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                 if (detailObject != null) {
                     ProfileDataOperationEmail email = (ProfileDataOperationEmail) detailObject;
                     inputValue.setText(email.getEmEmailId());
@@ -2380,7 +2381,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 spinnerWebsiteAdapter.setDropDownViewResource(android.R.layout
                         .simple_spinner_dropdown_item);
                 spinnerType.setAdapter(spinnerWebsiteAdapter);
-                inputValue.setInputType(InputType.TYPE_CLASS_TEXT);
+                inputValue.setInputType(InputType.TYPE_CLASS_TEXT | InputType
+                        .TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                 if (detailObject != null) {
                     ProfileDataOperationWebAddress webAddress = (ProfileDataOperationWebAddress)
                             detailObject;

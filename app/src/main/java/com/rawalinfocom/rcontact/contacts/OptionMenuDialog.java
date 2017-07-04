@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.contacts;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,7 +10,6 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -64,12 +64,9 @@ class OptionMenuDialog {
         rContactApplication = (RContactApplication) context.getApplicationContext();
         phoneBookContacts = new PhoneBookContacts(context);
         if (menuType == R_CONTACT_RCP) {
-
             if (StringUtils.contains(this.rawId, ",")) {
                 String rawIds[] = this.rawId.split(",");
-                this.rawId = phoneBookContacts.getLookupKeyFromRawId(rawIds[0]);
-            } else {
-                this.rawId = phoneBookContacts.getLookupKeyFromRawId(rawId);
+                this.rawId = rawIds[0];
             }
         }
         dialog = new Dialog(context);
@@ -90,17 +87,22 @@ class OptionMenuDialog {
         String[] menus = new String[0];
         switch (menuType) {
             case ALL_CONTACT_NON_RCP:
-                menus = new String[]{context.getString(R.string.edit), context.getString(R.string.delete)};
+                menus = new String[]{context.getString(R.string.edit), context.getString(R.string
+                        .delete)};
                 break;
 
             case ALL_CONTACT_RCP:
-                menus = new String[]{context.getString(R.string.edit), context.getString(R.string.str_view_in_phone_book),
-                        context.getString(R.string.str_rate_profile), context.getString(R.string.delete)};
+                menus = new String[]{context.getString(R.string.edit), context.getString(R.string
+                        .str_view_in_phone_book),
+                        context.getString(R.string.str_rate_profile), context.getString(R.string
+                        .delete)};
                 break;
 
             case R_CONTACT_RCP:
-                menus = new String[]{context.getString(R.string.edit), context.getString(R.string.view_in_ac),
-                        context.getString(R.string.str_rate_profile), context.getString(R.string.delete)};
+                menus = new String[]{context.getString(R.string.edit), context.getString(R.string
+                        .view_in_ac),
+                        context.getString(R.string.str_rate_profile), context.getString(R.string
+                        .delete)};
                 break;
         }
 
@@ -169,11 +171,9 @@ class OptionMenuDialog {
             //<editor-fold desc="Edit">
             case 0:
                 intent = new Intent(Intent.ACTION_EDIT);
-                lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
-                        .CONTENT_LOOKUP_URI, rawId);
-                res = ContactsContract.Contacts.lookupContact(context.getContentResolver
-                        (), lookupUri);
-                intent.setData(res);
+                Uri contactUri = ContentUris.withAppendedId(ContactsContract.RawContacts
+                        .CONTENT_URI, Long.parseLong(rawId));
+                intent.setData(contactUri);
                 if (context instanceof ProfileDetailActivity) {
                     ((ProfileDetailActivity) context).isContactEdited = true;
                 }
@@ -214,11 +214,9 @@ class OptionMenuDialog {
             //<editor-fold desc="Edit">
             case 0:
                 intent = new Intent(Intent.ACTION_EDIT);
-                lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
-                        .CONTENT_LOOKUP_URI, rawId);
-                res = ContactsContract.Contacts.lookupContact(context.getContentResolver
-                        (), lookupUri);
-                intent.setData(res);
+                Uri contactUri = ContentUris.withAppendedId(ContactsContract.RawContacts
+                        .CONTENT_URI, Long.parseLong(rawId));
+                intent.setData(contactUri);
                 if (context instanceof ProfileDetailActivity) {
                     ((ProfileDetailActivity) context).isContactEdited = true;
                 }
@@ -241,7 +239,8 @@ class OptionMenuDialog {
                     ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(context, context.getString(R.string.str_error_retrieving_contact_raw_id), Toast
+                    Toast.makeText(context, context.getString(R.string
+                            .str_error_retrieving_contact_raw_id), Toast
                             .LENGTH_SHORT).show();
                 }
                 break;
@@ -308,17 +307,14 @@ class OptionMenuDialog {
 //        if (StringUtils.contains(rcpRawId, ",")) {
 //            rcpRawId = rcpRawId.split(",")[0];
 //        }
-        Log.i("MAULIK", "rcpRawId" + rawId);
         switch (position) {
 
             //<editor-fold desc="Edit">
             case 0:
                 intent = new Intent(Intent.ACTION_EDIT);
-                lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
-                        .CONTENT_LOOKUP_URI, rawId);
-                res = ContactsContract.Contacts.lookupContact(context.getContentResolver(),
-                        lookupUri);
-                intent.setData(res);
+                Uri contactUri = ContentUris.withAppendedId(ContactsContract.RawContacts
+                        .CONTENT_URI, Long.parseLong(rawId));
+                intent.setData(contactUri);
                 context.startActivity(intent);
                 ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
