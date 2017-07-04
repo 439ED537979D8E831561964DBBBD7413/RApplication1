@@ -836,10 +836,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         if (isRatingUpdate) {
 
-            Intent localBroadcastIntent1 = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_RATING_UPDATE);
-            localBroadcastIntent1.putExtra(AppConstants.EXTRA_RCONTACT_POSITION, getIntent().getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0));
+            Intent localBroadcastIntent1 = new Intent(AppConstants
+                    .ACTION_LOCAL_BROADCAST_RATING_UPDATE);
+            localBroadcastIntent1.putExtra(AppConstants.EXTRA_RCONTACT_POSITION, getIntent()
+                    .getIntExtra(AppConstants.EXTRA_RCONTACT_POSITION, 0));
             localBroadcastIntent1.putExtra(AppConstants.EXTRA_RATING_UPDATE, isRatingUpdate);
-            LocalBroadcastManager.getInstance(ProfileDetailActivity.this).sendBroadcast(localBroadcastIntent1);
+            LocalBroadcastManager.getInstance(ProfileDetailActivity.this).sendBroadcast
+                    (localBroadcastIntent1);
         }
 
         Intent backIntent = getIntent();
@@ -1890,6 +1893,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         rippleActionRightRight = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_right);
 
+        Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor
+                (ProfileDetailActivity.this, R.color.colorAccent), 5, 0, ContextCompat.getColor
+                (ProfileDetailActivity.this, R.color.colorAccent));
+
         recyclerViewContactNumber.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEmail.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewWebsite.setLayoutManager(new LinearLayoutManager(this));
@@ -2012,10 +2019,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (isCallLogRcpUser) {
                 rippleInvite.setVisibility(View.GONE);
                 if (StringUtils.isEmpty(callLogCloudName)) {
-                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
+                            .colorAccent));
                     textFullScreenText.setText(historyName);
                 } else {
-                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                    textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
+                            .colorBlack));
                     textFullScreenText.setText(historyName);
                     textName.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
                     textName.setText(callLogCloudName);
