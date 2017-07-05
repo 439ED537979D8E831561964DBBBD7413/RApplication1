@@ -1886,7 +1886,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             imageRightCenter.setImageResource(R.drawable.ic_action_share);
             imageRightCenter.setTag(TAG_IMAGE_SHARE);
 
-            if (displayOwnProfile) {
+         /*   if (displayOwnProfile) {
                 textToolbarTitle.setText(getString(R.string.title_my_profile));
                 linearCallSms.setVisibility(View.GONE);
                 imageRightLeft.setImageResource(R.drawable.ic_action_edit);
@@ -1896,7 +1896,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             } else {
                 textToolbarTitle.setText(getString(R.string.str_profile_deails));
                 linearCallSms.setVisibility(View.VISIBLE);
-            }
+            }*/
 
             if (isHideFavourite) {
                 rippleActionRightLeft.setEnabled(false);
@@ -1912,6 +1912,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
                 }
             }
+
+            if (displayOwnProfile) {
+                textToolbarTitle.setText(getString(R.string.title_my_profile));
+                linearCallSms.setVisibility(View.GONE);
+                imageRightLeft.setImageResource(R.drawable.ic_action_edit);
+                rippleActionRightRight.setVisibility(View.GONE);
+                imageRightLeft.setTag(TAG_IMAGE_EDIT);
+                imageRightLeft.setVisibility(View.VISIBLE);
+            } else {
+                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+                linearCallSms.setVisibility(View.VISIBLE);
+            }
+
         }
     }
 
