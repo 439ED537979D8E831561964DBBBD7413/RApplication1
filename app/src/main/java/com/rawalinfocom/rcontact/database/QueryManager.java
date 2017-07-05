@@ -43,24 +43,12 @@ public class QueryManager {
 
         //<editor-fold desc="Profile Detail">
         // Select All Query
-        String profileDetailQuery = "SELECT profile." + TableProfileMaster.COLUMN_PM_RAW_ID + "," +
-                "profile." + TableProfileMaster.COLUMN_PM_PREFIX + ",profile." +
-                TableProfileMaster.COLUMN_PM_FIRST_NAME + ",profile." + TableProfileMaster
-                .COLUMN_PM_MIDDLE_NAME + ",profile." + TableProfileMaster.COLUMN_PM_LAST_NAME +
-                ",profile." + TableProfileMaster.COLUMN_PM_SUFFIX + ",profile." +
-                TableProfileMaster.COLUMN_PM_NICK_NAME + ",profile." + TableProfileMaster
-                .COLUMN_PM_PHONETIC_FIRST_NAME + ",profile." + TableProfileMaster
-                .COLUMN_PM_PHONETIC_MIDDLE_NAME + ",profile." + TableProfileMaster
-                .COLUMN_PM_PHONETIC_LAST_NAME + ",profile." + TableProfileMaster
-                .COLUMN_PM_PROFILE_IMAGE + ",profile." + TableProfileMaster
-                .COLUMN_PM_NICK_NAME_PRIVACY + ",profile." + TableProfileMaster.COLUMN_PM_NOTES +
-                ",profile." + TableProfileMaster.COLUMN_PM_NOTES_PRIVACY + ",profile." +
-                TableProfileMaster.COLUMN_PM_GENDER + ",profile." + TableProfileMaster
-                .COLUMN_PM_GENDER_PRIVACY + ",profile." + TableProfileMaster
-                .COLUMN_PM_IS_FAVOURITE + ", profile." + TableProfileMaster
-                .COLUMN_PM_PROFILE_RATING + ", profile." + TableProfileMaster
-                .COLUMN_PM_PROFILE_RATE_USER + " from " + TableProfileMaster
-                .TABLE_RC_PROFILE_MASTER + " profile WHERE profile." + TableProfileMaster
+        String profileDetailQuery = "SELECT profile." + TableProfileMaster.COLUMN_PM_RAW_ID +
+                ",profile." + TableProfileMaster.COLUMN_PM_FIRST_NAME + ",profile." + TableProfileMaster.COLUMN_PM_LAST_NAME +
+                ",profile." + TableProfileMaster.COLUMN_PM_PROFILE_IMAGE + ",profile." + TableProfileMaster.COLUMN_PM_GENDER +
+                ",profile." + TableProfileMaster.COLUMN_PM_GENDER_PRIVACY + ",profile." + TableProfileMaster.COLUMN_PM_IS_FAVOURITE +
+                ",profile." + TableProfileMaster.COLUMN_PM_PROFILE_RATING + ", profile." + TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER +
+                " from " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " profile WHERE profile." + TableProfileMaster
                 .COLUMN_PM_RCP_ID + " IN (" + rcpId + ")";
 
         Cursor cursor = db.rawQuery(profileDetailQuery, null);
@@ -69,28 +57,28 @@ public class QueryManager {
         if (cursor.moveToFirst()) {
 
             profileDataOperation.setRcpPmId(rcpId);
-            profileDataOperation.setPbNamePrefix(StringUtils.defaultString(cursor.getString
-                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_PREFIX))));
+//            profileDataOperation.setPbNamePrefix(StringUtils.defaultString(cursor.getString
+//                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_PREFIX))));
             profileDataOperation.setPbNameFirst(StringUtils.defaultString(cursor.getString(cursor
                     .getColumnIndex(TableProfileMaster.COLUMN_PM_FIRST_NAME))));
-            profileDataOperation.setPbNameMiddle(StringUtils.defaultString(cursor.getString
-                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_MIDDLE_NAME))));
+//            profileDataOperation.setPbNameMiddle(StringUtils.defaultString(cursor.getString
+//                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_MIDDLE_NAME))));
             profileDataOperation.setPbNameLast(StringUtils.defaultString(cursor.getString(cursor
                     .getColumnIndex(TableProfileMaster.COLUMN_PM_LAST_NAME))));
-            profileDataOperation.setPbNameSuffix(StringUtils.defaultString(cursor.getString
-                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_SUFFIX))));
-            profileDataOperation.setPbNickname(StringUtils.defaultString(cursor.getString(cursor
-                    .getColumnIndex(TableProfileMaster.COLUMN_PM_NICK_NAME))));
-            profileDataOperation.setPbPhoneticNameFirst(StringUtils.defaultString(cursor
-                    .getString(cursor.getColumnIndex(TableProfileMaster
-                            .COLUMN_PM_PHONETIC_FIRST_NAME))));
-            profileDataOperation.setPbPhoneticNameMiddle(StringUtils.defaultString(cursor
-                    .getString(cursor.getColumnIndex(TableProfileMaster
-                            .COLUMN_PM_PHONETIC_MIDDLE_NAME))));
-            profileDataOperation.setPbPhoneticNameLast(StringUtils.defaultString(cursor.getString
-                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_PHONETIC_LAST_NAME))));
-            profileDataOperation.setPbNote(StringUtils.defaultString(cursor.getString(cursor
-                    .getColumnIndex(TableProfileMaster.COLUMN_PM_NOTES))));
+//            profileDataOperation.setPbNameSuffix(StringUtils.defaultString(cursor.getString
+//                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_SUFFIX))));
+//            profileDataOperation.setPbNickname(StringUtils.defaultString(cursor.getString(cursor
+//                    .getColumnIndex(TableProfileMaster.COLUMN_PM_NICK_NAME))));
+//            profileDataOperation.setPbPhoneticNameFirst(StringUtils.defaultString(cursor
+//                    .getString(cursor.getColumnIndex(TableProfileMaster
+//                            .COLUMN_PM_PHONETIC_FIRST_NAME))));
+//            profileDataOperation.setPbPhoneticNameMiddle(StringUtils.defaultString(cursor
+//                    .getString(cursor.getColumnIndex(TableProfileMaster
+//                            .COLUMN_PM_PHONETIC_MIDDLE_NAME))));
+//            profileDataOperation.setPbPhoneticNameLast(StringUtils.defaultString(cursor.getString
+//                    (cursor.getColumnIndex(TableProfileMaster.COLUMN_PM_PHONETIC_LAST_NAME))));
+//            profileDataOperation.setPbNote(StringUtils.defaultString(cursor.getString(cursor
+//                    .getColumnIndex(TableProfileMaster.COLUMN_PM_NOTES))));
             profileDataOperation.setPbGender(StringUtils.defaultString(cursor.getString(cursor
                     .getColumnIndex(TableProfileMaster.COLUMN_PM_GENDER))));
             profileDataOperation.setIsFavourite(StringUtils.defaultString(cursor.getString(cursor

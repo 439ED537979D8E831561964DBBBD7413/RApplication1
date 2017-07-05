@@ -379,12 +379,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
         set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
-//        set.add(ContactsContract.Contacts.LOOKUP_KEY);
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
 
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = set.toArray(new String[0]);
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)";
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and " +
+                ContactsContract.Contacts.HAS_PHONE_NUMBER + " >0";
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
@@ -449,7 +449,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         }
         Intent localBroadcastIntent = new Intent(AppConstants
                 .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
-        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                (getActivity());
         myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
     }
 
@@ -567,7 +568,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         final int rawIdIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
                 .RAW_CONTACT_ID);
-        final int display = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        final int display = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
+                .DISPLAY_NAME);
 
 
         while (data.moveToNext()) {
@@ -674,17 +676,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             //<editor-fold desc="Profile Master">
             UserProfile userProfile = new UserProfile();
-            userProfile.setPmSuffix(profileData.get(i).getPbNameSuffix());
-            userProfile.setPmPrefix(profileData.get(i).getPbNamePrefix());
+//            userProfile.setPmSuffix(profileData.get(i).getPbNameSuffix());
+//            userProfile.setPmPrefix(profileData.get(i).getPbNamePrefix());
             userProfile.setPmFirstName(profileData.get(i).getPbNameFirst());
-            userProfile.setPmMiddleName(profileData.get(i).getPbNameMiddle());
+//            userProfile.setPmMiddleName(profileData.get(i).getPbNameMiddle());
             userProfile.setPmLastName(profileData.get(i).getPbNameLast());
-            userProfile.setPmPhoneticFirstName(profileData.get(i).getPbPhoneticNameFirst());
-            userProfile.setPmPhoneticMiddleName(profileData.get(i).getPbPhoneticNameMiddle());
-            userProfile.setPmPhoneticLastName(profileData.get(i).getPbPhoneticNameLast());
+//            userProfile.setPmPhoneticFirstName(profileData.get(i).getPbPhoneticNameFirst());
+//            userProfile.setPmPhoneticMiddleName(profileData.get(i).getPbPhoneticNameMiddle());
+//            userProfile.setPmPhoneticLastName(profileData.get(i).getPbPhoneticNameLast());
             userProfile.setPmIsFavourite(profileData.get(i).getIsFavourite());
-            userProfile.setPmNotes(profileData.get(i).getPbNote());
-            userProfile.setPmNickName(profileData.get(i).getPbNickname());
+//            userProfile.setPmNotes(profileData.get(i).getPbNote());
+//            userProfile.setPmNickName(profileData.get(i).getPbNickname());
             userProfile.setPmRcpId(profileData.get(i).getRcpPmId());
             userProfile.setPmNosqlMasterId(profileData.get(i).getNoSqlMasterId());
             userProfile.setProfileRating(profileData.get(i).getProfileRating());
@@ -1074,7 +1076,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + callNumber + "?");
+        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
+                + callNumber + "?");
 
         callConfirmationDialog.showDialog();
 
@@ -1134,8 +1137,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         permissionConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
-        permissionConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_ok));
+        permissionConfirmationDialog.setLeftButtonText(getActivity().getString(R.string
+                .action_cancel));
+        permissionConfirmationDialog.setRightButtonText(getActivity().getString(R.string
+                .action_ok));
         permissionConfirmationDialog.setDialogBody(message);
 
         permissionConfirmationDialog.showDialog();
@@ -1197,7 +1202,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 ContactsContract.CommonDataKinds.Event.START_DATE,
 
         };
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?)";
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and "
+                + ContactsContract.Contacts.HAS_PHONE_NUMBER + " >0";
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
                 // starred contact not accessible
@@ -1550,7 +1556,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             return;
         }
         WsRequestObject uploadContactObject = new WsRequestObject();
-//        uploadContactObject.setPmId(Integer.parseInt(((BaseActivity) getActivity()).getUserPmId()));
+//        uploadContactObject.setPmId(Integer.parseInt(((BaseActivity) getActivity()).getUserPmId
+// ()));
         uploadContactObject.setProfileData(arrayListUserContact);
 
         if (Utils.isNetworkAvailable(getActivity())) {

@@ -41,10 +41,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
@@ -72,6 +74,7 @@ import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.CallLogType;
@@ -193,7 +196,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         if (logs) {
             if (Utils.isNetworkAvailable(this)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
-                    && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                    && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
+                    false)) {
                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                 syncCallLogAsyncTask.execute();
             }
@@ -545,17 +549,17 @@ public class MainActivity extends BaseActivity implements NavigationView
 
             //<editor-fold desc="Profile Master">
             UserProfile userProfile = new UserProfile();
-            userProfile.setPmSuffix(profileData.get(i).getPbNameSuffix());
-            userProfile.setPmPrefix(profileData.get(i).getPbNamePrefix());
+//            userProfile.setPmSuffix(profileData.get(i).getPbNameSuffix());
+//            userProfile.setPmPrefix(profileData.get(i).getPbNamePrefix());
             userProfile.setPmFirstName(profileData.get(i).getPbNameFirst());
-            userProfile.setPmMiddleName(profileData.get(i).getPbNameMiddle());
+//            userProfile.setPmMiddleName(profileData.get(i).getPbNameMiddle());
             userProfile.setPmLastName(profileData.get(i).getPbNameLast());
-            userProfile.setPmPhoneticFirstName(profileData.get(i).getPbPhoneticNameFirst());
-            userProfile.setPmPhoneticMiddleName(profileData.get(i).getPbPhoneticNameMiddle());
-            userProfile.setPmPhoneticLastName(profileData.get(i).getPbPhoneticNameLast());
+//            userProfile.setPmPhoneticFirstName(profileData.get(i).getPbPhoneticNameFirst());
+//            userProfile.setPmPhoneticMiddleName(profileData.get(i).getPbPhoneticNameMiddle());
+//            userProfile.setPmPhoneticLastName(profileData.get(i).getPbPhoneticNameLast());
             userProfile.setPmIsFavourite(profileData.get(i).getIsFavourite());
-            userProfile.setPmNotes(profileData.get(i).getPbNote());
-            userProfile.setPmNickName(profileData.get(i).getPbNickname());
+//            userProfile.setPmNotes(profileData.get(i).getPbNote());
+//            userProfile.setPmNickName(profileData.get(i).getPbNickname());
             userProfile.setPmRcpId(profileData.get(i).getRcpPmId());
             userProfile.setPmNosqlMasterId(profileData.get(i).getNoSqlMasterId());
             userProfile.setProfileRating(profileData.get(i).getProfileRating());
@@ -906,6 +910,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        setNavigationHeaderData();
+
         if (BuildConfig.DEBUG) {
             Menu menu = navigationView.getMenu();
             menu.findItem(R.id.nav_db_export).setVisible(true);
@@ -917,6 +923,42 @@ public class MainActivity extends BaseActivity implements NavigationView
         setupTabLayout();
         Utils.changeTabsFont(this, tabMain);
 
+    }
+
+    private void setNavigationHeaderData() {
+
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView text_user_name = (TextView) headerView.findViewById(R.id.text_user_name);
+        TextView text_number = (TextView) headerView.findViewById(R.id.text_number);
+        TextView text_rating_count = (TextView) headerView.findViewById(R.id.text_rating_count);
+        RatingBar rating_user = (RatingBar) headerView.findViewById(R.id.rating_user);
+        ImageView userProfileImage = (ImageView) headerView.findViewById(R.id.userProfileImage);
+
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
+
+        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+        String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
+
+        text_user_name.setText(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+        text_number.setText(number);
+        text_rating_count.setText(userProfile.getTotalProfileRateUser());
+        rating_user.setRating(Float.parseFloat(userProfile.getProfileRating()));
+
+        final String thumbnailUrl = userProfile.getPmProfileImage();
+        if (!TextUtils.isEmpty(thumbnailUrl)) {
+            Glide.with(MainActivity.this)
+                    .load(thumbnailUrl)
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(MainActivity.this))
+                    .override(500, 500)
+                    .into(userProfileImage);
+
+        } else {
+            userProfileImage.setImageResource(R.drawable.home_screen_profile);
+        }
     }
 
     private void openDialer() {
@@ -1130,7 +1172,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         localBroadcastManagerUpdateNotificationCount.registerReceiver
                 (localBroadCastReceiverUpdateCount, intentFilterUpdateCount);
 
-        LocalBroadcastManager contactDisplayed = LocalBroadcastManager.getInstance(MainActivity.this);
+        LocalBroadcastManager contactDisplayed = LocalBroadcastManager.getInstance(MainActivity
+                .this);
         IntentFilter intentFilterContactDisplayed = new IntentFilter(AppConstants
                 .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
         contactDisplayed.registerReceiver
@@ -1307,8 +1350,10 @@ public class MainActivity extends BaseActivity implements NavigationView
                     checkPermissionToExecute();
                 } else {
                     if (Utils.isNetworkAvailable(MainActivity.this)
-                            && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CONTACT_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CALL_LOG_SYNCED, false)) {
                         syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                         syncCallLogAsyncTask.execute();
                     }
@@ -1328,9 +1373,12 @@ public class MainActivity extends BaseActivity implements NavigationView
                     checkPermissionToExecute();
                 } else {
                     if (Utils.isNetworkAvailable(MainActivity.this)
-                            && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                            && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CONTACT_SYNCED, false)
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CALL_LOG_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_SMS_SYNCED, false)) {
                         syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                         syncSmsLogAsyncTask.execute();
                     }
@@ -2070,23 +2118,31 @@ public class MainActivity extends BaseActivity implements NavigationView
                             checkPermissionToExecute();
                         } else {
                             if (Utils.isNetworkAvailable(MainActivity.this)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                                    && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CONTACT_SYNCED, false)
+                                    && !Utils.getBooleanPreference(MainActivity.this,
+                                    AppConstants.PREF_CALL_LOG_SYNCED, false)) {
                                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                                 syncCallLogAsyncTask.execute();
                             }
 
                             if (Utils.isNetworkAvailable(MainActivity.this)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                                    && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CONTACT_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED, false)
+                                    && !Utils.getBooleanPreference(MainActivity.this,
+                                    AppConstants.PREF_SMS_SYNCED, false)) {
                                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                                 syncSmsLogAsyncTask.execute();
                             }
                             if (Utils.isNetworkAvailable(MainActivity.this)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CONTACT_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_SMS_SYNCED, false)) {
 //                                Log.i("MAULIK", " looking for updated contacts");
                                 reSyncContactAsyncTask = new ReSyncContactAsyncTask();
                                 reSyncContactAsyncTask.execute();
@@ -2236,8 +2292,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         cursor.close();
 
         Set<String> arrayListOldContactIds = new HashSet<>();
-        arrayListOldContactIds.addAll(Utils.getArrayListPreference(this, AppConstants
-                .PREF_CONTACT_ID_SET));
+        arrayListOldContactIds.addAll(Utils.getArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET));
 //        Log.i("MAULIK", " getAllContactRawId");
 
         Cursor contactNameCursor = phoneBookContacts.getAllContactRawId();
@@ -2354,7 +2409,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                 ContactsContract.CommonDataKinds.Event.START_DATE,
 
         };
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " + ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID + " in " + inCaluse;
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " +
+                ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID + " in " + inCaluse;
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
                 // starred contact not accessible
@@ -2650,7 +2706,8 @@ public class MainActivity extends BaseActivity implements NavigationView
     private void uploadContacts() {
 
         WsRequestObject uploadContactObject = new WsRequestObject();
-        uploadContactObject.setPmId(Integer.parseInt(Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0")));
+        uploadContactObject.setPmId(Integer.parseInt(Utils.getStringPreference(this, AppConstants
+                .PREF_USER_PM_ID, "0")));
         uploadContactObject.setProfileData(arrayListReSyncUserContact);
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),

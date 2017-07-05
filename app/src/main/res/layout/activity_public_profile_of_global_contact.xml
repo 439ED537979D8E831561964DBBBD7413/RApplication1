@@ -11,13 +11,13 @@
         android:id="@+id/include_toolbar"
         layout="@layout/layout_toolbar_public_profile_search"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
+        android:layout_height="?attr/actionBarSize" />
 
     <WebView
         android:id="@+id/webview_public_profile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none"
-        android:layout_below="@+id/include_toolbar"/>
+        android:layout_below="@+id/include_toolbar" />
 
 </RelativeLayout>

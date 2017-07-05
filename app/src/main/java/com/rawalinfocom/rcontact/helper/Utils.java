@@ -16,6 +16,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
@@ -41,6 +42,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -51,6 +53,7 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.Country;
+import com.rawalinfocom.rcontact.model.Rating;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -705,6 +708,18 @@ public class Utils {
                 return true;
         }
         return false;
+    }
+
+    public static void setRatingColor(Activity activity, RatingBar ratingUser) {
+        LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
+        setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(activity, R.color
+                .vivid_yellow));
+        // half stars
+        setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(activity, android.R
+                .color.darker_gray));
+        // Empty stars
+        setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(activity, android.R
+                .color.darker_gray));
     }
 
     public static void setRatingStarColor(Drawable drawable, @ColorInt int color) {

@@ -598,9 +598,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 String lastName = userProfile.getPmLastName();
                                 String rcpId = userProfile.getPmRcpId();
                                 String imagePath = userProfile.getPmProfileImage();
-                                String suffix = userProfile.getPmSuffix();
-                                String prefix = userProfile.getPmPrefix();
-                                String middleName = userProfile.getPmMiddleName();
+//                                String suffix = userProfile.getPmSuffix();
+//                                String prefix = userProfile.getPmPrefix();
+//                                String middleName = userProfile.getPmMiddleName();
 
                                 if (!StringUtils.isEmpty(firstName))
                                     callLogType.setRcpFirstName(firstName);
@@ -610,12 +610,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                     callLogType.setRcpId(rcpId);
                                 if (!StringUtils.isEmpty(imagePath))
                                     callLogType.setProfileImage(imagePath);
-                                if (!StringUtils.isEmpty(middleName))
-                                    callLogType.setMiddleName(middleName);
-                                if (!StringUtils.isEmpty(suffix))
-                                    callLogType.setSuffix(suffix);
-                                if (!StringUtils.isEmpty(prefix))
-                                    callLogType.setPrefix(prefix);
+//                                if (!StringUtils.isEmpty(middleName))
+//                                    callLogType.setMiddleName(middleName);
+//                                if (!StringUtils.isEmpty(suffix))
+//                                    callLogType.setSuffix(suffix);
+//                                if (!StringUtils.isEmpty(prefix))
+//                                    callLogType.setPrefix(prefix);
 
                                 callLogType.setRcpUser(true);
                                 int positionToReplace = callLogType.getRecordPosition();
@@ -3000,7 +3000,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         public void onReceive(Context context, Intent intent) {
             // Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
             try {
-                final Handler handler = new Handler();
+                Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -3022,9 +3022,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             }
         }
     };
-
-
-
 
 
     //</editor-fold>

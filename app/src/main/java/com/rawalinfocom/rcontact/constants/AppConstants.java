@@ -175,6 +175,10 @@ public class AppConstants {
 
     public static String KEY_PREFERENCES = "pref_rcontact";
 
+    public static String PREF_RE_LOGIN = "pref_re_login";
+    public static String PREF_FORGOT_PASSWORD= "pref_forgot_password";
+    public static String PREF_IS_FROM= "pref_is_from";
+    public static String PREF_TEMP_LOGOUT = "pref_temp_logout";
     public static String PREF_SELECTED_COUNTRY_OBJECT = "pref_selected_country_object";
     public static String PREF_DEVICE_TOKEN_ID = "pref_device_token_id";
     public static String PREF_LAUNCH_SCREEN_INT = "pref_launch_screen_int";

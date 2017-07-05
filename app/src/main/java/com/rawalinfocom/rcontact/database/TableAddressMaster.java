@@ -134,6 +134,62 @@ public class TableAddressMaster {
         db.close(); // Closing database connection
     }
 
+    // Adding or Updating array Address
+    public void addUpdateArrayAddress(ArrayList<Address> arrayListAddress, String RcpPmId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_ADDRESS_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
+//        ContentValues values = new ContentValues();
+        for (int i = 0; i < arrayListAddress.size(); i++) {
+            ContentValues values = new ContentValues();
+
+            values.put(COLUMN_AM_RECORD_INDEX_ID, arrayListAddress.get(i).getAmRecordIndexId());
+            values.put(COLUMN_AM_ID, arrayListAddress.get(i).getAmId());
+            values.put(COLUMN_AM_CITY, arrayListAddress.get(i).getAmCity());
+            values.put(COLUMN_AM_COUNTRY, arrayListAddress.get(i).getAmCountry());
+            values.put(COLUMN_AM_FORMATTED_ADDRESS, arrayListAddress.get(i).getAmFormattedAddress());
+            values.put(COLUMN_AM_NEIGHBORHOOD, arrayListAddress.get(i).getAmNeighborhood());
+            values.put(COLUMN_AM_POST_CODE, arrayListAddress.get(i).getAmPostCode());
+            values.put(COLUMN_AM_PO_BOX, arrayListAddress.get(i).getAmPoBox());
+            values.put(COLUMN_AM_STATE, arrayListAddress.get(i).getAmState());
+            values.put(COLUMN_AM_STREET, arrayListAddress.get(i).getAmStreet());
+            values.put(COLUMN_AM_IS_PRIVATE, MoreObjects.firstNonNull(arrayListAddress.get(i).getAmIsPrivate(), 0));
+            values.put(COLUMN_AM_ADDRESS_TYPE, arrayListAddress.get(i).getAmAddressType());
+            values.put(COLUMN_AM_GOOGLE_LATITUDE, arrayListAddress.get(i).getAmGoogleLatitude());
+            values.put(COLUMN_AM_GOOGLE_LONGITUDE, arrayListAddress.get(i).getAmGoogleLongitude());
+            values.put(COLUMN_AM_GOOGLE_ADDRESS, arrayListAddress.get(i).getAmGoogleAddress());
+//            values.put(COLUMN_AM_ADDRESS_PRIVACY, arrayListAddress.get(i).getAmAddressPrivacy());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListAddress.get(i)
+                    .getRcProfileMasterPmId());
+
+            // Inserting Row
+            db.insert(TABLE_RC_ADDRESS_MASTER, null, values);
+
+//            int count = 0;
+//            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_ADDRESS_MASTER + " " +
+//                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                    arrayListAddress.get(i).getRcProfileMasterPmId(), null);
+//            if (mCount != null) {
+//                mCount.moveToFirst();
+//                count = mCount.getInt(0);
+//                mCount.close();
+//            }
+//
+//            if (count > 0) {
+//                // Update if already exists
+//                db.update(TABLE_RC_ADDRESS_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                        arrayListAddress.get(i).getRcProfileMasterPmId(), null);
+//            } else {
+//                // Inserting Row
+//                values.put(COLUMN_AM_ID, arrayListAddress.get(i).getAmId());
+//                db.insert(TABLE_RC_ADDRESS_MASTER, null, values);
+//            }
+        }
+        db.close(); // Closing database connection
+    }
+
     // Getting single Address
     public Address getAddress(int amId) {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();

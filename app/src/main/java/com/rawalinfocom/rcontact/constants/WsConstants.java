@@ -15,10 +15,10 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
 
     // Monal
-//    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
+    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 
     // Aniruddh
-    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
 
     //    Maulik
 //    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
@@ -98,6 +98,7 @@ public class WsConstants {
     // pending
     public static final String REQ_SEND_INVITATION = "send-invitation"; //working
     public static final String REQ_ADD_PROFILE_VISIT = "add-profile-visit"; //working
+    public static final String REQ_GET_PROFILE_DETAILS = "get-profile-details"; //working
     public static final String REQ_PROFILE_UPDATE = "profile-update"; // monal
 
     public static final String REQ_SET_PRIVACY_SETTING = "set-privacy-setting"; //maulik

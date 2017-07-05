@@ -159,7 +159,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
                 if (enterPassWordResponse != null && StringUtils.equalsIgnoreCase
                         (enterPassWordResponse
-                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     // set launch screen as MainActivity
                     Utils.setIntegerPreference(this,
@@ -196,7 +196,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
                 if (enterPassWordResponse != null && StringUtils.equalsIgnoreCase
                         (enterPassWordResponse
-                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     // Redirect to MainActivity
                     Intent intent = new Intent(this, MainActivity.class);

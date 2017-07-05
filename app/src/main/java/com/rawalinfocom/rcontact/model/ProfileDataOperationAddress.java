@@ -132,7 +132,7 @@ public class ProfileDataOperationAddress implements Serializable {
     }
 
     @JsonProperty("formatted_address")
-    public String getFormattedAddress() {
+    public String   getFormattedAddress() {
         return StringUtils.defaultString(formattedAddress);
     }
 

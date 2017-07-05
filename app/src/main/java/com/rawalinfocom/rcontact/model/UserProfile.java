@@ -19,34 +19,34 @@ public class UserProfile implements Serializable {
 
     private String pmId;
     private String pmFirstName;
-    private String pmMiddleName;
     private String pmLastName;
     private String isAlreadyVerified;
     private String pmRawId;
-    private String pmPrefix;
-    private String pmSuffix;
-    private String pmNickName;
-    private String pmPhoneticFirstName;
-    private String pmPhoneticMiddleName;
-    private String pmPhoneticLastName;
     private String pmProfileImage;
     private String pmRcpId;
-    private String pmNickNamePrivacy;
-    private String pmNotes;
-    private String pmNotesPrivacy;
     private String pmGender;
     private String pmGenderPrivacy;
     private String pmIsFavourite;
-    private String pmAccessToken;
     private String pmNosqlMasterId;
-    private String pmSignupSocialMediaType;
-    private String pmJoiningDate;
 
     private String emailId;
     private String mobileNumber;
     private String profileRating;
     private String totalProfileRateUser;
+    private String pmJoiningDate;
 
+//    private String pmMiddleName;
+//    private String pmPrefix;
+//    private String pmSuffix;
+//    private String pmNickName;
+//    private String pmPhoneticFirstName;
+//    private String pmPhoneticMiddleName;
+//    private String pmPhoneticLastName;
+//    private String pmNickNamePrivacy;
+//    private String pmNotes;
+//    private String pmNotesPrivacy;
+//    private String pmAccessToken;
+//    private String pmSignupSocialMediaType;
 
     @JsonProperty("first_name")
     public String getPmFirstName() {
@@ -129,13 +129,13 @@ public class UserProfile implements Serializable {
         this.totalProfileRateUser = totalProfileRateUser;
     }
 
-    public String getPmMiddleName() {
-        return StringUtils.defaultString(pmMiddleName);
-    }
+//    public String getPmMiddleName() {
+//        return StringUtils.defaultString(pmMiddleName);
+//    }
 
-    public void setPmMiddleName(String pmMiddleName) {
-        this.pmMiddleName = pmMiddleName;
-    }
+//    public void setPmMiddleName(String pmMiddleName) {
+//        this.pmMiddleName = pmMiddleName;
+//    }
 
     public String getPmRawId() {
         return StringUtils.defaultString(pmRawId);
@@ -145,53 +145,53 @@ public class UserProfile implements Serializable {
         this.pmRawId = pmRawId;
     }
 
-    public String getPmPrefix() {
-        return StringUtils.defaultString(pmPrefix);
-    }
+//    public String getPmPrefix() {
+//        return StringUtils.defaultString(pmPrefix);
+//    }
 
-    public void setPmPrefix(String pmPrefix) {
-        this.pmPrefix = pmPrefix;
-    }
+//    public void setPmPrefix(String pmPrefix) {
+//        this.pmPrefix = pmPrefix;
+//    }
 
-    public String getPmSuffix() {
-        return StringUtils.defaultString(pmSuffix);
-    }
+//    public String getPmSuffix() {
+//        return StringUtils.defaultString(pmSuffix);
+//    }
 
-    public void setPmSuffix(String pmSuffix) {
-        this.pmSuffix = pmSuffix;
-    }
+//    public void setPmSuffix(String pmSuffix) {
+//        this.pmSuffix = pmSuffix;
+//    }
 
-    public String getPmNickName() {
-        return StringUtils.defaultString(pmNickName);
-    }
+//    public String getPmNickName() {
+//        return StringUtils.defaultString(pmNickName);
+//    }
 
-    public void setPmNickName(String pmNickName) {
-        this.pmNickName = pmNickName;
-    }
+//    public void setPmNickName(String pmNickName) {
+//        this.pmNickName = pmNickName;
+//    }
 
-    public String getPmPhoneticFirstName() {
-        return StringUtils.defaultString(pmPhoneticFirstName);
-    }
+//    public String getPmPhoneticFirstName() {
+//        return StringUtils.defaultString(pmPhoneticFirstName);
+//    }
 
-    public void setPmPhoneticFirstName(String pmPhoneticFirstName) {
-        this.pmPhoneticFirstName = pmPhoneticFirstName;
-    }
+//    public void setPmPhoneticFirstName(String pmPhoneticFirstName) {
+//        this.pmPhoneticFirstName = pmPhoneticFirstName;
+//    }
 
-    public String getPmPhoneticMiddleName() {
-        return StringUtils.defaultString(pmPhoneticMiddleName);
-    }
+//    public String getPmPhoneticMiddleName() {
+//        return StringUtils.defaultString(pmPhoneticMiddleName);
+//    }
 
-    public void setPmPhoneticMiddleName(String pmPhoneticMiddleName) {
-        this.pmPhoneticMiddleName = pmPhoneticMiddleName;
-    }
+//    public void setPmPhoneticMiddleName(String pmPhoneticMiddleName) {
+//        this.pmPhoneticMiddleName = pmPhoneticMiddleName;
+//    }
 
-    public String getPmPhoneticLastName() {
-        return StringUtils.defaultString(pmPhoneticLastName);
-    }
+//    public String getPmPhoneticLastName() {
+//        return StringUtils.defaultString(pmPhoneticLastName);
+//    }
 
-    public void setPmPhoneticLastName(String pmPhoneticLastName) {
-        this.pmPhoneticLastName = pmPhoneticLastName;
-    }
+//    public void setPmPhoneticLastName(String pmPhoneticLastName) {
+//        this.pmPhoneticLastName = pmPhoneticLastName;
+//    }
 
     public String getPmRcpId() {
         return StringUtils.defaultString(pmRcpId, "0");
@@ -201,29 +201,29 @@ public class UserProfile implements Serializable {
         this.pmRcpId = pmRcpId;
     }
 
-    public String getPmNickNamePrivacy() {
-        return StringUtils.defaultString(pmNickNamePrivacy);
-    }
+//    public String getPmNickNamePrivacy() {
+//        return StringUtils.defaultString(pmNickNamePrivacy);
+//    }
 
-    public void setPmNickNamePrivacy(String pmNickNamePrivacy) {
-        this.pmNickNamePrivacy = pmNickNamePrivacy;
-    }
+//    public void setPmNickNamePrivacy(String pmNickNamePrivacy) {
+//        this.pmNickNamePrivacy = pmNickNamePrivacy;
+//    }
 
-    public String getPmNotes() {
-        return StringUtils.defaultString(pmNotes);
-    }
+//    public String getPmNotes() {
+//        return StringUtils.defaultString(pmNotes);
+//    }
 
-    public void setPmNotes(String pmNotes) {
-        this.pmNotes = pmNotes;
-    }
+//    public void setPmNotes(String pmNotes) {
+//        this.pmNotes = pmNotes;
+//    }
 
-    public String getPmNotesPrivacy() {
-        return StringUtils.defaultString(pmNotesPrivacy);
-    }
+//    public String getPmNotesPrivacy() {
+//        return StringUtils.defaultString(pmNotesPrivacy);
+//    }
 
-    public void setPmNotesPrivacy(String pmNotesPrivacy) {
-        this.pmNotesPrivacy = pmNotesPrivacy;
-    }
+//    public void setPmNotesPrivacy(String pmNotesPrivacy) {
+//        this.pmNotesPrivacy = pmNotesPrivacy;
+//    }
 
     public String getPmGender() {
         return StringUtils.defaultString(pmGender);
@@ -249,13 +249,13 @@ public class UserProfile implements Serializable {
         this.pmIsFavourite = pmIsFavourite;
     }
 
-    public String getPmAccessToken() {
-        return StringUtils.defaultString(pmAccessToken);
-    }
+//    public String getPmAccessToken() {
+//        return StringUtils.defaultString(pmAccessToken);
+//    }
 
-    public void setPmAccessToken(String pmAccessToken) {
-        this.pmAccessToken = pmAccessToken;
-    }
+//    public void setPmAccessToken(String pmAccessToken) {
+//        this.pmAccessToken = pmAccessToken;
+//    }
 
     public String getPmNosqlMasterId() {
         return StringUtils.defaultString(pmNosqlMasterId);
@@ -265,13 +265,13 @@ public class UserProfile implements Serializable {
         this.pmNosqlMasterId = pmNosqlMasterId;
     }
 
-    public String getPmSignupSocialMediaType() {
-        return StringUtils.defaultString(pmSignupSocialMediaType);
-    }
+//    public String getPmSignupSocialMediaType() {
+//        return StringUtils.defaultString(pmSignupSocialMediaType);
+//    }
 
-    public void setPmSignupSocialMediaType(String pmSignupSocialMediaType) {
-        this.pmSignupSocialMediaType = pmSignupSocialMediaType;
-    }
+//    public void setPmSignupSocialMediaType(String pmSignupSocialMediaType) {
+//        this.pmSignupSocialMediaType = pmSignupSocialMediaType;
+//    }
 
     public String getPmJoiningDate() {
         return pmJoiningDate;

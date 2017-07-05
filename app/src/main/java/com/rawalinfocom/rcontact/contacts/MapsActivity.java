@@ -208,12 +208,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Ri
                             .str_no_location_found));
                 } else {
                     try {
-                        if (latitude == 0 && longitude == 0) {
-                            if (place != null) {
-                                LatLng latLng = place.getLatLng();
-                                latitude = latLng.latitude;
-                                longitude = latLng.longitude;
-                            } else {
+                        if (place != null) {
+//                            if (latitude == 0 && longitude == 0) {
+                            LatLng latLng = place.getLatLng();
+                            latitude = latLng.latitude;
+                            longitude = latLng.longitude;
+//                            }
+                        } else {
+                            if (latitude == 0 && longitude == 0) {
                                 latitude = Double.parseDouble(StringUtils.defaultString(objAddress
                                         .getLatitude(), "0"));
                                 longitude = Double.parseDouble(StringUtils.defaultString(objAddress

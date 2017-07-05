@@ -60,7 +60,7 @@
                         android:layout_height="1dp"
                         android:layout_above="@+id/text_label_name"
                         android:layout_marginBottom="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"/>
+                        android:background="@color/colorDarkGray" />
 
                     <TextView
                         android:id="@+id/text_label_name"
@@ -84,7 +84,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_name_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"/>
+                        android:background="@color/colorDarkGray" />
 
                 </RelativeLayout>
 
@@ -181,7 +181,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_phone_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"/>
+                        android:background="@color/colorDarkGray" />
 
                 </RelativeLayout>
 
@@ -274,7 +274,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_email_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"/>
+                        android:background="@color/colorDarkGray" />
 
                 </RelativeLayout>
 
@@ -369,7 +369,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_organization_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"/>
+                        android:background="@color/colorDarkGray" />
 
                 </RelativeLayout>
 
@@ -465,7 +465,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_website_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"/>
+                        android:background="@color/colorDarkGray" />
 
                 </RelativeLayout>
 
@@ -559,7 +559,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_address_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"/>
+                        android:background="@color/colorDarkGray" />
 
                 </RelativeLayout>
 
@@ -653,7 +653,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_social_contact_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"/>
+                        android:background="@color/colorDarkGray" />
 
                 </RelativeLayout>
 
@@ -747,7 +747,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_event_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"/>
+                        android:background="@color/colorDarkGray" />
 
                 </RelativeLayout>
 
@@ -842,7 +842,7 @@
                         android:layout_height="1dp"
                         android:layout_below="@+id/image_gender_expand"
                         android:layout_marginTop="@dimen/margin_3dp"
-                        android:background="@color/colorDarkGray"/>
+                        android:background="@color/colorDarkGray" />
 
                 </RelativeLayout>
 

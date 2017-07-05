@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.model.ContactRequestData;
 import com.rawalinfocom.rcontact.model.Email;
 
@@ -40,7 +41,6 @@ public class TableEmailMaster {
     //    private static final String COLUMN_EM_CUSTOM_TYPE = "em_custom_type";
     //    static final String COLUMN_EM_IS_PRIMARY = "em_is_primary";
     //    private static final String COLUMN_EM_IS_DEFAULT = "em_is_default";
-
 
     // Table Create Statements
     static final String CREATE_TABLE_RC_EMAIL_MASTER = "CREATE TABLE " +
@@ -99,13 +99,57 @@ public class TableEmailMaster {
         db.close(); // Closing database connection
     }
 
+    // Adding or Updating array Email
+    public void addUpdateArrayEmail(ArrayList<Email> arrayListEmail, String RcpPmId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_EMAIL_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
+//        ContentValues values = new ContentValues();
+        for (int i = 0; i < arrayListEmail.size(); i++) {
+            ContentValues values = new ContentValues();
+
+            values.put(COLUMN_EM_ID, arrayListEmail.get(i).getEmId());
+            values.put(COLUMN_EM_EMAIL_ADDRESS, arrayListEmail.get(i).getEmEmailAddress());
+            values.put(COLUMN_EM_EMAIL_TYPE, arrayListEmail.get(i).getEmEmailType());
+            values.put(COLUMN_EM_RECORD_INDEX_ID, arrayListEmail.get(i).getEmRecordIndexId());
+            values.put(COLUMN_EM_EMAIL_PRIVACY, arrayListEmail.get(i).getEmEmailPrivacy());
+            values.put(COLUMN_EM_IS_VERIFIED, arrayListEmail.get(i).getEmIsVerified());
+            values.put(COLUMN_EM_IS_PRIVATE, arrayListEmail.get(i).getEmIsPrivate());
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListEmail.get(i)
+                    .getRcProfileMasterPmId());
+
+            // Inserting Row
+            db.insert(TABLE_RC_EMAIL_MASTER, null, values);
+
+//            int count = 0;
+//            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_EMAIL_MASTER + " " +
+//                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                    arrayListEmail.get(i).getRcProfileMasterPmId(), null);
+//            if (mCount != null) {
+//                mCount.moveToFirst();
+//                count = mCount.getInt(0);
+//                mCount.close();
+//            }
+//
+//            if (count > 0) {
+//                // Update if already exists
+//                db.update(TABLE_RC_EMAIL_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                        arrayListEmail.get(i).getRcProfileMasterPmId(), null);
+//            } else {
+//            }
+        }
+        db.close(); // Closing database connection
+    }
+
     // Getting single Email
     public Email getEmail(int emId) {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RC_EMAIL_MASTER, new String[]{COLUMN_EM_ID,
                         COLUMN_EM_EMAIL_ADDRESS, COLUMN_EM_EMAIL_TYPE, COLUMN_EM_RECORD_INDEX_ID,
-                        COLUMN_EM_EMAIL_PRIVACY, COLUMN_EM_IS_VERIFIED,COLUMN_EM_IS_PRIVATE,
+                        COLUMN_EM_EMAIL_PRIVACY, COLUMN_EM_IS_VERIFIED, COLUMN_EM_IS_PRIVATE,
                         COLUMN_RC_PROFILE_MASTER_PM_ID},
                 COLUMN_EM_ID + "=?", new String[]{String.valueOf(emId)}, null, null, null, null);
         if (cursor != null)

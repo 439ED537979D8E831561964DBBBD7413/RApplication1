@@ -12,6 +12,7 @@ public class Website {
     private String wmWebsiteType;
     private String wmWebsitePrivacy;
     private String rcProfileMasterPmId;
+    private Integer wmIsPrivate;
 
 //    private String wmCustomType;
 
@@ -61,5 +62,13 @@ public class Website {
 
     public void setWmRecordIndexId(String wmRecordIndexId) {
         this.wmRecordIndexId = wmRecordIndexId;
+    }
+
+    public Integer getWmIsPrivate() {
+        return wmIsPrivate;
+    }
+
+    public void setWmIsPrivate(Integer wmIsPrivate) {
+        this.wmIsPrivate = wmIsPrivate;
     }
 }
