@@ -144,7 +144,7 @@ public class TableProfileMaster {
                     .getPmNickNamePrivacy());
             values.put(COLUMN_PM_NOTES, arrayListUserProfile.get(i).getPmNotes());
             values.put(COLUMN_PM_NOTES_PRIVACY, arrayListUserProfile.get(i).getPmNotesPrivacy());
-            values.put(COLUMN_PM_GENDER, arrayListUserProfile.get(i).getPmGender());
+//                values.put(COLUMN_PM_GENDER, arrayListUserProfile.get(i).getPmGender());
             values.put(COLUMN_PM_GENDER_PRIVACY, arrayListUserProfile.get(i).getPmGenderPrivacy());
             values.put(COLUMN_PM_PROFILE_RATING, arrayListUserProfile.get(i).getProfileRating());
             values.put(COLUMN_PM_PROFILE_RATE_USER, arrayListUserProfile.get(i)
@@ -168,8 +168,8 @@ public class TableProfileMaster {
 
             if (count > 0) {
                 // Update if already exists
-               /* db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
-                        new String[]{String.valueOf(arrayListUserProfile.get(i).getPmRcpId())});*/
+                db.update(TABLE_RC_PROFILE_MASTER, values, COLUMN_PM_RCP_ID + " = ?",
+                        new String[]{String.valueOf(arrayListUserProfile.get(i).getPmRcpId())});
             } else {
                 // Inserting Row
                 db.insert(TABLE_RC_PROFILE_MASTER, null, values);

@@ -449,7 +449,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         }
         Intent localBroadcastIntent = new Intent(AppConstants
                 .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
-        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
+                (getActivity());
         myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
     }
 
@@ -567,7 +568,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         final int rawIdIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
                 .RAW_CONTACT_ID);
-        final int display = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        final int display = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
+                .DISPLAY_NAME);
 
 
         while (data.moveToNext()) {
@@ -1074,7 +1076,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + callNumber + "?");
+        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
+                + callNumber + "?");
 
         callConfirmationDialog.showDialog();
 
@@ -1134,8 +1137,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         permissionConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
         permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
-        permissionConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_ok));
+        permissionConfirmationDialog.setLeftButtonText(getActivity().getString(R.string
+                .action_cancel));
+        permissionConfirmationDialog.setRightButtonText(getActivity().getString(R.string
+                .action_ok));
         permissionConfirmationDialog.setDialogBody(message);
 
         permissionConfirmationDialog.showDialog();
@@ -1544,7 +1549,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             return;
         }
         WsRequestObject uploadContactObject = new WsRequestObject();
-//        uploadContactObject.setPmId(Integer.parseInt(((BaseActivity) getActivity()).getUserPmId()));
+//        uploadContactObject.setPmId(Integer.parseInt(((BaseActivity) getActivity()).getUserPmId
+// ()));
         uploadContactObject.setProfileData(arrayListUserContact);
 
         if (Utils.isNetworkAvailable(getActivity())) {
