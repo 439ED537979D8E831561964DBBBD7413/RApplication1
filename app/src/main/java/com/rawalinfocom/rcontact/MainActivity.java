@@ -196,7 +196,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         if (logs) {
             if (Utils.isNetworkAvailable(this)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
-                    && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                    && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
+                    false)) {
                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                 syncCallLogAsyncTask.execute();
             }
@@ -1171,7 +1172,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         localBroadcastManagerUpdateNotificationCount.registerReceiver
                 (localBroadCastReceiverUpdateCount, intentFilterUpdateCount);
 
-        LocalBroadcastManager contactDisplayed = LocalBroadcastManager.getInstance(MainActivity.this);
+        LocalBroadcastManager contactDisplayed = LocalBroadcastManager.getInstance(MainActivity
+                .this);
         IntentFilter intentFilterContactDisplayed = new IntentFilter(AppConstants
                 .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
         contactDisplayed.registerReceiver
@@ -1348,8 +1350,10 @@ public class MainActivity extends BaseActivity implements NavigationView
                     checkPermissionToExecute();
                 } else {
                     if (Utils.isNetworkAvailable(MainActivity.this)
-                            && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CONTACT_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CALL_LOG_SYNCED, false)) {
                         syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                         syncCallLogAsyncTask.execute();
                     }
@@ -1369,9 +1373,12 @@ public class MainActivity extends BaseActivity implements NavigationView
                     checkPermissionToExecute();
                 } else {
                     if (Utils.isNetworkAvailable(MainActivity.this)
-                            && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                            && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CONTACT_SYNCED, false)
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CALL_LOG_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_SMS_SYNCED, false)) {
                         syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                         syncSmsLogAsyncTask.execute();
                     }
@@ -2111,23 +2118,31 @@ public class MainActivity extends BaseActivity implements NavigationView
                             checkPermissionToExecute();
                         } else {
                             if (Utils.isNetworkAvailable(MainActivity.this)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                                    && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CONTACT_SYNCED, false)
+                                    && !Utils.getBooleanPreference(MainActivity.this,
+                                    AppConstants.PREF_CALL_LOG_SYNCED, false)) {
                                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
                                 syncCallLogAsyncTask.execute();
                             }
 
                             if (Utils.isNetworkAvailable(MainActivity.this)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                                    && !Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CONTACT_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED, false)
+                                    && !Utils.getBooleanPreference(MainActivity.this,
+                                    AppConstants.PREF_SMS_SYNCED, false)) {
                                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                                 syncSmsLogAsyncTask.execute();
                             }
                             if (Utils.isNetworkAvailable(MainActivity.this)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CONTACT_SYNCED, false)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_SMS_SYNCED, false)) {
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CONTACT_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_SMS_SYNCED, false)) {
 //                                Log.i("MAULIK", " looking for updated contacts");
                                 reSyncContactAsyncTask = new ReSyncContactAsyncTask();
                                 reSyncContactAsyncTask.execute();
@@ -2394,7 +2409,8 @@ public class MainActivity extends BaseActivity implements NavigationView
                 ContactsContract.CommonDataKinds.Event.START_DATE,
 
         };
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " + ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID + " in " + inCaluse;
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " +
+                ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID + " in " + inCaluse;
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
                 // starred contact not accessible
@@ -2690,7 +2706,8 @@ public class MainActivity extends BaseActivity implements NavigationView
     private void uploadContacts() {
 
         WsRequestObject uploadContactObject = new WsRequestObject();
-        uploadContactObject.setPmId(Integer.parseInt(Utils.getStringPreference(this, AppConstants.PREF_USER_PM_ID, "0")));
+        uploadContactObject.setPmId(Integer.parseInt(Utils.getStringPreference(this, AppConstants
+                .PREF_USER_PM_ID, "0")));
         uploadContactObject.setProfileData(arrayListReSyncUserContact);
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),

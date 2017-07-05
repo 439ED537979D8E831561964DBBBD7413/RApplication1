@@ -33,6 +33,7 @@ public class UserProfile implements Serializable {
     private String mobileNumber;
     private String profileRating;
     private String totalProfileRateUser;
+    private String pmJoiningDate;
 
 //    private String pmMiddleName;
 //    private String pmPrefix;
@@ -46,7 +47,6 @@ public class UserProfile implements Serializable {
 //    private String pmNotesPrivacy;
 //    private String pmAccessToken;
 //    private String pmSignupSocialMediaType;
-//    private String pmJoiningDate;
 
     @JsonProperty("first_name")
     public String getPmFirstName() {
@@ -273,11 +273,11 @@ public class UserProfile implements Serializable {
 //        this.pmSignupSocialMediaType = pmSignupSocialMediaType;
 //    }
 
-//    public String getPmJoiningDate() {
-//        return pmJoiningDate;
-//    }
+    public String getPmJoiningDate() {
+        return pmJoiningDate;
+    }
 
-//    public void setPmJoiningDate(String pmJoiningDate) {
-//        this.pmJoiningDate = pmJoiningDate;
-//    }
+    public void setPmJoiningDate(String pmJoiningDate) {
+        this.pmJoiningDate = pmJoiningDate;
+    }
 }
