@@ -259,178 +259,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     if (AppConstants.isFromReceiver) {
                         AppConstants.isFromReceiver = false;
                         isResumeCalled = true;
-                        if (callLogTypeReceiver.getNumber() != null) {
-//                            String name = callLogType.findNameByNumber(callLogTypeReceiver
-// .getNumber());
-                            String name = getNameFromNumber(callLogTypeReceiver.getNumber());
-                            if (!TextUtils.isEmpty(name))
-                                callLogTypeReceiver.setName(name);
-                            else
-                                callLogTypeReceiver.setName("");
-
-                            String photoThumbNail = getPhotoUrlFromNumber(callLogTypeReceiver
-                                    .getNumber());
-
-                            if (!TextUtils.isEmpty(photoThumbNail)) {
-                                callLogTypeReceiver.setProfileImage(photoThumbNail);
-                            } else {
-                                callLogTypeReceiver.setProfileImage("");
-                            }
-
-                            final ArrayList<CallLogType> arrayListHistroy = callLogHistory
-                                    (callLogTypeReceiver.getNumber());
-
-                            PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs
-                                    (getActivity());
-                            Cursor cursor = phoneBookCallLogs.getAllCallLogId();
-                            String id = "";
-                            if (cursor != null) {
-                                int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
-                                while (cursor.moveToFirst()) {
-                                    id = cursor.getString(rowId);
-                                    callLogTypeReceiver.setUniqueContactId(id);
-                                    String uniquePhoneBookId = getStarredStatusFromNumber
-                                            (callLogTypeReceiver
-                                                    .getNumber());
-                                    if (!TextUtils.isEmpty(uniquePhoneBookId))
-                                        callLogTypeReceiver.setLocalPbRowId(uniquePhoneBookId);
-                                    else
-                                        callLogTypeReceiver.setLocalPbRowId(" ");
-
-                                    Date dateFromReceiver1 = callLogTypeReceiver
-                                            .getCallReceiverDate();
-                                    if (dateFromReceiver1 != null) {
-                                        long dateFromReceiver = dateFromReceiver1.getTime();
-                                        callLogTypeReceiver.setDate(dateFromReceiver);
-                                    }
-                                    break;
-                                }
-                            }
-                            if (!TextUtils.isEmpty(id)) {
-                                if(arrayListHistroy!=null && arrayListHistroy.size()>0){
-                                    for(int i=0; i<arrayListHistroy.size();i++){
-                                        CallLogType callLogType1 =  arrayListHistroy.get(i);
-                                        String historyId =  callLogType1.getHistoryId().toString();
-                                        if(historyId.equalsIgnoreCase(id)){
-                                            callLogTypeReceiver.setHistoryDuration(callLogType1.getHistoryDuration());
-                                            callLogTypeReceiver.setHistoryCallSimNumber(callLogType1
-                                                    .getHistoryCallSimNumber());
-                                            callLogTypeReceiver.setHistoryId(callLogType1.getHistoryId());
-                                            callLogTypeReceiver.setCallDateAndTime(callLogType1.getCallDateAndTime());
-                                            callLogTypeReceiver.setTypeOfCall(callLogType1.getTypeOfCall());
-                                            callLogTypeReceiver.setDurationToPass(callLogType1.getDurationToPass());
-                                            if (!StringUtils.isEmpty(callLogType1.getHistoryCallSimNumber()))
-                                                callLogTypeReceiver.setHistoryCallSimNumber(callLogType1
-                                                        .getHistoryCallSimNumber());
-                                            else
-                                                callLogTypeReceiver.setHistoryCallSimNumber(" ");
-
-                                            callLogTypeReceiver.setNumberType(callLogType1.getNumberType());
-                                        }
-                                    }
-                                    callLogTypeReceiver.setArrayListCallHistory(arrayListHistroy);
-                                }
-
-                                listOfIds.clear();
-                                PhoneBookCallLogs phoneBookCallLogs1 = new PhoneBookCallLogs(getActivity());
-                                Cursor cursor1 = phoneBookCallLogs1.getAllCallLogId();
-                                if (cursor1!= null) {
-                                    int rowId = cursor1.getColumnIndex(CallLog.Calls._ID);
-                                    while (cursor1.moveToNext()) {
-                                        listOfIds.add(cursor1.getString(rowId));
-                                    }
-                                }
-                                cursor.close();
-                                Utils.setArrayListPreference(getActivity(), AppConstants
-                                                .PREF_CALL_LOGS_ID_SET,
-                                        listOfIds);
-                            }
-
-                            if (!StringUtils.isEmpty(callLogTypeReceiver.getName())) {
-                                TableProfileMobileMapping tableProfileMobileMapping = new
-                                        TableProfileMobileMapping(getDatabaseHandler());
-                                ProfileMobileMapping profileMobileMapping =
-                                        tableProfileMobileMapping.
-                                                getCloudPmIdFromProfileMappingFromNumber
-                                                        (callLogTypeReceiver.getNumber());
-                                if (profileMobileMapping != null) {
-                                    String cloudPmId = profileMobileMapping.getMpmCloudPmId();
-                                    // To do
-                                    // Pass this cloudId to fetch FirstName and Last Name from
-                                    // ProfileMasterTable
-                                    TableProfileMaster tableProfileMaster = new
-                                            TableProfileMaster(getDatabaseHandler());
-                                    UserProfile userProfile = tableProfileMaster
-                                            .getProfileFromCloudPmId(Integer.parseInt(cloudPmId));
-                                    String firstName = userProfile.getPmFirstName();
-                                    String lastName = userProfile.getPmLastName();
-                                    String rcpId = userProfile.getPmRcpId();
-                                    String imagePath = userProfile.getPmProfileImage();
-//                                    String suffix = userProfile.getPmSuffix();
-//                                    String prefix = userProfile.getPmPrefix();
-//                                    String middleName = userProfile.getPmMiddleName();
-
-                                    if (!StringUtils.isEmpty(firstName))
-                                        callLogTypeReceiver.setRcpFirstName(firstName);
-                                    if (!StringUtils.isEmpty(lastName))
-                                        callLogTypeReceiver.setRcpLastName(lastName);
-                                    if (!StringUtils.isEmpty(rcpId))
-                                        callLogTypeReceiver.setRcpId(rcpId);
-                                    if (!StringUtils.isEmpty(imagePath))
-                                        callLogTypeReceiver.setProfileImage(imagePath);
-//                                    if (!StringUtils.isEmpty(middleName))
-//                                        callLogTypeReceiver.setMiddleName(middleName);
-//                                    if (!StringUtils.isEmpty(suffix))
-//                                        callLogTypeReceiver.setSuffix(suffix);
-//                                    if (!StringUtils.isEmpty(prefix))
-//                                        callLogTypeReceiver.setPrefix(prefix);
-
-                                    callLogTypeReceiver.setRcpUser(true);
-//                                    if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
-//                                        arrayListCallLogs.remove(0);
-                                        arrayListCallLogs.add(0, callLogTypeReceiver);
-                                        rContactApplication.setArrayListCallLogType(arrayListCallLogs);
-                                        tempList.add(0, callLogTypeReceiver);
-//                                    }
-                                } else {
-//                                    if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
-//                                        arrayListCallLogs.remove(0);
-                                        arrayListCallLogs.add(0, callLogTypeReceiver);
-                                        rContactApplication.setArrayListCallLogType(arrayListCallLogs);
-                                        tempList.add(0, callLogTypeReceiver);
-//                                    }
-                                }
-                            } else {
-//                                if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
-//                                    arrayListCallLogs.remove(0);
-                                    arrayListCallLogs.add(0, callLogTypeReceiver);
-                                    rContactApplication.setArrayListCallLogType(arrayListCallLogs);
-                                    tempList.add(0, callLogTypeReceiver);
-                                /*}else{
-                                    arrayListCallLogs.add(0, callLogTypeReceiver);
-                                    rContactApplication.setArrayListCallLogType(arrayListCallLogs);
-                                    tempList.add(0, callLogTypeReceiver);
-                                }*/
-                            }
-
-                            if (simpleCallLogListAdapter != null)
-                                simpleCallLogListAdapter.notifyItemInserted(0);
-                            else {
-                                setSimpleListAdapter();
-                            }
-                            recyclerCallLogs.scrollToPosition(0);
-                            ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
-                            callLogTypeArrayList.add(callLogTypeReceiver);
-                            if (Utils.getBooleanPreference(getActivity(), AppConstants
-                                            .PREF_CONTACT_SYNCED,
-                                    false) &&
-                                    Utils.getBooleanPreference(getActivity(), AppConstants
-                                                    .PREF_CALL_LOG_SYNCED,
-                                            false)) {
-                                if (!TextUtils.isEmpty(callLogTypeReceiver.getNumber()))
-                                    insertServiceCall(callLogTypeArrayList);
-                            }
-                        }
+                        getRecentCallLog();
 
                     }
                 }
@@ -446,12 +275,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     @Override
     public void onPause() {
         super.onPause();
-        if(isFirstTime){
+        if (isFirstTime) {
             isFirstTime = false;
         }
         AppConstants.isFromReceiver = false;
-        if(isLastRecord)
-            allCalldisplayDataCount =0;
+        if (isLastRecord)
+            allCalldisplayDataCount = 0;
         //23/06/2017 for Misbehaviour of call-log (like all call-logs not displaying,
         // repeated call-logs displaying, etc.
         /*isIdsFetchedFirstTime = false;
@@ -546,6 +375,147 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     }
 
+    private void getRecentCallLog() {
+
+        PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(getActivity());
+        Cursor cursor = phoneBookCallLogs.getAllCallLogId();
+        if (cursor != null) {
+
+            listOfIds.clear();
+            while (cursor.moveToNext()) {
+                listOfIds.add(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
+            }
+
+            Utils.setArrayListPreference(getActivity(), AppConstants.PREF_CALL_LOGS_ID_SET, listOfIds);
+
+            cursor.moveToFirst();
+
+            CallLogType callLogType = new CallLogType(getActivity());
+
+            String rowId = cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID));
+            String number = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
+            String name = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
+            Long date = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE));
+
+            final ArrayList<CallLogType> arrayListHistroy = callLogHistory(number);
+
+            callLogType.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
+
+            if (!TextUtils.isEmpty(number))
+                callLogType.setNumber(number);
+            else
+                callLogType.setNumber("");
+
+            if (!TextUtils.isEmpty(name))
+                callLogType.setName(name);
+            else
+                callLogType.setName("");
+
+            String photoThumbNail = getPhotoUrlFromNumber(number);
+
+            if (!TextUtils.isEmpty(photoThumbNail)) {
+                callLogType.setProfileImage(photoThumbNail);
+            } else {
+                callLogType.setProfileImage("");
+            }
+
+            callLogType.setUniqueContactId(rowId);
+            String uniquePhoneBookId = getStarredStatusFromNumber(callLogTypeReceiver.getNumber());
+            if (!TextUtils.isEmpty(uniquePhoneBookId))
+                callLogType.setLocalPbRowId(uniquePhoneBookId);
+            else
+                callLogType.setLocalPbRowId(" ");
+
+            callLogType.setDate(date);
+
+            if (arrayListHistroy != null && arrayListHistroy.size() > 0) {
+                CallLogType callLogType1 = arrayListHistroy.get(0);
+                String historyId = callLogType1.getHistoryId().toString();
+                if (historyId.equalsIgnoreCase(rowId)) {
+                    callLogType.setHistoryDuration(callLogType1.getHistoryDuration());
+                    callLogType.setHistoryCallSimNumber(callLogType1.getHistoryCallSimNumber());
+                    callLogType.setHistoryId(callLogType1.getHistoryId());
+                    callLogType.setCallDateAndTime(callLogType1.getCallDateAndTime());
+                    callLogType.setTypeOfCall(callLogType1.getTypeOfCall());
+                    callLogType.setDurationToPass(callLogType1.getDurationToPass());
+                    if (!StringUtils.isEmpty(callLogType1.getHistoryCallSimNumber()))
+                        callLogType.setHistoryCallSimNumber(callLogType1.getHistoryCallSimNumber());
+                    else
+                        callLogType.setHistoryCallSimNumber(" ");
+
+                    callLogType.setNumberType(callLogType1.getNumberType());
+                }
+                callLogType.setArrayListCallHistory(arrayListHistroy);
+            }
+
+            if (number != null) {
+
+                if (!StringUtils.isEmpty(name)) {
+                    TableProfileMobileMapping tableProfileMobileMapping = new
+                            TableProfileMobileMapping(getDatabaseHandler());
+                    ProfileMobileMapping profileMobileMapping = tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(number);
+
+                    if (profileMobileMapping != null) {
+                        String cloudPmId = profileMobileMapping.getMpmCloudPmId();
+                        // To do
+                        // Pass this cloudId to fetch FirstName and Last Name from
+                        // ProfileMasterTable
+                        TableProfileMaster tableProfileMaster = new
+                                TableProfileMaster(getDatabaseHandler());
+                        UserProfile userProfile = tableProfileMaster
+                                .getProfileFromCloudPmId(Integer.parseInt(cloudPmId));
+                        String firstName = userProfile.getPmFirstName();
+                        String lastName = userProfile.getPmLastName();
+                        String rcpId = userProfile.getPmRcpId();
+                        String imagePath = userProfile.getPmProfileImage();
+
+                        if (!StringUtils.isEmpty(firstName))
+                            callLogType.setRcpFirstName(firstName);
+                        if (!StringUtils.isEmpty(lastName))
+                            callLogType.setRcpLastName(lastName);
+                        if (!StringUtils.isEmpty(rcpId))
+                            callLogType.setRcpId(rcpId);
+                        if (!StringUtils.isEmpty(imagePath))
+                            callLogType.setProfileImage(imagePath);
+
+                        callLogType.setRcpUser(true);
+
+                        arrayListCallLogs.add(0, callLogType);
+                        rContactApplication.setArrayListCallLogType(arrayListCallLogs);
+                        tempList.add(0, callLogType);
+                    } else {
+                        arrayListCallLogs.add(0, callLogType);
+                        rContactApplication.setArrayListCallLogType(arrayListCallLogs);
+                        tempList.add(0, callLogType);
+//                                    }
+                    }
+                } else {
+                    arrayListCallLogs.add(0, callLogType);
+                    rContactApplication.setArrayListCallLogType(arrayListCallLogs);
+                    tempList.add(0, callLogType);
+                }
+
+                if (simpleCallLogListAdapter != null)
+                    simpleCallLogListAdapter.notifyItemInserted(0);
+                else {
+                    setSimpleListAdapter();
+                }
+                recyclerCallLogs.scrollToPosition(0);
+                ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
+                callLogTypeArrayList.add(callLogType);
+                if (Utils.getBooleanPreference(getActivity(), AppConstants
+                                .PREF_CONTACT_SYNCED,
+                        false) &&
+                        Utils.getBooleanPreference(getActivity(), AppConstants
+                                        .PREF_CALL_LOG_SYNCED,
+                                false)) {
+                    if (!TextUtils.isEmpty(callLogType.getNumber()))
+                        insertServiceCall(callLogTypeArrayList);
+                }
+            }
+        }
+    }
+
     private void makeSimpleData(String callType, ArrayList<CallLogType> callLogs) {
         List<CallLogType> filteredList = new ArrayList<>();
         ArrayList<CallLogType> savedContactList = new ArrayList<>();
@@ -582,11 +552,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 } else {
 //                    tempList = new ArrayList<>();
                     if (spinnerCount > 0) {
-                        if(selectedCallType.equalsIgnoreCase(ALL_CALLS)){
-                            allCalldisplayDataCount =  allCalldisplayDataCount +1;
-                            if(isSpinnerAllCall){
+                        if (selectedCallType.equalsIgnoreCase(ALL_CALLS)) {
+                            allCalldisplayDataCount = allCalldisplayDataCount + 1;
+                            if (isSpinnerAllCall) {
                                 isSpinnerAllCall = false;
-                                allCalldisplayDataCount =0;
+                                allCalldisplayDataCount = 0;
                                 tempList.clear();
                             }
                         }
@@ -671,9 +641,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 } else {
 //                simpleCallLogListAdapter.notifyItemRangeInserted(logsDisplayed, tempList.size());
 //                recyclerCallLogs.scrollToPosition(callLogListAdapter.getItemCount() - 1);1
-                    if(spinnerCount > 0 && selectedCallType.equalsIgnoreCase(ALL_CALLS) && allCalldisplayDataCount == 0){
+                    if (spinnerCount > 0 && selectedCallType.equalsIgnoreCase(ALL_CALLS) && allCalldisplayDataCount == 0) {
                         setSimpleListAdapter();
-                    }else{
+                    } else {
                         simpleCallLogListAdapter.notifyDataSetChanged();
                     }
 //                    adapterSetCount = 1;
@@ -834,7 +804,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     Log.i("RecyclerView scrolled: ", "scroll up!");
                 else {
                     Log.i("RecyclerView scrolled: ", "scroll down!");
-                    if(selectedCallType.equalsIgnoreCase(ALL_CALLS)){
+                    if (selectedCallType.equalsIgnoreCase(ALL_CALLS)) {
                         if (!isLastRecord && newState == 0) {
                             if (isFirstTime) {
 //                            progressBarLoadCallLogs.setVisibility(View.VISIBLE);
@@ -880,7 +850,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                 if (dy > 0) //check for scroll down
                 {
-                    if(selectedCallType.equalsIgnoreCase(ALL_CALLS)){
+                    if (selectedCallType.equalsIgnoreCase(ALL_CALLS)) {
                         int visibleItemCount = mLinearLayoutManager.getChildCount();
                         int totalItemCount = mLinearLayoutManager.getItemCount();
                         int pastVisiblesItems = mLinearLayoutManager.findFirstVisibleItemPosition();
@@ -1045,8 +1015,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             count = 0;
         }
 
-        if(listOfIds!=null && listOfIds.size()==0){
-            if(listOfIds!=null && listOfIds.size()==0){
+        if (listOfIds != null && listOfIds.size() == 0) {
+            if (listOfIds != null && listOfIds.size() == 0) {
                 PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(getActivity());
 //            listOfIds = new ArrayList<>();
                 Cursor cursor = phoneBookCallLogs.getAllCallLogId();
@@ -1081,7 +1051,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         @Override
                         public void run() {
                             if (isFirstTime) {
-                                if(value.equalsIgnoreCase(ALL_CALLS) && spinnerCount>0){
+                                if (value.equalsIgnoreCase(ALL_CALLS) && spinnerCount > 0) {
                                     isSpinnerAllCall = true;
                                 }
                                 if (AppConstants.isFirstTime()) {
@@ -1094,7 +1064,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 } else {
                                     if (!value.equalsIgnoreCase(ALL_CALLS)) {
                                         spinnerCount = spinnerCount + 1;
-                                    }else{
+                                    } else {
 //                                        spinnerCount =0;
                                     }
 
@@ -1112,9 +1082,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                                 .getArrayListCallLogType();
                                         makeSimpleData(selectedCallType, arrayListCallLogs);
                                         initSwipe();
-                                    }else{
+                                    } else {
 //                                        spinnerCount =0;
-                                        if(value.equalsIgnoreCase(ALL_CALLS) && spinnerCount>0){
+                                        if (value.equalsIgnoreCase(ALL_CALLS) && spinnerCount > 0) {
                                             isSpinnerAllCall = true;
                                             if (listOfIds != null) {
                                                 listOfIds.clear();
@@ -1139,7 +1109,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                                         listOfIds);
                                             }
                                             loadLogs(selectedCallType);
-                                        }else{
+                                        } else {
                                             if (listOfIds != null) {
                                                 listOfIds.clear();
                                                 Utils.setArrayListPreference(getActivity(), AppConstants
@@ -1206,7 +1176,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                             1) {
                                         if (!value.equalsIgnoreCase(ALL_CALLS)) {
                                             spinnerCount = spinnerCount + 1;
-                                        }else {
+                                        } else {
                                             arrayListCallLogs.clear();
                                             tempList.clear();
                                             PhoneBookCallLogs phoneBookCallLogs = new
@@ -1230,11 +1200,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                         }
 
                                     } else {
-                                        if (arrayListCallLogs != null && arrayListCallLogs.size()>0 ){
+                                        if (arrayListCallLogs != null && arrayListCallLogs.size() > 0) {
                                             if (!value.equalsIgnoreCase(ALL_CALLS)) {
                                                 spinnerCount = spinnerCount + 1;
-                                            }else{
-                                                if(value.equalsIgnoreCase(ALL_CALLS) && spinnerCount>0){
+                                            } else {
+                                                if (value.equalsIgnoreCase(ALL_CALLS) && spinnerCount > 0) {
                                                     isSpinnerAllCall = true;
 
                                                 }
@@ -3040,184 +3010,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         } else {
                             if (AppConstants.isFromReceiver) {
                                 AppConstants.isFromReceiver = false;
-                                if (callLogTypeReceiver.getNumber() != null) {
-//                                    String name = callLogType.findNameByNumber
-// (callLogTypeReceiver.getNumber());
-                                    String name = getNameFromNumber(callLogTypeReceiver.getNumber
-                                            ());
-                                    if (!TextUtils.isEmpty(name))
-                                        callLogTypeReceiver.setName(name);
-                                    else
-                                        callLogTypeReceiver.setName("");
-
-                                    String photoThumbNail = getPhotoUrlFromNumber
-                                            (callLogTypeReceiver.getNumber());
-                                    if (!TextUtils.isEmpty(photoThumbNail)) {
-                                        callLogTypeReceiver.setProfileImage(photoThumbNail);
-                                    } else {
-                                        callLogTypeReceiver.setProfileImage("");
-                                    }
-                                    final ArrayList<CallLogType> arrayListHistroy = callLogHistory
-                                            (callLogTypeReceiver.getNumber());
-                                    PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs
-                                            (getActivity());
-                                    Cursor cursor = phoneBookCallLogs.getAllCallLogId();
-                                    String id = "";
-                                    if (cursor != null) {
-                                        int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
-                                        while (cursor.moveToFirst()) {
-                                            id = cursor.getString(rowId);
-                                            callLogTypeReceiver.setUniqueContactId(id);
-                                            String uniquePhoneBookId = getStarredStatusFromNumber
-                                                    (callLogTypeReceiver
-                                                            .getNumber());
-                                            if (!TextUtils.isEmpty(uniquePhoneBookId))
-                                                callLogTypeReceiver.setLocalPbRowId
-                                                        (uniquePhoneBookId);
-                                            else
-                                                callLogTypeReceiver.setLocalPbRowId(" ");
-
-                                            Date dateFromReceiver1 = callLogTypeReceiver
-                                                    .getCallReceiverDate();
-                                            if (dateFromReceiver1 != null) {
-                                                long dateFromReceiver = dateFromReceiver1.getTime();
-                                                callLogTypeReceiver.setDate(dateFromReceiver);
-                                            }
-                                            break;
-                                        }
-                                    }
-                                    if (!TextUtils.isEmpty(id)) {
-                                        if(arrayListHistroy!=null && arrayListHistroy.size()>0){
-                                            for(int i=0; i<arrayListHistroy.size();i++){
-                                                CallLogType callLogType1 =  arrayListHistroy.get(i);
-                                                String historyId =  callLogType1.getHistoryId().toString();
-                                                if(historyId.equalsIgnoreCase(id)){
-                                                    callLogTypeReceiver.setHistoryDuration(callLogType1.getHistoryDuration());
-                                                    callLogTypeReceiver.setHistoryCallSimNumber(callLogType1
-                                                            .getHistoryCallSimNumber());
-                                                    callLogTypeReceiver.setHistoryId(callLogType1.getHistoryId());
-                                                    callLogTypeReceiver.setCallDateAndTime(callLogType1.getCallDateAndTime());
-                                                    callLogTypeReceiver.setTypeOfCall(callLogType1.getTypeOfCall());
-                                                    callLogTypeReceiver.setDurationToPass(callLogType1.getDurationToPass());
-                                                    if (!StringUtils.isEmpty(callLogType1.getHistoryCallSimNumber()))
-                                                        callLogTypeReceiver.setHistoryCallSimNumber(callLogType1
-                                                                .getHistoryCallSimNumber());
-                                                    else
-                                                        callLogTypeReceiver.setHistoryCallSimNumber(" ");
-
-                                                    callLogTypeReceiver.setNumberType(callLogType1.getNumberType());
-                                                }
-                                            }
-                                            callLogTypeReceiver.setArrayListCallHistory(arrayListHistroy);
-                                        }
-
-                                        listOfIds.clear();
-                                        PhoneBookCallLogs phoneBookCallLogs1 = new PhoneBookCallLogs(getActivity());
-                                        Cursor cursor1 = phoneBookCallLogs1.getAllCallLogId();
-                                        if (cursor1!= null) {
-                                            int rowId = cursor1.getColumnIndex(CallLog.Calls._ID);
-                                            while (cursor1.moveToNext()) {
-                                                listOfIds.add(cursor1.getString(rowId));
-                                            }
-                                        }
-                                        cursor.close();
-//                                listOfIds.add(0, id);
-                                        Utils.setArrayListPreference(getActivity(), AppConstants
-                                                        .PREF_CALL_LOGS_ID_SET,
-                                                listOfIds);
-                                    }
-
-                                    if (!StringUtils.isEmpty(callLogTypeReceiver.getName())) {
-                                        TableProfileMobileMapping tableProfileMobileMapping = new
-                                                TableProfileMobileMapping(getDatabaseHandler());
-                                        ProfileMobileMapping profileMobileMapping =
-                                                tableProfileMobileMapping.
-                                                        getCloudPmIdFromProfileMappingFromNumber
-                                                                (callLogTypeReceiver.getNumber());
-                                        if (profileMobileMapping != null) {
-                                            String cloudPmId = profileMobileMapping
-                                                    .getMpmCloudPmId();
-                                            // To do
-                                            // Pass this cloudId to fetch FirstName and Last Name
-                                            // from ProfileMasterTable
-                                            TableProfileMaster tableProfileMaster = new
-                                                    TableProfileMaster(getDatabaseHandler());
-                                            UserProfile userProfile = tableProfileMaster
-                                                    .getProfileFromCloudPmId(Integer.parseInt
-                                                            (cloudPmId));
-                                            String firstName = userProfile.getPmFirstName();
-                                            String lastName = userProfile.getPmLastName();
-                                            String rcpId = userProfile.getPmRcpId();
-                                            String imagePath = userProfile.getPmProfileImage();
-//                                            String suffix = userProfile.getPmSuffix();
-//                                            String prefix = userProfile.getPmPrefix();
-//                                            String middleName = userProfile.getPmMiddleName();
-
-                                            if (!StringUtils.isEmpty(firstName))
-                                                callLogTypeReceiver.setRcpFirstName(firstName);
-                                            if (!StringUtils.isEmpty(lastName))
-                                                callLogTypeReceiver.setRcpLastName(lastName);
-                                            if (!StringUtils.isEmpty(rcpId))
-                                                callLogTypeReceiver.setRcpId(rcpId);
-                                            if (!StringUtils.isEmpty(imagePath))
-                                                callLogTypeReceiver.setProfileImage(imagePath);
-//                                            if (!StringUtils.isEmpty(middleName))
-//                                                callLogTypeReceiver.setMiddleName(middleName);
-//                                            if (!StringUtils.isEmpty(suffix))
-//                                                callLogTypeReceiver.setSuffix(suffix);
-//                                            if (!StringUtils.isEmpty(prefix))
-//                                                callLogTypeReceiver.setPrefix(prefix);
-
-                                            callLogTypeReceiver.setRcpUser(true);
-//                                            if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
-//                                                arrayListCallLogs.remove(0);
-                                                arrayListCallLogs.add(0, callLogTypeReceiver);
-                                                rContactApplication.setArrayListCallLogType
-                                                        (arrayListCallLogs);
-                                                tempList.add(0, callLogTypeReceiver);
-//                                            }
-                                        } else {
-//                                            if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
-//                                                arrayListCallLogs.remove(0);
-                                                arrayListCallLogs.add(0, callLogTypeReceiver);
-                                                rContactApplication.setArrayListCallLogType
-                                                        (arrayListCallLogs);
-                                                tempList.add(0, callLogTypeReceiver);
-//                                            }
-                                        }
-                                    } else {
-//                                        if(arrayListCallLogs.get(0).getUniqueContactId().equalsIgnoreCase(callLogTypeReceiver.getUniqueContactId())){
-//                                            arrayListCallLogs.remove(0);
-                                            arrayListCallLogs.add(0, callLogTypeReceiver);
-                                            rContactApplication.setArrayListCallLogType
-                                                    (arrayListCallLogs);
-                                            tempList.add(0, callLogTypeReceiver);
-                                        /*}else {
-                                            arrayListCallLogs.add(0, callLogTypeReceiver);
-                                            rContactApplication.setArrayListCallLogType
-                                                    (arrayListCallLogs);
-                                            tempList.add(0, callLogTypeReceiver);
-                                        }*/
-                                    }
-
-                                    if (simpleCallLogListAdapter != null)
-                                        simpleCallLogListAdapter.notifyItemInserted(0);
-                                    else {
-                                        setSimpleListAdapter();
-                                    }
-                                    recyclerCallLogs.scrollToPosition(0);
-                                    ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
-                                    callLogTypeArrayList.add(callLogTypeReceiver);
-                                    if (Utils.getBooleanPreference(getActivity(), AppConstants
-                                                    .PREF_CONTACT_SYNCED,
-                                            false) &&
-                                            Utils.getBooleanPreference(getActivity(),
-                                                    AppConstants.PREF_CALL_LOG_SYNCED,
-                                                    false)) {
-                                        if (!TextUtils.isEmpty(callLogTypeReceiver.getNumber()))
-                                            insertServiceCall(callLogTypeArrayList);
-                                    }
-                                }
+                                getRecentCallLog();
 
                             }
                         }
