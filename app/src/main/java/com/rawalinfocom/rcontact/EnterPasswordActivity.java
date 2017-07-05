@@ -178,6 +178,9 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     deviceDetail();
 
                 } else {
+
+                    Utils.hideProgressDialog();
+
                     if (enterPassWordResponse != null) {
                         Log.e("error response", enterPassWordResponse.getMessage());
                     } else {

@@ -223,8 +223,6 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
                 } else {
 
-                    Utils.hideProgressDialog();
-
                     if (enterPassWordResponse != null) {
                         Log.e("error response", enterPassWordResponse.getMessage());
                     } else {

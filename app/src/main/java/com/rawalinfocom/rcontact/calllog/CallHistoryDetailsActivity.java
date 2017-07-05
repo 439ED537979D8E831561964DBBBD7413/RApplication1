@@ -393,20 +393,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
                         Rating responseRating = profileRatingResponse.getProfileRating();
 
-                        /*DbRating dbRating = new DbRating();
-
-                        dbRating.setRcProfileMasterPmId(String.valueOf(responseRating.getPrToPmId
-                                ()));
-                        dbRating.setCrmStatus(String.valueOf(responseRating.getPrStatus()));
-                        dbRating.setCrmRating(responseRating.getPrRatingStars());
-                        dbRating.setCrmCloudPrId(String.valueOf(responseRating.getPrId()));
-                        dbRating.setCrmComment(responseRating.getPrComment());
-                        dbRating.setCrmCreatedAt(responseRating.getCreatedAt());
-
-                        TableContactRatingMaster tableContactRatingMaster = new
-                                TableContactRatingMaster(databaseHandler);
-                        tableContactRatingMaster.addRating(dbRating);*/
-
                         Comment comment = new Comment();
                         comment.setRcProfileMasterPmId(responseRating.getPrToPmId());
                         comment.setCrmStatus(responseRating.getPrStatus());

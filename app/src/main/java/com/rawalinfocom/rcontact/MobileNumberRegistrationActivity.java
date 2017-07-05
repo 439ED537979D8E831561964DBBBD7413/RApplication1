@@ -173,6 +173,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
             //<editor-fold desc="REQ_SEND_OTP">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_CHECK_NUMBER)) {
                 WsResponseObject otpDetailResponse = (WsResponseObject) data;
+
                 Utils.hideProgressDialog();
 
                 if (otpDetailResponse != null && StringUtils.equalsIgnoreCase(otpDetailResponse
