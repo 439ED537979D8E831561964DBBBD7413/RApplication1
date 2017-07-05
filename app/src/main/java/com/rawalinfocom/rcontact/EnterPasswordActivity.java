@@ -280,9 +280,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         enterPassWordObject.setPassword(StringUtils.trimToEmpty(password));
         enterPassWordObject.setCreatedBy("2"); // For Android Devices
         enterPassWordObject.setGcmToken(getDeviceTokenId());
-        enterPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings
-                .Secure
-                .ANDROID_ID));
+        enterPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
