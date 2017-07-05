@@ -382,7 +382,8 @@ public class Utils {
 
     public static void hideProgressDialog() {
         try {
-            progressDialog.dismiss();
+            if (progressDialog != null && progressDialog.isShowing())
+                progressDialog.dismiss();
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(LOG_TAG, "method : hideProgressDialog()");

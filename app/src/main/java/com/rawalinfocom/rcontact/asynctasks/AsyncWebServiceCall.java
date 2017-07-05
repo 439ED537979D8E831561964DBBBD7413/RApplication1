@@ -87,6 +87,7 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
             return new RequestWs().getPostRequest(activity, params[0], requestType, requestObject,
                     responseClass, contentValues, setHeader);
         } catch (Exception e) {
+            Utils.hideProgressDialog();
             this.error = e;
             Log.e(LOG_TAG, e.getMessage() + "");
         }

@@ -390,32 +390,27 @@ public class TimelineActivity extends BaseActivity implements RippleView
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
         if (error == null) {
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_RATING)) {
+                WsResponseObject wsResponseObject = (WsResponseObject) data;
+                Rating rating = wsResponseObject.getProfileRating();
 
-                {
-                    WsResponseObject wsResponseObject = (WsResponseObject) data;
-                    Rating rating = wsResponseObject.getProfileRating();
-
-                    int updated = tableCommentMaster.addReply(rating.getPrId() + "", rating.getPrReply(), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
-                    if (updated != 0) {
-                        if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
-                            switch (selectedRecycler) {
-                                case 0:
-                                    addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
-                                    break;
-                                case 1:
-                                    addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
-                                    break;
-                                case 2:
-                                    addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
-                                    break;
-                            }
-                            selectedRecycler = -1;
-                            selectedRecyclerItem = -1;
+                int updated = tableCommentMaster.addReply(rating.getPrId() + "", rating.getPrReply(), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
+                if (updated != 0) {
+                    if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
+                        switch (selectedRecycler) {
+                            case 0:
+                                addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                                break;
+                            case 1:
+                                addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                                break;
+                            case 2:
+                                addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                                break;
                         }
-                        Utils.hideProgressDialog();
+                        selectedRecycler = -1;
+                        selectedRecyclerItem = -1;
                     }
-
-
+                    Utils.hideProgressDialog();
                 }
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_EVENT_COMMENT)) {
 
@@ -447,8 +442,6 @@ public class TimelineActivity extends BaseActivity implements RippleView
                     }
                     Utils.hideProgressDialog();
                 }
-
-
             }
         } else {
             Utils.hideProgressDialog();
