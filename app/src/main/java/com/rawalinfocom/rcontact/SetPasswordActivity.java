@@ -175,6 +175,9 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                     }
 
                 } else {
+
+                    Utils.hideProgressDialog();
+
                     if (setPasswordResponse != null) {
                         Log.e("error response", setPasswordResponse.getMessage());
                     } else {
@@ -272,9 +275,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         WsRequestObject setPassWordObject = new WsRequestObject();
         setPassWordObject.setPassword(StringUtils.trimToEmpty(password));
         setPassWordObject.setPassword_confirmation(StringUtils.trimToEmpty(confirmPassword));
-        setPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings
-                .Secure
-                .ANDROID_ID));
+        setPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
         setPassWordObject.setCreatedBy("2"); // For Android Devices
 
         if (Utils.isNetworkAvailable(this)) {

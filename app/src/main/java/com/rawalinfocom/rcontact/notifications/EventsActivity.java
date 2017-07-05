@@ -440,8 +440,5 @@ public class EventsActivity extends BaseActivity implements RippleView
         } else {
             Toast.makeText(EventsActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
         }
-
     }
-
-
 }
