@@ -55,6 +55,4 @@ public class BaseActivity extends AppCompatActivity {
         return (UserProfile) Utils.getObjectPreference(this, AppConstants.PREF_REGS_USER_OBJECT,
                 UserProfile.class);
     }
-
-
 }

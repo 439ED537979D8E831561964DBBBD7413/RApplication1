@@ -71,7 +71,9 @@ import com.rawalinfocom.rcontact.database.TableEmailMaster;
 import com.rawalinfocom.rcontact.database.TableEventMaster;
 import com.rawalinfocom.rcontact.database.TableImMaster;
 import com.rawalinfocom.rcontact.database.TableMobileMaster;
+import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.CallConfirmationListDialog;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
@@ -88,6 +90,7 @@ import com.rawalinfocom.rcontact.model.Email;
 import com.rawalinfocom.rcontact.model.Event;
 import com.rawalinfocom.rcontact.model.ImAccount;
 import com.rawalinfocom.rcontact.model.MobileNumber;
+import com.rawalinfocom.rcontact.model.Organization;
 import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
@@ -100,6 +103,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 import com.rawalinfocom.rcontact.model.ProfileVisit;
 import com.rawalinfocom.rcontact.model.Rating;
 import com.rawalinfocom.rcontact.model.UserProfile;
+import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
@@ -1181,10 +1185,36 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         return listNumber;
     }
 
-
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
         if (error == null) {
+
+            // <editor-fold desc="REQ_GET_PROFILE_DETAILS">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_PROFILE_DETAILS)) {
+                WsResponseObject getProfileResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (getProfileResponse != null && StringUtils.equalsIgnoreCase(getProfileResponse.getStatus(),
+                        WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    ProfileDataOperation profileDetail = getProfileResponse.getProfileDetail();
+                    storeProfileDataToDb(profileDetail);
+
+                    getDataFromDB();
+
+                    ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
+                    ProfileVisit profileVisit = new ProfileVisit();
+                    profileVisit.setVisitorPmId(Integer.parseInt(pmId));
+                    profileVisit.setVisitCount(1);
+                    profileVisits.add(profileVisit);
+                    profileVisit(profileVisits);
+
+                } else {
+                    Log.e("onDeliveryResponse: ", "otpDetailResponse null");
+                    Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
+                            .string.msg_try_later));
+                }
+            }
+            //</editor-fold>
 
             // <editor-fold desc="REQ_MARK_AS_FAVOURITE">
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_MARK_AS_FAVOURITE)) {
@@ -1367,10 +1397,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     ProfileDataOperation profileDetail = editProfileResponse.getProfileDetail();
                     savePrivacySettingToDb(profileDetail);
 
+                    getDataFromDB();
+
+                    Utils.hideProgressDialog();
                     Toast.makeText(ProfileDetailActivity.this, getString(R.string
                                     .str_privacy_setting_update),
                             Toast.LENGTH_SHORT).show();
-                    Utils.hideProgressDialog();
                 } else {
                     if (editProfileResponse != null) {
                         Log.e("error response", editProfileResponse.getMessage());
@@ -1707,14 +1739,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
                 if (!pmId.equalsIgnoreCase("-1") && !pmId.equalsIgnoreCase(getUserPmId())) {
-                    if (Utils.isNetworkAvailable(this)) {
-                        ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
-                        ProfileVisit profileVisit = new ProfileVisit();
-                        profileVisit.setVisitorPmId(Integer.parseInt(pmId));
-                        profileVisit.setVisitCount(1);
-                        profileVisits.add(profileVisit);
-                        profileVisit(profileVisits);
-                    } else {
+                    if (!Utils.isNetworkAvailable(this)) {
+//
+////                        getProfileDetails();
+////                        ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
+////                        ProfileVisit profileVisit = new ProfileVisit();
+////                        profileVisit.setVisitorPmId(Integer.parseInt(pmId));
+////                        profileVisit.setVisitCount(1);
+////                        profileVisits.add(profileVisit);
+////                        profileVisit(profileVisits);
+//                    } else {
                         HashMap<String, String> mapProfileViews = new HashMap<>();
                         if (Utils.getHashMapPreference(this, AppConstants
                                 .PREF_PROFILE_VIEWS) != null) {
@@ -1960,43 +1994,44 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
         });
 
+        Utils.setRatingColor(ProfileDetailActivity.this,ratingUser);
 
-        LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
-        // Filled stars
-        Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(this, R.color
-                .vivid_yellow));
-        // half stars
-        Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(this, android.R
-                .color.darker_gray));
-        // Empty stars
-        Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(this, android.R
-                .color.darker_gray));
+//        LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
+//        // Filled stars
+//        Utils.setRatingStarColor(stars.getDrawable(2), ContextCompat.getColor(this, R.color
+//                .vivid_yellow));
+//        // half stars
+//        Utils.setRatingStarColor(stars.getDrawable(1), ContextCompat.getColor(this, android.R
+//                .color.darker_gray));
+//        // Empty stars
+//        Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(this, android.R
+//                .color.darker_gray));
 
-        if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
-            // RC Profile
-//            getProfileDetail();
-//            if (displayOwnProfile) {
-//                ProfileDataOperation profileDataOperation = (ProfileDataOperation) Utils
-//                        .getObjectPreference(this, AppConstants.PREF_REGS_USER_OBJECT,
-//                                ProfileDataOperation.class);
-//                setUpView(profileDataOperation);
-//            } else {
-//                TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-//            QueryManager queryManager = new QueryManager(databaseHandler);
-            ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
-                    (this, pmId);
-            setUpView(profileDataOperation);
+        if (!displayOwnProfile)
+            if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
+                // RC Profile
+                if (Utils.isNetworkAvailable(ProfileDetailActivity.this)) {
+                    //call service
+                    getProfileDetails();
+                } else {
+                    getDataFromDB();
+                }
 //            }
-        } else {
-            // Non-RC Profile
-//            textJoiningDate.setVisibility(View.GONE);
-            setUpView(null);
-        }
+            } else {
+                // Non-RC Profile
+                setUpView(null);
+            }
 
         layoutVisibility();
 
         initSwipe();
 
+    }
+
+    private void getDataFromDB() {
+        ProfileDataOperation profileDataOperation = queryManager.getRcProfileDetail
+                (this, pmId);
+        setUpView(profileDataOperation);
     }
 
     private void setCallLogHistoryDetails() {
@@ -2093,7 +2128,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private void setUpView(final ProfileDataOperation profileDetail) {
-
 
         try {
 
@@ -2342,8 +2376,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     ())) {
                 arrayListEmail.addAll(profileDetail.getPbEmailId());
                 for (int i = 0; i < arrayListEmail.size(); i++) {
-                    String email = arrayListEmail.get(i).getEmEmailId();
-                    arrayListCloudEmail.add(email);
+                    arrayListCloudEmail.add(arrayListEmail.get(i).getEmEmailId());
                 }
             }
 
@@ -3306,6 +3339,17 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
     }
 
+    private void getProfileDetails() {
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null, WsResponseObject.class, WsConstants
+                    .REQ_GET_PROFILE_DETAILS, getString(R.string.msg_please_wait), true)
+                    .execute(WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_DETAILS + "/" + pmId);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
     private void profileVisit(ArrayList<ProfileVisit> arrayListProfileVisit) {
 
         WsRequestObject profileVisitObject = new WsRequestObject();
@@ -3341,4 +3385,184 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }*/
     }
     //</editor-fold>
+
+    private void storeProfileDataToDb(ProfileDataOperation profileDetail) {
+
+        //<editor-fold desc="Basic Details">
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+
+        UserProfile userProfile = new UserProfile();
+        userProfile.setPmRcpId(profileDetail.getRcpPmId());
+        userProfile.setPmFirstName(profileDetail.getPbNameFirst());
+        userProfile.setPmLastName(profileDetail.getPbNameLast());
+        userProfile.setProfileRating(profileDetail.getProfileRating());
+        userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
+        userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
+        userProfile.setPmGender(profileDetail.getPbGender());
+
+        tableProfileMaster.addProfile(userProfile);
+        //</editor-fold>
+
+        //<editor-fold desc="Mobile Number">
+        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+
+        ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
+        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber =
+                profileDetail.getPbPhoneNumber();
+        if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber)) {
+            for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
+                MobileNumber mobileNumber = new MobileNumber();
+                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i).getPhoneId());
+                mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i).getPhoneType());
+                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
+                mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(i).getPhonePublic()));
+                mobileNumber.setMnmIsPrimary(arrayListPhoneNumber.get(i).getPbRcpType());
+                mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(i).getIsPrivate());
+                mobileNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+                arrayListMobileNumber.add(mobileNumber);
+            }
+            tableMobileMaster.addUpdateArrayMobileNumber(arrayListMobileNumber, profileDetail.getRcpPmId());
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Email Master">
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
+            ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
+            ArrayList<Email> arrayListEmail = new ArrayList<>();
+            for (int i = 0; i < arrayListEmailId.size(); i++) {
+                Email email = new Email();
+                email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
+                email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+                email.setEmEmailType(arrayListEmailId.get(i).getEmType());
+                email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
+                email.setEmIsPrivate(arrayListEmailId.get(i).getEmIsPrivate());
+                email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
+                email.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+                arrayListEmail.add(email);
+            }
+
+            TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
+            tableEmailMaster.addUpdateArrayEmail(arrayListEmail, profileDetail.getRcpPmId());
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Organization Master">
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbOrganization())) {
+            ArrayList<ProfileDataOperationOrganization> arrayListOrganization = profileDetail
+                    .getPbOrganization();
+            ArrayList<Organization> organizationList = new ArrayList<>();
+            for (int i = 0; i < arrayListOrganization.size(); i++) {
+                Organization organization = new Organization();
+                organization.setOmRecordIndexId(arrayListOrganization.get(i).getOrgId());
+                organization.setOmOrganizationCompany(arrayListOrganization.get(i).getOrgName());
+                organization.setOmOrganizationDesignation(arrayListOrganization.get(i).getOrgJobTitle());
+                organization.setOmIsPrivate(arrayListOrganization.get(i).getIsPrivate());
+                organization.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+                organizationList.add(organization);
+            }
+
+            TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
+                    (databaseHandler);
+            tableOrganizationMaster.addUpdateArrayOrganization(organizationList, profileDetail.getRcpPmId());
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Website Master">
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbWebAddress())) {
+//            ArrayList<String> arrayListWebsite = profileDetail.getPbWebAddress();
+            ArrayList<ProfileDataOperationWebAddress> arrayListWebsite = profileDetail
+                    .getPbWebAddress();
+            ArrayList<Website> websiteList = new ArrayList<>();
+            for (int j = 0; j < arrayListWebsite.size(); j++) {
+                Website website = new Website();
+                website.setWmRecordIndexId(arrayListWebsite.get(j).getWebId());
+                website.setWmWebsiteUrl(arrayListWebsite.get(j).getWebAddress());
+                website.setWmWebsiteType(arrayListWebsite.get(j).getWebType());
+                website.setWmIsPrivate(arrayListWebsite.get(j).getWebIsPrivate());
+                website.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+                websiteList.add(website);
+            }
+
+            TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
+            tableWebsiteMaster.addUpdateArrayWebsite(websiteList, profileDetail.getRcpPmId());
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Address Master">
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
+            ArrayList<ProfileDataOperationAddress> arrayListAddress = profileDetail.getPbAddress();
+            ArrayList<Address> addressList = new ArrayList<>();
+            for (int j = 0; j < arrayListAddress.size(); j++) {
+                Address address = new Address();
+
+//                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
+                address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
+                address.setAmCity(arrayListAddress.get(j).getCity());
+                address.setAmState(arrayListAddress.get(j).getState());
+                address.setAmCountry(arrayListAddress.get(j).getCountry());
+                address.setAmStreet(arrayListAddress.get(j).getStreet());
+                address.setAmPoBox(arrayListAddress.get(j).getPoBox());
+                address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
+                address.setAmPostCode(arrayListAddress.get(j).getPostCode());
+                address.setAmAddressType(arrayListAddress.get(j).getAddressType());
+
+                if (arrayListAddress.get(j).getGoogleLatLong() != null && arrayListAddress.get(j)
+                        .getGoogleLatLong().size() == 2) {
+                    address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatLong().get(1));
+                    address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLatLong().get(0));
+                }
+//                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
+                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
+                address.setAmIsPrivate(arrayListAddress.get(j).getIsPrivate());
+                address.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+                addressList.add(address);
+            }
+
+            TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
+            tableAddressMaster.addUpdateArrayAddress(addressList, profileDetail.getRcpPmId());
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Im Account Master">
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
+            ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileDetail
+                    .getPbIMAccounts();
+            ArrayList<ImAccount> imAccountsList = new ArrayList<>();
+            for (int j = 0; j < arrayListImAccount.size(); j++) {
+                ImAccount imAccount = new ImAccount();
+
+                imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
+                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
+                imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
+                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j).getIMAccountPublic()));
+                imAccount.setImIsPrivate(arrayListImAccount.get(j).getIMAccountIsPrivate());
+                imAccount.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+
+                imAccountsList.add(imAccount);
+            }
+
+            TableImMaster tableImMaster = new TableImMaster(databaseHandler);
+            tableImMaster.addUpdateArrayImAccount(imAccountsList, profileDetail.getRcpPmId());
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Event Master">
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
+            ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail.getPbEvent();
+            ArrayList<Event> eventList = new ArrayList<>();
+            for (int j = 0; j < arrayListEvent.size(); j++) {
+                Event event = new Event();
+                event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
+                event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
+                event.setEvmEventType(arrayListEvent.get(j).getEventType());
+                event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
+                event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
+                eventList.add(event);
+            }
+
+            TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
+            tableEventMaster.addUpdateArrayEvent(eventList, profileDetail.getRcpPmId());
+        }
+        //</editor-fold>
+    }
 }

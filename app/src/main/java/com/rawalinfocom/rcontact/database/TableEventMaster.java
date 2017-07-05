@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.model.ContactRequestData;
 import com.rawalinfocom.rcontact.model.Event;
 
@@ -91,6 +92,50 @@ public class TableEventMaster {
 
             // Inserting Row
             db.insert(TABLE_RC_EVENT_MASTER, null, values);
+        }
+        db.close(); // Closing database connection
+    }
+
+    // Adding or Updating array Event
+    public void addUpdateArrayEvent(ArrayList<Event> arrayListEvent, String RcpPmId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_EVENT_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
+        for (int i = 0; i < arrayListEvent.size(); i++) {
+            ContentValues values = new ContentValues();
+
+            values.put(COLUMN_EVM_ID, arrayListEvent.get(i).getEvmId());
+            values.put(COLUMN_EVM_RECORD_INDEX_ID, arrayListEvent.get(i).getEvmRecordIndexId());
+            values.put(COLUMN_EVM_START_DATE, arrayListEvent.get(i).getEvmStartDate());
+            values.put(COLUMN_EVM_EVENT_TYPE, arrayListEvent.get(i).getEvmEventType());
+            values.put(COLUMN_EVM_IS_YEAR_HIDDEN, arrayListEvent.get(i).getEvmIsYearHidden());
+            values.put(COLUMN_EVM_IS_PRIVATE, MoreObjects.firstNonNull(arrayListEvent.get(i).getEvmIsPrivate(), 0));
+            values.put(COLUMN_RC_PROFILE_MASTER_PM_ID, arrayListEvent.get(i).getRcProfileMasterPmId());
+
+            // Inserting Row
+            db.insert(TABLE_RC_EVENT_MASTER, null, values);
+
+//            int count = 0;
+//            Cursor mCount = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_RC_EVENT_MASTER + " " +
+//                    "WHERE " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                    arrayListEvent.get(i).getRcProfileMasterPmId(), null);
+//            if (mCount != null) {
+//                mCount.moveToFirst();
+//                count = mCount.getInt(0);
+//                mCount.close();
+//            }
+//
+//            if (count > 0) {
+//                // Update if already exists
+//                db.update(TABLE_RC_EVENT_MASTER, values, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+//                        arrayListEvent.get(i).getRcProfileMasterPmId(), null);
+//            } else {
+//                // Inserting Row
+//                values.put(COLUMN_EVM_ID, arrayListEvent.get(i).getEvmId());
+//                db.insert(TABLE_RC_EVENT_MASTER, null, values);
+//            }
         }
         db.close(); // Closing database connection
     }

@@ -3205,21 +3205,21 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         UserProfile userProfile = new UserProfile();
         userProfile.setPmRcpId(getUserPmId());
-        userProfile.setPmPrefix(profileDetail.getPbNamePrefix());
+//        userProfile.setPmPrefix(profileDetail.getPbNamePrefix());
         userProfile.setPmFirstName(profileDetail.getPbNameFirst());
-        userProfile.setPmMiddleName(profileDetail.getPbNameMiddle());
+//        userProfile.setPmMiddleName(profileDetail.getPbNameMiddle());
         userProfile.setPmLastName(profileDetail.getPbNameLast());
-        userProfile.setPmSuffix(profileDetail.getPbNameSuffix());
-        userProfile.setPmNickName(profileDetail.getPbNickname());
-        userProfile.setPmPhoneticFirstName(profileDetail.getPbPhoneticNameFirst());
-        userProfile.setPmPhoneticMiddleName(profileDetail.getPbPhoneticNameMiddle());
-        userProfile.setPmPhoneticLastName(profileDetail.getPbPhoneticNameLast());
-        userProfile.setPmNotes(profileDetail.getPbNote());
+//        userProfile.setPmSuffix(profileDetail.getPbNameSuffix());
+//        userProfile.setPmNickName(profileDetail.getPbNickname());
+//        userProfile.setPmPhoneticFirstName(profileDetail.getPbPhoneticNameFirst());
+//        userProfile.setPmPhoneticMiddleName(profileDetail.getPbPhoneticNameMiddle());
+//        userProfile.setPmPhoneticLastName(profileDetail.getPbPhoneticNameLast());
+//        userProfile.setPmNotes(profileDetail.getPbNote());
         userProfile.setProfileRating(profileDetail.getProfileRating());
         userProfile.setTotalProfileRateUser(profileDetail.getTotalProfileRateUser());
         userProfile.setPmIsFavourite(profileDetail.getIsFavourite());
         userProfile.setPmNosqlMasterId(profileDetail.getNoSqlMasterId());
-        userProfile.setPmJoiningDate(profileDetail.getJoiningDate());
+//        userProfile.setPmJoiningDate(profileDetail.getJoiningDate());
         userProfile.setPmGender(profileDetail.getPbGender());
         userProfile.setPmProfileImage(profileDetail.getPbProfilePhoto());
 

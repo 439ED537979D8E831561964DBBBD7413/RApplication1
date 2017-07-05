@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,7 +41,7 @@ import butterknife.ButterKnife;
 public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements
         SectionIndexer {
 
-    private Context context;
+    private Activity activity;
     private Fragment fragment;
     private ArrayList<Object> arrayListUserProfile;
     private ArrayList<String> arrayListContactHeader;
@@ -55,7 +56,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public RContactListAdapter(Fragment fragment, ArrayList<Object> arrayListUserProfile,
                                ArrayList<String> arrayListContactHeader) {
         this.fragment = fragment;
-        this.context = fragment.getActivity();
+        this.activity = fragment.getActivity();
         this.arrayListUserProfile = arrayListUserProfile;
         this.arrayListContactHeader = arrayListContactHeader;
     }
@@ -89,7 +90,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 break;
         }
         return viewHolder;
-
     }
 
     @Override
@@ -109,7 +109,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 configureFooterViewHolder(contactFooterViewHolder, position);
                 break;
         }
-
     }
 
     @Override
@@ -207,11 +206,11 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         if (StringUtils.length(userProfile.getPmProfileImage()) > 0) {
-            Glide.with(context)
+            Glide.with(activity)
                     .load(userProfile.getPmProfileImage())
                     .placeholder(R.drawable.home_screen_profile)
                     .error(R.drawable.home_screen_profile)
-                    .bitmapTransform(new CropCircleTransformation(context))
+                    .bitmapTransform(new CropCircleTransformation(activity))
                     .override(500, 500)
                     .into(holder.imageProfile);
 
@@ -247,19 +246,20 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
                 bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, userProfile
                         .getPmProfileImage());
-               /* ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
+                bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NUMBER, userProfile.getMobileNumber());
+
+               /* ((BaseActivity) activity).startActivityIntent(activity, ProfileDetailActivity
                         .class, bundle);*/
                 bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NUMBER, userProfile
                         .getMobileNumber());
-                Intent intent = new Intent(context, ProfileDetailActivity.class);
+                Intent intent = new Intent(activity, ProfileDetailActivity.class);
                 intent.putExtras(bundle);
                 fragment.startActivityForResult(intent, AppConstants
                         .REQUEST_CODE_PROFILE_DETAIL);
-                ((BaseActivity) context).overridePendingTransition(R.anim.enter, R
+                ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
                         .anim.exit);
             }
         });
-
     }
 
     private void configureHeaderViewHolder(ContactHeaderViewHolder holder, int position) {
@@ -270,7 +270,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private void configureFooterViewHolder(ContactFooterViewHolder holder, int position) {
 //        String letter = (String) arrayListUserContact.get(position);
         holder.textTotalContacts.setText(arrayListUserProfile.size() - arrayListContactHeader
-                .size() + " " + context.getString(R.string.contacts));
+                .size() + " " + activity.getString(R.string.contacts));
     }
 
     //</editor-fold>
@@ -305,19 +305,18 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textContactName.setTypeface(Utils.typefaceSemiBold(context));
-            textCloudContactName.setTypeface(Utils.typefaceSemiBold(context));
-            textContactNumber.setTypeface(Utils.typefaceRegular(context));
+            textContactName.setTypeface(Utils.typefaceSemiBold(activity));
+            textCloudContactName.setTypeface(Utils.typefaceSemiBold(activity));
+            textContactNumber.setTypeface(Utils.typefaceRegular(activity));
 
-            textRatingUserCount.setTypeface(Utils.typefaceRegular(context));
+            textRatingUserCount.setTypeface(Utils.typefaceRegular(activity));
 
-            textContactName.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
-            textContactNumber.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+            textContactName.setTextColor(ContextCompat.getColor(activity, R.color.colorAccent));
+            textContactNumber.setTextColor(ContextCompat.getColor(activity, R.color.colorAccent));
 
             textCloudContactName.setVisibility(View.GONE);
 
-//            linearRating.setVisibility(View.GONE);
-
+            Utils.setRatingColor(activity, ratingUser);
         }
     }
 
@@ -330,8 +329,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textHeader.setTypeface(Utils.typefaceSemiBold(context));
-
+            textHeader.setTypeface(Utils.typefaceSemiBold(activity));
         }
     }
 
@@ -344,11 +342,9 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            textTotalContacts.setTypeface(Utils.typefaceSemiBold(context));
+            textTotalContacts.setTypeface(Utils.typefaceSemiBold(activity));
 
         }
     }
-
     //</editor-fold>
-
 }

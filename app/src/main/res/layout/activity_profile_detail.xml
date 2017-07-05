@@ -299,7 +299,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignStart="@+id/text_text_call_history"
                     android:layout_below="@+id/text_text_call_history"
-                    android:visibility="visible"/>
+                    android:visibility="visible" />
 
 
                 <!--

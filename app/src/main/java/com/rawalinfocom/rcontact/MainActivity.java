@@ -41,10 +41,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
@@ -72,6 +74,7 @@ import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Address;
 import com.rawalinfocom.rcontact.model.CallLogType;
@@ -546,17 +549,17 @@ public class MainActivity extends BaseActivity implements NavigationView
 
             //<editor-fold desc="Profile Master">
             UserProfile userProfile = new UserProfile();
-            userProfile.setPmSuffix(profileData.get(i).getPbNameSuffix());
-            userProfile.setPmPrefix(profileData.get(i).getPbNamePrefix());
+//            userProfile.setPmSuffix(profileData.get(i).getPbNameSuffix());
+//            userProfile.setPmPrefix(profileData.get(i).getPbNamePrefix());
             userProfile.setPmFirstName(profileData.get(i).getPbNameFirst());
-            userProfile.setPmMiddleName(profileData.get(i).getPbNameMiddle());
+//            userProfile.setPmMiddleName(profileData.get(i).getPbNameMiddle());
             userProfile.setPmLastName(profileData.get(i).getPbNameLast());
-            userProfile.setPmPhoneticFirstName(profileData.get(i).getPbPhoneticNameFirst());
-            userProfile.setPmPhoneticMiddleName(profileData.get(i).getPbPhoneticNameMiddle());
-            userProfile.setPmPhoneticLastName(profileData.get(i).getPbPhoneticNameLast());
+//            userProfile.setPmPhoneticFirstName(profileData.get(i).getPbPhoneticNameFirst());
+//            userProfile.setPmPhoneticMiddleName(profileData.get(i).getPbPhoneticNameMiddle());
+//            userProfile.setPmPhoneticLastName(profileData.get(i).getPbPhoneticNameLast());
             userProfile.setPmIsFavourite(profileData.get(i).getIsFavourite());
-            userProfile.setPmNotes(profileData.get(i).getPbNote());
-            userProfile.setPmNickName(profileData.get(i).getPbNickname());
+//            userProfile.setPmNotes(profileData.get(i).getPbNote());
+//            userProfile.setPmNickName(profileData.get(i).getPbNickname());
             userProfile.setPmRcpId(profileData.get(i).getRcpPmId());
             userProfile.setPmNosqlMasterId(profileData.get(i).getNoSqlMasterId());
             userProfile.setProfileRating(profileData.get(i).getProfileRating());
@@ -907,6 +910,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        setNavigationHeaderData();
+
         if (BuildConfig.DEBUG) {
             Menu menu = navigationView.getMenu();
             menu.findItem(R.id.nav_db_export).setVisible(true);
@@ -918,6 +923,42 @@ public class MainActivity extends BaseActivity implements NavigationView
         setupTabLayout();
         Utils.changeTabsFont(this, tabMain);
 
+    }
+
+    private void setNavigationHeaderData() {
+
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView text_user_name = (TextView) headerView.findViewById(R.id.text_user_name);
+        TextView text_number = (TextView) headerView.findViewById(R.id.text_number);
+        TextView text_rating_count = (TextView) headerView.findViewById(R.id.text_rating_count);
+        RatingBar rating_user = (RatingBar) headerView.findViewById(R.id.rating_user);
+        ImageView userProfileImage = (ImageView) headerView.findViewById(R.id.userProfileImage);
+
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
+
+        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+        String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
+
+        text_user_name.setText(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+        text_number.setText(number);
+        text_rating_count.setText(userProfile.getTotalProfileRateUser());
+        rating_user.setRating(Float.parseFloat(userProfile.getProfileRating()));
+
+        final String thumbnailUrl = userProfile.getPmProfileImage();
+        if (!TextUtils.isEmpty(thumbnailUrl)) {
+            Glide.with(MainActivity.this)
+                    .load(thumbnailUrl)
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(MainActivity.this))
+                    .override(500, 500)
+                    .into(userProfileImage);
+
+        } else {
+            userProfileImage.setImageResource(R.drawable.home_screen_profile);
+        }
     }
 
     private void openDialer() {
@@ -2251,8 +2292,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         cursor.close();
 
         Set<String> arrayListOldContactIds = new HashSet<>();
-        arrayListOldContactIds.addAll(Utils.getArrayListPreference(this, AppConstants
-                .PREF_CONTACT_ID_SET));
+        arrayListOldContactIds.addAll(Utils.getArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET));
 //        Log.i("MAULIK", " getAllContactRawId");
 
         Cursor contactNameCursor = phoneBookContacts.getAllContactRawId();
@@ -2394,201 +2434,205 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         //<editor-fold desc="Data Read from Cursor">
         if (cursor != null) {
-            final int mimeTypeIdx = cursor.getColumnIndex(ContactsContract.Data.MIMETYPE);
-            final int idIdx = cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID);
+            try {
+                final int mimeTypeIdx = cursor.getColumnIndex(ContactsContract.Data.MIMETYPE);
+                final int idIdx = cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID);
 
-            while (cursor.moveToNext()) {
+                while (cursor.moveToNext()) {
 //                if (syncingTask != null && syncingTask.isCancelled()) {
 //                    return;
 //                }
-                //ProfileDataOperation operation = new ProfileDataOperation();
-                //operation.setFlag(flag);
-                long id = cursor.getLong(idIdx);
-                ProfileDataOperation phoneBookContact = profileDetailSparseArray.get(id);
-                if (phoneBookContact == null) {
-                    phoneBookContact = new ProfileDataOperation(id);
-                    profileDetailSparseArray.put(id, phoneBookContact);
+                    //ProfileDataOperation operation = new ProfileDataOperation();
+                    //operation.setFlag(flag);
+                    long id = cursor.getLong(idIdx);
+                    ProfileDataOperation phoneBookContact = profileDetailSparseArray.get(id);
+                    if (phoneBookContact == null) {
+                        phoneBookContact = new ProfileDataOperation(id);
+                        profileDetailSparseArray.put(id, phoneBookContact);
 //                    profileDataList.add(phoneBookContact);
+                    }
+                    phoneBookContact.setLookupKey(cursor.getString(cursor.getColumnIndex
+                            (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
+                    phoneBookContact.setIsFavourite(cursor.getString(cursor.getColumnIndex
+                            (ContactsContract.Contacts.STARRED)));
+                    String mimeType = cursor.getString(mimeTypeIdx);
+                    switch (mimeType) {
+                        case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
+
+                            phoneBookContact.setPbNamePrefix(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.StructuredName.PREFIX)));
+                            phoneBookContact.setPbNameFirst(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.StructuredName.GIVEN_NAME)));
+                            phoneBookContact.setPbNameMiddle(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.StructuredName.MIDDLE_NAME)));
+                            phoneBookContact.setPbNameLast(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.StructuredName.FAMILY_NAME)));
+                            phoneBookContact.setPbNameSuffix(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.StructuredName.SUFFIX)));
+                            phoneBookContact.setPbPhoneticNameFirst(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.StructuredName.PHONETIC_GIVEN_NAME)));
+                            phoneBookContact.setPbPhoneticNameMiddle(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.StructuredName.PHONETIC_MIDDLE_NAME)));
+                            phoneBookContact.setPbPhoneticNameLast(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.StructuredName.PHONETIC_FAMILY_NAME)));
+                            break;
+                        case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
+                            ProfileDataOperationPhoneNumber phoneNumber = new
+                                    ProfileDataOperationPhoneNumber();
+
+                            phoneNumber.setPhoneNumber(Utils.getFormattedNumber(this, cursor
+                                    .getString(cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.Phone.NUMBER))));
+                            phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
+                                    (cursor.getInt(cursor.getColumnIndex
+                                            (ContactsContract.CommonDataKinds.Phone.TYPE))));
+                            phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_EVERYONE);
+
+                            phoneBookContact.addPhone(phoneNumber);
+                            break;
+                        case ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE:
+                            ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
+
+                            emailId.setEmEmailId(cursor.getString(cursor
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+                            emailId.setEmType(phoneBookContacts.getEmailType(cursor,
+                                    cursor.getInt
+                                            (cursor.getColumnIndex(ContactsContract
+                                                    .CommonDataKinds.Email.TYPE))));
+                            emailId.setEmPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+
+                            phoneBookContact.addEmail(emailId);
+                            break;
+                        case ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE:
+                            ProfileDataOperationWebAddress webAddress = new
+                                    ProfileDataOperationWebAddress();
+
+                            webAddress.setWebAddress(cursor.getString(cursor
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
+                            webAddress.setWebType(phoneBookContacts.getWebsiteType(cursor, (cursor
+                                    .getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds
+                                            .Website.TYPE)))));
+                            webAddress.setWebPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+                            phoneBookContact.addWebsite(webAddress);
+
+                            break;
+                        case ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE:
+                            ProfileDataOperationOrganization organization = new
+                                    ProfileDataOperationOrganization();
+
+                            organization.setOrgName(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.Organization.COMPANY)));
+                            organization.setOrgJobTitle(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.Organization.TITLE)));
+                            organization.setOrgDepartment(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.Organization.DEPARTMENT)));
+                            organization.setOrgType(phoneBookContacts.getOrganizationType(cursor,
+                                    cursor.getInt((cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.Organization.TYPE)))));
+                            organization.setOrgJobDescription(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.Organization.JOB_DESCRIPTION)));
+                            organization.setOrgOfficeLocation(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.Organization.OFFICE_LOCATION)));
+                            organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+                            phoneBookContact.addOrganization(organization);
+                            break;
+                        case ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE:
+                            ProfileDataOperationAddress address = new ProfileDataOperationAddress();
+
+                            address.setFormattedAddress(cursor.getString
+                                    (cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS)));
+                            address.setCity(cursor.getString(cursor
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                            .CITY)));
+                            address.setCountry(cursor.getString(cursor
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                            .COUNTRY)));
+                            address.setNeighborhood(cursor.getString(cursor
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                            .NEIGHBORHOOD)));
+                            address.setPostCode(cursor.getString(cursor
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                            .POSTCODE)));
+                            address.setPoBox(cursor.getString(cursor
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                            .POBOX)));
+                            address.setStreet(cursor.getString(cursor
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                            .STREET)));
+                            address.setAddressType(phoneBookContacts.getAddressType(cursor, cursor
+                                    .getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal.TYPE))));
+                            address.setAddPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+                            phoneBookContact.addAddress(address);
+                            break;
+                        case ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE:
+                            ProfileDataOperationImAccount imAccount = new
+                                    ProfileDataOperationImAccount();
+
+
+                            imAccount.setIMAccountDetails(cursor.getString(cursor
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Im.DATA1)));
+
+                            imAccount.setIMAccountType(phoneBookContacts.getImAccountType(cursor,
+                                    cursor.getInt(cursor.getColumnIndex(ContactsContract
+                                            .CommonDataKinds.Im.TYPE))));
+
+                            imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
+                                    (cursor.getInt((cursor.getColumnIndex
+                                            (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
+
+                            imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+
+                            phoneBookContact.addImAccount(imAccount);
+                            break;
+                        case ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE:
+
+                            ProfileDataOperationEvent event = new ProfileDataOperationEvent();
+
+                            event.setEventType(phoneBookContacts.getEventType(cursor, cursor.getInt
+                                    (cursor.getColumnIndex(ContactsContract.CommonDataKinds.Event
+                                            .TYPE))));
+
+                            String eventDate = cursor.getString(cursor
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Event
+                                            .START_DATE));
+
+                            if (StringUtils.startsWith(eventDate, "--")) {
+                                eventDate = "1900" + eventDate.substring(1, StringUtils.length
+                                        (eventDate));
+                            }
+
+                            event.setEventDateTime(eventDate);
+
+                            event.setEventPublic(IntegerConstants.PRIVACY_EVERYONE);
+
+                            phoneBookContact.addEvent(event);
+                            break;
+                    }
                 }
-                phoneBookContact.setLookupKey(cursor.getString(cursor.getColumnIndex
-                        (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID)));
-                phoneBookContact.setIsFavourite(cursor.getString(cursor.getColumnIndex
-                        (ContactsContract.Contacts.STARRED)));
-                String mimeType = cursor.getString(mimeTypeIdx);
-                switch (mimeType) {
-                    case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
-
-                        phoneBookContact.setPbNamePrefix(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.StructuredName.PREFIX)));
-                        phoneBookContact.setPbNameFirst(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.StructuredName.GIVEN_NAME)));
-                        phoneBookContact.setPbNameMiddle(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.StructuredName.MIDDLE_NAME)));
-                        phoneBookContact.setPbNameLast(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.StructuredName.FAMILY_NAME)));
-                        phoneBookContact.setPbNameSuffix(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.StructuredName.SUFFIX)));
-                        phoneBookContact.setPbPhoneticNameFirst(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.StructuredName.PHONETIC_GIVEN_NAME)));
-                        phoneBookContact.setPbPhoneticNameMiddle(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.StructuredName.PHONETIC_MIDDLE_NAME)));
-                        phoneBookContact.setPbPhoneticNameLast(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.StructuredName.PHONETIC_FAMILY_NAME)));
-                        break;
-                    case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
-                        ProfileDataOperationPhoneNumber phoneNumber = new
-                                ProfileDataOperationPhoneNumber();
-
-                        phoneNumber.setPhoneNumber(Utils.getFormattedNumber(this, cursor
-                                .getString(cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Phone.NUMBER))));
-                        phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
-                                (cursor.getInt(cursor.getColumnIndex
-                                        (ContactsContract.CommonDataKinds.Phone.TYPE))));
-                        phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_EVERYONE);
-
-                        phoneBookContact.addPhone(phoneNumber);
-                        break;
-                    case ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE:
-                        ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
-
-                        emailId.setEmEmailId(cursor.getString(cursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
-                        emailId.setEmType(phoneBookContacts.getEmailType(cursor,
-                                cursor.getInt
-                                        (cursor.getColumnIndex(ContactsContract
-                                                .CommonDataKinds.Email.TYPE))));
-                        emailId.setEmPublic(IntegerConstants.PRIVACY_EVERYONE);
-
-
-                        phoneBookContact.addEmail(emailId);
-                        break;
-                    case ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE:
-                        ProfileDataOperationWebAddress webAddress = new
-                                ProfileDataOperationWebAddress();
-
-                        webAddress.setWebAddress(cursor.getString(cursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.Website.URL)));
-                        webAddress.setWebType(phoneBookContacts.getWebsiteType(cursor, (cursor
-                                .getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds
-                                        .Website.TYPE)))));
-                        webAddress.setWebPublic(IntegerConstants.PRIVACY_EVERYONE);
-
-                        phoneBookContact.addWebsite(webAddress);
-
-                        break;
-                    case ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE:
-                        ProfileDataOperationOrganization organization = new
-                                ProfileDataOperationOrganization();
-
-                        organization.setOrgName(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.COMPANY)));
-                        organization.setOrgJobTitle(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.TITLE)));
-                        organization.setOrgDepartment(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.DEPARTMENT)));
-                        organization.setOrgType(phoneBookContacts.getOrganizationType(cursor,
-                                cursor.getInt((cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.TYPE)))));
-                        organization.setOrgJobDescription(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.JOB_DESCRIPTION)));
-                        organization.setOrgOfficeLocation(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Organization.OFFICE_LOCATION)));
-                        organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
-
-                        phoneBookContact.addOrganization(organization);
-                        break;
-                    case ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE:
-                        ProfileDataOperationAddress address = new ProfileDataOperationAddress();
-
-                        address.setFormattedAddress(cursor.getString
-                                (cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS)));
-                        address.setCity(cursor.getString(cursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
-                                        .CITY)));
-                        address.setCountry(cursor.getString(cursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
-                                        .COUNTRY)));
-                        address.setNeighborhood(cursor.getString(cursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
-                                        .NEIGHBORHOOD)));
-                        address.setPostCode(cursor.getString(cursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
-                                        .POSTCODE)));
-                        address.setPoBox(cursor.getString(cursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
-                                        .POBOX)));
-                        address.setStreet(cursor.getString(cursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
-                                        .STREET)));
-                        address.setAddressType(phoneBookContacts.getAddressType(cursor, cursor
-                                .getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds
-                                        .StructuredPostal.TYPE))));
-                        address.setAddPublic(IntegerConstants.PRIVACY_EVERYONE);
-
-                        phoneBookContact.addAddress(address);
-                        break;
-                    case ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE:
-                        ProfileDataOperationImAccount imAccount = new
-                                ProfileDataOperationImAccount();
-
-
-                        imAccount.setIMAccountDetails(cursor.getString(cursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.Im.DATA1)));
-
-                        imAccount.setIMAccountType(phoneBookContacts.getImAccountType(cursor,
-                                cursor.getInt(cursor.getColumnIndex(ContactsContract
-                                        .CommonDataKinds.Im.TYPE))));
-
-                        imAccount.setIMAccountProtocol(phoneBookContacts.getImProtocol
-                                (cursor.getInt((cursor.getColumnIndex
-                                        (ContactsContract.CommonDataKinds.Im.PROTOCOL)))));
-
-                        imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_EVERYONE);
-
-
-                        phoneBookContact.addImAccount(imAccount);
-                        break;
-                    case ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE:
-
-                        ProfileDataOperationEvent event = new ProfileDataOperationEvent();
-
-                        event.setEventType(phoneBookContacts.getEventType(cursor, cursor.getInt
-                                (cursor.getColumnIndex(ContactsContract.CommonDataKinds.Event
-                                        .TYPE))));
-
-                        String eventDate = cursor.getString(cursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.Event
-                                        .START_DATE));
-
-                        if (StringUtils.startsWith(eventDate, "--")) {
-                            eventDate = "1900" + eventDate.substring(1, StringUtils.length
-                                    (eventDate));
-                        }
-
-                        event.setEventDateTime(eventDate);
-
-                        event.setEventPublic(IntegerConstants.PRIVACY_EVERYONE);
-
-                        phoneBookContact.addEvent(event);
-                        break;
-                }
+                cursor.close();
+            } catch (Exception e) {
+                Log.i("MainActivity", "Crash Occured when resyncing changed Contacts" + e.toString());
             }
-            cursor.close();
         }
         //</editor-fold>
 

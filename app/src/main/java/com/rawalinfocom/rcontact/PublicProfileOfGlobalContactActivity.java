@@ -23,7 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PublicProfileOfGlobalContactActivity extends BaseActivity implements RippleView
-        .OnRippleCompleteListener  {
+        .OnRippleCompleteListener {
 
     @BindView(R.id.image_action_back)
     ImageView imageActionBack;
@@ -56,12 +56,12 @@ public class PublicProfileOfGlobalContactActivity extends BaseActivity implement
         }
     }
 
-    private void initView(){
+    private void initView() {
         rippleActionBack.setOnRippleCompleteListener(this);
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
         textToolbarTitle.setText(getResources().getString(R.string.public_profile_toolbar_title));
         Intent intent = getIntent();
-        if(intent != null){
+        if (intent != null) {
             if (intent.hasExtra(AppConstants.EXTRA_GLOBAL_PUBLIC_PROFILE_URL)) {
                 publicProfileUrl = intent.getStringExtra(AppConstants.EXTRA_GLOBAL_PUBLIC_PROFILE_URL);
             }
@@ -71,7 +71,7 @@ public class PublicProfileOfGlobalContactActivity extends BaseActivity implement
 
     }
 
-    private void populateWebView(){
+    private void populateWebView() {
         webviewPublicProfile.getSettings().setJavaScriptEnabled(true); // enable javascript
         webviewPublicProfile.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
@@ -80,17 +80,17 @@ public class PublicProfileOfGlobalContactActivity extends BaseActivity implement
             }
 
             ProgressDialog progressDialog;
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if(!StringUtils.isEmpty(url)){
+                if (!StringUtils.isEmpty(url)) {
                     view.loadUrl(url);
                 }
                 return true;
             }
 
             @Override
-            public void onLoadResource(WebView view, String url)
-            {
+            public void onLoadResource(WebView view, String url) {
                 super.onLoadResource(view, url);
                 if (progressDialog == null) {
                     progressDialog = new ProgressDialog(PublicProfileOfGlobalContactActivity.this);
@@ -103,19 +103,19 @@ public class PublicProfileOfGlobalContactActivity extends BaseActivity implement
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                try{
+                try {
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
 //                        progressDialog = null;
                     }
-                }catch(Exception exception){
+                } catch (Exception exception) {
                     exception.printStackTrace();
                 }
             }
         });
 
         //Load url in webview
-        if(!StringUtils.isEmpty(publicProfileUrl))
+        if (!StringUtils.isEmpty(publicProfileUrl))
             webviewPublicProfile.loadUrl(publicProfileUrl);
 
     }
