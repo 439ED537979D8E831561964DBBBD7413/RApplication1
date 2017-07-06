@@ -230,7 +230,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         }
     }
 
-
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
         try {

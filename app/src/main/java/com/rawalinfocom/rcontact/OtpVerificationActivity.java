@@ -98,13 +98,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         filter.addAction(getString(R.string.str_rawal_otp));
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
 
-//        if (Utils.getStringPreference(this, AppConstants.PREF_DEVICE_TOKEN_ID, "").equals(""))
-//            new AsyncGetDeviceToken(this).execute();
-
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        /*mobileNumber = bundle.getString(AppConstants.EXTRA_MOBILE_NUMBER);
-        selectedCountry = (Country) bundle.getSerializable(AppConstants.EXTRA_OBJECT_COUNTRY);*/
 
         mobileNumber = Utils.getStringPreference(OtpVerificationActivity.this, AppConstants
                 .PREF_REGS_MOBILE_NUMBER, "");
@@ -126,13 +121,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
             case R.id.ripple_action_back:
-
                 finish();
-
-//                if (isFrom.equals("mobile")) {
-//                } else if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD)) {
-//                }
-
                 break;
 
             case R.id.ripple_submit:
@@ -142,12 +131,10 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                             relativeRootOtpVerification, getString(R.string.msg_otp_error));
                 } else {
                     otpConfirmed(inputOtp.getText().toString());
-//                verifyOtp(inputOtp.getText().toString());
                 }
                 break;
 
             case R.id.ripple_resend:
-//                stopService(new Intent(OtpVerificationActivity.this, OtpTimerService.class));
                 inputOtp.setText("");
                 sendOtp();
                 break;
@@ -278,7 +265,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
         WsRequestObject otpObject = new WsRequestObject();
         otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
-        otpObject.setMobileNumber(mobileNumber.replace("+", ""));
+        otpObject.setMobileNumber(mobileNumber.replace("+91", ""));
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
@@ -297,7 +284,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
         WsRequestObject otpObject = new WsRequestObject();
         otpObject.setOtp(otp);
-        otpObject.setMobileNumber(mobileNumber.replace("+91", ""));
+        otpObject.setMobileNumber(mobileNumber.replace("+", ""));
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,

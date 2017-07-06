@@ -1289,19 +1289,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                         Rating responseRating = profileRatingResponse.getProfileRating();
 
-                       /* DbRating dbRating = new DbRating();
-                        dbRating.setRcProfileMasterPmId(String.valueOf(responseRating.getPrToPmId
-                                ()));
-                        dbRating.setCrmStatus(String.valueOf(responseRating.getPrStatus()));
-                        dbRating.setCrmRating(responseRating.getPrRatingStars());
-                        dbRating.setCrmCloudPrId(String.valueOf(responseRating.getPrId()));
-                        dbRating.setCrmComment(responseRating.getPrComment());
-                        dbRating.setCrmCreatedAt(responseRating.getCreatedAt());
-
-                        TableContactRatingMaster tableContactRatingMaster = new
-                                TableContactRatingMaster(databaseHandler);
-                        tableContactRatingMaster.addRating(dbRating);*/
-
                         Comment comment = new Comment();
                         comment.setRcProfileMasterPmId(responseRating.getPrToPmId());
                         comment.setCrmStatus(responseRating.getPrStatus());
@@ -1397,6 +1384,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_SET_PRIVACY_SETTING)) {
 
                 WsResponseObject editProfileResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
 
                 if (editProfileResponse != null && StringUtils.equalsIgnoreCase
                         (editProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
@@ -1406,7 +1394,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                     getDataFromDB();
 
-                    Utils.hideProgressDialog();
                     Toast.makeText(ProfileDetailActivity.this, getString(R.string
                                     .str_privacy_setting_update),
                             Toast.LENGTH_SHORT).show();
@@ -1422,11 +1409,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_PRIVACY_REQUEST)) {
                 WsResponseObject editProfileResponse = (WsResponseObject) data;
+
+                Utils.hideProgressDialog();
+
                 if (editProfileResponse != null && StringUtils.equalsIgnoreCase
                         (editProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     Toast.makeText(ProfileDetailActivity.this, editProfileResponse.getMessage(),
                             Toast.LENGTH_SHORT).show();
-                    Utils.hideProgressDialog();
                 } else {
                     if (editProfileResponse != null)
                         Toast.makeText(ProfileDetailActivity.this, editProfileResponse.getMessage
@@ -1435,7 +1424,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         Toast.makeText(ProfileDetailActivity.this, getString(R.string
                                         .str_request_sending_fail),
                                 Toast.LENGTH_SHORT).show();
-                    Utils.hideProgressDialog();
                 }
             }
 
