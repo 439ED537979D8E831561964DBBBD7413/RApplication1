@@ -1284,9 +1284,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             ProfileDataOperationPhoneNumber phoneNumber = new
                                     ProfileDataOperationPhoneNumber();
 
-                            phoneNumber.setPhoneNumber(Utils.getFormattedNumber(getActivity(), cursor
-                                    .getString(cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Phone.NUMBER))));
+                            phoneNumber.setPhoneNumber(cursor.getString(cursor.getColumnIndex(ContactsContract
+                                    .CommonDataKinds.Phone.NUMBER)));
                             phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                     (cursor.getInt(cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Phone.TYPE))));

@@ -200,6 +200,8 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     comment.setCrmRating(m.get("pr_rating_stars"));
                     comment.setRcProfileMasterPmId(Integer.parseInt(m.get("pr_from_pm_id")));
                     comment.setCrmComment(m.get("pr_comment"));
+                    comment.setCrmProfileDetails(m.get("name"));
+                    comment.setCrmImage(m.get("pm_profile_photo"));
                     comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_at")));
                     comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_at")));
                     notificationStateData.setCreatedAt(comment.getCrmCreatedAt());

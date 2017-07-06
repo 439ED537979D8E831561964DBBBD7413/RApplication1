@@ -14,7 +14,6 @@ import android.provider.ContactsContract;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,11 +60,12 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     private String uniqueRowId;
     private String key;
     private String profileUrl;
+    private String pmId;
 
     public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number,
                                     long date, boolean isFromCallLogs, ArrayList<CallLogType>
                                             list, String name, String uniqueRowId, String key,
-                                    String profileUrl) {
+                                    String profileUrl, String pmId) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
@@ -76,6 +76,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
         this.profileUrl = profileUrl;
         this.uniqueRowId = uniqueRowId;
         this.key = key;
+        this.pmId = pmId;
     }
 
     @Override
@@ -134,14 +135,14 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     bundle.putString(AppConstants.EXTRA_CONTACT_NAME, dialogName);
                     bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, key);
                     bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, profileUrl);
+                    bundle.putString(AppConstants.EXTRA_PM_ID, pmId);
                     ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
                             .class, bundle);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.block))) {
 
-                    ArrayList<CallLogType> listToBlock = new ArrayList<CallLogType>();
-                    HashMap<String, ArrayList<CallLogType>> listHashMap = new HashMap<String,
-                            ArrayList<CallLogType>>();
+                    ArrayList<CallLogType> listToBlock = new ArrayList<>();
+                    HashMap<String, ArrayList<CallLogType>> listHashMap = new HashMap<>();
                     String uniqueContactId = "";
                     if (!TextUtils.isEmpty(dialogName)) {
                         listToBlock = getNumbersFromName(dialogName);

@@ -330,7 +330,11 @@ public class TimelineActivity extends BaseActivity implements RippleView
             }
             int pmId = comment.getRcProfileMasterPmId();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
-            item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+            String name = userProfile.getPmFirstName() + " " + userProfile.getPmLastName();
+            if (name.trim().length() > 0)
+                item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+            else
+                item.setWisherName("+" + comment.getCrmProfileDetails());
             item.setWisherComment(comment.getCrmComment());
             item.setWisherCommentTime(comment.getCrmCreatedAt());
             item.setCrmCloudPrId(comment.getCrmCloudPrId());
