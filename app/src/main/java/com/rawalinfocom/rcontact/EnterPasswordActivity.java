@@ -135,7 +135,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
                     // Redirect to OtpVerificationActivity
                     Bundle bundle = new Bundle();
-                    bundle.putString(AppConstants.EXTRA_IS_FROM, "forgot_pass");
+                    bundle.putString(AppConstants.EXTRA_IS_FROM, AppConstants.PREF_FORGOT_PASSWORD);
                     startActivityIntent(EnterPasswordActivity.this,
                             OtpVerificationActivity.class, bundle);
                     overridePendingTransition(R.anim.enter, R.anim.exit);

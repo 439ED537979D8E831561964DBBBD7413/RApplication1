@@ -173,7 +173,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         phoneBookContacts = new PhoneBookContacts(this);
         callLogTypeArrayListMain = new ArrayList<>();
         smsLogTypeArrayListMain = new ArrayList<>();
-        CallLogFragment.callLogTypeReceiver = new CallLogType();
+//        CallLogFragment.callLogTypeReceiver = new CallLogType();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         networkConnectionReceiver = new NetworkConnectionReceiver();
@@ -854,8 +854,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         }
 
         unRegisterLocalBroadCastReceiver();
-        Utils.setBooleanPreference(this, AppConstants
-                .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
 
         Utils.setBooleanPreference(this, AppConstants
                 .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
@@ -2175,7 +2173,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             Utils.setBooleanPreference(MainActivity.this, AppConstants
                                     .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
                             AppConstants.isFromReceiver = false;
-                            CallLogFragment.isIdsFetchedFirstTime = false;
+//                            CallLogFragment.isIdsFetchedFirstTime = false;
 //                                rContactApplication.setArrayListCallLogType(null);
                         }
                     }

@@ -183,6 +183,41 @@ public class TableProfileMaster {
         db.close(); // Closing database connection
     }
 
+    // Getting single RCP Profile from Pm id
+    public UserProfile getRCPProfileFromPmId(int cloudPmd) {
+        UserProfile userProfile = new UserProfile();
+
+        try {
+            SQLiteDatabase db = databaseHandler.getReadableDatabase();
+
+            Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_RCP_ID},
+                    COLUMN_PM_RCP_ID + "=?", new String[]{String.valueOf(cloudPmd)}, null, null, null, null);
+            if (cursor != null)
+                cursor.moveToFirst();
+
+            if (cursor != null) {
+                userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_FIRST_NAME)));
+                userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_LAST_NAME)));
+                userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_PROFILE_IMAGE)));
+                userProfile.setPmRcpId(cursor.getString(cursor.getColumnIndex(COLUMN_PM_RCP_ID)));
+                cursor.close();
+            }
+
+            db.close();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        // return Profile
+        return userProfile;
+    }
+
     // Getting single Profile from Cloud Pm id
     public UserProfile getProfileFromCloudPmId(int cloudPmd) {
         UserProfile userProfile = new UserProfile();
@@ -235,7 +270,6 @@ public class TableProfileMaster {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         // return Profile
         return userProfile;

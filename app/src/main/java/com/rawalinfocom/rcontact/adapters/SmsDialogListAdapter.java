@@ -174,6 +174,14 @@ public class SmsDialogListAdapter extends RecyclerView.Adapter<SmsDialogListAdap
 
     private void showCallConfirmationDialog(final String number) {
 
+        final String finalNumber;
+
+        if (!number.startsWith("+91")) {
+            finalNumber = "+91" + number;
+        } else {
+            finalNumber = number;
+        }
+
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
 
@@ -194,7 +202,7 @@ public class SmsDialogListAdapter extends RecyclerView.Adapter<SmsDialogListAdap
                         } catch (SecurityException e) {
                             e.printStackTrace();
                         }*/
-                        Utils.callIntent(context, number);
+                        Utils.callIntent(context, finalNumber);
                         break;
                 }
             }
@@ -204,7 +212,7 @@ public class SmsDialogListAdapter extends RecyclerView.Adapter<SmsDialogListAdap
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(context.getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " + number + "?");
+        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " + finalNumber + "?");
         callConfirmationDialog.showDialog();
 
     }

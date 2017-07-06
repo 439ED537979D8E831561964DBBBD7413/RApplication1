@@ -956,7 +956,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     startActivity(smsIntent);
 
                 } else {
-                    callNumber = actionNumber;
+
+                    if (!actionNumber.startsWith("+91")) {
+                        callNumber = "+91" + actionNumber;
+                    } else {
+                        callNumber = actionNumber;
+                    }
+
                     showCallConfirmationDialog();
                 }
                 Handler handler = new Handler();

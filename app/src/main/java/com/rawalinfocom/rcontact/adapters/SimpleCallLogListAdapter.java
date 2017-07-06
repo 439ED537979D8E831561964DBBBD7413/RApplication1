@@ -131,7 +131,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder contactViewHolder, final int position) {
         SimpleCallLogListAdapter.CallLogViewHolder holder = (SimpleCallLogListAdapter.CallLogViewHolder) contactViewHolder;
-        final CallLogType callLogType = (CallLogType) arrayListCallLogs.get(position);
+        final CallLogType callLogType = arrayListCallLogs.get(position);
         final String name = callLogType.getName();
         final String number = callLogType.getNumber();
         if (!TextUtils.isEmpty(number)) {
@@ -148,26 +148,17 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     .colorBlack));
             if (MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
                 String contactDisplayName = "";
-                String prefix = callLogType.getPrefix();
                 String firstName = callLogType.getRcpFirstName();
                 String lastName = callLogType.getRcpLastName();
                 String middleName = callLogType.getMiddleName();
-                String suffix = callLogType.getSuffix();
-               /* if (StringUtils.length(prefix) > 0) {
-                    contactDisplayName = prefix + " ";
-                }*/
+
                 if (StringUtils.length(firstName) > 0) {
                     contactDisplayName = contactDisplayName + firstName + " ";
                 }
-               /* if (StringUtils.length(middleName) > 0) {
-                    contactDisplayName = contactDisplayName + middleName + " ";
-                }*/
+
                 if (StringUtils.length(lastName) > 0) {
                     contactDisplayName = contactDisplayName + lastName + "";
                 }
-                /*if (StringUtils.length(suffix) > 0) {
-                    contactDisplayName = contactDisplayName + suffix;
-                }*/
 
                 if (StringUtils.equalsIgnoreCase(name, contactDisplayName)) {
                     holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
@@ -180,7 +171,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     holder.textCloudContactName.setVisibility(View.VISIBLE);
                     holder.textCloudContactName.setTextColor(ContextCompat.getColor(context, R.color
                             .colorAccent));
-                    holder.textContactName.setText(name + " ");
+                    holder.textContactName.setText(String.format("%s ", name));
                     holder.textCloudContactName.setText("(" + contactDisplayName + ")");
                 }
 
@@ -215,19 +206,19 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         final long date = callLogType.getDate();
 //        long logDate1 = callLogType.getDate();
         Date date1 = new Date(date);
-        String logDate = new SimpleDateFormat("yyyy-MM-dd").format(date1);
+        String logDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date1);
 //        Log.i("Call Log date", logDate);
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
         Date yesDate;
         yesDate = cal.getTime();
-        String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd").format(yesDate);
+        String yesterdayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(yesDate);
 //        Log.i("Call yesterday date", yesterdayDate);
 
         Calendar c = Calendar.getInstance();
         Date cDate = c.getTime();
-        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cDate);
 //        Log.i("Call Current date", currentDate);
         Date dateFromReceiver1 = callLogType.getCallReceiverDate();
         if (dateFromReceiver1 != null) {
@@ -238,23 +229,22 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             Date dateCallLog = new Date(date);
 //            String logDateCallLog = new SimpleDateFormat("MMM dd, hh:mm a").format(date1);
             if (logDate.equalsIgnoreCase(currentDate)) {
-                finalDate = context.getString(R.string.str_today) + ", " + new SimpleDateFormat("hh:mm a").format(dateCallLog);
+                finalDate = context.getString(R.string.str_today) + ", " + new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(dateCallLog);
             } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
-                finalDate = context.getString(R.string.str_yesterday) + ", " + new SimpleDateFormat("hh:mm a").format(dateCallLog);
+                finalDate = context.getString(R.string.str_yesterday) + ", " + new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(dateCallLog);
             } else {
-                finalDate = new SimpleDateFormat("MMM dd, hh:mm a").format(dateCallLog);
+                finalDate = new SimpleDateFormat("MMM dd, hh:mm a", Locale.getDefault()).format(dateCallLog);
             }
             holder.textContactDate.setText(finalDate);
         } else {
             Date callDate = callLogType.getCallReceiverDate();
             if (callDate != null) {
                 if (logDate.equalsIgnoreCase(currentDate)) {
-                    finalDate = context.getString(R.string.str_today) + ", " + new SimpleDateFormat("hh:mm a").format(callDate);
+                    finalDate = context.getString(R.string.str_today) + ", " + new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(callDate);
                 } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
-                    finalDate = context.getString(R.string.str_yesterday) + ", " + new SimpleDateFormat("hh:mm a").format(callDate);
-                    ;
+                    finalDate = context.getString(R.string.str_yesterday) + ", " + new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(callDate);
                 } else {
-                    finalDate = new SimpleDateFormat("MMM dd, hh:mm a").format(callDate);
+                    finalDate = new SimpleDateFormat("MMM dd, hh:mm a", Locale.getDefault()).format(callDate);
                 }
                 holder.textContactDate.setText(finalDate);
             }
@@ -286,14 +276,17 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 
                 }
             }
-        }
 
-       /* int logCount = callLogType.getHistoryLogCount();
-        if (logCount > 0) {
-            holder.textCount.setText("(" + logCount + "" + ")");
-        } else {
-            holder.textCount.setText(" ");
-        }*/
+//            if (strCallLogType.equals(AppConstants.LOG_LOG_ALL_CALLS)) {
+//
+//            } else if (strCallLogType.equals(AppConstants.LOG_LOG_INCOMING_CALLS)) {
+//                holder.imageCallType.setImageResource(R.drawable.ic_call_incoming);
+//            } else if (strCallLogType.equals(AppConstants.LOG_LOG_OUTGOING_CALLS)) {
+//                holder.imageCallType.setImageResource(R.drawable.ic_call_outgoing);
+//            } else if (strCallLogType.equals(AppConstants.LOG_LOG_MISSED_CALLS)) {
+//                holder.imageCallType.setImageResource(R.drawable.ic_call_missed);
+//            }
+        }
 
         boolean isDual = AppConstants.isDualSimPhone();
         String simNumber;
@@ -482,7 +475,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                 String cloudName = "";
                 String contactDisplayName = "";
 
-                if (MoreObjects.firstNonNull(isRcpUser,false)) {
+                if (MoreObjects.firstNonNull(isRcpUser, false)) {
                     if (StringUtils.length(firstName) > 0) {
                         contactDisplayName = contactDisplayName + firstName + " ";
                     }
@@ -587,7 +580,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             } else {
                 for (int i = 0; i < arrayList.size(); i++) {
                     if (arrayList.get(i) instanceof CallLogType) {
-                        CallLogType profileData = (CallLogType) arrayList.get(i);
+                        CallLogType profileData = arrayList.get(i);
                         if (!TextUtils.isEmpty(profileData.getNumber())) {
                             if (profileData.getNumber().contains(charText)) {
                                 arrayListCallLogs.add(profileData);

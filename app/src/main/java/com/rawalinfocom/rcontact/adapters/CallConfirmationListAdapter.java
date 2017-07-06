@@ -119,6 +119,14 @@ public class CallConfirmationListAdapter extends RecyclerView.Adapter<CallConfir
 
     private void showCallConfirmationDialog(final String number) {
 
+        final String finalNumber;
+
+        if (!number.startsWith("+91")) {
+            finalNumber = "+91" + number;
+        } else {
+            finalNumber = number;
+        }
+
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
 
@@ -139,7 +147,7 @@ public class CallConfirmationListAdapter extends RecyclerView.Adapter<CallConfir
                         } catch (SecurityException e) {
                             e.printStackTrace();
                         }*/
-                        Utils.callIntent(context, number);
+                        Utils.callIntent(context, finalNumber);
                         break;
                 }
             }

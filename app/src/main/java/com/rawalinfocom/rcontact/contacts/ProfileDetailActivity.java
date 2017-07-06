@@ -2908,6 +2908,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void showCallConfirmationDialog(final String number) {
 
+        final String finalNumber;
+
+        if (!number.startsWith("+91")) {
+            finalNumber = "+91" + number;
+        } else {
+            finalNumber = number;
+        }
+
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
 
@@ -2923,7 +2931,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                        /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
                                 number));
                         startActivity(intent);*/
-                        Utils.callIntent(ProfileDetailActivity.this, number);
+                        Utils.callIntent(ProfileDetailActivity.this, finalNumber);
                         break;
                 }
             }
@@ -2933,7 +2941,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + number + "?");
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber + "?");
 
         callConfirmationDialog.showDialog();
 
@@ -3043,8 +3051,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 Date intentDate1 = new Date(historyDate);
                 intentDate = new SimpleDateFormat("yyyy-MM-dd").format(intentDate1);
             } else {
-                intentDate = new SimpleDateFormat("yyyy-MM-dd").format(CallLogFragment
-                        .callLogTypeReceiver.getCallReceiverDate());
+//                intentDate = new SimpleDateFormat("yyyy-MM-dd").format(CallLogFragment
+//                        .callLogTypeReceiver.getCallReceiverDate());
             }
             if (intentDate.equalsIgnoreCase(arrayDate)) {
                 arrayListHistory.add(callLogTypeHistory);

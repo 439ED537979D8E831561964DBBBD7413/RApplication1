@@ -617,8 +617,8 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     smsDataType.setRecordPosition(i);
                     String address = smsDataType.getAddress();
                     String savedNumber = getNumberFromName(address);
-                    if(!StringUtils.isEmpty(savedNumber))
-                        number =  Utils.getFormattedNumber(getActivity(),savedNumber);
+                    if (!StringUtils.isEmpty(savedNumber))
+                        number = Utils.getFormattedNumber(getActivity(), savedNumber);
                     if (!StringUtils.isEmpty(number)) {
                         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping(getDatabaseHandler());
                         ProfileMobileMapping profileMobileMapping = tableProfileMobileMapping.
@@ -929,20 +929,20 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             photoThumbUrl = "";
             ContentResolver contentResolver = getActivity().getContentResolver();
 
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+            Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_FILTER_URI, Uri
                     .encode(phoneNumber));
 
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
-                    ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
+            String[] projection = new String[]{ContactsContract.Contacts.DISPLAY_NAME,
+                    ContactsContract.Contacts.PHOTO_THUMBNAIL_URI};
             Cursor cursor =
                     contentResolver.query(uri, projection, null, null, null);
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     String contactName = cursor.getString(cursor.getColumnIndexOrThrow
-                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                            (ContactsContract.Contacts.DISPLAY_NAME));
                     photoThumbUrl = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
-                            .PhoneLookup.PHOTO_THUMBNAIL_URI));
+                            .Contacts.PHOTO_THUMBNAIL_URI));
 //                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
                 }
                 cursor.close();
@@ -963,18 +963,18 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
             ContentResolver contentResolver = getActivity().getContentResolver();
 
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+            Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_FILTER_URI, Uri
                     .encode(phoneNumber));
 
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
-                    ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
+            String[] projection = new String[]{ContactsContract.Contacts.DISPLAY_NAME,
+                    ContactsContract.Contacts.PHOTO_THUMBNAIL_URI};
             Cursor cursor =
                     contentResolver.query(uri, projection, null, null, null);
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     contactName = cursor.getString(cursor.getColumnIndexOrThrow
-                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                            (ContactsContract.Contacts.DISPLAY_NAME));
                 }
                 cursor.close();
             }
@@ -1241,16 +1241,15 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         itemTouchHelper.attachToRecyclerView(recyclerSmsLogs);
     }
 
-
     private String getNumberFromName(String name) {
         String number = "";
 //        Cursor cursor = null;
         try {
-           /* Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+           /* Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_FILTER_URI, Uri
                     .encode(name));
 
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
-                    ContactsContract.PhoneLookup.LOOKUP_KEY};*/
+            String[] projection = new String[]{ContactsContract.Contacts.DISPLAY_NAME,
+                    ContactsContract.Contacts.LOOKUP_KEY};*/
 
             Cursor cursor =
                     getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
@@ -1272,7 +1271,15 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     }
 
     private void showCallConfirmationDialog(final String number, String name) {
-//        final String formattedNumber = Utils.getFormattedNumber(getActivity(), number);
+
+        final String finalNumber;
+
+        if (!number.startsWith("+91")) {
+            finalNumber = "+91" + number;
+        } else {
+            finalNumber = number;
+        }
+
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
 
@@ -1285,8 +1292,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                number));
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + finalNumber));
                         startActivity(intent);
                         break;
                 }
