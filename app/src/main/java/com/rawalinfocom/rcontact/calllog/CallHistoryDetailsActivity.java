@@ -1758,7 +1758,15 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
 
     private void showCallConfirmationDialog(final String number) {
-        final String formattedNumber = Utils.getFormattedNumber(this, number);
+
+        final String finalNumber;
+
+        if (!number.startsWith("+91")) {
+            finalNumber = "+91" + number;
+        } else {
+            finalNumber = number;
+        }
+
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
 
@@ -1774,7 +1782,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                        /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
                                 formattedNumber));
                         startActivity(intent);*/
-                        Utils.callIntent(CallHistoryDetailsActivity.this, formattedNumber);
+                        Utils.callIntent(CallHistoryDetailsActivity.this, finalNumber);
                         break;
                 }
             }
@@ -1784,8 +1792,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " +
-                formattedNumber + "?");
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber + "?");
         callConfirmationDialog.showDialog();
     }
 

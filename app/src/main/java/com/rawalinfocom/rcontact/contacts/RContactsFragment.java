@@ -335,6 +335,14 @@ public class RContactsFragment extends BaseFragment {
 
     private void showCallConfirmationDialog(final String number) {
 
+        final String finalNumber;
+
+        if (!number.startsWith("+91")) {
+            finalNumber = "+91" + number;
+        } else {
+            finalNumber = number;
+        }
+
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
 
@@ -350,7 +358,7 @@ public class RContactsFragment extends BaseFragment {
                        /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
                                 number));
                         startActivity(intent);*/
-                        Utils.callIntent(getActivity(), number);
+                        Utils.callIntent(getActivity(), finalNumber);
                         break;
                 }
             }
@@ -360,7 +368,7 @@ public class RContactsFragment extends BaseFragment {
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + number + "?");
+        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + finalNumber + "?");
 
         callConfirmationDialog.showDialog();
     }

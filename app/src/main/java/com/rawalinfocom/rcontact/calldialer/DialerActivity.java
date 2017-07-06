@@ -697,6 +697,15 @@ public class DialerActivity extends Activity {
     }
 
     private void showCallConfirmationDialog(final String number) {
+
+        final String finalNumber;
+
+        if (!number.startsWith("+91")) {
+            finalNumber = "+91" + number;
+        } else {
+            finalNumber = number;
+        }
+
 //        final String formattedNumber = Utils.getFormattedNumber(DialerActivity.this, number);
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
@@ -715,7 +724,9 @@ public class DialerActivity extends Activity {
                         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
                                 unicodeNumber));
                         startActivity(intent);*/
-                        Utils.callIntent(DialerActivity.this, number);
+
+
+                        Utils.callIntent(DialerActivity.this, finalNumber);
                         break;
                 }
             }
@@ -725,7 +736,7 @@ public class DialerActivity extends Activity {
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + number + " ?");
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber + " ?");
         callConfirmationDialog.showDialog();
     }
 

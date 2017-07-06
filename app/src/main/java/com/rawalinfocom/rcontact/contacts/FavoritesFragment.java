@@ -425,6 +425,13 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                     startActivity(smsIntent);
 
                 } else {
+
+                    if (!actionNumber.startsWith("+91")) {
+                        callNumber = "+91" + actionNumber;
+                    } else {
+                        callNumber = actionNumber;
+                    }
+
                     showCallConfirmationDialog();
                 }
                 Handler handler = new Handler();
