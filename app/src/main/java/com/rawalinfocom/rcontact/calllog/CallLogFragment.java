@@ -679,7 +679,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private void fetchCallLogs() {
 
         simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(), callLogTypeArrayList);
-        simpleCallLogListAdapter.setCallLogType(selectedCallType);
         recyclerCallLogs.setAdapter(simpleCallLogListAdapter);
 
         try {
