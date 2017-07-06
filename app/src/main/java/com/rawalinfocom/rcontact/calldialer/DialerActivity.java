@@ -196,13 +196,13 @@ public class DialerActivity extends Activity {
                         showContactDetail(number);
                 } else if (s.length() == 0) {
                     showContactDetail(s.toString());
-                } else if (s.length() >= 0) {
-                    showContactDetail(s.toString());
-                } else if (s.length() > 11) {
+                }  else if (s.length() > 11) {
                     editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_14sp));
                 } else if (s.length() < 11) {
                     editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_25sp));
-                }
+                }/*else if (s.length() >= 0) {
+                    showContactDetail(s.toString());
+                }*/
 
             }
         });
@@ -732,7 +732,6 @@ public class DialerActivity extends Activity {
     private String getPhotoUrlFromNumber(String phoneNumber) {
         String photoThumbUrl = "";
         try {
-
             photoThumbUrl = "";
             ContentResolver contentResolver = this.getContentResolver();
 

@@ -247,28 +247,30 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             userViewHolder.textCloudContactName.setText(" " + "(" + contactDisplayName + ")");
                         }
                     } else {
-                        if (StringUtils.equalsIgnoreCase(add, contactDisplayName)) {
+//                        if (StringUtils.equalsIgnoreCase(add, contactDisplayName)) {
+                        if (StringUtils.equalsIgnoreCase(address, contactDisplayName)) {
                             userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
                                     .colorAccent));
                             userViewHolder.textCloudContactName.setVisibility(View.GONE);
-                            userViewHolder.textNumber.setText(add);
+                            userViewHolder.textNumber.setText(address);
                         } else {
                             userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
                                     .colorBlack));
                             userViewHolder.textCloudContactName.setVisibility(View.VISIBLE);
                             userViewHolder.textCloudContactName.setTextColor(ContextCompat.getColor(context, R.color
                                     .colorAccent));
-                            userViewHolder.textNumber.setText(add);
+                            userViewHolder.textNumber.setText(address);
                             userViewHolder.textCloudContactName.setText(" " + "(" + contactDisplayName + ")");
                         }
                     }
 
-                } else {
+                 } else {
                     userViewHolder.textCloudContactName.setVisibility(View.GONE);
                     userViewHolder.textNumber.setTextColor(ContextCompat.getColor(context, R.color
                             .colorBlack));
                     userViewHolder.textCloudContactName.setVisibility(View.GONE);
-                    userViewHolder.textNumber.setText(add);
+//                    userViewHolder.textNumber.setText(add);
+                    userViewHolder.textNumber.setText(address);
                 }
 
             } else {
@@ -358,7 +360,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 context.getString(R.string.copy_phone_number) *//*, context.getString(R.string.delete)*//*));
                     }*/
 
-                    if (StringUtils.containsOnly(address, "\\d+")) {
+                    if (address.matches("[+][0-9]+")) {
                         arrayListForKnownContact = new ArrayList<>(Arrays.asList(context.getString(R.string.action_call)
                                         + " " + address, context.getString(R.string.add_to_contact),
                                 context.getString(R.string.add_to_existing_contact),
