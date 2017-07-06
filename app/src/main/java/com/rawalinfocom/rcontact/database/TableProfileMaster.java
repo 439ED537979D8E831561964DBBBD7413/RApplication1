@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.rawalinfocom.rcontact.model.UserProfile;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -39,7 +41,8 @@ public class TableProfileMaster {
 //    static final String COLUMN_PM_NOTES = "pm_notes";
 //    static final String COLUMN_PM_NOTES_PRIVACY = "pm_notes_privacy";
 //    private static final String COLUMN_PM_ACCESS_TOKEN = "pm_access_token";
-//    private static final String COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE = "pm_signup_social_media_type";
+//    private static final String COLUMN_PM_SIGNUP_SOCIAL_MEDIA_TYPE =
+// "pm_signup_social_media_type";
 
     static final String COLUMN_PM_RCP_ID = "pm_rcp_id";
     static final String COLUMN_PM_RAW_ID = "pm_raw_id";
@@ -105,7 +108,9 @@ public class TableProfileMaster {
 
         ContentValues values = new ContentValues();
 //        values.put(COLUMN_PM_ID, userProfile.getPmId());
-        values.put(COLUMN_PM_RAW_ID, userProfile.getPmRawId());
+        if (StringUtils.length(userProfile.getPmRawId()) > 0) {
+            values.put(COLUMN_PM_RAW_ID, userProfile.getPmRawId());
+        }
         values.put(COLUMN_PM_FIRST_NAME, userProfile.getPmFirstName());
         values.put(COLUMN_PM_LAST_NAME, userProfile.getPmLastName());
         values.put(COLUMN_PM_PROFILE_IMAGE, userProfile.getPmProfileImage());
@@ -204,7 +209,8 @@ public class TableProfileMaster {
 
             if (cursor != null) {
                 userProfile.setPmRawId(cursor.getString(cursor.getColumnIndex(COLUMN_PM_RAW_ID)));
-//                userProfile.setPmPrefix(cursor.getString(cursor.getColumnIndex(COLUMN_PM_PREFIX)));
+//                userProfile.setPmPrefix(cursor.getString(cursor.getColumnIndex
+// (COLUMN_PM_PREFIX)));
                 userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
                         (COLUMN_PM_FIRST_NAME)));
                 userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex
