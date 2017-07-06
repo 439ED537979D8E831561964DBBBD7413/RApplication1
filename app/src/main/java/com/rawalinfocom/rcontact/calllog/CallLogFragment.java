@@ -245,9 +245,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         }
     }
 
-
-    int itemPosition;
-
     @Override
     public void onResume() {
         super.onResume();
