@@ -9,7 +9,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -91,7 +90,7 @@ public class BlockContactListActivity extends BaseActivity implements RippleView
                 ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(getString(R.string
                         .unblock_All)));
                 ProfileMenuOptionDialog profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                        arrayList, " ", 0, false, listOfBlockContact, "", "", "", "");
+                        arrayList, " ", 0, false, listOfBlockContact, "", "", "", "", "");
                 profileMenuOptionDialog.showDialog();
 
                 break;
@@ -161,7 +160,8 @@ public class BlockContactListActivity extends BaseActivity implements RippleView
             if (listOfBlockContact != null && listOfBlockContact.size() > 0) {
                 int count = listOfBlockContact.size();
                 textTotalContacts.setVisibility(View.VISIBLE);
-                textTotalContacts.setText(String.format(Locale.getDefault(), "%d " + getString(R.string.contacts), count));
+                textTotalContacts.setText(String.format(Locale.getDefault(), "%d " + getString(R
+                        .string.contacts), count));
             }
         }
     }

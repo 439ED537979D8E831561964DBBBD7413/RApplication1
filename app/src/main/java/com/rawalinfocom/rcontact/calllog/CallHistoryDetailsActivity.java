@@ -709,7 +709,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 this.getString(R.string.clear_call_log)));
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                 arrayListName, contactName, 0, isFromCallLogTab,
-                                arrayListHistory, contactName, "", hashMapKey, profileThumbnail);
+                                arrayListHistory, contactName, "", hashMapKey, profileThumbnail,
+                                pmId);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -726,7 +727,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
                                     arrayListHistory, "", uniqueContactId, hashMapKey,
-                                    profileThumbnail);
+                                    profileThumbnail, pmId);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -743,7 +744,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 this.getString(R.string.clear_call_log)));
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                 arrayListName, contactName, 0, isFromCallLogTab,
-                                arrayListHistory, contactName, "", phoneBookId, profileThumbnail);
+                                arrayListHistory, contactName, "", phoneBookId, profileThumbnail, pmId);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -759,7 +760,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                                     .clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
-                                    arrayListHistory, "", uniqueContactId, "", profileThumbnail);
+                                    arrayListHistory, "", uniqueContactId, "", profileThumbnail, pmId);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
