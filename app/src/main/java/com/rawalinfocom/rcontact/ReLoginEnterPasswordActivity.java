@@ -268,6 +268,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         WsRequestObject otpObject = new WsRequestObject();
         otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
         otpObject.setMobileNumber(mobileNumber.replace("+91", ""));
+        otpObject.setForgotPassword(1);
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,

@@ -41,6 +41,8 @@ public class TableCommentMaster {
     private static final String COLUMN_CRM_CREATED_AT = "crm_created_at";
     private static final String COLUMN_CRM_REPLIED_AT = "crm_replied_at";
     private static final String COLUMN_CRM_UPDATED_AT = "crm_updated_at";
+    private static final String COLUMN_CRM_IMG = "crm_img";
+    private static final String COLUMN_CRM_PROFILE_DETAILS = "crm_profiledetails";
     private static final String COLUMN_EVM_RECORD_INDEX_ID = "evm_record_index_id";
 
     // Table Create Statements
@@ -55,6 +57,8 @@ public class TableCommentMaster {
             " " + COLUMN_CRM_RC_PROFILE_MASTER_PM_ID + " integer NOT NULL," +
             " " + COLUMN_CRM_COMMENT + " text NOT NULL," +
             " " + COLUMN_CRM_REPLY + " text," +
+            " " + COLUMN_CRM_IMG + " text," +
+            " " + COLUMN_CRM_PROFILE_DETAILS + " text," +
             " " + COLUMN_CRM_CREATED_AT + " datetime NOT NULL," +
             " " + COLUMN_CRM_REPLIED_AT + " datetime," +
             " " + COLUMN_CRM_UPDATED_AT + " datetime NOT NULL," +
@@ -73,6 +77,8 @@ public class TableCommentMaster {
         values.put(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID, comment.getRcProfileMasterPmId());
         values.put(COLUMN_CRM_COMMENT, comment.getCrmComment());
         values.put(COLUMN_CRM_REPLY, comment.getCrmReply());
+        values.put(COLUMN_CRM_IMG, comment.getCrmImage());
+        values.put(COLUMN_CRM_PROFILE_DETAILS, comment.getCrmProfileDetails());
         values.put(COLUMN_CRM_CREATED_AT, comment.getCrmCreatedAt());
         values.put(COLUMN_CRM_REPLIED_AT, comment.getCrmRepliedAt());
         values.put(COLUMN_CRM_UPDATED_AT, comment.getCrmUpdatedAt());
@@ -112,6 +118,8 @@ public class TableCommentMaster {
                     (COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
             comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
             comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));
+            comment.setCrmImage(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_IMG)));
+            comment.setCrmProfileDetails(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_PROFILE_DETAILS)));
             comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_CREATED_AT)));
             comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLIED_AT)));
             comment.setCrmUpdatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_UPDATED_AT)));
@@ -146,6 +154,8 @@ public class TableCommentMaster {
                         (COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
                 comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
                 comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));
+                comment.setCrmImage(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_IMG)));
+                comment.setCrmProfileDetails(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_PROFILE_DETAILS)));
                 comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex
                         (COLUMN_CRM_CREATED_AT)));
                 comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex
@@ -206,6 +216,8 @@ public class TableCommentMaster {
                         (COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
                 comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
                 comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));
+                comment.setCrmImage(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_IMG)));
+                comment.setCrmProfileDetails(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_PROFILE_DETAILS)));
                 comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex
                         (COLUMN_CRM_CREATED_AT)));
                 comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex
@@ -248,6 +260,8 @@ public class TableCommentMaster {
                         (COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
                 comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
                 comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));
+                comment.setCrmImage(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_IMG)));
+                comment.setCrmProfileDetails(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_PROFILE_DETAILS)));
                 comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex
                         (COLUMN_CRM_CREATED_AT)));
                 comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex
@@ -289,6 +303,8 @@ public class TableCommentMaster {
                         (COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
                 comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
                 comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));
+                comment.setCrmImage(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_IMG)));
+                comment.setCrmProfileDetails(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_PROFILE_DETAILS)));
                 comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex
                         (COLUMN_CRM_CREATED_AT)));
                 comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex
@@ -330,6 +346,8 @@ public class TableCommentMaster {
                         (COLUMN_CRM_RC_PROFILE_MASTER_PM_ID)));
                 comment.setCrmComment(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_COMMENT)));
                 comment.setCrmReply(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_REPLY)));
+                comment.setCrmImage(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_IMG)));
+                comment.setCrmProfileDetails(cursor.getString(cursor.getColumnIndex(COLUMN_CRM_PROFILE_DETAILS)));
                 comment.setCrmCreatedAt(cursor.getString(cursor.getColumnIndex
                         (COLUMN_CRM_CREATED_AT)));
                 comment.setCrmRepliedAt(cursor.getString(cursor.getColumnIndex

@@ -956,7 +956,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     startActivity(smsIntent);
 
                 } else {
-                    callNumber = actionNumber;
+
+                    if (!actionNumber.startsWith("+91")) {
+                        callNumber = "+91" + actionNumber;
+                    } else {
+                        callNumber = actionNumber;
+                    }
+
                     showCallConfirmationDialog();
                 }
                 Handler handler = new Handler();
@@ -1278,9 +1284,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             ProfileDataOperationPhoneNumber phoneNumber = new
                                     ProfileDataOperationPhoneNumber();
 
-                            phoneNumber.setPhoneNumber(Utils.getFormattedNumber(getActivity(), cursor
-                                    .getString(cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Phone.NUMBER))));
+                            phoneNumber.setPhoneNumber(cursor.getString(cursor.getColumnIndex(ContactsContract
+                                    .CommonDataKinds.Phone.NUMBER)));
                             phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                     (cursor.getInt(cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Phone.TYPE))));

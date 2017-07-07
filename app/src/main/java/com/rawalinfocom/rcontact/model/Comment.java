@@ -14,6 +14,8 @@ public class Comment {
     private Integer rcProfileMasterPmId;
     private String crmComment;
     private String crmReply;
+    private String crmImage;
+    private String crmProfileDetails;
     private String crmCreatedAt;
     private String crmRepliedAt;
     private String crmUpdatedAt;
@@ -113,5 +115,21 @@ public class Comment {
 
     public void setEvmRecordIndexId(String evmRecordIndexId) {
         this.evmRecordIndexId = evmRecordIndexId;
+    }
+
+    public String getCrmImage() {
+        return crmImage;
+    }
+
+    public void setCrmImage(String crmImage) {
+        this.crmImage = crmImage;
+    }
+
+    public String getCrmProfileDetails() {
+        return crmProfileDetails;
+    }
+
+    public void setCrmProfileDetails(String crmProfileDetails) {
+        this.crmProfileDetails = crmProfileDetails;
     }
 }

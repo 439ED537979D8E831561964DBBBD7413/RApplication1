@@ -1483,7 +1483,15 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     }
 
     private void showCallConfirmationDialog(final String number) {
-//        final String formattedNumber = Utils.getFormattedNumber(getActivity(), number);
+
+        final String finalNumber;
+
+        if (!number.startsWith("+91")) {
+            finalNumber = "+91" + number;
+        } else {
+            finalNumber = number;
+        }
+
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
 
@@ -1496,8 +1504,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                number));
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + finalNumber));
                         startActivity(intent);
                         break;
                 }
@@ -1516,7 +1523,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + number + "?");
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber + "?");
         callConfirmationDialog.showDialog();
     }
 

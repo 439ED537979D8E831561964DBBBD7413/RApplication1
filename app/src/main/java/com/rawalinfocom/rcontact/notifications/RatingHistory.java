@@ -404,7 +404,11 @@ public class RatingHistory extends BaseActivity implements RippleView
 
             } else {
                 // 1 receive
-                item.setRaterName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+                String name = userProfile.getPmFirstName() + " " + userProfile.getPmLastName();
+                if (name.trim().length() > 0)
+                    item.setRaterName(name);
+                else
+                    item.setRaterName(comment.getCrmProfileDetails());
                 item.setReceiverPersonName(currentUserProfile.getPmFirstName() + " " + currentUserProfile.getPmLastName());
             }
             item.setRating(comment.getCrmRating());
