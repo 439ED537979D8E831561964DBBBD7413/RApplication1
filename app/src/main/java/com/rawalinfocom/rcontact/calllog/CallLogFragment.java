@@ -234,17 +234,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         initSwipe();
 
-        recyclerCallLogs.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
-        });
     }
 
     @Override
@@ -826,24 +815,26 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(number);
                     if (profileMobileMapping != null) {
                         String cloudPmId = profileMobileMapping.getMpmCloudPmId();
-                        UserProfile userProfile = tableProfileMaster
-                                .getRCPProfileFromPmId(Integer.parseInt(cloudPmId));
-                        String firstName = userProfile.getPmFirstName();
-                        String lastName = userProfile.getPmLastName();
-                        String rcpId = userProfile.getPmRcpId();
-                        String imagePath = userProfile.getPmProfileImage();
-                        if (!StringUtils.isEmpty(firstName))
-                            callLogType.setRcpFirstName(firstName);
-                        if (!StringUtils.isEmpty(lastName))
-                            callLogType.setRcpLastName(lastName);
-                        if (!StringUtils.isEmpty(rcpId))
-                            callLogType.setRcpId(rcpId);
-                        if (!StringUtils.isEmpty(imagePath))
-                            callLogType.setProfileImage(imagePath);
+                        if(!StringUtils.isEmpty(cloudPmId)){
+                            UserProfile userProfile = tableProfileMaster
+                                    .getRCPProfileFromPmId(Integer.parseInt(cloudPmId));
+                            String firstName = userProfile.getPmFirstName();
+                            String lastName = userProfile.getPmLastName();
+                            String rcpId = userProfile.getPmRcpId();
+                            String imagePath = userProfile.getPmProfileImage();
+                            if (!StringUtils.isEmpty(firstName))
+                                callLogType.setRcpFirstName(firstName);
+                            if (!StringUtils.isEmpty(lastName))
+                                callLogType.setRcpLastName(lastName);
+                            if (!StringUtils.isEmpty(rcpId))
+                                callLogType.setRcpId(rcpId);
+                            if (!StringUtils.isEmpty(imagePath))
+                                callLogType.setProfileImage(imagePath);
 
-                        callLogType.setRcpUser(true);
+                            callLogType.setRcpUser(true);
 
-                        callLogTypeArrayList.set(i, callLogType);
+                            callLogTypeArrayList.set(i, callLogType);
+                        }
                     }
                 }
             }
