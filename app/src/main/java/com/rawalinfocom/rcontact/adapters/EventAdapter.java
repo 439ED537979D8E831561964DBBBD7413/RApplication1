@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -160,8 +161,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         if (Utils.isNetworkAvailable(activity)) {
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
-                    .REQ_ADD_EVENT_COMMENT, activity.getResources().getString(R.string.msg_please_wait), true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
+                    .REQ_ADD_EVENT_COMMENT, activity.getResources().getString(R.string.msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
         } else {
             //show no toast
             Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();

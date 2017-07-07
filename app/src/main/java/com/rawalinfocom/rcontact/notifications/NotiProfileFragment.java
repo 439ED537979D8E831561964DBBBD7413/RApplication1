@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact.notifications;
 
 import android.app.Service;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -211,8 +212,8 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
         if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     requestObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_PROFILE_PRIVACY_REQUEST, getResources().getString(R.string.msg_please_wait), true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_PRIVACY_REQUEST);
+                    .REQ_GET_PROFILE_PRIVACY_REQUEST, getResources().getString(R.string.msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_PRIVACY_REQUEST);
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
         }

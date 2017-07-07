@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
@@ -690,8 +691,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     wsRequestObject, null, WsResponseObject.class, WsConstants
                     .REQ_SET_PRIVACY_SETTING, activity.getResources().getString(R.string
-                    .msg_please_wait), true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_SET_PRIVACY_SETTING);
+                    .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_SET_PRIVACY_SETTING);
         } else {
             //show no toast
             Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network),
@@ -711,8 +712,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     requestObj, null, WsResponseObject.class, WsConstants
                     .REQ_PROFILE_PRIVACY_REQUEST, activity.getResources().getString(R.string
-                    .msg_please_wait), true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+                    .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
         } else {
             //show no net
             Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network),

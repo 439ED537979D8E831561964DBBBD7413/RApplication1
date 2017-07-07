@@ -1,6 +1,7 @@
 
 package com.rawalinfocom.rcontact.notifications;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -97,8 +98,8 @@ public class NotiRContactsFragment extends BaseFragment implements WsResponseLis
         if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     allUpdatesObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_RCONTACT_UPDATES, "Getting updates..", true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_GET_RCONTACT_UPDATES);
+                    .REQ_GET_RCONTACT_UPDATES, "Getting updates..", true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_GET_RCONTACT_UPDATES);
         } else {
             Toast.makeText(getActivity(), getActivity().getString(R.string.msg_no_internet),
                     Toast.LENGTH_SHORT).show();

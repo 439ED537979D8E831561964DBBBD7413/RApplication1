@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -23,7 +24,7 @@ public class BaseActivity extends AppCompatActivity {
         databaseHandler = new DatabaseHandler(this);
 
         if (Utils.getStringPreference(this, AppConstants.PREF_DEVICE_TOKEN_ID, "").equals(""))
-            new AsyncGetDeviceToken(this).execute();
+            new AsyncGetDeviceToken(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override

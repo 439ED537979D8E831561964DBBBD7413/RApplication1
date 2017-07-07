@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.LayerDrawable;
+import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -144,13 +145,13 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             if (crmType.equalsIgnoreCase(activity.getResources().getString(R.string.str_tab_rating))) {
                 new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
-                        .REQ_PROFILE_RATING, activity.getResources().getString(R.string.msg_please_wait), true).execute
-                        (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
+                        .REQ_PROFILE_RATING, activity.getResources().getString(R.string.msg_please_wait), true)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
             } else {
                 new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
-                        .REQ_ADD_EVENT_COMMENT, activity.getResources().getString(R.string.msg_please_wait), true).execute
-                        (WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
+                        .REQ_ADD_EVENT_COMMENT, activity.getResources().getString(R.string.msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
             }
         } else {
             //show no toast

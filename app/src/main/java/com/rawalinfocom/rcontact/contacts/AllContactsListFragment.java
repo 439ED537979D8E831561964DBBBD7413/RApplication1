@@ -358,6 +358,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager
                         .PERMISSION_GRANTED) {
+                    AppConstants.setIsFirstTime(false);
                     // Permission Granted
                     Utils.callIntent(getActivity(), callNumber);
                 } else {
@@ -444,7 +445,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
         if (!Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false)) {
             syncingTask = new SyncingTask();
-            syncingTask.execute();
+            syncingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
         Intent localBroadcastIntent = new Intent(AppConstants
                 .ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED);
@@ -1070,6 +1071,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     .CALL_PHONE}, AppConstants
                                     .MY_PERMISSIONS_REQUEST_PHONE_CALL);
                         } else {
+                            AppConstants.setIsFirstTime(false);
                             Utils.callIntent(getActivity(), callNumber);
                         }
                         break;
@@ -1567,8 +1569,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_UPLOAD_CONTACTS + "_" + previouslySyncedData, null, true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
+                    .REQ_UPLOAD_CONTACTS + "_" + previouslySyncedData, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
         } else {
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
                     .getString(R.string.msg_no_network));

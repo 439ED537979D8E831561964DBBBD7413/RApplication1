@@ -183,7 +183,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
                     } else {
                         syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                        syncCallLogAsyncTask.execute();
+                        syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                     }
                 }
@@ -199,7 +199,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
                     } else {
                         syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                        syncSmsLogAsyncTask.execute();
+                        syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 }
             }
@@ -237,10 +237,10 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             requestPermissions(permissions, requestCode);
         } else {
             syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-            syncCallLogAsyncTask.execute();
+            syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-            syncSmsLogAsyncTask.execute();
+            syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -456,7 +456,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS);
             } else {
                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                syncCallLogAsyncTask.execute();
+                syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }
 
@@ -468,7 +468,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
             } else {
                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                syncSmsLogAsyncTask.execute();
+                syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }
 
@@ -907,8 +907,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             if (Utils.isNetworkAvailable(this)) {
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         deviceDetailObject, null, WsResponseObject.class, WsConstants
-                        .REQ_GET_GLOBAL_SEARCH_RECORDS, null, true).execute
-                        (WsConstants.WS_ROOT + WsConstants.REQ_GET_GLOBAL_SEARCH_RECORDS);
+                        .REQ_GET_GLOBAL_SEARCH_RECORDS, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        WsConstants.WS_ROOT + WsConstants.REQ_GET_GLOBAL_SEARCH_RECORDS);
             } else {
                 Utils.showErrorSnackBar(this, rlSearchRoot, getResources()
                         .getString(R.string.msg_no_network));
