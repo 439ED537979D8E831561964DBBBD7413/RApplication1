@@ -105,12 +105,12 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
                     (contact.getTempRcpName(), ",") + 1) + " RC)");
         }
 
-        holder.imageSocialMedia.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showBottomSheet();
-            }
-        });
+//        holder.imageSocialMedia.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showBottomSheet();
+//            }
+//        });
 
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,8 +167,8 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
-        @BindView(R.id.image_social_media)
-        ImageView imageSocialMedia;
+//        @BindView(R.id.image_social_media)
+//        ImageView imageSocialMedia;
         @BindView(R.id.text_contact_name)
         TextView textContactName;
         @BindView(R.id.text_cloud_contact_name)
@@ -187,8 +187,8 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
         LinearLayout linearRating;
         @BindView(R.id.recycler_view_multiple_rc)
         RecyclerView recyclerViewMultipleRc;
-        @BindView(R.id.button_invite)
-        Button buttonInvite;
+//        @BindView(R.id.button_invite)
+//        Button buttonInvite;
 
         AllContactViewHolder(View itemView) {
             super(itemView);
@@ -207,8 +207,8 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
 
             recyclerViewMultipleRc.setVisibility(View.GONE);
             linearRating.setVisibility(View.GONE);
-            buttonInvite.setVisibility(View.GONE);
-            imageSocialMedia.setVisibility(View.GONE);
+//            buttonInvite.setVisibility(View.GONE);
+//            imageSocialMedia.setVisibility(View.GONE);
 //            textContactName.setVisibility(View.GONE);
 
             relativeRowAllContact.setBackgroundColor(ContextCompat.getColor(context, R.color
