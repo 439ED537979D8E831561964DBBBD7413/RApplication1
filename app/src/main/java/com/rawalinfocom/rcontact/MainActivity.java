@@ -200,7 +200,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                     && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
                     false)) {
                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                syncCallLogAsyncTask.execute();
+                syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
 
         }
@@ -210,7 +210,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
                     && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                syncSmsLogAsyncTask.execute();
+                syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }
         if (contacts) {
@@ -219,7 +219,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
                 reSyncContactAsyncTask = new ReSyncContactAsyncTask();
-                reSyncContactAsyncTask.execute();
+                reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }
 
@@ -1370,7 +1370,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             && !Utils.getBooleanPreference(MainActivity.this, AppConstants
                             .PREF_CALL_LOG_SYNCED, false)) {
                         syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                        syncCallLogAsyncTask.execute();
+                        syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 }
             }
@@ -1395,7 +1395,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             && !Utils.getBooleanPreference(MainActivity.this, AppConstants
                             .PREF_SMS_SYNCED, false)) {
                         syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                        syncSmsLogAsyncTask.execute();
+                        syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 }
             }
@@ -1430,8 +1430,8 @@ public class MainActivity extends BaseActivity implements NavigationView
             if (Utils.isNetworkAvailable(this)) {
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         deviceDetailObject, null, WsResponseObject.class, WsConstants
-                        .REQ_UPLOAD_CALL_LOGS, null, true).execute
-                        (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
+                        .REQ_UPLOAD_CALL_LOGS, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
             }
         }
 
@@ -2059,8 +2059,8 @@ public class MainActivity extends BaseActivity implements NavigationView
             if (Utils.isNetworkAvailable(this)) {
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         deviceDetailObject, null, WsResponseObject.class, WsConstants
-                        .REQ_UPLOAD_SMS_LOGS, null, true).execute
-                        (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_SMS_LOGS);
+                        .REQ_UPLOAD_SMS_LOGS, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_SMS_LOGS);
             }
         }
 
@@ -2138,7 +2138,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                                     && !Utils.getBooleanPreference(MainActivity.this,
                                     AppConstants.PREF_CALL_LOG_SYNCED, false)) {
                                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                                syncCallLogAsyncTask.execute();
+                                syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                             }
 
                             if (Utils.isNetworkAvailable(MainActivity.this)
@@ -2149,7 +2149,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                                     && !Utils.getBooleanPreference(MainActivity.this,
                                     AppConstants.PREF_SMS_SYNCED, false)) {
                                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                                syncSmsLogAsyncTask.execute();
+                                syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                             }
                             if (Utils.isNetworkAvailable(MainActivity.this)
                                     && Utils.getBooleanPreference(MainActivity.this, AppConstants
@@ -2160,7 +2160,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                                     .PREF_SMS_SYNCED, false)) {
 //                                Log.i("MAULIK", " looking for updated contacts");
                                 reSyncContactAsyncTask = new ReSyncContactAsyncTask();
-                                reSyncContactAsyncTask.execute();
+                                reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                             }
                         }
                     }
@@ -2727,8 +2727,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_UPLOAD_CONTACTS + "_" + currentStamp, null, true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
+                    .REQ_UPLOAD_CONTACTS + "_" + currentStamp, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
         }
     }
 }
