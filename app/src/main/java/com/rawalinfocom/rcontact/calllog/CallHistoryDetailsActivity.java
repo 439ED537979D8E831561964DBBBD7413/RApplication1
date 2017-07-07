@@ -1868,6 +1868,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             recyclerCallHistory.setAdapter(callHistoryListAdapter);
             recyclerCallHistory.setFocusable(false);
             setRecyclerViewLayoutManager(recyclerCallHistory);
+            recyclerCallHistory.setNestedScrollingEnabled(false);
         } else {
             recyclerCallHistory.setVisibility(View.GONE);
             rippleViewOldRecords.setVisibility(View.GONE);
