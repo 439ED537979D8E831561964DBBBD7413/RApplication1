@@ -54,6 +54,7 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
@@ -927,6 +928,7 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         View headerView = navigationView.getHeaderView(0);
 
+        LinearLayout mainContent = (LinearLayout) headerView.findViewById(R.id.main_content);
         TextView text_user_name = (TextView) headerView.findViewById(R.id.text_user_name);
         TextView text_number = (TextView) headerView.findViewById(R.id.text_number);
         TextView text_rating_count = (TextView) headerView.findViewById(R.id.text_rating_count);
@@ -934,7 +936,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         ImageView userProfileImage = (ImageView) headerView.findViewById(R.id.userProfileImage);
 
         TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-        UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
+        final UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
 
         TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
         String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
@@ -957,6 +959,21 @@ public class MainActivity extends BaseActivity implements NavigationView
         } else {
             userProfileImage.setImageResource(R.drawable.home_screen_profile);
         }
+
+        mainContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+                Bundle bundle = new Bundle();
+                bundle.putString(AppConstants.EXTRA_PM_ID, getUserPmId());
+                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "");
+                bundle.putString(AppConstants.EXTRA_CONTACT_NAME, userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+                bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, 1);
+                startActivityIntent(MainActivity.this, ProfileDetailActivity.class, bundle);
+            }
+        });
+
     }
 
     private void openDialer() {

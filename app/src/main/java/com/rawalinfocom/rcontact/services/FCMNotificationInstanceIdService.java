@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact.services;
 
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -15,10 +16,10 @@ public class FCMNotificationInstanceIdService extends FirebaseInstanceIdService 
     @Override
     public void onTokenRefresh() {
         super.onTokenRefresh();
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "Refreshed token: " + refreshedToken);
+        Intent service = new Intent(getApplicationContext(), GCMRegistrationIntentService.class);
+        startService(service);
 
-        sendRegistrationToServer(refreshedToken);
+//        sendRegistrationToServer(refreshedToken);
     }
 
     private void sendRegistrationToServer(String token) {

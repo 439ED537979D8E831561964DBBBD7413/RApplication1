@@ -24,7 +24,7 @@ public class BaseActivity extends AppCompatActivity {
         databaseHandler = new DatabaseHandler(this);
 
         if (Utils.getStringPreference(this, AppConstants.PREF_DEVICE_TOKEN_ID, "").equals(""))
-            new AsyncGetDeviceToken(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new AsyncGetDeviceToken(this).execute();
     }
 
     @Override
