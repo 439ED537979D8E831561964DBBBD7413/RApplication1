@@ -16,9 +16,8 @@ public class FCMNotificationInstanceIdService extends FirebaseInstanceIdService 
     @Override
     public void onTokenRefresh() {
         super.onTokenRefresh();
-        Intent service = new Intent(getApplicationContext(), GCMRegistrationIntentService.class);
-        startService(service);
-
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        Log.d(TAG, "Refreshed token: " + refreshedToken);
 //        sendRegistrationToServer(refreshedToken);
     }
 
