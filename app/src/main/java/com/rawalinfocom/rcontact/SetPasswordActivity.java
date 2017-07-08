@@ -1,6 +1,7 @@
 package com.rawalinfocom.rcontact;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -283,7 +284,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     setPassWordObject, null, WsResponseObject.class, WsConstants.REQ_SAVE_PASSWORD,
-                    getString(R.string.msg_please_wait), true).execute(WsConstants.WS_ROOT +
+                    getString(R.string.msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT +
                     WsConstants.REQ_SAVE_PASSWORD);
         } else {
             Utils.showErrorSnackBar(this, layoutRoot, getResources()
@@ -493,8 +494,8 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_STORE_DEVICE_DETAILS, null, true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
+                    .REQ_STORE_DEVICE_DETAILS, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
         }
         /*else {
             Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()

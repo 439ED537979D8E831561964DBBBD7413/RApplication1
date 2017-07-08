@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
@@ -454,7 +455,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_RCP_PROFILE_SHARING + "_RCP", getResources().getString(R.string
                     .msg_please_wait),
-                    true).execute(WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
+                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
         } else {
             Utils.showErrorSnackBar(this, activityContactListing, getResources()
                     .getString(R.string.msg_no_network));
@@ -474,7 +475,7 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_RCP_PROFILE_SHARING + "_NON", getResources().getString(R.string
                     .msg_please_wait),
-                    true).execute(WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
+                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
         } else {
             Utils.showErrorSnackBar(this, activityContactListing, getResources()
                     .getString(R.string.msg_no_network));
@@ -491,8 +492,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     inviteContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_SEND_INVITATION, getString(R.string.invitation_sending), true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+                    .REQ_SEND_INVITATION, getString(R.string.invitation_sending), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
         } else {
             Utils.showErrorSnackBar(this, activityContactListing, getResources()
                     .getString(R.string.msg_no_network));

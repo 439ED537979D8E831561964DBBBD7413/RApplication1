@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.notifications;
 import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -137,8 +138,8 @@ public class RatingHistory extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(activity)) {
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_EVENT_COMMENT, getResources().getString(R.string.msg_please_wait), true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
+                    .REQ_GET_EVENT_COMMENT, getResources().getString(R.string.msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
         } else {
             Toast.makeText(RatingHistory.this, getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
 
