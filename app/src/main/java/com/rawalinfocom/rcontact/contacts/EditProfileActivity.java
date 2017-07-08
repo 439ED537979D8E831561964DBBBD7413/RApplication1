@@ -472,8 +472,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 textLongitude.setText(objAddress.getLongitude());
                 textGoogleAddress.setText(objAddress.getAddress());
                 textImageMapMarker.setTextColor(defaultMarkerColor);
-//                isAddressModified = false;
-                inputIsAddressModified.setText("false");
+                isAddressModified = false;
+//                inputIsAddressModified.setText("false");
 //                }
 
             }
@@ -1135,9 +1135,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         if (StringUtils.length(address.getGoogleLatLong().get(0))
                                                 > 0 && StringUtils.length(address
                                                 .getGoogleLatLong().get(1)) > 0) {
-//                                            if (!isAddressModified) {
-                                            arrayListNewAddress.add(address);
-                                            /*} else {
+                                            if (!isAddressModified) {
+                                                arrayListNewAddress.add(address);
+                                            } else {
                                                 Utils.showErrorSnackBar(this,
                                                         relativeRootEditProfile,
                                                         "Address mapping on Map is required!");
@@ -1147,7 +1147,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                                                 .colorSnackBarNegative));
                                                 isValid = false;
                                                 break;
-                                            }*/
+                                            }
                                         } else {
                                             Utils.showErrorSnackBar(this,
                                                     relativeRootEditProfile,
@@ -1197,26 +1197,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     }
                 }
                 if (isValid) {
-                    if (isAddressModified) {
+                    /*if (isAddressModified) {
                         Utils.showErrorSnackBar(this, relativeRootEditProfile, "Address mapping on "
                                 + "Map is required!");
                         textImageMapMarker.setTextColor(ContextCompat.getColor(EditProfileActivity
                                 .this, R.color.colorSnackBarNegative));
                         break;
+                    } else {*/
+                    if (arrayListNewAddress.size() > 0) {
+                        profileDataOperation.setPbAddress(arrayListNewAddress);
+                        editProfile(profileDataOperation, AppConstants.ADDRESS);
                     } else {
-                        if (arrayListNewAddress.size() > 0) {
+                        if (arrayListAddressObject.size() > 0) {
                             profileDataOperation.setPbAddress(arrayListNewAddress);
                             editProfile(profileDataOperation, AppConstants.ADDRESS);
                         } else {
-                            if (arrayListAddressObject.size() > 0) {
-                                profileDataOperation.setPbAddress(arrayListNewAddress);
-                                editProfile(profileDataOperation, AppConstants.ADDRESS);
-                            } else {
-                                Utils.showErrorSnackBar(this, relativeRootEditProfile, "Nothing " +
-                                        "to Update");
-                            }
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile, "Nothing " +
+                                    "to Update");
                         }
                     }
+//                    }
                 }
               /*  }
                 else {
@@ -3433,7 +3433,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     editProfileObject, null, WsResponseObject.class, WsConstants
                     .REQ_PROFILE_UPDATE + ":" + type, getResources().getString(R.string
-                    .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants
+                    .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
                     .REQ_PROFILE_UPDATE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
