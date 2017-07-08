@@ -724,11 +724,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     callLogType.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION)));
                     callLogType.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
                     callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
-//                    String uniquePhoneBookId = getStarredStatusFromNumber(cursor.getString(number));
+//                    String uniquePhoneBookId = getStarredStatusFromNumber(number);
 //                    if (!TextUtils.isEmpty(uniquePhoneBookId)) {
 //                        callLogType.setLocalPbRowId(uniquePhoneBookId);
 //                    } else
-                    callLogType.setLocalPbRowId(" ");
+                        callLogType.setLocalPbRowId(" ");
                     callLogType.setProfileImage("");
 
                     callLogTypeArrayList.add(callLogType);

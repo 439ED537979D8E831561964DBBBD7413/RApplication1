@@ -483,6 +483,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 TextView textName = (TextView) v.findViewById(R.id.text_contact_name);
                 TextView textCloudName = (TextView) v.findViewById(R.id.text_cloud_contact_name);
 
+                bundle.putBoolean(AppConstants.EXTRA_IS_RCP_USER, profileData.getTempIsRcp());
+
 //                if (StringUtils.isNumeric(String.valueOf(v.getTag()))) {
                 if (holder.recyclerViewMultipleRc.getVisibility() == View.GONE) {
                     if (StringUtils.contains(String.valueOf(v.getTag()), ",")) {
@@ -515,9 +517,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         holder.recyclerViewMultipleRc.setVisibility(View.GONE);
                     }
                     if (!String.valueOf(v.getTag()).contains(",")) {
-                  /*  TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
-                        TextView textCloudName = (TextView) view.findViewById(R.id
-                                .text_cloud_contact_name);*/
 
                         bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText()
                                 .toString());
@@ -534,7 +533,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             intent.putExtras(bundle);
                             fragment.startActivityForResult(intent, AppConstants
                                     .REQUEST_CODE_PROFILE_DETAIL);
-                            ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                            activity.overridePendingTransition(R.anim.enter, R
                                     .anim.exit);
                         } else if (fragment instanceof FavoritesFragment) {
                             Intent intent = new Intent(activity, ProfileDetailActivity.class);
@@ -542,14 +541,14 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             intent.putExtras(bundle);
                             fragment.startActivityForResult(intent, AppConstants
                                     .REQUEST_CODE_PROFILE_DETAIL);
-                            ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                            activity.overridePendingTransition(R.anim.enter, R
                                     .anim.exit);
                         } else {
                             if (activity instanceof SearchActivity) {
                                 Intent intent = new Intent(activity, ProfileDetailActivity.class);
                                 intent.putExtras(bundle);
                                 activity.startActivity(intent);
-                                ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                                activity.overridePendingTransition(R.anim.enter, R
                                         .anim.exit);
                             }
                         }
@@ -1127,7 +1126,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(activity, 3);
 
-        View view = ((Activity) activity).getLayoutInflater().inflate(R.layout
+        View view = activity.getLayoutInflater().inflate(R.layout
                 .layout_bottom_sheet, null);
         RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
         TextView textSheetHeader = ButterKnife.findById(view, R.id.text_sheet_header);
