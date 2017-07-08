@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -26,6 +27,8 @@ import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.NestedScrollingChild;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +38,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -45,6 +49,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -145,8 +150,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     ImageView imageRightCenter;
     ImageView imageRightRight;
 
-    /* @BindView(R.id.text_joining_date)
-     TextView textJoiningDate;*/
+    //    @BindView(R.id.nestedScrollView)
+//    ScrollView nestedScrollView;
     @BindView(R.id.image_profile)
     ImageView imageProfile;
     @BindView(R.id.relative_contact_details)
@@ -319,7 +324,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_detail);
+
+        if (getIntent().getBooleanExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, false)) {
+            setContentView(R.layout.activity_call_history_details);
+        } else {
+            setContentView(R.layout.activity_profile_detail);
+        }
+
         rContactApplication = (RContactApplication) getApplicationContext();
         ButterKnife.bind(this);
 
@@ -1094,7 +1105,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         dialog.show();
     }
 
-
     private void openCallLogHistoryDetailsActivity() {
         Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
         intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
@@ -1115,6 +1125,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
         intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, hashMapKey);
         intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueContactId);
+        intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isCallLogRcpUser);
         intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileThumbnail);
         startActivity(intent);
         overridePendingTransition(R.anim.enter, R.anim.exit);
@@ -1804,16 +1815,75 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 listClickedPosition = intent.getIntExtra(AppConstants.EXTRA_CONTACT_POSITION, -1);
             }
         }
+
+        if (phoneBookId.equals("-1"))
+            phoneBookId = getStarredStatusFromNumber(historyNumber);
+    }
+
+    private String getStarredStatusFromNumber(String phoneNumber) {
+        String numberId, rawId = "";
+        try {
+
+            ContentResolver contentResolver = getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.LOOKUP_KEY));
+                    Uri uri1 = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                    String[] projection1 = new String[]{
+                            ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
+                            ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID
+                    };
+
+                    String selection = ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ?";
+                    String[] selectionArgs = new String[]{numberId};
+
+                    Cursor cursor1 = contentResolver.query(uri1, projection1, selection,
+                            selectionArgs, null);
+                    if (cursor1 != null) {
+                        while (cursor1.moveToNext()) {
+                            rawId = cursor1.getString(cursor1.getColumnIndexOrThrow
+                                    (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID));
+                        }
+                        cursor1.close();
+                    }
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return rawId;
     }
 
     private void layoutVisibility() {
         if (profileActivityCallInstance) {
             relativeContactDetails.setVisibility(View.GONE);
             relativeCallHistory.setVisibility(View.VISIBLE);
-//            textIconHistory.setTypeface(Utils.typefaceIcons(this));
+//            nestedScrollView.setOnTouchListener(new View.OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
+//                    return true;
+//                }
+//            });
+//            recyclerCallHistory.setNestedScrollingEnabled(false);
             rippleCallLog.setVisibility(View.GONE);
             setCallLogHistoryDetails();
         } else {
+
+//            recyclerCallHistory.setNestedScrollingEnabled(false);
+//            nestedScrollView.setOnTouchListener(null);
             relativeContactDetails.setVisibility(View.VISIBLE);
             relativeCallHistory.setVisibility(View.GONE);
 
@@ -1984,30 +2054,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         recyclerCallHistory.setLayoutManager(mLinearLayoutManager);
         recyclerCallHistory.setNestedScrollingEnabled(false);
 
-        recyclerCallHistory.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                if (dy > 0) //check for scroll down
-                {
-                    int visibleItemCount = mLinearLayoutManager.getChildCount();
-                    int totalItemCount = mLinearLayoutManager.getItemCount();
-                    int pastVisiblesItems = mLinearLayoutManager.findFirstVisibleItemPosition();
-                    if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                        Log.v("...", "Last Item Wow !");
-                        //Do pagination.. i.e. fetch new data
-                    }
-                }
-
-            }
-        });
-
         Utils.setRatingColor(ProfileDetailActivity.this, ratingUser);
 
 //        LayerDrawable stars = (LayerDrawable) ratingUser.getProgressDrawable();
@@ -2067,6 +2113,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             textFullScreenText.setTypeface(Utils.typefaceBold(this));
             if (isCallLogRcpUser) {
                 rippleInvite.setVisibility(View.GONE);
+                linearBasicDetailRating.setVisibility(View.VISIBLE);
                 if (StringUtils.isEmpty(callLogCloudName)) {
                     textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
                             .colorAccent));
@@ -2080,13 +2127,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 }
             } else {
                 rippleInvite.setVisibility(View.VISIBLE);
+                linearBasicDetailRating.setVisibility(View.GONE);
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 textFullScreenText.setText(historyName);
             }
 
-
         } else {
             if (!TextUtils.isEmpty(historyNumber)) {
+                rippleInvite.setVisibility(View.GONE);
+                linearBasicDetailRating.setVisibility(View.GONE);
                 textFullScreenText.setTypeface(Utils.typefaceBold(this));
                 textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                 textFullScreenText.setText(historyNumber);
