@@ -955,7 +955,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                     .bitmapTransform(new CropCircleTransformation(MainActivity.this))
                     .override(500, 500)
                     .into(userProfileImage);
-
         } else {
             userProfileImage.setImageResource(R.drawable.home_screen_profile);
         }
