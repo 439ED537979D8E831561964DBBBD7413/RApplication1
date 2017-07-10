@@ -129,7 +129,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder contactViewHolder, final int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder contactViewHolder, int position) {
         SimpleCallLogListAdapter.CallLogViewHolder holder = (SimpleCallLogListAdapter.CallLogViewHolder) contactViewHolder;
         final CallLogType callLogType = arrayListCallLogs.get(position);
         final String name = callLogType.getName();
@@ -328,12 +328,16 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
 
+        holder.image3dotsCallLog.setTag(position);
         holder.image3dotsCallLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                selectedPosition = position;
-                selectedCallLogData = callLogType;
+                selectedPosition = (int) v.getTag();
+
+                System.out.println("RContact selectedPosition --> " + selectedPosition);
+
+//                selectedCallLogData = callLogType;
                 String blockedNumber = "";
                 String key = "";
                 key = callLogType.getLocalPbRowId();
@@ -454,13 +458,14 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             }
         });
 
+        holder.relativeRowMain.setTag(position);
         holder.relativeRowMain.setClickable(true);
         holder.relativeRowMain.setEnabled(true);
         holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                selectedPosition = position;
+                selectedPosition = (int) v.getTag();
                 selectedCallLogData = callLogType;
                 String key = "";
                 key = callLogType.getLocalPbRowId();
@@ -497,6 +502,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                 Intent intent = new Intent(context, ProfileDetailActivity.class);
                 intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, formatedNumber);
+                intent.putExtra(AppConstants.EXTRA_PM_ID, selectedCallLogData.getRcpId());
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
                 if (date == 0) {
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, dateFromReceiver);

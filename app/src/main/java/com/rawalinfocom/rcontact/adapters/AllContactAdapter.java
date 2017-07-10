@@ -12,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetDialog;
@@ -360,29 +361,28 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         boolean showPineGreen = false;
 
         String contactDisplayName = "";
-        String prefix = profileData.getTempPrefix();
-        String firstName = profileData.getTempFirstName();
-        String lastName = profileData.getTempLastName();
-        String middleName = profileData.getTempMiddleName();
-        String suffix = profileData.getTempSufix();
-
-        if (StringUtils.length(prefix) > 0) {
-            contactDisplayName = prefix + " ";
-        }
-        if (StringUtils.length(firstName) > 0) {
-            contactDisplayName = contactDisplayName + firstName + " ";
-        }
-        if (StringUtils.length(middleName) > 0) {
-            contactDisplayName = contactDisplayName + middleName + " ";
-        }
-        if (StringUtils.length(lastName) > 0) {
-            contactDisplayName = contactDisplayName + lastName + " ";
-        }
-        if (StringUtils.length(suffix) > 0) {
-            contactDisplayName = contactDisplayName + suffix;
-        }
-        contactDisplayName = /*StringUtils.trimToEmpty(contactDisplayName);*/StringUtils
-                .defaultIfEmpty(profileData.getName(), "");
+//        String prefix = profileData.getTempPrefix();
+//        String firstName = profileData.getTempFirstName();
+//        String lastName = profileData.getTempLastName();
+//        String middleName = profileData.getTempMiddleName();
+//        String suffix = profileData.getTempSufix();
+//
+//        if (StringUtils.length(prefix) > 0) {
+//            contactDisplayName = prefix + " ";
+//        }
+//        if (StringUtils.length(firstName) > 0) {
+//            contactDisplayName = contactDisplayName + firstName + " ";
+//        }
+//        if (StringUtils.length(middleName) > 0) {
+//            contactDisplayName = contactDisplayName + middleName + " ";
+//        }
+//        if (StringUtils.length(lastName) > 0) {
+//            contactDisplayName = contactDisplayName + lastName + " ";
+//        }
+//        if (StringUtils.length(suffix) > 0) {
+//            contactDisplayName = contactDisplayName + suffix;
+//        }
+        contactDisplayName = StringUtils.defaultIfEmpty(profileData.getName(), "");
 
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
                 activity.getString(R.string.unknown));
@@ -406,6 +406,14 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (!StringUtils.isEmpty(profileData.getTempRcpName())) {
                     holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
                     showPineGreen = false;
+
+                    Glide.with(activity)
+                            .load(thumbnailUrl)
+                            .placeholder(R.drawable.rcontacticon)
+                            .error(R.drawable.rcontacticon)
+                            .bitmapTransform(new CropCircleTransformation(activity))
+                            .override(500, 500)
+                            .into(holder.imageProfile);
                 }
             }
             holder.relativeRowAllContact.setTag(profileData.getTempRcpId());
@@ -475,6 +483,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 TextView textName = (TextView) v.findViewById(R.id.text_contact_name);
                 TextView textCloudName = (TextView) v.findViewById(R.id.text_cloud_contact_name);
 
+                bundle.putBoolean(AppConstants.EXTRA_IS_RCP_USER, profileData.getTempIsRcp());
+
 //                if (StringUtils.isNumeric(String.valueOf(v.getTag()))) {
                 if (holder.recyclerViewMultipleRc.getVisibility() == View.GONE) {
                     if (StringUtils.contains(String.valueOf(v.getTag()), ",")) {
@@ -507,9 +517,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         holder.recyclerViewMultipleRc.setVisibility(View.GONE);
                     }
                     if (!String.valueOf(v.getTag()).contains(",")) {
-                  /*  TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
-                        TextView textCloudName = (TextView) view.findViewById(R.id
-                                .text_cloud_contact_name);*/
 
                         bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText()
                                 .toString());
@@ -526,7 +533,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             intent.putExtras(bundle);
                             fragment.startActivityForResult(intent, AppConstants
                                     .REQUEST_CODE_PROFILE_DETAIL);
-                            ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                            activity.overridePendingTransition(R.anim.enter, R
                                     .anim.exit);
                         } else if (fragment instanceof FavoritesFragment) {
                             Intent intent = new Intent(activity, ProfileDetailActivity.class);
@@ -534,14 +541,14 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             intent.putExtras(bundle);
                             fragment.startActivityForResult(intent, AppConstants
                                     .REQUEST_CODE_PROFILE_DETAIL);
-                            ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                            activity.overridePendingTransition(R.anim.enter, R
                                     .anim.exit);
                         } else {
                             if (activity instanceof SearchActivity) {
                                 Intent intent = new Intent(activity, ProfileDetailActivity.class);
                                 intent.putExtras(bundle);
                                 activity.startActivity(intent);
-                                ((BaseActivity) activity).overridePendingTransition(R.anim.enter, R
+                                activity.overridePendingTransition(R.anim.enter, R
                                         .anim.exit);
                             }
                         }
@@ -1119,7 +1126,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(activity, 3);
 
-        View view = ((Activity) activity).getLayoutInflater().inflate(R.layout
+        View view = activity.getLayoutInflater().inflate(R.layout
                 .layout_bottom_sheet, null);
         RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
         TextView textSheetHeader = ButterKnife.findById(view, R.id.text_sheet_header);
@@ -1140,92 +1147,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public int getListClickedPosition() {
         return listClickedPosition;
-    }
-
-    private void selectContactDialog(String contactName,
-                                     final ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers,
-                                     ArrayList<ProfileDataOperationEmail> emailIds) {
-
-        final ArrayList<Object> arrayList = new ArrayList<>();
-        arrayList.add(activity.getString(R.string.str_all));
-        arrayList.addAll(phoneNumbers);
-        arrayList.addAll(emailIds);
-
-        final Dialog dialog = new Dialog(activity);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_all_organization);
-        dialog.setCancelable(false);
-
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        layoutParams.copyFrom(dialog.getWindow().getAttributes());
-        layoutParams.width = (int) (activity.getResources().getDisplayMetrics().widthPixels * 0.90);
-        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
-
-        final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
-                .relative_root_dialog_list);
-        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        textDialogTitle.setText(String.format(Locale.getDefault(), "%s %s", activity.getString(R
-                .string.str_invite), contactName));
-        textDialogTitle.setTypeface(Utils.typefaceSemiBold(activity));
-
-        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
-        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
-        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
-        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
-
-        buttonRight.setTypeface(Utils.typefaceRegular(activity));
-        buttonRight.setText(R.string.action_cancel);
-        buttonLeft.setTypeface(Utils.typefaceRegular(activity));
-        buttonLeft.setText(activity.getString(R.string.str_invite));
-
-        rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
-            @Override
-            public void onComplete(RippleView rippleView) {
-                dialog.dismiss();
-            }
-        });
-
-
-        RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
-                .recycler_view_dialog_list);
-        recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(activity));
-
-        final PhoneBookContactDetailAdapter adapter = new PhoneBookContactDetailAdapter(activity,
-                arrayList);
-        recyclerViewDialogList.setAdapter(adapter);
-
-        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
-            @Override
-            public void onComplete(RippleView rippleView) {
-                if (adapter.getArrayListSelectedContacts().size() > 0) {
-                    dialog.dismiss();
-                    ArrayList<String> numbers = new ArrayList<>();
-                    ArrayList<String> emails = new ArrayList<>();
-                    for (int i = 0; i < arrayList.size(); i++) {
-                        if (adapter.getArrayListSelectedContacts().contains(i)) {
-                            if (arrayList.get(i) instanceof ProfileDataOperationPhoneNumber) {
-                                ProfileDataOperationPhoneNumber number =
-                                        (ProfileDataOperationPhoneNumber) arrayList.get(i);
-                                numbers.add(number.getPhoneNumber());
-                            }
-                            if (arrayList.get(i) instanceof ProfileDataOperationEmail) {
-                                ProfileDataOperationEmail email = (ProfileDataOperationEmail)
-                                        arrayList.get(i);
-                                emails.add(email.getEmEmailId());
-                            }
-                        }
-                    }
-                    inviteContact(numbers, emails);
-                } else {
-                    Utils.showErrorSnackBar(activity, relativeRootDialogList, activity.getString(R
-                            .string.please_select_one));
-                }
-            }
-        });
-
-        dialog.show();
     }
 
     private void initSwipe(RecyclerView recyclerView) {
@@ -1505,14 +1426,14 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (fragment != null) {
                 new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         inviteContactObject, null, WsResponseObject.class, WsConstants
-                        .REQ_SEND_INVITATION, null, true).execute
-                        (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+                        .REQ_SEND_INVITATION, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
             } else {
                 if (activity instanceof SearchActivity) {
                     new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                             inviteContactObject, null, WsResponseObject.class, WsConstants
-                            .REQ_SEND_INVITATION, null, true).execute
-                            (WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+                            .REQ_SEND_INVITATION, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                            WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
                 }
 
             }

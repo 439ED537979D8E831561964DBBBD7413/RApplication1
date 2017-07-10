@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.support.v4.util.LongSparseArray;
 
@@ -93,8 +94,8 @@ public class OnlineDataSync {
     private void sendToCloud(WsRequestObject requestObject, String requestApi) {
         if (Utils.isNetworkAvailable(activity)) {
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    requestObject, null, WsResponseObject.class, requestApi, null, true).execute
-                    (WsConstants.WS_ROOT + requestApi);
+                    requestObject, null, WsResponseObject.class, requestApi, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + requestApi);
         }
     }
 
@@ -538,8 +539,8 @@ public class OnlineDataSync {
         if (Utils.isNetworkAvailable(activity)) {
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_UPLOAD_CONTACTS + "_" + currentStamp, null, true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
+                    .REQ_UPLOAD_CONTACTS + "_" + currentStamp, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
         }
     }
 }

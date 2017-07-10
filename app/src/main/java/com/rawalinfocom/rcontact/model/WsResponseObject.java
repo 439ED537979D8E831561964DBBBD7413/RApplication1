@@ -44,6 +44,7 @@ public class WsResponseObject {
     private String status;
     private String message;
     private Integer flag;
+    private Integer reSync;
 
     private OtpLog otpLog;
     private UserProfile userProfile;
@@ -114,6 +115,16 @@ public class WsResponseObject {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    @JsonProperty("resync")
+    public Integer getReSync() {
+        return reSync;
+    }
+
+    public void setReSync(int reSync) {
+        this.reSync = reSync;
+    }
+
 
     @JsonProperty("flag")
     public Integer getFlag() {

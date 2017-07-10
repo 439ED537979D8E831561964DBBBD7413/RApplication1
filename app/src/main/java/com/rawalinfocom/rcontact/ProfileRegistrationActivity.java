@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -739,8 +740,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     profileRegistrationObject, null, WsResponseObject.class, WsConstants
-                    .REQ_PROFILE_REGISTRATION, getString(R.string.msg_please_wait), true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_REGISTRATION);
+                    .REQ_PROFILE_REGISTRATION, getString(R.string.msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_REGISTRATION);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
                     .getString(R.string.msg_no_network));

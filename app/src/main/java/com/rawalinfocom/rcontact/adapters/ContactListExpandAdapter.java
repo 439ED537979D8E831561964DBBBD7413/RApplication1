@@ -167,8 +167,8 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
-       /* @BindView(R.id.image_social_media)
-        ImageView imageSocialMedia;*/
+//        @BindView(R.id.image_social_media)
+//        ImageView imageSocialMedia;
         @BindView(R.id.text_contact_name)
         TextView textContactName;
         @BindView(R.id.text_cloud_contact_name)

@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.CallLog;
@@ -44,11 +45,13 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.CallHistoryListAdapter;
 import com.rawalinfocom.rcontact.adapters.OrganizationListAdapter;
+import com.rawalinfocom.rcontact.adapters.PhoneBookContactDetailAdapter;
 import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
@@ -182,15 +185,19 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     String historyName = "";
     long historyDate;
     CallHistoryListAdapter callHistoryListAdapter;
-    ArrayList<Object> tempPhoneNumber;
+    ArrayList<Object> tempPhoneNumber, tempEmail;
     String hashMapKey = "";
     String uniqueContactId = "";
     @BindView(R.id.button_view_old_records)
     Button buttonViewOldRecords;
     @BindView(R.id.ripple_view_old_records)
     RippleView rippleViewOldRecords;
+
+    @BindView(R.id.ripple_invite)
+    RippleView rippleInvite;
     @BindView(R.id.progressBarLoadCallLogs)
     ProgressBar progressBarLoadCallLogs;
+    private boolean isCallLogRcpUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,6 +233,18 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (intent.hasExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE)) {
                 profileThumbnail = intent.getStringExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_IS_RCP_USER)) {
+                isCallLogRcpUser = intent.getBooleanExtra(AppConstants.EXTRA_IS_RCP_USER, false);
+            }
+
+            if (isCallLogRcpUser) {
+                rippleInvite.setVisibility(View.GONE);
+                linearBasicDetailRating.setVisibility(View.VISIBLE);
+            } else {
+                rippleInvite.setVisibility(View.VISIBLE);
+                linearBasicDetailRating.setVisibility(View.GONE);
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
@@ -273,14 +292,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (intent.hasExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME)) {
                 cloudContactName = intent.getStringExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME);
-               /* if(!TextUtils.isEmpty(cloudContactName)){
-                    cloudContactName = StringUtils.substring(cloudContactName, 2, cloudContactName
-                            .length() - 1);
-                }*/
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE)) {
-//                isHideFavourite = true;
                 checkNumberFavourite = intent.getStringExtra(AppConstants
                         .EXTRA_CHECK_NUMBER_FAVOURITE);
             }
@@ -301,20 +315,50 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     .PREF_FAVOURITE_CONTACT_NUMBER_EMAIL));
         }
 
-        init();
-
-        if (!StringUtils.isEmpty(historyNumber)) {
-            fetchAllCallLogHistory(historyNumber);
-        } else {
-            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
-                fetchAllCallLogHistory(contactName);
-            } else {
-                if (!TextUtils.isEmpty(profileContactNumber)) {
-                    fetchAllCallLogHistory(profileContactNumber);
-                }
-            }
+        if (TextUtils.isEmpty(contactName) && contactName.equalsIgnoreCase("[Unknown]")) {
+            rippleInvite.setVisibility(View.GONE);
+            linearBasicDetailRating.setVisibility(View.GONE);
         }
 
+        init();
+
+//        new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private class GetRCPNameAndProfileImage extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Utils.showProgressDialog(CallHistoryDetailsActivity.this, "Please wait...", false);
+            rippleViewOldRecords.setVisibility(View.GONE);
+        }
+
+        protected Void doInBackground(Void... urls) {
+            if (!StringUtils.isEmpty(historyNumber)) {
+                fetchAllCallLogHistory(historyNumber);
+            } else {
+                if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
+                    fetchAllCallLogHistory(contactName);
+                } else {
+                    if (!TextUtils.isEmpty(profileContactNumber)) {
+                        fetchAllCallLogHistory(profileContactNumber);
+                    }
+                }
+            }
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.hideProgressDialog();
+                    setHistoryAdapter();
+                }
+            });
+        }
     }
 
     @Override
@@ -326,17 +370,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 .ACTION_LOCAL_BROADCAST_CALL_HISTORY_ACTIVITY);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);
 
-        if (!StringUtils.isEmpty(historyNumber)) {
-            fetchAllCallLogHistory(historyNumber);
-        } else {
-            if (!TextUtils.isEmpty(contactName) && !contactName.equalsIgnoreCase("[Unknown]")) {
-                fetchAllCallLogHistory(contactName);
-            } else {
-                if (!TextUtils.isEmpty(profileContactNumber)) {
-                    fetchAllCallLogHistory(profileContactNumber);
-                }
-            }
-        }
+        new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -375,6 +409,25 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
                                 .string.msg_try_later));
+                    }
+                }
+            }
+            //</editor-fold>
+
+            // <editor-fold desc="REQ_SEND_INVITATION">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_SEND_INVITATION)) {
+                WsResponseObject inviteContactResponse = (WsResponseObject) data;
+                if (inviteContactResponse != null && StringUtils.equalsIgnoreCase
+                        (inviteContactResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail,
+                            getString(R.string.invitation_sent));
+                } else {
+                    if (inviteContactResponse != null) {
+                        Log.e("error response", inviteContactResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "inviteContactResponse null");
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                getString(R.string.msg_try_later));
                     }
                 }
             }
@@ -481,6 +534,50 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 rippleViewOldRecords.setVisibility(View.GONE);
                 getOldCallHistory();
                 break;
+
+            //<editor-fold desc="Invite">
+            case R.id.ripple_invite:
+                ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
+                for (int i = 0; i < tempPhoneNumber.size(); i++) {
+                    ProfileDataOperationPhoneNumber phoneNumber = new
+                            ProfileDataOperationPhoneNumber();
+                    ProfileDataOperationPhoneNumber number = (ProfileDataOperationPhoneNumber)
+                            tempPhoneNumber.get(i);
+                    phoneNumber.setPhoneNumber(Utils.getFormattedNumber(this, number
+                            .getPhoneNumber()));
+                    phoneNumber.setPhoneType(number.getPhoneType());
+                    phoneNumbers.add(phoneNumber);
+                }
+
+                ArrayList<ProfileDataOperationEmail> emails = new ArrayList<>();
+                for (int i = 0; i < tempEmail.size(); i++) {
+                    ProfileDataOperationEmail email = new ProfileDataOperationEmail();
+                    ProfileDataOperationEmail emailId = (ProfileDataOperationEmail) tempEmail.get
+                            (i);
+                    email.setEmEmailId(emailId.getEmEmailId());
+                    email.setEmType(emailId.getEmType());
+                    emails.add(email);
+                }
+
+                if (phoneNumbers.size() + emails.size() > 1) {
+                    selectContactDialog(phoneNumbers, emails);
+                } else {
+                    if (phoneNumbers.size() > 0) {
+                        ArrayList<String> numbers = new ArrayList<>();
+                        for (int i = 0; i < phoneNumbers.size(); i++) {
+                            numbers.add(phoneNumbers.get(i).getPhoneNumber());
+                        }
+                        inviteContact(numbers, null);
+                    } else if (emails.size() > 0) {
+                        ArrayList<String> aryEmails = new ArrayList<>();
+                        for (int i = 0; i < emails.size(); i++) {
+                            aryEmails.add(emails.get(i).getEmEmailId());
+                        }
+                        inviteContact(null, aryEmails);
+                    }
+                }
+                break;
+            //</editor-fold>
 
             case R.id.ripple_sms:
 
@@ -804,8 +901,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).execute
-                    (WsConstants.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
+                    .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
                     .getString(R.string.msg_no_network));
@@ -1408,7 +1505,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
         if (!Utils.isArraylistNullOrEmpty(arrayListEmail) || !Utils.isArraylistNullOrEmpty
                 (arrayListPhoneBookEmail)) {
-            ArrayList<Object> tempEmail = new ArrayList<>();
+            tempEmail = new ArrayList<>();
             tempEmail.addAll(arrayListEmail);
             tempEmail.addAll(arrayListPhoneBookEmail);
             ProfileDetailAdapter emailDetailAdapter = new ProfileDetailAdapter(this, tempEmail,
@@ -1808,7 +1905,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     ratingObject, null, WsResponseObject.class, WsConstants.REQ_PROFILE_RATING,
-                    null, true).execute(WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
+                    null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
                     .string.msg_no_network));
@@ -1823,7 +1920,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     profileVisitObject, null, WsResponseObject.class, WsConstants
-                    .REQ_ADD_PROFILE_VISIT, null, true).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_ADD_PROFILE_VISIT, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
                     .REQ_ADD_PROFILE_VISIT);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
@@ -1840,7 +1937,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     favouriteStatusObject, null, WsResponseObject.class, WsConstants
-                    .REQ_MARK_AS_FAVOURITE, null, true).execute(WsConstants.WS_ROOT + WsConstants
+                    .REQ_MARK_AS_FAVOURITE, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
                     .REQ_MARK_AS_FAVOURITE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
@@ -1854,7 +1951,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             arrayListHistory = callLogHistory(value);
             Log.i("History size  ", arrayListHistory.size() + "" + " of  " + value);
         }
-        setHistoryAdapter();
     }
 
     private void setHistoryAdapter() {
@@ -1867,6 +1963,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             recyclerCallHistory.setAdapter(callHistoryListAdapter);
             recyclerCallHistory.setFocusable(false);
             setRecyclerViewLayoutManager(recyclerCallHistory);
+            recyclerCallHistory.setNestedScrollingEnabled(false);
         } else {
             recyclerCallHistory.setVisibility(View.GONE);
             rippleViewOldRecords.setVisibility(View.GONE);
@@ -2178,5 +2275,108 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         return getString(R.string.type_other);
     }
 
+    private void selectContactDialog(final ArrayList<ProfileDataOperationPhoneNumber>
+                                             phoneNumbers, ArrayList<ProfileDataOperationEmail>
+                                             emailIds) {
 
+        final ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add(getString(R.string.str_all));
+        arrayList.addAll(phoneNumbers);
+        arrayList.addAll(emailIds);
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_all_organization);
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
+                .relative_root_dialog_list);
+        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
+        textDialogTitle.setText(String.format("%s %s", getString(R.string.str_invite),
+                contactName));
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
+
+        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
+        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
+        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+
+        buttonRight.setTypeface(Utils.typefaceRegular(this));
+        buttonRight.setText(R.string.action_cancel);
+        buttonLeft.setTypeface(Utils.typefaceRegular(this));
+        buttonLeft.setText(getString(R.string.str_invite));
+
+        rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                dialog.dismiss();
+            }
+        });
+
+        RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
+                .recycler_view_dialog_list);
+        recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
+
+        final PhoneBookContactDetailAdapter adapter = new PhoneBookContactDetailAdapter(this,
+                arrayList);
+        recyclerViewDialogList.setAdapter(adapter);
+
+        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                if (adapter.getArrayListSelectedContacts().size() > 0) {
+                    dialog.dismiss();
+                    ArrayList<String> numbers = new ArrayList<>();
+                    ArrayList<String> emails = new ArrayList<>();
+                    for (int i = 0; i < arrayList.size(); i++) {
+                        if (adapter.getArrayListSelectedContacts().contains(i)) {
+                            if (arrayList.get(i) instanceof ProfileDataOperationPhoneNumber) {
+                                ProfileDataOperationPhoneNumber number =
+                                        (ProfileDataOperationPhoneNumber) arrayList.get(i);
+                                numbers.add(number.getPhoneNumber());
+                            }
+                            if (arrayList.get(i) instanceof ProfileDataOperationEmail) {
+                                ProfileDataOperationEmail email = (ProfileDataOperationEmail)
+                                        arrayList.get(i);
+                                emails.add(email.getEmEmailId());
+                            }
+                        }
+                    }
+                    inviteContact(numbers, emails);
+                } else {
+                    Utils.showErrorSnackBar(CallHistoryDetailsActivity.this, relativeRootDialogList,
+                            getString(R.string.please_select_one));
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void inviteContact(ArrayList<String> arrayListContactNumber, ArrayList<String>
+            arrayListEmail) {
+
+        WsRequestObject inviteContactObject = new WsRequestObject();
+        inviteContactObject.setArrayListContactNumber(arrayListContactNumber);
+        inviteContactObject.setArrayListEmailAddress(arrayListEmail);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    inviteContactObject, null, WsResponseObject.class, WsConstants
+                    .REQ_SEND_INVITATION, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+        }
+        /*else {
+            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
+                    .getString(R.string.msg_no_network));
+        }*/
+    }
+    //</editor-fold>
 }
