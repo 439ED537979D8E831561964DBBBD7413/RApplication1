@@ -332,61 +332,65 @@ public class TableProfileMobileMapping {
     public ArrayList<UserProfile> getRContactList() {
         ArrayList<UserProfile> arrayListRContact = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT DISTINCT " + TABLE_RC_PROFILE_MASTER + "." +
-                COLUMN_PM_FIRST_NAME +
-                "," + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_LAST_NAME + "," +
-                TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RCP_ID + "," +
-                TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RAW_ID + "," +
-                TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATING + "," +
-                TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATE_USER + "," +
-                TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_IMAGE + "," +
+
+        try {
+            String selectQuery = "SELECT DISTINCT " + TABLE_RC_PROFILE_MASTER + "." +
+                    COLUMN_PM_FIRST_NAME +
+                    "," + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_LAST_NAME + "," +
+                    TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RCP_ID + "," +
+                    TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RAW_ID + "," +
+                    TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATING + "," +
+                    TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATE_USER + "," +
+                    TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_IMAGE + "," +
 //                TABLE_PB_PROFILE_EMAIL_MAPPING + "." + COLUMN_EPM_EMAIL_ID + "," +
-                TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_MOBILE_NUMBER + " FROM " +
-                TABLE_RC_PROFILE_MASTER + " LEFT JOIN " + TABLE_PB_PROFILE_MOBILE_MAPPING + " ON " +
-                "" + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RCP_ID + " = " +
-                TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_CLOUD_PM_ID + " LEFT JOIN " +
-                TABLE_PB_PROFILE_EMAIL_MAPPING + " ON " + TABLE_RC_PROFILE_MASTER + "." +
-                COLUMN_PM_RCP_ID + " = " + TABLE_PB_PROFILE_EMAIL_MAPPING + "." +
-                COLUMN_EPM_CLOUD_PM_ID + " WHERE " + TABLE_PB_PROFILE_MOBILE_MAPPING + "." +
-                COLUMN_MPM_IS_RCP + " = 1 OR " + TABLE_PB_PROFILE_EMAIL_MAPPING + "." +
-                COLUMN_EPM_IS_RCP + " = 1 ORDER BY UPPER(" + TABLE_RC_PROFILE_MASTER + "." +
-                COLUMN_PM_FIRST_NAME + ")";
+                    TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_MOBILE_NUMBER + " FROM " +
+                    TABLE_RC_PROFILE_MASTER + " LEFT JOIN " + TABLE_PB_PROFILE_MOBILE_MAPPING + " ON " +
+                    "" + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RCP_ID + " = " +
+                    TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_CLOUD_PM_ID + " LEFT JOIN " +
+                    TABLE_PB_PROFILE_EMAIL_MAPPING + " ON " + TABLE_RC_PROFILE_MASTER + "." +
+                    COLUMN_PM_RCP_ID + " = " + TABLE_PB_PROFILE_EMAIL_MAPPING + "." +
+                    COLUMN_EPM_CLOUD_PM_ID + " WHERE " + TABLE_PB_PROFILE_MOBILE_MAPPING + "." +
+                    COLUMN_MPM_IS_RCP + " = 1 OR " + TABLE_PB_PROFILE_EMAIL_MAPPING + "." +
+                    COLUMN_EPM_IS_RCP + " = 1 ORDER BY UPPER(" + TABLE_RC_PROFILE_MASTER + "." +
+                    COLUMN_PM_FIRST_NAME + ")";
 
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+            SQLiteDatabase db = databaseHandler.getWritableDatabase();
+            Cursor cursor = db.rawQuery(selectQuery, null);
 
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                UserProfile userProfile = new UserProfile();
-                userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
-                        (TableProfileMaster.COLUMN_PM_FIRST_NAME)));
-                userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex
-                        (TableProfileMaster.COLUMN_PM_LAST_NAME)));
-                userProfile.setPmId(cursor.getString(cursor.getColumnIndex
-                        (TableProfileMaster.COLUMN_PM_RCP_ID)));
-                userProfile.setPmRawId(cursor.getString(cursor.getColumnIndex
-                        (TableProfileMaster.COLUMN_PM_RAW_ID)));
-                userProfile.setProfileRating(cursor.getString(cursor.getColumnIndex
-                        (TableProfileMaster.COLUMN_PM_PROFILE_RATING)));
-                userProfile.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex
-                        (TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER)));
-                userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
-                        (TableProfileMaster.COLUMN_PM_PROFILE_IMAGE)));
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+                    UserProfile userProfile = new UserProfile();
+                    userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
+                            (TableProfileMaster.COLUMN_PM_FIRST_NAME)));
+                    userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex
+                            (TableProfileMaster.COLUMN_PM_LAST_NAME)));
+                    userProfile.setPmId(cursor.getString(cursor.getColumnIndex
+                            (TableProfileMaster.COLUMN_PM_RCP_ID)));
+                    userProfile.setPmRawId(cursor.getString(cursor.getColumnIndex
+                            (TableProfileMaster.COLUMN_PM_RAW_ID)));
+                    userProfile.setProfileRating(cursor.getString(cursor.getColumnIndex
+                            (TableProfileMaster.COLUMN_PM_PROFILE_RATING)));
+                    userProfile.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex
+                            (TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER)));
+                    userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
+                            (TableProfileMaster.COLUMN_PM_PROFILE_IMAGE)));
                /* userProfile.setEmailId(cursor.getString(cursor.getColumnIndex
                         (TableProfileEmailMapping.COLUMN_EPM_EMAIL_ID)));*/
-                userProfile.setMobileNumber(cursor.getString(cursor.getColumnIndex
-                        (TableProfileMobileMapping.COLUMN_MPM_MOBILE_NUMBER)));
-                // Adding profileMobileMapping to list
-                arrayListRContact.add(userProfile);
-            } while (cursor.moveToNext());
+                    userProfile.setMobileNumber(cursor.getString(cursor.getColumnIndex
+                            (TableProfileMobileMapping.COLUMN_MPM_MOBILE_NUMBER)));
+                    // Adding profileMobileMapping to list
+                    arrayListRContact.add(userProfile);
+                } while (cursor.moveToNext());
 
-            cursor.close();
+                cursor.close();
 
+            }
+
+            db.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        db.close();
-
         // return RContact list
         return arrayListRContact;
     }

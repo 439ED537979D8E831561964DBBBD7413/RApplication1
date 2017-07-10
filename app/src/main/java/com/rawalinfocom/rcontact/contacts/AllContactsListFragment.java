@@ -412,16 +412,18 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             ProfileData myProfileData = new ProfileData();
 
             TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
-            UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt((
+            UserProfile userProfile = tableProfileMaster.getProfileFromPmId(Integer.parseInt((
                     (BaseActivity) getActivity()).getUserPmId()));
 
             TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
-            MobileNumber mobileNumber = tableMobileMaster.getOwnVerifiedMobileNumbersFromPmId
-                    (getActivity());
+            String mobileNumber = tableMobileMaster.getUserMobileNumber(getUserPmId());
+
+            System.out.println("RContact firstName - LastName - Number --> " + userProfile.getPmFirstName()
+                    + " -- " + userProfile.getPmLastName() + " -- " + mobileNumber);
 
             myProfileData.setName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
             myProfileData.setProfileUrl(userProfile.getPmProfileImage());
-            myProfileData.setTempNumber(mobileNumber.getMnmMobileNumber());
+            myProfileData.setTempNumber(mobileNumber);
             myProfileData.setTempIsRcp(true);
             myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
 
