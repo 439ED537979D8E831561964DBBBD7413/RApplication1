@@ -332,10 +332,13 @@ public class TimelineActivity extends BaseActivity implements RippleView
             int pmId = comment.getRcProfileMasterPmId();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
             String name = userProfile.getPmFirstName() + " " + userProfile.getPmLastName();
-            if (name.trim().length() > 0)
+            if (name.trim().length() > 0) {
                 item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
-            else
+                item.setWisherProfileImage(userProfile.getPmProfileImage());
+            } else {
                 item.setWisherName("+" + comment.getCrmProfileDetails());
+            }
+            final UserProfile ownProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
             item.setWisherComment(comment.getCrmComment());
             item.setWisherCommentTime(comment.getCrmCreatedAt());
             item.setCrmCloudPrId(comment.getCrmCloudPrId());
@@ -344,6 +347,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
             item.setEvmRecordIndexId(comment.getEvmRecordIndexId());
             item.setUserComment(comment.getCrmReply());
             item.setUserCommentTime(comment.getCrmRepliedAt());
+            item.setUserprofileImage(ownProfile.getPmProfileImage());
             list.add(item);
 
         }
@@ -377,7 +381,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_EVENT_COMMENT, getResources().getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
         } else {
             Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
 
