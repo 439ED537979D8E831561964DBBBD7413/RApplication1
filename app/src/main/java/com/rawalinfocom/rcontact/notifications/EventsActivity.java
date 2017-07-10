@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.EventAdapter;
@@ -301,9 +302,8 @@ public class EventsActivity extends BaseActivity implements RippleView
             String eventName = e.getEvmEventType();
             int eventType = -1;
             TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-            if (e.getEvmIsPrivate() != IntegerConstants.IS_PRIVATE && e.getRcProfileMasterPmId() != null && e.getRcProfileMasterPmId().length() > 0) {
-                int pmId = Integer
-                        .parseInt(e.getRcProfileMasterPmId());
+            if (MoreObjects.firstNonNull(e.getEvmIsPrivate(), 0) != IntegerConstants.IS_PRIVATE && e.getRcProfileMasterPmId() != null && e.getRcProfileMasterPmId().length() > 0) {
+                int pmId = Integer.parseInt(e.getRcProfileMasterPmId());
 
                 UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
 
@@ -318,6 +318,7 @@ public class EventsActivity extends BaseActivity implements RippleView
                 }
 
                 item.setPersonName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+                item.setPersonImage(userProfile.getPmProfileImage());
                 item.setPersonFirstName(userProfile.getPmFirstName());
                 item.setPersonLastName(userProfile.getPmLastName());
                 item.setEventName(eventName);
@@ -396,49 +397,55 @@ public class EventsActivity extends BaseActivity implements RippleView
         if (error == null) {
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_ADD_EVENT_COMMENT)) {
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
-                EventComment eventComment = wsResponseObject.getEventComment();
+                if (wsResponseObject != null) {
+                    EventComment eventComment = wsResponseObject.getEventComment();
 
-                Comment comment = new Comment();
-                comment.setCrmStatus(Integer.parseInt(eventComment.getStatus()));
-                comment.setCrmRating("");
-                comment.setCrmType(eventComment.getType());
-                comment.setCrmCloudPrId(eventComment.getId());
-                comment.setRcProfileMasterPmId(eventComment.getToPmId());
-                comment.setCrmComment(eventComment.getComment());
-                comment.setCrmReply(eventComment.getReply());
-                comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getCreatedDate()));
-                comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()));
-                comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-                comment.setEvmRecordIndexId(evmRecordId);
+                    Comment comment = new Comment();
+                    comment.setCrmStatus(Integer.parseInt(eventComment.getStatus()));
+                    comment.setCrmRating("");
+                    comment.setCrmType(eventComment.getType());
+                    comment.setCrmCloudPrId(eventComment.getId());
+                    comment.setRcProfileMasterPmId(eventComment.getToPmId());
+                    comment.setCrmComment(eventComment.getComment());
+                    comment.setCrmReply(eventComment.getReply());
+                    comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getCreatedDate()));
+                    comment.setCrmRepliedAt(Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()));
+                    comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+                    comment.setEvmRecordIndexId(evmRecordId);
 
-                if (evmRecordId != null) {
-                    tableCommentMaster.addComment(comment);
-                    evmRecordId = "";
-                    switch (selectedRecycler) {
-                        case 0:
-                            listTodayEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
-                            listTodayEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-                            listTodayEvent.get(selectedRecyclerItem).setEventCommentPending(false);
-                            todayEventAdapter.notifyDataSetChanged();
-                            break;
-                        case 1:
-                            listRecentEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
-                            listRecentEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-                            listRecentEvent.get(selectedRecyclerItem).setEventCommentPending(false);
-                            recentEventAdapter.notifyDataSetChanged();
-                            break;
-                        case 2:
-                            listUpcomingEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
-                            listUpcomingEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-                            listUpcomingEvent.get(selectedRecyclerItem).setEventCommentPending(false);
-                            upcomingEventAdapter.notifyDataSetChanged();
-                            break;
+                    if (evmRecordId != null) {
+                        tableCommentMaster.addComment(comment);
+                        evmRecordId = "";
+                        switch (selectedRecycler) {
+                            case 0:
+                                listTodayEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
+                                listTodayEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+                                listTodayEvent.get(selectedRecyclerItem).setEventCommentPending(false);
+                                todayEventAdapter.notifyDataSetChanged();
+                                break;
+                            case 1:
+                                listRecentEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
+                                listRecentEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+                                listRecentEvent.get(selectedRecyclerItem).setEventCommentPending(false);
+                                recentEventAdapter.notifyDataSetChanged();
+                                break;
+                            case 2:
+                                listUpcomingEvent.get(selectedRecyclerItem).setUserComment(eventComment.getComment());
+                                listUpcomingEvent.get(selectedRecyclerItem).setCommentTime(Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+                                listUpcomingEvent.get(selectedRecyclerItem).setEventCommentPending(false);
+                                upcomingEventAdapter.notifyDataSetChanged();
+                                break;
+                        }
+                        Utils.hideProgressDialog();
                     }
+                } else {
+                    Toast.makeText(EventsActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
                     Utils.hideProgressDialog();
                 }
             }
         } else {
             Toast.makeText(EventsActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+            Utils.hideProgressDialog();
         }
     }
 }
