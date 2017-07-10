@@ -115,7 +115,17 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
             arrayListContactHeaders = new ArrayList<>();
             arrayListPhoneBookContacts = new ArrayList<>();
         } else {
-            isReload = true;
+            if (rContactApplication.getFavouriteStatus() == RContactApplication.FAVOURITE_REMOVED
+                    || rContactApplication.getFavouriteStatus() == RContactApplication
+                    .FAVOURITE_ADDED) {
+                arrayListContactHeaders = new ArrayList<>();
+                arrayListPhoneBookContacts = new ArrayList<>();
+                arrayListUserContact = new ArrayList<>();
+                array = new LongSparseArray<>();
+                isReload = false;
+            } else {
+                isReload = true;
+            }
         }
     }
 
@@ -145,12 +155,19 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         super.onResume();
         if (allContactListAdapter != null && rContactApplication.getFavouriteStatus() ==
                 RContactApplication.FAVOURITE_REMOVED) {
-            if (allContactListAdapter.getListClickedPosition() != -1) {
-                arrayListPhoneBookContacts.remove(allContactListAdapter.getListClickedPosition());
-                allContactListAdapter.notifyItemRemoved(allContactListAdapter
-                        .getListClickedPosition());
-                rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_UNMODIFIED);
-            }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (allContactListAdapter.getListClickedPosition() != -1) {
+                        arrayListPhoneBookContacts.remove(allContactListAdapter
+                                .getListClickedPosition());
+                        allContactListAdapter.notifyItemRemoved(allContactListAdapter
+                                .getListClickedPosition());
+                        rContactApplication.setFavouriteStatus(RContactApplication
+                                .FAVOURITE_UNMODIFIED);
+                    }
+                }
+            }, 500);
         }
         if (isFromSettings) {
             isFromSettings = false;
@@ -383,7 +400,6 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         if (rContactApplication.getArrayListFavPhoneBookContacts() != null) {
             relativeRootFavourite.setVisibility(View.VISIBLE);
             if (rContactApplication.getArrayListFavPhoneBookContacts().size() <= 0) {
-//            getFavouriteContacts();
                 if (getLoaderManager().getLoader(0) == null) {
                     getLoaderManager().initLoader(0, null, this);
                 } else {
@@ -579,19 +595,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
 
-//        final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-//                .StructuredName.GIVEN_NAME);
         final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
                 .Phone.DISPLAY_NAME);
-//        final int familyNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-//                .StructuredName.FAMILY_NAME);
-//        final int middleNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-//                .StructuredName.MIDDLE_NAME);
-//        final int suffixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-//                .StructuredName.SUFFIX);
-//        final int prefixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-//                .StructuredName.PREFIX);
-//        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
         final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
                 .PHOTO_THUMBNAIL_URI);
 
@@ -635,6 +640,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                     break;
             }
         }
+
         if (arrayListUserContact.size() > 0) {
             for (int i = 0; i < arrayListUserContact.size(); i++) {
                 arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
