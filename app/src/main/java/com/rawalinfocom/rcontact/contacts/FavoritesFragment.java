@@ -209,7 +209,12 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 //        String[] selectionArgs = new String[]{"1"};
 //        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
 //        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and starred = ?";
+//        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and starred = ?";
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)" +
+                " and starred = ?" +
+                " and " + ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0" +
+                " and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + AppConstants
+                .CONTACT_STORAGES + ")";
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,

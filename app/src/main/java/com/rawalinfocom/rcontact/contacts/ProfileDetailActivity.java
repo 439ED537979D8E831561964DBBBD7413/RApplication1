@@ -58,7 +58,6 @@ import com.rawalinfocom.rcontact.adapters.PhoneBookContactDetailAdapter;
 import com.rawalinfocom.rcontact.adapters.ProfileDetailAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calllog.CallHistoryDetailsActivity;
-import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -1769,6 +1768,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             } else {
                 phoneBookId = "-1";
             }
+            Log.i("phonebookId", phoneBookId);
 
             if (intent.hasExtra(AppConstants.EXTRA_IS_FROM_FAVOURITE)) {
                 isFromFavourite = intent.getBooleanExtra(AppConstants.EXTRA_IS_FROM_FAVOURITE,
@@ -2966,7 +2966,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber + "?");
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber
+                + "?");
 
         callConfirmationDialog.showDialog();
 

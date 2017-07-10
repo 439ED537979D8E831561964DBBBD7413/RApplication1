@@ -34,6 +34,29 @@ public class AppConstants {
     public static boolean isRecentCallFromSMSTab = false;
     //</editor-fold>
 
+    //<editor-fold desc="Device Information">
+    public static final String CONTACT_STORAGES = "" +
+            // Google
+            "'com.google'," +
+            // Samsung default storage
+            "'vnd.sec.contact.phone'," +
+            // Mi default storage
+            "'com.xiaomi'," +
+            // Asus/HTC/Panasonic/Sony Defalul storage
+            "'Local Phone Account'," +
+            // Asus Sim storage
+            "'USIM Account'," +
+            // Panasonic/Sony Sim storage
+            "'SIM Account'," +
+            // Lenovo/Letv Defalul storage
+            "'com.android.localphone'," +
+            // Oppo Defalul storage
+            "'com.oppo.contacts.device'," +
+            // Lenovo Sim storage
+            "'com.android.sim'" +
+            "";
+    //</editor-fold>
+
     //<editor-fold desc="App Specific final constants">
 
     public static final String OTP_CONFIRMED_STATUS = "2";
@@ -138,8 +161,10 @@ public class AppConstants {
     public static String ACTION_LOCAL_BROADCAST_TABCHANGE = "action_local_broadcast_tab_change";
     public static String ACTION_LOCAL_BROADCAST_PROFILE = "action_local_broadcast_profile";
     public static String ACTION_LOCAL_BROADCAST_DELETE_LOGS = "action_local_broadcast_delete_logs";
-    public static String ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS = "action_local_broadcast_remove_call_logs";
-    public static String ACTION_LOCAL_BROADCAST_RATING_UPDATE = "action_local_broadcast_rating_update";
+    public static String ACTION_LOCAL_BROADCAST_REMOVE_CALL_LOGS =
+            "action_local_broadcast_remove_call_logs";
+    public static String ACTION_LOCAL_BROADCAST_RATING_UPDATE =
+            "action_local_broadcast_rating_update";
     public static String ACTION_LOCAL_BROADCAST_PROFILE_BLOCK =
             "action_local_broadcast_profile_block";
     public static String ACTION_LOCAL_BROADCAST_UNBLOCK = "action_local_broadcast_unblock";
@@ -156,10 +181,13 @@ public class AppConstants {
             "action_local_broadcast_sms_receiver";
     public static String ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_SMS =
             "action_local_broadcast_recent_sms";
-    public static String ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER = "action_local_broadcast_delete_sms_receiver";
+    public static String ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER =
+            "action_local_broadcast_delete_sms_receiver";
     public static String ACTION_LOCAL_BROADCAST_SYNC_SMS = "action_local_broadcast_sync_sms";
-    public static String ACTION_LOCAL_BROADCAST_UPDATE_NOTIFICATION_COUNT = "action_local_broadcast_update_notification_count";
-    public static String ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED = "action_local_broadcast_contact_displayed";
+    public static String ACTION_LOCAL_BROADCAST_UPDATE_NOTIFICATION_COUNT =
+            "action_local_broadcast_update_notification_count";
+    public static String ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED =
+            "action_local_broadcast_contact_displayed";
 
     //</editor-fold>
 
@@ -208,9 +236,12 @@ public class AppConstants {
     public static String PREF_CONTACT_ID_SET = "pref_contact_id_set";
     public static String PREF_SMS_LOG_STARTS_FIRST_TIME = "pref_sms_log_start_first_time";
     public static String PREF_SMS_LOGS_ID_SET = "pref_sms_logs_id_set";
-    public static String PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE = "pref_recent_calls_broadcast_receiver_main_instance";
-    public static String PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE = "pref_recent_sms_broadcast_receiver_main_instance";
-    public static String PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB = "pref_recent_calls_broadcast_receiver_main_instance_call_log_tab";
+    public static String PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE =
+            "pref_recent_calls_broadcast_receiver_main_instance";
+    public static String PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE =
+            "pref_recent_sms_broadcast_receiver_main_instance";
+    public static String PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB =
+            "pref_recent_calls_broadcast_receiver_main_instance_call_log_tab";
     public static String PREF_SMS_LOG_SYNCED_COUNT = "pref_sms_log_synced_count";
     public static String PREF_SMS_LOG_SYNCED = "pref_sms_log_synced";
 
@@ -252,7 +283,6 @@ public class AppConstants {
         AppConstants.isFirstTime = isFirstTime;
     }
     //</editor-fold>
-
 
     public static boolean isFromReceiver = false;
     public static boolean isSMSFromReceiver = false;
