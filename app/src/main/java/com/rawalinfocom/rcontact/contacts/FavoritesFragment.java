@@ -533,14 +533,9 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
                         (i)).getRawContactId())) {
                     ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
-                   /*  String name = tableProfileMaster.getNameFromRawId(((ProfileData)
-                    arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId());
-                    ((ProfileData) arrayListPhoneBookContacts.get(i))
-                            .setTempRcpName(name);*/
                     ArrayList<UserProfile> userProfiles = new ArrayList<>();
                     userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
-                            (ProfileData) arrayListPhoneBookContacts.get(i)).getRawContactId
-                            ()));
+                            (ProfileData) arrayListPhoneBookContacts.get(i)).getRawContactId()));
                     String name = "0";
                     String rcpID = "0";
                     if (userProfiles.size() > 1) {

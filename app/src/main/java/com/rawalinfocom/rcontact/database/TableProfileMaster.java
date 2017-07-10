@@ -223,6 +223,40 @@ public class TableProfileMaster {
         return userProfile;
     }
 
+    // get login user profile
+    public UserProfile getProfileFromPmId(int cloudPmd) {
+        UserProfile userProfile = new UserProfile();
+
+        try {
+            SQLiteDatabase db = databaseHandler.getReadableDatabase();
+
+            Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_RAW_ID,
+                    COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_RCP_ID,}, COLUMN_PM_RCP_ID
+                    + "=?", new String[]{String.valueOf(cloudPmd)}, null, null, null, null);
+            if (cursor != null)
+                cursor.moveToFirst();
+
+            if (cursor != null) {
+                userProfile.setPmRawId(cursor.getString(cursor.getColumnIndex(COLUMN_PM_RAW_ID)));
+                userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_FIRST_NAME)));
+                userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_LAST_NAME)));
+                userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_PM_PROFILE_IMAGE)));
+
+                cursor.close();
+            }
+            db.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // return Profile
+        return userProfile;
+    }
+
     // Getting single Profile from Cloud Pm id
     public UserProfile getProfileFromCloudPmId(int cloudPmd) {
         UserProfile userProfile = new UserProfile();
@@ -430,35 +464,41 @@ public class TableProfileMaster {
 
         ArrayList<String> arrayListRawId = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT " + COLUMN_PM_RAW_ID + " FROM " + TABLE_RC_PROFILE_MASTER;
 
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        try {
 
-        // looping through all rows and adding to list
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                do {
-                    UserProfile userProfile = new UserProfile();
-                    userProfile.setPmRawId(cursor.getString(cursor.getColumnIndex
-                            (COLUMN_PM_RAW_ID)));
+            String selectQuery = "SELECT " + COLUMN_PM_RAW_ID + " FROM " + TABLE_RC_PROFILE_MASTER;
+
+            SQLiteDatabase db = databaseHandler.getWritableDatabase();
+            Cursor cursor = db.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        UserProfile userProfile = new UserProfile();
+                        userProfile.setPmRawId(cursor.getString(cursor.getColumnIndex
+                                (COLUMN_PM_RAW_ID)));
                    /* userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
                             (COLUMN_PM_FIRST_NAME)));
                     userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex
                             (COLUMN_PM_LAST_NAME)));*/
-                    // Adding user profile to list
-                    if (userProfile.getPmRawId().contains(",")) {
-                        String[] multipleRawIds = userProfile.getPmRawId().split(",");
-                        Collections.addAll(arrayListRawId, multipleRawIds);
-                    } else {
-                        arrayListRawId.add(userProfile.getPmRawId());
-                    }
-                } while (cursor.moveToNext());
+                        // Adding user profile to list
+                        if (userProfile.getPmRawId().contains(",")) {
+                            String[] multipleRawIds = userProfile.getPmRawId().split(",");
+                            Collections.addAll(arrayListRawId, multipleRawIds);
+                        } else {
+                            arrayListRawId.add(userProfile.getPmRawId());
+                        }
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
             }
-            cursor.close();
-        }
 
-        db.close();
+            db.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // return user profile list
         return arrayListRawId;

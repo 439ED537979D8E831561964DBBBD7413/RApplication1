@@ -164,27 +164,32 @@ public class TableMobileMaster {
     public String getUserMobileNumber(String pm_id) {
 
         String mobileNumber = "";
-        SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
-        String query = "SELECT " + COLUMN_MNM_MOBILE_NUMBER + " FROM " + TABLE_RC_MOBILE_NUMBER_MASTER +
-                " where " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = \"" + pm_id + "\" and " + COLUMN_MNM_IS_PRIMARY
-                + " = 1 ";
+        try {
+            SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
-        System.out.println("RContact query --> " + query);
+            String query = "SELECT " + COLUMN_MNM_MOBILE_NUMBER + " FROM " + TABLE_RC_MOBILE_NUMBER_MASTER +
+                    " where " + COLUMN_RC_PROFILE_MASTER_PM_ID + " = \"" + pm_id + "\" and " + COLUMN_MNM_IS_PRIMARY
+                    + " = 1 ";
 
-        Cursor cursor = db.rawQuery(query, null);
+            System.out.println("RContact query --> " + query);
 
-        // looping through all rows and adding to list
-        if (cursor != null && cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            mobileNumber = cursor.getString(0);
-        } else {
-            mobileNumber = "";
+            Cursor cursor = db.rawQuery(query, null);
+
+            // looping through all rows and adding to list
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                mobileNumber = cursor.getString(0);
+            } else {
+                mobileNumber = "";
+            }
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        if (cursor != null) {
-            cursor.close();
-        }
-        db.close();
 
         return mobileNumber;
     }
