@@ -713,7 +713,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     callLogType.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION)));
                     callLogType.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
                     callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
-//                    String uniquePhoneBookId = getStarredStatusFromNumber(cursor.getString(number));
+//                    String uniquePhoneBookId = getStarredStatusFromNumber(number);
 //                    if (!TextUtils.isEmpty(uniquePhoneBookId)) {
 //                        callLogType.setLocalPbRowId(uniquePhoneBookId);
 //                    } else
@@ -907,12 +907,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     private String getPhotoUrlFromNumber(String phoneNumber) {
         String photoThumbUrl = "";
+        Cursor cursor = null;
         try {
 
             Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
 
             String[] projection = new String[]{ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
-            Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
+            cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
@@ -923,6 +924,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             }
 
         } catch (Exception e) {
+            if (cursor != null)
+                cursor.close();
             e.printStackTrace();
         }
 
@@ -931,6 +934,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     private String getStarredStatusFromNumber(String phoneNumber) {
         String numberId, rawId = "";
+        Cursor cursor = null;
         try {
 
             ContentResolver contentResolver = getActivity().getContentResolver();
@@ -940,7 +944,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
             String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
                     ContactsContract.PhoneLookup.LOOKUP_KEY};
-            Cursor cursor =
+            cursor =
                     contentResolver.query(uri, projection, null, null, null);
 
             if (cursor != null) {
@@ -970,6 +974,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             }
 
         } catch (Exception e) {
+            if (cursor != null)
+                cursor.close();
             e.printStackTrace();
         }
 

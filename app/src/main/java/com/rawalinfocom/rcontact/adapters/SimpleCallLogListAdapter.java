@@ -502,6 +502,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                 Intent intent = new Intent(context, ProfileDetailActivity.class);
                 intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, formatedNumber);
+                intent.putExtra(AppConstants.EXTRA_PM_ID, selectedCallLogData.getRcpId());
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
                 if (date == 0) {
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, dateFromReceiver);

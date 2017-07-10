@@ -13,6 +13,380 @@
         android:layout_height="?attr/actionBarSize" />
 
     <RelativeLayout
+        android:id="@+id/relative_contact_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/activity_half_horizontal_margin"
+        tools:visibility="gone">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_contact_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_tiny"
+            app:cardCornerRadius="3dp"
+            app:cardElevation="0dp"
+            tools:visibility="gone">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/activity_half_horizontal_margin">
+
+                <LinearLayout
+                    android:id="@+id/linear_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/image_call"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_margin="@dimen/margin_tiny"
+                        android:contentDescription="@string/str_content_description"
+                        android:src="@drawable/ic_action_call"
+                        android:tint="@color/colorVeryDarkGrayishBlue2" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text_label_phone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:text="@string/str_phone"
+                            android:textColor="@color/colorBlack" />
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recycler_view_contact_number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:overScrollMode="never" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/linear_phone"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/image_email"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_margin="@dimen/margin_tiny"
+                        android:contentDescription="@string/str_content_description"
+                        android:src="@drawable/ic_action_sms"
+                        android:tint="@color/colorVeryDarkGrayishBlue2" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text_label_email"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:text="@string/str_email"
+                            android:textColor="@color/colorBlack" />
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recycler_view_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:overScrollMode="never" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relative_section_view_more"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/linear_email"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/linear_website"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/image_website"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:contentDescription="@string/str_content_description"
+                            android:src="@drawable/ic_action_sms"
+                            android:tint="@color/colorVeryDarkGrayishBlue2" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_label_website"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:text="@string/str_website"
+                                android:textColor="@color/colorBlack" />
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/recycler_view_website"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:overScrollMode="never" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/linear_website"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/image_address"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:contentDescription="@string/str_content_description"
+                            android:src="@drawable/ic_action_sms"
+                            android:tint="@color/colorVeryDarkGrayishBlue2" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_label_address"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:text="@string/str_address"
+                                android:textColor="@color/colorBlack" />
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/recycler_view_address"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:overScrollMode="never" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_social_contact"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/linear_address"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/image_social_contact"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:contentDescription="@string/str_content_description"
+                            android:src="@drawable/ic_action_sms"
+                            android:tint="@color/colorVeryDarkGrayishBlue2" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_label_social_contact"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:text="@string/str_social_contact"
+                                android:textColor="@color/colorBlack" />
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/recycler_view_social_contact"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny"
+                                android:overScrollMode="never" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <com.rawalinfocom.rcontact.helper.RippleView
+                    android:id="@+id/ripple_view_more"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/relative_section_view_more"
+                    app:rv_alpha="@integer/alpha_ripple"
+                    app:rv_centered="true"
+                    app:rv_color="@color/colorAccent"
+                    app:rv_rippleDuration="@integer/duration_ripple">
+
+                    <Button
+                        android:id="@+id/button_view_more"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:gravity="left|center_vertical"
+                        android:padding="@dimen/activity_half_horizontal_margin"
+                        android:text="@string/str_view_more"
+                        android:textAllCaps="false" />
+
+                </com.rawalinfocom.rcontact.helper.RippleView>
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_other_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/card_contact_details"
+            android:layout_marginTop="@dimen/margin_tiny"
+            app:cardCornerRadius="3dp"
+            app:cardElevation="0dp"
+            tools:visibility="gone">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/activity_half_horizontal_margin">
+
+                <LinearLayout
+                    android:id="@+id/linear_event"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/image_event"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_margin="@dimen/margin_tiny"
+                        android:contentDescription="@string/str_content_description"
+                        android:src="@drawable/ic_action_call"
+                        android:tint="@color/colorVeryDarkGrayishBlue2" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text_label_event"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:text="@string/str_event"
+                            android:textColor="@color/colorBlack" />
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recycler_view_event"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:overScrollMode="never" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_gender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/linear_event"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/image_gender"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_margin="@dimen/margin_tiny"
+                        android:contentDescription="@string/str_content_description"
+                        android:src="@drawable/ic_action_sms"
+                        android:tint="@color/colorVeryDarkGrayishBlue2" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text_label_gender"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_tiny"
+                            android:text="@string/str_gender"
+                            android:textColor="@color/colorBlack" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_tiny">
+
+                            <ImageView
+                                android:id="@+id/image_icon_gender"
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:layout_alignParentRight="true"
+                                android:layout_margin="@dimen/activity_half_horizontal_margin"
+                                android:contentDescription="@string/str_content_description"
+                                android:src="@drawable/ic_action_sms"
+                                android:tint="@color/colorVeryDarkGrayishBlue2" />
+
+                            <TextView
+                                android:id="@+id/text_gender"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_toLeftOf="@id/image_icon_gender"
+                                android:textColor="@color/colorAccent"
+                                tools:text="@string/str_female" />
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/include_toolbar"
@@ -53,36 +427,70 @@
                     android:contentDescription="@string/str_content_description"
                     android:src="@drawable/home_screen_profile" />
 
-                <LinearLayout
-                    android:id="@+id/linear_basic_detail_rating"
+                <FrameLayout
+                    android:id="@+id/frame_container_right"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    android:layout_marginEnd="@dimen/margin_5dp"
+                    android:layout_marginRight="@dimen/margin_5dp">
 
-                    <TextView
-                        android:id="@+id/text_user_rating"
+                    <com.rawalinfocom.rcontact.helper.RippleView
+                        android:id="@+id/ripple_invite"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        app:rv_alpha="@integer/alpha_ripple"
+                        app:rv_color="@color/colorWhite"
+                        app:rv_rippleDuration="@integer/duration_ripple">
+
+                        <Button
+                            android:id="@+id/button_invite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/background_rounded_corner"
+                            android:minHeight="0dp"
+                            android:minWidth="0dp"
+                            android:paddingBottom="@dimen/margin_small"
+                            android:paddingLeft="@dimen/margin_medium"
+                            android:paddingRight="@dimen/margin_medium"
+                            android:paddingTop="@dimen/margin_small"
+                            android:text="@string/str_invite"
+                            android:textAllCaps="false"
+                            android:textColor="@color/colorWhite" />
+
+                    </com.rawalinfocom.rcontact.helper.RippleView>
+
+                    <LinearLayout
+                        android:id="@+id/linear_basic_detail_rating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/margin_tiny" />
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                    <RatingBar
-                        android:id="@+id/rating_user"
-                        style="?android:attr/ratingBarStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:isIndicator="true" />
+                        <TextView
+                            android:id="@+id/text_user_rating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_tiny" />
 
-                </LinearLayout>
+                        <RatingBar
+                            android:id="@+id/rating_user"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:isIndicator="true" />
+
+                    </LinearLayout>
+                </FrameLayout>
 
                 <LinearLayout
                     android:id="@+id/linear_basic_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@id/linear_basic_detail_rating"
+                    android:layout_toLeftOf="@id/frame_container_right"
                     android:layout_toRightOf="@id/image_profile"
                     android:orientation="vertical">
 
@@ -103,23 +511,6 @@
                             tools:text="Monal Godiwala" />
 
                     </HorizontalScrollView>
-
-                    <!-- <HorizontalScrollView
-                         android:layout_width="match_parent"
-                         android:layout_height="match_parent"
-                         android:scrollbars="none">
-
-                         <TextView
-                             android:id="@+id/text_cloud_name"
-                             android:layout_width="wrap_content"
-                             android:layout_height="wrap_content"
-                             android:padding="2dp"
-                             android:singleLine="true"
-                             android:textAppearance="?android:textAppearanceMedium"
-                             android:textColor="@color/colorAccent"
-                             tools:text="Monel"/>
-
-                     </HorizontalScrollView>-->
 
                     <LinearLayout
                         android:id="@+id/linear_organization_detail"
