@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.EventItem;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
@@ -82,6 +85,18 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             holder.layoutUserCommentPending.setVisibility(View.GONE);
             holder.textUserComment.setVisibility(View.GONE);
             holder.textEventCommentTime.setVisibility(View.GONE);
+        }
+        if (!TextUtils.isEmpty(item.getPersonImage())) {
+            Glide.with(activity)
+                    .load(item.getPersonImage())
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(activity))
+                    .override(500, 500)
+                    .into(holder.imagePerson);
+
+        } else {
+            holder.imagePerson.setImageResource(R.drawable.home_screen_profile);
         }
         holder.buttonUserCommentSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,7 +177,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
                     .REQ_ADD_EVENT_COMMENT, activity.getResources().getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_ADD_EVENT_COMMENT);
         } else {
             //show no toast
             Toast.makeText(activity, activity.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();

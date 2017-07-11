@@ -218,10 +218,11 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
     }
 
     private List<NotiCommentsItem> createReplyList(ArrayList<Comment> replyList) {
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+        UserProfile currentUserProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
         List<NotiCommentsItem> list = new ArrayList<>();
         for (Comment comment : replyList) {
             NotiCommentsItem item = new NotiCommentsItem();
-            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
             TableEventMaster tableEventMaster = new TableEventMaster(getDatabaseHandler());
 
             if (getResources().getString(R.string.str_tab_rating).equalsIgnoreCase(comment.getCrmType())) {
@@ -234,12 +235,15 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
             int pmId = comment.getRcProfileMasterPmId();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
             item.setCommenterName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+            item.setCommenterImage(userProfile.getPmProfileImage());
             item.setCommenterInfo(getResources().getString(R.string.text_reply_you_on_your, userProfile.getPmFirstName()));
             item.setNotiCommentTime(comment.getCrmRepliedAt());
             item.setComment(comment.getCrmComment());
             item.setReply(comment.getCrmReply());
             item.setCommentTime(comment.getCrmCreatedAt());
             item.setReplyTime(comment.getCrmRepliedAt());
+            item.setReplyTime(comment.getCrmRepliedAt());
+            item.setReceiverPersonImage(currentUserProfile.getPmProfileImage());
 
             list.add(item);
 
@@ -402,7 +406,7 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
             new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_EVENT_COMMENT, getResources().getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
         }

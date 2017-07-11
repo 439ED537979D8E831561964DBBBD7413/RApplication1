@@ -7,6 +7,7 @@ package com.rawalinfocom.rcontact.model;
 public class NotiCommentsItem {
 
     private String commenterName;
+    private String commenterImage;
     private String commenterInfo;
     private String notiCommentTime;
     private String eventName;
@@ -14,6 +15,7 @@ public class NotiCommentsItem {
     private String commentTime;
     private String reply;
     private String replyTime;
+    private String receiverPersonImage;
 
     public String getCommenterName() {
         return commenterName;
@@ -77,5 +79,21 @@ public class NotiCommentsItem {
 
     public void setReplyTime(String replyTime) {
         this.replyTime = replyTime;
+    }
+
+    public String getCommenterImage() {
+        return commenterImage;
+    }
+
+    public void setCommenterImage(String commenterImage) {
+        this.commenterImage = commenterImage;
+    }
+
+    public String getReceiverPersonImage() {
+        return receiverPersonImage;
+    }
+
+    public void setReceiverPersonImage(String receiverPersonImage) {
+        this.receiverPersonImage = receiverPersonImage;
     }
 }

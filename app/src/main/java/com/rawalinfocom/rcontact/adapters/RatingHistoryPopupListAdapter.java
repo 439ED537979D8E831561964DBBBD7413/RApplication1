@@ -2,13 +2,16 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 
 import java.util.ArrayList;
 
@@ -55,6 +58,30 @@ public class RatingHistoryPopupListAdapter extends RecyclerView.Adapter<RatingHi
             holder.textReceiverCommentTime.setVisibility(View.GONE);
             holder.imageReceiver.setVisibility(View.GONE);
             holder.textReceiverName.setVisibility(View.GONE);
+        }
+        if (!TextUtils.isEmpty(stringArrayList.get(6))) {
+            Glide.with(context)
+                    .load(stringArrayList.get(6))
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .override(500, 500)
+                    .into(holder.imageRater);
+
+        } else {
+            holder.imageRater.setImageResource(R.drawable.home_screen_profile);
+        }
+        if (!TextUtils.isEmpty(stringArrayList.get(7))) {
+            Glide.with(context)
+                    .load(stringArrayList.get(7))
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .override(500, 500)
+                    .into(holder.imageReceiver);
+
+        } else {
+            holder.imageReceiver.setImageResource(R.drawable.home_screen_profile);
         }
     }
 
