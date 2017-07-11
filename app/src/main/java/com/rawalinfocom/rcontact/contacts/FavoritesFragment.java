@@ -574,19 +574,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
 
-//        final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-//                .StructuredName.GIVEN_NAME);
         final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
                 .Phone.DISPLAY_NAME);
-//        final int familyNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-//                .StructuredName.FAMILY_NAME);
-//        final int middleNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-//                .StructuredName.MIDDLE_NAME);
-//        final int suffixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-//                .StructuredName.SUFFIX);
-//        final int prefixNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-//                .StructuredName.PREFIX);
-//        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
         final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
                 .PHOTO_THUMBNAIL_URI);
 
@@ -617,16 +606,6 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                     profileData.setTempFirstName(data.getString(givenNameIdx));
                     profileData.setName(StringUtils.defaultString(data.getString
                             (givenNameIdx)));
-//                    profileData.setTempLastName(data.getString(familyNameIdx));
-//                    profileData.setTempPrefix(data.getString(prefixNameIdx));
-//                    profileData.setTempSufix(data.getString(suffixNameIdx));
-//                    profileData.setTempMiddleName(data.getString(middleNameIdx));
-//                    if (StringUtils.length(data.getString(familyNameIdx)) > 0) {
-//                        profileData.setName(data.getString(givenNameIdx));
-//                    } else {
-//                        profileData.setName(StringUtils.defaultString(data.getString
-//                                (givenNameIdx)));
-//                    }
                     break;
             }
         }
@@ -634,41 +613,6 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
             for (int i = 0; i < arrayListUserContact.size(); i++) {
                 arrayListPhoneBookContacts.add(arrayListUserContact.get(i));
             }
-//        final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-//        final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
-//                .Phone.DISPLAY_NAME);
-//        final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
-//                .PHOTO_THUMBNAIL_URI);
-//        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
-//        final int rawIdIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
-//                .RAW_CONTACT_ID);
-//
-//        ArrayList contactsWithNoName = new ArrayList<>();
-//        String lastDisplayName = "XXX", lastRawId = "XXX";
-//
-//        while (data.moveToNext()) {
-//            ProfileData profileData;
-//            profileData = new ProfileData();
-//            profileData.setTempFirstName(data.getString(givenNameIdx));
-//            profileData.setTempNumber(data.getString(phoneIdx));
-//            profileData.setProfileUrl(data.getString(photoURIIdx));
-//            profileData.setLocalPhoneBookId(data.getString(lookUpKeyIdx));
-//            profileData.setRawContactId(data.getString(rawIdIdx));
-//            profileData.setTempRawId(data.getString(rawIdIdx));
-//
-//            if (profileData.getTempFirstName().equals(profileData.getTempNumber())) {
-//                contactsWithNoName.add(profileData);
-//            } else {
-//                if (lastDisplayName.equals(profileData.getTempFirstName()) && lastRawId.equals
-//                        (profileData.getTempRawId())) {
-//                } else {
-//                    arrayListPhoneBookContacts.add(profileData);
-//                    lastDisplayName = profileData.getTempFirstName();
-//                    lastRawId = profileData.getTempRawId();
-//                }
-//            }
-//        }
-//        arrayListPhoneBookContacts.addAll(contactsWithNoName);
         }
     }
 
@@ -691,53 +635,6 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         }
 
         getRcpDetail();
-        /*TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
-        ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
-        for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
-            if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
-                if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
-                        (i)).getLocalPhoneBookId())) {
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(true);
-                  *//*  String name = tableProfileMaster.getNameFromRawId(((ProfileData)
-                            arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId());
-                    ((ProfileData) arrayListPhoneBookContacts.get(i))
-                            .setTempRcpName(name);*//*
-                    ArrayList<UserProfile> userProfiles = new ArrayList<>();
-                    userProfiles.addAll(tableProfileMaster.getProfileDetailsFromRawId((
-                            (ProfileData) arrayListPhoneBookContacts.get(i)).getLocalPhoneBookId
-                            ()));
-                    String name = "0";
-                    String rcpID = "0";
-                    if (userProfiles.size() > 1) {
-                        for (int j = 0; j < userProfiles.size();
-                             j++) {
-                            if (name.equalsIgnoreCase("0")) {
-                                name = userProfiles.get(j).getPmRcpId();
-                            } else {
-                                name = name + "," + userProfiles.get(j).getPmRcpId();
-                            }
-                        }
-                    } else if (userProfiles.size() == 1) {
-                        name = userProfiles.get(0).getPmFirstName() + " " + userProfiles.get(0)
-                                .getPmLastName();
-                        rcpID = userProfiles.get(0).getPmRcpId();
-                    }
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
-                } else {
-                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
-                }
-                final int finalI = i;
-                getActivity().runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        allContactListAdapter.notifyItemChanged(finalI);
-                    }
-                });
-            }
-        }*/
-
     }
 
     private void showCallConfirmationDialog() {

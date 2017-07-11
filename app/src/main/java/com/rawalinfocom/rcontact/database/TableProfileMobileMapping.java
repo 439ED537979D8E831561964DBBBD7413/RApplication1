@@ -165,6 +165,36 @@ public class TableProfileMobileMapping {
         return arrayListProfileMapping;
     }
 
+    public boolean getPmIdFromNumber(String mobileNumber) {
+
+        boolean isRCP = false;
+
+        try {
+
+            SQLiteDatabase db = databaseHandler.getReadableDatabase();
+
+            String query = "SELECT " + COLUMN_MPM_CLOUD_PM_ID +
+                    " FROM " + TABLE_PB_PROFILE_MOBILE_MAPPING + " where " + COLUMN_MPM_MOBILE_NUMBER + " = \"" + mobileNumber + "\"";
+
+            Cursor cursor = db.rawQuery(query, null);
+
+            // looping through all rows and adding to list
+
+            isRCP = cursor != null && cursor.getCount() > 0;
+
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+
+            return isRCP;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isRCP;
+    }
+
     public ProfileMobileMapping getCloudPmIdFromProfileMappingFromNumber(String mobileNumber) {
 
         ProfileMobileMapping profileMobileMapping = new ProfileMobileMapping();
@@ -342,7 +372,6 @@ public class TableProfileMobileMapping {
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATING + "," +
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATE_USER + "," +
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_IMAGE + "," +
-//                TABLE_PB_PROFILE_EMAIL_MAPPING + "." + COLUMN_EPM_EMAIL_ID + "," +
                     TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_MOBILE_NUMBER + " FROM " +
                     TABLE_RC_PROFILE_MASTER + " LEFT JOIN " + TABLE_PB_PROFILE_MOBILE_MAPPING + " ON " +
                     "" + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RCP_ID + " = " +

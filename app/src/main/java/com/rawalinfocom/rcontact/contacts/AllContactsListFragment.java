@@ -418,12 +418,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
             String mobileNumber = tableMobileMaster.getUserMobileNumber(getUserPmId());
 
-            System.out.println("RContact firstName - LastName - Number --> " + userProfile.getPmFirstName()
-                    + " -- " + userProfile.getPmLastName() + " -- " + mobileNumber);
-
-            myProfileData.setName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
-            myProfileData.setProfileUrl(userProfile.getPmProfileImage());
+            myProfileData.setName(Utils.getStringPreference(getActivity(), AppConstants.PREF_USER_NAME, ""));
             myProfileData.setTempNumber(mobileNumber);
+            myProfileData.setProfileUrl(Utils.getStringPreference(getActivity(), AppConstants.PREF_USER_PHOTO, ""));
             myProfileData.setTempIsRcp(true);
             myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
 
@@ -476,7 +473,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             .getListClickedPosition());
                     rContactApplication.setArrayListAllPhoneBookContacts
                             (arrayListPhoneBookContacts);
-                    RContactsFragment.arrayListRContact = null;
+//                    RContactsFragment.arrayListRContact = null;
                 }
             }
         } catch (Exception ex) {

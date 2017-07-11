@@ -95,7 +95,7 @@ public class ContactsFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        RContactsFragment.arrayListRContact = null;
+//        RContactsFragment.arrayListRContact = null;
         AllContactsListFragment.arrayListPhoneBookContacts = null;
     }
 
