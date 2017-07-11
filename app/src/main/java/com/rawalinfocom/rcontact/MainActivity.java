@@ -183,6 +183,14 @@ public class MainActivity extends BaseActivity implements NavigationView
         registerLocalBroadCastReceiver();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (Utils.getBooleanPreference(MainActivity.this, AppConstants.PREF_USER_PROFILE_UPDATE, false)) {
+            setNavigationHeaderData();
+        }
+    }
+
     @TargetApi(Build.VERSION_CODES.M)
     private void checkPermissionToExecute() {
         boolean contacts = ContextCompat.checkSelfPermission(MainActivity.this,
@@ -970,6 +978,7 @@ public class MainActivity extends BaseActivity implements NavigationView
             }
         });
 
+//        Utils.setBooleanPreference(this, AppConstants.PREF_USER_PROFILE_UPDATE, false);
     }
 
     private void openDialer() {

@@ -174,6 +174,7 @@ public class AppConstants {
     //<editor-fold desc="Shared Preferences">
 
     // User profile
+    public static String PREF_USER_PROFILE_UPDATE = "pref_user_profile_update";
     public static String PREF_USER_NAME = "pref_user_name";
     public static String PREF_USER_NUMBER = "pref_user_number";
     public static String PREF_USER_RATING = "pref_user_rating";
