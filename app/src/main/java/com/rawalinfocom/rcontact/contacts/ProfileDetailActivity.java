@@ -2107,12 +2107,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                textToolbarTitle.setText(historyName);
                 //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
                 // suggestion
-                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+//                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+
+                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit Sir's suggestion
+                textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
+
             } else {
 //                textToolbarTitle.setText(historyName);
                 //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
                 // suggestion
-                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+//                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit Sir's suggestion
+                textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
             }
             textFullScreenText.setTypeface(Utils.typefaceBold(this));
             if (isCallLogRcpUser) {
@@ -2147,7 +2153,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                textToolbarTitle.setText(historyNumber);
                 //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
                 // suggestion
-                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+//                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit Sir's suggestion
+                textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
             }
 
         }

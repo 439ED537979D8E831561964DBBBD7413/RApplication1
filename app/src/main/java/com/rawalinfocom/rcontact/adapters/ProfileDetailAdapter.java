@@ -516,6 +516,31 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             });
         }
 
+        holder.llProfileData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
+                    String url = null;
+                    if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
+                        url = "https://www.facebook.com/" + imAccount.getIMAccountDetails();
+                    } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
+                        url = "https://twitter.com/" + imAccount.getIMAccountDetails();
+                    } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
+                        url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                            ("google")) {
+                        url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
+                    }
+
+                    if (url != null) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse(url));
+                        activity.startActivity(intent);
+                    }
+                }
+            }
+        });
+
         holder.imageView1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -743,6 +768,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         ImageView imageView2;
         @BindView(R.id.view_other_profile)
         LinearLayout viewOtherProfile;
+        @BindView(R.id.ll_profile_data)
+        LinearLayout llProfileData;
 
         TextView getTextMain(boolean isOwnProfile) {
             if (isOwnProfile) {

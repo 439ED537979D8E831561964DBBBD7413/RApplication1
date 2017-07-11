@@ -57,11 +57,15 @@ import com.rawalinfocom.rcontact.adapters.SmsListAdapter;
 import com.rawalinfocom.rcontact.calldialer.transition.ScaleTransition;
 import com.rawalinfocom.rcontact.calllog.TelephonyInfo;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileData;
+import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
+import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -216,10 +220,14 @@ public class DialerActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {
 
                 // TODO Auto-generated method stub
+
                 if (s.length() > 11) {
                     editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_14sp));
                 } else if (s.length() < 11) {
                     editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_25sp));
+                    if (allContactAdapter == null) {
+                        allContactAdapter = new AllContactAdapter(DialerActivity.this, objectArrayListContact);
+                    }
                 }
 
                 String number = s.toString();
@@ -254,6 +262,14 @@ public class DialerActivity extends BaseActivity {
             getWindow().setEnterTransition(makeEnterTransition());
             getWindow().setReturnTransition(makeReturnTransition());
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context
+                .INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editTextNumber.getWindowToken(), 0);
     }
 
     @SuppressLint("NewApi")
@@ -647,8 +663,60 @@ public class DialerActivity extends BaseActivity {
                     linearAddToContact.setVisibility(View.GONE);
                     recycleViewPbContact.setAdapter(allContactAdapter);
                 } else {
-                    relativeContact.setVisibility(View.GONE);
-                    linearAddToContact.setVisibility(View.VISIBLE);
+                    String name = getNameFromNumber(number);
+                    if (!TextUtils.isEmpty(name)) {
+                        relativeContact.setVisibility(View.VISIBLE);
+                        linearAddToContact.setVisibility(View.GONE);
+                        ProfileData profileData = new ProfileData();
+                        String imageUrl = getPhotoUrlFromNumber(number);
+                        if (!StringUtils.isEmpty(imageUrl))
+                            profileData.setProfileUrl(imageUrl);
+                        else
+                            profileData.setProfileUrl("");
+
+                        profileData.setName(name);
+                        profileData.setTempNumber(number);
+
+                        TableProfileMobileMapping tableProfileMobileMapping =
+                                new TableProfileMobileMapping(getDatabaseHandler());
+                        ProfileMobileMapping profileMobileMapping =
+                                tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(
+                                        Utils.getFormattedNumber(this,number));
+
+                        if (profileMobileMapping != null) {
+                            String cloudPmId = profileMobileMapping.getMpmCloudPmId();
+                            // To do
+                            // Pass this cloudId to fetch FirstName and Last Name from
+                            // ProfileMasterTable
+                            if (!StringUtils.isEmpty(cloudPmId)) {
+                                TableProfileMaster tableProfileMaster = new
+                                        TableProfileMaster(getDatabaseHandler());
+                                UserProfile userProfile = tableProfileMaster
+                                        .getProfileFromCloudPmId(Integer.parseInt(cloudPmId));
+                                String firstName = userProfile.getPmFirstName();
+                                String lastName = userProfile.getPmLastName();
+                                String rcpId = userProfile.getPmRcpId();
+                                String imagePath = userProfile.getPmProfileImage();
+                                profileData.setTempIsRcp(true);
+                                profileData.setTempRcpName(firstName + " " + lastName);
+                                profileData.setTempRcpId(rcpId);
+
+                            }
+                        }
+//                            objectArrayListContact.add(profileData);
+                        ArrayList<Object> tempContact = new ArrayList<>();
+                        tempContact.add(profileData);
+                        if (allContactAdapter != null) {
+                            allContactAdapter = new AllContactAdapter(DialerActivity.this, tempContact);
+                            recycleViewPbContact.setAdapter(allContactAdapter);
+                            allContactAdapter = null;
+
+                        }
+                    } else {
+                        relativeContact.setVisibility(View.GONE);
+                        linearAddToContact.setVisibility(View.VISIBLE);
+                    }
+
                 }
             }
 
@@ -764,9 +832,9 @@ public class DialerActivity extends BaseActivity {
 
         final String finalNumber;
 
-        if(number.startsWith("*")){
-            finalNumber =  number;
-        }else{
+        if (number.startsWith("*")) {
+            finalNumber = number;
+        } else {
             if (!number.startsWith("+91")) {
                 finalNumber = "+91" + number;
             } else {
