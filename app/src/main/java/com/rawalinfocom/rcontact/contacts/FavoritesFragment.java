@@ -208,7 +208,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 //                ContactsContract.Contacts._ID};
         Set<String> set = new HashSet<>();
         set.add(ContactsContract.Data.MIMETYPE);
-        set.add(ContactsContract.Data.CONTACT_ID);
+//        set.add(ContactsContract.Data.CONTACT_ID);
+        set.add(ContactsContract.Data.RAW_CONTACT_ID);
         set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
 //        set.add(ContactsContract.CommonDataKinds.Phone.TYPE);
 //        set.add(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
@@ -221,6 +222,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         set.add(ContactsContract.Contacts.PHOTO_ID);
 //        set.add(ContactsContract.Contacts.LOOKUP_KEY);
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
+        set.add(ContactsContract.RawContacts.ACCOUNT_NAME);
+        set.add(ContactsContract.RawContacts.ACCOUNT_TYPE);
         String[] projection = set.toArray(new String[0]);
 
 //        String selection = "starred = ?";
@@ -592,7 +595,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
     private void getFavouritesFromPhonebook(Cursor data) {
         final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
-        final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
+//        final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
+        final int idIdx = data.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
 
         final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
