@@ -279,7 +279,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     ProfileDataOperation profileDataOperationVcard;
 
-    String pmId, phoneBookId, contactName = "", cloudContactName = null, checkNumberFavourite =
+    String pmId = "", phoneBookId, contactName = "", cloudContactName = null, checkNumberFavourite =
             null, thumbnailUrl = "";
     boolean displayOwnProfile = false, isHideFavourite = false, isFromFavourite = false;
     int isFavourite = 0;
@@ -1745,8 +1745,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             if (intent.hasExtra(AppConstants.EXTRA_PM_ID)) {
                 pmId = intent.getStringExtra(AppConstants.EXTRA_PM_ID);
-                if (!pmId.equalsIgnoreCase("-1") && !pmId.equalsIgnoreCase(getUserPmId())) {
-                    if (!Utils.isNetworkAvailable(this)) {
+                if (!StringUtils.isEmpty(pmId)) {
+                    if (!pmId.equalsIgnoreCase("-1") && !pmId.equalsIgnoreCase(getUserPmId())) {
+                        if (!Utils.isNetworkAvailable(this)) {
 //
 ////                        getProfileDetails();
 ////                        ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
@@ -1756,21 +1757,24 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 ////                        profileVisits.add(profileVisit);
 ////                        profileVisit(profileVisits);
 //                    } else {
-                        HashMap<String, String> mapProfileViews = new HashMap<>();
-                        if (Utils.getHashMapPreference(this, AppConstants
-                                .PREF_PROFILE_VIEWS) != null) {
-                            mapProfileViews.putAll(Utils.getHashMapPreference(this, AppConstants
-                                    .PREF_PROFILE_VIEWS));
+                            HashMap<String, String> mapProfileViews = new HashMap<>();
+                            if (Utils.getHashMapPreference(this, AppConstants
+                                    .PREF_PROFILE_VIEWS) != null) {
+                                mapProfileViews.putAll(Utils.getHashMapPreference(this, AppConstants
+                                        .PREF_PROFILE_VIEWS));
+                            }
+                            if (mapProfileViews.containsKey(pmId)) {
+                                int count = Integer.parseInt(mapProfileViews.get(pmId));
+                                mapProfileViews.put(pmId, String.valueOf(++count));
+                            } else {
+                                mapProfileViews.put(pmId, "1");
+                            }
+                            Utils.setHashMapPreference(this, AppConstants.PREF_PROFILE_VIEWS,
+                                    mapProfileViews);
                         }
-                        if (mapProfileViews.containsKey(pmId)) {
-                            int count = Integer.parseInt(mapProfileViews.get(pmId));
-                            mapProfileViews.put(pmId, String.valueOf(++count));
-                        } else {
-                            mapProfileViews.put(pmId, "1");
-                        }
-                        Utils.setHashMapPreference(this, AppConstants.PREF_PROFILE_VIEWS,
-                                mapProfileViews);
                     }
+                } else {
+                    pmId = "-1";
                 }
             } else {
                 pmId = "-1";
