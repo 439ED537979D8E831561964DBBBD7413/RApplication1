@@ -53,7 +53,6 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.Country;
-import com.rawalinfocom.rcontact.model.Rating;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -673,7 +672,9 @@ public class Utils {
                     defaultCountryCode = country.getCountryCodeNumber();
                 }
                 if (!StringUtils.startsWith(phoneNumber, "+")) {
-                    if (StringUtils.startsWith(phoneNumber, "0")) {
+                    if (StringUtils.startsWith(phoneNumber, "00")) {
+                        phoneNumber = "+" + StringUtils.substring(phoneNumber, 2);
+                    } else if (StringUtils.startsWith(phoneNumber, "0")) {
                         phoneNumber = defaultCountryCode + StringUtils.substring(phoneNumber, 1);
                     } else {
                         phoneNumber = defaultCountryCode + phoneNumber;
