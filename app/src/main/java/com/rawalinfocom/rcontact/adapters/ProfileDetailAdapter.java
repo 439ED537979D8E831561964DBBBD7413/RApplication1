@@ -20,6 +20,7 @@ import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.calllog.CallHistoryDetailsActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -122,12 +123,19 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         }
     }
 
-    private void displayPhoneNumber(ProfileDetailViewHolder holder, final int position) {
+    private void displayPhoneNumber(final ProfileDetailViewHolder holder, final int position) {
         final ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                 arrayList.get(position);
-        String number = phoneNumber.getPhoneNumber();
+        final String number = phoneNumber.getPhoneNumber();
         holder.getTextSub(isOwnProfile).setText(phoneNumber.getPhoneType());
         holder.getTextSub(isOwnProfile).setVisibility(View.VISIBLE);
+
+        holder.imageView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utils.callIntent(activity, number);
+            }
+        });
 
         holder.getTextMain(isOwnProfile).setOnLongClickListener(new View.OnLongClickListener() {
             @Override

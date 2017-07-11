@@ -27,6 +27,10 @@ public class BaseActivity extends AppCompatActivity {
             new AsyncGetDeviceToken(this).execute();
     }
 
+    public DatabaseHandler getDatabaseHandler() {
+        return databaseHandler;
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();

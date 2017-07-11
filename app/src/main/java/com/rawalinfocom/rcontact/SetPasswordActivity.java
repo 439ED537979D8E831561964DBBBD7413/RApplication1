@@ -172,6 +172,12 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                         Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
                                 profileDetail.getRcpPmId());
 
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail.getVerifiedMobileNumber());
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, profileDetail.getTotalProfileRateUser());
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, profileDetail.getProfileRating());
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO, profileDetail.getPbProfilePhoto());
+
                         storeProfileDataToDb(profileDetail);
 
                         deviceDetail();
@@ -284,7 +290,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     setPassWordObject, null, WsResponseObject.class, WsConstants.REQ_SAVE_PASSWORD,
-                    getString(R.string.msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT +
+                    getString(R.string.msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
                     WsConstants.REQ_SAVE_PASSWORD);
         } else {
             Utils.showErrorSnackBar(this, layoutRoot, getResources()

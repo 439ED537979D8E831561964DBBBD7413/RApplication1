@@ -497,25 +497,22 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                 } else {
                     selectedLogDate = date;
                 }
-
-
                 AppConstants.isFromReceiver = false;
                 String formatedNumber = Utils.getFormattedNumber(context, number);
                 Intent intent = new Intent(context, ProfileDetailActivity.class);
                 intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, formatedNumber);
+
+                if (selectedCallLogData.getRcpId() == null)
+                    intent.putExtra(AppConstants.EXTRA_PM_ID, "-1");
+                else
+                    intent.putExtra(AppConstants.EXTRA_PM_ID, selectedCallLogData.getRcpId());
+
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, name);
                 if (date == 0) {
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, dateFromReceiver);
                 } else {
                     intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, date);
-                }
-                if(selectedCallLogData.getRcpId() ==null){
-
-                    intent.putExtra(AppConstants.EXTRA_PM_ID, "");
-                }else{
-
-                    intent.putExtra(AppConstants.EXTRA_PM_ID, selectedCallLogData.getRcpId());
                 }
                 intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, key);
                 intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueRowID);
