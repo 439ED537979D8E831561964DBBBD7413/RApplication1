@@ -219,11 +219,11 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
     }
 
     private List<NotiRatingItem> createRatingReplyList(ArrayList<Comment> replyList) {
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+        UserProfile currentUserProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
         List<NotiRatingItem> list = new ArrayList<>();
         for (Comment comment : replyList) {
             NotiRatingItem item = new NotiRatingItem();
-            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
-
             int pmId = comment.getRcProfileMasterPmId();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
 
@@ -235,6 +235,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
             item.setReply(comment.getCrmReply());
             item.setCommentTime(comment.getCrmCreatedAt());
             item.setReplyTime(comment.getCrmRepliedAt());
+            item.setReceiverPersonImage(currentUserProfile.getPmProfileImage());
             list.add(item);
 
         }

@@ -218,10 +218,11 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
     }
 
     private List<NotiCommentsItem> createReplyList(ArrayList<Comment> replyList) {
+        TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
+        UserProfile currentUserProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
         List<NotiCommentsItem> list = new ArrayList<>();
         for (Comment comment : replyList) {
             NotiCommentsItem item = new NotiCommentsItem();
-            TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler());
             TableEventMaster tableEventMaster = new TableEventMaster(getDatabaseHandler());
 
             if (getResources().getString(R.string.str_tab_rating).equalsIgnoreCase(comment.getCrmType())) {
@@ -241,6 +242,8 @@ public class NotiCommentsFragment extends BaseFragment implements WsResponseList
             item.setReply(comment.getCrmReply());
             item.setCommentTime(comment.getCrmCreatedAt());
             item.setReplyTime(comment.getCrmRepliedAt());
+            item.setReplyTime(comment.getCrmRepliedAt());
+            item.setReceiverPersonImage(currentUserProfile.getPmProfileImage());
 
             list.add(item);
 

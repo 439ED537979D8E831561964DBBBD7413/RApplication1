@@ -15,6 +15,7 @@ public class NotiCommentsItem {
     private String commentTime;
     private String reply;
     private String replyTime;
+    private String receiverPersonImage;
 
     public String getCommenterName() {
         return commenterName;
@@ -86,5 +87,13 @@ public class NotiCommentsItem {
 
     public void setCommenterImage(String commenterImage) {
         this.commenterImage = commenterImage;
+    }
+
+    public String getReceiverPersonImage() {
+        return receiverPersonImage;
+    }
+
+    public void setReceiverPersonImage(String receiverPersonImage) {
+        this.receiverPersonImage = receiverPersonImage;
     }
 }

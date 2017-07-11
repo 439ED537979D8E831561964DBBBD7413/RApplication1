@@ -107,6 +107,8 @@ public class NotiCommentsAdapter extends RecyclerView.Adapter<NotiCommentsAdapte
                 arrayListComments.add(Utils.formatDateTime(item.getCommentTime(), "dd MMM, hh:mm a"));
                 arrayListComments.add(item.getReply());
                 arrayListComments.add(Utils.formatDateTime(item.getReplyTime(), "dd MMM, hh:mm a"));
+                arrayListComments.add(item.getCommenterImage());
+                arrayListComments.add(item.getReceiverPersonImage());
 
                 notificationPopupDialog = new NotificationPopupDialog(context, arrayListComments, false);
                 notificationPopupDialog.setDialogTitle(item.getCommenterName() + context.getString(R.string.str_reply_you));
