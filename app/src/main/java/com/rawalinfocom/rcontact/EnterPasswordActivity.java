@@ -175,6 +175,11 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
                             profileDetail.getRcpPmId());
 
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail.getVerifiedMobileNumber());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, profileDetail.getTotalProfileRateUser());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, profileDetail.getProfileRating());
+
                     storeProfileDataToDb(profileDetail);
 
                     if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals(1)) {

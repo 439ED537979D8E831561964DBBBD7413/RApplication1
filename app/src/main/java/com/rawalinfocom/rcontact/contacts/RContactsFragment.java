@@ -63,7 +63,7 @@ public class RContactsFragment extends BaseFragment {
 
     ArrayList<String> arrayListContactHeaders;
     private ArrayList<UserProfile> arrayListDisplayProfile;
-    public static ArrayList<Object> arrayListRContact;
+    public  ArrayList<Object> arrayListRContact;
 
     RContactListAdapter rContactListAdapter;
 
@@ -88,12 +88,11 @@ public class RContactsFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (arrayListRContact == null) {
-            arrayListContactHeaders = new ArrayList<>();
-            isReload = false;
-        } else {
-            isReload = true;
-        }
+//        if (arrayListRContact == null) {
+//            isReload = false;
+//        } else {
+//            isReload = true;
+//        }
     }
 
     @Override
@@ -115,9 +114,10 @@ public class RContactsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (!isReload) {
-            init();
-        }
+//        if (!isReload) {
+        arrayListContactHeaders = new ArrayList<>();
+        init();
+//        }
     }
 
     @Override
@@ -210,8 +210,7 @@ public class RContactsFragment extends BaseFragment {
         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
                 (getDatabaseHandler());
 
-        arrayListDisplayProfile = tableProfileMobileMapping
-                .getRContactList();
+        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList();
 
         arrayListRContact = new ArrayList<>();
         if (arrayListDisplayProfile.size() > 0) {
