@@ -1501,7 +1501,9 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         }
 
+
         setSearchCount(arrayListUserContact.size());
+
         notifyDataSetChanged();
     }
 

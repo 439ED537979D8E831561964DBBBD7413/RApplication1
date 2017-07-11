@@ -678,6 +678,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         switch (view.getId()) {
 
+
             //<editor-fold desc="button_name_update">
             case R.id.button_name_update:
                 String firstName = inputFirstName.getText().toString();
