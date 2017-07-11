@@ -425,7 +425,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
             String mobileNumber = tableMobileMaster.getUserMobileNumber(getUserPmId());
 
-            System.out.println("RContact firstName - LastName - Number --> " + userProfile.getPmFirstName()
+            System.out.println("RContact firstName - LastName - Number --> " + userProfile
+                    .getPmFirstName()
                     + " -- " + userProfile.getPmLastName() + " -- " + mobileNumber);
 
             myProfileData.setName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
@@ -1233,8 +1234,14 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 ContactsContract.CommonDataKinds.Event.START_DATE,
 
         };
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and "
-                + ContactsContract.Contacts.HAS_PHONE_NUMBER + " >0";
+        /*String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)" +
+                " and " + ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0" +
+                " and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + AppConstants
+                .CONTACT_STORAGES + ")";*/
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?)" +
+                " and " + ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0" +
+                " and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + AppConstants
+                .CONTACT_STORAGES + ")";
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
                 // starred contact not accessible
@@ -1603,7 +1610,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_UPLOAD_CONTACTS + "_" + previouslySyncedData, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    .REQ_UPLOAD_CONTACTS + "_" + previouslySyncedData, null, true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                     WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
         } else {
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
