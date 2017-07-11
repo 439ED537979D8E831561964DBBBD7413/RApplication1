@@ -677,12 +677,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case R.id.button_name_update:
                 String firstName = inputFirstName.getText().toString();
                 String lastName = inputLastName.getText().toString();
-                if (StringUtils.length(firstName) > 0 && StringUtils.length(lastName) > 0) {
+                if (!StringUtils.isBlank(firstName) && !StringUtils.isBlank(lastName)) {
                     profileDataOperation.setPbNameFirst(firstName);
                     profileDataOperation.setPbNameLast(lastName);
                     editProfile(profileDataOperation, AppConstants.NAME);
                 } else {
-                    if (StringUtils.length(firstName) <= 0) {
+//                    if (StringUtils.length(firstName) <= 0) {
+                    if (StringUtils.isBlank(firstName)) {
                         Utils.showErrorSnackBar(this, relativeRootEditProfile, "Please add First " +
                                 "name!");
                     } else {
@@ -731,7 +732,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
 
-                    if (StringUtils.length(phoneNumber.getPhoneNumber()) > 0) {
+//                    if (StringUtils.length(phoneNumber.getPhoneNumber()) > 0) {
+                    if (!StringUtils.isBlank(phoneNumber.getPhoneNumber())) {
                         arrayListNewPhone.add(phoneNumber);
                     } else {
                         if (i != 0) {
@@ -780,7 +782,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
 
-                    if (StringUtils.length(email.getEmEmailId()) > 0) {
+//                    if (StringUtils.length(email.getEmEmailId()) > 0) {
+                    if (!StringUtils.isBlank(email.getEmEmailId())) {
                         if (android.util.Patterns.EMAIL_ADDRESS.matcher(email.getEmEmailId())
                                 .matches()) {
                             arrayListNewEmail.add(email);
@@ -841,7 +844,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
 
-                    if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
+//                    if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
+                    if (!StringUtils.isBlank(imAccount.getIMAccountDetails())) {
                         arrayListNewImAccount.add(imAccount);
                     } else {
                         if (i != 0) {
@@ -888,7 +892,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     webAddress.setWebPublic(IntegerConstants.PRIVACY_EVERYONE);
 
-                    if (StringUtils.length(webAddress.getWebAddress()) > 0) {
+//                    if (StringUtils.length(webAddress.getWebAddress()) > 0) {
+                    if (!StringUtils.isBlank(webAddress.getWebAddress())) {
                         arrayListNewWebAddress.add(webAddress);
                     } else {
                         if (i != 0) {
@@ -940,10 +945,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
                     organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
-                    if (StringUtils.length(organization.getOrgName()) > 0 ||
-                            StringUtils.length(organization.getOrgJobTitle()) > 0) {
-                        if (StringUtils.length(organization.getOrgName()) > 0) {
-                            if (StringUtils.length(organization.getOrgJobTitle()) > 0) {
+                    if (!StringUtils.isBlank(organization.getOrgName()) ||
+                            !StringUtils.isBlank(organization.getOrgJobTitle())) {
+                        if (!StringUtils.isBlank(organization.getOrgName())) {
+                            if (!StringUtils.isBlank(organization.getOrgJobTitle())) {
                                 arrayListNewOrganization.add(organization);
                             } else {
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
@@ -1021,7 +1026,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     } else {
                         event.setEventPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
-                    if (eventDate.getText().toString().length() > 0) {
+//                    if (eventDate.getText().toString().length() > 0) {
+                    if (!StringUtils.isBlank(eventDate.getText().toString())) {
                         event.setEventDateTime(Utils.convertDateFormat(eventDate.getText()
                                 .toString(), EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
                         event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString(),
@@ -1125,16 +1131,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         address.setAddPublic(IntegerConstants.PRIVACY_MY_CONTACT);
                     }
 
-                    if (StringUtils.length(address.getCountry()) > 0 || StringUtils.length
-                            (address.getState()) > 0 || StringUtils.length(address.getCity())
-                            > 0 || StringUtils.length(address.getStreet()) > 0) {
-                        if (StringUtils.length(address.getCountry()) > 0) {
-                            if (StringUtils.length(address.getState()) > 0) {
-                                if (StringUtils.length(address.getCity()) > 0) {
-                                    if (StringUtils.length(address.getStreet()) > 0) {
-                                        if (StringUtils.length(address.getGoogleLatLong().get(0))
-                                                > 0 && StringUtils.length(address
-                                                .getGoogleLatLong().get(1)) > 0) {
+                    if (!StringUtils.isBlank(address.getCountry()) || !StringUtils.isBlank(
+                            (address.getState())) || !StringUtils.isBlank(address.getCity())
+                            || !StringUtils.isBlank(address.getStreet())) {
+                        if (!StringUtils.isBlank(address.getCountry())) {
+                            if (!StringUtils.isBlank(address.getState())) {
+                                if (!StringUtils.isBlank(address.getCity())) {
+                                    if (!StringUtils.isBlank(address.getStreet())) {
+                                        if (!StringUtils.isBlank(address.getGoogleLatLong().get(0))
+                                                && !StringUtils.isBlank(address.getGoogleLatLong
+                                                ().get(1))) {
                                             if (!isAddressModified) {
                                                 arrayListNewAddress.add(address);
                                             } else {
@@ -2846,9 +2852,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 String neighborhoodName = neighborhood.getText().toString();
                 String pinCodeName = pinCode.getText().toString();
 
-                if (StringUtils.length(countryName) > 0 && StringUtils.length(stateName) > 0 &&
-                        StringUtils.length(cityName) > 0 && StringUtils.length(streetName) > 0 &&
-                        StringUtils.length(pinCodeName) > 0) {
+                if (!StringUtils.isBlank(countryName) && !StringUtils.isBlank(stateName) &&
+                        !StringUtils.isBlank(cityName) && !StringUtils.isBlank(streetName) &&
+                        !StringUtils.isBlank(pinCodeName)) {
 
                     Intent intent = new Intent(EditProfileActivity.this, MapsActivity.class);
 
@@ -3092,48 +3098,53 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
             public void onComplete(RippleView rippleView) {
-                Utils.hideSoftKeyboard(EditProfileActivity.this, inputCustomName);
-                dialog.dismiss();
-                switch ((Integer) spinnerType.getTag()) {
-                    case AppConstants.PHONE_NUMBER:
-                        spinnerPhoneAdapter.add(inputCustomName.getText().toString());
-                        spinnerPhoneAdapter.notifyDataSetChanged();
-                        spinnerType.setSelection(spinnerPhoneAdapter.getPosition(inputCustomName
-                                .getText().toString()));
-                        break;
+                if (!StringUtils.isBlank(inputCustomName.getText().toString())) {
+                    Utils.hideSoftKeyboard(EditProfileActivity.this, inputCustomName);
+                    dialog.dismiss();
+                    switch ((Integer) spinnerType.getTag()) {
+                        case AppConstants.PHONE_NUMBER:
+                            spinnerPhoneAdapter.add(inputCustomName.getText().toString());
+                            spinnerPhoneAdapter.notifyDataSetChanged();
+                            spinnerType.setSelection(spinnerPhoneAdapter.getPosition(inputCustomName
+                                    .getText().toString()));
+                            break;
 
-                    case AppConstants.EMAIL:
-                        spinnerEmailAdapter.add(inputCustomName.getText().toString());
-                        spinnerEmailAdapter.notifyDataSetChanged();
-                        spinnerType.setSelection(spinnerEmailAdapter.getPosition(inputCustomName
-                                .getText().toString()));
-                        break;
+                        case AppConstants.EMAIL:
+                            spinnerEmailAdapter.add(inputCustomName.getText().toString());
+                            spinnerEmailAdapter.notifyDataSetChanged();
+                            spinnerType.setSelection(spinnerEmailAdapter.getPosition(inputCustomName
+                                    .getText().toString()));
+                            break;
 
-                    case AppConstants.WEBSITE:
-                        spinnerWebsiteAdapter.add(inputCustomName.getText().toString());
-                        spinnerWebsiteAdapter.notifyDataSetChanged();
-                        spinnerType.setSelection(spinnerWebsiteAdapter.getPosition(inputCustomName
-                                .getText().toString()));
-                        break;
+                        case AppConstants.WEBSITE:
+                            spinnerWebsiteAdapter.add(inputCustomName.getText().toString());
+                            spinnerWebsiteAdapter.notifyDataSetChanged();
+                            spinnerType.setSelection(spinnerWebsiteAdapter.getPosition
+                                    (inputCustomName
+                                            .getText().toString()));
+                            break;
 
-                    case AppConstants.EVENT:
-                        spinnerEventAdapter.add(inputCustomName.getText().toString());
-                        spinnerEventAdapter.notifyDataSetChanged();
-                        spinnerType.setSelection(spinnerEventAdapter.getPosition(inputCustomName
-                                .getText().toString()));
-                        break;
+                        case AppConstants.EVENT:
+                            spinnerEventAdapter.add(inputCustomName.getText().toString());
+                            spinnerEventAdapter.notifyDataSetChanged();
+                            spinnerType.setSelection(spinnerEventAdapter.getPosition(inputCustomName
+                                    .getText().toString()));
+                            break;
 
-                    case AppConstants.IM_ACCOUNT:
-                        spinnerImAccountAdapter.add(inputCustomName.getText().toString());
-                        spinnerImAccountAdapter.notifyDataSetChanged();
-                        spinnerType.setSelection(spinnerImAccountAdapter.getPosition(inputCustomName
-                                .getText().toString()));
-                        break;
+                        case AppConstants.IM_ACCOUNT:
+                            spinnerImAccountAdapter.add(inputCustomName.getText().toString());
+                            spinnerImAccountAdapter.notifyDataSetChanged();
+                            spinnerType.setSelection(spinnerImAccountAdapter.getPosition
+                                    (inputCustomName
+                                            .getText().toString()));
+                            break;
+                    }
+                } else {
+                    Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
+                            getString(R.string.error_custom_type));
                 }
             }
         });
-
-
         dialog.show();
     }
 
@@ -3433,8 +3444,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     editProfileObject, null, WsResponseObject.class, WsConstants
                     .REQ_PROFILE_UPDATE + ":" + type, getResources().getString(R.string
-                    .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
-                    .REQ_PROFILE_UPDATE);
+                    .msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants
+                            .REQ_PROFILE_UPDATE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEditProfile, getResources()
                     .getString(R.string.msg_no_network));

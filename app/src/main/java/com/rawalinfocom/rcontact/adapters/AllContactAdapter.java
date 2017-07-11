@@ -400,6 +400,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.textCloudContactName.setVisibility(View.VISIBLE);
             if (contactDisplayName.equalsIgnoreCase(profileData.getTempRcpName())) {
                 holder.textCloudContactName.setVisibility(View.GONE);
+                holder.textCloudContactName.setText("");
                 showPineGreen = true;
             } else {
                 holder.textCloudContactName.setVisibility(View.VISIBLE);
@@ -409,8 +410,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                     Glide.with(activity)
                             .load(thumbnailUrl)
-                            .placeholder(R.drawable.rcontacticon)
-                            .error(R.drawable.rcontacticon)
+                            .placeholder(R.drawable.home_screen_profile)
+                            .error(R.drawable.home_screen_profile)
                             .bitmapTransform(new CropCircleTransformation(activity))
                             .override(500, 500)
                             .into(holder.imageProfile);
@@ -459,6 +460,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.textContactName.setTextColor(colorPineGreen);
             holder.textContactNumber.setTextColor(colorPineGreen);
             holder.textCloudContactName.setVisibility(View.GONE);
+            holder.textCloudContactName.setText("");
         } else {
             if (showPineGreen) {
                 holder.textContactName.setTextColor(colorPineGreen);
