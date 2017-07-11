@@ -206,10 +206,12 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_at")));
                     String avgRating = m.get("profile_rating");
                     String totalUniqueRater = m.get("total_profile_rate_user");
-                    String toPmId = m.get("profile_rating");
+                    String toPmId = m.get("pr_to_pm_id");
 
                     TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
                     tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
 
                     notificationStateData.setCreatedAt(comment.getCrmCreatedAt());
                     notificationStateData.setUpdatedAt(comment.getCrmUpdatedAt());
