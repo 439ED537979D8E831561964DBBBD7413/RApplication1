@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact.notifications;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -400,56 +399,71 @@ public class TimelineActivity extends BaseActivity implements RippleView
         if (error == null) {
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_RATING)) {
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
-                Rating rating = wsResponseObject.getProfileRating();
+                if (wsResponseObject != null) {
+                    Rating rating = wsResponseObject.getProfileRating();
 
-                int updated = tableCommentMaster.addReply(rating.getPrId() + "", rating.getPrReply(), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
-                if (updated != 0) {
-                    if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
-                        switch (selectedRecycler) {
-                            case 0:
-                                addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
-                                break;
-                            case 1:
-                                addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
-                                break;
-                            case 2:
-                                addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
-                                break;
+                    int updated = tableCommentMaster.addReply(rating.getPrId() + "", rating.getPrReply(), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
+                    if (updated != 0) {
+                        if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
+                            switch (selectedRecycler) {
+                                case 0:
+                                    addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                                    break;
+                                case 1:
+                                    addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                                    break;
+                                case 2:
+                                    addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                                    break;
+                            }
+                            selectedRecycler = -1;
+                            selectedRecyclerItem = -1;
                         }
-                        selectedRecycler = -1;
-                        selectedRecyclerItem = -1;
+                        Utils.hideProgressDialog();
                     }
+                } else {
                     Utils.hideProgressDialog();
+                    Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
                 }
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_EVENT_COMMENT)) {
 
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
-                ArrayList<EventCommentData> eventReceiveCommentData = wsResponseObject.getEventReceiveCommentData();
-                saveCommentDataToDb(eventReceiveCommentData);
-                Utils.hideProgressDialog();
+                if (wsResponseObject != null) {
+                    ArrayList<EventCommentData> eventReceiveCommentData = wsResponseObject.getEventReceiveCommentData();
+                    saveCommentDataToDb(eventReceiveCommentData);
+                    Utils.hideProgressDialog();
+                } else {
+                    Utils.hideProgressDialog();
+                    Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                }
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_ADD_EVENT_COMMENT)) {
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
-                EventComment eventComment = wsResponseObject.getEventComment();
+                if (wsResponseObject != null) {
+                    EventComment eventComment = wsResponseObject.getEventComment();
 
-                int updated = tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
-                        Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-                if (updated != 0) {
-                    if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
-                        switch (selectedRecycler) {
-                            case 0:
-                                addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
-                                break;
-                            case 1:
-                                addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
-                                break;
-                            case 2:
-                                addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
-                                break;
+                    int updated = tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
+                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+                    if (updated != 0) {
+                        if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
+                            switch (selectedRecycler) {
+                                case 0:
+                                    addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+                                    break;
+                                case 1:
+                                    addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+                                    break;
+                                case 2:
+                                    addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+                                    break;
+                            }
+                            selectedRecycler = -1;
+                            selectedRecyclerItem = -1;
                         }
-                        selectedRecycler = -1;
-                        selectedRecyclerItem = -1;
+                        Utils.hideProgressDialog();
                     }
+                } else {
                     Utils.hideProgressDialog();
+                    Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
                 }
             }
         } else {

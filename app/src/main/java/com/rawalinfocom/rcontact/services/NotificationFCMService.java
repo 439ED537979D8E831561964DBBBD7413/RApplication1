@@ -418,8 +418,8 @@ public class NotificationFCMService extends FirebaseMessagingService {
 
     private void sendNotification(String messageBody, int type) {
         Class aClass = MainActivity.class;
-        int tabIndex = -1;
-        int subTabIndex = -1;
+        int tabIndex = 0;
+        int subTabIndex = 0;
         switch (type) {
             case AppConstants.NOTIFICATION_TYPE_TIMELINE:
                 aClass = TimelineActivity.class;
