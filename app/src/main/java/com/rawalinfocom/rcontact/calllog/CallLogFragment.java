@@ -1544,7 +1544,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             if (AppConstants.isFromReceiver) {
                                 AppConstants.isFromReceiver = false;
                                 getRecentCallLog();
-
                             }
                         }
                     }
