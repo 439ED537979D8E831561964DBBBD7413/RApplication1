@@ -25,7 +25,14 @@
         android:layout_above="@+id/linear_number"
         android:visibility="gone">
 
-        <ImageView
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycle_view_pb_contact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:visibility="visible">
+        </android.support.v7.widget.RecyclerView>
+       <!-- <ImageView
             android:id="@+id/image_profile"
             android:layout_width="45dp"
             android:layout_height="45dp"
@@ -90,7 +97,7 @@
 
             </LinearLayout>
 
-        </LinearLayout>
+        </LinearLayout>-->
 
     </RelativeLayout>
 
@@ -103,7 +110,8 @@
         android:layout_centerHorizontal="true"
         android:orientation="horizontal"
         android:padding="@dimen/padding_10dp"
-        android:visibility="visible">
+        android:visibility="visible"
+        android:clickable="true">
 
         <ImageButton
             android:id="@+id/image_button_add_to_contact"
@@ -113,7 +121,8 @@
             android:layout_weight="1"
             android:background="@drawable/circle_gray"
             android:elevation="5dp"
-            android:src="@drawable/ic_person_add_to_contact" />
+            android:src="@drawable/ic_person_add_to_contact"
+            android:clickable="true"/>
 
         <TextView
             android:id="@+id/text_add_to_contact"

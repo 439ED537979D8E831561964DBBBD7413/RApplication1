@@ -44,8 +44,6 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
         this.arrayListUserProfile = arrayListUserProfile;
         arrayListTempUserProfile = new ArrayList<>();
         arrayListCheckedPositions = new ArrayList<>();
-
-//        arrayListTempUserProfile.addAll(arrayListUserProfile);
     }
 
     @Override
@@ -73,12 +71,6 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
 
         holder.textContactNumber.setText(contactInformation);
 
-       /* if (arrayListCheckedPositions.contains(position)) {
-            holder.checkboxSelectContact.setChecked(true);
-        } else {
-            holder.checkboxSelectContact.setChecked(false);
-        }*/
-
         if (!isSelectedAll) {
             holder.checkboxSelectContact.setChecked(false);
             if (arrayListCheckedPositions.contains(position)) {
@@ -101,7 +93,7 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
                     }
                 } else {
                     if (arrayListCheckedPositions.contains((Integer) buttonView.getTag())) {
-                        arrayListCheckedPositions.remove((Integer) buttonView.getTag());
+                        arrayListCheckedPositions.remove(buttonView.getTag());
                     }
                 }
             }
