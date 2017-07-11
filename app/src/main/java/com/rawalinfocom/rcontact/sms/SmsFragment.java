@@ -5,6 +5,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -50,8 +51,10 @@ import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.listener.OnLoadMoreListener;
 import com.rawalinfocom.rcontact.model.CallLogType;
+import com.rawalinfocom.rcontact.model.Contact;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.SmsDataType;
+import com.rawalinfocom.rcontact.model.SmsMsg;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +64,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -143,7 +147,6 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     }
 
     @Override
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -273,6 +276,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         if (AppConstants.isFromReceiver) {
             AppConstants.isRecentCallFromSMSTab = true;
         }
+
+//        fetchSMSData();
+
         if (isFromSettings) {
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
                     .READ_SMS) == PackageManager.PERMISSION_GRANTED) {
@@ -452,9 +458,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 }
 
                 if (isFirstTime) {
-                    LIST_PARTITION_COUNT = 20;
+                    LIST_PARTITION_COUNT = 50;
                 } else {
-                    LIST_PARTITION_COUNT = 20;
+                    LIST_PARTITION_COUNT = 50;
                 }
                 if (tempIdsList.size() > LIST_PARTITION_COUNT) {
                     for (ArrayList<String> partition : chopped(tempIdsList, LIST_PARTITION_COUNT)) {
@@ -497,6 +503,105 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         return parts;
     }
 
+    private void fetchSMSData() {
+
+        System.out.println("RContact start --> " + System.currentTimeMillis());
+
+        ArrayList<Contact> allSms = new ArrayList<Contact>();
+        ArrayList<SmsMsg> smsMsgs = new ArrayList<SmsMsg>();
+        TreeSet<Integer> threadIds = new TreeSet<Integer>();
+
+        Uri mSmsinboxQueryUri = Uri.parse("content://sms");
+        String[] columns = new String[]{"address", "thread_id", "date",
+                "body", "type"};
+        Cursor cursor = getActivity().getContentResolver().query(
+                mSmsinboxQueryUri, columns, null, null, Telephony.Sms.DEFAULT_SORT_ORDER);
+
+        if (cursor != null && cursor.getCount() > 0) {
+
+            while (cursor.moveToNext()) {
+
+                SmsMsg smsMsg = new SmsMsg();
+
+                String address = null, displayName = null, date = null, msg = null, type = null, threadId = null;
+                String photoUri = null;
+
+                threadId = cursor.getString(cursor.getColumnIndex(columns[1]));
+
+                type = cursor.getString(cursor.getColumnIndex(columns[4]));
+
+                if (Integer.parseInt(type) == 1 || Integer.parseInt(type) == 2) {
+
+                    address = cursor.getString(cursor
+                            .getColumnIndex(columns[0]));
+
+                    if (address.length() > 0) {
+                        displayName = getContactNameFromNumber(address);
+                        photoUri = getPhotoUrlFromNumber(address);
+                    } else
+                        address = null;
+
+                    date = cursor.getString(cursor.getColumnIndex(columns[2]));
+                    msg = cursor.getString(cursor.getColumnIndex(columns[3]));
+
+                    smsMsg.setDisplayName(displayName);
+                    smsMsg.setThreadId(threadId);
+                    smsMsg.setAddress(address);
+                    smsMsg.setPhotoUri(photoUri);
+                    smsMsg.setDate(date);
+                    smsMsg.setMsg(msg);
+                    smsMsg.setType(type);
+
+                    smsMsgs.add(smsMsg);
+
+                    // Add threadId to Tree
+                    threadIds.add(Integer.parseInt(threadId));
+                }
+
+            }
+
+            cursor.close();
+
+            for (int threadId : threadIds) {
+
+                for (SmsMsg smsMsg : smsMsgs) {
+
+                    if (Integer.parseInt(smsMsg.getThreadId()) == threadId) {
+
+                        Contact con = new Contact();
+
+                        con.setContactName(smsMsg.getDisplayName());
+                        con.setContactNumber(smsMsg.getAddress());
+                        con.setContactPhotoUri(smsMsg.getPhotoUri());
+                        con.setMessage(smsMsg.getMsg());
+
+                        allSms.add(con);
+                    }
+
+                }
+
+            }
+        }
+
+        System.out.println("RContact end --> " + System.currentTimeMillis());
+
+        for (int i = 0; i < allSms.size(); i++) {
+            System.out.println("RContact allSms name/number --> " + allSms.get(i).getDisplayName()
+                    + " -- " + allSms.get(i).getContactNumber());
+            System.out.println("RContact allSms message --> " + allSms.get(i).getMessage());
+        }
+    }
+
+    public Uri getContactPhotoUri(long contactId) {
+
+        Uri photoUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,
+                contactId);
+        photoUri = Uri.withAppendedPath(photoUri,
+                ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+        return photoUri;
+
+    }
+
     private void fetchSMSDataById(ArrayList<String> listOfRowIds) {
 
         try {
@@ -509,7 +614,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                             null, Telephony.Sms._ID + " = " + uniqueCallLogId, null, order);
 
                     if (cursor != null) {
-                        if (cursor != null && cursor.getCount() > 0) {
+                        if (cursor.getCount() > 0) {
                             int number = cursor.getColumnIndexOrThrow(Telephony.Sms.ADDRESS);
                             int id = cursor.getColumnIndexOrThrow(Telephony.Sms._ID);
                             int body = cursor.getColumnIndexOrThrow(Telephony.Sms.BODY);
