@@ -204,6 +204,13 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     comment.setCrmImage(m.get("pm_profile_photo"));
                     comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_at")));
                     comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_at")));
+                    String avgRating = m.get("profile_rating");
+                    String totalUniqueRater = m.get("total_profile_rate_user");
+                    String toPmId = m.get("profile_rating");
+
+                    TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                    tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
+
                     notificationStateData.setCreatedAt(comment.getCrmCreatedAt());
                     notificationStateData.setUpdatedAt(comment.getCrmUpdatedAt());
                     notificationStateData.setNotificationType(AppConstants
