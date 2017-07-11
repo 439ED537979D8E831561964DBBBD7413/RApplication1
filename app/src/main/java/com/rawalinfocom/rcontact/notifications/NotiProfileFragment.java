@@ -387,6 +387,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
             int pmId = request.getCarPmIdFrom();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
             item.setPersonName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+            item.setPersonImage(userProfile.getPmProfileImage());
             if (listType == 0) {
 
                 item.setProfileNotiType(0);

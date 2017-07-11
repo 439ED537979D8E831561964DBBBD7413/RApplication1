@@ -228,6 +228,7 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
 
             item.setRaterName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+            item.setRaterPersonImage(userProfile.getPmProfileImage());
             item.setRating(comment.getCrmRating());
             item.setNotiTime(comment.getCrmRepliedAt());
             item.setComment(comment.getCrmComment());

@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
@@ -20,6 +22,7 @@ import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.NotiProfileItem;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
@@ -97,7 +100,18 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
         } else {
             holder.textRequestNotiTime.setText(Utils.formatDateTime(item.getNotiRequestTime(), "hh:mm a"));
         }
+        if (!TextUtils.isEmpty(item.getPersonImage())) {
+            Glide.with(activity)
+                    .load(item.getPersonImage())
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(activity.getContext()))
+                    .override(500, 500)
+                    .into(holder.imageRequester);
 
+        } else {
+            holder.imageRequester.setImageResource(R.drawable.home_screen_profile);
+        }
         holder.buttonRequestConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,7 +147,7 @@ public class NotiProfileAdapter extends RecyclerView.Adapter<NotiProfileAdapter.
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     requestObj, null, WsResponseObject.class, WsConstants
                     .REQ_PROFILE_PRIVACY_REQUEST, activity.getResources().getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_PRIVACY_REQUEST);
         } else {
             //show no net
             Toast.makeText(activity.getActivity(), activity.getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
