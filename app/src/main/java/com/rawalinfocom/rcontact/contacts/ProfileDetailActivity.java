@@ -788,8 +788,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListName, historyNumber, historyDate, isFromCallLogTab,
-                                    arrayListHistory, historyName, "", hashMapKey,
+                                    arrayListHistory, historyName, "", phoneBookId,
                                     profileThumbnail, pmId);
+                            //11/07/2017 : hashMapKey replaced with phoneBookId to solve edit option problem
                             profileMenuOptionDialog.showDialog();
 
                         } else {
@@ -3230,7 +3231,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private ArrayList callLogHistory(String number) {
         ArrayList<CallLogType> callDetails = new ArrayList<>();
         Cursor cursor = null;
-        Pattern numberPat = Pattern.compile("\\d+");
+//        Pattern numberPat = Pattern.compile("\\d+");
+        Pattern numberPat = Pattern.compile("[+][0-9]+");
         Matcher matcher1 = numberPat.matcher(number);
         if (matcher1.find()) {
             cursor = getCallHistoryDataByNumber(number);

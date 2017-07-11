@@ -276,7 +276,7 @@
     <string name="characters_left">characters left</string>
     <string name="text_character">character</string>
     <string name="please_fill_stars">Please fill appropriate stars!</string>
-    <string name="call_history_toolbar_title">Call History Details</string>
+    <string name="call_history_toolbar_title">Call History</string>
     <!-- Phone Number Type -->
     <string name="type_home">Home</string>
     <string name="type_mobile">Mobile</string>

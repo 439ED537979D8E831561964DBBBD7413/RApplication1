@@ -231,12 +231,12 @@ public class DialerActivity extends BaseActivity {
                 }
 
                 String number = s.toString();
-                if (!StringUtils.isEmpty(number) && number.length() >= 3) {
+                if (!StringUtils.isEmpty(number) && number.length() == 0) {
                     showContactDetail(number);
-                } else {
+                } /*else {
                     if (number.length() == 0)
                         showContactDetail(number);
-                }
+                }*/
                 /*if (s.length() == 11) {
                     String number = s.toString();
                     if (!TextUtils.isEmpty(number))
@@ -372,6 +372,10 @@ public class DialerActivity extends BaseActivity {
                 } else {
                     editTextNumber.setCursorVisible(false);
                 }
+
+                if(length == 0){
+                    showContactDetail(editTextNumber.getText().toString());
+                }
             }
         });
 
@@ -380,6 +384,10 @@ public class DialerActivity extends BaseActivity {
             public boolean onLongClick(View v) {
                 isCalledOnce = false;
                 editTextNumber.getText().clear();
+                int length = editTextNumber.getText().length();
+                if(length == 0){
+                    showContactDetail(editTextNumber.getText().toString());
+                }
                 return true;
             }
         });

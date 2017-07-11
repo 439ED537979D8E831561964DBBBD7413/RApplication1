@@ -661,6 +661,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         textGlobalText.setVisibility(View.VISIBLE);
                     }
                     Pattern numberPat = Pattern.compile("\\d+");
+//                    Pattern numberPat = Pattern.compile("[+][0-9]+");
                     Matcher matcher1 = numberPat.matcher(arg0);
                     if (matcher1.find()) {
                         String text = arg0.toString();
@@ -1243,6 +1244,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                         .SMSViewHolder) viewHolder).textNumber.getText()
                                         .toString());
                                 Pattern numberPat = Pattern.compile("\\d+");
+//                                Pattern numberPat = Pattern.compile("[+][0-9]+");
                                 Matcher matcher1 = numberPat.matcher(actionNumber);
                                 if (matcher1.find()) {
                                     numberToSend = actionNumber;

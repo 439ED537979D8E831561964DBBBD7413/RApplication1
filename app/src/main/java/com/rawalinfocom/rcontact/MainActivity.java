@@ -1700,6 +1700,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         Cursor cursor;
 
         Pattern numberPat = Pattern.compile("\\d+");
+//        Pattern numberPat = Pattern.compile("[+][0-9]+");
         Matcher matcher1 = numberPat.matcher(number);
         if (matcher1.find()) {
             cursor = getCallHistoryDataByNumber(number);

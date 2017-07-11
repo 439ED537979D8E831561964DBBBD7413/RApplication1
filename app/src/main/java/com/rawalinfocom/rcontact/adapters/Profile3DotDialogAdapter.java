@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact.adapters;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -105,12 +106,9 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 } else if (value.equalsIgnoreCase(context.getString(R.string.edit))) {
                     try {
                         Intent intent = new Intent(Intent.ACTION_EDIT);
-                        Uri lookupUri = Uri.withAppendedPath(ContactsContract.Contacts
-                                .CONTENT_LOOKUP_URI, key);
-                        Uri res = ContactsContract.Contacts.lookupContact(context
-                                        .getContentResolver(),
-                                lookupUri);
-                        intent.setData(res);
+                        Uri contactUri = ContentUris.withAppendedId(ContactsContract.RawContacts
+                                .CONTENT_URI, Long.parseLong(key));
+                        intent.setData(contactUri);
                         context.startActivity(intent);
                         ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
                     } catch (Exception e) {
