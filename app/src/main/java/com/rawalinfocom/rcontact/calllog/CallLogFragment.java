@@ -616,12 +616,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                             if (AppConstants.isFirstTime()) {
                                 AppConstants.setIsFirstTime(false);
-                                fetchCallLogs();
+                                new GetCallLogs().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                             } else {
                                 if (callLogTypeArrayList.size() > 0) {
                                     makeSimpleData();
                                 } else {
-                                    fetchCallLogs();
+                                    new GetCallLogs().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                                 }
                             }
                         }
@@ -671,12 +671,34 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         return callLogsListbyChunck;
     }
 
+    private class GetCallLogs extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            callLogTypeArrayList.clear();
+            simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(), callLogTypeArrayList);
+            recyclerCallLogs.setAdapter(simpleCallLogListAdapter);
+        }
+
+        protected Void doInBackground(Void... urls) {
+            fetchCallLogs();
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    makeSimpleData();
+                    nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            });
+        }
+    }
+
     private void fetchCallLogs() {
-
-        callLogTypeArrayList.clear();
-
-        simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(), callLogTypeArrayList);
-        recyclerCallLogs.setAdapter(simpleCallLogListAdapter);
 
         try {
 
@@ -701,8 +723,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                     String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
 
-//                    if (StringUtils.isEmpty(userName))
-//                        userName = getNameFromNumber(number);
+                    if (StringUtils.isEmpty(userName))
+                        userName = getNameFromNumber(number);
 
                     if (!TextUtils.isEmpty(userName))
                         callLogType.setName(userName);
@@ -725,13 +747,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 cursor.close();
             }
 
-            makeSimpleData();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void makeSimpleData() {
