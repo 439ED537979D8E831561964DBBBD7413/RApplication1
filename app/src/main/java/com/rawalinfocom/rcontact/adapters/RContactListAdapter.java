@@ -26,6 +26,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -96,10 +97,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         switch (holder.getItemViewType()) {
-            case HEADER:
-                ContactHeaderViewHolder contactHeaderViewHolder = (ContactHeaderViewHolder) holder;
-                configureHeaderViewHolder(contactHeaderViewHolder, position);
-                break;
             case CONTACT:
                 RContactViewHolder contactViewHolder = (RContactViewHolder) holder;
                 configureRContactViewHolder(contactViewHolder, position);
@@ -117,8 +114,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return FOOTER;
         } else if (arrayListUserProfile.get(position) instanceof UserProfile) {
             return CONTACT;
-        } else if (arrayListUserProfile.get(position) instanceof String) {
-            return HEADER;
         }
         return -1;
     }
@@ -260,11 +255,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         .anim.exit);
             }
         });
-    }
-
-    private void configureHeaderViewHolder(ContactHeaderViewHolder holder, int position) {
-        String letter = (String) arrayListUserProfile.get(position);
-        holder.textHeader.setText(letter);
     }
 
     private void configureFooterViewHolder(ContactFooterViewHolder holder, int position) {

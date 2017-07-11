@@ -491,12 +491,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (editProfileResponse != null && StringUtils.equalsIgnoreCase
                         (editProfileResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-
                     Utils.hideProgressDialog();
 
                     ProfileDataOperation profileDetail = editProfileResponse.getProfileDetail();
                     Utils.setObjectPreference(EditProfileActivity.this, AppConstants
                             .PREF_REGS_USER_OBJECT, profileDetail);
+
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail.getVerifiedMobileNumber());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, profileDetail.getTotalProfileRateUser());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, profileDetail.getProfileRating());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO, profileDetail.getPbProfilePhoto());
 
                     storeProfileDataToDb(profileDetail);
 
@@ -672,6 +677,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         boolean isValid;
 
         switch (view.getId()) {
+
 
             //<editor-fold desc="button_name_update">
             case R.id.button_name_update:

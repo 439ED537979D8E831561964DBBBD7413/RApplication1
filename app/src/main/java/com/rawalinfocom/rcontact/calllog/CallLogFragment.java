@@ -700,7 +700,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     callLogType.setNumber(number);
 
                     String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
-//
+
 //                    if (StringUtils.isEmpty(userName))
 //                        userName = getNameFromNumber(number);
 
@@ -824,7 +824,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         if (callLogTypeArrayList.size() > 0) {
             for (int i = 0; i < callLogTypeArrayList.size(); i++) {
                 CallLogType callLogType = callLogTypeArrayList.get(i);
+
                 String number = callLogType.getNumber();
+
+                if (!number.startsWith("+91")) {
+                    number = "+91" + number;
+                }
+
                 if (!StringUtils.isEmpty(number)) {
 
                     ProfileMobileMapping profileMobileMapping =
@@ -834,6 +840,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         if (!StringUtils.isEmpty(cloudPmId)) {
                             UserProfile userProfile = tableProfileMaster
                                     .getRCPProfileFromPmId(Integer.parseInt(cloudPmId));
+                            callLogType.setRcpUser(true);
                             String firstName = userProfile.getPmFirstName();
                             String lastName = userProfile.getPmLastName();
                             String rcpId = userProfile.getPmRcpId();
@@ -846,8 +853,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                 callLogType.setRcpId(rcpId);
                             if (!StringUtils.isEmpty(imagePath))
                                 callLogType.setProfileImage(imagePath);
-
-                            callLogType.setRcpUser(true);
 
                             callLogTypeArrayList.set(i, callLogType);
                         }
