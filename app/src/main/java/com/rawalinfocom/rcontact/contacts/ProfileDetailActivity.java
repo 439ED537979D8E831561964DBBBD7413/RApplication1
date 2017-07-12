@@ -2915,7 +2915,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             .toString());
                 } else {
                     actionNumber = StringUtils.defaultString(((ProfileDetailAdapter
-                            .ProfileDetailViewHolder) viewHolder).textMain2.getText()
+                            .ProfileDetailViewHolder) viewHolder).textMain1.getText()
                             .toString());
                 }
                 if (direction == ItemTouchHelper.LEFT) {

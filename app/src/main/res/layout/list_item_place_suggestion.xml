@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:padding="@dimen/margin_small"
-        android:text="@string/im_map_marker"
+        android:text="@string/im_icon_map_marker"
         android:textColor="@color/colorDarkGray"
         android:textSize="25sp" />
 
