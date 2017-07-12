@@ -558,5 +558,6 @@
 
     <!-- Registration -->
     <string name="str_mobile_number">Mobile Number</string>
+    <string name="error_custom_type">Please add valid custom type</string>
 
 </resources>
