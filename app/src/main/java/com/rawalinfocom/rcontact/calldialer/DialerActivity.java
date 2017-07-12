@@ -231,7 +231,7 @@ public class DialerActivity extends BaseActivity {
                 }
 
                 String number = s.toString();
-                if (!StringUtils.isEmpty(number) && number.length() == 0) {
+                if (number.length()>0) {
                     showContactDetail(number);
                 } /*else {
                     if (number.length() == 0)
