@@ -183,6 +183,12 @@ public class MainActivity extends BaseActivity implements NavigationView
         registerLocalBroadCastReceiver();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setNavigationHeaderData();
+    }
+
     @TargetApi(Build.VERSION_CODES.M)
     private void checkPermissionToExecute() {
         boolean contacts = ContextCompat.checkSelfPermission(MainActivity.this,
@@ -935,18 +941,15 @@ public class MainActivity extends BaseActivity implements NavigationView
         RatingBar rating_user = (RatingBar) headerView.findViewById(R.id.rating_user);
         ImageView userProfileImage = (ImageView) headerView.findViewById(R.id.userProfileImage);
 
-        TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
-        final UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
-
         TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
         String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
 
-        text_user_name.setText(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+        text_user_name.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
         text_number.setText(number);
-        text_rating_count.setText(userProfile.getTotalProfileRateUser());
-        rating_user.setRating(Float.parseFloat(userProfile.getProfileRating()));
+        text_rating_count.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, ""));
+        rating_user.setRating(Float.parseFloat(Utils.getStringPreference(this, AppConstants.PREF_USER_RATING, "")));
 
-        final String thumbnailUrl = userProfile.getPmProfileImage();
+        final String thumbnailUrl = Utils.getStringPreference(this, AppConstants.PREF_USER_PHOTO, "");
         if (!TextUtils.isEmpty(thumbnailUrl)) {
             Glide.with(MainActivity.this)
                     .load(thumbnailUrl)
@@ -966,13 +969,14 @@ public class MainActivity extends BaseActivity implements NavigationView
                 Bundle bundle = new Bundle();
                 bundle.putString(AppConstants.EXTRA_PM_ID, getUserPmId());
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "");
-                bundle.putString(AppConstants.EXTRA_CONTACT_NAME, userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+                bundle.putString(AppConstants.EXTRA_CONTACT_NAME, Utils.getStringPreference(MainActivity.this, AppConstants.PREF_USER_NAME, ""));
                 bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
                 bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, 1);
                 startActivityIntent(MainActivity.this, ProfileDetailActivity.class, bundle);
             }
         });
 
+//        Utils.setBooleanPreference(this, AppConstants.PREF_USER_PROFILE_UPDATE, false);
     }
 
     private void openDialer() {
@@ -1694,6 +1698,7 @@ public class MainActivity extends BaseActivity implements NavigationView
         Cursor cursor;
 
         Pattern numberPat = Pattern.compile("\\d+");
+//        Pattern numberPat = Pattern.compile("[+][0-9]+");
         Matcher matcher1 = numberPat.matcher(number);
         if (matcher1.find()) {
             cursor = getCallHistoryDataByNumber(number);

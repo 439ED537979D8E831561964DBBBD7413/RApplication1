@@ -479,11 +479,6 @@ public class TableProfileMaster {
                         UserProfile userProfile = new UserProfile();
                         userProfile.setPmRawId(cursor.getString(cursor.getColumnIndex
                                 (COLUMN_PM_RAW_ID)));
-                   /* userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
-                            (COLUMN_PM_FIRST_NAME)));
-                    userProfile.setPmLastName(cursor.getString(cursor.getColumnIndex
-                            (COLUMN_PM_LAST_NAME)));*/
-                        // Adding user profile to list
                         if (userProfile.getPmRawId().contains(",")) {
                             String[] multipleRawIds = userProfile.getPmRawId().split(",");
                             Collections.addAll(arrayListRawId, multipleRawIds);

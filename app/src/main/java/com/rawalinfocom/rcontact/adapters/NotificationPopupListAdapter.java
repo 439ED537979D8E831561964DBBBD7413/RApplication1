@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 
 import java.util.ArrayList;
 
@@ -54,6 +57,42 @@ public class NotificationPopupListAdapter extends RecyclerView.Adapter<Notificat
             holder.textUserComment.setVisibility(View.GONE);
             holder.textUserCommentTime.setVisibility(View.GONE);
             holder.imageUser.setVisibility(View.GONE);
+        }
+        if (!TextUtils.isEmpty(stringArrayList.get(6))) {
+            Glide.with(context)
+                    .load(stringArrayList.get(6))
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .override(500, 500)
+                    .into(holder.imageWisher);
+
+        } else {
+            holder.imageWisher.setImageResource(R.drawable.home_screen_profile);
+        }
+        if (!TextUtils.isEmpty(stringArrayList.get(7))) {
+            Glide.with(context)
+                    .load(stringArrayList.get(7))
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .override(500, 500)
+                    .into(holder.imageWisherSmall);
+
+        } else {
+            holder.imageWisherSmall.setImageResource(R.drawable.home_screen_profile);
+        }
+        if (!TextUtils.isEmpty(stringArrayList.get(6))) {
+            Glide.with(context)
+                    .load(stringArrayList.get(6))
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .override(500, 500)
+                    .into(holder.imageUser);
+
+        } else {
+            holder.imageUser.setImageResource(R.drawable.home_screen_profile);
         }
     }
 

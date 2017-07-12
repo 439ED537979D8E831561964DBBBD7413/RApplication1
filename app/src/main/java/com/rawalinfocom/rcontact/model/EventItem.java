@@ -10,6 +10,7 @@ public class EventItem {
     private String personName;
     private String personFirstName;
     private String personLastName;
+    private String personImage;
     private String eventName;
     private String commentTime;
     private String eventDetail;
@@ -114,5 +115,13 @@ public class EventItem {
 
     public void setEventCommentPending(boolean eventCommentPending) {
         this.eventCommentPending = eventCommentPending;
+    }
+
+    public String getPersonImage() {
+        return personImage;
+    }
+
+    public void setPersonImage(String personImage) {
+        this.personImage = personImage;
     }
 }

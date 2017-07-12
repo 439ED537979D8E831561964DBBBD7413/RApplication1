@@ -31,6 +31,7 @@ public class UserProfile implements Serializable {
 
     private String emailId;
     private String mobileNumber;
+//    private String strEmailMobile;
     private String profileRating;
     private String totalProfileRateUser;
     private String pmJoiningDate;
@@ -101,6 +102,14 @@ public class UserProfile implements Serializable {
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
+
+//    public String getStrEmailMobile() {
+//        return StringUtils.defaultString(strEmailMobile);
+//    }
+//
+//    public void setStrEmailMobile(String strEmailMobile) {
+//        this.strEmailMobile = strEmailMobile;
+//    }
 
     @JsonProperty("profile_image")
     public String getPmProfileImage() {

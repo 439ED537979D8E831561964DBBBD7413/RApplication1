@@ -19,6 +19,8 @@ public class TimelineItem {
     private String crmType;
     private String crmRating;
     private String evmRecordIndexId;
+    private String wisherProfileImage;
+    private String userprofileImage;
 
     public String getCrmRating() {
         return crmRating;
@@ -114,5 +116,21 @@ public class TimelineItem {
 
     public void setUserCommentTime(String userCommentTime) {
         this.userCommentTime = userCommentTime;
+    }
+
+    public String getWisherProfileImage() {
+        return wisherProfileImage;
+    }
+
+    public void setWisherProfileImage(String wisherProfileImage) {
+        this.wisherProfileImage = wisherProfileImage;
+    }
+
+    public String getUserprofileImage() {
+        return userprofileImage;
+    }
+
+    public void setUserprofileImage(String userprofileImage) {
+        this.userprofileImage = userprofileImage;
     }
 }

@@ -13,6 +13,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetDialog;
@@ -41,6 +42,7 @@ import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.AllContactsListFragment;
@@ -194,7 +196,9 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemViewType(int position) {
-        if (position == arrayListUserContact.size() && !(activity instanceof SearchActivity)) {
+//        if (position == arrayListUserContact.size() && fragment!=null) {
+        if (position == arrayListUserContact.size() && !(activity instanceof SearchActivity)
+                && !(activity instanceof DialerActivity)) {
             return FOOTER;
         } else if (arrayListUserContact.get(position) instanceof ProfileData) {
             return CONTACT;
@@ -206,7 +210,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        if (!(activity instanceof SearchActivity)) {
+//        if(fragment!=null){
+        if (!(activity instanceof SearchActivity) && !(activity instanceof DialerActivity)) {
             return (arrayListUserContact.size() + 1);
         } else {
             return arrayListUserContact.size();
@@ -492,7 +497,14 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 activity.startActivity(intent);
                                 activity.overridePendingTransition(R.anim.enter, R
                                         .anim.exit);
+                            }else if(activity instanceof DialerActivity){
+                                Intent intent = new Intent(activity, ProfileDetailActivity.class);
+                                intent.putExtras(bundle);
+                                activity.startActivity(intent);
+                                activity.overridePendingTransition(R.anim.enter, R
+                                        .anim.exit);
                             }
+
                         }
                     }
                 } else {
@@ -500,6 +512,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             }
         });
+
         //</editor-fold>
 
     }

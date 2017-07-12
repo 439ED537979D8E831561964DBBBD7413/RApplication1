@@ -5,6 +5,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +14,10 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.NotiRatingItem;
 import com.rawalinfocom.rcontact.notifications.RatingHistoryPopupDialog;
 
@@ -111,13 +114,30 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
         if (item.getHistoryType() == 0) {
             holder.historyPlaceHolder.setText(context.getResources().getString(R.string.text_you_rated));
             holder.textRatingDetailInfo.setText(String.format("%s%s", context.getString(R.string.str_rating_comment_hint_2)
-                    , item.getReceiverPersonName()));
+                    , " " + item.getReceiverPersonName()));
         } else {
             holder.historyPlaceHolder.setText(context.getResources().getString(R.string.text_rated_you));
             holder.textRatingDetailInfo.setText(String.format("%s%s", context.getString(R.string.str_rating_comment_hint_3)
-                    , item.getRaterName()));
+                    , " " + item.getRaterName()));
         }
+        String imageurl = "";
+        if (item.getHistoryType() == 0) {
+            imageurl = item.getReceiverPersonImage();
+        } else {
+            imageurl = item.getRaterPersonImage();
+        }
+        if (!TextUtils.isEmpty(imageurl)) {
+            Glide.with(context)
+                    .load(imageurl)
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .override(500, 500)
+                    .into(holder.imageRater);
 
+        } else {
+            holder.imageRater.setImageResource(R.drawable.home_screen_profile);
+        }
         holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,6 +148,8 @@ public class NotiRatingHistoryAdapter extends RecyclerView.Adapter<NotiRatingHis
                 arrayListComments.add(Utils.formatDateTime(item.getCommentTime(), "dd MMM, hh:mm a"));
                 arrayListComments.add(item.getReply());
                 arrayListComments.add(Utils.formatDateTime(item.getReplyTime(), "dd MMM, hh:mm a"));
+                arrayListComments.add(item.getRaterPersonImage());
+                arrayListComments.add(item.getReceiverPersonImage());
 
                 notificationPopupDialog = new RatingHistoryPopupDialog(context, arrayListComments, true);
                 if (item.getHistoryType() == 0) {

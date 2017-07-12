@@ -1211,13 +1211,18 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase("[Unknown]")*/) {
 //            textToolbarTitle.setText(contactName);
             //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
-            textToolbarTitle.setText(getString(R.string.str_profile_deails));
+//            textToolbarTitle.setText(getString(R.string.str_profile_deails));
+            // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit Sir's suggestion
+            textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
+
         } else {
             if (!TextUtils.isEmpty(profileContactNumber)) {
 //                textToolbarTitle.setText(profileContactNumber);
                 //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
                 // suggestion
-                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+//                textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
+                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avi+jit Sir's suggestion
+                textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
             }
 
         }

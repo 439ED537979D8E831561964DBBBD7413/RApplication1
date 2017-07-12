@@ -9,14 +9,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -33,23 +42,34 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.RContactApplication;
+import com.rawalinfocom.rcontact.SearchActivity;
+import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
+import com.rawalinfocom.rcontact.adapters.SimpleCallLogListAdapter;
+import com.rawalinfocom.rcontact.adapters.SmsListAdapter;
 import com.rawalinfocom.rcontact.calldialer.transition.ScaleTransition;
 import com.rawalinfocom.rcontact.calllog.TelephonyInfo;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+import com.rawalinfocom.rcontact.model.ProfileData;
+import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
+import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,7 +77,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Aniruddh on 08/04/2017
  */
-public class DialerActivity extends Activity {
+public class DialerActivity extends BaseActivity {
 
     View mCallButton;
     @BindView(R.id.num_pad_bg_to_animate)
@@ -136,7 +156,7 @@ public class DialerActivity extends Activity {
     boolean isCalledOnce = false;
 
     Animation slideDownAnimation;
-    @BindView(R.id.image_profile)
+    /*@BindView(R.id.image_profile)
     ImageView imageProfile;
     @BindView(R.id.text_temp_number)
     TextView textTempNumber;
@@ -147,13 +167,20 @@ public class DialerActivity extends Activity {
     @BindView(R.id.text_contact_number)
     TextView textContactNumber;
     @BindView(R.id.linear_content_main)
-    LinearLayout linearContentMain;
+    LinearLayout linearContentMain;*/
+   /* @BindView(R.id.relative_contact)
+    RelativeLayout relativeContact;*/
+    @BindView(R.id.recycle_view_pb_contact)
+    RecyclerView recycleViewPbContact;
     @BindView(R.id.relative_contact)
     RelativeLayout relativeContact;
 
     String numberToCall;
     private String[] requiredPermissions = {Manifest.permission.READ_CALL_LOG};
     MaterialDialog permissionConfirmationDialog;
+    ArrayList<Object> objectArrayListContact;
+    RContactApplication rContactApplication;
+    AllContactAdapter allContactAdapter;
 
 
     @Override
@@ -161,6 +188,17 @@ public class DialerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialer);
         ButterKnife.bind(this);
+
+        objectArrayListContact = new ArrayList<>();
+        rContactApplication = (RContactApplication) getApplicationContext();
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recycleViewPbContact.setLayoutManager(linearLayoutManager);
+        if (rContactApplication.getArrayListAllPhoneBookContacts() != null)
+            objectArrayListContact.addAll(rContactApplication.getArrayListAllPhoneBookContacts());
+
+        if (objectArrayListContact != null && objectArrayListContact.size() > 0) {
+            allContactAdapter = new AllContactAdapter(DialerActivity.this, objectArrayListContact);
+        }
 
         slideDownAnimation = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.slide_down_animation);
@@ -182,7 +220,24 @@ public class DialerActivity extends Activity {
             public void afterTextChanged(Editable s) {
 
                 // TODO Auto-generated method stub
-                if (s.length() == 11) {
+
+                if (s.length() > 11) {
+                    editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_14sp));
+                } else if (s.length() < 11) {
+                    editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_25sp));
+                    if (allContactAdapter == null) {
+                        allContactAdapter = new AllContactAdapter(DialerActivity.this, objectArrayListContact);
+                    }
+                }
+
+                String number = s.toString();
+                if (!StringUtils.isEmpty(number) && number.length() == 0) {
+                    showContactDetail(number);
+                } /*else {
+                    if (number.length() == 0)
+                        showContactDetail(number);
+                }*/
+                /*if (s.length() == 11) {
                     String number = s.toString();
                     if (!TextUtils.isEmpty(number))
                         showContactDetail(number);
@@ -196,11 +251,7 @@ public class DialerActivity extends Activity {
                         showContactDetail(number);
                 } else if (s.length() == 0) {
                     showContactDetail(s.toString());
-                } else if (s.length() > 11) {
-                    editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_14sp));
-                } else if (s.length() < 11) {
-                    editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_25sp));
-                }/*else if (s.length() >= 0) {
+                }*/ /*else if (s.length() >= 0) {
                     showContactDetail(s.toString());
                 }*/
 
@@ -211,6 +262,14 @@ public class DialerActivity extends Activity {
             getWindow().setEnterTransition(makeEnterTransition());
             getWindow().setReturnTransition(makeReturnTransition());
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context
+                .INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editTextNumber.getWindowToken(), 0);
     }
 
     @SuppressLint("NewApi")
@@ -279,6 +338,14 @@ public class DialerActivity extends Activity {
             }
         });
 
+        imageButtonAddToContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String numberToSave = editTextNumber.getText().toString();
+                Utils.addToContact(DialerActivity.this, numberToSave);
+            }
+        });
+
         imageBtnCloseDrawer.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
             @Override
@@ -305,6 +372,10 @@ public class DialerActivity extends Activity {
                 } else {
                     editTextNumber.setCursorVisible(false);
                 }
+
+                if(length == 0){
+                    showContactDetail(editTextNumber.getText().toString());
+                }
             }
         });
 
@@ -313,6 +384,10 @@ public class DialerActivity extends Activity {
             public boolean onLongClick(View v) {
                 isCalledOnce = false;
                 editTextNumber.getText().clear();
+                int length = editTextNumber.getText().length();
+                if(length == 0){
+                    showContactDetail(editTextNumber.getText().toString());
+                }
                 return true;
             }
         });
@@ -588,11 +663,76 @@ public class DialerActivity extends Activity {
 
     private void showContactDetail(final String number) {
         if (!TextUtils.isEmpty(number)) {
-            String name = getNameFromNumber(number);
+            if (allContactAdapter != null) {
+                allContactAdapter.filter(number);
+
+                if (allContactAdapter.getSearchCount() > 0) {
+                    relativeContact.setVisibility(View.VISIBLE);
+                    linearAddToContact.setVisibility(View.GONE);
+                    recycleViewPbContact.setAdapter(allContactAdapter);
+                } else {
+                    String name = getNameFromNumber(number);
+                    if (!TextUtils.isEmpty(name)) {
+                        relativeContact.setVisibility(View.VISIBLE);
+                        linearAddToContact.setVisibility(View.GONE);
+                        ProfileData profileData = new ProfileData();
+                        String imageUrl = getPhotoUrlFromNumber(number);
+                        if (!StringUtils.isEmpty(imageUrl))
+                            profileData.setProfileUrl(imageUrl);
+                        else
+                            profileData.setProfileUrl("");
+
+                        profileData.setName(name);
+                        profileData.setTempNumber(number);
+
+                        TableProfileMobileMapping tableProfileMobileMapping =
+                                new TableProfileMobileMapping(getDatabaseHandler());
+                        ProfileMobileMapping profileMobileMapping =
+                                tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(
+                                        Utils.getFormattedNumber(this,number));
+
+                        if (profileMobileMapping != null) {
+                            String cloudPmId = profileMobileMapping.getMpmCloudPmId();
+                            // To do
+                            // Pass this cloudId to fetch FirstName and Last Name from
+                            // ProfileMasterTable
+                            if (!StringUtils.isEmpty(cloudPmId)) {
+                                TableProfileMaster tableProfileMaster = new
+                                        TableProfileMaster(getDatabaseHandler());
+                                UserProfile userProfile = tableProfileMaster
+                                        .getProfileFromCloudPmId(Integer.parseInt(cloudPmId));
+                                String firstName = userProfile.getPmFirstName();
+                                String lastName = userProfile.getPmLastName();
+                                String rcpId = userProfile.getPmRcpId();
+                                String imagePath = userProfile.getPmProfileImage();
+                                profileData.setTempIsRcp(true);
+                                profileData.setTempRcpName(firstName + " " + lastName);
+                                profileData.setTempRcpId(rcpId);
+
+                            }
+                        }
+//                            objectArrayListContact.add(profileData);
+                        ArrayList<Object> tempContact = new ArrayList<>();
+                        tempContact.add(profileData);
+                        if (allContactAdapter != null) {
+                            allContactAdapter = new AllContactAdapter(DialerActivity.this, tempContact);
+                            recycleViewPbContact.setAdapter(allContactAdapter);
+                            allContactAdapter = null;
+
+                        }
+                    } else {
+                        relativeContact.setVisibility(View.GONE);
+                        linearAddToContact.setVisibility(View.VISIBLE);
+                    }
+
+                }
+            }
+
+            /*String name = getNameFromNumber(number);
             if (!TextUtils.isEmpty(name)) {
                 relativeContact.setVisibility(View.VISIBLE);
-                linearAddToContact.setVisibility(View.GONE);
-                textContactName.setText(name);
+                linearAddToContact.setVisibility(View.GONE);*/
+               /* textContactName.setText(name);
                 textContactNumber.setText(number);
                 String imageUrl = getPhotoUrlFromNumber(number);
                 if (!TextUtils.isEmpty(imageUrl)) {
@@ -618,17 +758,17 @@ public class DialerActivity extends Activity {
                             showCallConfirmationDialog(number);
                         }
                     }
-                });
+                });*/
 
-            } else {
+            /*} else {
                 relativeContact.setVisibility(View.GONE);
                 linearAddToContact.setVisibility(View.VISIBLE);
-            }
+            }*/
         } else {
             relativeContact.setVisibility(View.GONE);
             linearAddToContact.setVisibility(View.VISIBLE);
         }
-
+        initSwipe();
     }
 
 
@@ -700,11 +840,16 @@ public class DialerActivity extends Activity {
 
         final String finalNumber;
 
-        if (!number.startsWith("+91")) {
-            finalNumber = "+91" + number;
-        } else {
+        if (number.startsWith("*")) {
             finalNumber = number;
+        } else {
+            if (!number.startsWith("+91")) {
+                finalNumber = "+91" + number;
+            } else {
+                finalNumber = number;
+            }
         }
+
 
 //        final String formattedNumber = Utils.getFormattedNumber(DialerActivity.this, number);
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
@@ -820,5 +965,100 @@ public class DialerActivity extends Activity {
             e.printStackTrace();
         }
         return contactName;
+    }
+
+    private void initSwipe() {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
+                .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                String actionNumber = StringUtils.defaultString(((AllContactAdapter
+                        .AllContactViewHolder) viewHolder).textContactNumber
+                        .getText().toString());
+                if (direction == ItemTouchHelper.LEFT) {
+                    /* SMS */
+                    Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                    smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                    smsIntent.setType("vnd.android-dir/mms-sms");
+                    smsIntent.setData(Uri.parse("sms:" + actionNumber));
+                    startActivity(smsIntent);
+
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS,
+                                actionNumber);
+                    } else {
+                        showCallConfirmationDialog(actionNumber);
+                    }
+
+//                    showCallConfirmationDialog(actionNumber);
+                }
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        allContactAdapter.notifyDataSetChanged();
+                    }
+                }, 1000);
+            }
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                /* Disable swiping in headers */
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder
+                    viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                Bitmap icon;
+                Paint p = new Paint();
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+                    View itemView = viewHolder.itemView;
+                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                    float width = height / 3;
+
+                    if (dX > 0) {
+                        p.setColor(ContextCompat.getColor(DialerActivity.this, R.color
+                                .darkModerateLimeGreen));
+                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView
+                                .getTop(), dX, (float) itemView.getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable
+                                .ic_action_call);
+                        RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
+                                itemView.getTop() + width, (float) itemView.getLeft() + 2 *
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    } else {
+                        p.setColor(ContextCompat.getColor(DialerActivity.this, R.color.brightOrange));
+                        RectF background = new RectF((float) itemView.getRight() + dX, (float)
+                                itemView.getTop(), (float) itemView.getRight(), (float) itemView
+                                .getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable
+                                .ic_action_sms);
+                        RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width,
+                                (float) itemView.getTop() + width, (float) itemView.getRight() -
+                                width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState,
+                        isCurrentlyActive);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recycleViewPbContact);
     }
 }

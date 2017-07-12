@@ -204,6 +204,15 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     comment.setCrmImage(m.get("pm_profile_photo"));
                     comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_at")));
                     comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_at")));
+                    String avgRating = m.get("profile_rating");
+                    String totalUniqueRater = m.get("total_profile_rate_user");
+                    String toPmId = m.get("pr_to_pm_id");
+
+                    TableProfileMaster tableProfileMaster = new TableProfileMaster(databaseHandler);
+                    tableProfileMaster.updateUserProfileRating(toPmId, avgRating, totalUniqueRater);
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, totalUniqueRater);
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, avgRating);
+
                     notificationStateData.setCreatedAt(comment.getCrmCreatedAt());
                     notificationStateData.setUpdatedAt(comment.getCrmUpdatedAt());
                     notificationStateData.setNotificationType(AppConstants
@@ -418,8 +427,8 @@ public class NotificationFCMService extends FirebaseMessagingService {
 
     private void sendNotification(String messageBody, int type) {
         Class aClass = MainActivity.class;
-        int tabIndex = -1;
-        int subTabIndex = -1;
+        int tabIndex = 0;
+        int subTabIndex = 0;
         switch (type) {
             case AppConstants.NOTIFICATION_TYPE_TIMELINE:
                 aClass = TimelineActivity.class;

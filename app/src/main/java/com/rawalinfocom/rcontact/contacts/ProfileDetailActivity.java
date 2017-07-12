@@ -787,8 +787,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListName, historyNumber, historyDate, isFromCallLogTab,
-                                    arrayListHistory, historyName, "", hashMapKey,
+                                    arrayListHistory, historyName, "", phoneBookId,
                                     profileThumbnail, pmId);
+                            //11/07/2017 : hashMapKey replaced with phoneBookId to solve edit option problem
                             profileMenuOptionDialog.showDialog();
 
                         } else {
@@ -2107,12 +2108,18 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                textToolbarTitle.setText(historyName);
                 //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
                 // suggestion
-                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+//                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+
+                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit Sir's suggestion
+                textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
+
             } else {
 //                textToolbarTitle.setText(historyName);
                 //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
                 // suggestion
-                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+//                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit Sir's suggestion
+                textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
             }
             textFullScreenText.setTypeface(Utils.typefaceBold(this));
             if (isCallLogRcpUser) {
@@ -2147,7 +2154,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //                textToolbarTitle.setText(historyNumber);
                 //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
                 // suggestion
-                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+//                textToolbarTitle.setText(getString(R.string.str_profile_deails));
+                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit Sir's suggestion
+                textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
             }
 
         }
@@ -3223,7 +3232,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private ArrayList callLogHistory(String number) {
         ArrayList<CallLogType> callDetails = new ArrayList<>();
         Cursor cursor = null;
-        Pattern numberPat = Pattern.compile("\\d+");
+//        Pattern numberPat = Pattern.compile("\\d+");
+        Pattern numberPat = Pattern.compile("[+][0-9]+");
         Matcher matcher1 = numberPat.matcher(number);
         if (matcher1.find()) {
             cursor = getCallHistoryDataByNumber(number);

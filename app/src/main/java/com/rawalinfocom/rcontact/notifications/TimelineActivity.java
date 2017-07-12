@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact.notifications;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -332,10 +331,13 @@ public class TimelineActivity extends BaseActivity implements RippleView
             int pmId = comment.getRcProfileMasterPmId();
             UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(pmId);
             String name = userProfile.getPmFirstName() + " " + userProfile.getPmLastName();
-            if (name.trim().length() > 0)
+            if (name.trim().length() > 0) {
                 item.setWisherName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
-            else
+                item.setWisherProfileImage(userProfile.getPmProfileImage());
+            } else {
                 item.setWisherName("+" + comment.getCrmProfileDetails());
+            }
+            final UserProfile ownProfile = tableProfileMaster.getProfileFromCloudPmId(Integer.parseInt(getUserPmId()));
             item.setWisherComment(comment.getCrmComment());
             item.setWisherCommentTime(comment.getCrmCreatedAt());
             item.setCrmCloudPrId(comment.getCrmCloudPrId());
@@ -344,6 +346,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
             item.setEvmRecordIndexId(comment.getEvmRecordIndexId());
             item.setUserComment(comment.getCrmReply());
             item.setUserCommentTime(comment.getCrmRepliedAt());
+            item.setUserprofileImage(ownProfile.getPmProfileImage());
             list.add(item);
 
         }
@@ -377,7 +380,7 @@ public class TimelineActivity extends BaseActivity implements RippleView
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_EVENT_COMMENT, getResources().getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
         } else {
             Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
 
@@ -396,56 +399,71 @@ public class TimelineActivity extends BaseActivity implements RippleView
         if (error == null) {
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_RATING)) {
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
-                Rating rating = wsResponseObject.getProfileRating();
+                if (wsResponseObject != null) {
+                    Rating rating = wsResponseObject.getProfileRating();
 
-                int updated = tableCommentMaster.addReply(rating.getPrId() + "", rating.getPrReply(), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
-                if (updated != 0) {
-                    if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
-                        switch (selectedRecycler) {
-                            case 0:
-                                addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
-                                break;
-                            case 1:
-                                addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
-                                break;
-                            case 2:
-                                addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
-                                break;
+                    int updated = tableCommentMaster.addReply(rating.getPrId() + "", rating.getPrReply(), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()), Utils.getLocalTimeFromUTCTime(rating.getReplyAt()));
+                    if (updated != 0) {
+                        if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
+                            switch (selectedRecycler) {
+                                case 0:
+                                    addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                                    break;
+                                case 1:
+                                    addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                                    break;
+                                case 2:
+                                    addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, rating.getPrReply(), rating.getReplyAt());
+                                    break;
+                            }
+                            selectedRecycler = -1;
+                            selectedRecyclerItem = -1;
                         }
-                        selectedRecycler = -1;
-                        selectedRecyclerItem = -1;
+                        Utils.hideProgressDialog();
                     }
+                } else {
                     Utils.hideProgressDialog();
+                    Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
                 }
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_EVENT_COMMENT)) {
 
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
-                ArrayList<EventCommentData> eventReceiveCommentData = wsResponseObject.getEventReceiveCommentData();
-                saveCommentDataToDb(eventReceiveCommentData);
-                Utils.hideProgressDialog();
+                if (wsResponseObject != null) {
+                    ArrayList<EventCommentData> eventReceiveCommentData = wsResponseObject.getEventReceiveCommentData();
+                    saveCommentDataToDb(eventReceiveCommentData);
+                    Utils.hideProgressDialog();
+                } else {
+                    Utils.hideProgressDialog();
+                    Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                }
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_ADD_EVENT_COMMENT)) {
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
-                EventComment eventComment = wsResponseObject.getEventComment();
+                if (wsResponseObject != null) {
+                    EventComment eventComment = wsResponseObject.getEventComment();
 
-                int updated = tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
-                        Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-                if (updated != 0) {
-                    if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
-                        switch (selectedRecycler) {
-                            case 0:
-                                addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
-                                break;
-                            case 1:
-                                addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
-                                break;
-                            case 2:
-                                addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
-                                break;
+                    int updated = tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
+                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+                    if (updated != 0) {
+                        if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
+                            switch (selectedRecycler) {
+                                case 0:
+                                    addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+                                    break;
+                                case 1:
+                                    addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+                                    break;
+                                case 2:
+                                    addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+                                    break;
+                            }
+                            selectedRecycler = -1;
+                            selectedRecyclerItem = -1;
                         }
-                        selectedRecycler = -1;
-                        selectedRecyclerItem = -1;
+                        Utils.hideProgressDialog();
                     }
+                } else {
                     Utils.hideProgressDialog();
+                    Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
                 }
             }
         } else {

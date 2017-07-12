@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -29,16 +30,22 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.adapters.PhoneBookContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.calllog.CallHistoryDetailsActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
+import com.rawalinfocom.rcontact.database.TableProfileMaster;
+import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.ContactReceiver;
+import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
+import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
@@ -52,8 +59,7 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ContactListingActivity extends BaseActivity implements RippleView
-        .OnRippleCompleteListener, WsResponseListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class ContactListingActivity extends BaseActivity implements RippleView.OnRippleCompleteListener, WsResponseListener {
 
     @BindView(R.id.include_toolbar)
     Toolbar includeToolbar;
@@ -84,6 +90,10 @@ public class ContactListingActivity extends BaseActivity implements RippleView
     ArrayList<UserProfile> arrayListNumberUserProfile;
     ArrayList<UserProfile> arrayListEmailUserProfile;
     ArrayList<UserProfile> arrayListFilteredUserProfile;
+//    public ArrayList<Object> arrayListPhoneBookContacts;
+
+    private ProfileMobileMapping profileMobileMapping;
+    private TableProfileMobileMapping tableProfileMobileMapping;
 
     PhoneBookContactListAdapter phoneBookContactListAdapter;
 
@@ -119,6 +129,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 profileDataOperationVcard = null;
             }
         }
+
+        tableProfileMobileMapping = new TableProfileMobileMapping(getDatabaseHandler());
 
         init();
         setupView();
@@ -251,31 +263,6 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionRightCenter.setOnRippleCompleteListener(this);
 
-        spinnerShareVia.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                arrayListFilteredUserProfile.clear();
-                phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
-                phoneBookContactListAdapter.isSelectAll(false);
-                checkboxSelectAll.setChecked(false);
-                inputSearch.getText().clear();
-                Utils.hideSoftKeyboard(ContactListingActivity.this, inputSearch);
-                if (position == 0) {
-                    arrayListFilteredUserProfile.addAll(arrayListUserProfile);
-                } else if (position == 1) {
-                    arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
-                } else if (position == 2) {
-                    arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
-                }
-                phoneBookContactListAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
         checkboxSelectAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -283,13 +270,19 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 if (!isChecked) {
                     phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
                 }
-
             }
         });
     }
 
     //<editor-fold desc="Private Methods">
     private void setupView() {
+
+        arrayListFilteredUserProfile = new ArrayList<>();
+//        arrayListUserProfile.addAll(arrayListFilteredUserProfile);
+
+        recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
+        phoneBookContactListAdapter = new PhoneBookContactListAdapter(this, arrayListFilteredUserProfile);
+        recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
 
         ArrayAdapter<String> spinnerAdapter;
         if (!pmId.equalsIgnoreCase("-1")) {
@@ -305,15 +298,38 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
         spinnerShareVia.setAdapter(spinnerAdapter);
 
-        arrayListFilteredUserProfile = new ArrayList<>();
-        arrayListUserProfile.addAll(arrayListFilteredUserProfile);
+        spinnerShareVia.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                arrayListFilteredUserProfile.clear();
+                phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
+                phoneBookContactListAdapter.isSelectAll(false);
+                checkboxSelectAll.setChecked(false);
+                inputSearch.getText().clear();
+                Utils.hideSoftKeyboard(ContactListingActivity.this, inputSearch);
+                if (position == 0) {
+                    if (arrayListUserProfile.size() > 0) {
+                        arrayListFilteredUserProfile.addAll(arrayListUserProfile);
+                        phoneBookContactListAdapter.notifyDataSetChanged();
+                    } else {
+                        new GetContactData().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }
+                } else if (position == 1) {
+                    setFilterList("sms");
+                    arrayListFilteredUserProfile.addAll(arrayListNumberUserProfile);
+                    phoneBookContactListAdapter.notifyDataSetChanged();
+                } else if (position == 2) {
+                    setFilterList("email");
+                    arrayListFilteredUserProfile.addAll(arrayListEmailUserProfile);
+                    phoneBookContactListAdapter.notifyDataSetChanged();
+                }
+            }
 
-        recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
-        phoneBookContactListAdapter = new PhoneBookContactListAdapter(this,
-                arrayListFilteredUserProfile);
-
-        recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
+            }
+        });
 
         inputSearch.addTextChangedListener(new TextWatcher() {
 
@@ -342,9 +358,219 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
             }
         });
-
-//        getLoaderManager().initLoader(0, null, this);
     }
+
+    private void setFilterList(String type) {
+
+        arrayListNumberUserProfile.clear();
+        arrayListEmailUserProfile.clear();
+
+        for (int i = 0; i < arrayListUserProfile.size(); i++) {
+
+            UserProfile userProfile = new UserProfile();
+
+            if (type.equals("sms")) {
+                if (!arrayListUserProfile.get(i).getMobileNumber().equals("")) {
+                    userProfile.setMobileNumber(arrayListUserProfile.get(i).getMobileNumber());
+                    userProfile.setPmFirstName(arrayListUserProfile.get(i).getPmFirstName());
+                    arrayListNumberUserProfile.add(userProfile);
+                }
+            } else {
+                if (!arrayListUserProfile.get(i).getEmailId().equals("")) {
+                    userProfile.setEmailId(arrayListUserProfile.get(i).getEmailId());
+                    userProfile.setPmFirstName(arrayListUserProfile.get(i).getPmFirstName());
+                    arrayListEmailUserProfile.add(userProfile);
+                }
+            }
+        }
+    }
+
+    private class GetContactData extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Utils.showProgressDialog(ContactListingActivity.this, "Please wait...", false);
+            System.out.println("RContact start --> " + System.currentTimeMillis());
+        }
+
+        protected Void doInBackground(Void... urls) {
+
+            Cursor cursor = null;
+            String mobileNumber = "";
+
+            try {
+
+                Set<String> set = new HashSet<>();
+                set.add(ContactsContract.Data.MIMETYPE);
+                set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+                set.add(ContactsContract.CommonDataKinds.Email.ADDRESS);
+
+                Uri uri = ContactsContract.Data.CONTENT_URI;
+                String[] projection = set.toArray(new String[0]);
+                String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)";
+                String[] selectionArgs = {
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                        ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
+                };
+                String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC";
+
+                cursor = getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
+
+                if (cursor != null) {
+
+                    final int mobile = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+
+                    while (cursor.moveToNext()) {
+                        try {
+
+                            if (cursor.getString(mobile) != null) {
+                                mobileNumber = Utils.getFormattedNumber(getApplicationContext(), cursor.getString(mobile));
+                            }
+
+                            UserProfile userProfile = new UserProfile();
+
+                            String mimeType = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.MIMETYPE));
+                            switch (mimeType) {
+                                case ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE:
+                                    userProfile.setEmailId(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+                                    break;
+                                case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
+                                    userProfile.setMobileNumber(mobileNumber);
+                                    break;
+                            }
+
+                            userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+
+                            arrayListUserProfile.add(userProfile);
+
+                        } catch (Exception e) {
+                            Log.i("AllContacts", "Crash occurred when displaying contacts" + e.toString());
+                        }
+                    }
+                    cursor.close();
+                }
+
+                System.out.println("RContact half --> " + System.currentTimeMillis());
+
+                setRCPUser();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (cursor != null) cursor.close();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    arrayListFilteredUserProfile.addAll(arrayListUserProfile);
+                    Utils.hideProgressDialog();
+                    phoneBookContactListAdapter.notifyDataSetChanged();
+                    System.out.println("RContact end --> " + System.currentTimeMillis());
+                }
+            });
+        }
+    }
+
+    private void setRCPUser() {
+
+        for (int i = 0; i < arrayListUserProfile.size(); i++) {
+            if (!arrayListUserProfile.get(i).getMobileNumber().equals("")) {
+                boolean what = tableProfileMobileMapping.getPmIdFromNumber(arrayListUserProfile.get(i).getMobileNumber());
+
+                if (what)
+                    arrayListUserProfile.remove(i);
+            }
+        }
+    }
+
+    private void isRCPUser() {
+
+        for (int i = 0; i < arrayListUserProfile.size(); i++) {
+            if (!arrayListUserProfile.get(i).getMobileNumber().equals("")) {
+                profileMobileMapping = tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(arrayListUserProfile.get(i).getMobileNumber());
+
+                if (profileMobileMapping != null) {
+                    String cloudPmId = profileMobileMapping.getMpmCloudPmId();
+                    if (!StringUtils.isEmpty(cloudPmId)) {
+
+                    }
+                }
+            }
+        }
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Web Service Call">
+
+    private void shareContactRcp(ContactReceiver receiver) {
+
+        WsRequestObject uploadContactObject = new WsRequestObject();
+//        uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
+        uploadContactObject.setSendProfileType(IntegerConstants.SEND_PROFILE_RCP);
+        uploadContactObject.setPmIdWhose(Integer.parseInt(pmId));
+        uploadContactObject.setReceiver(receiver);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    uploadContactObject, null, WsResponseObject.class, WsConstants
+                    .REQ_RCP_PROFILE_SHARING + "_RCP", getResources().getString(R.string
+                    .msg_please_wait),
+                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
+        } else {
+            Utils.showErrorSnackBar(this, activityContactListing, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
+    private void shareContactNonRcp(ContactReceiver receiver) {
+
+        WsRequestObject uploadContactObject = new WsRequestObject();
+//        uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
+        uploadContactObject.setSendProfileType(IntegerConstants.SEND_PROFILE_NON_RCP);
+        uploadContactObject.setReceiver(receiver);
+        uploadContactObject.setContactData(profileDataOperationVcard);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    uploadContactObject, null, WsResponseObject.class, WsConstants
+                    .REQ_RCP_PROFILE_SHARING + "_NON", getResources().getString(R.string
+                    .msg_please_wait),
+                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
+        } else {
+            Utils.showErrorSnackBar(this, activityContactListing, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
+    private void inviteContact
+            (ArrayList<String> arrayListContactNumber, ArrayList<String>
+                    arrayListEmail) {
+
+        WsRequestObject inviteContactObject = new WsRequestObject();
+        inviteContactObject.setArrayListContactNumber(arrayListContactNumber);
+        inviteContactObject.setArrayListEmailAddress(arrayListEmail);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    inviteContactObject, null, WsResponseObject.class, WsConstants
+                    .REQ_SEND_INVITATION, getString(R.string.invitation_sending), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+        } else {
+            Utils.showErrorSnackBar(this, activityContactListing, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+    //</editor-fold>
+}
+
 
 //    private void getContactData() {
 
@@ -403,101 +629,3 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             //</editor-fold>
         }*/
 //    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Set<String> set = new HashSet<>();
-        set.add(ContactsContract.Data.MIMETYPE);
-        set.add(ContactsContract.Data.CONTACT_ID);
-        set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
-        set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
-        set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
-
-        Uri uri = ContactsContract.Data.CONTENT_URI;
-        String[] projection = set.toArray(new String[0]);
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)";
-        String[] selectionArgs = {
-                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
-                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
-        };
-        String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC";
-
-        // Starts the query
-        return new CursorLoader(ContactListingActivity.this, uri, projection, selection, selectionArgs, sortOrder);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-//        getContactsFromPhoneBook(data);
-        data.close();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
-
-    //</editor-fold>
-
-    //<editor-fold desc="Web Service Call">
-
-    private void shareContactRcp(ContactReceiver receiver) {
-
-        WsRequestObject uploadContactObject = new WsRequestObject();
-//        uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
-        uploadContactObject.setSendProfileType(IntegerConstants.SEND_PROFILE_RCP);
-        uploadContactObject.setPmIdWhose(Integer.parseInt(pmId));
-        uploadContactObject.setReceiver(receiver);
-
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    uploadContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_RCP_PROFILE_SHARING + "_RCP", getResources().getString(R.string
-                    .msg_please_wait),
-                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
-        } else {
-            Utils.showErrorSnackBar(this, activityContactListing, getResources()
-                    .getString(R.string.msg_no_network));
-        }
-    }
-
-    private void shareContactNonRcp(ContactReceiver receiver) {
-
-        WsRequestObject uploadContactObject = new WsRequestObject();
-//        uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
-        uploadContactObject.setSendProfileType(IntegerConstants.SEND_PROFILE_NON_RCP);
-        uploadContactObject.setReceiver(receiver);
-        uploadContactObject.setContactData(profileDataOperationVcard);
-
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    uploadContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_RCP_PROFILE_SHARING + "_NON", getResources().getString(R.string
-                    .msg_please_wait),
-                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
-        } else {
-            Utils.showErrorSnackBar(this, activityContactListing, getResources()
-                    .getString(R.string.msg_no_network));
-        }
-    }
-
-    private void inviteContact(ArrayList<String> arrayListContactNumber, ArrayList<String>
-            arrayListEmail) {
-
-        WsRequestObject inviteContactObject = new WsRequestObject();
-        inviteContactObject.setArrayListContactNumber(arrayListContactNumber);
-        inviteContactObject.setArrayListEmailAddress(arrayListEmail);
-
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    inviteContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_SEND_INVITATION, getString(R.string.invitation_sending), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
-        } else {
-            Utils.showErrorSnackBar(this, activityContactListing, getResources()
-                    .getString(R.string.msg_no_network));
-        }
-    }
-    //</editor-fold>
-}

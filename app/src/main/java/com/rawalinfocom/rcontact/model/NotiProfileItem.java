@@ -7,6 +7,7 @@ package com.rawalinfocom.rcontact.model;
 public class NotiProfileItem {
 
     private String personName;
+    private String personImage;
     private String notiInfo;
     private String notiRequestTime;
     private Integer profileNotiType;
@@ -62,5 +63,13 @@ public class NotiProfileItem {
 
     public String getNotiRequestTime() {
         return notiRequestTime;
+    }
+
+    public String getPersonImage() {
+        return personImage;
+    }
+
+    public void setPersonImage(String personImage) {
+        this.personImage = personImage;
     }
 }

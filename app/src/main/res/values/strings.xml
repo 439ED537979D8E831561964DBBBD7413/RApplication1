@@ -267,6 +267,8 @@
     <string name="add_to_existing_contact">Add to Existing Contact</string>
     <string name="copy_to_clipboard">Copy to clip board</string>
     <string name="view_profile">View Profile</string>
+    <string name="view_reply">View Reply</string>
+    <string name="text_reply_you">Reply You</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="clear_call_log">Clear Call Log</string>
@@ -276,7 +278,7 @@
     <string name="characters_left">characters left</string>
     <string name="text_character">character</string>
     <string name="please_fill_stars">Please fill appropriate stars!</string>
-
+    <string name="call_history_toolbar_title">Call History</string>
     <!-- Phone Number Type -->
     <string name="type_home">Home</string>
     <string name="type_mobile">Mobile</string>
