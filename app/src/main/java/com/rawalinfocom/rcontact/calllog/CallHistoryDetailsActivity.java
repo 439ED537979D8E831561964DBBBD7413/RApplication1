@@ -152,10 +152,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     Toolbar includeToolbar;
     TextView textToolbarTitle;
     RippleView rippleActionBack;
-    RippleView rippleActionRightLeft;
+//    RippleView rippleActionRightLeft;
     RippleView rippleActionRightCenter;
     RippleView rippleActionRightRight;
-    ImageView imageRightLeft;
+//    ImageView imageRightLeft;
     ImageView imageRightCenter;
     String profileThumbnail;
 
@@ -705,7 +705,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 }
                 break;
 
-            case R.id.ripple_action_right_left:
+           /* case R.id.ripple_action_right_left:
 
                 if (StringUtils.equals(imageRightLeft.getTag().toString(), TAG_IMAGE_FAVOURITE)
                         || StringUtils.equals(imageRightLeft.getTag().toString(),
@@ -742,7 +742,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 .FAVOURITE_REMOVED);
                     }
                 }
-                break;
+                break;*/
 
             case R.id.ripple_action_right_right:
 
@@ -948,10 +948,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     private void init() {
         rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
         textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
-        imageRightLeft = ButterKnife.findById(includeToolbar, R.id.image_right_left);
+//        imageRightLeft = ButterKnife.findById(includeToolbar, R.id.image_right_left);
         imageRightCenter = ButterKnife.findById(includeToolbar, R.id.image_right_center);
-        rippleActionRightLeft = ButterKnife.findById(includeToolbar,
-                R.id.ripple_action_right_left);
+        /*rippleActionRightLeft = ButterKnife.findById(includeToolbar,
+                R.id.ripple_action_right_left);*/
         rippleActionRightCenter = ButterKnife.findById(includeToolbar, R.id
                 .ripple_action_right_center);
         rippleActionRightRight = ButterKnife.findById(includeToolbar, R.id
@@ -966,7 +966,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         textUserRating.setTypeface(Utils.typefaceRegular(this));
         textFullScreenText.setSelected(true);
         rippleActionBack.setOnRippleCompleteListener(this);
-        rippleActionRightLeft.setOnRippleCompleteListener(this);
+//        rippleActionRightLeft.setOnRippleCompleteListener(this);
         rippleActionRightCenter.setOnRippleCompleteListener(this);
         rippleActionRightRight.setOnRippleCompleteListener(this);
 
@@ -1147,7 +1147,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
         setCallLogHistoryDetails();
 
-        if (isHideFavourite) {
+       /* if (isHideFavourite) {
 //            rippleActionRightLeft.setEnabled(false);
             if (checkNumberFavourite != null && arrayListFavouriteContacts.contains
                     (checkNumberFavourite)) {
@@ -1155,7 +1155,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             } else {
                 imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
             }
-        }
+        }*/
 
     }
 
@@ -1252,13 +1252,13 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 contactFavouriteCursor.close();
             }
 
-            if (isFavourite == 0) {
+           /* if (isFavourite == 0) {
                 imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
                 imageRightLeft.setTag(TAG_IMAGE_UN_FAVOURITE);
             } else {
                 imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
                 imageRightLeft.setTag(TAG_IMAGE_FAVOURITE);
-            }
+            }*/
         }
 
         //</editor-fold>
