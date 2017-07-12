@@ -380,7 +380,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         localBroadcastManagerReceiveRecentCalls.registerReceiver
                 (localBroadcastReceiverRecentCalls, intentFilter5);
 
-
     }
 
     private void unregisterLocalBroadcast() {
