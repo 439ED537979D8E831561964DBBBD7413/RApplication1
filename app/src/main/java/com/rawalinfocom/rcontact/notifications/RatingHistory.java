@@ -139,7 +139,7 @@ public class RatingHistory extends BaseActivity implements RippleView
             new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     addCommentObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_EVENT_COMMENT, getResources().getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_GET_EVENT_COMMENT);
         } else {
             Toast.makeText(RatingHistory.this, getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
 
@@ -401,16 +401,22 @@ public class RatingHistory extends BaseActivity implements RippleView
             if (historyType == 0) {
                 // 0 done
                 item.setRaterName(currentUserProfile.getPmFirstName() + " " + currentUserProfile.getPmLastName());
+                item.setRaterPersonImage(currentUserProfile.getPmProfileImage());
                 item.setReceiverPersonName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+                item.setReceiverPersonImage(userProfile.getPmProfileImage());
 
             } else {
                 // 1 receive
                 String name = userProfile.getPmFirstName() + " " + userProfile.getPmLastName();
-                if (name.trim().length() > 0)
+                if (name.trim().length() > 0) {
                     item.setRaterName(name);
-                else
+                    item.setRaterPersonImage(userProfile.getPmProfileImage());
+                } else {
                     item.setRaterName(comment.getCrmProfileDetails());
+                    item.setRaterPersonImage(comment.getCrmImage());
+                }
                 item.setReceiverPersonName(currentUserProfile.getPmFirstName() + " " + currentUserProfile.getPmLastName());
+                item.setReceiverPersonImage(currentUserProfile.getPmProfileImage());
             }
             item.setRating(comment.getCrmRating());
             item.setNotiTime(comment.getCrmCreatedAt());

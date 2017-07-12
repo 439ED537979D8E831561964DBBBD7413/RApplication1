@@ -15,6 +15,8 @@ public class NotiRatingItem {
     private String replyTime;
     private Integer historyType;
     private String receiverPersonName;
+    private String receiverPersonImage;
+    private String raterPersonImage;
 
     public String getReceiverPersonName() {
         return receiverPersonName;
@@ -87,5 +89,21 @@ public class NotiRatingItem {
 
     public void setReplyTime(String replyTime) {
         this.replyTime = replyTime;
+    }
+
+    public String getReceiverPersonImage() {
+        return receiverPersonImage;
+    }
+
+    public void setReceiverPersonImage(String receiverPersonImage) {
+        this.receiverPersonImage = receiverPersonImage;
+    }
+
+    public String getRaterPersonImage() {
+        return raterPersonImage;
+    }
+
+    public void setRaterPersonImage(String raterPersonImage) {
+        this.raterPersonImage = raterPersonImage;
     }
 }

@@ -379,16 +379,23 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Set<String> set = new HashSet<>();
         set.add(ContactsContract.Data.MIMETYPE);
-        set.add(ContactsContract.Data.CONTACT_ID);
+//        set.add(ContactsContract.Data.CONTACT_ID);
+        set.add(ContactsContract.Data.RAW_CONTACT_ID);
         set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
         set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
         set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
+        set.add(ContactsContract.RawContacts.ACCOUNT_NAME);
+        set.add(ContactsContract.RawContacts.ACCOUNT_TYPE);
 
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = set.toArray(new String[0]);
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and " +
-                ContactsContract.Contacts.HAS_PHONE_NUMBER + " >0";
+       /* String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and " +
+                ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0";*/
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)" +
+                " and " + ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0" +
+                " and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + AppConstants
+                .CONTACT_STORAGES + ")";
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
@@ -411,13 +418,19 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             arrayListPhoneBookContacts = new ArrayList<>();
             arrayListFavouriteContacts = new ArrayList<>();
-            arrayListPhoneBookContacts.add(getActivity().getString(R.string.title_my_profile));
+          /*  arrayListPhoneBookContacts.add(getActivity().getString(R.string.title_my_profile));
 
             ProfileData myProfileData = new ProfileData();
 
             TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
             String mobileNumber = tableMobileMaster.getUserMobileNumber(getUserPmId());
 
+            System.out.println("RContact firstName - LastName - Number --> " + userProfile
+                    .getPmFirstName()
+                    + " -- " + userProfile.getPmLastName() + " -- " + mobileNumber);
+
+            myProfileData.setName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
+            myProfileData.setProfileUrl(userProfile.getPmProfileImage());
             myProfileData.setName(Utils.getStringPreference(getActivity(), AppConstants.PREF_USER_NAME, ""));
             myProfileData.setTempNumber(mobileNumber);
             myProfileData.setProfileUrl(Utils.getStringPreference(getActivity(), AppConstants.PREF_USER_PHOTO, ""));
@@ -425,6 +438,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
 
             arrayListPhoneBookContacts.add(myProfileData);
+            arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));*/
 
             arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));
 
@@ -579,7 +593,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     private void getContactsFromPhoneBook(Cursor data) {
         final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
-        final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
+        final int idIdx = data.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
 
 //        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
@@ -591,6 +605,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         final int display = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
                 .DISPLAY_NAME);
 
+        ArrayList<String> accounts = new ArrayList<>();
 
         while (data.moveToNext()) {
             try {
@@ -606,6 +621,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 profileData.setLocalPhoneBookId(data.getString(rawIdIdx));
                 profileData.setRawContactId(data.getString(rawIdIdx));
 
+               /* Log.i("Account Name", data.getString(data.getColumnIndex(ContactsContract
+                        .RawContacts.ACCOUNT_NAME)));
+                Log.i("Account Type", data.getString(data.getColumnIndex(ContactsContract
+                        .RawContacts.ACCOUNT_TYPE)));*/
+
+                if (!accounts.contains(data.getString(data.getColumnIndex(ContactsContract
+                        .RawContacts.ACCOUNT_TYPE)))) {
+                    accounts.add(data.getString(data.getColumnIndex(ContactsContract
+                            .RawContacts.ACCOUNT_TYPE)));
+                }
+
                 switch (data.getString(mimeTypeIdx)) {
                     case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
                         profileData.setTempNumber(data.getString(phoneIdx));
@@ -619,6 +645,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 Log.i("AllContacts", "Crash occurred when displaying contacts" + E.toString());
             }
         }
+
+        Log.i("accounts", accounts.toString());
     }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
@@ -1183,7 +1211,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         //<editor-fold desc="Create Cursor">
         String[] projection = {
                 ContactsContract.Data.MIMETYPE,
-                ContactsContract.Data.CONTACT_ID,
+//                ContactsContract.Data.CONTACT_ID,
+                ContactsContract.Data.RAW_CONTACT_ID,
                 ContactsContract.Contacts.STARRED,
 
                 ContactsContract.CommonDataKinds.StructuredName.PREFIX,
@@ -1229,8 +1258,14 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 ContactsContract.CommonDataKinds.Event.START_DATE,
 
         };
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and "
-                + ContactsContract.Contacts.HAS_PHONE_NUMBER + " >0";
+        /*String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)" +
+                " and " + ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0" +
+                " and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + AppConstants
+                .CONTACT_STORAGES + ")";*/
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?)" +
+                " and " + ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0" +
+                " and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + AppConstants
+                .CONTACT_STORAGES + ")";
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
                 // starred contact not accessible
@@ -1255,7 +1290,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (cursor != null) {
             try {
                 final int mimeTypeIdx = cursor.getColumnIndex(ContactsContract.Data.MIMETYPE);
-                final int idIdx = cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID);
+//                final int idIdx = cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID);
+                final int idIdx = cursor.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID);
 
                 while (cursor.moveToNext()) {
                     if (syncingTask != null && syncingTask.isCancelled()) {
@@ -1306,8 +1342,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             ProfileDataOperationPhoneNumber phoneNumber = new
                                     ProfileDataOperationPhoneNumber();
 
-                            phoneNumber.setPhoneNumber(cursor.getString(cursor.getColumnIndex(ContactsContract
-                                    .CommonDataKinds.Phone.NUMBER)));
+                            phoneNumber.setPhoneNumber(cursor.getString(cursor.getColumnIndex
+                                    (ContactsContract
+                                            .CommonDataKinds.Phone.NUMBER)));
                             phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                     (cursor.getInt(cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Phone.TYPE))));
@@ -1319,7 +1356,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
 
                             emailId.setEmEmailId(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Email
+                                            .ADDRESS)));
                             emailId.setEmType(phoneBookContacts.getEmailType(cursor,
                                     cursor.getInt
                                             (cursor.getColumnIndex(ContactsContract
@@ -1376,22 +1414,28 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     (cursor.getColumnIndex(ContactsContract
                                             .CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS)));
                             address.setCity(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                    .getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal
                                             .CITY)));
                             address.setCountry(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                    .getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal
                                             .COUNTRY)));
                             address.setNeighborhood(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                    .getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal
                                             .NEIGHBORHOOD)));
                             address.setPostCode(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                    .getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal
                                             .POSTCODE)));
                             address.setPoBox(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                    .getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal
                                             .POBOX)));
                             address.setStreet(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                    .getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal
                                             .STREET)));
                             address.setAddressType(phoneBookContacts.getAddressType(cursor, cursor
                                     .getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds
@@ -1557,8 +1601,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     limit = arrayListSyncUserContact.size();
                 }
                 if (lastSyncedData <= limit) {
-                    ArrayList<ProfileData> subList = new ArrayList<>(arrayListSyncUserContact.subList
-                            (lastSyncedData, limit));
+                    ArrayList<ProfileData> subList = new ArrayList<>(arrayListSyncUserContact
+                            .subList
+                                    (lastSyncedData, limit));
                     uploadContacts(lastSyncedData, subList);
                 }
             }
@@ -1589,7 +1634,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_UPLOAD_CONTACTS + "_" + previouslySyncedData, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    .REQ_UPLOAD_CONTACTS + "_" + previouslySyncedData, null, true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                     WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
         } else {
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()

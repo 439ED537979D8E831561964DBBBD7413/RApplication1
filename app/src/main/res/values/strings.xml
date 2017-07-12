@@ -267,6 +267,8 @@
     <string name="add_to_existing_contact">Add to Existing Contact</string>
     <string name="copy_to_clipboard">Copy to clip board</string>
     <string name="view_profile">View Profile</string>
+    <string name="view_reply">View Reply</string>
+    <string name="text_reply_you">Reply You</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="clear_call_log">Clear Call Log</string>
@@ -556,5 +558,6 @@
 
     <!-- Registration -->
     <string name="str_mobile_number">Mobile Number</string>
+    <string name="error_custom_type">Please add valid custom type</string>
 
 </resources>

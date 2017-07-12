@@ -6,6 +6,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +17,14 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.TimelineItem;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
@@ -125,6 +128,42 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
                 }
             }
         });
+        if (!TextUtils.isEmpty(item.getWisherProfileImage())) {
+            Glide.with(activity)
+                    .load(item.getWisherProfileImage())
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(activity))
+                    .override(500, 500)
+                    .into(holder.imageWisher);
+
+        } else {
+            holder.imageWisher.setImageResource(R.drawable.home_screen_profile);
+        }
+        if (!TextUtils.isEmpty(item.getWisherProfileImage())) {
+            Glide.with(activity)
+                    .load(item.getWisherProfileImage())
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(activity))
+                    .override(500, 500)
+                    .into(holder.imageWisherSmall);
+
+        } else {
+            holder.imageWisherSmall.setImageResource(R.drawable.home_screen_profile);
+        }
+        if (!TextUtils.isEmpty(item.getUserprofileImage())) {
+            Glide.with(activity)
+                    .load(item.getUserprofileImage())
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(activity))
+                    .override(500, 500)
+                    .into(holder.imageUser);
+
+        } else {
+            holder.imageUser.setImageResource(R.drawable.home_screen_profile);
+        }
     }
 
     private void addReplyonComment(String crmType, String crmCloudPrId, String userComment, int commentStatusReceived, String evmRecordIndexId) {
@@ -146,7 +185,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
                 new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants
                         .REQ_PROFILE_RATING, activity.getResources().getString(R.string.msg_please_wait), true)
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
             } else {
                 new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         addCommentObject, null, WsResponseObject.class, WsConstants

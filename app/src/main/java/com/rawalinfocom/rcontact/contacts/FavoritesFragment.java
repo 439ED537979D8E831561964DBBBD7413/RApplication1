@@ -115,7 +115,17 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
             arrayListContactHeaders = new ArrayList<>();
             arrayListPhoneBookContacts = new ArrayList<>();
         } else {
-            isReload = true;
+            if (rContactApplication.getFavouriteStatus() == RContactApplication.FAVOURITE_REMOVED
+                    || rContactApplication.getFavouriteStatus() == RContactApplication
+                    .FAVOURITE_ADDED) {
+                arrayListContactHeaders = new ArrayList<>();
+                arrayListPhoneBookContacts = new ArrayList<>();
+                arrayListUserContact = new ArrayList<>();
+                array = new LongSparseArray<>();
+                isReload = false;
+            } else {
+                isReload = true;
+            }
         }
     }
 
@@ -145,12 +155,19 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         super.onResume();
         if (allContactListAdapter != null && rContactApplication.getFavouriteStatus() ==
                 RContactApplication.FAVOURITE_REMOVED) {
-            if (allContactListAdapter.getListClickedPosition() != -1) {
-                arrayListPhoneBookContacts.remove(allContactListAdapter.getListClickedPosition());
-                allContactListAdapter.notifyItemRemoved(allContactListAdapter
-                        .getListClickedPosition());
-                rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_UNMODIFIED);
-            }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (allContactListAdapter.getListClickedPosition() != -1) {
+                        arrayListPhoneBookContacts.remove(allContactListAdapter
+                                .getListClickedPosition());
+                        allContactListAdapter.notifyItemRemoved(allContactListAdapter
+                                .getListClickedPosition());
+                        rContactApplication.setFavouriteStatus(RContactApplication
+                                .FAVOURITE_UNMODIFIED);
+                    }
+                }
+            }, 500);
         }
         if (isFromSettings) {
             isFromSettings = false;
@@ -191,7 +208,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 //                ContactsContract.Contacts._ID};
         Set<String> set = new HashSet<>();
         set.add(ContactsContract.Data.MIMETYPE);
-        set.add(ContactsContract.Data.CONTACT_ID);
+//        set.add(ContactsContract.Data.CONTACT_ID);
+        set.add(ContactsContract.Data.RAW_CONTACT_ID);
         set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
 //        set.add(ContactsContract.CommonDataKinds.Phone.TYPE);
 //        set.add(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
@@ -204,13 +222,20 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         set.add(ContactsContract.Contacts.PHOTO_ID);
 //        set.add(ContactsContract.Contacts.LOOKUP_KEY);
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
+        set.add(ContactsContract.RawContacts.ACCOUNT_NAME);
+        set.add(ContactsContract.RawContacts.ACCOUNT_TYPE);
         String[] projection = set.toArray(new String[0]);
 
 //        String selection = "starred = ?";
 //        String[] selectionArgs = new String[]{"1"};
 //        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
 //        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and starred = ?";
+//        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and starred = ?";
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)" +
+                " and starred = ?" +
+                " and " + ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0" +
+                " and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + AppConstants
+                .CONTACT_STORAGES + ")";
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
@@ -378,7 +403,6 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         if (rContactApplication.getArrayListFavPhoneBookContacts() != null) {
             relativeRootFavourite.setVisibility(View.VISIBLE);
             if (rContactApplication.getArrayListFavPhoneBookContacts().size() <= 0) {
-//            getFavouriteContacts();
                 if (getLoaderManager().getLoader(0) == null) {
                     getLoaderManager().initLoader(0, null, this);
                 } else {
@@ -571,7 +595,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
     private void getFavouritesFromPhonebook(Cursor data) {
         final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
-        final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
+//        final int idIdx = data.getColumnIndex(ContactsContract.Data.CONTACT_ID);
+        final int idIdx = data.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
 
         final int givenNameIdx = data.getColumnIndex(ContactsContract.CommonDataKinds
@@ -609,6 +634,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                     break;
             }
         }
+
         if (arrayListUserContact.size() > 0) {
             for (int i = 0; i < arrayListUserContact.size(); i++) {
                 arrayListPhoneBookContacts.add(arrayListUserContact.get(i));

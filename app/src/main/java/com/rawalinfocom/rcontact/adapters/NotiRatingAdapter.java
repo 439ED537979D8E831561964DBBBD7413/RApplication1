@@ -2,6 +2,7 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +10,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.NotiRatingItem;
 import com.rawalinfocom.rcontact.notifications.NotificationPopupDialog;
 
@@ -78,8 +81,20 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
             holder.textRatingNotiTime.setText(Utils.formatDateTime(item.getNotiTime(), "hh:mm a"));
         }
         holder.textRatingDetailInfo.setText(item.getRaterName() + context.getString(R.string.str_rating_comment_hint_1));
+        if (!TextUtils.isEmpty(item.getRaterPersonImage())) {
+            Glide.with(context)
+                    .load(item.getRaterPersonImage())
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(context))
+                    .override(500, 500)
+                    .into(holder.imageRater);
+
+        } else {
+            holder.imageRater.setImageResource(R.drawable.home_screen_profile);
+        }
         holder.buttonRatingViewReply.setAllCaps(true);
-        holder.buttonRatingViewReply.setText(context.getString(R.string.view_profile));
+        holder.buttonRatingViewReply.setText(context.getString(R.string.view_reply));
         holder.buttonRatingViewReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,8 +105,10 @@ public class NotiRatingAdapter extends RecyclerView.Adapter<NotiRatingAdapter.My
                 arrayListComments.add(Utils.formatDateTime(item.getCommentTime(), "dd MMM, hh:mm a"));
                 arrayListComments.add(item.getReply());
                 arrayListComments.add(Utils.formatDateTime(item.getReplyTime(), "dd MMM, hh:mm a"));
+                arrayListComments.add(item.getRaterPersonImage());
+                arrayListComments.add(item.getReceiverPersonImage());
                 notificationPopupDialog = new NotificationPopupDialog(context, arrayListComments, true);
-                notificationPopupDialog.setDialogTitle(item.getRaterName() + context.getString(R.string.text_rate_you));
+                notificationPopupDialog.setDialogTitle(item.getRaterName() + context.getString(R.string.text_reply_you));
                 notificationPopupDialog.setRatingInfo(item.getRating());
                 notificationPopupDialog.showDialog();
             }

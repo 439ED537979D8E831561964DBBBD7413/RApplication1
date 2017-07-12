@@ -57,7 +57,7 @@
             android:layout_centerVertical="true"
             android:orientation="horizontal">
 
-            <com.rawalinfocom.rcontact.helper.RippleView
+            <!--<com.rawalinfocom.rcontact.helper.RippleView
                 android:id="@+id/ripple_action_right_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
                     android:padding="@dimen/activity_half_horizontal_margin"
                     android:src="@drawable/ic_action_favorite_border" />
 
-            </com.rawalinfocom.rcontact.helper.RippleView>
+            </com.rawalinfocom.rcontact.helper.RippleView>-->
 
             <com.rawalinfocom.rcontact.helper.RippleView
                 android:id="@+id/ripple_action_right_center"
