@@ -94,19 +94,13 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     /* phone book contacts */
     private ArrayList<Object> arrayListUserContact;
     private ArrayList<String> arrayListContactHeader;
-    private int previousPosition = 0;
 
     private final int HEADER = 0, CONTACT = 1, FOOTER = 2;
     private int colorBlack, colorPineGreen;
     private int listClickedPosition = -1;
 
-    private TableProfileMaster tableProfileMaster;
-    private TableProfileMobileMapping tableProfileMobileMapping;
-    private TableProfileEmailMapping tableProfileEmailMapping;
-
     private ArrayList<Integer> arrayListExpandedPositions;
 
-    private PhoneBookContacts phoneBookContacts;
     private ArrayList<Integer> mSectionPositions;
     private ArrayList<Object> arraylist;
     private int searchCount;
@@ -114,66 +108,44 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private ContactListExpandAdapter expandableAdapter;
 
     //<editor-fold desc="Constructor">
+
     public AllContactAdapter(Fragment fragment, ArrayList<Object> arrayListUserContact,
                              ArrayList<String> arrayListContactHeader) {
         this.activity = fragment.getActivity();
         this.fragment = fragment;
         this.arrayListUserContact = arrayListUserContact;
         this.arrayListContactHeader = arrayListContactHeader;
-        /*this.arrayListContactHeader = new ArrayList<>();
-        this.arrayListContactHeader.add("#");
-        this.arrayListContactHeader.addAll(arrayListContactHeader);*/
-
 
         arrayListExpandedPositions = new ArrayList<>();
 
         colorBlack = ContextCompat.getColor(activity, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(activity, R.color.colorAccent);
 
-        tableProfileMaster = new TableProfileMaster(((BaseActivity) activity).databaseHandler);
-        tableProfileMobileMapping = new TableProfileMobileMapping(((BaseActivity) activity)
-                .databaseHandler);
-        tableProfileEmailMapping = new TableProfileEmailMapping(((BaseActivity) activity)
-                .databaseHandler);
-
-        phoneBookContacts = new PhoneBookContacts(activity);
     }
 
     public AllContactAdapter(Activity activity, ArrayList<Object> arrayListUserContact) {
         this.activity = activity;
-        this.fragment = fragment;
-//        this.arrayListUserContact = arrayListUserContact;
         this.arrayListUserContact = new ArrayList<>();
         this.arrayListUserContact.addAll(arrayListUserContact);
-        /*this.arrayListContactHeader = new ArrayList<>();
-        this.arrayListContactHeader.add("#");
-        this.arrayListContactHeader.addAll(arrayListContactHeader);*/
-        this.arraylist = new ArrayList<Object>();
+
+        this.arraylist = new ArrayList<>();
         this.arraylist.addAll(arrayListUserContact);
 
         arrayListExpandedPositions = new ArrayList<>();
 
         colorBlack = ContextCompat.getColor(activity, R.color.colorBlack);
         colorPineGreen = ContextCompat.getColor(activity, R.color.colorAccent);
-
-        tableProfileMaster = new TableProfileMaster(((BaseActivity) activity).databaseHandler);
-        tableProfileMobileMapping = new TableProfileMobileMapping(((BaseActivity) activity)
-                .databaseHandler);
-        tableProfileEmailMapping = new TableProfileEmailMapping(((BaseActivity) activity)
-                .databaseHandler);
-
-        phoneBookContacts = new PhoneBookContacts(activity);
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Override Methods">
-
 
     public int getSearchCount() {
         return searchCount;
     }
 
-    public void setSearchCount(int searchCount) {
+    private void setSearchCount(int searchCount) {
         this.searchCount = searchCount;
     }
 
@@ -200,7 +172,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return viewHolder;
     }
 
-
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
@@ -223,7 +194,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemViewType(int position) {
-//        if (position == arrayListUserContact.size() && fragment!=null) {
         if (position == arrayListUserContact.size() && !(activity instanceof SearchActivity)) {
             return FOOTER;
         } else if (arrayListUserContact.get(position) instanceof ProfileData) {
@@ -236,13 +206,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-//        if(fragment!=null){
         if (!(activity instanceof SearchActivity)) {
             return (arrayListUserContact.size() + 1);
         } else {
             return arrayListUserContact.size();
         }
-
     }
 
     /**
@@ -356,11 +324,9 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.recyclerViewMultipleRc.setVisibility(View.GONE);
         }
 
-//        holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
-
         boolean showPineGreen = false;
 
-        String contactDisplayName = "";
+        String contactDisplayName;
 //        String prefix = profileData.getTempPrefix();
 //        String firstName = profileData.getTempFirstName();
 //        String lastName = profileData.getTempLastName();
@@ -417,51 +383,28 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             .into(holder.imageProfile);
                 }
             }
+
             holder.relativeRowAllContact.setTag(profileData.getTempRcpId());
+
             if (StringUtils.contains(profileData.getTempRcpName(), ",")) {
                 holder.relativeRowAllContact.setTag(profileData.getTempRcpName());
                 holder.textCloudContactName.setText(" (" + String.valueOf(StringUtils.countMatches
                         (profileData.getTempRcpName(), ",") + 1) + " RC)");
             }
+
         } else {
             showPineGreen = false;
             holder.relativeRowAllContact.setTag("-1");
             holder.textCloudContactName.setVisibility(View.GONE);
             holder.textCloudContactName.setText("");
-           /* if (Utils.getBooleanPreference(activity, AppConstants.PREF_CONTACT_SYNCED, false)) {
-                holder.rippleInvite.setVisibility(View.VISIBLE);
-                if (StringUtils.length(profileData.getTempNumber()) > 0) {
-                    holder.rippleInvite.setVisibility(View.VISIBLE);
-                } else {
-                    holder.rippleInvite.setVisibility(View.GONE);
-                }
-            } else {
-                holder.rippleInvite.setVisibility(View.GONE);
-            }*/
         }
 
-        /*if (fragment instanceof AllContactsListFragment) {
-            if (position == 1) {
-                holder.textContactName.setTextColor(colorPineGreen);
-                holder.textContactNumber.setTextColor(colorPineGreen);
-                holder.textCloudContactName.setVisibility(View.GONE);
-            } else {
-                if (showPineGreen) {
-                    holder.textContactName.setTextColor(colorPineGreen);
-                } else {
-                    holder.textContactName.setTextColor(colorBlack);
-                }
-                holder.textContactNumber.setTextColor(colorBlack);
-                holder.textCloudContactName.setVisibility(View.VISIBLE);
-            }
-        }*/
-        if (fragment instanceof AllContactsListFragment && position == 1) {
-//            if (position == 1) {
+        /*if (fragment instanceof AllContactsListFragment && position == 1) {
             holder.textContactName.setTextColor(colorPineGreen);
             holder.textContactNumber.setTextColor(colorPineGreen);
             holder.textCloudContactName.setVisibility(View.GONE);
             holder.textCloudContactName.setText("");
-        } else {
+        } else {*/
             if (showPineGreen) {
                 holder.textContactName.setTextColor(colorPineGreen);
             } else {
@@ -469,7 +412,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
             holder.textContactNumber.setTextColor(colorBlack);
             holder.textCloudContactName.setVisibility(View.VISIBLE);
-        }
 //        }
 
         holder.textContactNumber.setText(Utils.getFormattedNumber(activity, profileData
@@ -487,7 +429,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 bundle.putBoolean(AppConstants.EXTRA_IS_RCP_USER, profileData.getTempIsRcp());
 
-//                if (StringUtils.isNumeric(String.valueOf(v.getTag()))) {
                 if (holder.recyclerViewMultipleRc.getVisibility() == View.GONE) {
                     if (StringUtils.contains(String.valueOf(v.getTag()), ",")) {
                         // Multiple RCP
@@ -529,7 +470,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textCloudName
                                     .getText().toString());
                         }
-//                        bundle.putString(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileImage);
                         if (fragment instanceof AllContactsListFragment) {
                             Intent intent = new Intent(activity, ProfileDetailActivity.class);
                             intent.putExtras(bundle);
@@ -562,266 +502,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
         //</editor-fold>
 
-        //<editor-fold desc="buttonInvite Click">
-      /*  holder.buttonInvite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
-
-                Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(profileData
-                        .getLocalPhoneBookId());
-                if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
-                    while (contactNumberCursor.moveToNext()) {
-
-                        ProfileDataOperationPhoneNumber phoneNumber = new
-                                ProfileDataOperationPhoneNumber();
-                        phoneNumber.setPhoneNumber(Utils.getFormattedNumber(activity,
-                                contactNumberCursor.getString(contactNumberCursor.getColumnIndex
-                                        (ContactsContract.CommonDataKinds.Phone.NUMBER))));
-                        phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
-                                (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
-                                        (ContactsContract.CommonDataKinds.Phone.TYPE))));
-
-                        phoneNumbers.add(phoneNumber);
-
-                    }
-                    contactNumberCursor.close();
-                }
-
-                ArrayList<ProfileDataOperationEmail> emailIds = new ArrayList<>();
-
-                Cursor contactEmailCursor = phoneBookContacts.getContactEmail(profileData
-                        .getLocalPhoneBookId());
-                if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
-                    while (contactEmailCursor.moveToNext()) {
-
-                        ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
-                        emailId.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
-                        emailId.setEmType(phoneBookContacts.getEmailType(contactEmailCursor,
-                                contactEmailCursor.getInt(contactEmailCursor.getColumnIndex
-                                        (ContactsContract.CommonDataKinds.Email.TYPE))));
-
-                        emailIds.add(emailId);
-
-                    }
-                    contactEmailCursor.close();
-                }
-
-                if (phoneNumbers.size() + emailIds.size() > 1) {
-                    selectContactDialog(profileData.getTempFirstName(), phoneNumbers, emailIds);
-                } else {
-                    if (phoneNumbers.size() > 0) {
-                        ArrayList<String> numbers = new ArrayList<>();
-                        for (int i = 0; i < phoneNumbers.size(); i++) {
-                            numbers.add(phoneNumbers.get(i).getPhoneNumber());
-                        }
-                        inviteContact(numbers, null);
-                    } else if (emailIds.size() > 0) {
-                        ArrayList<String> emails = new ArrayList<>();
-                        for (int i = 0; i < emailIds.size(); i++) {
-                            emails.add(emailIds.get(i).getEmEmailId());
-                        }
-                        inviteContact(null, emails);
-                    }
-                }
-            }
-        });*/
-
-        /*holder.rippleInvite.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener
-        () {
-            @Override
-            public void onComplete(RippleView rippleView) {
-                ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
-
-                Cursor contactNumberCursor = phoneBookContacts.getContactNumbers(profileData
-                        .getLocalPhoneBookId());
-                if (contactNumberCursor != null && contactNumberCursor.getCount() > 0) {
-                    while (contactNumberCursor.moveToNext()) {
-
-                        ProfileDataOperationPhoneNumber phoneNumber = new
-                                ProfileDataOperationPhoneNumber();
-                        phoneNumber.setPhoneNumber(Utils.getFormattedNumber(activity,
-                                contactNumberCursor.getString(contactNumberCursor.getColumnIndex
-                                        (ContactsContract.CommonDataKinds.Phone.NUMBER))));
-                        phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
-                                (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
-                                        (ContactsContract.CommonDataKinds.Phone.TYPE))));
-
-                        phoneNumbers.add(phoneNumber);
-
-                    }
-                    contactNumberCursor.close();
-                }
-
-                ArrayList<ProfileDataOperationEmail> emailIds = new ArrayList<>();
-
-                Cursor contactEmailCursor = phoneBookContacts.getContactEmail(profileData
-                        .getLocalPhoneBookId());
-                if (contactEmailCursor != null && contactEmailCursor.getCount() > 0) {
-                    while (contactEmailCursor.moveToNext()) {
-
-                        ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
-                        emailId.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
-                        emailId.setEmType(phoneBookContacts.getEmailType(contactEmailCursor,
-                                contactEmailCursor.getInt(contactEmailCursor.getColumnIndex
-                                        (ContactsContract.CommonDataKinds.Email.TYPE))));
-
-                        emailIds.add(emailId);
-
-                    }
-                    contactEmailCursor.close();
-                }
-
-                if (phoneNumbers.size() + emailIds.size() > 1) {
-                    selectContactDialog(profileData.getName(), phoneNumbers, emailIds);
-                } else {
-                    if (phoneNumbers.size() > 0) {
-                        ArrayList<String> numbers = new ArrayList<>();
-                        for (int i = 0; i < phoneNumbers.size(); i++) {
-                            numbers.add(phoneNumbers.get(i).getPhoneNumber());
-                        }
-                        inviteContact(numbers, null);
-                    } else if (emailIds.size() > 0) {
-                        ArrayList<String> emails = new ArrayList<>();
-                        for (int i = 0; i < emailIds.size(); i++) {
-                            emails.add(emailIds.get(i).getEmEmailId());
-                        }
-                        inviteContact(null, emails);
-                    }
-                }
-            }
-        });*/
-
-        //</editor-fold>
-
-       /* if (profileData.getOperation().get(0).getPbPhoneNumber().size() > 0) {
-            displayNumber(holder, profileData, contactDisplayName, position);
-        } else if (!Utils.isArraylistNullOrEmpty(profileData.getOperation().get(0)
-                .getPbEmailId()) && profileData.getOperation().get(0).getPbEmailId().size() > 0) {
-            displayEmail(holder, profileData, null, contactDisplayName, position);
-        }
-
-        *//* Hide Divider if row is last in Section *//*
-        if ((position + 1) < arrayListUserContact.size()) {
-            if (arrayListUserContact.get(position + 1) instanceof String) {
-                holder.dividerAllContact.setVisibility(View.GONE);
-            } else {
-                holder.dividerAllContact.setVisibility(View.VISIBLE);
-            }
-        }
-
-        final String profileImage =  profileData.getProfileUrl();
-        if(!TextUtils.isEmpty(profileImage)){
-            Glide.with(activity)
-                    .load(profileImage)
-                    .placeholder(R.drawable.home_screen_profile)
-                    .error(R.drawable.home_screen_profile)
-                    .bitmapTransform(new CropCircleTransformation(activity))
-                    .override(200, 200)
-                    .into(holder.imageProfile);
-        }else{
-            holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
-        }
-
-
-        holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Bundle bundle = new Bundle();
-
-                TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
-                TextView textCloudName = (TextView) view.findViewById(R.id
-                        .text_cloud_contact_name);
-
-                if (StringUtils.equalsIgnoreCase(view.getTag().toString(), "0")) {
-                    // Display own profile
-                    bundle.putString(AppConstants.EXTRA_PM_ID, ((BaseActivity) activity)
-                            .getUserPmId());
-                    bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "-1");
-                } else if (!StringUtils.equalsIgnoreCase(view.getTag().toString(), "-1")) {
-                    // RCP profile
-
-                    if (String.valueOf(view.getTag()).contains(",")) {
-                        if (holder.recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
-                            holder.recyclerViewMultipleRc.setVisibility(View.GONE);
-                            arrayListExpandedPositions.remove((Object) textName.getTag());
-                        } else {
-                            arrayListExpandedPositions.add((int) textName.getTag());
-                            holder.recyclerViewMultipleRc.setVisibility(View.VISIBLE);
-                        }
-                    } else {
-                        bundle.putString(AppConstants.EXTRA_PM_ID, String.valueOf(view.getTag()));
-                        bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, profileData
-                                .getLocalPhoneBookId());
-                    }
-
-                } else {
-                    // Non RCP profile
-                    bundle.putString(AppConstants.EXTRA_PM_ID, "-1");
-                    bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, profileData
-                            .getLocalPhoneBookId());
-                }
-                if (!String.valueOf(view.getTag()).contains(",")) {
-                  *//*  TextView textName = (TextView) view.findViewById(R.id.text_contact_name);
-                    TextView textCloudName = (TextView) view.findViewById(R.id
-                            .text_cloud_contact_name);*//*
-
-                    bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString
-                            ());
-                    listClickedPosition = (int) textName.getTag();
-                    if (textCloudName.getVisibility() == View.VISIBLE) {
-                        bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textCloudName
-                                .getText().toString());
-                    }
-                    bundle.putString(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE,profileImage);
-                    ((BaseActivity) activity).startActivityIntent(activity, ProfileDetailActivity
-                            .class, bundle);
-                }
-            }
-        });
-
-        holder.imageSocialMedia.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showBottomSheet();
-            }
-        });
-
-        holder.buttonInvite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers = new ArrayList<>();
-                phoneNumbers.addAll(profileData.getOperation().get(0).getPbPhoneNumber());
-                ArrayList<ProfileDataOperationEmail> emailIds = new ArrayList<>();
-                emailIds.addAll(profileData.getOperation().get(0).getPbEmailId());
-
-                if (phoneNumbers.size() + emailIds.size() > 1) {
-                    selectContactDialog(profileData.getOperation()
-                            .get(0).getPbNameFirst(), phoneNumbers, emailIds);
-                } else {
-                    if (phoneNumbers.size() > 0) {
-                        ArrayList<String> numbers = new ArrayList<>();
-                        for (int i = 0; i < phoneNumbers.size(); i++) {
-                            numbers.add(phoneNumbers.get(i).getPhoneNumber());
-                        }
-                        inviteContact(numbers, null);
-                    } else if (emailIds.size() > 0) {
-                        ArrayList<String> emails = new ArrayList<>();
-                        for (int i = 0; i < emailIds.size(); i++) {
-                            emails.add(emailIds.get(i).getEmEmailId());
-                        }
-                        inviteContact(null, emails);
-                    }
-                }
-
-            }
-        });*/
-
     }
 
     private void configureHeaderViewHolder(ContactHeaderViewHolder holder, int position) {
@@ -830,7 +510,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private void configureFooterViewHolder(ContactFooterViewHolder holder) {
-//        String letter = (String) arrayListUserContact.get(position);
         if (fragment instanceof AllContactsListFragment) {
             holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d %s",
                     arrayListUserContact.size() - 3, activity.getString(R.string.contacts)));
@@ -840,311 +519,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             arrayListContactHeader.size(), activity.getString(R.string.contacts)));
 
         }
-    }
-
-    private void displayNumber(AllContactViewHolder holder, ProfileData profileData, String
-            contactDisplayName, int position) {
-
-       /* ArrayList<String> arrayListMobileNumbers = new ArrayList<>();
-        for (int i = 0; i < profileData.getOperation().get(0).getPbPhoneNumber().size(); i++) {
-            arrayListMobileNumbers.add(profileData.getOperation().get(0).getPbPhoneNumber().get
-                    (i).getPhoneNumber());
-        }
-
-        ArrayList<ProfileMobileMapping> arrayListDbMobileNumbers = tableProfileMobileMapping
-                .getProfileMobileMappingFromNumber(arrayListMobileNumbers.toArray(new
-                        String[arrayListMobileNumbers.size()]));
-
-        String displayNumber, displayName, rating, totalRatingUser;
-        boolean isRcp;
-        if (arrayListDbMobileNumbers.size() > 0) {
-
-            displayNumber = arrayListDbMobileNumbers.get(0).getMpmMobileNumber();
-
-            if (arrayListDbMobileNumbers.size() == 1) {
-
-//                holder.recyclerViewMultipleRc.setVisibility(View.GONE);
-
-                String displayNamePmId = arrayListDbMobileNumbers.get(0).getMpmCloudPmId();
-                holder.relativeRowAllContact.setTag(displayNamePmId);
-
-                UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
-                        .parseInt(displayNamePmId));
-
-                rating = userProfile.getTotalProfileRateUser();
-                totalRatingUser = userProfile.getProfileRating();
-
-                holder.linearRating.setVisibility(View.VISIBLE);
-                holder.buttonInvite.setVisibility(View.GONE);
-                holder.imageSocialMedia.setVisibility(View.VISIBLE);
-                holder.textRatingUserCount.setText(rating);
-                holder.ratingUser.setRating(Float.parseFloat(totalRatingUser));
-
-                displayName = ((userProfile.getPmFirstName().length() > 0 || userProfile
-                        .getPmLastName().length() > 0) ? " (" + userProfile.getPmFirstName() + " " +
-                        "" + userProfile.getPmLastName() + ")" : "");
-
-            } else {
-
-                holder.linearRating.setVisibility(View.GONE);
-                holder.buttonInvite.setVisibility(View.VISIBLE);
-                holder.imageSocialMedia.setVisibility(View.GONE);
-//                holder.recyclerViewMultipleRc.setVisibility(View.VISIBLE);
-                populateNumberRecyclerView(holder.recyclerViewMultipleRc, arrayListDbMobileNumbers,
-                        contactDisplayName, profileData.getLocalPhoneBookId());
-
-                String[] pmIds = new String[arrayListDbMobileNumbers.size()];
-                for (int i = 0; i < arrayListDbMobileNumbers.size(); i++) {
-                    pmIds[i] = arrayListDbMobileNumbers.get(i).getMpmCloudPmId();
-                }
-                holder.relativeRowAllContact.setTag(StringUtils.join(pmIds, ","));
-
-                displayName = " (" + arrayListDbMobileNumbers.size() + "RC)";
-
-            }
-
-            if (StringUtils.equals(displayName, (" (" + contactDisplayName + ")"))) {
-                holder.textCloudContactName.setVisibility(View.GONE);
-                holder.textContactName.setTextColor(colorPineGreen);
-            } else {
-                holder.textCloudContactName.setVisibility(View.VISIBLE);
-
-                if (position == 1 && fragment instanceof AllContactsFragment) {
-                    holder.textContactName.setTextColor(colorPineGreen);
-                } else {
-                    holder.textContactName.setTextColor(colorBlack);
-                }
-            }
-
-            holder.textContactNumber.setTextColor(colorPineGreen);
-            isRcp = true;
-            holder.linearRating.setVisibility(View.VISIBLE);
-            holder.buttonInvite.setVisibility(View.GONE);
-//            holder.imageSocialMedia.setVisibility(View.VISIBLE);
-
-        } else {
-
-//            holder.recyclerViewMultipleRc.setVisibility(View.GONE);
-
-            displayNumber = profileData.getOperation().get(0).getPbPhoneNumber().get(0)
-                    .getPhoneNumber();
-            rating = profileData.getOperation().get(0).getProfileRating();
-            totalRatingUser = profileData.getOperation().get(0).getTotalProfileRateUser();
-
-            displayName = " ";
-            if (position == 1 && fragment instanceof AllContactsFragment) {
-                holder.relativeRowAllContact.setTag("0");
-                holder.textContactName.setTextColor(colorPineGreen);
-                holder.textContactNumber.setTextColor(colorPineGreen);
-                holder.linearRating.setVisibility(View.VISIBLE);
-                holder.buttonInvite.setVisibility(View.GONE);
-                holder.imageSocialMedia.setVisibility(View.VISIBLE);
-                holder.textRatingUserCount.setText(rating);
-                holder.ratingUser.setRating(Float.parseFloat(totalRatingUser));
-            } else {
-                holder.relativeRowAllContact.setTag("-1");
-                holder.textContactName.setTextColor(colorBlack);
-                holder.textContactNumber.setTextColor(colorBlack);
-                holder.linearRating.setVisibility(View.GONE);
-                holder.buttonInvite.setVisibility(View.VISIBLE);
-                holder.imageSocialMedia.setVisibility(View.GONE);
-            }
-
-            isRcp = false;
-        }
-
-        displayNumber = Utils.getFormattedNumber(activity, displayNumber);
-
-        holder.textCloudContactName.setText(displayName);
-        holder.textContactNumber.setText(displayNumber);
-
-        if (!isRcp && !Utils.isArraylistNullOrEmpty(profileData.getOperation().get(0)
-                .getPbEmailId())) {
-            displayEmail(holder, profileData, displayNumber, contactDisplayName, position);
-        }*/
-
-
-
-
-       /* if (holder.textCloudContactName.getVisibility() == View.VISIBLE && holder
-                .textCloudContactName.getText().toString().length() > 0) {
-            holder.textContactName.setMaxWidth(((LinearLayout) holder.textContactName.getParent()
-            ).getWidth() / 2);
-            holder.textCloudContactName.setMaxWidth(((LinearLayout) holder
-                    .textCloudContactName.getParent()).getWidth() / 2);
-        } else {
-            holder.textContactName.setWidth(((LinearLayout) holder.textContactName.getParent())
-                    .getWidth());
-        }*/
-
-    }
-
-    private void populateNumberRecyclerView(RecyclerView recyclerViewMultipleRc,
-                                            ArrayList<ProfileMobileMapping>
-                                                    arrayListDbMobileNumbers, String
-                                                    contactDisplayName, String phonebookId) {
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
-        recyclerViewMultipleRc.setLayoutManager(linearLayoutManager);
-
-        ExpandableContactListAdapter adapter = new ExpandableContactListAdapter(fragment,
-                arrayListDbMobileNumbers, null, contactDisplayName, phonebookId);
-        recyclerViewMultipleRc.setAdapter(adapter);
-
-    }
-
-    private void populateEmailRecyclerView(RecyclerView recyclerViewMultipleRc,
-                                           ArrayList<ProfileEmailMapping> arrayListDbEmailIds,
-                                           String contactDisplayName, String phonebookId) {
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
-        recyclerViewMultipleRc.setLayoutManager(linearLayoutManager);
-
-        ExpandableContactListAdapter adapter = new ExpandableContactListAdapter(fragment, null,
-                arrayListDbEmailIds, contactDisplayName, phonebookId);
-        recyclerViewMultipleRc.setAdapter(adapter);
-
-    }
-
-    private void displayEmail(AllContactViewHolder holder, ProfileData profileData, String
-            displayNumber, String contactDisplayName, int position) {
-        /*TableProfileEmailMapping tableProfileEmailMapping = new TableProfileEmailMapping((
-                (BaseActivity) activity).databaseHandler);*/
-
-       /* ArrayList<String> arrayListEmails = new ArrayList<>();
-        for (int i = 0; i < profileData.getOperation().get(0).getPbEmailId().size(); i++) {
-            arrayListEmails.add(profileData.getOperation().get(0).getPbEmailId().get
-                    (i).getEmEmailId());
-        }
-
-        if (arrayListEmails.size() > 0) {
-            ArrayList<ProfileEmailMapping> arrayListDbEmailIds = tableProfileEmailMapping
-                    .getProfileEmailMappingFromEmailId(arrayListEmails.toArray(new
-                            String[arrayListEmails.size()]));
-
-            String displayEmailId, displayName;
-            boolean isRcp;
-            if (arrayListDbEmailIds.size() > 0) {
-                displayEmailId = arrayListDbEmailIds.get(0).getEpmEmailId();
-              *//*  String displayNamePmId = arrayListDbEmailIds.get(0).getEpmCloudPmId();
-                holder.relativeRowAllContact.setTag(displayNamePmId);*//*
-
-                if (arrayListDbEmailIds.size() == 1) {
-
-                    String displayNamePmId = arrayListDbEmailIds.get(0).getEpmCloudPmId();
-                    holder.relativeRowAllContact.setTag(displayNamePmId);
-
-                    UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
-                            .parseInt(displayNamePmId));
-
-                    holder.linearRating.setVisibility(View.VISIBLE);
-                    holder.buttonInvite.setVisibility(View.GONE);
-                    holder.imageSocialMedia.setVisibility(View.VISIBLE);
-                    holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
-                    holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
-
-                    displayName = ((userProfile.getPmFirstName().length() > 0 || userProfile
-                            .getPmLastName().length() > 0) ? " (" + userProfile
-                            .getPmFirstName() + " " + userProfile
-                            .getPmLastName() + ")" : "");
-
-                } else {
-
-                    holder.linearRating.setVisibility(View.GONE);
-                    holder.buttonInvite.setVisibility(View.VISIBLE);
-                    holder.imageSocialMedia.setVisibility(View.GONE);
-                    populateEmailRecyclerView(holder.recyclerViewMultipleRc, arrayListDbEmailIds,
-                            contactDisplayName, profileData.getLocalPhoneBookId());
-
-                    String[] pmIds = new String[arrayListDbEmailIds.size()];
-                    for (int i = 0; i < arrayListDbEmailIds.size(); i++) {
-                        pmIds[i] = arrayListDbEmailIds.get(i).getEpmCloudPmId();
-                    }
-                    holder.relativeRowAllContact.setTag(StringUtils.join(pmIds, ","));
-
-                    displayName = " (" + arrayListDbEmailIds.size() + "RC)";
-                }
-
-                if (StringUtils.equals(displayName, (" (" + contactDisplayName + ")"))) {
-                    holder.textCloudContactName.setVisibility(View.GONE);
-                    holder.textContactName.setTextColor(colorPineGreen);
-                } else {
-                    holder.textCloudContactName.setVisibility(View.VISIBLE);
-
-                    if (position == 1) {
-                        holder.textContactName.setTextColor(colorPineGreen);
-                    } else {
-                        holder.textContactName.setTextColor(colorBlack);
-                    }
-                }
-
-//                holder.textContactNumber.setTextColor(colorPineGreen);
-                isRcp = true;
-                holder.linearRating.setVisibility(View.VISIBLE);
-                holder.buttonInvite.setVisibility(View.GONE);
-                holder.imageSocialMedia.setVisibility(View.VISIBLE);
-            } else {
-
-                if (position == 1 && fragment instanceof AllContactsFragment) {
-                    holder.linearRating.setVisibility(View.VISIBLE);
-                    holder.buttonInvite.setVisibility(View.GONE);
-                    holder.imageSocialMedia.setVisibility(View.VISIBLE);
-                    holder.relativeRowAllContact.setTag("0");
-                } else {
-                    holder.linearRating.setVisibility(View.GONE);
-                    holder.buttonInvite.setVisibility(View.VISIBLE);
-                    holder.imageSocialMedia.setVisibility(View.GONE);
-                    holder.relativeRowAllContact.setTag("-1");
-                }
-                displayEmailId = profileData.getOperation().get(0).getPbEmailId().get(0)
-                        .getEmEmailId();
-                displayName = "";
-//                holder.textContactNumber.setTextColor(colorBlack);
-                isRcp = false;
-            *//* Display mobile number if Email Id is not rcp *//*
-                if (displayNumber != null) {
-                    displayEmailId = displayNumber;
-                }
-
-            }
-            holder.textCloudContactName.setText(displayName);
-             *//*holder.textContactNumber.setText(displayEmailId);*//*
-            if (displayNumber != null) {
-                holder.textContactNumber.setText(displayNumber);
-            } else {
-                if (isRcp || (position == 1 && fragment instanceof AllContactsFragment)) {
-                    holder.textContactNumber.setTextColor(colorPineGreen);
-                } else {
-                    holder.textContactNumber.setTextColor(colorBlack);
-                }
-                holder.textContactNumber.setText(displayEmailId);
-            }
-
-        }*/
-
-    }
-
-    private void showBottomSheet() {
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(activity, 3);
-
-        View view = activity.getLayoutInflater().inflate(R.layout
-                .layout_bottom_sheet, null);
-        RecyclerView recyclerViewShare = ButterKnife.findById(view, R.id.recycler_view_share);
-        TextView textSheetHeader = ButterKnife.findById(view, R.id.text_sheet_header);
-
-        textSheetHeader.setText(activity.getString(R.string.social_media));
-        textSheetHeader.setTypeface(Utils.typefaceBold(activity));
-
-        BottomSheetSocialMediaAdapter adapter = new BottomSheetSocialMediaAdapter(activity);
-
-        recyclerViewShare.setLayoutManager(gridLayoutManager);
-        recyclerViewShare.setAdapter(adapter);
-
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(activity);
-        bottomSheetDialog.setContentView(view);
-        bottomSheetDialog.show();
-
     }
 
     public int getListClickedPosition() {
@@ -1277,9 +651,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             fragment.requestPermissions(new String[]{Manifest.permission
                                     .CALL_PHONE}, AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL);
                         } else {
-                           /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                    callNumber));
-                            startActivity(intent);*/
                             if (fragment instanceof AllContactsListFragment) {
                                 Utils.callIntent(activity, ((AllContactsListFragment) fragment)
                                         .callNumber);
@@ -1317,8 +688,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
-        /* @BindView(R.id.image_social_media)
-         ImageView imageSocialMedia;*/
         @BindView(R.id.text_contact_name)
         public TextView textContactName;
         @BindView(R.id.text_cloud_contact_name)
@@ -1337,11 +706,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         LinearLayout linearRating;
         @BindView(R.id.recycler_view_multiple_rc)
         public RecyclerView recyclerViewMultipleRc;
-      /*  @BindView(R.id.button_invite)
-        Button buttonInvite;
-        @BindView(R.id.ripple_invite)
-        RippleView rippleInvite;*/
-
 
         AllContactViewHolder(View itemView) {
             super(itemView);
@@ -1374,11 +738,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             // Empty stars
             Utils.setRatingStarColor(stars.getDrawable(0), ContextCompat.getColor(activity,
                     android.R.color.darker_gray));
-
-//            textRatingUserCount.setText("0");
-
-            /*textContactName.setMaxWidth(Utils.getDeviceWidth(activity) / 2);
-            textCloudContactName.setMaxWidth(Utils.getDeviceWidth(activity) / 2);*/
 
             initSwipe(recyclerViewMultipleRc);
 
@@ -1416,37 +775,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     //</editor-fold>
 
     //<editor-fold desc="Web Service Call">
-
-    private void inviteContact(ArrayList<String> arrayListContactNumber, ArrayList<String>
-            arrayListEmail) {
-
-        WsRequestObject inviteContactObject = new WsRequestObject();
-        inviteContactObject.setArrayListContactNumber(arrayListContactNumber);
-        inviteContactObject.setArrayListEmailAddress(arrayListEmail);
-
-        if (Utils.isNetworkAvailable(activity)) {
-            if (fragment != null) {
-                new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                        inviteContactObject, null, WsResponseObject.class, WsConstants
-                        .REQ_SEND_INVITATION, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                        WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
-            } else {
-                if (activity instanceof SearchActivity) {
-                    new AsyncWebServiceCall(activity, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                            inviteContactObject, null, WsResponseObject.class, WsConstants
-                            .REQ_SEND_INVITATION, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                            WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
-                }
-
-            }
-
-        }
-        /*else {
-            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
-                    .getString(R.string.msg_no_network));
-        }*/
-    }
-
 
     // Filter Class
     public void filter(String charText) {
