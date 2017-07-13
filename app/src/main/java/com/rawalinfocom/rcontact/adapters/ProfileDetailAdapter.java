@@ -658,6 +658,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         break;
 
                 }
+                holder.llPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
                 if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
