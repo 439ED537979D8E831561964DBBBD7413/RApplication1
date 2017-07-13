@@ -32,25 +32,15 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
             minifyEnabled false
-
-//            resValue("string", "PORT_NUMBER", "8082")
-
-            proguardFiles 'proguard-support-design.pro'
-            proguardFiles 'proguard-support-v7-appcompat.pro'
-            proguardFiles 'proguard-support-v7-recyclerview.pro'
-            proguardFiles 'proguard-jackson.pro'
-            proguardFiles 'proguard-butterknife.pro'
-            proguardFiles 'proguard-gson.pro'
-            proguardFiles 'proguard-apache-commons-lang.pro'
-
-            proguardFiles 'proguard-rules.pro'
-            proguardFiles getDefaultProguardFile('proguard-android.txt')
         }
+    }
+    lintOptions {
+        checkAllWarnings false
     }
 
     packagingOptions {
