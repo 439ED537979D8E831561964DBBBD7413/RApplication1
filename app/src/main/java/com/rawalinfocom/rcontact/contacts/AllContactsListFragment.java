@@ -182,7 +182,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             }
         }
 
-        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE, false)) {
+        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE,
+                false)) {
             UpdateLoginUserProfile();
         }
     }
@@ -431,9 +432,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             myProfileData.setName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
             myProfileData.setProfileUrl(userProfile.getPmProfileImage());
-            myProfileData.setName(Utils.getStringPreference(getActivity(), AppConstants.PREF_USER_NAME, ""));
+            myProfileData.setName(Utils.getStringPreference(getActivity(), AppConstants
+            .PREF_USER_NAME, ""));
             myProfileData.setTempNumber(mobileNumber);
-            myProfileData.setProfileUrl(Utils.getStringPreference(getActivity(), AppConstants.PREF_USER_PHOTO, ""));
+            myProfileData.setProfileUrl(Utils.getStringPreference(getActivity(), AppConstants
+            .PREF_USER_PHOTO, ""));
             myProfileData.setTempIsRcp(true);
             myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
 
@@ -475,9 +478,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
         String mobileNumber = tableMobileMaster.getUserMobileNumber(getUserPmId());
 
-        myProfileData.setName(Utils.getStringPreference(getActivity(), AppConstants.PREF_USER_NAME, ""));
+        myProfileData.setName(Utils.getStringPreference(getActivity(), AppConstants
+                .PREF_USER_NAME, ""));
         myProfileData.setTempNumber(mobileNumber);
-        myProfileData.setProfileUrl(Utils.getStringPreference(getActivity(), AppConstants.PREF_USER_PHOTO, ""));
+        myProfileData.setProfileUrl(Utils.getStringPreference(getActivity(), AppConstants
+                .PREF_USER_PHOTO, ""));
         myProfileData.setTempIsRcp(true);
         myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
 
@@ -605,7 +610,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         final int display = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
                 .DISPLAY_NAME);
 
-        ArrayList<String> accounts = new ArrayList<>();
+//        ArrayList<String> accounts = new ArrayList<>();
 
         while (data.moveToNext()) {
             try {
@@ -626,11 +631,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 Log.i("Account Type", data.getString(data.getColumnIndex(ContactsContract
                         .RawContacts.ACCOUNT_TYPE)));*/
 
-                if (!accounts.contains(data.getString(data.getColumnIndex(ContactsContract
-                        .RawContacts.ACCOUNT_TYPE)))) {
-                    accounts.add(data.getString(data.getColumnIndex(ContactsContract
-                            .RawContacts.ACCOUNT_TYPE)));
-                }
+//                if (!accounts.contains(data.getString(data.getColumnIndex(ContactsContract
+//                        .RawContacts.ACCOUNT_TYPE)))) {
+//                    accounts.add(data.getString(data.getColumnIndex(ContactsContract
+//                            .RawContacts.ACCOUNT_TYPE)));
+//                }
 
                 switch (data.getString(mimeTypeIdx)) {
                     case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
@@ -646,7 +651,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             }
         }
 
-        Log.i("accounts", accounts.toString());
+//        Log.i("accounts", accounts.toString());
     }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
@@ -1611,7 +1616,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         AsyncTask.execute(run);
     }
 
-    public class SyncingTask extends AsyncTask<Void, Void, Void> {
+    private class SyncingTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -1619,7 +1624,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             return null;
         }
     }
-    //</editor-fold>
+
+    //<editor-fold desc="Private Methods">
 
     private void uploadContacts(int previouslySyncedData, ArrayList<ProfileData>
             arrayListUserContact) {
@@ -1636,11 +1642,29 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_UPLOAD_CONTACTS + "_" + previouslySyncedData, null, true)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
+                            WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
         } else {
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
                     .getString(R.string.msg_no_network));
         }
     }
+
+    private void savePackages() {
+
+       /* WsRequestObject savePackageObject = new WsRequestObject();
+        savePackageObject.setFavourites(favourites);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    favouriteStatusObject, null, WsResponseObject.class, WsConstants
+                    .REQ_MARK_AS_FAVOURITE, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    .REQ_MARK_AS_FAVOURITE);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
+                    .string.msg_no_network));
+        }*/
+    }
+
+
     //</editor-fold>
 }

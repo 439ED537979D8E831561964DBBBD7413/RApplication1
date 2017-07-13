@@ -10,6 +10,7 @@ import android.provider.ContactsContract;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.ContactPackage;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -847,4 +848,65 @@ public class PhoneBookContacts {
         Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
                 firstTimeList);
     }
+
+    /*public ArrayList<ContactPackage> getContactStorageAccounts() {
+        String contactDisplayName = "";
+        Uri uri = ContactsContract.Data.CONTENT_URI;
+        String[] projection = new String[]{
+//                ContactsContract.CommonDataKinds.StructuredName._ID,
+//                ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY,
+                ContactsContract.CommonDataKinds.StructuredName.RAW_CONTACT_ID,
+                ContactsContract.CommonDataKinds.StructuredName.PREFIX,
+                ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.SUFFIX,
+                ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
+        };
+
+        String selection = ContactsContract.Data.MIMETYPE + " = '" +
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE + "' AND " +
+//                ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY
+                ContactsContract.CommonDataKinds.StructuredName.RAW_CONTACT_ID
+                + " IN (?)";
+        String[] selectionArgs = new String[]{contactId};
+
+        Cursor cursor = context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                String prefix = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.PREFIX));
+                String firstName = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.GIVEN_NAME));
+                String lastName = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.FAMILY_NAME));
+                String middleName = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.MIDDLE_NAME));
+                String suffix = cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .CommonDataKinds.StructuredName.SUFFIX));
+
+                if (StringUtils.length(prefix) > 0) {
+                    contactDisplayName = prefix + " ";
+                }
+                if (StringUtils.length(firstName) > 0) {
+                    contactDisplayName = contactDisplayName + firstName + " ";
+                }
+                if (StringUtils.length(middleName) > 0) {
+                    contactDisplayName = contactDisplayName + middleName + " ";
+                }
+                if (StringUtils.length(lastName) > 0) {
+                    contactDisplayName = contactDisplayName + lastName + " ";
+                }
+                if (StringUtils.length(suffix) > 0) {
+                    contactDisplayName = contactDisplayName + suffix;
+                }
+                contactDisplayName = StringUtils.trimToEmpty(contactDisplayName);
+
+            }
+            cursor.close();
+        }
+      *//*  return context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, null);*//*
+        return contactDisplayName;
+    }*/
 }
