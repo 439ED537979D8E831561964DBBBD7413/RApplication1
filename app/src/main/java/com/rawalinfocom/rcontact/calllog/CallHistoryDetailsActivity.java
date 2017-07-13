@@ -108,6 +108,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     ImageView imageProfile;
     @BindView(R.id.text_user_rating)
     TextView textUserRating;
+    @BindView(R.id.img_user_rating)
+    TextView imgUserRating;
     @BindView(R.id.rating_user)
     RatingBar ratingUser;
     @BindView(R.id.linear_basic_detail_rating)
@@ -974,6 +976,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         textOrganization.setTypeface(Utils.typefaceRegular(this));
         textViewAllOrganization.setTypeface(Utils.typefaceRegular(this));
         textUserRating.setTypeface(Utils.typefaceRegular(this));
+        imgUserRating.setTypeface(Utils.typefaceIcons(this));
+        imgUserRating.setText(getString(R.string.im_icon_rating_user));
+
         textFullScreenText.setSelected(true);
         rippleActionBack.setOnRippleCompleteListener(this);
 //        rippleActionRightLeft.setOnRippleCompleteListener(this);
