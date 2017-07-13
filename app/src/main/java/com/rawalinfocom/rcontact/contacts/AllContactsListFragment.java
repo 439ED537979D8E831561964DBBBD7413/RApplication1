@@ -271,29 +271,66 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                         .getArrayListMapping());
                             }
 
-                            Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                    getActivity().getString(R.string.str_all_contact_sync));
+
+                           /* Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
+                                    getActivity().getString(R.string.str_all_contact_sync));*/
                             Utils.setStringPreference(getActivity(), AppConstants
                                     .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System
                                     .currentTimeMillis() - 10000));
-                            Utils.setBooleanPreference(getActivity(), AppConstants
-                                    .PREF_CONTACT_SYNCED, true);
+                            /*Utils.setBooleanPreference(getActivity(), AppConstants
+                                    .PREF_CONTACT_SYNCED, true);*/
                             getRcpDetail();
                             phoneBookContacts.saveRawIdsToPref();
-                            Intent localBroadcastIntent = new Intent(AppConstants
+
+                            savePackages();
+                           /* Intent localBroadcastIntent = new Intent(AppConstants
                                     .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
                             LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
                                     .getInstance(getActivity());
-                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);*/
                         }
                     } else {
                         if (uploadContactResponse != null) {
                             Log.e("error response", uploadContactResponse.getMessage());
+                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                                    uploadContactResponse.getMessage());
                         } else {
                             Log.e("onDeliveryResponse: ", "uploadContactResponse null");
                             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
                                     getString(R
                                             .string.msg_try_later));
+                        }
+                    }
+                }
+                //</editor-fold>
+
+                // <editor-fold desc="REQ_SAVE_PACKAGE">
+
+                if (serviceType.contains(WsConstants.REQ_SAVE_PACKAGE)) {
+                    WsResponseObject savePackageResponse = (WsResponseObject) data;
+                    progressAllContact.setVisibility(View.GONE);
+                    if (savePackageResponse != null && StringUtils.equalsIgnoreCase
+                            (savePackageResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                            Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
+                                    getActivity().getString(R.string.str_all_contact_sync));
+                            Utils.setBooleanPreference(getActivity(), AppConstants
+                                    .PREF_CONTACT_SYNCED, true);
+                            Intent localBroadcastIntent = new Intent(AppConstants
+                                    .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
+                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                                    .getInstance(getActivity());
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+                    } else {
+                        if (savePackageResponse != null) {
+                            Log.e("error response", savePackageResponse.getMessage());
+                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                                    savePackageResponse.getMessage());
+                        } else {
+                            Log.e("onDeliveryResponse: ", "savePackageResponse null");
+                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                                    getString(R.string.msg_try_later));
                         }
                     }
                 }
@@ -310,6 +347,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     } else {
                         if (inviteContactResponse != null) {
                             Log.e("error response", inviteContactResponse.getMessage());
+                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                                    inviteContactResponse.getMessage());
                         } else {
                             Log.e("onDeliveryResponse: ", "uploadContactResponse null");
                             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
@@ -431,16 +470,18 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             myProfileData.setName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
             myProfileData.setProfileUrl(userProfile.getPmProfileImage());
-            myProfileData.setName(Utils.getStringPreference(getActivity(), AppConstants.PREF_USER_NAME, ""));
+            myProfileData.setName(Utils.getStringPreference(getActivity(), AppConstants
+            .PREF_USER_NAME, ""));
             myProfileData.setTempNumber(mobileNumber);
-            myProfileData.setProfileUrl(Utils.getStringPreference(getActivity(), AppConstants.PREF_USER_PHOTO, ""));
+            myProfileData.setProfileUrl(Utils.getStringPreference(getActivity(), AppConstants
+            .PREF_USER_PHOTO, ""));
             myProfileData.setTempIsRcp(true);
             myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
 
             arrayListPhoneBookContacts.add(myProfileData);
-            arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));*/
+            arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));
 
-//            arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));
+            arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));*/
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
             isReload = false;
@@ -467,26 +508,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 (getActivity());
         myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
     }
-
-//    private void UpdateLoginUserProfile() {
-//
-//        ProfileData myProfileData = new ProfileData();
-//
-//        TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
-//        String mobileNumber = tableMobileMaster.getUserMobileNumber(getUserPmId());
-//
-//        myProfileData.setName(Utils.getStringPreference(getActivity(), AppConstants.PREF_USER_NAME, ""));
-//        myProfileData.setTempNumber(mobileNumber);
-//        myProfileData.setProfileUrl(Utils.getStringPreference(getActivity(), AppConstants.PREF_USER_PHOTO, ""));
-//        myProfileData.setTempIsRcp(true);
-//        myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
-//
-//        arrayListPhoneBookContacts.set(1, myProfileData);
-//
-//        Utils.setBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE, false);
-//
-//        allContactListAdapter.notifyItemChanged(1);
-//    }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
@@ -605,7 +626,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         final int display = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone
                 .DISPLAY_NAME);
 
-        ArrayList<String> accounts = new ArrayList<>();
+//        ArrayList<String> accounts = new ArrayList<>();
 
         while (data.moveToNext()) {
             try {
@@ -626,11 +647,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 Log.i("Account Type", data.getString(data.getColumnIndex(ContactsContract
                         .RawContacts.ACCOUNT_TYPE)));*/
 
-                if (!accounts.contains(data.getString(data.getColumnIndex(ContactsContract
-                        .RawContacts.ACCOUNT_TYPE)))) {
-                    accounts.add(data.getString(data.getColumnIndex(ContactsContract
-                            .RawContacts.ACCOUNT_TYPE)));
-                }
+//                if (!accounts.contains(data.getString(data.getColumnIndex(ContactsContract
+//                        .RawContacts.ACCOUNT_TYPE)))) {
+//                    accounts.add(data.getString(data.getColumnIndex(ContactsContract
+//                            .RawContacts.ACCOUNT_TYPE)));
+//                }
 
                 switch (data.getString(mimeTypeIdx)) {
                     case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
@@ -646,7 +667,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             }
         }
 
-        Log.i("accounts", accounts.toString());
+//        Log.i("accounts", accounts.toString());
     }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
@@ -1611,7 +1632,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         AsyncTask.execute(run);
     }
 
-    public class SyncingTask extends AsyncTask<Void, Void, Void> {
+    private class SyncingTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -1619,7 +1640,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             return null;
         }
     }
-    //</editor-fold>
+
+    //<editor-fold desc="Private Methods">
 
     private void uploadContacts(int previouslySyncedData, ArrayList<ProfileData>
             arrayListUserContact) {
@@ -1642,5 +1664,25 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     .getString(R.string.msg_no_network));
         }
     }
+
+    private void savePackages() {
+
+//        Log.i("savePackages", phoneBookContacts.getContactStorageAccounts().toString());
+
+        WsRequestObject savePackageObject = new WsRequestObject();
+        savePackageObject.setArrayListPackageData(phoneBookContacts.getContactStorageAccounts());
+
+        if (Utils.isNetworkAvailable(getActivity())) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    savePackageObject, null, WsResponseObject.class, WsConstants
+                    .REQ_SAVE_PACKAGE, null, true).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_SAVE_PACKAGE);
+        } else {
+            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
+
     //</editor-fold>
 }

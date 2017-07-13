@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <LinearLayout
+        android:id="@+id/nav_ll_account"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal"
+        android:paddingEnd="0dp"
+        android:paddingStart="@dimen/margin_20dp">
+
+        <TextView
+            android:id="@+id/nav_txt_account"
+            android:layout_width="36dp"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:textColor="@color/regularFontColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_10dp"
+            android:gravity="center|start"
+            android:text="@string/nav_text_account"
+            android:textColor="@color/regularFontColor"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/drawer_item_bg" />
+
+    <LinearLayout
+        android:id="@+id/nav_ll_timeline"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal"
+        android:paddingEnd="@dimen/margin_20dp"
+        android:paddingStart="@dimen/margin_20dp">
+
+        <TextView
+            android:id="@+id/nav_txt_timeline"
+            android:layout_width="36dp"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:textColor="@color/regularFontColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_10dp"
+            android:layout_weight="1"
+            android:gravity="center|start"
+            android:text="@string/nav_text_timeline"
+            android:textColor="@color/regularFontColor"
+            android:textStyle="bold" />
+
+        <include layout="@layout/menu_counter" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/drawer_item_bg" />
+
+    <LinearLayout
+        android:id="@+id/nav_ll_events"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal"
+        android:paddingEnd="0dp"
+        android:paddingStart="@dimen/margin_20dp">
+
+        <TextView
+            android:id="@+id/nav_txt_events"
+            android:layout_width="36dp"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:textColor="@color/regularFontColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_10dp"
+            android:gravity="center|start"
+            android:text="@string/nav_text_events"
+            android:textColor="@color/regularFontColor"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/drawer_item_bg" />
+
+    <LinearLayout
+        android:id="@+id/nav_ll_rating_history"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal"
+        android:paddingEnd="0dp"
+        android:paddingStart="@dimen/margin_20dp">
+
+        <TextView
+            android:id="@+id/nav_txt_rating"
+            android:layout_width="36dp"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:textColor="@color/regularFontColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_10dp"
+            android:gravity="center|start"
+            android:text="@string/nav_text_rating_history"
+            android:textColor="@color/regularFontColor"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/drawer_item_bg" />
+
+    <LinearLayout
+        android:id="@+id/nav_ll_invite"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal"
+        android:paddingEnd="0dp"
+        android:paddingStart="@dimen/margin_20dp">
+
+        <TextView
+            android:id="@+id/nav_txt_invite"
+            android:layout_width="36dp"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:textColor="@color/regularFontColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_10dp"
+            android:gravity="center|start"
+            android:text="@string/nav_text_invite_contact"
+            android:textColor="@color/regularFontColor"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/drawer_item_bg" />
+
+    <LinearLayout
+        android:id="@+id/nav_ll_share"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal"
+        android:paddingEnd="0dp"
+        android:paddingStart="@dimen/margin_20dp">
+
+        <TextView
+            android:id="@+id/nav_txt_share"
+            android:layout_width="36dp"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:textColor="@color/regularFontColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_10dp"
+            android:gravity="center|start"
+            android:text="@string/nav_text_share_rcontact"
+            android:textColor="@color/regularFontColor"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/drawer_item_bg" />
+
+    <LinearLayout
+        android:id="@+id/nav_ll_settings"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal"
+        android:paddingEnd="0dp"
+        android:paddingStart="@dimen/margin_20dp">
+
+        <TextView
+            android:id="@+id/nav_txt_settings"
+            android:layout_width="36dp"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:textColor="@color/regularFontColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_10dp"
+            android:gravity="center|start"
+            android:text="@string/nav_text_settings"
+            android:textColor="@color/regularFontColor"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/drawer_item_bg" />
+
+    <LinearLayout
+        android:id="@+id/nav_ll_rate_us"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal"
+        android:paddingEnd="0dp"
+        android:paddingStart="@dimen/margin_20dp">
+
+        <TextView
+            android:id="@+id/nav_txt_rate"
+            android:layout_width="36dp"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:textColor="@color/regularFontColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_10dp"
+            android:gravity="center|start"
+            android:text="@string/nav_text_rate_us"
+            android:textColor="@color/regularFontColor"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/drawer_item_bg" />
+
+    <LinearLayout
+        android:id="@+id/nav_ll_about"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal"
+        android:paddingEnd="0dp"
+        android:paddingStart="@dimen/margin_20dp">
+
+        <TextView
+            android:id="@+id/nav_txt_about"
+            android:layout_width="36dp"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:textColor="@color/regularFontColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_10dp"
+            android:gravity="center|start"
+            android:text="@string/nav_text_about_help"
+            android:textColor="@color/regularFontColor"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/drawer_item_bg" />
+
+    <LinearLayout
+        android:id="@+id/nav_ll_export"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal"
+        android:paddingEnd="0dp"
+        android:paddingStart="@dimen/margin_20dp">
+
+        <TextView
+            android:id="@+id/nav_txt_export"
+            android:layout_width="36dp"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:textColor="@color/regularFontColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_10dp"
+            android:gravity="center|start"
+            android:text="@string/nav_text_export_db"
+            android:textColor="@color/regularFontColor"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</LinearLayout>

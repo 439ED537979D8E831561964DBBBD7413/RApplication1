@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -47,6 +48,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
@@ -110,9 +112,11 @@ import com.rawalinfocom.rcontact.sms.SmsFragment;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -124,8 +128,7 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements NavigationView
-        .OnNavigationItemSelectedListener, WsResponseListener {
+public class MainActivity extends BaseActivity implements WsResponseListener, View.OnClickListener {
 
     private static final String TAG = "MainActivity";
     @BindView(R.id.relative_root_contacts_main)
@@ -147,12 +150,12 @@ public class MainActivity extends BaseActivity implements NavigationView
     RContactApplication rContactApplication;
     private ArrayList<ProfileData> arrayListReSyncUserContact;
     private String currentStamp;
-    int LIST_PARTITION_COUNT = 10;
+    int LIST_PARTITION_COUNT = 20;
     private ArrayList<CallLogType> callLogTypeArrayListMain;
     ArrayList<CallLogType> callLogsListbyChunck;
     ArrayList<CallLogType> newList;
     ArrayList<SmsDataType> newSmsList;
-    int logsSyncedCount = 10;
+    int logsSyncedCount = 20;
     MaterialDialog permissionConfirmationDialog;
     private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
             .permission.READ_CALL_LOG, Manifest.permission.READ_SMS};
@@ -252,14 +255,14 @@ public class MainActivity extends BaseActivity implements NavigationView
             badgeLayout.setVisibility(View.GONE);
         }
         count = getTimeLineNotificationCount(databaseHandler);
-        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id
-                .nav_user_timeline).getActionView();
-        TextView textView = (TextView) view.findViewById(R.id.badge_count);
+//        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id
+//                .nav_user_timeline).getActionView();
+        TextView badge_count = (TextView) navigationView.findViewById(R.id.badge_count);
         if (count > 0) {
-            view.setVisibility(View.VISIBLE);
-            textView.setText(String.valueOf(count));
+            badge_count.setVisibility(View.VISIBLE);
+            badge_count.setText(String.valueOf(count));
         } else {
-            view.setVisibility(View.GONE);
+            badge_count.setVisibility(View.GONE);
         }
     }
 
@@ -271,49 +274,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         } else {
             super.onBackPressed();
         }
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.nav_share) {
-            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-            sharingIntent.setType("text/plain");
-            String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName();
-            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-            startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
-        } else if (id == R.id.nav_invite) {
-            startActivityIntent(MainActivity.this, ContactListingActivity.class, null);
-        } else if (id == R.id.nav_db_export) {
-            if (BuildConfig.DEBUG) {
-                String exportedFileName = Utils.exportDB(this);
-                if (exportedFileName != null) {
-                    File fileLocation = new File(Environment.getExternalStorageDirectory()
-                            .getAbsolutePath(), exportedFileName);
-                    Uri path = Uri.fromFile(fileLocation);
-                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                    emailIntent.setType("vnd.android.cursor.dir/email");
-                    emailIntent.putExtra(Intent.EXTRA_STREAM, path);
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
-                    startActivity(Intent.createChooser(emailIntent, getString(R.string
-                            .str_send_email)));
-                } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.db_dump_failed),
-                            Toast.LENGTH_SHORT)
-                            .show();
-                }
-            }
-        } else if (id == R.id.nav_user_timeline) {
-            startActivityIntent(MainActivity.this, TimelineActivity.class, null);
-        } else if (id == R.id.nav_user_events) {
-            startActivityIntent(MainActivity.this, EventsActivity.class, null);
-        } else if (id == R.id.nav_user_rating_history) {
-            startActivityIntent(this, RatingHistory.class, new Bundle());
-        }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     @Override
@@ -391,7 +351,7 @@ public class MainActivity extends BaseActivity implements NavigationView
 
                     if (Utils.getBooleanPreference(this, AppConstants
                             .PREF_CALL_LOG_SYNCED, false)) {
-                        LIST_PARTITION_COUNT = 10;
+                        LIST_PARTITION_COUNT = 20;
                         ArrayList<CallLogType> temp = divideCallLogByChunck(newList);
                         if (temp.size() >= LIST_PARTITION_COUNT) {
                             if (temp != null && temp.size() > 0)
@@ -419,8 +379,6 @@ public class MainActivity extends BaseActivity implements NavigationView
                         }
                         Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
                                 logsSyncedCount);
-
-
                     }
                 } else {
                     if (callLogInsertionResponse != null) {
@@ -913,14 +871,9 @@ public class MainActivity extends BaseActivity implements NavigationView
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         setNavigationHeaderData();
-
-        if (BuildConfig.DEBUG) {
-            Menu menu = navigationView.getMenu();
-            menu.findItem(R.id.nav_db_export).setVisible(true);
-        }
+        setNavigationListData();
 
         tabMain = (TabLayout) findViewById(R.id.tab_main);
 
@@ -930,16 +883,136 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     }
 
+    private void setNavigationListData() {
+
+        TextView nav_txt_account = (TextView) navigationView.findViewById(R.id.nav_txt_account);
+        TextView nav_txt_timeline = (TextView) navigationView.findViewById(R.id.nav_txt_timeline);
+        TextView nav_txt_events = (TextView) navigationView.findViewById(R.id.nav_txt_events);
+        TextView nav_txt_rating = (TextView) navigationView.findViewById(R.id.nav_txt_rating);
+        TextView nav_txt_invite = (TextView) navigationView.findViewById(R.id.nav_txt_invite);
+        TextView nav_txt_share = (TextView) navigationView.findViewById(R.id.nav_txt_share);
+        TextView nav_txt_settings = (TextView) navigationView.findViewById(R.id.nav_txt_settings);
+        TextView nav_txt_rate = (TextView) navigationView.findViewById(R.id.nav_txt_rate);
+        TextView nav_txt_about = (TextView) navigationView.findViewById(R.id.nav_txt_about);
+        TextView nav_txt_export = (TextView) navigationView.findViewById(R.id.nav_txt_export);
+
+        LinearLayout nav_ll_account = (LinearLayout) navigationView.findViewById(R.id.nav_ll_account);
+        LinearLayout nav_ll_timeline = (LinearLayout) navigationView.findViewById(R.id.nav_ll_timeline);
+        LinearLayout nav_ll_events = (LinearLayout) navigationView.findViewById(R.id.nav_ll_events);
+        LinearLayout nav_ll_rating = (LinearLayout) navigationView.findViewById(R.id.nav_ll_rating_history);
+        LinearLayout nav_ll_invite = (LinearLayout) navigationView.findViewById(R.id.nav_ll_invite);
+        LinearLayout nav_ll_share = (LinearLayout) navigationView.findViewById(R.id.nav_ll_share);
+        LinearLayout nav_ll_settings = (LinearLayout) navigationView.findViewById(R.id.nav_ll_settings);
+        LinearLayout nav_ll_rate = (LinearLayout) navigationView.findViewById(R.id.nav_ll_rate_us);
+        LinearLayout nav_ll_about = (LinearLayout) navigationView.findViewById(R.id.nav_ll_about);
+        LinearLayout nav_ll_export = (LinearLayout) navigationView.findViewById(R.id.nav_ll_export);
+
+        nav_ll_account.setOnClickListener(this);
+        nav_ll_timeline.setOnClickListener(this);
+        nav_ll_events.setOnClickListener(this);
+        nav_ll_rating.setOnClickListener(this);
+        nav_ll_invite.setOnClickListener(this);
+        nav_ll_share.setOnClickListener(this);
+        nav_ll_settings.setOnClickListener(this);
+        nav_ll_rate.setOnClickListener(this);
+        nav_ll_about.setOnClickListener(this);
+        nav_ll_export.setOnClickListener(this);
+
+        if (BuildConfig.DEBUG) {
+            nav_txt_export.setVisibility(View.VISIBLE);
+        }
+
+        nav_txt_account.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_account.setText(R.string.im_icon_user);
+        nav_txt_timeline.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_timeline.setText(R.string.im_icon_timeline);
+        nav_txt_events.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_events.setText(R.string.im_icon_events);
+        nav_txt_rating.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_rating.setText(R.string.im_icon_rating_history);
+        nav_txt_invite.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_invite.setText(R.string.im_icon_invite_contact);
+        nav_txt_share.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_share.setText(R.string.im_icon_share);
+        nav_txt_settings.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_settings.setText(R.string.im_icon_setting);
+        nav_txt_rate.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_rate.setText(R.string.im_icon_rate_us);
+        nav_txt_about.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_about.setText(R.string.im_icon_about_help);
+        nav_txt_export.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_export.setText(R.string.im_icon_about_help);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.nav_ll_account:
+                break;
+            case R.id.nav_ll_timeline:
+                startActivityIntent(MainActivity.this, TimelineActivity.class, null);
+                break;
+            case R.id.nav_ll_events:
+                startActivityIntent(MainActivity.this, EventsActivity.class, null);
+                break;
+            case R.id.nav_ll_rating_history:
+                startActivityIntent(this, RatingHistory.class, new Bundle());
+                break;
+            case R.id.nav_ll_invite:
+                startActivityIntent(MainActivity.this, ContactListingActivity.class, null);
+                break;
+            case R.id.nav_ll_share:
+
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName();
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
+
+                break;
+            case R.id.nav_ll_settings:
+                break;
+            case R.id.nav_ll_rate_us:
+                break;
+            case R.id.nav_ll_about:
+                break;
+            case R.id.nav_ll_export:
+
+                if (BuildConfig.DEBUG) {
+                    String exportedFileName = Utils.exportDB(this);
+                    if (exportedFileName != null) {
+                        File fileLocation = new File(Environment.getExternalStorageDirectory()
+                                .getAbsolutePath(), exportedFileName);
+                        Uri path = Uri.fromFile(fileLocation);
+                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                        emailIntent.setType("vnd.android.cursor.dir/email");
+                        emailIntent.putExtra(Intent.EXTRA_STREAM, path);
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
+                        startActivity(Intent.createChooser(emailIntent, getString(R.string
+                                .str_send_email)));
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.db_dump_failed),
+                                Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                }
+
+                break;
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+    }
+
     private void setNavigationHeaderData() {
 
-        View headerView = navigationView.getHeaderView(0);
-
-        LinearLayout mainContent = (LinearLayout) headerView.findViewById(R.id.main_content);
-        TextView text_user_name = (TextView) headerView.findViewById(R.id.text_user_name);
-        TextView text_number = (TextView) headerView.findViewById(R.id.text_number);
-        TextView text_rating_count = (TextView) headerView.findViewById(R.id.text_rating_count);
-        RatingBar rating_user = (RatingBar) headerView.findViewById(R.id.rating_user);
-        ImageView userProfileImage = (ImageView) headerView.findViewById(R.id.userProfileImage);
+        LinearLayout mainContent = (LinearLayout) navigationView.findViewById(R.id.main_content);
+        TextView text_user_name = (TextView) navigationView.findViewById(R.id.text_user_name);
+        TextView text_number = (TextView) navigationView.findViewById(R.id.text_number);
+        TextView text_rating_count = (TextView) navigationView.findViewById(R.id.text_rating_count);
+        RatingBar rating_user = (RatingBar) navigationView.findViewById(R.id.rating_user);
+        ImageView userProfileImage = (ImageView) navigationView.findViewById(R.id.userProfileImage);
 
         TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
         String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
@@ -1211,25 +1284,124 @@ public class MainActivity extends BaseActivity implements NavigationView
         localBroadcastManager.unregisterReceiver(localBroadcastReceiverContactDisplayed);
     }
 
-    private void getCallLogsByRawId() {
+    // TODO
+    private void getLatestCallLogsByRawId() {
 
-        ArrayList<String> callLogsIdsList = Utils.getArrayListPreference(this, AppConstants
-                .PREF_CALL_LOGS_ID_SET);
-        if (callLogsIdsList == null) {
-            PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(this);
-            callLogsIdsList = new ArrayList<>();
-            Cursor cursor = phoneBookCallLogs.getAllCallLogId();
+        try {
+            String order = CallLog.Calls.DATE + " ASC";
+            String prefDate =  Utils.getStringPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNC_TIME, "");
+            String currentDate = String.valueOf(System.currentTimeMillis());
+
+            Cursor cursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
+                    android.provider.CallLog.Calls.DATE + " BETWEEN ? AND ?"
+                    ,new String[]{prefDate,currentDate} , order);
+
             if (cursor != null) {
+                int number = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+                int name = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
+                int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
+                int date = cursor.getColumnIndex(CallLog.Calls.DATE);
+                int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
                 int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
+                int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
+
                 while (cursor.moveToNext()) {
-                    callLogsIdsList.add(cursor.getString(rowId));
+
+                    if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.isCancelled())
+                        return;
+
+                    CallLogType log = new CallLogType(this);
+                    log.setNumber(cursor.getString(number));
+                    String userName = cursor.getString(name);
+                    if (!TextUtils.isEmpty(userName))
+                        log.setName(userName);
+                    else
+                        log.setName("");
+
+                    log.setType(cursor.getInt(type));
+                    log.setDuration(cursor.getInt(duration));
+                    log.setDate(cursor.getLong(date));
+                    System.out.println("RContact Log date "+ cursor.getLong(date));
+                    log.setUniqueContactId(cursor.getString(rowId));
+                    String numberTypeLog = getPhoneNumberType(cursor.getInt(numberType));
+                    log.setNumberType(numberTypeLog);
+                    String userNumber = cursor.getString(number);
+                    String uniquePhoneBookId = getRawContactIdFromNumber(userNumber);
+                    if (!TextUtils.isEmpty(uniquePhoneBookId))
+                        log.setLocalPbRowId(uniquePhoneBookId);
+                    else
+                        log.setLocalPbRowId(" ");
+                    ArrayList<CallLogType> arrayListHistory;
+                    arrayListHistory = callLogHistory(userNumber);
+                    ArrayList<CallLogType> arrayListHistoryCount = new ArrayList<>();
+                    for (int j = 0; j < arrayListHistory.size(); j++) {
+                        CallLogType tempCallLogType = arrayListHistory.get(j);
+                        String simNumber = arrayListHistory.get(j)
+                                .getHistoryCallSimNumber();
+                        log.setCallSimNumber(simNumber);
+                        long tempdate = tempCallLogType.getHistoryDate();
+                        Date objDate1 = new Date(tempdate);
+                        String arrayDate = new SimpleDateFormat("yyyy-MM-dd", Locale
+                                .getDefault()).format
+                                (objDate1);
+                        long callLogDate = log.getDate();
+                        Date intentDate1 = new Date(callLogDate);
+                        String intentDate = new SimpleDateFormat("yyyy-MM-dd", Locale
+                                .getDefault()).format
+                                (intentDate1);
+                        if (intentDate.equalsIgnoreCase(arrayDate)) {
+                            arrayListHistoryCount.add(tempCallLogType);
+                        }
+                        // 25/05/2017 Updated bcz sync format changed
+                        // 16/06/2017 changed done start
+                        //log.setHistoryNumber(tempCallLogType.getHistoryNumber());
+                        //log.setHistoryType(tempCallLogType.getHistoryType());
+                        //log.setHistoryDate(tempCallLogType.getHistoryDate());
+                        log.setHistoryDuration(tempCallLogType.getHistoryDuration());
+                        log.setHistoryCallSimNumber(tempCallLogType
+                                .getHistoryCallSimNumber());
+                        log.setHistoryId(tempCallLogType.getHistoryId());
+                        log.setCallDateAndTime(tempCallLogType.getCallDateAndTime());
+                        log.setTypeOfCall(tempCallLogType.getTypeOfCall());
+                        log.setDurationToPass(tempCallLogType.getDurationToPass());
+                        if (!StringUtils.isEmpty(tempCallLogType.getHistoryCallSimNumber()))
+                            log.setHistoryCallSimNumber(tempCallLogType
+                                    .getHistoryCallSimNumber());
+                        else
+                            log.setHistoryCallSimNumber(" ");
+                        // 16/06/2017 changed done end
+                    }
+                    int logCount = arrayListHistoryCount.size();
+                    log.setHistoryLogCount(logCount);
+                    callLogTypeArrayListMain.add(log);
+//                    rContactApplication.setArrayListCallLogType(callLogTypeArrayListMain);
                 }
                 cursor.close();
             }
-            Utils.setArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET, callLogsIdsList);
-        }
 
-        if (callLogsIdsList != null && callLogsIdsList.size() > 0) {
+            syncCallLogDataToServer(callLogTypeArrayListMain);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getCallLogsByRawId() {
+
+        ArrayList<String> callLogsIdsList = new ArrayList<>();
+
+        PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(this);
+        Cursor cursor = phoneBookCallLogs.getAllCallLogId();
+        if (cursor != null) {
+            int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
+            while (cursor.moveToNext()) {
+                callLogsIdsList.add(cursor.getString(rowId));
+            }
+            cursor.close();
+        }
+        Utils.setArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET, callLogsIdsList);
+
+        if (callLogsIdsList.size() > 0) {
             int indexToBeginSync = Utils.getIntegerPreference(this, AppConstants
                     .PREF_CALL_LOG_SYNCED_COUNT, 0);
             ArrayList<String> tempIdsList = new ArrayList<>();
@@ -1237,7 +1409,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                 String ids = callLogsIdsList.get(i);
                 tempIdsList.add(ids);
             }
-            LIST_PARTITION_COUNT = 10;
+            LIST_PARTITION_COUNT = 20;
             if (tempIdsList.size() > LIST_PARTITION_COUNT) {
                 for (ArrayList<String> partition : chopped(tempIdsList, LIST_PARTITION_COUNT)) {
                     // do something with partition
@@ -1345,7 +1517,7 @@ public class MainActivity extends BaseActivity implements NavigationView
                             int logCount = arrayListHistoryCount.size();
                             log.setHistoryLogCount(logCount);
                             callLogTypeArrayListMain.add(log);
-                            rContactApplication.setArrayListCallLogType(callLogTypeArrayListMain);
+//                            rContactApplication.setArrayListCallLogType(callLogTypeArrayListMain);
                         }
                         cursor.close();
                     }
@@ -1409,9 +1581,8 @@ public class MainActivity extends BaseActivity implements NavigationView
         if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.isCancelled())
             return;
         if (Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)) {
-            if (!Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
-                    false)) {
-                LIST_PARTITION_COUNT = 10;
+            if (!Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                LIST_PARTITION_COUNT = 20;
                 if (list.size() > LIST_PARTITION_COUNT) {
                     ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
                     if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
@@ -1478,7 +1649,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     private ArrayList<CallLogType> divideCallLogByChunck() {
         int size = callLogTypeArrayListMain.size();
         callLogsListbyChunck = new ArrayList<>();
-        LIST_PARTITION_COUNT = 10;
+        LIST_PARTITION_COUNT = 20;
         for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayListMain,
                 LIST_PARTITION_COUNT)) {
             // do something with partition
@@ -1533,7 +1704,7 @@ public class MainActivity extends BaseActivity implements NavigationView
     private ArrayList<CallLogType> divideCallLogByChunck(ArrayList<CallLogType> list) {
         int size = 0;
         callLogsListbyChunck = new ArrayList<>();
-        LIST_PARTITION_COUNT = 10;
+        LIST_PARTITION_COUNT = 20;
         if (list != null && list.size() > 0) {
             size = list.size();
             if (size > LIST_PARTITION_COUNT) {
@@ -1861,7 +2032,13 @@ public class MainActivity extends BaseActivity implements NavigationView
 
         @Override
         protected Void doInBackground(Void... params) {
-            getCallLogsByRawId();
+
+            if (Long.parseLong(Utils.getStringPreference(MainActivity.this,
+                    AppConstants.PREF_CALL_LOG_SYNC_TIME, "0")) == 0)
+                getCallLogsByRawId();
+            else {
+                getLatestCallLogsByRawId();
+            }
             return null;
         }
     }
