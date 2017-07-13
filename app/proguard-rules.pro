@@ -1,6 +1,6 @@
 # Add project specific ProGuard rules here.
 # By default, the flags in this file are appended to flags specified
-# in /Users/user/Library/Android/sdk/tools/proguard/proguard-android.txt
+# in /Users/maulik/Library/Android/sdk/tools/proguard/proguard-android.txt
 # You can edit the include path and order by changing the proguardFiles
 # directive in build.gradle.
 #
@@ -16,17 +16,10 @@
 #   public *;
 #}
 
-## --------------- Start Project specifics --------------- ##
+# Uncomment this to preserve the line number information for
+# debugging stack traces.
+#-keepattributes SourceFile,LineNumberTable
 
-# Keep the BuildConfig
--keep class com.rawalinfocom.rcontact.BuildConfig { *; }
-
-# Keep the support library
--keep class android.support.v4.** { *; }
--keep interface android.support.v4.** { *; }
-
-# Application classes that will be serialized/deserialized over Gson
-# or have been blown up by ProGuard in the past
-
-## ---------------- End Project specifics ---------------- ##
-
+# If you keep the line number information, uncomment this to
+# hide the original source file name.
+#-renamesourcefileattribute SourceFile
