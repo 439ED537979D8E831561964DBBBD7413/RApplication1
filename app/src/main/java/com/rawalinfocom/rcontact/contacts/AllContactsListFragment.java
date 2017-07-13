@@ -182,10 +182,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             }
         }
 
-        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE,
-                false)) {
-            UpdateLoginUserProfile();
-        }
+//        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE, false)) {
+//            UpdateLoginUserProfile();
+//        }
     }
 
     @Override
@@ -502,28 +501,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance
                 (getActivity());
         myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
-    }
-
-    private void UpdateLoginUserProfile() {
-
-        ProfileData myProfileData = new ProfileData();
-
-        TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
-        String mobileNumber = tableMobileMaster.getUserMobileNumber(getUserPmId());
-
-        myProfileData.setName(Utils.getStringPreference(getActivity(), AppConstants
-                .PREF_USER_NAME, ""));
-        myProfileData.setTempNumber(mobileNumber);
-        myProfileData.setProfileUrl(Utils.getStringPreference(getActivity(), AppConstants
-                .PREF_USER_PHOTO, ""));
-        myProfileData.setTempIsRcp(true);
-        myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
-
-        arrayListPhoneBookContacts.set(1, myProfileData);
-
-        Utils.setBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE, false);
-
-        allContactListAdapter.notifyItemChanged(1);
     }
 
     @Override
