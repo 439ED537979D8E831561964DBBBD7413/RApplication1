@@ -230,11 +230,9 @@ class OptionMenuDialog {
                 // In Case of invalid lookup key
                 try {
                     intent = new Intent(Intent.ACTION_VIEW);
-                    lookupUri = Uri.withAppendedPath(ContactsContract.RawContacts
-                            .CONTENT_URI, rawId);
-                    res = ContactsContract.Contacts.lookupContact(context.getContentResolver
-                            (), lookupUri);
-                    intent.setData(res);
+                    lookupUri = ContentUris.withAppendedId(ContactsContract.RawContacts
+                            .CONTENT_URI, Long.parseLong(rawId));
+                    intent.setData(lookupUri);
                     context.startActivity(intent);
                     ((Activity) context).overridePendingTransition(R.anim.enter, R.anim.exit);
                 } catch (Exception e) {

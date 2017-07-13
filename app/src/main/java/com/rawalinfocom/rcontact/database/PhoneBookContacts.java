@@ -10,6 +10,7 @@ import android.provider.ContactsContract;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.model.ContactPackage;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -846,5 +847,43 @@ public class PhoneBookContacts {
         ArrayList<String> firstTimeList = new ArrayList<>(arrayListNewContactId);
         Utils.setArrayListPreference(context, AppConstants.PREF_CONTACT_ID_SET,
                 firstTimeList);
+    }
+
+    public ArrayList<ContactPackage> getContactStorageAccounts() {
+        ArrayList<String> accounts = new ArrayList<>();
+        ArrayList<ContactPackage> packages = new ArrayList<>();
+
+        String brand = android.os.Build.BRAND;
+
+        Uri uri = ContactsContract.Data.CONTENT_URI;
+        String[] projection = new String[]{
+                ContactsContract.RawContacts.ACCOUNT_TYPE,
+        };
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)";
+
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+        };
+
+        Cursor cursor = context.getContentResolver().query(uri, projection, selection,
+                selectionArgs, null);
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                if (!accounts.contains(cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .RawContacts.ACCOUNT_TYPE)))) {
+                    String packageName = cursor.getString(cursor.getColumnIndex(ContactsContract
+                            .RawContacts.ACCOUNT_TYPE));
+                    accounts.add(packageName);
+                    ContactPackage contactPackage = new ContactPackage();
+                    contactPackage.setBrand(brand);
+                    contactPackage.setContactPackage(packageName);
+                    packages.add(contactPackage);
+                }
+            }
+            cursor.close();
+        }
+        return packages;
     }
 }

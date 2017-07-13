@@ -114,6 +114,8 @@ public class WsRequestObject {
 
     private ArrayList<ProfileVisit> arrayListProfileVisit;
 
+    private ArrayList<ContactPackage> arrayListPackageData;
+
     private ProfileDataOperation profileEdit;
 
     private ArrayList<CallLogHistoryType> historyTypeArrayList;
@@ -597,7 +599,8 @@ public class WsRequestObject {
         return globalSearchTypeArrayList;
     }
 
-    public void setGlobalSearchTypeArrayList(ArrayList<GlobalSearchType> globalSearchTypeArrayList) {
+    public void setGlobalSearchTypeArrayList(ArrayList<GlobalSearchType>
+                                                     globalSearchTypeArrayList) {
         this.globalSearchTypeArrayList = globalSearchTypeArrayList;
     }
 
@@ -726,5 +729,14 @@ public class WsRequestObject {
 
     public void setRatings(ArrayList<Rating> ratings) {
         this.ratings = ratings;
+    }
+
+    @JsonProperty("package_data")
+    public ArrayList<ContactPackage> getArrayListPackageData() {
+        return arrayListPackageData;
+    }
+
+    public void setArrayListPackageData(ArrayList<ContactPackage> arrayListPackageData) {
+        this.arrayListPackageData = arrayListPackageData;
     }
 }
