@@ -27,6 +27,7 @@
     <string name="im_icon_setting">&#xe973;</string>
     <string name="im_icon_rate_us">&#xe97c;</string>
     <string name="im_icon_about_help">&#xe93e;</string>
+    <string name="im_icon_rating_user">&#xe987;</string>
 
     <string name="im_cross">&#xe942;</string>
     <string name="im_sim_2">&#xe91c;</string> <!--updated -->

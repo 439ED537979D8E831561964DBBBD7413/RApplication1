@@ -469,11 +469,24 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/text_user_rating"
+                        <TableRow
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/margin_tiny" />
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/img_user_rating"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/margin_tiny"
+                                android:layout_marginStart="@dimen/margin_tiny"
+                                android:layout_marginTop="@dimen/margin_tiny" />
+
+                            <TextView
+                                android:id="@+id/text_user_rating"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/margin_tiny" />
+                        </TableRow>
 
                         <RatingBar
                             android:id="@+id/rating_user"

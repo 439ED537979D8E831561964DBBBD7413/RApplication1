@@ -1,17 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/relative_root_profile_detail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/colorVeryLightGray">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_root_profile_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorVeryLightGray">
 
     <include
         android:id="@+id/include_toolbar"
         layout="@layout/layout_toolbar_profile_detail"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
+        android:layout_height="?attr/actionBarSize" />
 
     <!--<ScrollView-->
     <!--android:layout_width="match_parent"-->
@@ -81,12 +81,25 @@
                             android:gravity="center"
                             android:orientation="vertical">
 
-                            <TextView
-                                android:id="@+id/text_user_rating"
+                            <TableRow
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/margin_tiny"
-                                tools:text="12345" />
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/img_user_rating"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="@dimen/margin_tiny"
+                                    android:layout_marginStart="@dimen/margin_tiny"
+                                    android:layout_marginTop="@dimen/margin_tiny" />
+
+                                <TextView
+                                    android:id="@+id/text_user_rating"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/margin_tiny"
+                                    tools:text="12345" />
+                            </TableRow>
 
                             <RatingBar
                                 android:id="@+id/rating_user"
