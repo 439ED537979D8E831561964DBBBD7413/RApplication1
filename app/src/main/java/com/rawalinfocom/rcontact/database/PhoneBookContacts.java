@@ -60,7 +60,6 @@ public class PhoneBookContacts {
                 ContactsContract.RawContacts.STARRED,
         };
 
-//        String selection = ContactsContract.Contacts.LOOKUP_KEY + " = ?";
         String selection = ContactsContract.RawContacts._ID + " = ?";
         String[] selectionArgs = new String[]{contactId};
 
@@ -77,9 +76,10 @@ public class PhoneBookContacts {
                 ContactsContract.RawContacts.STARRED,
         };
 
-//        String selection = ContactsContract.Contacts.LOOKUP_KEY + " IN (?) AND starred = ?";
-        String selection = ContactsContract.RawContacts._ID + " IN (?) AND starred = ?";
-        String[] selectionArgs = new String[]{rawId, "1"};
+        String selection = ContactsContract.RawContacts._ID + " IN (" + rawId + ") AND starred = " +
+                "? and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + AppConstants
+                .CONTACT_STORAGES + ")";
+        String[] selectionArgs = new String[]{"1"};
 
         Cursor cursor = context.getContentResolver().query(uri, projection, selection,
                 selectionArgs, null);

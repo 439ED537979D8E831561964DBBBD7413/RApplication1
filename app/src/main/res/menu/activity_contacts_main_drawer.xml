@@ -1,12 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--<group android:checkableBehavior="single">-->
-    <item
-        android:id="@+id/nav_home"
-        android:icon="@drawable/ic_menu_home"
-        android:title="@string/nav_text_home" />
-
     <group android:checkableBehavior="none">
         <item
             android:id="@+id/nav_user_circle"

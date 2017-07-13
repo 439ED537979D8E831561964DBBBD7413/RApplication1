@@ -380,7 +380,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         localBroadcastManagerReceiveRecentCalls.registerReceiver
                 (localBroadcastReceiverRecentCalls, intentFilter5);
 
-
     }
 
     private void unregisterLocalBroadcast() {
@@ -616,12 +615,14 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                             if (AppConstants.isFirstTime()) {
                                 AppConstants.setIsFirstTime(false);
-                                new GetCallLogs().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//                                new GetCallLogs().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                fetchCallLogs();
                             } else {
                                 if (callLogTypeArrayList.size() > 0) {
                                     makeSimpleData();
                                 } else {
-                                    new GetCallLogs().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//                                    new GetCallLogs().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                    fetchCallLogs();
                                 }
                             }
                         }
@@ -723,9 +724,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                     String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
 
-                    if (StringUtils.isEmpty(userName))
-                        userName = getNameFromNumber(number);
-
                     if (!TextUtils.isEmpty(userName))
                         callLogType.setName(userName);
                     else
@@ -750,6 +748,15 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                makeSimpleData();
+                nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+        });
+
     }
 
     private void makeSimpleData() {
@@ -799,6 +806,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         protected Void doInBackground(Void... urls) {
             setRCPUserName();
+            getContactName();
             getPhoto();
             return null;
         }
@@ -833,6 +841,24 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                     callLogTypeArrayList.set(i, callLogType);
                 }
+            }
+        }
+    }
+
+    private void getContactName(){
+        if(callLogTypeArrayList.size()>0){
+            for (int i=0; i<callLogTypeArrayList.size();i++){
+                CallLogType callLogType =  callLogTypeArrayList.get(i);
+                String number =  callLogType.getNumber();
+                String name =  callLogType.getName();
+                if (StringUtils.isEmpty(name)){
+                    name = getNameFromNumber(number);
+                    if(!StringUtils.isEmpty(name))
+                        callLogType.setName(name);
+                    else
+                        callLogType.setName("");
+                }
+                callLogTypeArrayList.set(i,callLogType);
             }
         }
     }

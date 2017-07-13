@@ -1,16 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relative_root_profile_detail"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/relative_root_profile_detail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorVeryLightGray">
 
     <include
         android:id="@+id/include_toolbar"
         layout="@layout/layout_toolbar_profile_detail"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
+        android:layout_height="?attr/actionBarSize"/>
 
     <!--<ScrollView-->
     <!--android:layout_width="match_parent"-->
@@ -26,8 +27,7 @@
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/include_toolbar"
-        android:background="@color/colorWhite">
+        android:layout_below="@+id/include_toolbar">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -267,7 +267,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/linear_call_sms"
-                tools:visibility="gone">
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/text_text_call_history"
@@ -312,6 +312,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="@dimen/margin_10dp"
                 android:layout_marginTop="@dimen/margin_10dp"
+                android:visibility="gone"
                 app:rv_alpha="@integer/alpha_ripple"
                 app:rv_color="@color/colorWhite"
                 app:rv_rippleDuration="@integer/duration_ripple">
@@ -344,16 +345,16 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/linear_call_sms"
                 android:padding="@dimen/activity_half_horizontal_margin"
-                tools:visibility="visible">
+                android:visibility="visible">
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/card_contact_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin_tiny"
+                    android:visibility="visible"
                     app:cardCornerRadius="3dp"
-                    card_view:cardElevation="0dp"
-                    tools:visibility="visible">
+                    card_view:cardElevation="0dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"

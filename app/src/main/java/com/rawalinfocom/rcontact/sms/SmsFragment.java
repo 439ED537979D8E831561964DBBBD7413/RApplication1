@@ -458,9 +458,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 }
 
                 if (isFirstTime) {
-                    LIST_PARTITION_COUNT = 50;
+                    LIST_PARTITION_COUNT = 20;
                 } else {
-                    LIST_PARTITION_COUNT = 50;
+                    LIST_PARTITION_COUNT = 20;
                 }
                 if (tempIdsList.size() > LIST_PARTITION_COUNT) {
                     for (ArrayList<String> partition : chopped(tempIdsList, LIST_PARTITION_COUNT)) {
