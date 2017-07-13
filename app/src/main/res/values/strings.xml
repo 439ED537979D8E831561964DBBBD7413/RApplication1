@@ -325,7 +325,7 @@
     <string name="tab_call">CALL LOG</string>
     <string name="tab_sms">SMS</string>
 
-    <string name="tab_all_contact">All Contacts</string>
+    <string name="tab_all_contact">My Contacts</string>
     <!--<string name="tab_r_contact">R Contacts</string>-->
     <string name="tab_favorites">Favorites</string>
 

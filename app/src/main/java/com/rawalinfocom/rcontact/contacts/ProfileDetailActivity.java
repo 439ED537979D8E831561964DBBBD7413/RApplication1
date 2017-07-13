@@ -27,8 +27,6 @@ import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.NestedScrollingChild;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,7 +36,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -49,7 +46,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -789,7 +785,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     arrayListName, historyNumber, historyDate, isFromCallLogTab,
                                     arrayListHistory, historyName, "", phoneBookId,
                                     profileThumbnail, pmId);
-                            //11/07/2017 : hashMapKey replaced with phoneBookId to solve edit option problem
+                            //11/07/2017 : hashMapKey replaced with phoneBookId to solve edit
+                            // option problem
                             profileMenuOptionDialog.showDialog();
 
                         } else {
@@ -1162,7 +1159,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).executeOnExecutor(AsyncTask
+                            .THREAD_POOL_EXECUTOR,
                     WsConstants.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
@@ -1980,11 +1978,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 if (checkNumberFavourite != null) {
                     if (phoneBookContacts.getStarredStatusFromRawId(checkNumberFavourite)) {
                         imageRightLeft.setImageResource(R.drawable.ic_action_favorite_fill);
+                        rippleActionRightLeft.setVisibility(View.VISIBLE);
                     } else {
                         imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
+                        rippleActionRightLeft.setVisibility(View.GONE);
                     }
                 } else {
                     imageRightLeft.setImageResource(R.drawable.ic_action_favorite_border);
+                    rippleActionRightLeft.setVisibility(View.GONE);
                 }
             }
 
@@ -2110,7 +2111,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 // suggestion
 //                textToolbarTitle.setText(getString(R.string.str_profile_deails));
 
-                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit Sir's suggestion
+                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit
+                // Sir's suggestion
                 textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
 
             } else {
@@ -2118,7 +2120,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
                 // suggestion
 //                textToolbarTitle.setText(getString(R.string.str_profile_deails));
-                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit Sir's suggestion
+                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit
+                // Sir's suggestion
                 textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
             }
             textFullScreenText.setTypeface(Utils.typefaceBold(this));
@@ -2155,7 +2158,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
                 // suggestion
 //                textToolbarTitle.setText(getString(R.string.str_profile_deails));
-                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit Sir's suggestion
+                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit
+                // Sir's suggestion
                 textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
             }
 
@@ -3381,7 +3385,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     favouriteStatusObject, null, WsResponseObject.class, WsConstants
-                    .REQ_MARK_AS_FAVOURITE, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    .REQ_MARK_AS_FAVOURITE, null, true).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
                     .REQ_MARK_AS_FAVOURITE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
@@ -3401,7 +3406,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     ratingObject, null, WsResponseObject.class, WsConstants.REQ_PROFILE_RATING,
-                    null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
+                    null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants
+                    .WS_ROOT + WsConstants.REQ_PROFILE_RATING);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
                     .string.msg_no_network));
@@ -3419,7 +3425,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_RCP_PROFILE_SHARING, getResources().getString(R.string.msg_please_wait),
-                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
+                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    WsConstants.REQ_RCP_PROFILE_SHARING);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
                     .getString(R.string.msg_no_network));
@@ -3429,8 +3436,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void getProfileDetails() {
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
-                    WsResponseObject.class, WsConstants.REQ_GET_PROFILE_DETAILS, getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_DETAILS + "/" +
+                    WsResponseObject.class, WsConstants.REQ_GET_PROFILE_DETAILS, getString(R
+                    .string.msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                            WsConstants.REQ_GET_PROFILE_DETAILS + "/" +
                             pmId);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
@@ -3446,7 +3455,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     profileVisitObject, null, WsResponseObject.class, WsConstants
-                    .REQ_ADD_PROFILE_VISIT, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    .REQ_ADD_PROFILE_VISIT, null, true).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
                     .REQ_ADD_PROFILE_VISIT);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
@@ -3464,7 +3474,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     inviteContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_SEND_INVITATION, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    .REQ_SEND_INVITATION, null, true).executeOnExecutor(AsyncTask
+                            .THREAD_POOL_EXECUTOR,
                     WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
         }
         /*else {

@@ -163,6 +163,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                                 .getListClickedPosition());
                         allContactListAdapter.notifyItemRemoved(allContactListAdapter
                                 .getListClickedPosition());
+                        allContactListAdapter.notifyDataSetChanged();
                         rContactApplication.setFavouriteStatus(RContactApplication
                                 .FAVOURITE_UNMODIFIED);
                     }
