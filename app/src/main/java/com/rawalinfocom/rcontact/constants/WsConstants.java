@@ -18,7 +18,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 
     // Aniruddh
-    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
 
     //    Maulik
 //    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
@@ -59,7 +59,8 @@ public class WsConstants {
 //    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
 
 //     Staging Env
-//    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
+//    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts
+// .in/global/public/";
 
     public static final String RESPONSE_STATUS_TRUE = "true";
 
@@ -93,6 +94,7 @@ public class WsConstants {
     public static final String REQ_MARK_AS_FAVOURITE = "mark-as-favourite"; //working
     public static final String REQ_PROFILE_RATING = "profile-rating"; //working
     public static final String REQ_RCP_PROFILE_SHARING = "rcp-profile-sharing"; //functionality
+    public static final String REQ_SAVE_PACKAGE = "save-package"; //functionality
     // pending
     public static final String REQ_SEND_INVITATION = "send-invitation"; //working
     public static final String REQ_ADD_PROFILE_VISIT = "add-profile-visit"; //working

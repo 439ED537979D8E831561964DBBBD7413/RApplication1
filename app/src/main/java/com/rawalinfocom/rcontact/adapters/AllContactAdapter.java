@@ -2,7 +2,6 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,14 +11,10 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -27,9 +22,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -41,30 +33,17 @@ import com.bumptech.glide.Glide;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.SearchActivity;
-import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
-import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.AllContactsListFragment;
 import com.rawalinfocom.rcontact.contacts.FavoritesFragment;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
-import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
-import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
-import com.rawalinfocom.rcontact.database.TableProfileMaster;
-import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
-import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
 import com.rawalinfocom.rcontact.model.ProfileData;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
-import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
-import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
-import com.rawalinfocom.rcontact.model.WsRequestObject;
-import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -410,13 +389,13 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.textCloudContactName.setVisibility(View.GONE);
             holder.textCloudContactName.setText("");
         } else {*/
-            if (showPineGreen) {
-                holder.textContactName.setTextColor(colorPineGreen);
-            } else {
-                holder.textContactName.setTextColor(colorBlack);
-            }
-            holder.textContactNumber.setTextColor(colorBlack);
-            holder.textCloudContactName.setVisibility(View.VISIBLE);
+        if (showPineGreen) {
+            holder.textContactName.setTextColor(colorPineGreen);
+        } else {
+            holder.textContactName.setTextColor(colorBlack);
+        }
+        holder.textContactNumber.setTextColor(colorBlack);
+        holder.textCloudContactName.setVisibility(View.VISIBLE);
 //        }
 
         holder.textContactNumber.setText(Utils.getFormattedNumber(activity, profileData
@@ -497,7 +476,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 activity.startActivity(intent);
                                 activity.overridePendingTransition(R.anim.enter, R
                                         .anim.exit);
-                            }else if(activity instanceof DialerActivity){
+                            } else if (activity instanceof DialerActivity) {
                                 Intent intent = new Intent(activity, ProfileDetailActivity.class);
                                 intent.putExtras(bundle);
                                 activity.startActivity(intent);
@@ -525,7 +504,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void configureFooterViewHolder(ContactFooterViewHolder holder) {
         if (fragment instanceof AllContactsListFragment) {
             holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d %s",
-                    arrayListUserContact.size() - 3, activity.getString(R.string.contacts)));
+                    arrayListUserContact.size(), activity.getString(R.string.contacts)));
         } else if (fragment instanceof FavoritesFragment) {
             holder.textTotalContacts.setText(String.format(Locale.getDefault(), "%d %s",
                     arrayListUserContact.size() -

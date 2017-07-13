@@ -1,14 +1,14 @@
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:background="@color/colorPrimary"
-    android:elevation="4dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-    app:contentInsetLeft="0dp"
-    app:contentInsetStart="0dp"
-    tools:ignore="UnusedAttribute">
+                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                   xmlns:tools="http://schemas.android.com/tools"
+                                   android:layout_width="match_parent"
+                                   android:layout_height="?attr/actionBarSize"
+                                   android:background="@color/colorPrimary"
+                                   android:elevation="4dp"
+                                   android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                                   app:contentInsetLeft="0dp"
+                                   app:contentInsetStart="0dp"
+                                   tools:ignore="UnusedAttribute">
 
     <RelativeLayout
         android:id="@+id/relative_action_back"
@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/description_action_back"
                 android:padding="@dimen/activity_half_horizontal_margin"
-                android:src="@drawable/ic_action_back" />
+                android:src="@drawable/ic_action_back"/>
 
         </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -43,11 +43,11 @@
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/ripple_action_back"
             android:layout_toRightOf="@id/ripple_action_back"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/colorWhite"
-            android:singleLine="true"
-            android:ellipsize="end"
-            tools:text="@string/str_title" />
+            tools:text="@string/str_title"/>
 
         <LinearLayout
             android:id="@+id/linear_action_right"
@@ -61,6 +61,7 @@
                 android:id="@+id/ripple_action_right_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:rv_alpha="@integer/alpha_ripple"
                 app:rv_centered="true"
                 app:rv_color="@color/colorWhite"
@@ -73,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/activity_half_horizontal_margin"
-                    android:src="@drawable/ic_action_favorite_border" />
+                    android:src="@drawable/ic_action_favorite_border"/>
 
             </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -92,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/activity_half_horizontal_margin"
-                    android:src="@drawable/ic_action_call" />
+                    android:src="@drawable/ic_action_call"/>
 
             </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -111,7 +112,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/str_content_description"
                     android:padding="@dimen/activity_half_horizontal_margin"
-                    android:src="@drawable/ic_action_more_vertical" />
+                    android:src="@drawable/ic_action_more_vertical"/>
 
             </com.rawalinfocom.rcontact.helper.RippleView>
 

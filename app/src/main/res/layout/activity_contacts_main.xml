@@ -18,9 +18,27 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:itemBackground="@drawable/drawer_item_bg"
-        app:headerLayout="@layout/nav_header_contacts_main"
-        app:menu="@menu/activity_contacts_main_drawer" />
+        android:fitsSystemWindows="true">
+        <!--app:headerLayout="@layout/nav_header_contacts_main"-->
+        <!--app:itemBackground="@drawable/drawer_item_bg"-->
+        <!--app:menu="@menu/activity_contacts_main_drawer">-->
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <include layout="@layout/nav_header_contacts_main" />
+
+                <include layout="@layout/nav_menu_item_list" />
+
+            </LinearLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

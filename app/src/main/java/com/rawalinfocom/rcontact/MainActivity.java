@@ -48,6 +48,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
@@ -127,8 +128,7 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements NavigationView
-        .OnNavigationItemSelectedListener, WsResponseListener {
+public class MainActivity extends BaseActivity implements WsResponseListener, View.OnClickListener {
 
     private static final String TAG = "MainActivity";
     @BindView(R.id.relative_root_contacts_main)
@@ -255,14 +255,14 @@ public class MainActivity extends BaseActivity implements NavigationView
             badgeLayout.setVisibility(View.GONE);
         }
         count = getTimeLineNotificationCount(databaseHandler);
-        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id
-                .nav_user_timeline).getActionView();
-        TextView textView = (TextView) view.findViewById(R.id.badge_count);
+//        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id
+//                .nav_user_timeline).getActionView();
+        TextView badge_count = (TextView) navigationView.findViewById(R.id.badge_count);
         if (count > 0) {
-            view.setVisibility(View.VISIBLE);
-            textView.setText(String.valueOf(count));
+            badge_count.setVisibility(View.VISIBLE);
+            badge_count.setText(String.valueOf(count));
         } else {
-            view.setVisibility(View.GONE);
+            badge_count.setVisibility(View.GONE);
         }
     }
 
@@ -274,49 +274,6 @@ public class MainActivity extends BaseActivity implements NavigationView
         } else {
             super.onBackPressed();
         }
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.nav_share) {
-            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-            sharingIntent.setType("text/plain");
-            String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName();
-            sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-            startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
-        } else if (id == R.id.nav_invite) {
-            startActivityIntent(MainActivity.this, ContactListingActivity.class, null);
-        } else if (id == R.id.nav_db_export) {
-            if (BuildConfig.DEBUG) {
-                String exportedFileName = Utils.exportDB(this);
-                if (exportedFileName != null) {
-                    File fileLocation = new File(Environment.getExternalStorageDirectory()
-                            .getAbsolutePath(), exportedFileName);
-                    Uri path = Uri.fromFile(fileLocation);
-                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                    emailIntent.setType("vnd.android.cursor.dir/email");
-                    emailIntent.putExtra(Intent.EXTRA_STREAM, path);
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
-                    startActivity(Intent.createChooser(emailIntent, getString(R.string
-                            .str_send_email)));
-                } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.db_dump_failed),
-                            Toast.LENGTH_SHORT)
-                            .show();
-                }
-            }
-        } else if (id == R.id.nav_user_timeline) {
-            startActivityIntent(MainActivity.this, TimelineActivity.class, null);
-        } else if (id == R.id.nav_user_events) {
-            startActivityIntent(MainActivity.this, EventsActivity.class, null);
-        } else if (id == R.id.nav_user_rating_history) {
-            startActivityIntent(this, RatingHistory.class, new Bundle());
-        }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     @Override
@@ -914,14 +871,9 @@ public class MainActivity extends BaseActivity implements NavigationView
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         setNavigationHeaderData();
-
-        if (BuildConfig.DEBUG) {
-            Menu menu = navigationView.getMenu();
-            menu.findItem(R.id.nav_db_export).setVisible(true);
-        }
+        setNavigationListData();
 
         tabMain = (TabLayout) findViewById(R.id.tab_main);
 
@@ -931,16 +883,136 @@ public class MainActivity extends BaseActivity implements NavigationView
 
     }
 
+    private void setNavigationListData() {
+
+        TextView nav_txt_account = (TextView) navigationView.findViewById(R.id.nav_txt_account);
+        TextView nav_txt_timeline = (TextView) navigationView.findViewById(R.id.nav_txt_timeline);
+        TextView nav_txt_events = (TextView) navigationView.findViewById(R.id.nav_txt_events);
+        TextView nav_txt_rating = (TextView) navigationView.findViewById(R.id.nav_txt_rating);
+        TextView nav_txt_invite = (TextView) navigationView.findViewById(R.id.nav_txt_invite);
+        TextView nav_txt_share = (TextView) navigationView.findViewById(R.id.nav_txt_share);
+        TextView nav_txt_settings = (TextView) navigationView.findViewById(R.id.nav_txt_settings);
+        TextView nav_txt_rate = (TextView) navigationView.findViewById(R.id.nav_txt_rate);
+        TextView nav_txt_about = (TextView) navigationView.findViewById(R.id.nav_txt_about);
+        TextView nav_txt_export = (TextView) navigationView.findViewById(R.id.nav_txt_export);
+
+        LinearLayout nav_ll_account = (LinearLayout) navigationView.findViewById(R.id.nav_ll_account);
+        LinearLayout nav_ll_timeline = (LinearLayout) navigationView.findViewById(R.id.nav_ll_timeline);
+        LinearLayout nav_ll_events = (LinearLayout) navigationView.findViewById(R.id.nav_ll_events);
+        LinearLayout nav_ll_rating = (LinearLayout) navigationView.findViewById(R.id.nav_ll_rating_history);
+        LinearLayout nav_ll_invite = (LinearLayout) navigationView.findViewById(R.id.nav_ll_invite);
+        LinearLayout nav_ll_share = (LinearLayout) navigationView.findViewById(R.id.nav_ll_share);
+        LinearLayout nav_ll_settings = (LinearLayout) navigationView.findViewById(R.id.nav_ll_settings);
+        LinearLayout nav_ll_rate = (LinearLayout) navigationView.findViewById(R.id.nav_ll_rate_us);
+        LinearLayout nav_ll_about = (LinearLayout) navigationView.findViewById(R.id.nav_ll_about);
+        LinearLayout nav_ll_export = (LinearLayout) navigationView.findViewById(R.id.nav_ll_export);
+
+        nav_ll_account.setOnClickListener(this);
+        nav_ll_timeline.setOnClickListener(this);
+        nav_ll_events.setOnClickListener(this);
+        nav_ll_rating.setOnClickListener(this);
+        nav_ll_invite.setOnClickListener(this);
+        nav_ll_share.setOnClickListener(this);
+        nav_ll_settings.setOnClickListener(this);
+        nav_ll_rate.setOnClickListener(this);
+        nav_ll_about.setOnClickListener(this);
+        nav_ll_export.setOnClickListener(this);
+
+        if (BuildConfig.DEBUG) {
+            nav_txt_export.setVisibility(View.VISIBLE);
+        }
+
+        nav_txt_account.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_account.setText(R.string.im_icon_user);
+        nav_txt_timeline.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_timeline.setText(R.string.im_icon_timeline);
+        nav_txt_events.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_events.setText(R.string.im_icon_events);
+        nav_txt_rating.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_rating.setText(R.string.im_icon_rating_history);
+        nav_txt_invite.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_invite.setText(R.string.im_icon_invite_contact);
+        nav_txt_share.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_share.setText(R.string.im_icon_share);
+        nav_txt_settings.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_settings.setText(R.string.im_icon_setting);
+        nav_txt_rate.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_rate.setText(R.string.im_icon_rate_us);
+        nav_txt_about.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_about.setText(R.string.im_icon_about_help);
+        nav_txt_export.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_export.setText(R.string.im_icon_about_help);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.nav_ll_account:
+                break;
+            case R.id.nav_ll_timeline:
+                startActivityIntent(MainActivity.this, TimelineActivity.class, null);
+                break;
+            case R.id.nav_ll_events:
+                startActivityIntent(MainActivity.this, EventsActivity.class, null);
+                break;
+            case R.id.nav_ll_rating_history:
+                startActivityIntent(this, RatingHistory.class, new Bundle());
+                break;
+            case R.id.nav_ll_invite:
+                startActivityIntent(MainActivity.this, ContactListingActivity.class, null);
+                break;
+            case R.id.nav_ll_share:
+
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName();
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
+
+                break;
+            case R.id.nav_ll_settings:
+                break;
+            case R.id.nav_ll_rate_us:
+                break;
+            case R.id.nav_ll_about:
+                break;
+            case R.id.nav_ll_export:
+
+                if (BuildConfig.DEBUG) {
+                    String exportedFileName = Utils.exportDB(this);
+                    if (exportedFileName != null) {
+                        File fileLocation = new File(Environment.getExternalStorageDirectory()
+                                .getAbsolutePath(), exportedFileName);
+                        Uri path = Uri.fromFile(fileLocation);
+                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                        emailIntent.setType("vnd.android.cursor.dir/email");
+                        emailIntent.putExtra(Intent.EXTRA_STREAM, path);
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
+                        startActivity(Intent.createChooser(emailIntent, getString(R.string
+                                .str_send_email)));
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.db_dump_failed),
+                                Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                }
+
+                break;
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+    }
+
     private void setNavigationHeaderData() {
 
-        View headerView = navigationView.getHeaderView(0);
-
-        LinearLayout mainContent = (LinearLayout) headerView.findViewById(R.id.main_content);
-        TextView text_user_name = (TextView) headerView.findViewById(R.id.text_user_name);
-        TextView text_number = (TextView) headerView.findViewById(R.id.text_number);
-        TextView text_rating_count = (TextView) headerView.findViewById(R.id.text_rating_count);
-        RatingBar rating_user = (RatingBar) headerView.findViewById(R.id.rating_user);
-        ImageView userProfileImage = (ImageView) headerView.findViewById(R.id.userProfileImage);
+        LinearLayout mainContent = (LinearLayout) navigationView.findViewById(R.id.main_content);
+        TextView text_user_name = (TextView) navigationView.findViewById(R.id.text_user_name);
+        TextView text_number = (TextView) navigationView.findViewById(R.id.text_number);
+        TextView text_rating_count = (TextView) navigationView.findViewById(R.id.text_rating_count);
+        RatingBar rating_user = (RatingBar) navigationView.findViewById(R.id.rating_user);
+        ImageView userProfileImage = (ImageView) navigationView.findViewById(R.id.userProfileImage);
 
         TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
         String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
