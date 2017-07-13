@@ -1,6 +1,5 @@
 package com.rawalinfocom.rcontact;
 
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,31 +16,23 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.rawalinfocom.rcontact.asynctasks.AsyncGetDeviceToken;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.database.TableOtpLogDetails;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.Country;
-import com.rawalinfocom.rcontact.model.OtpLog;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
-import com.rawalinfocom.rcontact.services.OtpTimerService;
 
 import org.apache.commons.lang3.StringUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.rawalinfocom.rcontact.helper.Utils.PLAY_SERVICES_RESOLUTION_REQUEST;
 
 public class OtpVerificationActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
@@ -157,6 +148,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                 } else {
                     if (otpDetailResponse != null) {
                         Log.e("error response", otpDetailResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootOtpVerification,
+                                otpDetailResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootOtpVerification, getString(R
@@ -184,11 +177,13 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
                         // set launch screen as OtpVerificationActivity
                         Utils.setIntegerPreference(OtpVerificationActivity.this,
-                                AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_MOBILE_REGISTRATION);
+                                AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
+                                        .LAUNCH_MOBILE_REGISTRATION);
 
                         // Redirect to SetPassWordActivity
                         Bundle bundle = new Bundle();
-                        bundle.putString(AppConstants.EXTRA_IS_FROM, AppConstants.PREF_FORGOT_PASSWORD);
+                        bundle.putString(AppConstants.EXTRA_IS_FROM, AppConstants
+                                .PREF_FORGOT_PASSWORD);
                         Intent intent = new Intent(this, SetPasswordActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -202,7 +197,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
                         // set launch screen as OtpVerificationActivity
                         Utils.setIntegerPreference(OtpVerificationActivity.this,
-                                AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_PROFILE_REGISTRATION);
+                                AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
+                                        .LAUNCH_PROFILE_REGISTRATION);
 
                         // Redirect to ProfileRegistrationActivity
                         Intent intent = new Intent(this, ProfileRegistrationActivity.class);
@@ -217,6 +213,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
                 } else {
                     if (confirmOtpResponse != null) {
                         Log.e("error response", confirmOtpResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootOtpVerification,
+                                confirmOtpResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootOtpVerification, getString(R
@@ -274,7 +272,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_NUMBER, getString(R.string
                     .msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_CHECK_NUMBER);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                            WsConstants.REQ_CHECK_NUMBER);
             Utils.showSuccessSnackBar(OtpVerificationActivity.this,
                     relativeRootOtpVerification, getString(R.string.msg_success_otp_request));
         } else {
@@ -293,7 +292,8 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_OTP_CONFIRMED, getString(R
                     .string.msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_OTP_CONFIRMED);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                            WsConstants.REQ_OTP_CONFIRMED);
         } else {
             Utils.showErrorSnackBar(this, relativeRootOtpVerification, getResources()
                     .getString(R.string.msg_no_network));

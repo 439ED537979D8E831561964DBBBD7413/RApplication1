@@ -7,12 +7,9 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
@@ -25,9 +22,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -44,7 +38,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.model.LatLng;
 import com.linkedin.platform.APIHelper;
 import com.linkedin.platform.LISessionManager;
 import com.linkedin.platform.errors.LIApiError;
@@ -53,54 +46,25 @@ import com.linkedin.platform.listeners.ApiListener;
 import com.linkedin.platform.listeners.ApiResponse;
 import com.linkedin.platform.listeners.AuthListener;
 import com.linkedin.platform.utils.Scope;
-import com.rawalinfocom.rcontact.asynctasks.AsyncReverseGeoCoding;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.database.TableAddressMaster;
-import com.rawalinfocom.rcontact.database.TableEmailMaster;
-import com.rawalinfocom.rcontact.database.TableEventMaster;
-import com.rawalinfocom.rcontact.database.TableImMaster;
-import com.rawalinfocom.rcontact.database.TableMobileMaster;
-import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
-import com.rawalinfocom.rcontact.database.TableProfileMaster;
-import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
-import com.rawalinfocom.rcontact.helper.FileUtils;
-import com.rawalinfocom.rcontact.helper.GPSTracker;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
-import com.rawalinfocom.rcontact.model.Address;
-import com.rawalinfocom.rcontact.model.Email;
-import com.rawalinfocom.rcontact.model.Event;
-import com.rawalinfocom.rcontact.model.ImAccount;
-import com.rawalinfocom.rcontact.model.MobileNumber;
-import com.rawalinfocom.rcontact.model.Organization;
-import com.rawalinfocom.rcontact.model.ProfileDataOperation;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationAddress;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationEmail;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationEvent;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationImAccount;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationOrganization;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
-import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
-import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
 import com.rawalinfocom.rcontact.model.UserProfile;
-import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import butterknife.BindView;
@@ -236,7 +200,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_FACEBOOK) {
             // Facebook Callback
             callbackManager.onActivityResult(requestCode, resultCode, data);
-        } else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants.REGISTRATION_VIA_LINED_IN) {
+        } else if (IntegerConstants.REGISTRATION_VIA == IntegerConstants
+                .REGISTRATION_VIA_LINED_IN) {
             // LinkedIn Callback
             LISessionManager.getInstance(getApplicationContext()).onActivityResult(this,
                     requestCode, resultCode, data);
@@ -274,11 +239,14 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
                 if (firstName.equalsIgnoreCase("") || lastName.equalsIgnoreCase("")) {
-                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R.string.str_valid_both_name));
+                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R
+                            .string.str_valid_both_name));
                 } else if (email.length() > 0 && !email.matches(emailPattern)) {
-                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R.string.str_valid_email));
+                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R
+                            .string.str_valid_email));
                 } else {
-                    profileRegistration(firstName, lastName, email, IntegerConstants.REGISTRATION_VIA);
+                    profileRegistration(firstName, lastName, email, IntegerConstants
+                            .REGISTRATION_VIA);
                 }
                 break;
             //</editor-fold>
@@ -409,7 +377,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                     Bundle bundle = new Bundle();
                     bundle.putString(AppConstants.EXTRA_IS_FROM, "profile");
-                    startActivityIntent(ProfileRegistrationActivity.this, SetPasswordActivity.class, bundle);
+                    startActivityIntent(ProfileRegistrationActivity.this, SetPasswordActivity
+                            .class, bundle);
                     overridePendingTransition(R.anim.enter, R.anim.exit);
 
                     //deviceDetail();
@@ -417,6 +386,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 } else {
                     if (userProfileResponse != null) {
                         Log.e("error response", userProfileResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileRegistration,
+                                userProfileResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "userProfileResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R
@@ -725,7 +696,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         profileRegistrationObject.setEmailId(StringUtils.trimToEmpty(emailId));
         profileRegistrationObject.setCreatedBy("2"); // For Android Devices
         profileRegistrationObject.setType(String.valueOf(type));
-//        profileRegistrationObject.setGcmToken(Utils.getStringPreference(ProfileRegistrationActivity.this,
+//        profileRegistrationObject.setGcmToken(Utils.getStringPreference
+// (ProfileRegistrationActivity.this,
 //                AppConstants.PREF_DEVICE_TOKEN_ID, ""));
 
         profileRegistrationObject.setGcmToken(getDeviceTokenId());
@@ -740,7 +712,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     profileRegistrationObject, null, WsResponseObject.class, WsConstants
-                    .REQ_PROFILE_REGISTRATION, getString(R.string.msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    .REQ_PROFILE_REGISTRATION, getString(R.string.msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                     WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_REGISTRATION);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
@@ -806,7 +779,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                                     inputEmailId.setEnabled(false);
 
-                                    profileRegistration(firstName, lastName, email, IntegerConstants.REGISTRATION_VIA_FACEBOOK);
+                                    profileRegistration(firstName, lastName, email,
+                                            IntegerConstants.REGISTRATION_VIA_FACEBOOK);
 
 //                                    if (StringUtils.length(facebookData.getString(PROFILE_IMAGE))
 //                                            > 0) {
@@ -827,7 +801,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     @Override
                     public void onCancel() {
                         Utils.showErrorSnackBar(ProfileRegistrationActivity.this,
-                                relativeRootProfileRegistration, getString(R.string.error_facebook_login_cancelled));
+                                relativeRootProfileRegistration, getString(R.string
+                                        .error_facebook_login_cancelled));
                     }
 
                     @Override
@@ -927,7 +902,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                 inputEmailId.setEnabled(false);
 
-                profileRegistration(firstName, lastName, email, IntegerConstants.REGISTRATION_VIA_GOOGLE);
+                profileRegistration(firstName, lastName, email, IntegerConstants
+                        .REGISTRATION_VIA_GOOGLE);
 
 //                getGoogleBitmapFromUrl(acct);
 
@@ -989,7 +965,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                     inputEmailId.setEnabled(false);
 
-                    profileRegistration(firstName, lastName, email, IntegerConstants.REGISTRATION_VIA_LINED_IN);
+                    profileRegistration(firstName, lastName, email, IntegerConstants
+                            .REGISTRATION_VIA_LINED_IN);
 
 //                    profileRegistration(response.get("firstName").toString(), response.get
 //                                    ("lastName").toString(), response.get("emailAddress")

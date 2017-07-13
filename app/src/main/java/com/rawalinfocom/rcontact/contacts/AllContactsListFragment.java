@@ -182,9 +182,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             }
         }
 
-//        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE, false)) {
-//            UpdateLoginUserProfile();
-//        }
+        /*if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE,
+                false)) {
+            UpdateLoginUserProfile();
+        }*/
     }
 
     @Override
@@ -292,6 +293,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     } else {
                         if (uploadContactResponse != null) {
                             Log.e("error response", uploadContactResponse.getMessage());
+                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                                    uploadContactResponse.getMessage());
                         } else {
                             Log.e("onDeliveryResponse: ", "uploadContactResponse null");
                             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
@@ -323,6 +326,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     } else {
                         if (savePackageResponse != null) {
                             Log.e("error response", savePackageResponse.getMessage());
+                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                                    savePackageResponse.getMessage());
                         } else {
                             Log.e("onDeliveryResponse: ", "savePackageResponse null");
                             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
@@ -343,6 +348,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     } else {
                         if (inviteContactResponse != null) {
                             Log.e("error response", inviteContactResponse.getMessage());
+                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                                    inviteContactResponse.getMessage());
                         } else {
                             Log.e("onDeliveryResponse: ", "uploadContactResponse null");
                             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,

@@ -294,6 +294,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 } else {
                     if (inviteContactResponse != null) {
                         Log.e("error response", inviteContactResponse.getMessage());
+                        Utils.showErrorSnackBar(this, rlSearchRoot, inviteContactResponse
+                                .getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "uploadContactResponse null");
                         Utils.showErrorSnackBar(SearchActivity.this, rlSearchRoot,
@@ -375,6 +377,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 } else {
                     if (globalSearchRecordsResponse != null) {
                         Log.e("error response", globalSearchRecordsResponse.getMessage());
+                        Utils.showErrorSnackBar(SearchActivity.this, rlSearchRoot,
+                                globalSearchRecordsResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "uploadContactResponse null");
                         Utils.showErrorSnackBar(SearchActivity.this, rlSearchRoot,
@@ -774,7 +778,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                                         int countOfSmsLogs = smsListAdapter
                                                                 .getSearchCount();
                                                         if (countOfSmsLogs > 0) {
-                                                            textSearchCount.setVisibility(View.VISIBLE);
+                                                            textSearchCount.setVisibility(View
+                                                                    .VISIBLE);
                                                             textSearchCount.setText
                                                                     (countOfSmsLogs + "");
                                                         }
@@ -784,7 +789,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                                     } else {
                                                         rlTitle.setVisibility(View.VISIBLE);
                                                         textSearchCount.setText("");
-                                                        textNoRecordsLocal.setVisibility(View.VISIBLE);
+                                                        textNoRecordsLocal.setVisibility(View
+                                                                .VISIBLE);
                                                     }
 
                                                 }
@@ -908,7 +914,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             if (Utils.isNetworkAvailable(this)) {
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         deviceDetailObject, null, WsResponseObject.class, WsConstants
-                        .REQ_GET_GLOBAL_SEARCH_RECORDS, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        .REQ_GET_GLOBAL_SEARCH_RECORDS, null, true).executeOnExecutor(AsyncTask
+                                .THREAD_POOL_EXECUTOR,
                         WsConstants.WS_ROOT + WsConstants.REQ_GET_GLOBAL_SEARCH_RECORDS);
             } else {
                 Utils.showErrorSnackBar(this, rlSearchRoot, getResources()
@@ -1272,7 +1279,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                 } else {
                                     numberToSend = StringUtils.defaultString((
                                             (SimpleCallLogListAdapter
-                                                    .CallLogViewHolder) viewHolder).textTempNumber.getText()
+                                                    .CallLogViewHolder) viewHolder)
+                                            .textTempNumber.getText()
                                             .toString());
                                 }
                             }
@@ -1506,7 +1514,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
                     case R.id.rippleRight:
                         callConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + finalNumber));
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+                                finalNumber));
                         startActivity(intent);
                         break;
                 }
@@ -1525,7 +1534,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber + "?");
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber
+                + "?");
         callConfirmationDialog.showDialog();
     }
 
