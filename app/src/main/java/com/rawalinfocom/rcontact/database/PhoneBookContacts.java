@@ -849,64 +849,41 @@ public class PhoneBookContacts {
                 firstTimeList);
     }
 
-    /*public ArrayList<ContactPackage> getContactStorageAccounts() {
-        String contactDisplayName = "";
+    public ArrayList<ContactPackage> getContactStorageAccounts() {
+        ArrayList<String> accounts = new ArrayList<>();
+        ArrayList<ContactPackage> packages = new ArrayList<>();
+
+        String brand = android.os.Build.BRAND;
+
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String[] projection = new String[]{
-//                ContactsContract.CommonDataKinds.StructuredName._ID,
-//                ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY,
-                ContactsContract.CommonDataKinds.StructuredName.RAW_CONTACT_ID,
-                ContactsContract.CommonDataKinds.StructuredName.PREFIX,
-                ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME,
-                ContactsContract.CommonDataKinds.StructuredName.SUFFIX,
-                ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
+                ContactsContract.RawContacts.ACCOUNT_TYPE,
         };
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)";
 
-        String selection = ContactsContract.Data.MIMETYPE + " = '" +
-                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE + "' AND " +
-//                ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY
-                ContactsContract.CommonDataKinds.StructuredName.RAW_CONTACT_ID
-                + " IN (?)";
-        String[] selectionArgs = new String[]{contactId};
+        String[] selectionArgs = {
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+        };
 
         Cursor cursor = context.getContentResolver().query(uri, projection, selection,
                 selectionArgs, null);
+
         if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                String prefix = cursor.getString(cursor.getColumnIndex(ContactsContract
-                        .CommonDataKinds.StructuredName.PREFIX));
-                String firstName = cursor.getString(cursor.getColumnIndex(ContactsContract
-                        .CommonDataKinds.StructuredName.GIVEN_NAME));
-                String lastName = cursor.getString(cursor.getColumnIndex(ContactsContract
-                        .CommonDataKinds.StructuredName.FAMILY_NAME));
-                String middleName = cursor.getString(cursor.getColumnIndex(ContactsContract
-                        .CommonDataKinds.StructuredName.MIDDLE_NAME));
-                String suffix = cursor.getString(cursor.getColumnIndex(ContactsContract
-                        .CommonDataKinds.StructuredName.SUFFIX));
-
-                if (StringUtils.length(prefix) > 0) {
-                    contactDisplayName = prefix + " ";
+            while (cursor.moveToNext()) {
+                if (!accounts.contains(cursor.getString(cursor.getColumnIndex(ContactsContract
+                        .RawContacts.ACCOUNT_TYPE)))) {
+                    String packageName = cursor.getString(cursor.getColumnIndex(ContactsContract
+                            .RawContacts.ACCOUNT_TYPE));
+                    accounts.add(packageName);
+                    ContactPackage contactPackage = new ContactPackage();
+                    contactPackage.setBrand(brand);
+                    contactPackage.setContactPackage(packageName);
+                    packages.add(contactPackage);
                 }
-                if (StringUtils.length(firstName) > 0) {
-                    contactDisplayName = contactDisplayName + firstName + " ";
-                }
-                if (StringUtils.length(middleName) > 0) {
-                    contactDisplayName = contactDisplayName + middleName + " ";
-                }
-                if (StringUtils.length(lastName) > 0) {
-                    contactDisplayName = contactDisplayName + lastName + " ";
-                }
-                if (StringUtils.length(suffix) > 0) {
-                    contactDisplayName = contactDisplayName + suffix;
-                }
-                contactDisplayName = StringUtils.trimToEmpty(contactDisplayName);
-
             }
             cursor.close();
         }
-      *//*  return context.getContentResolver().query(uri, projection, selection,
-                selectionArgs, null);*//*
-        return contactDisplayName;
-    }*/
+        return packages;
+    }
 }

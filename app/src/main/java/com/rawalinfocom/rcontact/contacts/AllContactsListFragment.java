@@ -272,20 +272,23 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                         .getArrayListMapping());
                             }
 
-                            Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                    getActivity().getString(R.string.str_all_contact_sync));
+
+                           /* Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
+                                    getActivity().getString(R.string.str_all_contact_sync));*/
                             Utils.setStringPreference(getActivity(), AppConstants
                                     .PREF_CONTACT_LAST_SYNC_TIME, String.valueOf(System
                                     .currentTimeMillis() - 10000));
-                            Utils.setBooleanPreference(getActivity(), AppConstants
-                                    .PREF_CONTACT_SYNCED, true);
+                            /*Utils.setBooleanPreference(getActivity(), AppConstants
+                                    .PREF_CONTACT_SYNCED, true);*/
                             getRcpDetail();
                             phoneBookContacts.saveRawIdsToPref();
-                            Intent localBroadcastIntent = new Intent(AppConstants
+
+                            savePackages();
+                           /* Intent localBroadcastIntent = new Intent(AppConstants
                                     .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
                             LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
                                     .getInstance(getActivity());
-                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);*/
                         }
                     } else {
                         if (uploadContactResponse != null) {
@@ -295,6 +298,36 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
                                     getString(R
                                             .string.msg_try_later));
+                        }
+                    }
+                }
+                //</editor-fold>
+
+                // <editor-fold desc="REQ_SAVE_PACKAGE">
+
+                if (serviceType.contains(WsConstants.REQ_SAVE_PACKAGE)) {
+                    WsResponseObject savePackageResponse = (WsResponseObject) data;
+                    progressAllContact.setVisibility(View.GONE);
+                    if (savePackageResponse != null && StringUtils.equalsIgnoreCase
+                            (savePackageResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                            Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
+                                    getActivity().getString(R.string.str_all_contact_sync));
+                            Utils.setBooleanPreference(getActivity(), AppConstants
+                                    .PREF_CONTACT_SYNCED, true);
+                            Intent localBroadcastIntent = new Intent(AppConstants
+                                    .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
+                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                                    .getInstance(getActivity());
+                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+                    } else {
+                        if (savePackageResponse != null) {
+                            Log.e("error response", savePackageResponse.getMessage());
+                        } else {
+                            Log.e("onDeliveryResponse: ", "savePackageResponse null");
+                            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts,
+                                    getString(R.string.msg_try_later));
                         }
                     }
                 }
@@ -441,9 +474,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
 
             arrayListPhoneBookContacts.add(myProfileData);
-            arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));*/
-
             arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));
+
+            arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));*/
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
             isReload = false;
@@ -1651,18 +1684,20 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     private void savePackages() {
 
-       /* WsRequestObject savePackageObject = new WsRequestObject();
-        savePackageObject.setFavourites(favourites);
+//        Log.i("savePackages", phoneBookContacts.getContactStorageAccounts().toString());
 
-        if (Utils.isNetworkAvailable(this)) {
+        WsRequestObject savePackageObject = new WsRequestObject();
+        savePackageObject.setArrayListPackageData(phoneBookContacts.getContactStorageAccounts());
+
+        if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    favouriteStatusObject, null, WsResponseObject.class, WsConstants
-                    .REQ_MARK_AS_FAVOURITE, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
-                    .REQ_MARK_AS_FAVOURITE);
+                    savePackageObject, null, WsResponseObject.class, WsConstants
+                    .REQ_SAVE_PACKAGE, null, true).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_SAVE_PACKAGE);
         } else {
-            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
-                    .string.msg_no_network));
-        }*/
+            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
+                    .getString(R.string.msg_no_network));
+        }
     }
 
 
