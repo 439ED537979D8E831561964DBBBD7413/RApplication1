@@ -45,6 +45,8 @@ public class ProfileDataOperation implements Serializable {
     private String verifiedMobileNumber;
     private String mnmCloudId;
 
+    private String callLogTimestamp;
+    private String smsLogTimestamp;
     private String joiningDate;
     private String pbRcpVerify;
     private String profileRating;
@@ -304,6 +306,24 @@ public class ProfileDataOperation implements Serializable {
 
     public void setJoiningDate(String joiningDate) {
         this.joiningDate = joiningDate;
+    }
+
+    @JsonProperty("smsLogTimestamp")
+    public String getSmsLogTimestamp() {
+        return smsLogTimestamp;
+    }
+
+    public void setSmsLogTimestamp(String smsLogTimestamp) {
+        this.smsLogTimestamp = smsLogTimestamp;
+    }
+
+    @JsonProperty("callLogTimestamp")
+    public String getCallLogTimestamp() {
+        return callLogTimestamp;
+    }
+
+    public void setCallLogTimestamp(String callLogTimestamp) {
+        this.callLogTimestamp = callLogTimestamp;
     }
 
     @JsonProperty("pb_rcp_verify")

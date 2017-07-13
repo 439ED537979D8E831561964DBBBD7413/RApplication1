@@ -228,6 +228,9 @@ public class AppConstants {
             "pref_favourite_contact_number_email";
     public static String PREF_PROFILE_VIEWS = "pref_profile_views";
 
+    public static String PREF_CALL_LOG_SYNC_TIME = "pref_call_log_sync_time";
+    public static String PREF_SMS_SYNC_TIME = "pref_sms_sync_time";
+
     public static String PREF_CALL_LOG_SIZE = "pref_call_log_size";
     public static String PREF_CALL_LOG_STARTS_FIRST_TIME = "pref_call_log_start_first_time";
     public static String PREF_CALL_LOG_SIZE_WITH_DIFF = "pref_call_log_size_with_diff";
