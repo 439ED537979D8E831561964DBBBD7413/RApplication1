@@ -117,7 +117,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
         isFrom = getIntent().getStringExtra(AppConstants.PREF_IS_FROM);
 
-        if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD) || isFrom.equals(AppConstants.PREF_RE_LOGIN)) {
+        if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD) || isFrom.equals(AppConstants
+                .PREF_RE_LOGIN)) {
             textToolbarTitle.setText(getResources().getString(R.string.password_verification));
         } else {
             textToolbarTitle.setText(getResources().getString(R.string.str_enter_password));
@@ -144,12 +145,15 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     // Redirect to OtpVerificationActivity
                     Bundle bundle = new Bundle();
                     bundle.putString(AppConstants.EXTRA_IS_FROM, AppConstants.PREF_FORGOT_PASSWORD);
-                    startActivityIntent(ReLoginEnterPasswordActivity.this, OtpVerificationActivity.class, bundle);
+                    startActivityIntent(ReLoginEnterPasswordActivity.this,
+                            OtpVerificationActivity.class, bundle);
                     overridePendingTransition(R.anim.enter, R.anim.exit);
 
                 } else {
                     if (otpDetailResponse != null) {
                         Log.e("error response", otpDetailResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword,
+                                otpDetailResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootEnterPassword, getString(R
@@ -179,10 +183,14 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                             .getRcpPmId());
                     storeProfileDataToDb(profileDetail);
 
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail.getVerifiedMobileNumber());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, profileDetail.getTotalProfileRateUser());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, profileDetail.getProfileRating());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail
+                            .getPbNameFirst() + " " + profileDetail.getPbNameLast());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail
+                            .getVerifiedMobileNumber());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
+                            profileDetail.getTotalProfileRateUser());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, profileDetail
+                            .getProfileRating());
 
                     if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals(1)) {
                         Utils.setBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false);
@@ -193,7 +201,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     // Redirect to MainActivity
                     if (isFrom.equals(AppConstants.PREF_RE_LOGIN)) {
                         Utils.hideProgressDialog();
-                        Utils.setBooleanPreference(ReLoginEnterPasswordActivity.this, AppConstants.PREF_TEMP_LOGOUT, false);
+                        Utils.setBooleanPreference(ReLoginEnterPasswordActivity.this,
+                                AppConstants.PREF_TEMP_LOGOUT, false);
                         Intent intent = new Intent(this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -211,6 +220,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
                     if (enterPassWordResponse != null) {
                         Log.e("error response", enterPassWordResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword, enterPassWordResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "enterPassWordResponse null");
                         Utils.showErrorSnackBar(this, relativeRootEnterPassword, getString(R
@@ -238,6 +248,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
 
                     if (enterPassWordResponse != null) {
                         Log.e("error response", enterPassWordResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword, enterPassWordResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "enterPassWordResponse null");
                         Utils.showErrorSnackBar(this, relativeRootEnterPassword, getString(R
@@ -287,7 +298,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_NUMBER, getString(R.string
                     .msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_CHECK_NUMBER);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                            WsConstants.REQ_CHECK_NUMBER);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEnterPassword, getResources()
                     .getString(R.string.msg_no_network));
@@ -299,7 +311,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         WsRequestObject enterPassWordObject = new WsRequestObject();
         enterPassWordObject.setMobileNumber(mobileNumber.replace("+", ""));
         enterPassWordObject.setPassword(StringUtils.trimToEmpty(password));
-        if (isFrom.equals(AppConstants.PREF_RE_LOGIN) || Utils.getBooleanPreference(ReLoginEnterPasswordActivity.this,
+        if (isFrom.equals(AppConstants.PREF_RE_LOGIN) || Utils.getBooleanPreference
+                (ReLoginEnterPasswordActivity.this,
                 AppConstants.PREF_TEMP_LOGOUT, false)) {
             enterPassWordObject.setReAuthenticate(1); // For Android Devices
         }
@@ -314,7 +327,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     enterPassWordObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_LOGIN, getString(R.string
                     .msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_CHECK_LOGIN);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                            WsConstants.REQ_CHECK_LOGIN);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEnterPassword, getResources()
                     .getString(R.string.msg_no_network));
@@ -523,7 +537,8 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_STORE_DEVICE_DETAILS, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    .REQ_STORE_DEVICE_DETAILS, null, true).executeOnExecutor(AsyncTask
+                            .THREAD_POOL_EXECUTOR,
                     WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
         }
         /*else {

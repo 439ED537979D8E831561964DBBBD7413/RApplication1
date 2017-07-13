@@ -8,8 +8,8 @@ import android.util.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.rawalinfocom.rcontact.ReLoginEnterPasswordActivity;
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.ReLoginEnterPasswordActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -83,8 +83,9 @@ class WebServicePost {
                 urlConnection.setRequestProperty("Content-Type", "application/json");
                 urlConnection.setRequestProperty("Accept", "application/json");
                 if (setHeader) {
-                    urlConnection.addRequestProperty(WsConstants.REQ_HEADER, Utils.getStringPreference
-                            (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
+                    urlConnection.addRequestProperty(WsConstants.REQ_HEADER, Utils
+                            .getStringPreference
+                                    (activity, AppConstants.PREF_ACCESS_TOKEN, ""));
                 }
 
                 urlConnection.connect();
@@ -127,7 +128,10 @@ class WebServicePost {
                 } else if (statusCode == HttpsURLConnection.HTTP_BAD_REQUEST) {
                     Log.e("Status Code: ", HttpsURLConnection.HTTP_BAD_REQUEST + " : Bad Request " +
                             ": Due to user error");
-                    response = null;
+                    inputStream = new BufferedInputStream(urlConnection.getErrorStream());
+                    String responseString = convertInputStreamToString(inputStream);
+                    response = getMapper().readValue(responseString, responseType);
+//                    response = getMapper().readValue("{\"status\":false}", responseType);
                 } else if (statusCode == HttpsURLConnection.HTTP_INTERNAL_ERROR) {
                     Log.e("Status Code: ", HttpsURLConnection.HTTP_INTERNAL_ERROR + " : Internal " +
                             "Server Error : Due to any unhandled error on server");
@@ -142,8 +146,9 @@ class WebServicePost {
                             "token or expired token");
                     response = null;
 
-                    Utils.setIntegerPreference(activity, AppConstants.PREF_LAUNCH_SCREEN_INT, IntegerConstants
-                            .LAUNCH_RE_LOGIN_PASSWORD);
+                    Utils.setIntegerPreference(activity, AppConstants.PREF_LAUNCH_SCREEN_INT,
+                            IntegerConstants
+                                    .LAUNCH_RE_LOGIN_PASSWORD);
                     Utils.setBooleanPreference(activity, AppConstants.PREF_TEMP_LOGOUT, true);
 
                     // Redirect to MobileNumberRegistrationActivity

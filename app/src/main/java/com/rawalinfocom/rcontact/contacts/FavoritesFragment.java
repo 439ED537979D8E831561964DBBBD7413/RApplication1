@@ -319,6 +319,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 } else {
                     if (inviteContactResponse != null) {
                         Log.e("error response", inviteContactResponse.getMessage());
+                        Utils.showErrorSnackBar(getActivity(), relativeRootFavourite,
+                                inviteContactResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "uploadContactResponse null");
                         Utils.showErrorSnackBar(getActivity(), relativeRootFavourite, getString(R
