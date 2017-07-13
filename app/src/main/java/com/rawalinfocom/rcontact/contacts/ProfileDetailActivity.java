@@ -351,16 +351,39 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
 
         init();
+    }
 
-        if (!TextUtils.isEmpty(historyName)) {
-            fetchAllCallLogHistory(historyName);
 
-        } else {
-//        fetchCallLogHistoryDateWise(historyNumber);
-            fetchAllCallLogHistory(historyNumber);
+    private class GetRCPNameAndProfileImage extends AsyncTask<Void, Void, Void> {
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+//            Utils.showProgressDialog(ProfileDetailActivity.this, "Please wait...", false);
+            rippleViewOldRecords.setVisibility(View.GONE);
         }
 
+        protected Void doInBackground(Void... urls) {
+            if (!TextUtils.isEmpty(historyName)) {
+                fetchAllCallLogHistory(historyName);
+            } else {
+                fetchAllCallLogHistory(historyNumber);
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+//                    Utils.hideProgressDialog();
+                    setHistoryAdapter();
+
+                }
+            });
+        }
     }
 
     @Override
@@ -1874,21 +1897,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void layoutVisibility() {
         if (profileActivityCallInstance) {
+
+            new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
             relativeContactDetails.setVisibility(View.GONE);
             relativeCallHistory.setVisibility(View.VISIBLE);
-//            nestedScrollView.setOnTouchListener(new View.OnTouchListener() {
-//                @Override
-//                public boolean onTouch(View v, MotionEvent event) {
-//                    return true;
-//                }
-//            });
-//            recyclerCallHistory.setNestedScrollingEnabled(false);
             rippleCallLog.setVisibility(View.GONE);
             setCallLogHistoryDetails();
+
         } else {
 
-//            recyclerCallHistory.setNestedScrollingEnabled(false);
-//            nestedScrollView.setOnTouchListener(null);
             relativeContactDetails.setVisibility(View.VISIBLE);
             relativeCallHistory.setVisibility(View.GONE);
 
@@ -2199,8 +2217,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         } else {
             imageRightLeft.setVisibility(View.GONE);
         }
-
-
     }
 
     private void setUpView(final ProfileDataOperation profileDetail) {
@@ -3124,7 +3140,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         dialog.show();
     }
 
-    private void fetchCallLogHistoryDateWise(String value) {
+    /*private void fetchCallLogHistoryDateWise(String value) {
         ArrayList<CallLogType> tempList = new ArrayList<>();
         arrayListHistory = new ArrayList<>();
         if (!TextUtils.isEmpty(value)) {
@@ -3151,13 +3167,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
         setHistoryAdapter();
     }
-
+    */
     private void fetchAllCallLogHistory(String value) {
         if (!TextUtils.isEmpty(value)) {
             arrayListHistory = callLogHistory(value);
             // Log.i("History size  ", arrayListHistory.size() + "" + " of  " + value);
         }
-        setHistoryAdapter();
     }
 
     private void setHistoryAdapter() {

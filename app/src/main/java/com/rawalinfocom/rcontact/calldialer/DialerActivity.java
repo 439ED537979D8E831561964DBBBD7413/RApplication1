@@ -47,6 +47,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
@@ -256,6 +257,7 @@ public class DialerActivity extends BaseActivity {
                 }*/
 
             }
+
         });
         initandClickEvents();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -843,13 +845,8 @@ public class DialerActivity extends BaseActivity {
         if (number.startsWith("*")) {
             finalNumber = number;
         } else {
-            if (!number.startsWith("+91")) {
-                finalNumber = "+91" + number;
-            } else {
-                finalNumber = number;
-            }
+            finalNumber = Utils.getFormattedNumber(DialerActivity.this,number);
         }
-
 
 //        final String formattedNumber = Utils.getFormattedNumber(DialerActivity.this, number);
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
