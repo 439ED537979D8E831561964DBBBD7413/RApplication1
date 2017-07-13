@@ -1266,6 +1266,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         (favouriteStatusResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     if (favouriteStatusResponse != null) {
                         Log.e("error response", favouriteStatusResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                favouriteStatusResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -1301,6 +1303,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     if (profileSharingResponse != null) {
                         Log.e("error response", profileSharingResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                profileSharingResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -1351,6 +1355,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     if (profileRatingResponse != null) {
                         Log.e("error response", profileRatingResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                profileRatingResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -1370,6 +1376,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     if (inviteContactResponse != null) {
                         Log.e("error response", inviteContactResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                inviteContactResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "inviteContactResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail,
@@ -1407,6 +1415,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     progressBarLoadCallLogs.setVisibility(View.GONE);
                     if (callHistoryResponse != null) {
                         Log.e("error response", callHistoryResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                callHistoryResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "Callhistoryapi null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -1435,6 +1445,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     if (editProfileResponse != null) {
                         Log.e("error response", editProfileResponse.getMessage());
+                        Toast.makeText(ProfileDetailActivity.this, editProfileResponse.getMessage
+                                (), Toast.LENGTH_SHORT).show();
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Toast.makeText(ProfileDetailActivity.this, "Privacy Setting Update " +

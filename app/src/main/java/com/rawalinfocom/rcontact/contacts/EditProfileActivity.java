@@ -496,11 +496,16 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     Utils.setObjectPreference(EditProfileActivity.this, AppConstants
                             .PREF_REGS_USER_OBJECT, profileDetail);
 
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail.getVerifiedMobileNumber());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, profileDetail.getTotalProfileRateUser());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, profileDetail.getProfileRating());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO, profileDetail.getPbProfilePhoto());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail
+                            .getPbNameFirst() + " " + profileDetail.getPbNameLast());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail
+                            .getVerifiedMobileNumber());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
+                            profileDetail.getTotalProfileRateUser());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, profileDetail
+                            .getProfileRating());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO, profileDetail
+                            .getPbProfilePhoto());
                     Utils.setBooleanPreference(this, AppConstants.PREF_USER_PROFILE_UPDATE, true);
 
                     storeProfileDataToDb(profileDetail);
@@ -551,6 +556,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 } else {
                     if (editProfileResponse != null) {
                         Log.e("error response", editProfileResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootEditProfile,
+                                editProfileResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R

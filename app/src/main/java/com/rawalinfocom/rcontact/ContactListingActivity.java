@@ -6,11 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.CallLog;
 import android.provider.ContactsContract;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -30,20 +26,16 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.adapters.PhoneBookContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
-import com.rawalinfocom.rcontact.calllog.CallHistoryDetailsActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
-import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
-import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.ContactReceiver;
-import com.rawalinfocom.rcontact.model.ProfileData;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.UserProfile;
@@ -59,7 +51,8 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ContactListingActivity extends BaseActivity implements RippleView.OnRippleCompleteListener, WsResponseListener {
+public class ContactListingActivity extends BaseActivity implements RippleView
+        .OnRippleCompleteListener, WsResponseListener {
 
     @BindView(R.id.include_toolbar)
     Toolbar includeToolbar;
@@ -178,7 +171,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView.O
                         shareContactNonRcp(receiver);
                     }
                 } else {
-                    Utils.showErrorSnackBar(this, activityContactListing, getString(R.string.please_select_one_contact));
+                    Utils.showErrorSnackBar(this, activityContactListing, getString(R.string
+                            .please_select_one_contact));
                 }
 
                 break;
@@ -196,7 +190,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView.O
                 Utils.hideProgressDialog();
                 if (shareResponse != null && StringUtils.equalsIgnoreCase
                         (shareResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                    Utils.showSuccessSnackBar(this, activityContactListing, getString(R.string.invitation_shared));
+                    Utils.showSuccessSnackBar(this, activityContactListing, getString(R.string
+                            .invitation_shared));
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -207,6 +202,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView.O
                 } else {
                     if (shareResponse != null) {
                         Log.e("error response", shareResponse.getMessage());
+                        Utils.showErrorSnackBar(this, activityContactListing, shareResponse
+                                .getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "shareResponse null");
                         Utils.showErrorSnackBar(this, activityContactListing, getString(R
@@ -222,7 +219,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView.O
                 Utils.hideProgressDialog();
                 if (inviteResponse != null && StringUtils.equalsIgnoreCase
                         (inviteResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-                    Utils.showSuccessSnackBar(this, activityContactListing, getString(R.string.invitation_sent));
+                    Utils.showSuccessSnackBar(this, activityContactListing, getString(R.string
+                            .invitation_sent));
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -233,6 +231,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView.O
                 } else {
                     if (inviteResponse != null) {
                         Log.e("error response", inviteResponse.getMessage());
+                        Utils.showErrorSnackBar(this, activityContactListing, inviteResponse
+                                .getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "shareResponse null");
                         Utils.showErrorSnackBar(this, activityContactListing, getString(R
@@ -281,7 +281,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView.O
 //        arrayListUserProfile.addAll(arrayListFilteredUserProfile);
 
         recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
-        phoneBookContactListAdapter = new PhoneBookContactListAdapter(this, arrayListFilteredUserProfile);
+        phoneBookContactListAdapter = new PhoneBookContactListAdapter(this,
+                arrayListFilteredUserProfile);
         recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
 
         ArrayAdapter<String> spinnerAdapter;
@@ -414,39 +415,47 @@ public class ContactListingActivity extends BaseActivity implements RippleView.O
                         ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                         ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
                 };
-                String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC";
+                String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+                        + ") ASC";
 
-                cursor = getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
+                cursor = getContentResolver().query(uri, projection, selection, selectionArgs,
+                        sortOrder);
 
                 if (cursor != null) {
 
-                    final int mobile = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                    final int mobile = cursor.getColumnIndex(ContactsContract.CommonDataKinds
+                            .Phone.NUMBER);
 
                     while (cursor.moveToNext()) {
                         try {
 
                             if (cursor.getString(mobile) != null) {
-                                mobileNumber = Utils.getFormattedNumber(getApplicationContext(), cursor.getString(mobile));
+                                mobileNumber = Utils.getFormattedNumber(getApplicationContext(),
+                                        cursor.getString(mobile));
                             }
 
                             UserProfile userProfile = new UserProfile();
 
-                            String mimeType = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.MIMETYPE));
+                            String mimeType = cursor.getString(cursor.getColumnIndex
+                                    (ContactsContract.Data.MIMETYPE));
                             switch (mimeType) {
                                 case ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE:
-                                    userProfile.setEmailId(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+                                    userProfile.setEmailId(cursor.getString(cursor.getColumnIndex
+                                            (ContactsContract.CommonDataKinds.Email.ADDRESS)));
                                     break;
                                 case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
                                     userProfile.setMobileNumber(mobileNumber);
                                     break;
                             }
 
-                            userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
+                            userProfile.setPmFirstName(cursor.getString(cursor.getColumnIndex
+                                    (ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
 
                             arrayListUserProfile.add(userProfile);
 
                         } catch (Exception e) {
-                            Log.i("AllContacts", "Crash occurred when displaying contacts" + e.toString());
+                            Log.i("AllContacts", "Crash occurred when displaying contacts" + e
+                                    .toString());
                         }
                     }
                     cursor.close();
@@ -482,7 +491,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView.O
 
         for (int i = 0; i < arrayListUserProfile.size(); i++) {
             if (!arrayListUserProfile.get(i).getMobileNumber().equals("")) {
-                boolean what = tableProfileMobileMapping.getPmIdFromNumber(arrayListUserProfile.get(i).getMobileNumber());
+                boolean what = tableProfileMobileMapping.getPmIdFromNumber(arrayListUserProfile
+                        .get(i).getMobileNumber());
 
                 if (what)
                     arrayListUserProfile.remove(i);
@@ -494,7 +504,9 @@ public class ContactListingActivity extends BaseActivity implements RippleView.O
 
         for (int i = 0; i < arrayListUserProfile.size(); i++) {
             if (!arrayListUserProfile.get(i).getMobileNumber().equals("")) {
-                profileMobileMapping = tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(arrayListUserProfile.get(i).getMobileNumber());
+                profileMobileMapping = tableProfileMobileMapping
+                        .getCloudPmIdFromProfileMappingFromNumber(arrayListUserProfile.get(i)
+                                .getMobileNumber());
 
                 if (profileMobileMapping != null) {
                     String cloudPmId = profileMobileMapping.getMpmCloudPmId();
@@ -523,7 +535,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView.O
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_RCP_PROFILE_SHARING + "_RCP", getResources().getString(R.string
                     .msg_please_wait),
-                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
+                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    WsConstants.REQ_RCP_PROFILE_SHARING);
         } else {
             Utils.showErrorSnackBar(this, activityContactListing, getResources()
                     .getString(R.string.msg_no_network));
@@ -543,7 +556,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView.O
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_RCP_PROFILE_SHARING + "_NON", getResources().getString(R.string
                     .msg_please_wait),
-                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_RCP_PROFILE_SHARING);
+                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    WsConstants.REQ_RCP_PROFILE_SHARING);
         } else {
             Utils.showErrorSnackBar(this, activityContactListing, getResources()
                     .getString(R.string.msg_no_network));
@@ -561,8 +575,9 @@ public class ContactListingActivity extends BaseActivity implements RippleView.O
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     inviteContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_SEND_INVITATION, getString(R.string.invitation_sending), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+                    .REQ_SEND_INVITATION, getString(R.string.invitation_sending), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                            WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
         } else {
             Utils.showErrorSnackBar(this, activityContactListing, getResources()
                     .getString(R.string.msg_no_network));
