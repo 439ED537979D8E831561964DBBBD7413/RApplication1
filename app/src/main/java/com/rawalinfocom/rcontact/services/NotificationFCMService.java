@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -244,6 +245,8 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     comment.setCrmStatus(AppConstants.COMMENT_STATUS_RECEIVED);
                     comment.setCrmType(m.get("type"));
                     comment.setCrmCloudPrId(m.get("id"));
+                    comment.setCrmProfileDetails(m.get("name"));
+                    comment.setCrmImage(m.get("pm_profile_photo"));
                     comment.setRcProfileMasterPmId(Integer.parseInt(m.get("from_pm_id")));
                     comment.setCrmComment(m.get("comment"));
                     comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_date")));
@@ -466,12 +469,17 @@ public class NotificationFCMService extends FirebaseMessagingService {
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("RContacts")
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            notificationBuilder.setSmallIcon(R.drawable.ic_notification_flat);
+        } else {
+            notificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
+        }
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
