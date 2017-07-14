@@ -154,29 +154,29 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            checkPermissionToExecute();
-//        } else {
-//            textGrantPermission.setVisibility(View.GONE);
-//            recyclerSmsLogs.setVisibility(View.VISIBLE);
-//            init();
-////            getLoaderManager().initLoader(0, null, SmsFragment.this);
-//            if (isFirstTime) {
-//                if (AppConstants.isFirstTime()) {
-//                    AppConstants.setIsFirstTime(false);
-////                    getLoaderManager().initLoader(0, null, SmsFragment.this);
-//                    loadData();
-//                }
-//            } else {
-//                smsDataTypeArrayList = rContactApplication.getArrayListSmsLogType();
-//                if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
-//                    setAdapter();
-//                } else {
-////                    getLoaderManager().initLoader(0, null, SmsFragment.this);
-//                    loadData();
-//                }
-//            }
-//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkPermissionToExecute();
+        } else {
+            textGrantPermission.setVisibility(View.GONE);
+            recyclerSmsLogs.setVisibility(View.VISIBLE);
+            init();
+//            getLoaderManager().initLoader(0, null, SmsFragment.this);
+            if (isFirstTime) {
+                if (AppConstants.isFirstTime()) {
+                    AppConstants.setIsFirstTime(false);
+//                    getLoaderManager().initLoader(0, null, SmsFragment.this);
+                    loadData();
+                }
+            } else {
+                smsDataTypeArrayList = rContactApplication.getArrayListSmsLogType();
+                if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
+                    setAdapter();
+                } else {
+//                    getLoaderManager().initLoader(0, null, SmsFragment.this);
+                    loadData();
+                }
+            }
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -272,73 +272,73 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             AppConstants.isRecentCallFromSMSTab = true;
         }
 
-        fetchSMSData();
+//        fetchSMSData();
 
-//        if (isFromSettings) {
-//            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
-//                    .READ_SMS) == PackageManager.PERMISSION_GRANTED) {
-//                // Initialize Query to fetch SMS-log
-////                progressBar.setVisibility(View.VISIBLE);
-//                textGrantPermission.setVisibility(View.GONE);
-//                isFromSettings = false;
-////                getLoaderManager().initLoader(0, null, SmsFragment.this);
-//                loadData();
-//            }
-//        } else if (isFirstTime) {
-//            if (AppConstants.isFirstTime()) {
-//                AppConstants.setIsFirstTime(false);
-//                loadData();
-////                getLoaderManager().initLoader(0, null, SmsFragment.this);
-//            }
-//        } else if (smsListAdapter != null) {
-//            if (AppConstants.isComposingSMS) {
-//                AppConstants.isComposingSMS = false;
-//                PhoneBookSMSLogs phoneBookSmsLogs = new PhoneBookSMSLogs(getActivity());
-//                listOfIds = new ArrayList<>();
-//                Cursor cursor = phoneBookSmsLogs.getAllSMSLogId();
-//                if (cursor != null) {
-//                    int rowId = cursor.getColumnIndex(Telephony.Sms._ID);
-//                    while (cursor.moveToNext()) {
-//                        listOfIds.add(cursor.getString(rowId));
-//                    }
-//                }
-//                cursor.close();
-//                Utils.setArrayListPreference(getActivity(), AppConstants.PREF_SMS_LOGS_ID_SET,
-//                        listOfIds);
-//                smsDataTypeArrayList = null;
-//                logsDisplayed = 0;
-//                smsListAdapter = null;
-//                count = 0;
-//              /*  Utils.setBooleanPreference(getActivity(), AppConstants
-//                        .PREF_SMS_LOG_STARTS_FIRST_TIME, true);*/
-//                AppConstants.setIsFirstTime(true);
-//                loadData();
-//
-//            } else {
-//                SmsDataType smsDataType = smsListAdapter.getSelectedSmsType();
-//                int indexPosition = smsListAdapter.getSelectedPosition();
-//                if (smsDataType != null && indexPosition >= 0) {
-//                    smsDataType.setIsRead("1");
-//                    smsDataTypeArrayList.set(indexPosition, smsDataType);
-//                    smsListAdapter.notifyDataSetChanged();
-//                }
-//            }
-//
-//        } else {
-//            /*arrayListObjectSmsLogs = rContactApplication.getArrayListObjectSmsLogs();
-//            arrayListSmsLogHeader =  rContactApplication.getArrayListSmsLogsHeaders();
-//            if(arrayListSmsLogHeader!=null && arrayListSmsLogHeader.size()>0 &&
-//                    arrayListObjectSmsLogs!=null && arrayListObjectSmsLogs.size()>0)*/
-//            smsDataTypeArrayList = rContactApplication.getArrayListSmsLogType();
-//            if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
-//                textNoSmsFound.setVisibility(View.GONE);
-//                setAdapter();
-//            } else {
-//                loadData();
-////                getLoaderManager().initLoader(0, null, SmsFragment.this);
-////                textNoSmsFound.setVisibility(View.VISIBLE);
-//            }
-//        }
+        if (isFromSettings) {
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
+                    .READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+                // Initialize Query to fetch SMS-log
+//                progressBar.setVisibility(View.VISIBLE);
+                textGrantPermission.setVisibility(View.GONE);
+                isFromSettings = false;
+//                getLoaderManager().initLoader(0, null, SmsFragment.this);
+                loadData();
+            }
+        } else if (isFirstTime) {
+            if (AppConstants.isFirstTime()) {
+                AppConstants.setIsFirstTime(false);
+                loadData();
+//                getLoaderManager().initLoader(0, null, SmsFragment.this);
+            }
+        } else if (smsListAdapter != null) {
+            if (AppConstants.isComposingSMS) {
+                AppConstants.isComposingSMS = false;
+                PhoneBookSMSLogs phoneBookSmsLogs = new PhoneBookSMSLogs(getActivity());
+                listOfIds = new ArrayList<>();
+                Cursor cursor = phoneBookSmsLogs.getAllSMSLogId();
+                if (cursor != null) {
+                    int rowId = cursor.getColumnIndex(Telephony.Sms._ID);
+                    while (cursor.moveToNext()) {
+                        listOfIds.add(cursor.getString(rowId));
+                    }
+                }
+                cursor.close();
+                Utils.setArrayListPreference(getActivity(), AppConstants.PREF_SMS_LOGS_ID_SET,
+                        listOfIds);
+                smsDataTypeArrayList = null;
+                logsDisplayed = 0;
+                smsListAdapter = null;
+                count = 0;
+              /*  Utils.setBooleanPreference(getActivity(), AppConstants
+                        .PREF_SMS_LOG_STARTS_FIRST_TIME, true);*/
+                AppConstants.setIsFirstTime(true);
+                loadData();
+
+            } else {
+                SmsDataType smsDataType = smsListAdapter.getSelectedSmsType();
+                int indexPosition = smsListAdapter.getSelectedPosition();
+                if (smsDataType != null && indexPosition >= 0) {
+                    smsDataType.setIsRead("1");
+                    smsDataTypeArrayList.set(indexPosition, smsDataType);
+                    smsListAdapter.notifyDataSetChanged();
+                }
+            }
+
+        } else {
+            /*arrayListObjectSmsLogs = rContactApplication.getArrayListObjectSmsLogs();
+            arrayListSmsLogHeader =  rContactApplication.getArrayListSmsLogsHeaders();
+            if(arrayListSmsLogHeader!=null && arrayListSmsLogHeader.size()>0 &&
+                    arrayListObjectSmsLogs!=null && arrayListObjectSmsLogs.size()>0)*/
+            smsDataTypeArrayList = rContactApplication.getArrayListSmsLogType();
+            if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
+                textNoSmsFound.setVisibility(View.GONE);
+                setAdapter();
+            } else {
+                loadData();
+//                getLoaderManager().initLoader(0, null, SmsFragment.this);
+//                textNoSmsFound.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override
@@ -532,41 +532,40 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             Uri mSmsinboxQueryUri = Uri.parse("content://sms");
             String[] columns = new String[]{"address", "date", "body", "type"};
             Cursor cursor = getActivity().getContentResolver().query(
-                    mSmsinboxQueryUri, columns, "allthreadIds =" + allthreadIds.get(i), null, Telephony.Sms.DEFAULT_SORT_ORDER);
+                    mSmsinboxQueryUri, columns, "thread_id =" + allthreadIds.get(i), null, Telephony.Sms.DEFAULT_SORT_ORDER);
 
             if (cursor != null && cursor.getCount() > 0) {
 
-                while (cursor.moveToNext()) {
+                cursor.moveToFirst();
 
-                    String address = null, displayName = null, date = null, msg = null, type = null;
-                    String photoUri = null;
+                String address = null, displayName = null, date = null, msg = null, type = null;
+                String photoUri = null;
 
-                    type = cursor.getString(cursor.getColumnIndex(columns[3]));
+                type = cursor.getString(cursor.getColumnIndex(columns[3]));
 
-                    if (Integer.parseInt(type) == 0 || Integer.parseInt(type) == 1) {
+                if (Integer.parseInt(type) == 0 || Integer.parseInt(type) == 1) {
 
-                        address = cursor.getString(cursor
-                                .getColumnIndex(columns[0]));
+                    address = cursor.getString(cursor
+                            .getColumnIndex(columns[0]));
 
-                        if (address.length() > 0) {
-                            displayName = getContactNameFromNumber(address);
-                            photoUri = getPhotoUrlFromNumber(address);
-                        } else
-                            address = null;
+                    if (address.length() > 0) {
+                        displayName = getContactNameFromNumber(address);
+                        photoUri = getPhotoUrlFromNumber(address);
+                    } else
+                        address = null;
 
-                        date = cursor.getString(cursor.getColumnIndex(columns[1]));
-                        msg = cursor.getString(cursor.getColumnIndex(columns[2]));
+                    date = cursor.getString(cursor.getColumnIndex(columns[1]));
+                    msg = cursor.getString(cursor.getColumnIndex(columns[2]));
 
-                        Contact contact = new Contact();
+                    Contact contact = new Contact();
 
-                        contact.setContactName(displayName);
-                        contact.setContactNumber(address);
-                        contact.setContactPhotoUri(photoUri);
-                        contact.setMessage(msg);
-                        contact.setDate(date);
+                    contact.setContactName(displayName);
+                    contact.setContactNumber(address);
+                    contact.setContactPhotoUri(photoUri);
+                    contact.setMessage(msg);
+                    contact.setDate(date);
 
-                        allSms.add(contact);
-                    }
+                    allSms.add(contact);
                 }
 
                 cursor.close();
