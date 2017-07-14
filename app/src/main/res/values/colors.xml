@@ -16,6 +16,7 @@
 
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorBlack5Opacity">#0D000000</color>
     <color name="colorVeryDarkGrayishBlue1">#4C4C4D</color>
     <color name="colorVeryDarkGrayishBlue2">#606062</color>
     <color name="colorVeryLightGray">#EFEFEF</color>

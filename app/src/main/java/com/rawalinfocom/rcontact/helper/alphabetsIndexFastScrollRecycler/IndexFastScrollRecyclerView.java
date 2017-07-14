@@ -21,9 +21,9 @@ public class IndexFastScrollRecyclerView extends RecyclerView {
     public static float mIndexbarMargin = 0;
     public static int mPreviewPadding = 5;
     public static int mIndexBarCornerRadius = 0;
-    public static float mIndexBarTransparentValue = (float) 0.6;
-    public static String mIndexbarBackgroudColor = "#003933";
-    public static String mIndexbarTextColor = "#FFFFFF";
+    public static float mIndexBarTransparentValue = (float) 1.0;
+    public static String mIndexbarBackgroudColor = "#CCE4E1";
+    public static String mIndexbarTextColor = "#00796b";
 
     public IndexFastScrollRecyclerView(Context context) {
         super(context);

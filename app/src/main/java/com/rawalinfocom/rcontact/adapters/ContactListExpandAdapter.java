@@ -163,7 +163,7 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
 
     }
 
-    public class AllContactViewHolder extends RecyclerView.ViewHolder {
+    class AllContactViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
@@ -179,8 +179,8 @@ public class ContactListExpandAdapter extends RecyclerView.Adapter<RecyclerView.
         RatingBar ratingUser;
         @BindView(R.id.text_contact_number)
         public TextView textContactNumber;
-        @BindView(R.id.divider_all_contact)
-        View dividerAllContact;
+       /* @BindView(R.id.divider_all_contact)
+        View dividerAllContact;*/
         @BindView(R.id.relative_row_all_contact)
         RelativeLayout relativeRowAllContact;
         @BindView(R.id.linear_rating)
