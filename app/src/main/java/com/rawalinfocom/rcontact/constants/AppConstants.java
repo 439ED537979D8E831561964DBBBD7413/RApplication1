@@ -40,6 +40,8 @@ public class AppConstants {
             "'com.google'," +
             // Samsung default storage
             "'vnd.sec.contact.phone'," +
+            // Samsung default sim
+            "'vnd.sec.contact.sim'," +
             // Mi default storage
             "'com.xiaomi'," +
             // Asus/HTC/Panasonic/Sony Defalul storage
