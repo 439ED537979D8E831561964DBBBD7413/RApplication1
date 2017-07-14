@@ -365,6 +365,12 @@ public class NotiRatingFragment extends BaseFragment implements WsResponseListen
 
         recyclerYesterDayRating.setVisibility(View.GONE);
         recyclerPastDayRating.setVisibility(View.GONE);
+        textViewMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.openWebSite(getActivity().getApplicationContext());
+            }
+        });
     }
 
     private void filter(String query) {
