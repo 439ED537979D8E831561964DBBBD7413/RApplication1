@@ -40,6 +40,7 @@ import com.rawalinfocom.rcontact.contacts.FavoritesFragment;
 import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
+import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
@@ -338,13 +339,13 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 activity.getString(R.string.unknown));
 
          /* Hide Divider if row is last in Section */
-        if ((position + 1) < arrayListUserContact.size()) {
+        /*if ((position + 1) < arrayListUserContact.size()) {
             if (arrayListUserContact.get(position + 1) instanceof String) {
                 holder.dividerAllContact.setVisibility(View.GONE);
             } else {
                 holder.dividerAllContact.setVisibility(View.VISIBLE);
             }
-        }
+        }*/
 
         if (profileData.getTempIsRcp()) {
             holder.textCloudContactName.setVisibility(View.VISIBLE);
@@ -690,8 +691,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         RatingBar ratingUser;
         @BindView(R.id.text_contact_number)
         public TextView textContactNumber;
-        @BindView(R.id.divider_all_contact)
-        View dividerAllContact;
+        /*@BindView(R.id.divider_all_contact)
+        View dividerAllContact;*/
         @BindView(R.id.relative_row_all_contact)
         RelativeLayout relativeRowAllContact;
         @BindView(R.id.linear_rating)
@@ -715,6 +716,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             recyclerViewMultipleRc.setVisibility(View.GONE);
             linearRating.setVisibility(View.GONE);
+
+            RecyclerItemDecoration decoration = new RecyclerItemDecoration(activity, ContextCompat
+                    .getColor(activity, R.color.lightGrey), 0.5f);
+            recyclerViewMultipleRc.addItemDecoration(decoration);
 
           /*  Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor(activity, R
                     .color.colorAccent), 5, 0, ContextCompat.getColor(activity, R.color

@@ -35,7 +35,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
@@ -58,6 +57,7 @@ import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
+import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
@@ -313,15 +313,15 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     if (savePackageResponse != null && StringUtils.equalsIgnoreCase
                             (savePackageResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                            Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
-                                    getActivity().getString(R.string.str_all_contact_sync));
-                            Utils.setBooleanPreference(getActivity(), AppConstants
-                                    .PREF_CONTACT_SYNCED, true);
-                            Intent localBroadcastIntent = new Intent(AppConstants
-                                    .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
-                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
-                                    .getInstance(getActivity());
-                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+                        Utils.showSuccessSnackBar(getActivity(), relativeRootAllContacts,
+                                getActivity().getString(R.string.str_all_contact_sync));
+                        Utils.setBooleanPreference(getActivity(), AppConstants
+                                .PREF_CONTACT_SYNCED, true);
+                        Intent localBroadcastIntent = new Intent(AppConstants
+                                .ACTION_LOCAL_BROADCAST_CALL_LOG_SYNC);
+                        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                                .getInstance(getActivity());
+                        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                     } else {
                         if (savePackageResponse != null) {
@@ -547,6 +547,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         getLoaderManager().initLoader(0, null, this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewContactList.setLayoutManager(linearLayoutManager);
+        RecyclerItemDecoration decoration = new RecyclerItemDecoration(getActivity(), ContextCompat
+                .getColor(getActivity(), R.color.colorVeryLightGray), 0.5f);
+        recyclerViewContactList.addItemDecoration(decoration);
     }
 
 
@@ -1058,11 +1061,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     /* Disable swiping in multiple RC case */
                     if (((AllContactAdapter.AllContactViewHolder) viewHolder)
                             .recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
-                        return 0;
-                    }
-                    /* Disable swiping for My Profile */
-                    if (Integer.parseInt(((AllContactAdapter.AllContactViewHolder) viewHolder)
-                            .textContactName.getTag().toString()) == 1) {
                         return 0;
                     }
                     /* Disable swiping for No number */

@@ -31,6 +31,7 @@ import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
+import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.UserProfile;
@@ -329,6 +330,9 @@ public class RContactsFragment extends BaseFragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
 
         recyclerView.setLayoutManager(linearLayoutManager);
+        RecyclerItemDecoration decoration = new RecyclerItemDecoration(getActivity(), ContextCompat
+                .getColor(getActivity(), R.color.colorVeryLightGray), 0.5f);
+        recyclerView.addItemDecoration(decoration);
         recyclerView.scrollToPosition(scrollPosition);
     }
 
