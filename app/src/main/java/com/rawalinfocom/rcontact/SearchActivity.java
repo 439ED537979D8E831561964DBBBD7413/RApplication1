@@ -716,7 +716,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
                     } else {
                         String text = arg0.toString().toLowerCase(Locale.getDefault());
-//                        allContactAdapter.filter(text);
                         if (allContactAdapter != null /*&& allContactAdapter.getSearchCount()>0*/) {
 //                            ArrayList<Object> objectArrayList = allContactAdapter
 // .getArrayListUserContact();
