@@ -802,7 +802,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                 arrayListName, contactName, 0, isFromCallLogTab,
                                 arrayListHistory, contactName, "", hashMapKey, profileThumbnail,
-                                pmId);
+                                pmId, isCallLogRcpUser);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -819,7 +819,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
                                     arrayListHistory, "", uniqueContactId, hashMapKey,
-                                    profileThumbnail, pmId);
+                                    profileThumbnail, pmId, isCallLogRcpUser);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -837,7 +837,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                 arrayListName, contactName, 0, isFromCallLogTab,
                                 arrayListHistory, contactName, "", phoneBookId, profileThumbnail,
-                                pmId);
+                                pmId, isCallLogRcpUser);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -854,7 +854,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
                                     arrayListHistory, "", uniqueContactId, "", profileThumbnail,
-                                    pmId);
+                                    pmId, isCallLogRcpUser);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -2028,7 +2028,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         return cursor;
     }
 
-
     @TargetApi(Build.VERSION_CODES.M)
     private Cursor getCallHistoryDataByName(String name) {
         Cursor cursor = null;
@@ -2043,8 +2042,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         return cursor;
     }
 
-
-    private ArrayList callLogHistory(String number) {
+    private ArrayList<CallLogType> callLogHistory(String number) {
         ArrayList<CallLogType> callDetails = new ArrayList<>();
         Cursor cursor = null;
         Pattern numberPat = Pattern.compile("\\d+");
@@ -2063,17 +2061,12 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
                 int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
                 int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
-                int name = cursor.getColumnIndexOrThrow(CallLog.Calls.CACHED_NAME);
                 int account = -1;
                 int account_id = -1;
-                int profileImage = -1;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     account = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME);
                     //for versions above lollipop
                     account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
-                    profileImage = cursor.getColumnIndex(CallLog.Calls.CACHED_PHOTO_URI);
-                } else {
-//                        account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
                 }
 
                 while (cursor.moveToNext()) {
@@ -2091,9 +2084,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         String accountName = cursor.getString(account);
                         if (!TextUtils.isEmpty(accountName))
                             Log.e("Sim Name", accountName);
-//                        String userImage = cursor.getString(profileImage);
-//                        if (userImage != null)
-//                            Log.e("User Image", userImage);
                     }
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
                     String uniquePhoneBookId = getStarredStatusFromNumber(phNum);
@@ -2199,10 +2189,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                 /*   String contactName = cursor.getString(cursor.getColumnIndexOrThrow
-                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
-                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
-                            .PhoneLookup.LOOKUP_KEY));*/
                     numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
                             .PhoneLookup.LOOKUP_KEY));
                     Uri uri1 = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;

@@ -231,7 +231,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }
-
     }
 
     @Override
@@ -243,7 +242,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     protected void onResume() {
         super.onResume();
         updateNotificationCount();
-
     }
 
     private void updateNotificationCount() {
@@ -876,7 +874,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        setNavigationHeaderData();
+        // setNavigationHeaderData();
         setNavigationListData();
 
         tabMain = (TabLayout) findViewById(R.id.tab_main);
@@ -885,6 +883,53 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         setupTabLayout();
         Utils.changeTabsFont(this, tabMain);
 
+    }
+
+    private void setNavigationHeaderData() {
+
+        LinearLayout mainContent = (LinearLayout) navigationView.findViewById(R.id.main_content);
+        TextView text_user_name = (TextView) navigationView.findViewById(R.id.text_user_name);
+        TextView text_number = (TextView) navigationView.findViewById(R.id.text_number);
+        TextView text_rating_count = (TextView) navigationView.findViewById(R.id.text_rating_count);
+        RatingBar rating_user = (RatingBar) navigationView.findViewById(R.id.rating_user);
+        ImageView userProfileImage = (ImageView) navigationView.findViewById(R.id.userProfileImage);
+
+        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+        String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
+
+        text_user_name.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
+        text_number.setText(number);
+        text_rating_count.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, ""));
+        rating_user.setRating(Float.parseFloat(Utils.getStringPreference(this, AppConstants.PREF_USER_RATING, "")));
+
+        final String thumbnailUrl = Utils.getStringPreference(this, AppConstants.PREF_USER_PHOTO, "");
+        if (!TextUtils.isEmpty(thumbnailUrl)) {
+            Glide.with(MainActivity.this)
+                    .load(thumbnailUrl)
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(MainActivity.this))
+                    .override(500, 500)
+                    .into(userProfileImage);
+        } else {
+            userProfileImage.setImageResource(R.drawable.home_screen_profile);
+        }
+
+        mainContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+                Bundle bundle = new Bundle();
+                bundle.putString(AppConstants.EXTRA_PM_ID, getUserPmId());
+                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "");
+                bundle.putString(AppConstants.EXTRA_CONTACT_NAME, Utils.getStringPreference(MainActivity.this, AppConstants.PREF_USER_NAME, ""));
+                bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, 1);
+                startActivityIntent(MainActivity.this, ProfileDetailActivity.class, bundle);
+            }
+        });
+
+//        Utils.setBooleanPreference(this, AppConstants.PREF_USER_PROFILE_UPDATE, false);
     }
 
     private void setNavigationListData() {
@@ -1007,53 +1052,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-    }
-
-    private void setNavigationHeaderData() {
-
-        LinearLayout mainContent = (LinearLayout) navigationView.findViewById(R.id.main_content);
-        TextView text_user_name = (TextView) navigationView.findViewById(R.id.text_user_name);
-        TextView text_number = (TextView) navigationView.findViewById(R.id.text_number);
-        TextView text_rating_count = (TextView) navigationView.findViewById(R.id.text_rating_count);
-        RatingBar rating_user = (RatingBar) navigationView.findViewById(R.id.rating_user);
-        ImageView userProfileImage = (ImageView) navigationView.findViewById(R.id.userProfileImage);
-
-        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
-        String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
-
-        text_user_name.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
-        text_number.setText(number);
-        text_rating_count.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, ""));
-        rating_user.setRating(Float.parseFloat(Utils.getStringPreference(this, AppConstants.PREF_USER_RATING, "")));
-
-        final String thumbnailUrl = Utils.getStringPreference(this, AppConstants.PREF_USER_PHOTO, "");
-        if (!TextUtils.isEmpty(thumbnailUrl)) {
-            Glide.with(MainActivity.this)
-                    .load(thumbnailUrl)
-                    .placeholder(R.drawable.home_screen_profile)
-                    .error(R.drawable.home_screen_profile)
-                    .bitmapTransform(new CropCircleTransformation(MainActivity.this))
-                    .override(500, 500)
-                    .into(userProfileImage);
-        } else {
-            userProfileImage.setImageResource(R.drawable.home_screen_profile);
-        }
-
-        mainContent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
-                Bundle bundle = new Bundle();
-                bundle.putString(AppConstants.EXTRA_PM_ID, getUserPmId());
-                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "");
-                bundle.putString(AppConstants.EXTRA_CONTACT_NAME, Utils.getStringPreference(MainActivity.this, AppConstants.PREF_USER_NAME, ""));
-                bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
-                bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, 1);
-                startActivityIntent(MainActivity.this, ProfileDetailActivity.class, bundle);
-            }
-        });
-
-//        Utils.setBooleanPreference(this, AppConstants.PREF_USER_PROFILE_UPDATE, false);
     }
 
     private void openDialer() {
@@ -1187,7 +1185,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private void setCurrentTabFragment(int tabPosition) {
         switch (tabPosition) {
 
-
             case 0:
                 showAddToContact(true);
                 fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable
@@ -1231,7 +1228,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         this.unregisterReceiver(networkConnectionReceiver);
 
     }
-
 
     private void registerLocalBroadCastReceiver() {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance
@@ -1722,6 +1718,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         LIST_PARTITION_COUNT)) {
                     // do something with partition
 //                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+
                     smsLogsListbyChunck.addAll(partition);
                     newSmsList.removeAll(partition);
                     break;

@@ -10,6 +10,7 @@ public class Contact {
     String Number;
     String PhotoUri;
     String Message;
+    String Date;
 
     public void setContactName(String DisplayName) {
         this.DisplayName = DisplayName;
@@ -42,6 +43,14 @@ public class Contact {
 
     public String getMessage() {
         return this.Message;
+    }
+
+    public void setDate(String Date) {
+        this.Date = Date;
+    }
+
+    public String getDate() {
+        return this.Date;
     }
 
 }

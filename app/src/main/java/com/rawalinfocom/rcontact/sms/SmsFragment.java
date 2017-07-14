@@ -20,7 +20,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.support.annotation.Nullable;
@@ -40,7 +39,6 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
-import com.rawalinfocom.rcontact.adapters.SimpleCallLogListAdapter;
 import com.rawalinfocom.rcontact.adapters.SmsListAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookSMSLogs;
@@ -50,11 +48,9 @@ import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.listener.OnLoadMoreListener;
-import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.Contact;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.SmsDataType;
-import com.rawalinfocom.rcontact.model.SmsMsg;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
 import org.apache.commons.lang3.StringUtils;
@@ -63,8 +59,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -180,7 +176,6 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     loadData();
                 }
             }
-
         }
     }
 
@@ -505,32 +500,50 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
     private void fetchSMSData() {
 
+        HashSet<String> threadIds = new HashSet<>();
+
         System.out.println("RContact start --> " + System.currentTimeMillis());
 
-        ArrayList<Contact> allSms = new ArrayList<Contact>();
-        ArrayList<SmsMsg> smsMsgs = new ArrayList<SmsMsg>();
-        TreeSet<Integer> threadIds = new TreeSet<Integer>();
-
         Uri mSmsinboxQueryUri = Uri.parse("content://sms");
-        String[] columns = new String[]{"address", "thread_id", "date",
-                "body", "type"};
+        String[] columns = new String[]{"thread_id"};
         Cursor cursor = getActivity().getContentResolver().query(
                 mSmsinboxQueryUri, columns, null, null, Telephony.Sms.DEFAULT_SORT_ORDER);
 
         if (cursor != null && cursor.getCount() > 0) {
 
             while (cursor.moveToNext()) {
+                threadIds.add(cursor.getString(cursor.getColumnIndex(columns[0])));
+            }
+            cursor.close();
+        }
 
-                SmsMsg smsMsg = new SmsMsg();
+        getSMS(threadIds);
+    }
 
-                String address = null, displayName = null, date = null, msg = null, type = null, threadId = null;
+    private void getSMS(HashSet<String> threadIds) {
+
+        ArrayList<String> allthreadIds = new ArrayList<>();
+        ArrayList<Contact> allSms = new ArrayList<Contact>();
+
+        allthreadIds.addAll(threadIds);
+
+        for (int i = 0; i < allthreadIds.size(); i++) {
+
+            Uri mSmsinboxQueryUri = Uri.parse("content://sms");
+            String[] columns = new String[]{"address", "date", "body", "type"};
+            Cursor cursor = getActivity().getContentResolver().query(
+                    mSmsinboxQueryUri, columns, "thread_id =" + allthreadIds.get(i), null, Telephony.Sms.DEFAULT_SORT_ORDER);
+
+            if (cursor != null && cursor.getCount() > 0) {
+
+                cursor.moveToFirst();
+
+                String address = null, displayName = null, date = null, msg = null, type = null;
                 String photoUri = null;
 
-                threadId = cursor.getString(cursor.getColumnIndex(columns[1]));
+                type = cursor.getString(cursor.getColumnIndex(columns[3]));
 
-                type = cursor.getString(cursor.getColumnIndex(columns[4]));
-
-                if (Integer.parseInt(type) == 1 || Integer.parseInt(type) == 2) {
+                if (Integer.parseInt(type) == 0 || Integer.parseInt(type) == 1) {
 
                     address = cursor.getString(cursor
                             .getColumnIndex(columns[0]));
@@ -541,45 +554,21 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     } else
                         address = null;
 
-                    date = cursor.getString(cursor.getColumnIndex(columns[2]));
-                    msg = cursor.getString(cursor.getColumnIndex(columns[3]));
+                    date = cursor.getString(cursor.getColumnIndex(columns[1]));
+                    msg = cursor.getString(cursor.getColumnIndex(columns[2]));
 
-                    smsMsg.setDisplayName(displayName);
-                    smsMsg.setThreadId(threadId);
-                    smsMsg.setAddress(address);
-                    smsMsg.setPhotoUri(photoUri);
-                    smsMsg.setDate(date);
-                    smsMsg.setMsg(msg);
-                    smsMsg.setType(type);
+                    Contact contact = new Contact();
 
-                    smsMsgs.add(smsMsg);
+                    contact.setContactName(displayName);
+                    contact.setContactNumber(address);
+                    contact.setContactPhotoUri(photoUri);
+                    contact.setMessage(msg);
+                    contact.setDate(date);
 
-                    // Add threadId to Tree
-                    threadIds.add(Integer.parseInt(threadId));
+                    allSms.add(contact);
                 }
 
-            }
-
-            cursor.close();
-
-            for (int threadId : threadIds) {
-
-                for (SmsMsg smsMsg : smsMsgs) {
-
-                    if (Integer.parseInt(smsMsg.getThreadId()) == threadId) {
-
-                        Contact con = new Contact();
-
-                        con.setContactName(smsMsg.getDisplayName());
-                        con.setContactNumber(smsMsg.getAddress());
-                        con.setContactPhotoUri(smsMsg.getPhotoUri());
-                        con.setMessage(smsMsg.getMsg());
-
-                        allSms.add(con);
-                    }
-
-                }
-
+                cursor.close();
             }
         }
 
@@ -675,7 +664,6 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             e.printStackTrace();
         }
     }
-
 
     private void makeSimpleDataThreadWise(ArrayList<SmsDataType> filteredList) {
 

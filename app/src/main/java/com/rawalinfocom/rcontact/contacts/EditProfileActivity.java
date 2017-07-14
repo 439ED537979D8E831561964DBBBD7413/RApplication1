@@ -2377,7 +2377,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     ProfileDataOperationPhoneNumber phoneNumber = (ProfileDataOperationPhoneNumber)
                             detailObject;
                     if (position == 0) {
-                        inputValue.setText(phoneNumber.getPhoneNumber());
+                        inputValue.setText(String.format("%s %s", phoneNumber.getPhoneNumber(),
+                                getString(R.string.im_icon_verify)));
+//                        inputValue.setText(phoneNumber.getPhoneNumber());
 //                        inputValue.setText(phoneNumber.getPhoneNumber() + " ◊");
                     } else {
                         inputValue.setText(phoneNumber.getPhoneNumber());
