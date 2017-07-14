@@ -2228,6 +2228,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             arrayListLatLong.add(arrayListAddress.get(i).getAmGoogleLongitude());
             arrayListLatLong.add(arrayListAddress.get(i).getAmGoogleLatitude());
             address.setGoogleLatLong(arrayListLatLong);
+            address.setGoogleAddress(arrayListAddress.get(i).getAmGoogleAddress());
             address.setAddId(arrayListAddress.get(i).getAmRecordIndexId());
             address.setAddPublic(Integer.parseInt(arrayListAddress.get(i).getAmAddressPrivacy()));
             arrayListAddressObject.add(address);
@@ -2792,6 +2793,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             inputPinCode.setText(address.getPostCode());
             textLatitude.setText(address.getGoogleLatLong().get(1));
             textLongitude.setText(address.getGoogleLatLong().get(0));
+            textGoogleAddress.setText(address.getGoogleAddress());
             textIsPublic.setText(String.valueOf(address.getAddPublic()));
             formattedAddress = address.getFormattedAddress();
             textImageMapMarker.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
@@ -3383,6 +3385,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 address.setAmAddressType(arrayListAddress.get(j).getAddressType());
                 address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatLong().get(1));
                 address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLatLong().get(0));
+                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                 address.setRcProfileMasterPmId(getUserPmId());
                 addressList.add(address);
             }
