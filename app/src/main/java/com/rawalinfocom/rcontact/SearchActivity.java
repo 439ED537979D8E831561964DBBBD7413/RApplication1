@@ -663,6 +663,17 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         textNoRecords.setVisibility(View.GONE);
                         rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
                         textGlobalText.setVisibility(View.VISIBLE);
+                    }else{
+                        globalSearchTypeArrayListMain = new ArrayList<GlobalSearchType>();
+                        globalSearchAdapter = null;
+                        recycleViewGlobalContact.setVisibility(View.GONE);
+                        rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
+                        textGlobalText.setVisibility(View.VISIBLE);
+                        count = 0;
+                        startAt = 0;
+                        globalSearchCount = 0;
+                        textGlobalSearchCount.setText("");
+                        rippleViewMoreGlobalContacts.setVisibility(View.GONE);
                     }
                     Pattern numberPat = Pattern.compile("\\d+");
 //                    Pattern numberPat = Pattern.compile("[+][0-9]+");
@@ -705,7 +716,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
                     } else {
                         String text = arg0.toString().toLowerCase(Locale.getDefault());
-//                        allContactAdapter.filter(text);
                         if (allContactAdapter != null /*&& allContactAdapter.getSearchCount()>0*/) {
 //                            ArrayList<Object> objectArrayList = allContactAdapter
 // .getArrayListUserContact();

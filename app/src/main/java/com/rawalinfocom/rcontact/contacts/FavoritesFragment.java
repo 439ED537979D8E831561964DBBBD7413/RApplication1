@@ -42,6 +42,7 @@ import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.ProgressWheel;
+import com.rawalinfocom.rcontact.helper.RecyclerItemDecoration;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
@@ -399,6 +400,9 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewContactList.setLayoutManager(linearLayoutManager);
+        RecyclerItemDecoration decoration = new RecyclerItemDecoration(getActivity(), ContextCompat
+                .getColor(getActivity(), R.color.colorVeryLightGray), 0.5f);
+        recyclerViewContactList.addItemDecoration(decoration);
 
 //        initSwipe();
 

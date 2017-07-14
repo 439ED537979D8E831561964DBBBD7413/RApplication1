@@ -45,6 +45,7 @@ public class WsResponseObject {
     private String message;
     private Integer flag;
     private Integer reSync;
+    private String callDateAndTime;
 
     private OtpLog otpLog;
     private UserProfile userProfile;
@@ -105,6 +106,15 @@ public class WsResponseObject {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @JsonProperty("call_date_and_time")
+    public String getCallDateAndTime() {
+        return StringUtils.defaultString(callDateAndTime);
+    }
+
+    public void setCallDateAndTime(String callDateAndTime) {
+        this.callDateAndTime = callDateAndTime;
     }
 
     @JsonProperty("message")
