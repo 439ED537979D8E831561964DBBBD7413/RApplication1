@@ -176,7 +176,7 @@
     <string name="text_notifications">Notifications</string>
     <string name="text_you_rated">You rated</string>
     <string name="text_rated_you">Rated you</string>
-    <string name="footer_noti_rating_text">Switch to Website for more 20 Notifications</string>
+    <string name="footer_noti_rating_text">If you want to see Previous Notification switch to Website</string>
     <string name="footer_noti_comments_text">If you want to see Previous Timeline Comments switch to Website</string>
     <string name="footer_events_text">If you want to see Upcoming Events switch to Website</string>
     <string name="footer_timeline_text">If you want to see Previous Timeline Events switch to Website</string>

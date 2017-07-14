@@ -309,6 +309,12 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
             }
 
         });
+        textViewMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.openWebSite(getActivity().getApplicationContext());
+            }
+        });
     }
 
     private void filter(String query, int tabIndex) {

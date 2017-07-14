@@ -82,7 +82,7 @@ public class EventsActivity extends BaseActivity implements RippleView
     @BindView(R.id.recyclerview3)
     RecyclerView recyclerViewUpcoming;
     @BindView(R.id.view_more)
-    TextView viewmore;
+    TextView viewMore;
 
 
     private EventAdapter todayEventAdapter;
@@ -186,6 +186,12 @@ public class EventsActivity extends BaseActivity implements RippleView
         });
         recyclerViewRecent.setVisibility(View.GONE);
         recyclerViewUpcoming.setVisibility(View.GONE);
+        viewMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.openWebSite(getApplicationContext());
+            }
+        });
 
     }
 

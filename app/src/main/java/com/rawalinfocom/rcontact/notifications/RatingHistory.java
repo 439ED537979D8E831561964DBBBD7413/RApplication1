@@ -214,6 +214,13 @@ public class RatingHistory extends BaseActivity implements RippleView
         textToolbarTitle.setText(getResources().getString(R.string.nav_text_rating_history));
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
 
+        textViewMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.openWebSite(getApplicationContext());
+            }
+        });
+
         textTodayTitle.setTypeface(Utils.typefaceRegular(this));
         textYesterdayTitle.setTypeface(Utils.typefaceRegular(this));
         textPast5daysTitle.setTypeface(Utils.typefaceRegular(this));

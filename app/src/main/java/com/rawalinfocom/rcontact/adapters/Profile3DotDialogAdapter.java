@@ -62,11 +62,12 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     private String key;
     private String profileUrl;
     private String pmId;
+    private boolean isCallLogRcpUser;
 
     public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number,
                                     long date, boolean isFromCallLogs, ArrayList<CallLogType>
                                             list, String name, String uniqueRowId, String key,
-                                    String profileUrl, String pmId) {
+                                    String profileUrl, String pmId, boolean isCallLogRcpUser) {
         this.context = context;
         this.arrayListString = arrayList;
         this.numberToCall = number;
@@ -78,6 +79,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
         this.uniqueRowId = uniqueRowId;
         this.key = key;
         this.pmId = pmId;
+        this.isCallLogRcpUser = isCallLogRcpUser;
     }
 
     @Override
@@ -127,15 +129,15 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     MaterialDialogClipboard materialDialogClipboard = new MaterialDialogClipboard
                             (context, numberToCall);
                     materialDialogClipboard.showDialog();
-                } else if (value.equalsIgnoreCase("View in AC")) {
+                } else if (value.equalsIgnoreCase(context.getString(R.string.view_in_ac))) {
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString(AppConstants.EXTRA_CONTACT_NAME, dialogName);
-                    bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, key);
-                    bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, profileUrl);
-                    bundle.putString(AppConstants.EXTRA_PM_ID, pmId);
-                    ((BaseActivity) context).startActivityIntent(context, ProfileDetailActivity
-                            .class, bundle);
+                    Intent intent = new Intent(context, ProfileDetailActivity.class);
+                    intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, dialogName);
+                    intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, key);
+                    intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, profileUrl);
+                    intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
+                    intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isCallLogRcpUser);
+                    context.startActivity(intent);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.block))) {
 

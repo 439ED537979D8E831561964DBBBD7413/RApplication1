@@ -50,6 +50,7 @@ import com.google.gson.reflect.TypeToken;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.Country;
@@ -246,7 +247,7 @@ public class Utils {
             arrayList) {
         SharedPreferences sharedpreferences = RContactApplication.getInstance()
                 .getSharedPreferences(AppConstants
-                .KEY_PREFERENCES, Context.MODE_PRIVATE);
+                        .KEY_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         Gson gson = new Gson();
         String json = gson.toJson(arrayList);
@@ -794,5 +795,11 @@ public class Utils {
             timeStamp = "";
         }
         return timeStamp;
+    }
+
+    public static void openWebSite(Context context) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(WsConstants.WS_WEBSITE_URL));
+        browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(browserIntent);
     }
 }
