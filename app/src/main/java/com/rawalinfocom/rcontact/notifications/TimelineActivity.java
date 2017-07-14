@@ -440,26 +440,31 @@ public class TimelineActivity extends BaseActivity implements RippleView
                 WsResponseObject wsResponseObject = (WsResponseObject) data;
                 if (wsResponseObject != null) {
                     EventComment eventComment = wsResponseObject.getEventComment();
+                    if (eventComment != null) {
 
-                    int updated = tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
-                            Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
-                    if (updated != 0) {
-                        if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
-                            switch (selectedRecycler) {
-                                case 0:
-                                    addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
-                                    break;
-                                case 1:
-                                    addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
-                                    break;
-                                case 2:
-                                    addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
-                                    break;
+                        int updated = tableCommentMaster.addReply(eventComment.getId(), eventComment.getReply(),
+                                Utils.getLocalTimeFromUTCTime(eventComment.getReplyAt()), Utils.getLocalTimeFromUTCTime(eventComment.getUpdatedDate()));
+                        if (updated != 0) {
+                            if (selectedRecycler != -1 && selectedRecyclerItem != -1) {
+                                switch (selectedRecycler) {
+                                    case 0:
+                                        addReplyAndUpdateList(listTimelineToday, todayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+                                        break;
+                                    case 1:
+                                        addReplyAndUpdateList(listTimelineYesterday, yesterdayTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+                                        break;
+                                    case 2:
+                                        addReplyAndUpdateList(listTimelinePastDay, past5daysTimelineAdapter, eventComment.getReply(), eventComment.getReplyAt());
+                                        break;
+                                }
+                                selectedRecycler = -1;
+                                selectedRecyclerItem = -1;
                             }
-                            selectedRecycler = -1;
-                            selectedRecyclerItem = -1;
+                            Utils.hideProgressDialog();
                         }
+                    } else {
                         Utils.hideProgressDialog();
+                        Toast.makeText(TimelineActivity.this, getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Utils.hideProgressDialog();

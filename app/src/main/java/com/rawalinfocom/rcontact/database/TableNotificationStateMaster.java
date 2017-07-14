@@ -4,8 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.rawalinfocom.rcontact.constants.AppConstants;
-import com.rawalinfocom.rcontact.model.ContactRequestData;
 import com.rawalinfocom.rcontact.model.NotificationStateData;
 
 /**
@@ -66,48 +64,45 @@ public class TableNotificationStateMaster {
         db.close(); // Closing database connection
     }
 
-
-    public int updatePrivacySetting(ContactRequestData obj, String cloudMongoId) {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_NS_STATE, obj.getEventDatetime());
-        // updating row
-        int isUpdated = db.update(TABLE_NOTIFICATION_STATE_MASTER, values, COLUMN_NS_CLOUD_NOTIFICATION_ID + " =" +
-                        " ?",
-                new String[]{cloudMongoId});
-
-        db.close();
-        return isUpdated;
-    }
-
     public int getTotalUnreadCount() {
-        String countQuery = "SELECT  * FROM " + TABLE_NOTIFICATION_STATE_MASTER + " WHERE " + COLUMN_NS_STATE + " =1";
-        SQLiteDatabase db = databaseHandler.getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-        int count = cursor.getCount();
-        cursor.close();
-        db.close();
-        return count;
+        try {
+            String countQuery = "SELECT  * FROM " + TABLE_NOTIFICATION_STATE_MASTER + " WHERE " + COLUMN_NS_STATE + " =1";
+            SQLiteDatabase db = databaseHandler.getReadableDatabase();
+            Cursor cursor = db.rawQuery(countQuery, null);
+            int count = cursor.getCount();
+            cursor.close();
+            db.close();
+            return count;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public int getTotalUnreadCountByType(int type) {
-        String countQuery = "SELECT  * FROM " + TABLE_NOTIFICATION_STATE_MASTER + " WHERE " + COLUMN_NS_STATE + " =1 AND " + COLUMN_NS_TYPE + " =" + type;
-        SQLiteDatabase db = databaseHandler.getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-        int count = cursor.getCount();
-        cursor.close();
-        db.close();
-        return count;
+        try {
+            String countQuery = "SELECT  * FROM " + TABLE_NOTIFICATION_STATE_MASTER + " WHERE " + COLUMN_NS_STATE + " =1 AND " + COLUMN_NS_TYPE + " =" + type;
+            SQLiteDatabase db = databaseHandler.getReadableDatabase();
+            Cursor cursor = db.rawQuery(countQuery, null);
+            int count = cursor.getCount();
+            cursor.close();
+            db.close();
+            return count;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public int makeAllNotificationsAsReadByType(int type) {
-        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        try {
+            SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_NS_STATE, 2);
-        int isUpdated = db.update(TABLE_NOTIFICATION_STATE_MASTER, values, COLUMN_NS_TYPE + " =" + type + " AND " + COLUMN_NS_STATE + " =1", null);
-        db.close();
-        return isUpdated;
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_NS_STATE, 2);
+            int isUpdated = db.update(TABLE_NOTIFICATION_STATE_MASTER, values, COLUMN_NS_TYPE + " =" + type + " AND " + COLUMN_NS_STATE + " =1", null);
+            db.close();
+            return isUpdated;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

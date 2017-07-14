@@ -182,10 +182,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             }
         }
 
-        /*if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE,
-                false)) {
-            UpdateLoginUserProfile();
-        }*/
+//        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE, false)) {
+//            UpdateLoginUserProfile();
+//        }
     }
 
     @Override
