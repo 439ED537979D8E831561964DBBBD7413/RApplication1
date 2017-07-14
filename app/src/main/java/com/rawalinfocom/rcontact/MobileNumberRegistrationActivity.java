@@ -110,11 +110,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
     public void onComplete(RippleView rippleView) {
         switch (rippleView.getId()) {
             case R.id.ripple_submit:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
-                } else {
-                    prepareToReceiveOtp();
-                }
+                prepareToReceiveOtp();
                 break;
 
         }
@@ -153,8 +149,17 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         if (READ_SMS || RECEIVE_SMS) {
             requestPermissions(permissions, requestCode);
         } else {
-            prepareToReceiveOtp();
+            redirectToOTPScreen();
         }
+    }
+
+    private void redirectToOTPScreen() {
+        // Redirect to OtpVerificationActivity
+        Bundle bundle = new Bundle();
+        bundle.putString(AppConstants.EXTRA_IS_FROM, "mobile");
+        startActivityIntent(MobileNumberRegistrationActivity.this,
+                OtpVerificationActivity.class, bundle);
+        overridePendingTransition(R.anim.enter, R.anim.exit);
     }
 
     @Override
@@ -163,7 +168,9 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == AppConstants.READ_SMS && permissions[0].equals(Manifest.permission
                 .READ_SMS) && permissions[1].equals(Manifest.permission.RECEIVE_SMS)) {
-            prepareToReceiveOtp();
+            redirectToOTPScreen();
+        } else {
+            checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
         }
     }
 
@@ -193,12 +200,12 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
 
                     if (otpDetailResponse.getFlag() == 0) {
 
-                        // Redirect to OtpVerificationActivity
-                        Bundle bundle = new Bundle();
-                        bundle.putString(AppConstants.EXTRA_IS_FROM, "mobile");
-                        startActivityIntent(MobileNumberRegistrationActivity.this,
-                                OtpVerificationActivity.class, bundle);
-                        overridePendingTransition(R.anim.enter, R.anim.exit);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            checkPermissionToExecute(requiredPermissions, AppConstants.READ_SMS);
+                        } else {
+                            redirectToOTPScreen();
+                        }
 
                     } else {
 
@@ -270,7 +277,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_NUMBER, getString(R.string
                     .msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_CHECK_NUMBER);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_CHECK_NUMBER);
         } else {
             Utils.showErrorSnackBar(this, relativeRootMobileRegistration, getResources()
                     .getString(R.string.msg_no_network));

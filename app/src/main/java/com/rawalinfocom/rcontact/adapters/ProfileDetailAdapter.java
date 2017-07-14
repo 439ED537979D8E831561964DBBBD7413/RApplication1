@@ -157,7 +157,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
         final ProfileDetailViewHolder viewHodler = holder;
         if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
-            holder.textMain1.setText(String.format("%s ◊", number));
+            holder.textMain1.setTypeface(Utils.typefaceIcons(activity));
+            holder.textMain1.setText(String.format("%s %s", number, activity.getString(R.string.im_icon_verify)));
             holder.textMain1.setTextColor(colorPineGreen);
             if (isOwnProfile)
                 holder.llPrivacy.setVisibility(View.INVISIBLE);
@@ -254,7 +255,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 .valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
         final ProfileDetailViewHolder viewHodler = holder;
         if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
-            holder.textMain1.setText(emailId + " ◊");
+            holder.textMain1.setTypeface(Utils.typefaceIcons(activity));
+            holder.textMain1.setText(String.format("%s %s", emailId, activity.getString(R.string.im_icon_verify)));
             holder.textMain1.setTextColor(colorPineGreen);
             if (isOwnProfile)
                 holder.llPrivacy.setVisibility(View.INVISIBLE);
