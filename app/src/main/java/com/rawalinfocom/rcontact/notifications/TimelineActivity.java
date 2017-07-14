@@ -215,6 +215,12 @@ public class TimelineActivity extends BaseActivity implements RippleView
                 return false;
             }
         });
+        viewMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.openWebSite(getApplicationContext());
+            }
+        });
 
     }
 
