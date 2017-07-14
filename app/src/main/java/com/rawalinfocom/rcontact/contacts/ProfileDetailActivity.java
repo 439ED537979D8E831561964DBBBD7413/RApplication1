@@ -772,7 +772,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListName, historyNumber, historyDate, isFromCallLogTab,
                                     arrayListHistory, historyName, "", hashMapKey,
-                                    profileThumbnail, pmId);
+                                    profileThumbnail, pmId, isCallLogRcpUser);
                             profileMenuOptionDialog.showDialog();
 
                         } else {
@@ -791,7 +791,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                         arrayListNumber, historyNumber, historyDate,
                                         isFromCallLogTab, arrayListHistory, "", uniqueContactId,
-                                        hashMapKey, profileThumbnail, pmId);
+                                        hashMapKey, profileThumbnail, pmId, isCallLogRcpUser);
                                 profileMenuOptionDialog.showDialog();
                             }
                         }
@@ -809,7 +809,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListName, historyNumber, historyDate, isFromCallLogTab,
                                     arrayListHistory, historyName, "", phoneBookId,
-                                    profileThumbnail, pmId);
+                                    profileThumbnail, pmId, isCallLogRcpUser);
                             //11/07/2017 : hashMapKey replaced with phoneBookId to solve edit
                             // option problem
                             profileMenuOptionDialog.showDialog();
@@ -830,7 +830,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                         arrayListNumber, historyNumber, historyDate,
                                         isFromCallLogTab, arrayListHistory, "", uniqueContactId,
-                                        "", profileThumbnail, pmId);
+                                        "", profileThumbnail, pmId, isCallLogRcpUser);
                                 profileMenuOptionDialog.showDialog();
                             }
                         }

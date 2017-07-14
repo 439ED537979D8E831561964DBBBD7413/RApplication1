@@ -802,7 +802,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                 arrayListName, contactName, 0, isFromCallLogTab,
                                 arrayListHistory, contactName, "", hashMapKey, profileThumbnail,
-                                pmId);
+                                pmId, isCallLogRcpUser);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -819,7 +819,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
                                     arrayListHistory, "", uniqueContactId, hashMapKey,
-                                    profileThumbnail, pmId);
+                                    profileThumbnail, pmId, isCallLogRcpUser);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -837,7 +837,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                 arrayListName, contactName, 0, isFromCallLogTab,
                                 arrayListHistory, contactName, "", phoneBookId, profileThumbnail,
-                                pmId);
+                                pmId, isCallLogRcpUser);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -854,7 +854,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
                                     arrayListHistory, "", uniqueContactId, "", profileThumbnail,
-                                    pmId);
+                                    pmId, isCallLogRcpUser);
                             profileMenuOptionDialog.showDialog();
                         }
                     }

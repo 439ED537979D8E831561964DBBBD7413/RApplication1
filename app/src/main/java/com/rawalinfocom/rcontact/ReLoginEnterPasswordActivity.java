@@ -190,6 +190,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                     Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail.getVerifiedMobileNumber());
                     Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, profileDetail.getTotalProfileRateUser());
                     Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, profileDetail.getProfileRating());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO, profileDetail.getPbProfilePhoto());
 
                     if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals(1)) {
                         Utils.setBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false);
@@ -312,7 +313,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         enterPassWordObject.setPassword(StringUtils.trimToEmpty(password));
         if (isFrom.equals(AppConstants.PREF_RE_LOGIN) || Utils.getBooleanPreference
                 (ReLoginEnterPasswordActivity.this,
-                AppConstants.PREF_TEMP_LOGOUT, false)) {
+                        AppConstants.PREF_TEMP_LOGOUT, false)) {
             enterPassWordObject.setReAuthenticate(1); // For Android Devices
         }
         enterPassWordObject.setCreatedBy("2"); // For Android Devices

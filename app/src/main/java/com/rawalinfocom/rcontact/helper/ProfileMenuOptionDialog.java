@@ -49,11 +49,12 @@ public class ProfileMenuOptionDialog {
     private String key;
     private String profileUrl;
     private String pmId;
+    private boolean isCallLogRcpUser;
 
     public ProfileMenuOptionDialog(Context context, ArrayList<String> arrayList, String number,
                                    long date, boolean isFromCallTab, ArrayList<CallLogType> list,
                                    String name, String uniqueRowId, String key, String
-                                           profileUrl, String pmId) {
+                                           profileUrl, String pmId, boolean isCallLogRcpUser) {
         this.context = context;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -94,6 +95,7 @@ public class ProfileMenuOptionDialog {
         this.uniqueID = uniqueRowId;
         this.profileUrl = profileUrl;
         this.pmId = pmId;
+        this.isCallLogRcpUser = isCallLogRcpUser;
 
         setAdapter();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
@@ -107,7 +109,7 @@ public class ProfileMenuOptionDialog {
             Profile3DotDialogAdapter profile3DotDialogAdapter = new Profile3DotDialogAdapter
                     (context, stringArrayList, numberToCall, callLogDateToDelete,
                             isFromCallLogFragment, arrayListCallLogType, name, uniqueID, key,
-                            profileUrl, pmId);
+                            profileUrl, pmId, isCallLogRcpUser);
             recycleViewDialog.setAdapter(profile3DotDialogAdapter);
             setRecyclerViewLayoutManager(recycleViewDialog);
         }

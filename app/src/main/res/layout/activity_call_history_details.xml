@@ -414,7 +414,7 @@
                 android:textAppearance="?android:textAppearanceMedium"
                 tools:text="" />
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/text_full_screen_text">
@@ -427,85 +427,11 @@
                     android:contentDescription="@string/str_content_description"
                     android:src="@drawable/home_screen_profile" />
 
-                <FrameLayout
-                    android:id="@+id/frame_container_right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/margin_5dp"
-                    android:layout_marginRight="@dimen/margin_5dp">
-
-                    <com.rawalinfocom.rcontact.helper.RippleView
-                        android:id="@+id/ripple_invite"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="gone"
-                        app:rv_alpha="@integer/alpha_ripple"
-                        app:rv_color="@color/colorWhite"
-                        app:rv_rippleDuration="@integer/duration_ripple">
-
-                        <Button
-                            android:id="@+id/button_invite"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/background_rounded_corner"
-                            android:minHeight="0dp"
-                            android:minWidth="0dp"
-                            android:paddingBottom="@dimen/margin_small"
-                            android:paddingLeft="@dimen/margin_medium"
-                            android:paddingRight="@dimen/margin_medium"
-                            android:paddingTop="@dimen/margin_small"
-                            android:text="@string/str_invite"
-                            android:textAllCaps="false"
-                            android:textColor="@color/colorWhite" />
-
-                    </com.rawalinfocom.rcontact.helper.RippleView>
-
-                    <LinearLayout
-                        android:id="@+id/linear_basic_detail_rating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TableRow
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                android:id="@+id/text_user_rating"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/margin_tiny" />
-
-                            <TextView
-                                android:id="@+id/img_user_rating"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="@dimen/margin_tiny"
-                                android:layout_marginStart="@dimen/margin_tiny"
-                                android:layout_marginTop="@dimen/margin_tiny" />
-
-                        </TableRow>
-
-                        <RatingBar
-                            android:id="@+id/rating_user"
-                            style="?android:attr/ratingBarStyleSmall"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:isIndicator="true" />
-
-                    </LinearLayout>
-                </FrameLayout>
-
                 <LinearLayout
                     android:id="@+id/linear_basic_detail"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@id/frame_container_right"
-                    android:layout_toRightOf="@id/image_profile"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <HorizontalScrollView
@@ -527,43 +453,123 @@
                     </HorizontalScrollView>
 
                     <LinearLayout
-                        android:id="@+id/linear_organization_detail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
-                        <TextView
-                            android:id="@+id/text_designation"
+                        <LinearLayout
+                            android:id="@+id/linear_organization_detail"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_designation"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="2dp"
+                                android:singleLine="true"
+                                android:textColor="@color/colorAccent"
+                                tools:text="Managing Director" />
+
+                            <TextView
+                                android:id="@+id/text_organization"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="2dp"
+                                android:singleLine="true"
+                                android:textColor="@color/colorAccent"
+                                tools:text="Blazze Apps" />
+
+                            <TextView
+                                android:id="@+id/text_view_all_organization"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="2dp"
+                                android:text="View All Organizations"
+                                android:visibility="gone"
+                                tools:visibility="visible" />
+
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:id="@+id/frame_container_right"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:padding="2dp"
-                            android:singleLine="true"
-                            android:textColor="@color/colorAccent"
-                            tools:text="Managing Director" />
+                            android:layout_gravity="center|bottom"
+                            android:layout_marginEnd="@dimen/margin_5dp"
+                            android:layout_marginRight="@dimen/margin_5dp">
 
-                        <TextView
-                            android:id="@+id/text_organization"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="2dp"
-                            android:singleLine="true"
-                            android:textColor="@color/colorAccent"
-                            tools:text="Blazze Apps" />
+                            <com.rawalinfocom.rcontact.helper.RippleView
+                                android:id="@+id/ripple_invite"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:visibility="visible"
+                                app:rv_alpha="@integer/alpha_ripple"
+                                app:rv_color="@color/colorWhite"
+                                app:rv_rippleDuration="@integer/duration_ripple">
 
-                        <TextView
-                            android:id="@+id/text_view_all_organization"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="2dp"
-                            android:text="View All Organizations"
-                            android:visibility="gone"
-                            tools:visibility="visible" />
+                                <Button
+                                    android:id="@+id/button_invite"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/background_rounded_corner"
+                                    android:minHeight="0dp"
+                                    android:minWidth="0dp"
+                                    android:paddingBottom="@dimen/margin_small"
+                                    android:paddingLeft="@dimen/margin_medium"
+                                    android:paddingRight="@dimen/margin_medium"
+                                    android:paddingTop="@dimen/margin_small"
+                                    android:text="@string/str_invite"
+                                    android:textAllCaps="false"
+                                    android:textColor="@color/colorWhite" />
+
+                            </com.rawalinfocom.rcontact.helper.RippleView>
+
+                            <LinearLayout
+                                android:id="@+id/linear_basic_detail_rating"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TableRow
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                    <TextView
+                                        android:id="@+id/text_user_rating"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_margin="@dimen/margin_tiny" />
+
+                                    <TextView
+                                        android:id="@+id/img_user_rating"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="@dimen/margin_tiny"
+                                        android:layout_marginStart="@dimen/margin_tiny"
+                                        android:layout_marginTop="@dimen/margin_tiny" />
+
+                                </TableRow>
+
+                                <RatingBar
+                                    android:id="@+id/rating_user"
+                                    style="?android:attr/ratingBarStyleSmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:isIndicator="true" />
+
+                            </LinearLayout>
+                        </FrameLayout>
 
                     </LinearLayout>
 
                 </LinearLayout>
 
-            </RelativeLayout>
+            </LinearLayout>
 
         </RelativeLayout>
 
