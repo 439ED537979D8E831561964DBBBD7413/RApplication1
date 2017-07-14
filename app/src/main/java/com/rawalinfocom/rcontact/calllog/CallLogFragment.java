@@ -310,6 +310,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     } else {
                         if (callLogInsertionResponse != null) {
                             Log.e("error response", callLogInsertionResponse.getMessage());
+                            Utils.showErrorSnackBar(getActivity(), linearMainContent, callLogInsertionResponse.getMessage());
                         } else {
                             Log.e("onDeliveryResponse: ", "userProfileResponse null");
                             Utils.showErrorSnackBar(getActivity(), linearMainContent, getString(R
@@ -806,8 +807,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         protected Void doInBackground(Void... urls) {
             setRCPUserName();
-            getContactName();
             getPhoto();
+            getContactName();
             return null;
         }
 

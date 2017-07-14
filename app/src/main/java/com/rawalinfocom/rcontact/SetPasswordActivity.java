@@ -153,7 +153,8 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        intent.putExtra(AppConstants.PREF_IS_FROM, AppConstants.PREF_FORGOT_PASSWORD);
+                        intent.putExtra(AppConstants.PREF_IS_FROM, AppConstants
+                                .PREF_FORGOT_PASSWORD);
                         startActivity(intent);
                         overridePendingTransition(R.anim.enter, R.anim.exit);
                         finish();
@@ -172,11 +173,17 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                         Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
                                 profileDetail.getRcpPmId());
 
-                        Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
-                        Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail.getVerifiedMobileNumber());
-                        Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, profileDetail.getTotalProfileRateUser());
-                        Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, profileDetail.getProfileRating());
-                        Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO, profileDetail.getPbProfilePhoto());
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_NAME,
+                                profileDetail.getPbNameFirst() + " " + profileDetail
+                                        .getPbNameLast());
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER,
+                                profileDetail.getVerifiedMobileNumber());
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
+                                profileDetail.getTotalProfileRateUser());
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_RATING,
+                                profileDetail.getProfileRating());
+                        Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO,
+                                profileDetail.getPbProfilePhoto());
 
                         storeProfileDataToDb(profileDetail);
 
@@ -189,6 +196,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
 
                     if (setPasswordResponse != null) {
                         Log.e("error response", setPasswordResponse.getMessage());
+                        Utils.showErrorSnackBar(this, layoutRoot, setPasswordResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "setPassword null");
                         Utils.showErrorSnackBar(this, layoutRoot, getString(R.string
@@ -216,6 +224,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                 } else {
                     if (setPasswordResponse != null) {
                         Log.e("error response", setPasswordResponse.getMessage());
+                        Utils.showErrorSnackBar(this, layoutRoot, setPasswordResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "setPassword null");
                         Utils.showErrorSnackBar(this, layoutRoot, getString(R.string
@@ -284,13 +293,15 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         WsRequestObject setPassWordObject = new WsRequestObject();
         setPassWordObject.setPassword(StringUtils.trimToEmpty(password));
         setPassWordObject.setPassword_confirmation(StringUtils.trimToEmpty(confirmPassword));
-        setPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+        setPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings
+                .Secure.ANDROID_ID));
         setPassWordObject.setCreatedBy("2"); // For Android Devices
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     setPassWordObject, null, WsResponseObject.class, WsConstants.REQ_SAVE_PASSWORD,
-                    getString(R.string.msg_please_wait), true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    getString(R.string.msg_please_wait), true).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
                     WsConstants.REQ_SAVE_PASSWORD);
         } else {
             Utils.showErrorSnackBar(this, layoutRoot, getResources()
@@ -500,7 +511,8 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_STORE_DEVICE_DETAILS, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    .REQ_STORE_DEVICE_DETAILS, null, true).executeOnExecutor(AsyncTask
+                            .THREAD_POOL_EXECUTOR,
                     WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
         }
         /*else {

@@ -349,16 +349,39 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
 
         init();
+    }
 
-        if (!TextUtils.isEmpty(historyName)) {
-            fetchAllCallLogHistory(historyName);
 
-        } else {
-//        fetchCallLogHistoryDateWise(historyNumber);
-            fetchAllCallLogHistory(historyNumber);
+    private class GetRCPNameAndProfileImage extends AsyncTask<Void, Void, Void> {
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+//            Utils.showProgressDialog(ProfileDetailActivity.this, "Please wait...", false);
+            rippleViewOldRecords.setVisibility(View.GONE);
         }
 
+        protected Void doInBackground(Void... urls) {
+            if (!TextUtils.isEmpty(historyName)) {
+                fetchAllCallLogHistory(historyName);
+            } else {
+                fetchAllCallLogHistory(historyNumber);
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+//                    Utils.hideProgressDialog();
+                    setHistoryAdapter();
+
+                }
+            });
+        }
     }
 
     @Override
@@ -1243,6 +1266,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         (favouriteStatusResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     if (favouriteStatusResponse != null) {
                         Log.e("error response", favouriteStatusResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                favouriteStatusResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -1278,6 +1303,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     if (profileSharingResponse != null) {
                         Log.e("error response", profileSharingResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                profileSharingResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -1328,6 +1355,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     if (profileRatingResponse != null) {
                         Log.e("error response", profileRatingResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                profileRatingResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -1347,6 +1376,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     if (inviteContactResponse != null) {
                         Log.e("error response", inviteContactResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                inviteContactResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "inviteContactResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail,
@@ -1384,6 +1415,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     progressBarLoadCallLogs.setVisibility(View.GONE);
                     if (callHistoryResponse != null) {
                         Log.e("error response", callHistoryResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                callHistoryResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "Callhistoryapi null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -1412,6 +1445,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 } else {
                     if (editProfileResponse != null) {
                         Log.e("error response", editProfileResponse.getMessage());
+                        Toast.makeText(ProfileDetailActivity.this, editProfileResponse.getMessage
+                                (), Toast.LENGTH_SHORT).show();
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Toast.makeText(ProfileDetailActivity.this, "Privacy Setting Update " +
@@ -1874,21 +1909,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void layoutVisibility() {
         if (profileActivityCallInstance) {
+
+            new GetRCPNameAndProfileImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
             relativeContactDetails.setVisibility(View.GONE);
             relativeCallHistory.setVisibility(View.VISIBLE);
-//            nestedScrollView.setOnTouchListener(new View.OnTouchListener() {
-//                @Override
-//                public boolean onTouch(View v, MotionEvent event) {
-//                    return true;
-//                }
-//            });
-//            recyclerCallHistory.setNestedScrollingEnabled(false);
             rippleCallLog.setVisibility(View.GONE);
             setCallLogHistoryDetails();
+
         } else {
 
-//            recyclerCallHistory.setNestedScrollingEnabled(false);
-//            nestedScrollView.setOnTouchListener(null);
             relativeContactDetails.setVisibility(View.VISIBLE);
             relativeCallHistory.setVisibility(View.GONE);
 
@@ -2208,8 +2238,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         } else {
             imageRightLeft.setVisibility(View.GONE);
         }
-
-
     }
 
     private void setUpView(final ProfileDataOperation profileDetail) {
@@ -3133,7 +3161,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         dialog.show();
     }
 
-    private void fetchCallLogHistoryDateWise(String value) {
+    /*private void fetchCallLogHistoryDateWise(String value) {
         ArrayList<CallLogType> tempList = new ArrayList<>();
         arrayListHistory = new ArrayList<>();
         if (!TextUtils.isEmpty(value)) {
@@ -3160,13 +3188,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
         setHistoryAdapter();
     }
-
+    */
     private void fetchAllCallLogHistory(String value) {
         if (!TextUtils.isEmpty(value)) {
             arrayListHistory = callLogHistory(value);
             // Log.i("History size  ", arrayListHistory.size() + "" + " of  " + value);
         }
-        setHistoryAdapter();
     }
 
     private void setHistoryAdapter() {

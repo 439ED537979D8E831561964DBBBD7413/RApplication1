@@ -51,7 +51,6 @@ import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableCommentMaster;
@@ -407,6 +406,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         (favouriteStatusResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
                     if (favouriteStatusResponse != null) {
                         Log.e("error response", favouriteStatusResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                favouriteStatusResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -426,6 +427,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 } else {
                     if (inviteContactResponse != null) {
                         Log.e("error response", inviteContactResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                inviteContactResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "inviteContactResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail,
@@ -473,6 +476,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 } else {
                     if (profileRatingResponse != null) {
                         Log.e("error response", profileRatingResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                profileRatingResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -506,6 +511,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     progressBarLoadCallLogs.setVisibility(View.GONE);
                     if (callHistoryResponse != null) {
                         Log.e("error response", callHistoryResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail,
+                                callHistoryResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
@@ -829,7 +836,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 this.getString(R.string.clear_call_log)));
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                 arrayListName, contactName, 0, isFromCallLogTab,
-                                arrayListHistory, contactName, "", phoneBookId, profileThumbnail, pmId);
+                                arrayListHistory, contactName, "", phoneBookId, profileThumbnail,
+                                pmId);
                         profileMenuOptionDialog.showDialog();
 
                     } else {
@@ -845,7 +853,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                                     .clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                     arrayListNumber, profileContactNumber, 0, isFromCallLogTab,
-                                    arrayListHistory, "", uniqueContactId, "", profileThumbnail, pmId);
+                                    arrayListHistory, "", uniqueContactId, "", profileThumbnail,
+                                    pmId);
                             profileMenuOptionDialog.showDialog();
                         }
                     }
@@ -903,7 +912,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).executeOnExecutor(AsyncTask
+                            .THREAD_POOL_EXECUTOR,
                     WsConstants.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
@@ -1217,7 +1227,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 //            textToolbarTitle.setText(contactName);
             //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's suggestion
 //            textToolbarTitle.setText(getString(R.string.str_profile_deails));
-            // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit Sir's suggestion
+            // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avijit Sir's
+            // suggestion
             textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
 
         } else {
@@ -1226,7 +1237,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 //17/06/2017 : toolBarTitle text is changed for Call-logs as per Avijit Sir's
                 // suggestion
 //                textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
-                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avi+jit Sir's suggestion
+                // 11/07/2017 : toolBarTitle text is changed again for Call-logs as per Avi+jit
+                // Sir's suggestion
                 textToolbarTitle.setText(getString(R.string.call_history_toolbar_title));
             }
 
@@ -1899,7 +1911,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber + "?");
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber
+                + "?");
         callConfirmationDialog.showDialog();
     }
 
@@ -1915,7 +1928,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     ratingObject, null, WsResponseObject.class, WsConstants.REQ_PROFILE_RATING,
-                    null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_RATING);
+                    null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants
+                    .WS_ROOT + WsConstants.REQ_PROFILE_RATING);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
                     .string.msg_no_network));
@@ -1930,7 +1944,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     profileVisitObject, null, WsResponseObject.class, WsConstants
-                    .REQ_ADD_PROFILE_VISIT, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    .REQ_ADD_PROFILE_VISIT, null, true).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
                     .REQ_ADD_PROFILE_VISIT);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
@@ -1947,7 +1962,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     favouriteStatusObject, null, WsResponseObject.class, WsConstants
-                    .REQ_MARK_AS_FAVOURITE, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    .REQ_MARK_AS_FAVOURITE, null, true).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
                     .REQ_MARK_AS_FAVOURITE);
         } else {
             Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
@@ -2012,7 +2028,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         return cursor;
     }
 
-
     @TargetApi(Build.VERSION_CODES.M)
     private Cursor getCallHistoryDataByName(String name) {
         Cursor cursor = null;
@@ -2027,8 +2042,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         return cursor;
     }
 
-
-    private ArrayList callLogHistory(String number) {
+    private ArrayList<CallLogType> callLogHistory(String number) {
         ArrayList<CallLogType> callDetails = new ArrayList<>();
         Cursor cursor = null;
         Pattern numberPat = Pattern.compile("\\d+");
@@ -2047,17 +2061,12 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
                 int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
                 int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
-                int name = cursor.getColumnIndexOrThrow(CallLog.Calls.CACHED_NAME);
                 int account = -1;
                 int account_id = -1;
-                int profileImage = -1;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     account = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME);
                     //for versions above lollipop
                     account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
-                    profileImage = cursor.getColumnIndex(CallLog.Calls.CACHED_PHOTO_URI);
-                } else {
-//                        account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
                 }
 
                 while (cursor.moveToNext()) {
@@ -2075,9 +2084,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         String accountName = cursor.getString(account);
                         if (!TextUtils.isEmpty(accountName))
                             Log.e("Sim Name", accountName);
-//                        String userImage = cursor.getString(profileImage);
-//                        if (userImage != null)
-//                            Log.e("User Image", userImage);
                     }
                     int histroyId = Integer.parseInt(cursor.getString(callLogId));
                     String uniquePhoneBookId = getStarredStatusFromNumber(phNum);
@@ -2183,10 +2189,6 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                 /*   String contactName = cursor.getString(cursor.getColumnIndexOrThrow
-                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
-                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
-                            .PhoneLookup.LOOKUP_KEY));*/
                     numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
                             .PhoneLookup.LOOKUP_KEY));
                     Uri uri1 = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
@@ -2380,7 +2382,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     inviteContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_SEND_INVITATION, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    .REQ_SEND_INVITATION, null, true).executeOnExecutor(AsyncTask
+                            .THREAD_POOL_EXECUTOR,
                     WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
         }
         /*else {

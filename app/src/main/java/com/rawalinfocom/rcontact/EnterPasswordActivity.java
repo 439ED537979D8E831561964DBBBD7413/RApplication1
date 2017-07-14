@@ -145,6 +145,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                 } else {
                     if (otpDetailResponse != null) {
                         Log.e("error response", otpDetailResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword,
+                                otpDetailResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                         Utils.showErrorSnackBar(this, relativeRootEnterPassword, getString(R
@@ -175,6 +177,9 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     Utils.setStringPreference(this, AppConstants.PREF_USER_PM_ID,
                             profileDetail.getRcpPmId());
 
+                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME, profileDetail.getCallLogTimestamp());
+                    Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME, profileDetail.getSmsLogTimestamp());
+
                     Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
                     Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail.getVerifiedMobileNumber());
                     Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, profileDetail.getTotalProfileRateUser());
@@ -196,6 +201,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
                     if (enterPassWordResponse != null) {
                         Log.e("error response", enterPassWordResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword,
+                                enterPassWordResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "enterPassWordResponse null");
                         Utils.showErrorSnackBar(this, relativeRootEnterPassword, getString(R
@@ -226,6 +233,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                 } else {
                     if (enterPassWordResponse != null) {
                         Log.e("error response", enterPassWordResponse.getMessage());
+                        Utils.showErrorSnackBar(this, relativeRootEnterPassword,
+                                enterPassWordResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "enterPassWordResponse null");
                         Utils.showErrorSnackBar(this, relativeRootEnterPassword, getString(R
@@ -279,7 +288,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_NUMBER, getString(R.string
                     .msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_CHECK_NUMBER);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                            WsConstants.REQ_CHECK_NUMBER);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEnterPassword, getResources()
                     .getString(R.string.msg_no_network));
@@ -293,14 +303,16 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         enterPassWordObject.setPassword(StringUtils.trimToEmpty(password));
         enterPassWordObject.setCreatedBy("2"); // For Android Devices
         enterPassWordObject.setGcmToken(getDeviceTokenId());
-        enterPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+        enterPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings
+                .Secure.ANDROID_ID));
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     enterPassWordObject,
                     null, WsResponseObject.class, WsConstants.REQ_CHECK_LOGIN, getString(R.string
                     .msg_please_wait), false)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_CHECK_LOGIN);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                            WsConstants.REQ_CHECK_LOGIN);
         } else {
             Utils.showErrorSnackBar(this, relativeRootEnterPassword, getResources()
                     .getString(R.string.msg_no_network));
@@ -509,7 +521,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_STORE_DEVICE_DETAILS, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    .REQ_STORE_DEVICE_DETAILS, null, true).executeOnExecutor(AsyncTask
+                            .THREAD_POOL_EXECUTOR,
                     WsConstants.WS_ROOT + WsConstants.REQ_STORE_DEVICE_DETAILS);
         }
         /*else {

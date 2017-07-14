@@ -228,6 +228,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         holder.textActionType.setText(activity.getString(R.string.im_icon_envelop));
         holder.textActionType.setTypeface(Utils.typefaceIcons(activity));
+        holder.textActionType.setTextColor(activity.getResources().getColor(R.color.regularFontColor));
         holder.textActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -329,6 +330,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         holder.textActionType.setText(activity.getString(R.string.im_icon_website));
         holder.textActionType.setTypeface(Utils.typefaceIcons(activity));
+        holder.textActionType.setTextColor(activity.getResources().getColor(R.color.regularFontColor));
         holder.textActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -376,6 +378,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
         holder.textActionType.setText(activity.getString(R.string.im_icon_map_marker));
         holder.textActionType.setTypeface(Utils.typefaceIcons(activity));
+        holder.textActionType.setTextColor(activity.getResources().getColor(R.color.regularFontColor));
         holder.textActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -479,12 +482,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.textActionType.setText(activity.getString(R.string.im_icon_twitter));
         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
             holder.textActionType.setText(activity.getString(R.string.im_icon_linkedin));
-        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
-                ("google")) {
+        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("google")) {
             holder.textActionType.setText(activity.getString(R.string.im_icon_google));
+        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("skype")) {
+            holder.textActionType.setText(activity.getString(R.string.im_icon_skype));
         }
 
         holder.textActionType.setTypeface(Utils.typefaceIcons(activity));
+        holder.textActionType.setTextColor(activity.getResources().getColor(R.color.regularFontColor));
         holder.textActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -497,9 +502,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         url = "https://twitter.com/" + imAccount.getIMAccountDetails();
                     } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
                         url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
-                            ("google")) {
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("google")) {
                         url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("skype")) {
+                        url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
                     }
 
                     if (url != null) {
@@ -580,9 +586,10 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         url = "https://twitter.com/" + imAccount.getIMAccountDetails();
                     } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
                         url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
-                            ("google")) {
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("google")) {
                         url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("skype")) {
+                        url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
                     }
 
                     if (url != null) {
@@ -634,6 +641,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 //            holder.textActionType.setText(activity.getString(R.string.im_icon_nav_call));
 
         holder.textActionType.setTypeface(Utils.typefaceIcons(activity));
+        holder.textActionType.setTextColor(activity.getResources().getColor(R.color.regularFontColor));
 
         int eventRcType = Integer.parseInt(StringUtils.defaultIfEmpty(event.getEventRcType(),
                 String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
@@ -660,6 +668,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         break;
 
                 }
+                holder.llPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
                 if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
@@ -704,6 +713,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         else
             holder.textActionType.setText(activity.getString(R.string.im_icon_female));
         holder.textActionType.setTypeface(Utils.typefaceIcons(activity));
+        holder.textActionType.setTextColor(activity.getResources().getColor(R.color.regularFontColor));
     }
 
     public ArrayList<Object> getDetailList() {
