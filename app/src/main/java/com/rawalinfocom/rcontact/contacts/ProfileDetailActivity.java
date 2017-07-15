@@ -819,8 +819,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 ArrayList<String> arrayListNumber = new ArrayList<>(Arrays.asList
                                         (this.getString(R.string.add_to_contact),
                                                 this.getString(R.string.add_to_existing_contact),
-                                                this
-                                                        .getString(R.string.view_profile),
+                                                /*this.getString(R.string.view_profile),*/
                                                 this.getString(R.string.copy_phone_number),
                                         /*this.getString(R.string.call_reminder), this.getString
                                         (R.string.block),*/
@@ -1148,7 +1147,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, hashMapKey);
         intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueContactId);
         intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isCallLogRcpUser);
-        intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileThumbnail);
+        if(!StringUtils.isEmpty(profileThumbnail)){
+            intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileThumbnail);
+        }else {
+            intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, thumbnailUrl);
+        }
         startActivity(intent);
         overridePendingTransition(R.anim.enter, R.anim.exit);
     }
