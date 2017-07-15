@@ -47,15 +47,15 @@ public class PrivacySettingPopupListAdapter extends RecyclerView.Adapter<Privacy
         switch (position) {
             case 0:
                 //everyone
-                holder.imageView.setImageResource(R.drawable.ic_privacy_public);
+                holder.imageView.setImageResource(R.drawable.ico_privacy_public);
                 break;
             case 1:
                 //my contacts
-                holder.imageView.setImageResource(R.drawable.ic_privacy_my_contact);
+                holder.imageView.setImageResource(R.drawable.ico_privacy_my_contact);
                 break;
             case 2:
                 //only me
-                holder.imageView.setImageResource(R.drawable.ic_privacy_onlyme);
+                holder.imageView.setImageResource(R.drawable.ico_privacy_onlyme);
                 break;
 
         }

@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -13,15 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.MoreObjects;
-import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
-import com.rawalinfocom.rcontact.calllog.CallHistoryDetailsActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
@@ -131,9 +127,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textSub1.setText(phoneNumber.getPhoneType());
         holder.textSub1.setVisibility(View.VISIBLE);
 
-        holder.textActionType.setText(activity.getString(R.string.im_icon_nav_call));
-        holder.textActionType.setTypeface(Utils.typefaceIcons(activity));
-        holder.textActionType.setOnClickListener(new View.OnClickListener() {
+        holder.imgActionType.setImageResource(R.drawable.ico_phone_alt_svg);
+        holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Utils.callIntent(activity, number);
@@ -161,7 +156,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             holder.textMain1.setText(String.format("%s %s", number, activity.getString(R.string.im_icon_verify)));
             holder.textMain1.setTextColor(colorPineGreen);
             if (isOwnProfile)
-                holder.llPrivacy.setVisibility(View.INVISIBLE);
+                holder.llPrivacy.setVisibility(View.GONE);
             else
                 holder.llPrivacy.setVisibility(View.GONE);
         } else if (pbRcpType == IntegerConstants.RCP_TYPE_SECONDARY) {
@@ -171,15 +166,15 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 switch ((MoreObjects.firstNonNull(phoneNumber.getPhonePublic(), 2))) {
                     case 1:
                         //everyone
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_public);
                         break;
                     case 2:
                         //my contacts
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_my_contact);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_my_contact);
                         break;
                     case 3:
                         //only me
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_onlyme);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_onlyme);
                         break;
 
                 }
@@ -190,7 +185,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.textActionType.setVisibility(View.GONE);
+                    holder.imgActionType.setVisibility(View.GONE);
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -226,10 +221,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textSub1.setText(email.getEmType());
         holder.textSub1.setVisibility(View.VISIBLE);
 
-        holder.textActionType.setText(activity.getString(R.string.im_icon_envelop));
-        holder.textActionType.setTypeface(Utils.typefaceIcons(activity));
-        holder.textActionType.setTextColor(activity.getResources().getColor(R.color.regularFontColor));
-        holder.textActionType.setOnClickListener(new View.OnClickListener() {
+        holder.imgActionType.setImageResource(R.drawable.ico_envelop_svg);
+        holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" +
@@ -270,15 +263,15 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 switch ((MoreObjects.firstNonNull(email.getEmPublic(), 2))) {
                     case 1:
                         //everyone
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_public);
                         break;
                     case 2:
                         //my contacts
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_my_contact);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_my_contact);
                         break;
                     case 3:
                         //only me
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_onlyme);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_onlyme);
                         break;
 
                 }
@@ -288,7 +281,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.textActionType.setVisibility(View.GONE);
+                    holder.imgActionType.setVisibility(View.GONE);
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -328,10 +321,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         if (!isOwnProfile)
             holder.llPrivacy.setVisibility(View.GONE);
 
-        holder.textActionType.setText(activity.getString(R.string.im_icon_website));
-        holder.textActionType.setTypeface(Utils.typefaceIcons(activity));
-        holder.textActionType.setTextColor(activity.getResources().getColor(R.color.regularFontColor));
-        holder.textActionType.setOnClickListener(new View.OnClickListener() {
+        holder.imgActionType.setImageResource(R.drawable.ico_website_svg);
+        holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -376,10 +367,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textSub1.setText(address.getAddressType());
         holder.textSub1.setVisibility(View.VISIBLE);
 
-        holder.textActionType.setText(activity.getString(R.string.im_icon_map_marker));
-        holder.textActionType.setTypeface(Utils.typefaceIcons(activity));
-        holder.textActionType.setTextColor(activity.getResources().getColor(R.color.regularFontColor));
-        holder.textActionType.setOnClickListener(new View.OnClickListener() {
+        holder.imgActionType.setImageResource(R.drawable.ico_address_svg);
+        holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (address.getGoogleLatLong() != null) {
@@ -424,15 +413,15 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 switch ((MoreObjects.firstNonNull(address.getAddPublic(), 2))) {
                     case 1:
                         //everyone
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_public);
                         break;
                     case 2:
                         //my contacts
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_my_contact);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_my_contact);
                         break;
                     case 3:
                         //only me
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_onlyme);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_onlyme);
                         break;
                 }
                 holder.llPrivacy.setVisibility(View.VISIBLE);
@@ -443,7 +432,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.textActionType.setVisibility(View.GONE);
+                    holder.imgActionType.setVisibility(View.GONE);
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -477,20 +466,22 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textSub1.setText(imAccount.getIMAccountProtocol());
 
         if (imAccount.getIMAccountProtocol().equalsIgnoreCase("facebook")) {
-            holder.textActionType.setText(activity.getString(R.string.im_icon_facebook));
+            holder.imgActionType.setImageResource(R.drawable.ico_facebook_svg);
         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("twitter")) {
-            holder.textActionType.setText(activity.getString(R.string.im_icon_twitter));
+            holder.imgActionType.setImageResource(R.drawable.ico_twitter_svg);
         } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
-            holder.textActionType.setText(activity.getString(R.string.im_icon_linkedin));
+            holder.imgActionType.setImageResource(R.drawable.ico_linkedin_svg);
         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("google")) {
-            holder.textActionType.setText(activity.getString(R.string.im_icon_google));
+            holder.imgActionType.setImageResource(R.drawable.ico_google_plus_svg);
         } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("skype")) {
-            holder.textActionType.setText(activity.getString(R.string.im_icon_skype));
+            holder.imgActionType.setImageResource(R.drawable.ico_skype_svg);
+        } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("whatsapp")) {
+            holder.imgActionType.setImageResource(R.drawable.ico_whatsapp_svg);
+        } else {
+            holder.imgActionType.setImageResource(R.drawable.ico_other_svg);
         }
 
-        holder.textActionType.setTypeface(Utils.typefaceIcons(activity));
-        holder.textActionType.setTextColor(activity.getResources().getColor(R.color.regularFontColor));
-        holder.textActionType.setOnClickListener(new View.OnClickListener() {
+        holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
@@ -506,6 +497,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
                     } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("skype")) {
                         url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("whatsapp")) {
+                        url = "https://web.whatsapp.com/" + imAccount.getIMAccountDetails();
                     }
 
                     if (url != null) {
@@ -530,15 +523,15 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 switch ((MoreObjects.firstNonNull(imAccount.getIMAccountPublic(), 2))) {
                     case 1:
                         //everyone
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_public);
                         break;
                     case 2:
                         //my contacts
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_my_contact);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_my_contact);
                         break;
                     case 3:
                         //only me
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_onlyme);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_onlyme);
                         break;
 
                 }
@@ -548,7 +541,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.textActionType.setVisibility(View.GONE);
+                    holder.imgActionType.setVisibility(View.GONE);
                 }
             }
             holder.llPrivacy.setOnClickListener(new View.OnClickListener() {
@@ -590,6 +583,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
                     } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("skype")) {
                         url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("whatsapp")) {
+                        url = "https://web.whatsapp.com/" + imAccount.getIMAccountDetails();
                     }
 
                     if (url != null) {
@@ -634,14 +629,11 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textSub1.setVisibility(View.VISIBLE);
 
         if (event.getEventType().equals("Birthday"))
-            holder.textActionType.setText(activity.getString(R.string.im_icon_birthday));
+            holder.imgActionType.setImageResource(R.drawable.ico_birthday_svg);
         else if (event.getEventType().equals("Anniversary"))
-            holder.textActionType.setText(activity.getString(R.string.im_icon_anniversary));
-//        else
-//            holder.textActionType.setText(activity.getString(R.string.im_icon_nav_call));
-
-        holder.textActionType.setTypeface(Utils.typefaceIcons(activity));
-        holder.textActionType.setTextColor(activity.getResources().getColor(R.color.regularFontColor));
+            holder.imgActionType.setImageResource(R.drawable.ico_anniversary_svg);
+        else
+            holder.imgActionType.setImageResource(R.drawable.ico_other_svg);
 
         int eventRcType = Integer.parseInt(StringUtils.defaultIfEmpty(event.getEventRcType(),
                 String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
@@ -656,15 +648,15 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 switch (event.getEventPublic()) {
                     case 1:
                         //everyone
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_public);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_public);
                         break;
                     case 2:
                         //my contacts
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_my_contact);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_my_contact);
                         break;
                     case 3:
                         //only me
-                        holder.buttonPrivacy.setImageResource(R.drawable.ic_privacy_onlyme);
+                        holder.buttonPrivacy.setImageResource(R.drawable.ico_privacy_onlyme);
                         break;
 
                 }
@@ -674,7 +666,7 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 if (event.getIsPrivate() == IntegerConstants.IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
-                    holder.textActionType.setVisibility(View.GONE);
+                    holder.imgActionType.setVisibility(View.GONE);
                 }
             }
             final ProfileDetailViewHolder viewHodler = holder;
@@ -709,11 +701,9 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.textMain1.setTextColor(colorBlack);
 
         if (gender.equals("Male"))
-            holder.textActionType.setText(activity.getString(R.string.im_icon_male));
+            holder.imgActionType.setImageResource(R.drawable.ico_male_svg);
         else
-            holder.textActionType.setText(activity.getString(R.string.im_icon_female));
-        holder.textActionType.setTypeface(Utils.typefaceIcons(activity));
-        holder.textActionType.setTextColor(activity.getResources().getColor(R.color.regularFontColor));
+            holder.imgActionType.setImageResource(R.drawable.ico_female_svg);
     }
 
     public ArrayList<Object> getDetailList() {
@@ -801,8 +791,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
     public class ProfileDetailViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.text_action_type)
-        TextView textActionType;
+        @BindView(R.id.img_action_type)
+        ImageView imgActionType;
         @BindView(R.id.text_main)
         public TextView textMain1;
         @BindView(R.id.text_sub)

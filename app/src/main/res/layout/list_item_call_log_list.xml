@@ -179,7 +179,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_person" />
+                    android:src="@drawable/ico_person_svg" />
 
                 <RatingBar
                     android:id="@+id/rating_user"
@@ -188,6 +188,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:isIndicator="true"
+                    android:stepSize="1"
                     tools:rating="5" />
 
             </LinearLayout>
