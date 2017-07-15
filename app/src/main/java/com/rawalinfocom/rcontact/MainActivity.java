@@ -1405,7 +1405,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private void getCallLogsByRawId() {
 
         ArrayList<String> callLogsIdsList = new ArrayList<>();
-
         PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(this);
         Cursor cursor = phoneBookCallLogs.getAllCallLogId();
         if (cursor != null) {
