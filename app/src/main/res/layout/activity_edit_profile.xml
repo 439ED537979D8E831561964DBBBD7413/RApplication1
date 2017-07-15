@@ -877,14 +877,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:textSize="@dimen/text_size_45sp"
-                                tools:text="@string/im_gender_male" />
+                                tools:text="@string/im_icon_male" />
 
                             <TextView
                                 android:id="@+id/text_male"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
-                                android:text="@string/str_male" />
+                                android:text="@string/im_icon_female" />
 
                         </LinearLayout>
 

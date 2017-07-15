@@ -160,11 +160,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             textGrantPermission.setVisibility(View.GONE);
             recyclerSmsLogs.setVisibility(View.VISIBLE);
             init();
-//            getLoaderManager().initLoader(0, null, SmsFragment.this);
             if (isFirstTime) {
                 if (AppConstants.isFirstTime()) {
                     AppConstants.setIsFirstTime(false);
-//                    getLoaderManager().initLoader(0, null, SmsFragment.this);
                     loadData();
                 }
             } else {
@@ -172,7 +170,6 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
                     setAdapter();
                 } else {
-//                    getLoaderManager().initLoader(0, null, SmsFragment.this);
                     loadData();
                 }
             }
@@ -188,23 +185,16 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             textGrantPermission.setVisibility(View.GONE);
             recyclerSmsLogs.setVisibility(View.VISIBLE);
             init();
-//            progressBar.setVisibility(View.VISIBLE);
             if (isFirstTime) {
                 if (AppConstants.isFirstTime()) {
                     AppConstants.setIsFirstTime(false);
-//                    getLoaderManager().initLoader(0, null, SmsFragment.this);
                     loadData();
                 }
             } else {
-                /*arrayListObjectSmsLogs = rContactApplication.getArrayListObjectSmsLogs();
-                arrayListSmsLogHeader =  rContactApplication.getArrayListSmsLogsHeaders();
-                if(arrayListSmsLogHeader!=null && arrayListSmsLogHeader.size()>0
-                        && arrayListObjectSmsLogs!=null && arrayListObjectSmsLogs.size()>0)*/
                 smsDataTypeArrayList = rContactApplication.getArrayListSmsLogType();
                 if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
                     setAdapter();
                 } else {
-//                    getLoaderManager().initLoader(0, null, SmsFragment.this);
                     loadData();
                 }
             }
@@ -215,55 +205,6 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             recyclerSmsLogs.setVisibility(View.GONE);
         }
     }
-
-  /*  @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String order = Telephony.Sms.DEFAULT_SORT_ORDER;
-        Uri uri = Telephony.Sms.CONTENT_URI;
-
-        return new CursorLoader(getActivity(), uri, null, null, null, order);
-    }
-
-    Cursor cursorMain;
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-//        loadData(cursor);
-        cursorMain=  cursor;
-//        new LoadsSMSInBackground().execute();
-        loadData(cursorMain);
-
-    }
-
-
-    @Override
-    public void onLoaderReset(Loader loader) {
-
-    }*/
-
-    /*private class LoadsSMSInBackground extends AsyncTask<Void, Void, Void> {
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Utils.showProgressDialog(getActivity(),"Please wait",false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            if(cursorMain.getCount() > 0){
-                loadData(cursorMain);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            Utils.hideProgressDialog();
-            setAdapter();
-        }
-    }*/
 
     @Override
     public void onResume() {
@@ -278,17 +219,14 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission
                     .READ_SMS) == PackageManager.PERMISSION_GRANTED) {
                 // Initialize Query to fetch SMS-log
-//                progressBar.setVisibility(View.VISIBLE);
                 textGrantPermission.setVisibility(View.GONE);
                 isFromSettings = false;
-//                getLoaderManager().initLoader(0, null, SmsFragment.this);
                 loadData();
             }
         } else if (isFirstTime) {
             if (AppConstants.isFirstTime()) {
                 AppConstants.setIsFirstTime(false);
                 loadData();
-//                getLoaderManager().initLoader(0, null, SmsFragment.this);
             }
         } else if (smsListAdapter != null) {
             if (AppConstants.isComposingSMS) {
@@ -301,16 +239,14 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     while (cursor.moveToNext()) {
                         listOfIds.add(cursor.getString(rowId));
                     }
+                    cursor.close();
                 }
-                cursor.close();
                 Utils.setArrayListPreference(getActivity(), AppConstants.PREF_SMS_LOGS_ID_SET,
                         listOfIds);
                 smsDataTypeArrayList = null;
                 logsDisplayed = 0;
                 smsListAdapter = null;
                 count = 0;
-              /*  Utils.setBooleanPreference(getActivity(), AppConstants
-                        .PREF_SMS_LOG_STARTS_FIRST_TIME, true);*/
                 AppConstants.setIsFirstTime(true);
                 loadData();
 
@@ -325,18 +261,12 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             }
 
         } else {
-            /*arrayListObjectSmsLogs = rContactApplication.getArrayListObjectSmsLogs();
-            arrayListSmsLogHeader =  rContactApplication.getArrayListSmsLogsHeaders();
-            if(arrayListSmsLogHeader!=null && arrayListSmsLogHeader.size()>0 &&
-                    arrayListObjectSmsLogs!=null && arrayListObjectSmsLogs.size()>0)*/
             smsDataTypeArrayList = rContactApplication.getArrayListSmsLogType();
             if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
                 textNoSmsFound.setVisibility(View.GONE);
                 setAdapter();
             } else {
                 loadData();
-//                getLoaderManager().initLoader(0, null, SmsFragment.this);
-//                textNoSmsFound.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -1291,7 +1221,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                 .getTop(), dX, (float) itemView.getBottom());
                         c.drawRect(background, p);
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable
-                                .ic_action_call);
+                                .ico_call_white_svg);
                         RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
                                 itemView.getTop() + width, (float) itemView.getLeft() + 2 *
                                 width, (float) itemView.getBottom() - width);

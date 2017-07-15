@@ -153,8 +153,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     RelativeLayout relativeContactDetails;
     @BindView(R.id.text_user_rating)
     TextView textUserRating;
-    @BindView(R.id.img_user_rating)
-    TextView imgUserRating;
     @BindView(R.id.linear_basic_detail_rating)
     LinearLayout linearBasicDetailRating;
     @BindView(R.id.text_name)
@@ -2073,8 +2071,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         textOrganization.setTypeface(Utils.typefaceRegular(this));
         textViewAllOrganization.setTypeface(Utils.typefaceRegular(this));
         textUserRating.setTypeface(Utils.typefaceRegular(this));
-        imgUserRating.setTypeface(Utils.typefaceIcons(this));
-        imgUserRating.setText(getString(R.string.im_icon_rating_user));
 
         textFullScreenText.setSelected(true);
         rippleViewMore.setOnRippleCompleteListener(this);
@@ -3004,7 +3000,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 .getTop(), dX, (float) itemView.getBottom());
                         c.drawRect(background, p);
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable
-                                .ic_action_call);
+                                .ico_call_white_svg);
                         RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
                                 itemView.getTop() + width, (float) itemView.getLeft() + 2 *
                                 width, (float) itemView.getBottom() - width);

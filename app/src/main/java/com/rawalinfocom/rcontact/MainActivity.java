@@ -915,6 +915,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             userProfileImage.setImageResource(R.drawable.home_screen_profile);
         }
 
+        Utils.setRatingColor(MainActivity.this, rating_user);
+
         mainContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -926,6 +928,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
                 bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, 1);
                 startActivityIntent(MainActivity.this, ProfileDetailActivity.class, bundle);
+
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
             }
         });
 

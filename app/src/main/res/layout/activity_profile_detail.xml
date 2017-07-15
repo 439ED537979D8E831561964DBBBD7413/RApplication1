@@ -177,21 +177,29 @@
 
                                     <TableRow
                                         android:layout_width="wrap_content"
+                                        android:gravity="center"
                                         android:layout_height="wrap_content">
 
                                         <TextView
                                             android:id="@+id/text_user_rating"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:layout_margin="@dimen/margin_tiny" />
+                                            android:layout_margin="@dimen/margin_tiny"
+                                            android:gravity="center"
+                                            android:text=""
+                                            android:textColor="@color/colorAccent"
+                                            android:textSize="@dimen/text_size_16sp" />
 
-                                        <TextView
+                                        <ImageView
                                             android:id="@+id/img_user_rating"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
+                                            android:layout_width="14dp"
+                                            android:layout_height="14dp"
                                             android:layout_marginBottom="@dimen/margin_tiny"
+                                            android:layout_gravity="center"
                                             android:layout_marginStart="@dimen/margin_tiny"
-                                            android:layout_marginTop="@dimen/margin_tiny" />
+                                            android:layout_marginTop="@dimen/margin_tiny"
+                                            android:contentDescription="@string/app_name"
+                                            android:src="@drawable/ico_user_rating_svg" />
 
                                     </TableRow>
 
@@ -361,7 +369,10 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/activity_half_horizontal_margin">
+                        android:paddingBottom="@dimen/activity_half_horizontal_margin"
+                        android:paddingEnd="@dimen/activity_tiny_horizontal_margin"
+                        android:paddingStart="@dimen/activity_half_horizontal_margin"
+                        android:paddingTop="@dimen/activity_half_horizontal_margin">
 
                         <LinearLayout
                             android:id="@+id/linear_phone"
@@ -376,7 +387,7 @@
                                 android:layout_height="15dp"
                                 android:layout_margin="@dimen/margin_tiny"
                                 android:contentDescription="@string/str_content_description"
-                                android:src="@drawable/ic_action_call"
+                                android:src="@drawable/ico_call_svg"
                                 android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                             <LinearLayout
@@ -388,7 +399,8 @@
                                     android:id="@+id/text_label_phone"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_margin="@dimen/margin_tiny"
+                                    android:layout_marginStart="@dimen/margin_tiny"
+                                    android:layout_marginTop="@dimen/margin_small_tiny"
                                     android:text="@string/str_phone"
                                     android:textColor="@color/colorBlack" />
 
@@ -396,7 +408,8 @@
                                     android:id="@+id/recycler_view_contact_number"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_margin="@dimen/margin_tiny"
+                                    android:layout_marginStart="@dimen/margin_tiny"
+                                    android:layout_marginTop="@dimen/margin_tiny"
                                     android:overScrollMode="never" />
 
                             </LinearLayout>
@@ -408,6 +421,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/linear_phone"
+                            android:gravity="start"
                             android:orientation="horizontal">
 
                             <ImageView
@@ -416,7 +430,7 @@
                                 android:layout_height="15dp"
                                 android:layout_margin="@dimen/margin_tiny"
                                 android:contentDescription="@string/str_content_description"
-                                android:src="@drawable/ic_action_sms"
+                                android:src="@drawable/ico_envelop_svg"
                                 android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                             <LinearLayout
@@ -428,7 +442,8 @@
                                     android:id="@+id/text_label_email"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_margin="@dimen/margin_tiny"
+                                    android:layout_marginStart="@dimen/margin_tiny"
+                                    android:layout_marginTop="@dimen/margin_small_tiny"
                                     android:text="@string/str_email"
                                     android:textColor="@color/colorBlack" />
 
@@ -436,7 +451,8 @@
                                     android:id="@+id/recycler_view_email"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_margin="@dimen/margin_tiny"
+                                    android:layout_marginStart="@dimen/margin_tiny"
+                                    android:layout_marginTop="@dimen/margin_tiny"
                                     android:overScrollMode="never" />
 
                             </LinearLayout>
@@ -462,7 +478,7 @@
                                     android:layout_height="15dp"
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:contentDescription="@string/str_content_description"
-                                    android:src="@drawable/ic_action_sms"
+                                    android:src="@drawable/ico_website_svg"
                                     android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                                 <LinearLayout
@@ -474,7 +490,8 @@
                                         android:id="@+id/text_label_website"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_margin="@dimen/margin_tiny"
+                                        android:layout_marginStart="@dimen/margin_tiny"
+                                        android:layout_marginTop="@dimen/margin_small_tiny"
                                         android:text="@string/str_website"
                                         android:textColor="@color/colorBlack" />
 
@@ -482,7 +499,8 @@
                                         android:id="@+id/recycler_view_website"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_margin="@dimen/margin_tiny"
+                                        android:layout_marginStart="@dimen/margin_tiny"
+                                        android:layout_marginTop="@dimen/margin_tiny"
                                         android:overScrollMode="never" />
 
                                 </LinearLayout>
@@ -502,7 +520,7 @@
                                     android:layout_height="15dp"
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:contentDescription="@string/str_content_description"
-                                    android:src="@drawable/ic_action_sms"
+                                    android:src="@drawable/ico_address_svg"
                                     android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                                 <LinearLayout
@@ -514,7 +532,8 @@
                                         android:id="@+id/text_label_address"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_margin="@dimen/margin_tiny"
+                                        android:layout_marginStart="@dimen/margin_tiny"
+                                        android:layout_marginTop="@dimen/margin_small_tiny"
                                         android:text="@string/str_address"
                                         android:textColor="@color/colorBlack" />
 
@@ -522,7 +541,8 @@
                                         android:id="@+id/recycler_view_address"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_margin="@dimen/margin_tiny"
+                                        android:layout_marginStart="@dimen/margin_tiny"
+                                        android:layout_marginTop="@dimen/margin_tiny"
                                         android:overScrollMode="never" />
 
                                 </LinearLayout>
@@ -542,7 +562,7 @@
                                     android:layout_height="15dp"
                                     android:layout_margin="@dimen/margin_tiny"
                                     android:contentDescription="@string/str_content_description"
-                                    android:src="@drawable/ic_action_sms"
+                                    android:src="@drawable/ico_social_svg"
                                     android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                                 <LinearLayout
@@ -554,7 +574,8 @@
                                         android:id="@+id/text_label_social_contact"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_margin="@dimen/margin_tiny"
+                                        android:layout_marginStart="@dimen/margin_tiny"
+                                        android:layout_marginTop="@dimen/margin_small_tiny"
                                         android:text="@string/str_social_contact"
                                         android:textColor="@color/colorBlack" />
 
@@ -562,7 +583,8 @@
                                         android:id="@+id/recycler_view_social_contact"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_margin="@dimen/margin_tiny"
+                                        android:layout_marginStart="@dimen/margin_tiny"
+                                        android:layout_marginTop="@dimen/margin_tiny"
                                         android:overScrollMode="never" />
 
                                 </LinearLayout>
@@ -624,7 +646,7 @@
                                 android:layout_height="15dp"
                                 android:layout_margin="@dimen/margin_tiny"
                                 android:contentDescription="@string/str_content_description"
-                                android:src="@drawable/ic_action_call"
+                                android:src="@drawable/ico_events_svg"
                                 android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                             <LinearLayout
@@ -636,7 +658,8 @@
                                     android:id="@+id/text_label_event"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_margin="@dimen/margin_tiny"
+                                    android:layout_marginStart="@dimen/margin_tiny"
+                                    android:layout_marginTop="@dimen/margin_small_tiny"
                                     android:text="@string/str_event"
                                     android:textColor="@color/colorBlack" />
 
@@ -644,7 +667,8 @@
                                     android:id="@+id/recycler_view_event"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_margin="@dimen/margin_tiny"
+                                    android:layout_marginStart="@dimen/margin_tiny"
+                                    android:layout_marginTop="@dimen/margin_tiny"
                                     android:overScrollMode="never" />
 
                             </LinearLayout>
@@ -664,7 +688,7 @@
                                 android:layout_height="15dp"
                                 android:layout_margin="@dimen/margin_tiny"
                                 android:contentDescription="@string/str_content_description"
-                                android:src="@drawable/ic_action_sms"
+                                android:src="@drawable/ico_gender_svg"
                                 android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                             <LinearLayout
@@ -676,7 +700,8 @@
                                     android:id="@+id/text_label_gender"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_margin="@dimen/margin_tiny"
+                                    android:layout_marginStart="@dimen/margin_tiny"
+                                    android:layout_marginTop="@dimen/margin_small_tiny"
                                     android:text="@string/str_gender"
                                     android:textColor="@color/colorBlack" />
 

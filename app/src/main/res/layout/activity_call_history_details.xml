@@ -46,7 +46,7 @@
                         android:layout_height="15dp"
                         android:layout_margin="@dimen/margin_tiny"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_action_call"
+                        android:src="@drawable/ico_call_svg"
                         android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                     <LinearLayout
@@ -294,7 +294,7 @@
                         android:layout_height="15dp"
                         android:layout_margin="@dimen/margin_tiny"
                         android:contentDescription="@string/str_content_description"
-                        android:src="@drawable/ic_action_call"
+                        android:src="@drawable/ico_call_svg"
                         android:tint="@color/colorVeryDarkGrayishBlue2" />
 
                     <LinearLayout
@@ -539,21 +539,29 @@
 
                                 <TableRow
                                     android:layout_width="wrap_content"
+                                    android:gravity="center"
                                     android:layout_height="wrap_content">
 
                                     <TextView
                                         android:id="@+id/text_user_rating"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_margin="@dimen/margin_tiny" />
+                                        android:layout_margin="@dimen/margin_tiny"
+                                        android:gravity="center"
+                                        android:text=""
+                                        android:textColor="@color/colorAccent"
+                                        android:textSize="@dimen/text_size_16sp" />
 
-                                    <TextView
+                                    <ImageView
                                         android:id="@+id/img_user_rating"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
+                                        android:layout_width="14dp"
+                                        android:layout_height="14dp"
+                                        android:layout_gravity="center"
                                         android:layout_marginBottom="@dimen/margin_tiny"
                                         android:layout_marginStart="@dimen/margin_tiny"
-                                        android:layout_marginTop="@dimen/margin_tiny" />
+                                        android:layout_marginTop="@dimen/margin_tiny"
+                                        android:contentDescription="@string/app_name"
+                                        android:src="@drawable/ico_user_rating_svg" />
 
                                 </TableRow>
 
