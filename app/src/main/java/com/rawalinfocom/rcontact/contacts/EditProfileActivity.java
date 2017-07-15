@@ -105,7 +105,10 @@ import butterknife.OnClick;
 public class EditProfileActivity extends BaseActivity implements WsResponseListener, RippleView
         .OnRippleCompleteListener {
 
-    private final String EVENT_DATE_FORMAT = "dd'th' MMM, yyyy";
+    private final String EVENT_GENERAL_DATE_FORMAT = "dd'th' MMMM, yyyy";
+    private final String EVENT_ST_DATE_FORMAT = "dd'st' MMMM, yyyy";
+    private final String EVENT_ND_DATE_FORMAT = "dd'nd' MMMM, yyyy";
+    private final String EVENT_RD_DATE_FORMAT = "dd'rd' MMMM, yyyy";
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
     private static final int GALLERY_IMAGE_REQUEST_CODE = 500;
@@ -1042,9 +1045,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //                    if (eventDate.getText().toString().length() > 0) {
                     if (!StringUtils.isBlank(eventDate.getText().toString())) {
                         event.setEventDateTime(Utils.convertDateFormat(eventDate.getText()
-                                .toString(), EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
+                                .toString(), getEventDateFormat(eventDate.getText()
+                                .toString()), "yyyy-MM-dd HH:mm:ss"));
                         event.setEventDate(Utils.convertDateFormat(eventDate.getText().toString(),
-                                EVENT_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss"));
+                                getEventDateFormat(eventDate.getText()
+                                        .toString()), "yyyy-MM-dd HH:mm:ss"));
                         arrayListNewEvent.add(event);
                     } else {
                         if (i != 0) {
@@ -1909,13 +1914,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         String date = format.format(myCalendar.getTime());
 
         if (date.endsWith("1") && !date.endsWith("11"))
-            format = new SimpleDateFormat("d'st' MMMM, yyyy");
+            format = new SimpleDateFormat(EVENT_ST_DATE_FORMAT);
         else if (date.endsWith("2") && !date.endsWith("12"))
-            format = new SimpleDateFormat("d'nd' MMMM, yyyy");
+            format = new SimpleDateFormat(EVENT_ND_DATE_FORMAT);
         else if (date.endsWith("3") && !date.endsWith("13"))
-            format = new SimpleDateFormat("d'rd' MMMM, yyyy");
+            format = new SimpleDateFormat(EVENT_RD_DATE_FORMAT);
         else
-            format = new SimpleDateFormat("d'th' MMMM, yyyy");
+            format = new SimpleDateFormat(EVENT_GENERAL_DATE_FORMAT);
 
         String yourDate = format.format(myCalendar.getTime());
 
@@ -1927,13 +1932,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         String date = format.format(myCalendar.getTime());
 
         if (date.endsWith("1") && !date.endsWith("11"))
-            format = new SimpleDateFormat("d'st' MMMM, yyyy");
+            format = new SimpleDateFormat(EVENT_ST_DATE_FORMAT);
         else if (date.endsWith("2") && !date.endsWith("12"))
-            format = new SimpleDateFormat("d'nd' MMMM, yyyy");
+            format = new SimpleDateFormat(EVENT_ND_DATE_FORMAT);
         else if (date.endsWith("3") && !date.endsWith("13"))
-            format = new SimpleDateFormat("d'rd' MMMM, yyyy");
+            format = new SimpleDateFormat(EVENT_RD_DATE_FORMAT);
         else
-            format = new SimpleDateFormat("d'th' MMMM, yyyy");
+            format = new SimpleDateFormat(EVENT_GENERAL_DATE_FORMAT);
 
         String yourDate = format.format(myCalendar.getTime());
 
@@ -1953,13 +1958,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         String date = format.format(myCalendar.getTime());
 
         if (date.endsWith("1") && !date.endsWith("11"))
-            format = new SimpleDateFormat("d'st' MMMM, yyyy");
+            format = new SimpleDateFormat(EVENT_ST_DATE_FORMAT);
         else if (date.endsWith("2") && !date.endsWith("12"))
-            format = new SimpleDateFormat("d'nd' MMMM, yyyy");
+            format = new SimpleDateFormat(EVENT_ND_DATE_FORMAT);
         else if (date.endsWith("3") && !date.endsWith("13"))
-            format = new SimpleDateFormat("d'rd' MMMM, yyyy");
+            format = new SimpleDateFormat(EVENT_RD_DATE_FORMAT);
         else
-            format = new SimpleDateFormat("d'th' MMMM, yyyy");
+            format = new SimpleDateFormat(EVENT_GENERAL_DATE_FORMAT);
 
         String yourDate = format.format(myCalendar.getTime());
         if (!TextUtils.isEmpty(yourDate))
@@ -2147,8 +2152,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         arrayListEventObject = new ArrayList<>();
         for (int i = 0; i < arrayListEvent.size(); i++) {
 
+            /*String formattedDate = Utils.convertDateFormat(arrayListEvent.get(i).getEvmStartDate
+                    (), "yyyy-MM-dd hh:mm:ss", getEventDateFormat(arrayListEvent.get(i)
+                    .getEvmStartDate()));*/
             String formattedDate = Utils.convertDateFormat(arrayListEvent.get(i).getEvmStartDate
-                    (), "yyyy-MM-dd hh:mm:ss", EVENT_DATE_FORMAT);
+                    (), "yyyy-MM-dd hh:mm:ss", getEventDateFormat(arrayListEvent.get(i)
+                    .getEvmStartDate()));
 
             ProfileDataOperationEvent event = new ProfileDataOperationEvent();
             event.setEventDateTime(formattedDate);
@@ -3065,7 +3074,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, monthOfYear);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                SimpleDateFormat sdf = new SimpleDateFormat(EVENT_DATE_FORMAT, Locale.US);
+                SimpleDateFormat sdf = new SimpleDateFormat(EVENT_GENERAL_DATE_FORMAT, Locale.US);
                 editText.setText(sdf.format(calendar.getTime()));
             }
 
@@ -3448,6 +3457,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
         //</editor-fold>
 
+    }
+
+    private String getEventDateFormat(String date) {
+
+        date = StringUtils.substring(date, 0, 2);
+        if (!StringUtils.isNumeric(date)) {
+            date = StringUtils.substring(date, 0, 1);
+        }
+
+        String format;
+        if (date.endsWith("1") && !date.endsWith("11"))
+//            format = "d'st' MMMM, yyyy";
+            format = EVENT_ST_DATE_FORMAT;
+        else if (date.endsWith("2") && !date.endsWith("12"))
+            format = EVENT_ND_DATE_FORMAT;
+        else if (date.endsWith("3") && !date.endsWith("13"))
+            format = EVENT_RD_DATE_FORMAT;
+        else
+            format = EVENT_GENERAL_DATE_FORMAT;
+        return format;
     }
 
     //</editor-fold>

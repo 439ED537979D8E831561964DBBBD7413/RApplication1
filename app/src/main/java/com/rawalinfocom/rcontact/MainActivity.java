@@ -1410,7 +1410,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private void getCallLogsByRawId() {
 
         ArrayList<String> callLogsIdsList = new ArrayList<>();
-
         PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(this);
         Cursor cursor = phoneBookCallLogs.getAllCallLogId();
         if (cursor != null) {
@@ -2724,9 +2723,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             ProfileDataOperationPhoneNumber phoneNumber = new
                                     ProfileDataOperationPhoneNumber();
 
-                            phoneNumber.setPhoneNumber(Utils.getFormattedNumber(this, cursor
+                            phoneNumber.setPhoneNumber(cursor
                                     .getString(cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Phone.NUMBER))));
+                                            .CommonDataKinds.Phone.NUMBER)));
                             phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                     (cursor.getInt(cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Phone.TYPE))));

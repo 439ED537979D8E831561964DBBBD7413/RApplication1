@@ -824,6 +824,12 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 } else {
                     if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase
                     ("[Unknown]")*/) {
+                        String number =  "";
+                        if(StringUtils.isEmpty(historyNumber)){
+                            number = contactName;
+                        }else{
+                            number =  historyNumber;
+                        }
                         ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
                                         .getString(R.string.edit), this.getString(R.string
                                         .view_in_ac),
@@ -833,7 +839,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 this.getString(R.string.block),*/ this.getString(R.string.delete),
                                 this.getString(R.string.clear_call_log)));
                         profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                arrayListName, contactName, 0, isFromCallLogTab,
+                                arrayListName, number, 0, isFromCallLogTab,
                                 arrayListHistory, contactName, "", phoneBookId, profileThumbnail,
                                 pmId, isCallLogRcpUser);
                         profileMenuOptionDialog.showDialog();
@@ -1134,7 +1140,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             textName.setVisibility(View.GONE);
         }
 
-        profileThumbnail = getPhotoUrlFromNumber();
+        if(StringUtils.isEmpty(profileThumbnail)){
+            profileThumbnail = getPhotoUrlFromNumber();
+        }
         if (!TextUtils.isEmpty(profileThumbnail)) {
             Glide.with(this)
                     .load(profileThumbnail)

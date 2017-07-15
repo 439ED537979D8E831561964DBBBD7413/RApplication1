@@ -1509,8 +1509,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             System.out.println("RContact itemIndexToRemove --> " + itemIndexToRemove);
 
                             // updated on 19/04/2017, when data are loading from arraylist
-//                            CallLogType callDataToUpdate = simpleCallLogListAdapter
-//                                    .getSelectedCallLogData();
+//                            CallLogType callDataToUpdate = simpleCallLogListAdapter.getSelectedCallLogData();
                             callLogTypeArrayList.remove(itemIndexToRemove);
                             rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                             simpleCallLogListAdapter.notifyItemRemoved(itemIndexToRemove);

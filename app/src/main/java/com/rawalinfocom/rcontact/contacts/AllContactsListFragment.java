@@ -182,7 +182,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             }
         }
 
-//        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE, false)) {
+//        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE,
+// false)) {
 //            UpdateLoginUserProfile();
 //        }
     }
@@ -568,7 +569,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
             TableProfileMaster tableProfileMaster = new TableProfileMaster(getDatabaseHandler
                     ());
             ArrayList<String> arrayListIds = tableProfileMaster.getAllRcpId();
-            for (int i = 2; i < arrayListPhoneBookContacts.size(); i++) {
+            for (int i = 0; i < arrayListPhoneBookContacts.size(); i++) {
                 if (arrayListPhoneBookContacts.get(i) instanceof ProfileData) {
                     if (arrayListIds.contains(((ProfileData) arrayListPhoneBookContacts.get
                             (i)).getRawContactId())) {

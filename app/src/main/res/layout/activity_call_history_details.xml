@@ -570,7 +570,8 @@
                                     style="?android:attr/ratingBarStyleSmall"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:isIndicator="true" />
+                                    android:isIndicator="true"
+                                    android:stepSize="1"/>
 
                             </LinearLayout>
                         </FrameLayout>

@@ -232,10 +232,13 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText().toString());
                 bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, userProfile
                         .getPmProfileImage());
-                bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NUMBER, userProfile.getMobileNumber());
+//                bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NUMBER, userProfile.getMobileNumber());
 
                /* ((BaseActivity) activity).startActivityIntent(activity, ProfileDetailActivity
                         .class, bundle);*/
+                bundle.putBoolean(AppConstants.EXTRA_IS_RCP_USER, true);
+//                bundle.putString(AppConstants.EXTRA_CLOUD_CONTACT_NAME, textName.getText().toString());
+
                 bundle.putString(AppConstants.EXTRA_CALL_HISTORY_NUMBER, userProfile
                         .getMobileNumber());
                 Intent intent = new Intent(activity, ProfileDetailActivity.class);
