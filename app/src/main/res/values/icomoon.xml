@@ -9,6 +9,7 @@
     <string name="im_icon_marker">&#xe94d;</string>
     <string name="im_icon_facebook">&#xe92c;</string>
     <string name="im_icon_skype">&#xe978;</string>
+    <string name="im_icon_whatsapp">&#xee99a;</string>
     <string name="im_icon_twitter">&#xe986;</string>
     <string name="im_icon_google">&#xe936;</string>
     <string name="im_icon_linkedin">&#xe947;</string>
@@ -33,8 +34,6 @@
     <string name="im_cross">&#xe942;</string>
     <string name="im_sim_2">&#xe91c;</string> <!--updated -->
     <string name="im_sim_1">&#xe91d;</string> <!--updated -->
-    <string name="im_female">&#xe94e;</string>
-    <string name="im_gender_male">&#xe93e;</string>
 
     <!--<string name="im_check_square_o">&#xe900;</string>-->
     <!--<string name="im_caret_down">&#xe901;</string>-->

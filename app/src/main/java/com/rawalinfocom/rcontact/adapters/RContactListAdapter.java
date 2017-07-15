@@ -216,15 +216,6 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.textRatingUserCount.setText(userProfile.getTotalProfileRateUser());
         holder.ratingUser.setRating(Float.parseFloat(userProfile.getProfileRating()));
 
-          /* Hide Divider if row is last in Section */
-        /*if ((position + 1) < arrayListUserProfile.size()) {
-            if (arrayListUserProfile.get(position + 1) instanceof String) {
-                holder.dividerAllContact.setVisibility(View.GONE);
-            } else {
-                holder.dividerAllContact.setVisibility(View.VISIBLE);
-            }
-        }*/
-
         holder.relativeRowAllContact.setTag(position);
 
         holder.relativeRowAllContact.setOnClickListener(new View.OnClickListener() {
@@ -282,8 +273,8 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         TextView textCloudContactName;
         @BindView(R.id.text_contact_number)
         public TextView textContactNumber;
-       /* @BindView(R.id.divider_all_contact)
-        View dividerAllContact;*/
+        @BindView(R.id.img_user_rating)
+        ImageView imgUserRating;
         @BindView(R.id.relative_row_all_contact)
         RelativeLayout relativeRowAllContact;
         @BindView(R.id.text_rating_user_count)
@@ -308,6 +299,7 @@ public class RContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             textContactNumber.setTextColor(ContextCompat.getColor(activity, R.color.colorAccent));
 
             textCloudContactName.setVisibility(View.GONE);
+            imgUserRating.setVisibility(View.VISIBLE);
 
             Utils.setRatingColor(activity, ratingUser);
         }

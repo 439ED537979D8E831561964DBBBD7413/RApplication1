@@ -1976,8 +1976,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     private void genderDetails() {
         textFemaleIcon.setTypeface(Utils.typefaceIcons(this));
         textMaleIcon.setTypeface(Utils.typefaceIcons(this));
-        textFemaleIcon.setText(getResources().getString(R.string.im_female));
-        textMaleIcon.setText(getResources().getString(R.string.im_gender_male));
+        textFemaleIcon.setText(getResources().getString(R.string.im_icon_female));
+        textMaleIcon.setText(getResources().getString(R.string.im_icon_male));
 
     }
 

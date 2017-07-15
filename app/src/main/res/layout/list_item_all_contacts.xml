@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relative_row_all_contact"
     android:layout_width="match_parent"
@@ -19,7 +18,7 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:contentDescription="@string/str_content_description"
-            android:src="@drawable/home_screen_profile"/>
+            android:src="@drawable/home_screen_profile" />
 
         <LinearLayout
             android:id="@+id/linear_content_main"
@@ -41,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    tools:text="Monal"/>
+                    tools:text="Monal" />
 
                 <TextView
                     android:id="@+id/text_cloud_contact_name"
@@ -49,7 +48,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    tools:text=" (Monell)"/>
+                    tools:text=" (Monell)" />
 
             </LinearLayout>
 
@@ -58,22 +57,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                tools:text="+911234567890"/>
+                tools:text="+911234567890" />
 
             <LinearLayout
                 android:id="@+id/linear_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/text_rating_user_count"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="2dp"
-                    tools:text="2008"/>
+                    android:gravity="center"
+                    tools:text="2008" />
+
+                <ImageView
+                    android:id="@+id/img_user_rating"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_margin="@dimen/margin_tiny"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ico_user_rating_svg" />
 
                 <RatingBar
                     android:id="@+id/rating_user"
@@ -82,7 +90,7 @@
                     android:layout_height="wrap_content"
                     android:isIndicator="true"
                     android:stepSize="1"
-                    tools:rating="4"/>
+                    tools:rating="4" />
 
             </LinearLayout>
 
@@ -105,6 +113,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/relative_row_main"
-        android:overScrollMode="never"/>
+        android:overScrollMode="never" />
 
 </RelativeLayout>
