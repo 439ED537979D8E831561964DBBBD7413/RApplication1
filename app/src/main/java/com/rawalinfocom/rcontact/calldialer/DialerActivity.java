@@ -3,7 +3,6 @@ package com.rawalinfocom.rcontact.calldialer;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -47,21 +46,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
-import com.rawalinfocom.rcontact.SearchActivity;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
-import com.rawalinfocom.rcontact.adapters.SimpleCallLogListAdapter;
-import com.rawalinfocom.rcontact.adapters.SmsListAdapter;
 import com.rawalinfocom.rcontact.calldialer.transition.ScaleTransition;
 import com.rawalinfocom.rcontact.calllog.TelephonyInfo;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
-import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ProfileData;
@@ -227,12 +221,13 @@ public class DialerActivity extends BaseActivity {
                 } else if (s.length() < 11) {
                     editTextNumber.setTextSize(getResources().getDimension(R.dimen.text_size_25sp));
                     if (allContactAdapter == null) {
-                        allContactAdapter = new AllContactAdapter(DialerActivity.this, objectArrayListContact);
+                        allContactAdapter = new AllContactAdapter(DialerActivity.this,
+                                objectArrayListContact);
                     }
                 }
 
                 String number = s.toString();
-                if (number.length()>0) {
+                if (number.length() > 0) {
                     showContactDetail(number);
                 } /*else {
                     if (number.length() == 0)
@@ -375,7 +370,7 @@ public class DialerActivity extends BaseActivity {
                     editTextNumber.setCursorVisible(false);
                 }
 
-                if(length == 0){
+                if (length == 0) {
                     showContactDetail(editTextNumber.getText().toString());
                 }
             }
@@ -387,7 +382,7 @@ public class DialerActivity extends BaseActivity {
                 isCalledOnce = false;
                 editTextNumber.getText().clear();
                 int length = editTextNumber.getText().length();
-                if(length == 0){
+                if (length == 0) {
                     showContactDetail(editTextNumber.getText().toString());
                 }
                 return true;
@@ -691,7 +686,7 @@ public class DialerActivity extends BaseActivity {
                                 new TableProfileMobileMapping(getDatabaseHandler());
                         ProfileMobileMapping profileMobileMapping =
                                 tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(
-                                        Utils.getFormattedNumber(this,number));
+                                        Utils.getFormattedNumber(this, number));
 
                         if (profileMobileMapping != null) {
                             String cloudPmId = profileMobileMapping.getMpmCloudPmId();
@@ -717,7 +712,8 @@ public class DialerActivity extends BaseActivity {
                         ArrayList<Object> tempContact = new ArrayList<>();
                         tempContact.add(profileData);
                         if (allContactAdapter != null) {
-                            allContactAdapter = new AllContactAdapter(DialerActivity.this, tempContact);
+                            allContactAdapter = new AllContactAdapter(DialerActivity.this,
+                                    tempContact);
                             recycleViewPbContact.setAdapter(allContactAdapter);
                             allContactAdapter = null;
 
@@ -840,7 +836,7 @@ public class DialerActivity extends BaseActivity {
 
     private void showCallConfirmationDialog(final String number) {
 
-        final String finalNumber = Utils.getFormattedNumber(DialerActivity.this,number);
+        final String finalNumber = Utils.getFormattedNumber(DialerActivity.this, number);
 
        /* if (number.startsWith("*")) {
             finalNumber = number;
@@ -880,7 +876,8 @@ public class DialerActivity extends BaseActivity {
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber + " ?");
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber
+                + " ?");
         callConfirmationDialog.showDialog();
     }
 
@@ -1033,13 +1030,14 @@ public class DialerActivity extends BaseActivity {
                                 .getTop(), dX, (float) itemView.getBottom());
                         c.drawRect(background, p);
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable
-                                .ico_call_white_svg);
+                                .ic_action_call);
                         RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
                                 itemView.getTop() + width, (float) itemView.getLeft() + 2 *
                                 width, (float) itemView.getBottom() - width);
                         c.drawBitmap(icon, null, icon_dest, p);
                     } else {
-                        p.setColor(ContextCompat.getColor(DialerActivity.this, R.color.brightOrange));
+                        p.setColor(ContextCompat.getColor(DialerActivity.this, R.color
+                                .brightOrange));
                         RectF background = new RectF((float) itemView.getRight() + dX, (float)
                                 itemView.getTop(), (float) itemView.getRight(), (float) itemView
                                 .getBottom());

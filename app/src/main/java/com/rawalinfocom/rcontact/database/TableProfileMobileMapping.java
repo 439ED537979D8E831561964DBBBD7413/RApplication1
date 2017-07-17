@@ -174,7 +174,8 @@ public class TableProfileMobileMapping {
             SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
             String query = "SELECT " + COLUMN_MPM_CLOUD_PM_ID +
-                    " FROM " + TABLE_PB_PROFILE_MOBILE_MAPPING + " where " + COLUMN_MPM_MOBILE_NUMBER + " = \"" + mobileNumber + "\"";
+                    " FROM " + TABLE_PB_PROFILE_MOBILE_MAPPING + " where " +
+                    COLUMN_MPM_MOBILE_NUMBER + " = \"" + mobileNumber + "\"";
 
             Cursor cursor = db.rawQuery(query, null);
 
@@ -205,7 +206,8 @@ public class TableProfileMobileMapping {
             SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
             String query = "SELECT " + COLUMN_MPM_CLOUD_PM_ID +
-                    " FROM " + TABLE_PB_PROFILE_MOBILE_MAPPING + " where " + COLUMN_MPM_MOBILE_NUMBER + " = \"" + mobileNumber + "\"";
+                    " FROM " + TABLE_PB_PROFILE_MOBILE_MAPPING + " where " +
+                    COLUMN_MPM_MOBILE_NUMBER + " = \"" + mobileNumber + "\"";
 
             Cursor cursor = db.rawQuery(query, null);
 
@@ -347,7 +349,8 @@ public class TableProfileMobileMapping {
     String makePlaceholders(int len) {
         if (len < 1) {
             // It will lead to an invalid query anyway ..
-            throw new RuntimeException(RContactApplication.getInstance().getString(R.string.error_no_placeholders));
+            throw new RuntimeException(RContactApplication.getInstance().getString(R.string
+                    .error_no_placeholders));
         } else {
             StringBuilder sb = new StringBuilder(len * 2 - 1);
             sb.append("?");
@@ -359,7 +362,7 @@ public class TableProfileMobileMapping {
     }
 
     // Getting RContact List
-    public ArrayList<UserProfile> getRContactList() {
+    public ArrayList<UserProfile> getRContactList(String ownRcpId) {
         ArrayList<UserProfile> arrayListRContact = new ArrayList<>();
         // Select All Query
 
@@ -373,7 +376,8 @@ public class TableProfileMobileMapping {
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_RATE_USER + "," +
                     TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_PROFILE_IMAGE + "," +
                     TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_MOBILE_NUMBER + " FROM " +
-                    TABLE_RC_PROFILE_MASTER + " LEFT JOIN " + TABLE_PB_PROFILE_MOBILE_MAPPING + " ON " +
+                    TABLE_RC_PROFILE_MASTER + " LEFT JOIN " + TABLE_PB_PROFILE_MOBILE_MAPPING + "" +
+                    " ON " +
                     "" + TABLE_RC_PROFILE_MASTER + "." + COLUMN_PM_RCP_ID + " = " +
                     TABLE_PB_PROFILE_MOBILE_MAPPING + "." + COLUMN_MPM_CLOUD_PM_ID + " LEFT JOIN " +
                     TABLE_PB_PROFILE_EMAIL_MAPPING + " ON " + TABLE_RC_PROFILE_MASTER + "." +
