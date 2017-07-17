@@ -1394,7 +1394,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 cursor.close();
             }
 
-            syncRecentCallLogDataToServer(callLogTypeArrayListMain);
+            if (callLogTypeArrayListMain.size() > 0)
+                syncRecentCallLogDataToServer(callLogTypeArrayListMain);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1537,7 +1538,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     }
                 }
             }
-            syncCallLogDataToServer(callLogTypeArrayListMain);
+
+            if (callLogTypeArrayListMain.size() > 0)
+                syncCallLogDataToServer(callLogTypeArrayListMain);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1565,7 +1569,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
         }
     };
-
 
     private BroadcastReceiver localBroadcastReceiverSmsLogSync = new BroadcastReceiver() {
         @Override

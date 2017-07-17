@@ -1,7 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relative_root_profile_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -51,8 +50,8 @@
                     android:padding="@dimen/margin_small"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    tools:text="Hello World" />
+                    android:text="Hello World"
+                    android:textAppearance="?android:textAppearanceMedium" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -86,9 +85,9 @@
                                 android:padding="2dp"
                                 android:scrollHorizontally="true"
                                 android:singleLine="true"
+                                android:text="Monal Godiwala"
                                 android:textAppearance="?android:textAppearanceMedium"
-                                android:textColor="@color/colorAccent"
-                                tools:text="Monal Godiwala" />
+                                android:textColor="@color/colorAccent" />
 
                         </HorizontalScrollView>
 
@@ -111,8 +110,8 @@
                                     android:layout_height="wrap_content"
                                     android:padding="2dp"
                                     android:singleLine="true"
-                                    android:textColor="@color/colorAccent"
-                                    tools:text="Managing Director" />
+                                    android:text="Managing Director"
+                                    android:textColor="@color/colorAccent" />
 
                                 <TextView
                                     android:id="@+id/text_organization"
@@ -120,8 +119,8 @@
                                     android:layout_height="wrap_content"
                                     android:padding="2dp"
                                     android:singleLine="true"
-                                    android:textColor="@color/colorAccent"
-                                    tools:text="Blazze Apps" />
+                                    android:text="Blazze Apps"
+                                    android:textColor="@color/colorAccent" />
 
                                 <TextView
                                     android:id="@+id/text_view_all_organization"
@@ -129,8 +128,7 @@
                                     android:layout_height="wrap_content"
                                     android:padding="2dp"
                                     android:text="View All Organizations"
-                                    android:visibility="gone"
-                                    tools:visibility="visible" />
+                                    android:visibility="gone" />
 
                             </LinearLayout>
 
@@ -177,8 +175,8 @@
 
                                     <TableRow
                                         android:layout_width="wrap_content"
-                                        android:gravity="center"
-                                        android:layout_height="wrap_content">
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center">
 
                                         <TextView
                                             android:id="@+id/text_user_rating"
@@ -194,8 +192,8 @@
                                             android:id="@+id/img_user_rating"
                                             android:layout_width="14dp"
                                             android:layout_height="14dp"
-                                            android:layout_marginBottom="@dimen/margin_tiny"
                                             android:layout_gravity="center"
+                                            android:layout_marginBottom="@dimen/margin_tiny"
                                             android:layout_marginStart="@dimen/margin_tiny"
                                             android:layout_marginTop="@dimen/margin_tiny"
                                             android:contentDescription="@string/app_name"
@@ -208,8 +206,8 @@
                                         style="?android:attr/ratingBarStyleSmall"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:stepSize="1"
-                                        android:isIndicator="true" />
+                                        android:isIndicator="true"
+                                        android:stepSize="1" />
 
                                 </LinearLayout>
                             </FrameLayout>
@@ -299,8 +297,8 @@
                     android:layout_marginBottom="@dimen/margin_15dp"
                     android:layout_marginTop="@dimen/margin_15dp"
                     android:gravity="center"
-                    android:visibility="gone"
-                    tools:text="@string/text_no_history" />
+                    android:text="@string/text_no_history"
+                    android:visibility="gone" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_call_history"
@@ -380,7 +378,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            tools:visibility="gone">
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/image_call"
@@ -626,9 +624,9 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/card_contact_details"
                     android:layout_marginTop="@dimen/margin_tiny"
+                    android:visibility="visible"
                     app:cardCornerRadius="3dp"
-                    card_view:cardElevation="0dp"
-                    tools:visibility="visible">
+                    card_view:cardElevation="0dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -713,13 +711,11 @@
 
                                     <ImageView
                                         android:id="@+id/image_icon_gender"
-                                        android:layout_width="15dp"
-                                        android:layout_height="15dp"
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
                                         android:layout_alignParentRight="true"
                                         android:layout_margin="@dimen/activity_half_horizontal_margin"
-                                        android:contentDescription="@string/str_content_description"
-                                        android:src="@drawable/ic_action_sms"
-                                        android:tint="@color/colorVeryDarkGrayishBlue2" />
+                                        android:contentDescription="@string/str_content_description" />
 
                                     <TextView
                                         android:id="@+id/text_gender"
@@ -727,8 +723,8 @@
                                         android:layout_height="wrap_content"
                                         android:layout_centerVertical="true"
                                         android:layout_toLeftOf="@id/image_icon_gender"
-                                        android:textColor="@color/colorAccent"
-                                        tools:text="@string/str_female" />
+                                        android:text="@string/str_female"
+                                        android:textColor="@color/colorAccent" />
 
                                 </RelativeLayout>
 
