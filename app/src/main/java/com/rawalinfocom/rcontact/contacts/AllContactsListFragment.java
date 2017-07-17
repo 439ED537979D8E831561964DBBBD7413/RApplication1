@@ -440,7 +440,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
         };
-        String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC";
+//        String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ")
+// ASC";
+        String sortOrder = "upper(" + ContactsContract.Contacts.DISPLAY_NAME + ") ASC";
 
         // Starts the query
         return new CursorLoader(
@@ -548,7 +550,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewContactList.setLayoutManager(linearLayoutManager);
         RecyclerItemDecoration decoration = new RecyclerItemDecoration(getActivity(), ContextCompat
-                .getColor(getActivity(), R.color.colorVeryLightGray), 0.5f);
+                .getColor(getActivity(), R.color.colorVeryLightGray), 0.7f);
         recyclerViewContactList.addItemDecoration(decoration);
     }
 
@@ -1018,7 +1020,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
                 String actionNumber = StringUtils.defaultString(((AllContactAdapter
                         .AllContactViewHolder) viewHolder).textContactNumber.getText().toString());
                 if (direction == ItemTouchHelper.LEFT) {
@@ -1091,7 +1092,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 .getTop(), dX, (float) itemView.getBottom());
                         c.drawRect(background, p);
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable
-                                .ico_call_white_svg);
+                                .ic_action_call);
                         RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
                                 itemView.getTop() + width, (float) itemView.getLeft() + 2 *
                                 width, (float) itemView.getBottom() - width);

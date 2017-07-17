@@ -154,7 +154,8 @@ public class RContactApplication extends Application {
         return arrayListFavPhoneBookContacts;
     }
 
-//    public void setArrayListFavPhoneBookContacts(ArrayList<Object> arrayListFavPhoneBookContacts) {
+//    public void setArrayListFavPhoneBookContacts(ArrayList<Object>
+// arrayListFavPhoneBookContacts) {
 //        this.arrayListFavPhoneBookContacts = arrayListFavPhoneBookContacts;
 //    }
 
