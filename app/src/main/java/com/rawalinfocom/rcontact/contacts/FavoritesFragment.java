@@ -401,7 +401,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewContactList.setLayoutManager(linearLayoutManager);
         RecyclerItemDecoration decoration = new RecyclerItemDecoration(getActivity(), ContextCompat
-                .getColor(getActivity(), R.color.colorVeryLightGray), 0.5f);
+                .getColor(getActivity(), R.color.colorVeryLightGray), 0.7f);
         recyclerViewContactList.addItemDecoration(decoration);
 
 //        initSwipe();
