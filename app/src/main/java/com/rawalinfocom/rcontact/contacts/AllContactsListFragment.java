@@ -440,7 +440,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
         };
-//        String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC";
+//        String sortOrder = "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ")
+// ASC";
         String sortOrder = "upper(" + ContactsContract.Contacts.DISPLAY_NAME + ") ASC";
 
         // Starts the query

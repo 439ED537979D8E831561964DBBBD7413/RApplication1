@@ -331,7 +331,7 @@ public class RContactsFragment extends BaseFragment {
 
         recyclerView.setLayoutManager(linearLayoutManager);
         RecyclerItemDecoration decoration = new RecyclerItemDecoration(getActivity(), ContextCompat
-                .getColor(getActivity(), R.color.colorVeryLightGray), 0.5f);
+                .getColor(getActivity(), R.color.colorVeryLightGray), 0.7f);
         recyclerView.addItemDecoration(decoration);
         recyclerView.scrollToPosition(scrollPosition);
     }
