@@ -137,7 +137,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                     intent.putExtra(AppConstants.EXTRA_PROFILE_IMAGE_URL, profileUrl);
                     intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
                     intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isCallLogRcpUser);
-                    intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER,numberToCall);
+                    intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, numberToCall);
                     context.startActivity(intent);
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.block))) {
@@ -455,7 +455,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
             if (value > 0) {
                 // Log.i("Delete Query value", value + "");
-                Toast.makeText(context, value + context.getString(R.string.call_logs_deleted),
+                Toast.makeText(context, value + " " + context.getString(R.string.call_logs_deleted),
                         Toast.LENGTH_SHORT).show();
 
                 Intent localBroadcastIntent = new Intent(AppConstants
@@ -471,8 +471,6 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                 LocalBroadcastManager myLocalBroadcastManager1 = LocalBroadcastManager
                         .getInstance(context);
                 myLocalBroadcastManager1.sendBroadcast(localBroadcastIntent1);
-
-            } else {
 
             }
 

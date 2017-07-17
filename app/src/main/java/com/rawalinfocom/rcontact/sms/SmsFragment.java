@@ -57,7 +57,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
@@ -164,6 +167,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 if (AppConstants.isFirstTime()) {
                     AppConstants.setIsFirstTime(false);
                     loadData();
+//                    fetchSMSData();
                 }
             } else {
                 smsDataTypeArrayList = rContactApplication.getArrayListSmsLogType();
@@ -171,6 +175,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     setAdapter();
                 } else {
                     loadData();
+//                    fetchSMSData();
                 }
             }
         }
@@ -189,6 +194,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 if (AppConstants.isFirstTime()) {
                     AppConstants.setIsFirstTime(false);
                     loadData();
+//                    fetchSMSData();
                 }
             } else {
                 smsDataTypeArrayList = rContactApplication.getArrayListSmsLogType();
@@ -196,6 +202,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                     setAdapter();
                 } else {
                     loadData();
+//                    fetchSMSData();
                 }
             }
 
@@ -437,7 +444,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         Uri mSmsinboxQueryUri = Uri.parse("content://sms");
         String[] columns = new String[]{"thread_id"};
         Cursor cursor = getActivity().getContentResolver().query(
-                mSmsinboxQueryUri, columns, null, null, Telephony.Sms.DEFAULT_SORT_ORDER);
+                mSmsinboxQueryUri, columns, null, null, Telephony.Sms.DATE + " DESC");
 
         if (cursor != null && cursor.getCount() > 0) {
 
@@ -452,63 +459,93 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
     private void getSMS(HashSet<String> threadIds) {
 
+        smsDataTypeArrayList = new ArrayList<>();
+
         ArrayList<String> allthreadIds = new ArrayList<>();
-        ArrayList<Contact> allSms = new ArrayList<Contact>();
+//        ArrayList<Contact> allSms = new ArrayList<Contact>();
 
         allthreadIds.addAll(threadIds);
+//        Collections.sort(allthreadIds);
 
         for (int i = 0; i < allthreadIds.size(); i++) {
 
             Uri mSmsinboxQueryUri = Uri.parse("content://sms");
-            String[] columns = new String[]{"address", "date", "body", "type"};
+//            String[] columns = new String[]{"address", "date", "body", "type"};
             Cursor cursor = getActivity().getContentResolver().query(
-                    mSmsinboxQueryUri, columns, "thread_id =" + allthreadIds.get(i), null, Telephony.Sms.DEFAULT_SORT_ORDER);
+                    mSmsinboxQueryUri, null, "thread_id =" + allthreadIds.get(i), null, Telephony.Sms.DATE + " DESC");
 
             if (cursor != null && cursor.getCount() > 0) {
 
                 cursor.moveToFirst();
 
-                String address = null, displayName = null, date = null, msg = null, type = null;
-                String photoUri = null;
+                SmsDataType smsDataType = new SmsDataType();
 
-                type = cursor.getString(cursor.getColumnIndex(columns[3]));
+                int number = cursor.getColumnIndexOrThrow(Telephony.Sms.ADDRESS);
+                int id = cursor.getColumnIndexOrThrow(Telephony.Sms._ID);
+                int body = cursor.getColumnIndexOrThrow(Telephony.Sms.BODY);
+                int date = cursor.getColumnIndexOrThrow(Telephony.Sms.DATE);
+                int read = cursor.getColumnIndexOrThrow(Telephony.Sms.READ);
+                int type = cursor.getColumnIndexOrThrow(Telephony.Sms.TYPE);
+                int thread_id = cursor.getColumnIndexOrThrow(Telephony.Sms.THREAD_ID);
 
-                if (Integer.parseInt(type) == 0 || Integer.parseInt(type) == 1) {
+                String photoUri = null, contactNumber = null;
 
-                    address = cursor.getString(cursor
-                            .getColumnIndex(columns[0]));
+                String address = cursor.getString(number);
+                System.out.println("RContact address --> " + address);
+                if (!TextUtils.isEmpty(address)) {
+                    Pattern numberPat = Pattern.compile("[a-zA-Z]+");
+                    Matcher matcher1 = numberPat.matcher(address);
+                    if (matcher1.find()) {
+                        smsDataType.setAddress(address);
+                    } else {
+                        // Todo: Add format number method before setting the address
+                        final String formattedNumber = Utils.getFormattedNumber(getActivity(), address);
+                        String contactName = getContactNameFromNumber(formattedNumber);
 
-                    if (address.length() > 0) {
-                        displayName = getContactNameFromNumber(address);
-                        photoUri = getPhotoUrlFromNumber(address);
-                    } else
-                        address = null;
+                        System.out.println("RContact contactName --> " + contactName);
 
-                    date = cursor.getString(cursor.getColumnIndex(columns[1]));
-                    msg = cursor.getString(cursor.getColumnIndex(columns[2]));
+                        if (!TextUtils.isEmpty(contactName)) {
+                            smsDataType.setAddress(contactName);
+                            smsDataType.setNumber(formattedNumber);
+                        } else {
+                            smsDataType.setAddress(formattedNumber);
+                            smsDataType.setNumber(formattedNumber);
+                        }
+                        contactNumber = formattedNumber;
+                    }
 
-                    Contact contact = new Contact();
+                    photoUri = getPhotoUrlFromNumber(contactNumber);
+                    if (!TextUtils.isEmpty(photoUri)) {
+                        smsDataType.setProfileImage(photoUri);
+                    } else {
+                        smsDataType.setProfileImage("");
+                    }
 
-                    contact.setContactName(displayName);
-                    contact.setContactNumber(address);
-                    contact.setContactPhotoUri(photoUri);
-                    contact.setMessage(msg);
-                    contact.setDate(date);
+                    smsDataType.setProfileImage(photoUri);
+                    smsDataType.setBody(cursor.getString(body));
+                    smsDataType.setTypeOfMessage(getMessageType(cursor.getInt(type)));
+                    smsDataType.setDataAndTime(cursor.getLong(date));
+                    smsDataType.setIsRead(cursor.getString(read));
+                    smsDataType.setUniqueRowId(cursor.getString(id));
+                    smsDataType.setThreadId(cursor.getString(thread_id));
 
-                    allSms.add(contact);
+                    smsDataTypeArrayList.add(smsDataType);
+
                 }
-
                 cursor.close();
             }
         }
 
         System.out.println("RContact end --> " + System.currentTimeMillis());
+        System.out.println("RContact size --> " + smsDataTypeArrayList.size());
 
-        for (int i = 0; i < allSms.size(); i++) {
-            System.out.println("RContact allSms name/number --> " + allSms.get(i).getDisplayName()
-                    + " -- " + allSms.get(i).getContactNumber());
-            System.out.println("RContact allSms message --> " + allSms.get(i).getMessage());
+        if (smsDataTypeArrayList != null && smsDataTypeArrayList.size() > 0) {
+            smsListAdapter = new SmsListAdapter(getActivity(), smsDataTypeArrayList, recyclerSmsLogs);
+            recyclerSmsLogs.setAdapter(smsListAdapter);
+            recyclerSmsLogs.setFocusable(false);
         }
+
+        initSwipe();
     }
 
     public Uri getContactPhotoUri(long contactId) {
