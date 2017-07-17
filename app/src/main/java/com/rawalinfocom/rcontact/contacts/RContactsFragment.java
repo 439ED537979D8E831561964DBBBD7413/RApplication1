@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.RContactListAdapter;
@@ -64,7 +65,7 @@ public class RContactsFragment extends BaseFragment {
 
     ArrayList<String> arrayListContactHeaders;
     private ArrayList<UserProfile> arrayListDisplayProfile;
-    public  ArrayList<Object> arrayListRContact;
+    public ArrayList<Object> arrayListRContact;
 
     RContactListAdapter rContactListAdapter;
 
@@ -134,13 +135,15 @@ public class RContactsFragment extends BaseFragment {
 
     private void registerLocalBroadCast() {
         // rating update broadcast receiver register
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(localBroadcastReceiverRatingUpdate,
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver
+                (localBroadcastReceiverRatingUpdate,
                 new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_RATING_UPDATE));
     }
 
     private void unregisterLocalBroadCast() {
         //  rating update broadcast receiver unregister
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(localBroadcastReceiverRatingUpdate);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver
+                (localBroadcastReceiverRatingUpdate);
     }
 
     // rating update broadcast receiver
@@ -211,7 +214,8 @@ public class RContactsFragment extends BaseFragment {
         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
                 (getDatabaseHandler());
 
-        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList();
+        arrayListDisplayProfile = tableProfileMobileMapping.getRContactList(((BaseActivity)
+                getActivity()).getUserPmId());
 
         arrayListRContact = new ArrayList<>();
         if (arrayListDisplayProfile.size() > 0) {
@@ -287,7 +291,7 @@ public class RContactsFragment extends BaseFragment {
                                 .getTop(), dX, (float) itemView.getBottom());
                         c.drawRect(background, p);
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable
-                                .ico_call_white_svg);
+                                .ic_action_call);
                         RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
                                 itemView.getTop() + width, (float) itemView.getLeft() + 2 *
                                 width, (float) itemView.getBottom() - width);
@@ -371,7 +375,8 @@ public class RContactsFragment extends BaseFragment {
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + finalNumber + "?");
+        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
+                + finalNumber + "?");
 
         callConfirmationDialog.showDialog();
     }
