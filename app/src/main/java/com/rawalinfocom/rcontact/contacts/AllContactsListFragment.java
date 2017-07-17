@@ -1020,7 +1020,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
                 String actionNumber = StringUtils.defaultString(((AllContactAdapter
                         .AllContactViewHolder) viewHolder).textContactNumber.getText().toString());
                 if (direction == ItemTouchHelper.LEFT) {
@@ -1093,7 +1092,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 .getTop(), dX, (float) itemView.getBottom());
                         c.drawRect(background, p);
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable
-                                .ic_action_call);
+                                .ico_call_white_svg);
                         RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
                                 itemView.getTop() + width, (float) itemView.getLeft() + 2 *
                                 width, (float) itemView.getBottom() - width);

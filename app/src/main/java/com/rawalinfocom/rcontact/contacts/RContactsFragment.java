@@ -287,7 +287,7 @@ public class RContactsFragment extends BaseFragment {
                                 .getTop(), dX, (float) itemView.getBottom());
                         c.drawRect(background, p);
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable
-                                .ic_action_call);
+                                .ico_call_white_svg);
                         RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
                                 itemView.getTop() + width, (float) itemView.getLeft() + 2 *
                                 width, (float) itemView.getBottom() - width);

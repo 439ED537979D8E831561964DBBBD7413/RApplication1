@@ -24,7 +24,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -37,8 +36,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -48,7 +45,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
@@ -112,11 +108,9 @@ import com.rawalinfocom.rcontact.sms.SmsFragment;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -915,6 +909,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             userProfileImage.setImageResource(R.drawable.home_screen_profile);
         }
 
+        Utils.setRatingColor(MainActivity.this, rating_user);
+
         mainContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -926,6 +922,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
                 bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, 1);
                 startActivityIntent(MainActivity.this, ProfileDetailActivity.class, bundle);
+
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
             }
         });
 
@@ -1405,7 +1404,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private void getCallLogsByRawId() {
 
         ArrayList<String> callLogsIdsList = new ArrayList<>();
-
         PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(this);
         Cursor cursor = phoneBookCallLogs.getAllCallLogId();
         if (cursor != null) {
@@ -2719,9 +2717,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             ProfileDataOperationPhoneNumber phoneNumber = new
                                     ProfileDataOperationPhoneNumber();
 
-                            phoneNumber.setPhoneNumber(Utils.getFormattedNumber(this, cursor
+                            phoneNumber.setPhoneNumber(cursor
                                     .getString(cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.Phone.NUMBER))));
+                                            .CommonDataKinds.Phone.NUMBER)));
                             phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                     (cursor.getInt(cursor.getColumnIndex
                                             (ContactsContract.CommonDataKinds.Phone.TYPE))));
