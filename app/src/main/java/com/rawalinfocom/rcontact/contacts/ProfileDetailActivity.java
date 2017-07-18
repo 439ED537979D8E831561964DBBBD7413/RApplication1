@@ -2870,14 +2870,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                         eventOperation.setEventType(phoneBookContacts.getEventType
                                 (contactEventCursor,
-                                contactEventCursor
-                                        .getInt(contactEventCursor.getColumnIndex(ContactsContract
-                                                .CommonDataKinds.Event.TYPE))));
+                                        contactEventCursor
+                                                .getInt(contactEventCursor.getColumnIndex(ContactsContract
+                                                        .CommonDataKinds.Event.TYPE))));
 
                         eventOperation.setEventDateTime(contactEventCursor.getString
                                 (contactEventCursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.Event
-                                        .START_DATE)));
+                                        .getColumnIndex(ContactsContract.CommonDataKinds.Event
+                                                .START_DATE)));
 
                         if (!arrayListEvent.contains(event)) {
                             arrayListPhoneBookEvent.add(event);
@@ -3032,6 +3032,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                if (viewHolder instanceof ProfileDetailAdapter.ProfileDetailViewHolder &&
+                        StringUtils.startsWithIgnoreCase(((ProfileDetailAdapter.ProfileDetailViewHolder) viewHolder).textMain1.getText().toString(), "+XX")) {
+                    return 0;
+                }
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
 
@@ -3740,6 +3744,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
                 event.setEvmEventType(arrayListEvent.get(j).getEventType());
                 event.setEvmIsPrivate(arrayListEvent.get(j).getIsPrivate());
+                event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
                 event.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 eventList.add(event);
             }
