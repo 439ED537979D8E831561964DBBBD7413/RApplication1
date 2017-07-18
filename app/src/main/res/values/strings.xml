@@ -204,6 +204,7 @@
     <string name="search_global_text">This search on rcontacts global directory</string>
     <string name="no_records_found">No Contact Found</string>
     <string name="public_profile_toolbar_title">Public Profile</string>
+    <string name="feedback_title">Feedback</string>
     <string name="search_query_validation">Please enter some text to search</string>
     <string name="no_records_found_local">No Record Found</string>
 
