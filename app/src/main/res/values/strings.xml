@@ -152,6 +152,7 @@
     <string name="nav_text_rate_us">Rate us</string>
     <string name="nav_text_about_help">About and Help</string>
     <string name="nav_text_export_db">Export DB</string>
+    <string name="nav_text_feedback">Feedback</string>
 
     <string name="past_5_days">Past 5 Days</string>
     <string name="recent_events">Recent Events</string>

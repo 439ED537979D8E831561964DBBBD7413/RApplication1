@@ -943,6 +943,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         TextView nav_txt_rate = (TextView) navigationView.findViewById(R.id.nav_txt_rate);
         TextView nav_txt_about = (TextView) navigationView.findViewById(R.id.nav_txt_about);
         TextView nav_txt_export = (TextView) navigationView.findViewById(R.id.nav_txt_export);
+        TextView nav_txt_feedback = (TextView) navigationView.findViewById(R.id.nav_txt_feedback);
 
         LinearLayout nav_ll_account = (LinearLayout) navigationView.findViewById(R.id.nav_ll_account);
         LinearLayout nav_ll_timeline = (LinearLayout) navigationView.findViewById(R.id.nav_ll_timeline);
@@ -954,6 +955,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         LinearLayout nav_ll_rate = (LinearLayout) navigationView.findViewById(R.id.nav_ll_rate_us);
         LinearLayout nav_ll_about = (LinearLayout) navigationView.findViewById(R.id.nav_ll_about);
         LinearLayout nav_ll_export = (LinearLayout) navigationView.findViewById(R.id.nav_ll_export);
+        LinearLayout nav_ll_feedback = (LinearLayout) navigationView.findViewById(R.id.nav_ll_feedback);
 
         nav_ll_account.setOnClickListener(this);
         nav_ll_timeline.setOnClickListener(this);
@@ -965,6 +967,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         nav_ll_rate.setOnClickListener(this);
         nav_ll_about.setOnClickListener(this);
         nav_ll_export.setOnClickListener(this);
+        nav_ll_feedback.setOnClickListener(this);
 
         if (BuildConfig.DEBUG) {
             nav_txt_export.setVisibility(View.VISIBLE);
@@ -990,6 +993,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         nav_txt_about.setText(R.string.im_icon_about_help);
         nav_txt_export.setTypeface(Utils.typefaceIcons(this));
         nav_txt_export.setText(R.string.im_icon_about_help);
+        nav_txt_feedback.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_feedback.setText(R.string.im_icon_about_help);
     }
 
     @Override
