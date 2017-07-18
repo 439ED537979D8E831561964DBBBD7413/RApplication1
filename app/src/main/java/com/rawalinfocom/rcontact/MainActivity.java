@@ -219,8 +219,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         if (contacts) {
             if (Utils.isNetworkAvailable(this)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
-                    && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                    && Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
+                    && (Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false) || !logs)
+                    && (Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false) || !smsLogs)) {
                 reSyncContactAsyncTask = new ReSyncContactAsyncTask();
                 reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
@@ -342,40 +342,41 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME, callLogInsertionResponse.getCallDateAndTime());
+                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID, callLogInsertionResponse.getCallLogRowId());
 
-                    if (Utils.getBooleanPreference(this, AppConstants
-                            .PREF_CALL_LOG_SYNCED, false)) {
-                        LIST_PARTITION_COUNT = 20;
-                        ArrayList<CallLogType> temp = divideCallLogByChunck(newList);
-                        if (temp.size() >= LIST_PARTITION_COUNT) {
-                            if (temp != null && temp.size() > 0)
-                                insertServiceCall(newList);
-                        } else {
-                            Log.e("onDeliveryResponse: ", "All Call Logs Synced");
-                        }
-
+//                    if (Utils.getBooleanPreference(this, AppConstants
+//                            .PREF_CALL_LOG_SYNCED, false)) {
+//                        LIST_PARTITION_COUNT = 20;
+//                        ArrayList<CallLogType> temp = divideCallLogByChunck(newList);
+//                        if (temp.size() >= LIST_PARTITION_COUNT) {
+//                            if (temp != null && temp.size() > 0)
+//                                insertServiceCall(newList);
+//                        } else {
+//                            Log.e("onDeliveryResponse: ", "All Call Logs Synced");
+//                        }
+//
+//                    } else {
+                    ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
+                    if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
+//                        insertServiceCall(callLogTypeArrayList);
+                        logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
                     } else {
-                        ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
-                        if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
-                            insertServiceCall(callLogTypeArrayList);
-                            logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
-                        } else {
 //                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
 //                            Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME, callLogInsertionResponse.getSmsLogTimestamp());
 
-                            Utils.setBooleanPreference(this, AppConstants
-                                    .PREF_CALL_LOG_SYNCED, true);
+                        Utils.setBooleanPreference(this, AppConstants
+                                .PREF_CALL_LOG_SYNCED, true);
 
-                            Intent localBroadcastIntent = new Intent(AppConstants
-                                    .ACTION_LOCAL_BROADCAST_SYNC_SMS);
-                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
-                                    .getInstance(MainActivity.this);
-                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+                        Intent localBroadcastIntent = new Intent(AppConstants
+                                .ACTION_LOCAL_BROADCAST_SYNC_SMS);
+                        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                                .getInstance(MainActivity.this);
+                        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
-                        }
-                        Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
-                                logsSyncedCount);
                     }
+                    Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
+                            logsSyncedCount);
+//                    }
                 } else {
                     if (callLogInsertionResponse != null) {
                         Log.e("error response", callLogInsertionResponse.getMessage());
@@ -1295,6 +1296,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         try {
             String order = CallLog.Calls.DATE + " ASC";
             String prefDate = Utils.getStringPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNC_TIME, "");
+            String prefRowId = Utils.getStringPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_ROW_ID, "");
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date startDate = sdf.parse(prefDate);
             long dateToConvert = startDate.getTime();
@@ -1328,7 +1330,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     Date date2 = new Date(dateToConvert);
                     String dateTodelete = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format(date2);
 
-                    if (!(dateToCompare1.equalsIgnoreCase(dateTodelete))) {
+                    if (!(dateToCompare1.equalsIgnoreCase(dateTodelete)) && !(prefRowId.equalsIgnoreCase(cursor.getString(rowId)))) {
 
                         CallLogType log = new CallLogType(this);
                         log.setNumber(cursor.getString(number));
@@ -1398,8 +1400,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 }
                 cursor.close();
             }
+            if (callLogTypeArrayListMain.size() > 0)
+                syncRecentCallLogDataToServer(callLogTypeArrayListMain);
+            else
+                Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, true);
 
-            syncRecentCallLogDataToServer(callLogTypeArrayListMain);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1410,7 +1415,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         ArrayList<String> callLogsIdsList = new ArrayList<>();
         PhoneBookCallLogs phoneBookCallLogs = new PhoneBookCallLogs(this);
-        Cursor cursor = phoneBookCallLogs.getAllCallLogId();
+        Cursor cursor = phoneBookCallLogs.getSyncAllCallLogId();
         if (cursor != null) {
             int rowId = cursor.getColumnIndex(CallLog.Calls._ID);
             while (cursor.moveToNext()) {
@@ -1542,7 +1547,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     }
                 }
             }
-            syncCallLogDataToServer(callLogTypeArrayListMain);
+            if (callLogTypeArrayListMain.size() > 0)
+                syncCallLogDataToServer(callLogTypeArrayListMain);
+            else
+                Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, true);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2409,11 +2418,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             Utils.setBooleanPreference(MainActivity.this, AppConstants
                                     .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
                             AppConstants.isFromReceiver = false;
+
+                            if (!Utils.getStringPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0"))
+                                getLatestCallLogsByRawId();
+
 //                            CallLogFragment.isIdsFetchedFirstTime = false;
 //                                rContactApplication.setArrayListCallLogType(null);
                         }
                     }
-                }, 100);
+                }, 300);
 
             } catch (Exception e) {
                 e.printStackTrace();

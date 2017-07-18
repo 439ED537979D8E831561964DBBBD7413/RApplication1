@@ -24,4 +24,10 @@ public class PhoneBookCallLogs {
         String order = CallLog.Calls.DATE + " DESC";
         return RContactApplication.getInstance().getContentResolver().query(uri, null, null, null, order);
     }
+
+    public Cursor getSyncAllCallLogId() {
+        Uri uri = CallLog.Calls.CONTENT_URI;
+        String order = CallLog.Calls.DATE + " ASC";
+        return RContactApplication.getInstance().getContentResolver().query(uri, null, null, null, order);
+    }
 }

@@ -297,7 +297,7 @@ public class CallLogDialogListAdapter extends RecyclerView.Adapter<CallLogDialog
 
             if (value > 0) {
                 Log.i("Delete Query value", value + "");
-                Toast.makeText(context, value + context.getString(R.string.call_logs_deleted),
+                Toast.makeText(context, value + " " + context.getString(R.string.call_logs_deleted),
                         Toast.LENGTH_SHORT).show();
 
                 Intent localBroadcastIntent = new Intent(AppConstants

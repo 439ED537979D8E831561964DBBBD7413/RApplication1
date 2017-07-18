@@ -2087,7 +2087,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         buttonViewOldRecords.setTypeface(Utils.typefaceRegular(this));
         buttonInvite.setTypeface(Utils.typefaceRegular(this));
-        rippleViewOldRecords.setVisibility(View.VISIBLE);
+        rippleViewOldRecords.setVisibility(View.GONE);
         rippleViewOldRecords.setOnRippleCompleteListener(this);
 
         mLinearLayoutManager = new LinearLayoutManager(this);
@@ -2905,6 +2905,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (displayOwnProfile && StringUtils.length(StringUtils.defaultString(profileDetail
                     != null ? profileDetail.getPbGender() : null)) > 0) {
                 textGender.setText(profileDetail.getPbGender());
+
+                if (textGender.getText().toString().trim().equals("Male"))
+                    imageIconGender.setImageResource(R.drawable.ico_male_svg);
+                else
+                    imageIconGender.setImageResource(R.drawable.ico_female_svg);
+
             } else {
                 linearGender.setVisibility(View.GONE);
             }
