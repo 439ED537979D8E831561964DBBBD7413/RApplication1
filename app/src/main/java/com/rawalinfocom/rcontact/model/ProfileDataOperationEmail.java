@@ -16,7 +16,7 @@ public class ProfileDataOperationEmail implements Serializable {
     private String emEmailId;
     private String emType;
     private Integer emPublic;
-    private String emRcpType;
+    private Integer emRcpType;
     private String emIsVerified;
     private Integer emIsPrivate;
 
@@ -58,11 +58,11 @@ public class ProfileDataOperationEmail implements Serializable {
 
 //    @JsonProperty("em_rcp_type")
     @JsonProperty("is_verified")
-    public String getEmRcpType() {
+    public Integer getEmRcpType() {
         return emRcpType;
     }
 
-    public void setEmRcpType(String emRcpType) {
+    public void setEmRcpType(Integer emRcpType) {
         this.emRcpType = emRcpType;
     }
 

@@ -1457,8 +1457,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 phoneNumberOperation.setPhoneType(phoneBookContacts.getPhoneNumberType
                         (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
                                 (ContactsContract.CommonDataKinds.Phone.TYPE))));
-                phoneNumber.setPbRcpType(String.valueOf(IntegerConstants
-                        .RCP_TYPE_LOCAL_PHONE_BOOK));
+                phoneNumber.setPbRcpType(IntegerConstants
+                        .RCP_TYPE_LOCAL_PHONE_BOOK);
 
                 if (!arrayListCloudNumber.contains(phoneNumber.getPhoneNumber())) {
                     arrayListPhoneBookNumber.add(phoneNumber);
@@ -1511,7 +1511,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                         contactEmailCursor.getInt
                                 (contactEmailCursor.getColumnIndex(ContactsContract
                                         .CommonDataKinds.Email.TYPE))));
-                emailId.setEmRcpType(String.valueOf(IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK));
+                emailId.setEmRcpType(IntegerConstants.RCP_TYPE_LOCAL_PHONE_BOOK);
 
                 emailIdOperation.setEmEmailId(contactEmailCursor.getString(contactEmailCursor
                         .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));

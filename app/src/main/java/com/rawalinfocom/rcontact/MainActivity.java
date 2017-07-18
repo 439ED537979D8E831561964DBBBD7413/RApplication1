@@ -582,7 +582,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         email.setEmEmailType(arrayListEmailId.get(j).getEmType());
                         email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j)
                                 .getEmPublic()));
-                        email.setEmIsVerified(arrayListEmailId.get(j).getEmRcpType());
+                        email.setEmIsVerified(String.valueOf(arrayListEmailId.get(j).getEmRcpType()));
                         email.setEmIsPrivate(arrayListEmailId.get(j).getEmIsPrivate());
 
                         email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());

@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.model.ContactRequestData;
 import com.rawalinfocom.rcontact.model.Email;
 
@@ -103,7 +102,8 @@ public class TableEmailMaster {
     public void addUpdateArrayEmail(ArrayList<Email> arrayListEmail, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
 
-        int count = db.delete(TABLE_RC_EMAIL_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + RcpPmId, null);
+        int count = db.delete(TABLE_RC_EMAIL_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                RcpPmId, null);
         if (count > 0) System.out.println("RContact data delete ");
 
 //        ContentValues values = new ContentValues();
@@ -229,6 +229,7 @@ public class TableEmailMaster {
                 COLUMN_EM_EMAIL_TYPE + ", " +
                 COLUMN_EM_RECORD_INDEX_ID + ", " +
                 COLUMN_EM_EMAIL_PRIVACY + ", " +
+                COLUMN_EM_IS_VERIFIED + ", " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " FROM " +
                 TABLE_RC_EMAIL_MASTER + " WHERE " +
                 COLUMN_RC_PROFILE_MASTER_PM_ID + " = " + pmId;
@@ -247,6 +248,8 @@ public class TableEmailMaster {
                         (COLUMN_EM_RECORD_INDEX_ID)));
                 email.setEmEmailPrivacy(cursor.getString(cursor.getColumnIndex
                         (COLUMN_EM_EMAIL_PRIVACY)));
+                email.setEmIsVerified(cursor.getString(cursor.getColumnIndex
+                        (COLUMN_EM_IS_VERIFIED)));
                 email.setRcProfileMasterPmId(cursor.getString(cursor.getColumnIndex
                         (COLUMN_RC_PROFILE_MASTER_PM_ID)));
                 // Adding Email to list

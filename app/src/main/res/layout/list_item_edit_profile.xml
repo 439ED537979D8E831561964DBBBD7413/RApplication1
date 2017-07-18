@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relative_row_edit_profile"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/relative_row_edit_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/image_delete"
@@ -13,13 +13,19 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:src="@drawable/ic_delete"
-        android:visibility="visible" />
+        android:visibility="visible"/>
 
     <TextView
         android:id="@+id/text_is_public"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/text_is_verified"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/image_calender"
@@ -28,7 +34,7 @@
         android:layout_marginRight="@dimen/margin_5dp"
         android:layout_toLeftOf="@+id/spinner_type"
         android:src="@drawable/ic_date_picker"
-        android:visibility="visible" />
+        android:visibility="visible"/>
 
     <Spinner
         android:id="@+id/spinner_type"
@@ -40,7 +46,7 @@
         android:layout_marginStart="@dimen/margin_small"
         android:layout_toLeftOf="@id/image_delete"
         android:layout_toStartOf="@id/image_delete"
-        android:padding="0dp" />
+        android:padding="0dp"/>
 
     <EditText
         android:id="@+id/input_value"
@@ -51,7 +57,7 @@
         android:textColor="@color/colorAccent"
         android:textSize="16sp"
         tools:ignore="TextFields"
-        tools:text="1234567890" />
+        tools:text="1234567890"/>
 
     <LinearLayout
         android:id="@+id/liner_checkbox"
@@ -62,7 +68,7 @@
         <CheckBox
             android:id="@+id/checkbox_hide_year"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/text_label_checkbox"
@@ -70,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_tiny"
             android:layout_marginStart="@dimen/margin_tiny"
-            android:text="@string/check_text_donot_show_year" />
+            android:text="@string/check_text_donot_show_year"/>
 
     </LinearLayout>
 
