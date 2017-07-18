@@ -760,7 +760,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             @Override
             public void run() {
                 makeSimpleData();
-                nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//                nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                nameAndProfileImage.execute();
             }
         });
 
