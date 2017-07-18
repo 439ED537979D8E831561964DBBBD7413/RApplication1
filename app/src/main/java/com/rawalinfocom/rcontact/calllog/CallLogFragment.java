@@ -339,6 +339,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         if (nameAndProfileImage != null) {
             nameAndProfileImage.cancel(true);
+            getDatabaseHandler().close();
         }
     }
 
