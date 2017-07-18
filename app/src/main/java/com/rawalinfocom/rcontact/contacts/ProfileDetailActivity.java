@@ -401,14 +401,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (profileActivityCallInstance) {
 //            fetchCallLogHistoryDateWise(historyNumber);
 //            fetchAllCallLogHistory(historyNumber);
-            if (!TextUtils.isEmpty(historyName)) {
+            /*if (!TextUtils.isEmpty(historyName)) {
                 fetchAllCallLogHistory(historyName);
 
             } else {
 //        fetchCallLogHistoryDateWise(historyNumber);
                 fetchAllCallLogHistory(historyNumber);
 
-            }
+            }*/
+            new GetRCPNameAndProfileImage().execute();
             if (isFromReceiver) {
                 isFromReceiver = false;
                 Utils.setBooleanPreference(ProfileDetailActivity.this, AppConstants
