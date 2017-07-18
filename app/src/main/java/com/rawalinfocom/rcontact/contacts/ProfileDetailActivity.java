@@ -1145,9 +1145,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, hashMapKey);
         intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueContactId);
         intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isCallLogRcpUser);
-        if(!StringUtils.isEmpty(profileThumbnail)){
+        if (!StringUtils.isEmpty(profileThumbnail)) {
             intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileThumbnail);
-        }else {
+        } else {
             intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, thumbnailUrl);
         }
         startActivity(intent);
@@ -2087,7 +2087,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
         buttonViewOldRecords.setTypeface(Utils.typefaceRegular(this));
         buttonInvite.setTypeface(Utils.typefaceRegular(this));
-        rippleViewOldRecords.setVisibility(View.VISIBLE);
+        rippleViewOldRecords.setVisibility(View.GONE);
         rippleViewOldRecords.setOnRippleCompleteListener(this);
 
         mLinearLayoutManager = new LinearLayoutManager(this);
@@ -2861,6 +2861,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (displayOwnProfile && StringUtils.length(StringUtils.defaultString(profileDetail
                     != null ? profileDetail.getPbGender() : null)) > 0) {
                 textGender.setText(profileDetail.getPbGender());
+
+                if (textGender.getText().toString().trim().equals("Male"))
+                    imageIconGender.setImageResource(R.drawable.ico_male_svg);
+                else
+                    imageIconGender.setImageResource(R.drawable.ico_female_svg);
+
             } else {
                 linearGender.setVisibility(View.GONE);
             }
@@ -3003,7 +3009,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 .getTop(), dX, (float) itemView.getBottom());
                         c.drawRect(background, p);
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable
-                                .ico_call_white_svg);
+                                .ic_action_call);
                         RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
                                 itemView.getTop() + width, (float) itemView.getLeft() + 2 *
                                 width, (float) itemView.getBottom() - width);

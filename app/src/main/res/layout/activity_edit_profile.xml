@@ -877,14 +877,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:textSize="@dimen/text_size_45sp"
-                                tools:text="@string/im_icon_male" />
+                                tools:text="@string/im_icon_female" />
 
                             <TextView
                                 android:id="@+id/text_male"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
-                                android:text="@string/im_icon_female" />
+                                android:text="@string/str_male" />
 
                         </LinearLayout>
 
@@ -900,8 +900,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:textSize="@dimen/text_size_45sp"
-                                tools:text="@string/im_female" />
+                                android:text="@string/im_icon_male"
+                                android:textSize="@dimen/text_size_45sp" />
 
                             <TextView
                                 android:id="@+id/text_female"

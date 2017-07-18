@@ -68,7 +68,8 @@ public class RContactApplication extends Application {
         mInstance = this;
 
 //         Fabric Initialization
-        Fabric.with(this, new Crashlytics());
+//        Fabric.with(this, new Crashlytics());
+
 
         arrayListAllPhoneBookContacts = new ArrayList<>();
 //        arrayListAllContactHeaders = new ArrayList<>();
@@ -153,7 +154,8 @@ public class RContactApplication extends Application {
         return arrayListFavPhoneBookContacts;
     }
 
-//    public void setArrayListFavPhoneBookContacts(ArrayList<Object> arrayListFavPhoneBookContacts) {
+//    public void setArrayListFavPhoneBookContacts(ArrayList<Object>
+// arrayListFavPhoneBookContacts) {
 //        this.arrayListFavPhoneBookContacts = arrayListFavPhoneBookContacts;
 //    }
 

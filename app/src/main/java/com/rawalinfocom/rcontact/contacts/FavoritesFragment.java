@@ -401,7 +401,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewContactList.setLayoutManager(linearLayoutManager);
         RecyclerItemDecoration decoration = new RecyclerItemDecoration(getActivity(), ContextCompat
-                .getColor(getActivity(), R.color.colorVeryLightGray), 0.5f);
+                .getColor(getActivity(), R.color.colorVeryLightGray), 0.7f);
         recyclerViewContactList.addItemDecoration(decoration);
 
 //        initSwipe();
@@ -511,7 +511,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                                 .getTop(), dX, (float) itemView.getBottom());
                         c.drawRect(background, p);
                         icon = BitmapFactory.decodeResource(getResources(), R.drawable
-                                .ico_call_white_svg);
+                                .ic_action_call);
                         RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float)
                                 itemView.getTop() + width, (float) itemView.getLeft() + 2 *
                                 width, (float) itemView.getBottom() - width);
