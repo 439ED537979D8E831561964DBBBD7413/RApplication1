@@ -955,6 +955,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         TextView nav_txt_about = (TextView) navigationView.findViewById(R.id.nav_txt_about);
         TextView nav_txt_export = (TextView) navigationView.findViewById(R.id.nav_txt_export);
         TextView nav_txt_feedback = (TextView) navigationView.findViewById(R.id.nav_txt_feedback);
+        TextView nav_txt_invite_contact = (TextView) navigationView.findViewById(R.id.nav_txt_invite_contact);
+        TextView nav_txt_share_name = (TextView) navigationView.findViewById(R.id.nav_txt_share_name);
+
 
         LinearLayout nav_ll_account = (LinearLayout) navigationView.findViewById(R.id
                 .nav_ll_account);
@@ -975,6 +978,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         nav_ll_invite.setEnabled(false);
         nav_ll_share.setEnabled(false);
+        nav_txt_invite.setTextColor(getResources().getColor(R.color.lightGrey));
+        nav_txt_share.setTextColor(getResources().getColor(R.color.lightGrey));
+        nav_txt_invite_contact.setTextColor(getResources().getColor(R.color.lightGrey));
+        nav_txt_share_name.setTextColor(getResources().getColor(R.color.lightGrey));
 
         nav_ll_account.setOnClickListener(this);
         nav_ll_timeline.setOnClickListener(this);
@@ -1886,7 +1893,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 return getString(R.string.call_log_voice_mail);
 
         }
-        return getString(R.string.type_other);
+//        return getString(R.string.type_other);
+        return getString(R.string.call_log_missed);
     }
 
     private String getRawContactIdFromNumber(String phoneNumber) {
