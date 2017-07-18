@@ -618,9 +618,16 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "--MM-dd", "dd'th' " +
                     "MMM");
         } else {
-            convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "yyyy-MM-dd",
-                    "dd'th' " +
-                            "MMM, yyyy");
+            if (MoreObjects.firstNonNull(event.getIsYearHidden(), 0) == IntegerConstants
+                    .IS_YEAR_HIDDEN) {
+                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "MM-dd",
+                        "dd'th' " +
+                                "MMM");
+            } else {
+                convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "yyyy-MM-dd",
+                        "dd'th' " +
+                                "MMM, yyyy");
+            }
         }
         if (!isOwnProfile) {
             if (MoreObjects.firstNonNull(event.getIsYearHidden(), 0) == IntegerConstants

@@ -40,8 +40,8 @@
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/button_request"
-                android:layout_width="90dp"
-                android:layout_height="50dp"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
                 android:text="Request"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_size_12sp"
