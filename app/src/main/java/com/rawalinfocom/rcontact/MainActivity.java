@@ -1886,7 +1886,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 return getString(R.string.call_log_voice_mail);
 
         }
-        return getString(R.string.type_other);
+//        return getString(R.string.type_other);
+        return getString(R.string.call_log_missed);
     }
 
     private String getRawContactIdFromNumber(String phoneNumber) {
