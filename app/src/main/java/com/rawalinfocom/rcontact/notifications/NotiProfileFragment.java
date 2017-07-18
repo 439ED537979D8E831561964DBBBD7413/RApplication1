@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.NotiProfileAdapter;
@@ -213,7 +214,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
             new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     requestObject, null, WsResponseObject.class, WsConstants
                     .REQ_GET_PROFILE_PRIVACY_REQUEST, getResources().getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_PRIVACY_REQUEST);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_PRIVACY_REQUEST);
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
         }
@@ -483,7 +484,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_PRIVACY_REQUEST)) {
                 String msg = wsResponseObject.getMessage();
                 PrivacyRequestDataItem item = wsResponseObject.getContactRequestData();
-                if (item.getCarAccessPermissionStatus() == 1 || item.getCarAccessPermissionStatus() == 2) {
+                if (MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0) == 1 || MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0) == 2) {
                     boolean deleted = tableRCContactRequest.removeRequest(item.getCarId());
                     if (deleted) {
                         refreshAllList();

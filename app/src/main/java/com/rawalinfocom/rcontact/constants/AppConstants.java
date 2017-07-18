@@ -231,6 +231,7 @@ public class AppConstants {
     public static String PREF_PROFILE_VIEWS = "pref_profile_views";
 
     public static String PREF_CALL_LOG_SYNC_TIME = "pref_call_log_sync_time";
+    public static String PREF_CALL_LOG_ROW_ID = "pref_call_log_row_id";
     public static String PREF_SMS_SYNC_TIME = "pref_sms_sync_time";
 
     public static String PREF_CALL_LOG_SIZE = "pref_call_log_size";
