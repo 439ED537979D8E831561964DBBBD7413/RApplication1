@@ -702,6 +702,10 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     private void fetchCallLogs() {
 
+        callLogTypeArrayList.clear();
+        simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(), callLogTypeArrayList);
+        recyclerCallLogs.setAdapter(simpleCallLogListAdapter);
+
         try {
 
             String order = CallLog.Calls.DATE + " DESC";
