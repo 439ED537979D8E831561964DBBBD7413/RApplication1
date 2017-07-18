@@ -736,6 +736,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     Spinner emailType = (Spinner) linearPhone.findViewById(R.id.spinner_type);
                     TextView textIsPublic = (TextView) linearPhone.findViewById(R.id
                             .text_is_public);
+                    TextView textIsVerified = (TextView) linearPhone.findViewById(R.id
+                            .text_is_verified);
                     RelativeLayout relativeRowEditProfile = (RelativeLayout) linearPhone
                             .findViewById(R.id.relative_row_edit_profile);
                     phoneNumber.setPhoneNumber(emailId.getText().toString());
@@ -746,6 +748,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 .toString()));
                     } else {
                         phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    }
+                    if (StringUtils.length(textIsVerified.getText().toString()) > 0) {
+                        phoneNumber.setPbRcpType(Integer.parseInt(textIsVerified.getText()
+                                .toString()));
                     }
 
 //                    if (StringUtils.length(phoneNumber.getPhoneNumber()) > 0) {
@@ -787,6 +793,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     Spinner emailType = (Spinner) linearEmail.findViewById(R.id.spinner_type);
                     TextView textIsPublic = (TextView) linearEmail.findViewById(R.id
                             .text_is_public);
+                    TextView textIsVerified = (TextView) linearEmail.findViewById(R.id
+                            .text_is_verified);
                     RelativeLayout relativeRowEditProfile = (RelativeLayout) linearEmail
                             .findViewById(R.id.relative_row_edit_profile);
                     email.setEmEmailId(StringUtils.trim(emailId.getText().toString()));
@@ -796,6 +804,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         email.setEmPublic(Integer.parseInt(textIsPublic.getText().toString()));
                     } else {
                         email.setEmPublic(IntegerConstants.PRIVACY_MY_CONTACT);
+                    }
+                    if (StringUtils.length(textIsVerified.getText().toString()) > 0) {
+                        email.setEmRcpType(Integer.parseInt(textIsVerified.getText().toString()));
                     }
 
 //                    if (StringUtils.length(email.getEmEmailId()) > 0) {
@@ -2030,6 +2041,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             phoneNumber.setPhoneId(arrayListMobileNumber.get(i).getMnmRecordIndexId());
             phoneNumber.setPhonePublic(Integer.parseInt(arrayListMobileNumber.get(i)
                     .getMnmNumberPrivacy()));
+            phoneNumber.setPbRcpType(Integer.parseInt(arrayListMobileNumber.get(i)
+                    .getMnmIsPrimary()));
             arrayListPhoneNumberObject.add(phoneNumber);
         }
         if (arrayListPhoneNumberObject.size() > 0) {
@@ -2060,6 +2073,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             email.setEmType(arrayListEmail.get(i).getEmEmailType());
             email.setEmId(arrayListEmail.get(i).getEmRecordIndexId());
             email.setEmPublic(Integer.parseInt(arrayListEmail.get(i).getEmEmailPrivacy()));
+            email.setEmRcpType(Integer.parseInt(arrayListEmail.get(i).getEmIsVerified()));
             arrayListEmailObject.add(email);
         }
         if (arrayListEmailObject.size() > 0) {
@@ -2351,6 +2365,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         final CheckBox checkboxHideYear = (CheckBox) view.findViewById(R.id.checkbox_hide_year);
         TextView textLabelCheckbox = (TextView) view.findViewById(R.id.text_label_checkbox);
         TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+        TextView textIsVerified = (TextView) view.findViewById(R.id.text_is_verified);
         ImageView imageViewCalender = (ImageView) view.findViewById(R.id.image_calender);
         imageViewCalender.setVisibility(View.GONE);
         final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
@@ -2394,6 +2409,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         inputValue.setText(phoneNumber.getPhoneNumber());
                     }
                     textIsPublic.setText(String.valueOf(phoneNumber.getPhonePublic()));
+                    textIsVerified.setText(String.valueOf(phoneNumber.getPbRcpType()));
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(phoneNumber.getPhoneType()))) {
                         spinnerPosition = spinnerPhoneAdapter.getPosition(phoneNumber
@@ -2425,6 +2441,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     ProfileDataOperationEmail email = (ProfileDataOperationEmail) detailObject;
                     inputValue.setText(email.getEmEmailId());
                     textIsPublic.setText(String.valueOf(email.getEmPublic()));
+                    textIsVerified.setText(String.valueOf(email.getEmRcpType()));
                     int spinnerPosition;
                     if (typeList.contains(StringUtils.defaultString(email.getEmType()))) {
                         spinnerPosition = spinnerEmailAdapter.getPosition(email.getEmType());
@@ -3284,7 +3301,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i).getPhoneNumber());
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
                         .get(i).getPhonePublic()));
-                mobileNumber.setMnmIsPrimary(arrayListPhoneNumber.get(i).getPbRcpType());
+                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
+                        .getPbRcpType()));
                 mobileNumber.setRcProfileMasterPmId(getUserPmId());
                 arrayListMobileNumber.add(mobileNumber);
             }

@@ -1,17 +1,13 @@
 package com.rawalinfocom.rcontact;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.RippleView;
@@ -22,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PublicProfileOfGlobalContactActivity extends BaseActivity implements RippleView
+public class WebBrowserActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener {
 
     @BindView(R.id.image_action_back)
@@ -59,11 +55,16 @@ public class PublicProfileOfGlobalContactActivity extends BaseActivity implement
     private void initView() {
         rippleActionBack.setOnRippleCompleteListener(this);
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
-        textToolbarTitle.setText(getResources().getString(R.string.public_profile_toolbar_title));
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra(AppConstants.EXTRA_GLOBAL_PUBLIC_PROFILE_URL)) {
-                publicProfileUrl = intent.getStringExtra(AppConstants.EXTRA_GLOBAL_PUBLIC_PROFILE_URL);
+                textToolbarTitle.setText(getResources().getString(R.string
+                        .public_profile_toolbar_title));
+                publicProfileUrl = intent.getStringExtra(AppConstants
+                        .EXTRA_GLOBAL_PUBLIC_PROFILE_URL);
+            } else if (intent.hasExtra(AppConstants.EXTRA_FEEDBACK_URL)) {
+                textToolbarTitle.setText(getResources().getString(R.string.feedback_title));
+                publicProfileUrl = intent.getStringExtra(AppConstants.EXTRA_FEEDBACK_URL);
             }
         }
 
@@ -74,8 +75,9 @@ public class PublicProfileOfGlobalContactActivity extends BaseActivity implement
     private void populateWebView() {
         webviewPublicProfile.getSettings().setJavaScriptEnabled(true); // enable javascript
         webviewPublicProfile.setWebViewClient(new WebViewClient() {
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                Utils.showErrorSnackBar(PublicProfileOfGlobalContactActivity.this, relativeRootPublicProfile,
+            public void onReceivedError(WebView view, int errorCode, String description, String
+                    failingUrl) {
+                Utils.showErrorSnackBar(WebBrowserActivity.this, relativeRootPublicProfile,
                         description);
             }
 
@@ -93,7 +95,7 @@ public class PublicProfileOfGlobalContactActivity extends BaseActivity implement
             public void onLoadResource(WebView view, String url) {
                 super.onLoadResource(view, url);
                 if (progressDialog == null) {
-                    progressDialog = new ProgressDialog(PublicProfileOfGlobalContactActivity.this);
+                    progressDialog = new ProgressDialog(WebBrowserActivity.this);
                     progressDialog.setMessage("Loading...");
                     progressDialog.show();
                 }

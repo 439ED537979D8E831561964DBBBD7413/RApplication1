@@ -557,7 +557,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                         if (!StringUtils.isEmpty(publicUrl)) {
                                             previousId = globalSearchType.getRcpPmId();
                                             Intent intent = new Intent(SearchActivity.this,
-                                                    PublicProfileOfGlobalContactActivity.class);
+                                                    WebBrowserActivity.class);
                                             intent.putExtra(AppConstants
                                                     .EXTRA_GLOBAL_PUBLIC_PROFILE_URL, publicUrl);
                                             startActivity(intent);
