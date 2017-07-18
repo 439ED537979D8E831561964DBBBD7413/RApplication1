@@ -3203,7 +3203,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private void setHistoryAdapter() {
-//        if (callHistoryListAdapter == null) {
         if (arrayListHistory != null && arrayListHistory.size() > 0) {
             textNoHistoryToShow.setVisibility(View.GONE);
             rippleViewOldRecords.setVisibility(View.VISIBLE);
@@ -3212,16 +3211,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     arrayListHistory);
             recyclerCallHistory.setAdapter(callHistoryListAdapter);
             recyclerCallHistory.setFocusable(false);
-//            setRecyclerViewLayoutManager(recyclerCallHistory);
         } else {
             recyclerCallHistory.setVisibility(View.GONE);
             rippleViewOldRecords.setVisibility(View.GONE);
             textNoHistoryToShow.setVisibility(View.VISIBLE);
             textNoHistoryToShow.setText(getResources().getString(R.string.text_no_history));
         }
-//        } else {
-//            callHistoryListAdapter.notifyDataSetChanged();
-//        }
 
 
     }
