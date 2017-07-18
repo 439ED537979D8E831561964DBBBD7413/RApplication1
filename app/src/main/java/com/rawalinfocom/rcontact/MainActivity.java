@@ -219,8 +219,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         if (contacts) {
             if (Utils.isNetworkAvailable(this)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
-                    && (Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false) || !logs)
-                    && (Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false) || !smsLogs)) {
+                    && (Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
+                    false) || !logs)
+                    && (Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false) ||
+                    !smsLogs)) {
                 reSyncContactAsyncTask = new ReSyncContactAsyncTask();
                 reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
@@ -341,8 +343,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         (callLogInsertionResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME, callLogInsertionResponse.getCallDateAndTime());
-                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID, callLogInsertionResponse.getCallLogRowId());
+                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME,
+                            callLogInsertionResponse.getCallDateAndTime());
+                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID,
+                            callLogInsertionResponse.getCallLogRowId());
 
 //                    if (Utils.getBooleanPreference(this, AppConstants
 //                            .PREF_CALL_LOG_SYNCED, false)) {
@@ -362,7 +366,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
                     } else {
 //                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
-//                            Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME, callLogInsertionResponse.getSmsLogTimestamp());
+//                            Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME,
+// callLogInsertionResponse.getSmsLogTimestamp());
 
                         Utils.setBooleanPreference(this, AppConstants
                                 .PREF_CALL_LOG_SYNCED, true);
@@ -583,7 +588,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         email.setEmEmailType(arrayListEmailId.get(j).getEmType());
                         email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j)
                                 .getEmPublic()));
-                        email.setEmIsVerified(arrayListEmailId.get(j).getEmRcpType());
+                        email.setEmIsVerified(String.valueOf(arrayListEmailId.get(j).getEmRcpType
+                                ()));
                         email.setEmIsPrivate(arrayListEmailId.get(j).getEmIsPrivate());
 
                         email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -894,10 +900,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         text_user_name.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
         text_number.setText(number);
-        text_rating_count.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, ""));
-        rating_user.setRating(Float.parseFloat(Utils.getStringPreference(this, AppConstants.PREF_USER_RATING, "")));
+        text_rating_count.setText(Utils.getStringPreference(this, AppConstants
+                .PREF_USER_TOTAL_RATING, ""));
+        rating_user.setRating(Float.parseFloat(Utils.getStringPreference(this, AppConstants
+                .PREF_USER_RATING, "")));
 
-        final String thumbnailUrl = Utils.getStringPreference(this, AppConstants.PREF_USER_PHOTO, "");
+        final String thumbnailUrl = Utils.getStringPreference(this, AppConstants.PREF_USER_PHOTO,
+                "");
         if (!TextUtils.isEmpty(thumbnailUrl)) {
             Glide.with(MainActivity.this)
                     .load(thumbnailUrl)
@@ -919,7 +928,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 Bundle bundle = new Bundle();
                 bundle.putString(AppConstants.EXTRA_PM_ID, getUserPmId());
                 bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "");
-                bundle.putString(AppConstants.EXTRA_CONTACT_NAME, Utils.getStringPreference(MainActivity.this, AppConstants.PREF_USER_NAME, ""));
+                bundle.putString(AppConstants.EXTRA_CONTACT_NAME, Utils.getStringPreference
+                        (MainActivity.this, AppConstants.PREF_USER_NAME, ""));
                 bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
                 bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, 1);
                 startActivityIntent(MainActivity.this, ProfileDetailActivity.class, bundle);
@@ -944,32 +954,45 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         TextView nav_txt_rate = (TextView) navigationView.findViewById(R.id.nav_txt_rate);
         TextView nav_txt_about = (TextView) navigationView.findViewById(R.id.nav_txt_about);
         TextView nav_txt_export = (TextView) navigationView.findViewById(R.id.nav_txt_export);
+        TextView nav_txt_feedback = (TextView) navigationView.findViewById(R.id.nav_txt_feedback);
 
-        LinearLayout nav_ll_account = (LinearLayout) navigationView.findViewById(R.id.nav_ll_account);
-        LinearLayout nav_ll_timeline = (LinearLayout) navigationView.findViewById(R.id.nav_ll_timeline);
+        LinearLayout nav_ll_account = (LinearLayout) navigationView.findViewById(R.id
+                .nav_ll_account);
+        LinearLayout nav_ll_timeline = (LinearLayout) navigationView.findViewById(R.id
+                .nav_ll_timeline);
         LinearLayout nav_ll_events = (LinearLayout) navigationView.findViewById(R.id.nav_ll_events);
-        LinearLayout nav_ll_rating = (LinearLayout) navigationView.findViewById(R.id.nav_ll_rating_history);
+        LinearLayout nav_ll_rating = (LinearLayout) navigationView.findViewById(R.id
+                .nav_ll_rating_history);
         LinearLayout nav_ll_invite = (LinearLayout) navigationView.findViewById(R.id.nav_ll_invite);
         LinearLayout nav_ll_share = (LinearLayout) navigationView.findViewById(R.id.nav_ll_share);
-        LinearLayout nav_ll_settings = (LinearLayout) navigationView.findViewById(R.id.nav_ll_settings);
+        LinearLayout nav_ll_settings = (LinearLayout) navigationView.findViewById(R.id
+                .nav_ll_settings);
         LinearLayout nav_ll_rate = (LinearLayout) navigationView.findViewById(R.id.nav_ll_rate_us);
         LinearLayout nav_ll_about = (LinearLayout) navigationView.findViewById(R.id.nav_ll_about);
         LinearLayout nav_ll_export = (LinearLayout) navigationView.findViewById(R.id.nav_ll_export);
+        LinearLayout nav_ll_feedback = (LinearLayout) navigationView.findViewById(R.id
+                .nav_ll_feedback);
+
+        nav_ll_invite.setEnabled(false);
+        nav_ll_share.setEnabled(false);
 
         nav_ll_account.setOnClickListener(this);
         nav_ll_timeline.setOnClickListener(this);
         nav_ll_events.setOnClickListener(this);
         nav_ll_rating.setOnClickListener(this);
-        nav_ll_invite.setOnClickListener(this);
-        nav_ll_share.setOnClickListener(this);
+//        nav_ll_invite.setOnClickListener(this);
+//        nav_ll_share.setOnClickListener(this);
         nav_ll_settings.setOnClickListener(this);
         nav_ll_rate.setOnClickListener(this);
         nav_ll_about.setOnClickListener(this);
         nav_ll_export.setOnClickListener(this);
+        nav_ll_feedback.setOnClickListener(this);
 
-        if (BuildConfig.DEBUG) {
-            nav_txt_export.setVisibility(View.VISIBLE);
-        }
+        nav_txt_export.setVisibility(View.GONE);
+
+//        if (BuildConfig.DEBUG) {
+//            nav_txt_export.setVisibility(View.VISIBLE);
+//        }
 
         nav_txt_account.setTypeface(Utils.typefaceIcons(this));
         nav_txt_account.setText(R.string.im_icon_user);
@@ -991,6 +1014,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         nav_txt_about.setText(R.string.im_icon_about_help);
         nav_txt_export.setTypeface(Utils.typefaceIcons(this));
         nav_txt_export.setText(R.string.im_icon_about_help);
+        nav_txt_feedback.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_feedback.setText(R.string.im_icon_about_help);
     }
 
     @Override
@@ -1025,6 +1050,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             case R.id.nav_ll_rate_us:
                 break;
             case R.id.nav_ll_about:
+                break;
+            case R.id.nav_ll_feedback:
+                Intent intent = new Intent(MainActivity.this, WebBrowserActivity.class);
+                intent.putExtra(AppConstants.EXTRA_FEEDBACK_URL, "http://feedback.rcontacts.in");
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
             case R.id.nav_ll_export:
 
@@ -1290,8 +1321,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         try {
             String order = CallLog.Calls.DATE + " ASC";
-            String prefDate = Utils.getStringPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNC_TIME, "");
-            String prefRowId = Utils.getStringPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_ROW_ID, "");
+            String prefDate = Utils.getStringPreference(MainActivity.this, AppConstants
+                    .PREF_CALL_LOG_SYNC_TIME, "");
+            String prefRowId = Utils.getStringPreference(MainActivity.this, AppConstants
+                    .PREF_CALL_LOG_ROW_ID, "");
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date startDate = sdf.parse(prefDate);
             long dateToConvert = startDate.getTime();
@@ -1320,12 +1353,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                     long callLogDate1 = cursor.getLong(date);
                     Date date1 = new Date(callLogDate1);
-                    String dateToCompare1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format(date1);
+                    String dateToCompare1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale
+                            .getDefault()).format(date1);
 
                     Date date2 = new Date(dateToConvert);
-                    String dateTodelete = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format(date2);
+                    String dateTodelete = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale
+                            .getDefault()).format(date2);
 
-                    if (!(dateToCompare1.equalsIgnoreCase(dateTodelete)) && !(prefRowId.equalsIgnoreCase(cursor.getString(rowId)))) {
+                    if (!(dateToCompare1.equalsIgnoreCase(dateTodelete)) && !(prefRowId
+                            .equalsIgnoreCase(cursor.getString(rowId)))) {
 
                         CallLogType log = new CallLogType(this);
                         log.setNumber(cursor.getString(number));
@@ -1643,7 +1679,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             if (Utils.isNetworkAvailable(this)) {
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         deviceDetailObject, null, WsResponseObject.class, WsConstants
-                        .REQ_UPLOAD_CALL_LOGS, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        .REQ_UPLOAD_CALL_LOGS, null, true).executeOnExecutor(AsyncTask
+                                .THREAD_POOL_EXECUTOR,
                         WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
             }
         }
@@ -2064,7 +2101,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         @Override
         protected Void doInBackground(Void... params) {
             reSyncPhoneBookContactList();
-            if (!Utils.getStringPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0"))
+            if (!Utils.getStringPreference(MainActivity.this, AppConstants
+                    .PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0"))
                 getLatestCallLogsByRawId();
             return null;
         }
@@ -2282,7 +2320,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             if (Utils.isNetworkAvailable(this)) {
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                         deviceDetailObject, null, WsResponseObject.class, WsConstants
-                        .REQ_UPLOAD_SMS_LOGS, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        .REQ_UPLOAD_SMS_LOGS, null, true).executeOnExecutor(AsyncTask
+                                .THREAD_POOL_EXECUTOR,
                         WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_SMS_LOGS);
             }
         }
@@ -2361,7 +2400,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     && !Utils.getBooleanPreference(MainActivity.this,
                                     AppConstants.PREF_CALL_LOG_SYNCED, false)) {
                                 syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                                syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                syncCallLogAsyncTask.executeOnExecutor(AsyncTask
+                                        .THREAD_POOL_EXECUTOR);
                             }
 
                             if (Utils.isNetworkAvailable(MainActivity.this)
@@ -2372,7 +2412,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     && !Utils.getBooleanPreference(MainActivity.this,
                                     AppConstants.PREF_SMS_SYNCED, false)) {
                                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                                syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                syncSmsLogAsyncTask.executeOnExecutor(AsyncTask
+                                        .THREAD_POOL_EXECUTOR);
                             }
                             if (Utils.isNetworkAvailable(MainActivity.this)
                                     && Utils.getBooleanPreference(MainActivity.this, AppConstants
@@ -2383,7 +2424,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     .PREF_SMS_SYNCED, false)) {
 //                                Log.i("MAULIK", " looking for updated contacts");
                                 reSyncContactAsyncTask = new ReSyncContactAsyncTask();
-                                reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                reSyncContactAsyncTask.executeOnExecutor(AsyncTask
+                                        .THREAD_POOL_EXECUTOR);
                             }
                         }
                     }
@@ -2414,7 +2456,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
                             AppConstants.isFromReceiver = false;
 
-                            if (!Utils.getStringPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0"))
+                            if (!Utils.getStringPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0"))
                                 getLatestCallLogsByRawId();
 
 //                            CallLogFragment.isIdsFetchedFirstTime = false;
@@ -2534,7 +2577,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         cursor.close();
 
         Set<String> arrayListOldContactIds = new HashSet<>();
-        arrayListOldContactIds.addAll(Utils.getArrayListPreference(this, AppConstants.PREF_CONTACT_ID_SET));
+        arrayListOldContactIds.addAll(Utils.getArrayListPreference(this, AppConstants
+                .PREF_CONTACT_ID_SET));
 //        Log.i("MAULIK", " getAllContactRawId");
 
         Cursor contactNameCursor = phoneBookContacts.getAllContactRawId();
@@ -2744,7 +2788,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
 
                             emailId.setEmEmailId(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)));
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Email
+                                            .ADDRESS)));
                             emailId.setEmType(phoneBookContacts.getEmailType(cursor,
                                     cursor.getInt
                                             (cursor.getColumnIndex(ContactsContract
@@ -2801,22 +2846,28 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     (cursor.getColumnIndex(ContactsContract
                                             .CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS)));
                             address.setCity(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                    .getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal
                                             .CITY)));
                             address.setCountry(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                    .getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal
                                             .COUNTRY)));
                             address.setNeighborhood(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                    .getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal
                                             .NEIGHBORHOOD)));
                             address.setPostCode(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                    .getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal
                                             .POSTCODE)));
                             address.setPoBox(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                    .getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal
                                             .POBOX)));
                             address.setStreet(cursor.getString(cursor
-                                    .getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal
+                                    .getColumnIndex(ContactsContract.CommonDataKinds
+                                            .StructuredPostal
                                             .STREET)));
                             address.setAddressType(phoneBookContacts.getAddressType(cursor, cursor
                                     .getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds
@@ -2873,7 +2924,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 }
                 cursor.close();
             } catch (Exception e) {
-                Log.i("MainActivity", "Crash Occured when resyncing changed Contacts" + e.toString());
+                Log.i("MainActivity", "Crash Occured when resyncing changed Contacts" + e
+                        .toString());
             }
         }
         //</editor-fold>
@@ -2954,8 +3006,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_UPLOAD_CONTACTS + "_" + currentStamp, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
+                    .REQ_UPLOAD_CONTACTS + "_" + currentStamp, null, true).executeOnExecutor
+                    (AsyncTask.THREAD_POOL_EXECUTOR,
+                            WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
         }
     }
 }

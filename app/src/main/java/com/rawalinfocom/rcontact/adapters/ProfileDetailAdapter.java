@@ -148,12 +148,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        int pbRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(phoneNumber.getPbRcpType(),
-                String.valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
+        int pbRcpType = phoneNumber.getPbRcpType();
         final ProfileDetailViewHolder viewHodler = holder;
         if (pbRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
             holder.textMain1.setTypeface(Utils.typefaceIcons(activity));
-            holder.textMain1.setText(String.format("%s %s", number, activity.getString(R.string.im_icon_verify)));
+            holder.textMain1.setText(String.format("%s %s", number, activity.getString(R.string
+                    .im_icon_verify)));
             holder.textMain1.setTextColor(colorPineGreen);
             if (isOwnProfile)
                 holder.llPrivacy.setVisibility(View.GONE);
@@ -182,7 +182,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
 
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(phoneNumber.getIsPrivate(), 0)) == IntegerConstants
+                        .IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
@@ -245,12 +246,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             }
         });
 
-        int emRcpType = Integer.parseInt(StringUtils.defaultIfEmpty(email.getEmRcpType(), String
-                .valueOf(IntegerConstants.RCP_TYPE_SECONDARY)));
+        int emRcpType = email.getEmRcpType();
         final ProfileDetailViewHolder viewHodler = holder;
         if (emRcpType == IntegerConstants.RCP_TYPE_PRIMARY) {
             holder.textMain1.setTypeface(Utils.typefaceIcons(activity));
-            holder.textMain1.setText(String.format("%s %s", emailId, activity.getString(R.string.im_icon_verify)));
+            holder.textMain1.setText(String.format("%s %s", emailId, activity.getString(R.string
+                    .im_icon_verify)));
             holder.textMain1.setTextColor(colorPineGreen);
             if (isOwnProfile)
                 holder.llPrivacy.setVisibility(View.INVISIBLE);
@@ -278,7 +279,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(email.getEmIsPrivate(), 0)) == IntegerConstants
+                        .IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
@@ -429,7 +431,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
 //                holder.textActionType.setVisibility(View.VISIBLE);
-                if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(address.getIsPrivate(), 0)) == IntegerConstants
+                        .IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
@@ -493,11 +496,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         url = "https://twitter.com/" + imAccount.getIMAccountDetails();
                     } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
                         url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("google")) {
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                            ("google")) {
                         url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("skype")) {
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                            ("skype")) {
                         url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("whatsapp")) {
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                            ("whatsapp")) {
                         url = "https://web.whatsapp.com/" + imAccount.getIMAccountDetails();
                     }
 
@@ -538,7 +544,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                 holder.llPrivacy.setVisibility(View.VISIBLE);
             } else {
                 holder.llPrivacy.setVisibility(View.GONE);
-                if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) == IntegerConstants.IS_PRIVATE) {
+                if ((MoreObjects.firstNonNull(imAccount.getIMAccountIsPrivate(), 0)) ==
+                        IntegerConstants.IS_PRIVATE) {
 //                    holder.imageView2.setVisibility(View.GONE);
                     holder.buttonRequest.setVisibility(View.VISIBLE);
                     holder.imgActionType.setVisibility(View.GONE);
@@ -579,11 +586,14 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                         url = "https://twitter.com/" + imAccount.getIMAccountDetails();
                     } else if (imAccount.getIMAccountProtocol().equalsIgnoreCase("linkedin")) {
                         url = "https://www.linkedin.com/in/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("google")) {
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                            ("google")) {
                         url = "https://plus.google.com/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("skype")) {
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                            ("skype")) {
                         url = "https://web.skype.com/" + imAccount.getIMAccountDetails();
-                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains("whatsapp")) {
+                    } else if (StringUtils.lowerCase(imAccount.getIMAccountProtocol()).contains
+                            ("whatsapp")) {
                         url = "https://web.whatsapp.com/" + imAccount.getIMAccountDetails();
                     }
 
@@ -613,7 +623,8 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                             "MMM, yyyy");
         }
         if (!isOwnProfile) {
-            if (MoreObjects.firstNonNull(event.getIsYearHidden(), 0) == IntegerConstants.IS_YEAR_HIDDEN) {
+            if (MoreObjects.firstNonNull(event.getIsYearHidden(), 0) == IntegerConstants
+                    .IS_YEAR_HIDDEN) {
                 convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "MM-dd",
                         "dd'th' " +
                                 "MMM");

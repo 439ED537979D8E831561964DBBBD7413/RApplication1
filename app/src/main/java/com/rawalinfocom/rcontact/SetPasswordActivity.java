@@ -343,7 +343,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                         .getPhoneNumber());
                 mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
                         .get(i).getPhonePublic()));
-                mobileNumber.setMnmIsPrimary(arrayListPhoneNumber.get(i).getPbRcpType());
+                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i).getPbRcpType()));
                 mobileNumber.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListMobileNumber.add(mobileNumber);
             }

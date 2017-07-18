@@ -44,11 +44,16 @@ public class QueryManager {
         //<editor-fold desc="Profile Detail">
         // Select All Query
         String profileDetailQuery = "SELECT profile." + TableProfileMaster.COLUMN_PM_RAW_ID +
-                ",profile." + TableProfileMaster.COLUMN_PM_FIRST_NAME + ",profile." + TableProfileMaster.COLUMN_PM_LAST_NAME +
-                ",profile." + TableProfileMaster.COLUMN_PM_PROFILE_IMAGE + ",profile." + TableProfileMaster.COLUMN_PM_GENDER +
-                ",profile." + TableProfileMaster.COLUMN_PM_GENDER_PRIVACY + ",profile." + TableProfileMaster.COLUMN_PM_IS_FAVOURITE +
-                ",profile." + TableProfileMaster.COLUMN_PM_PROFILE_RATING + ", profile." + TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER +
-                " from " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " profile WHERE profile." + TableProfileMaster
+                ",profile." + TableProfileMaster.COLUMN_PM_FIRST_NAME + ",profile." +
+                TableProfileMaster.COLUMN_PM_LAST_NAME +
+                ",profile." + TableProfileMaster.COLUMN_PM_PROFILE_IMAGE + ",profile." +
+                TableProfileMaster.COLUMN_PM_GENDER +
+                ",profile." + TableProfileMaster.COLUMN_PM_GENDER_PRIVACY + ",profile." +
+                TableProfileMaster.COLUMN_PM_IS_FAVOURITE +
+                ",profile." + TableProfileMaster.COLUMN_PM_PROFILE_RATING + ", profile." +
+                TableProfileMaster.COLUMN_PM_PROFILE_RATE_USER +
+                " from " + TableProfileMaster.TABLE_RC_PROFILE_MASTER + " profile WHERE profile."
+                + TableProfileMaster
                 .COLUMN_PM_RCP_ID + " IN (" + rcpId + ")";
 
         Cursor cursor = db.rawQuery(profileDetailQuery, null);
@@ -117,9 +122,9 @@ public class QueryManager {
                 phoneNumber.setPhoneType(StringUtils.defaultString(mobileNumberCursor.getString
                         (mobileNumberCursor.getColumnIndex(TableMobileMaster
                                 .COLUMN_MNM_NUMBER_TYPE))));
-                phoneNumber.setPbRcpType(StringUtils.defaultString(mobileNumberCursor.getString
+                phoneNumber.setPbRcpType(Integer.parseInt(mobileNumberCursor.getString
                         (mobileNumberCursor.getColumnIndex(TableMobileMaster
-                                .COLUMN_MNM_IS_PRIMARY)), "1"));
+                                .COLUMN_MNM_IS_PRIMARY))));
                 phoneNumber.setPhonePublic(Integer.parseInt(StringUtils.defaultString
                         (mobileNumberCursor.getString(mobileNumberCursor.getColumnIndex
                                 (TableMobileMaster.COLUMN_MNM_NUMBER_PRIVACY)), "0")));
@@ -165,10 +170,9 @@ public class QueryManager {
                                 .COLUMN_EM_IS_PRIVATE)), "0")));
                 email.setEmId(StringUtils.defaultString(emailIdCursor.getString(emailIdCursor
                         .getColumnIndex(TableEmailMaster.COLUMN_EM_RECORD_INDEX_ID))));
-                email.setEmRcpType(StringUtils.defaultString(emailIdCursor.getString
-                                (emailIdCursor.getColumnIndex(TableEmailMaster
-                                        .COLUMN_EM_IS_VERIFIED)),
-                        String.valueOf(IntegerConstants.RCP_TYPE_PRIMARY)));
+                email.setEmRcpType(Integer.parseInt(emailIdCursor.getString
+                        (emailIdCursor.getColumnIndex(TableEmailMaster
+                                .COLUMN_EM_IS_VERIFIED))));
                 arrayListEmail.add(email);
             } while (emailIdCursor.moveToNext());
             emailIdCursor.close();
