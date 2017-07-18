@@ -142,6 +142,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private TableProfileMaster tableProfileMaster;
     private TableProfileMobileMapping tableProfileMobileMapping;
     private GetRCPNameAndProfileImage nameAndProfileImage;
+    boolean isFromDeleteBroadcast = false;
 
 
     public CallLogFragment() {
@@ -270,6 +271,10 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         }
         AppConstants.isFromReceiver = false;
 
+        if (nameAndProfileImage != null) {
+            nameAndProfileImage.cancel(true);
+        }
+
         LocalBroadcastManager localBroadcastManagerTabChange = LocalBroadcastManager.getInstance
                 (getActivity());
         localBroadcastManagerTabChange.unregisterReceiver(localBroadcastReceiverTabChange);
@@ -336,11 +341,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         unregisterLocalBroadcast();
 //        AppConstants.setIsFirstTime(true);
         simpleCallLogListAdapter = null;
-
-        if (nameAndProfileImage != null) {
-            nameAndProfileImage.cancel(true);
-            getDatabaseHandler().close();
-        }
     }
 
     private void registerLocalBroadcast() {
@@ -757,14 +757,35 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             e.printStackTrace();
         }
 
-        getActivity().runOnUiThread(new Runnable() {
+        /*getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 makeSimpleData();
-//                nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                if(isFromDeleteBroadcast){
+                    isFromDeleteBroadcast =  false;
+                    new GetRCPNameAndProfileImage().execute();
+                }else{
+                    nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+
+            }
+        });*/
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                makeSimpleData();
+                /*if(isFromDeleteBroadcast){
+                    isFromDeleteBroadcast =  false;
+                    nameAndProfileImage = new GetRCPNameAndProfileImage();
+                    nameAndProfileImage.execute();
+                }else{
+                    nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }*/
+                nameAndProfileImage = new GetRCPNameAndProfileImage();
                 nameAndProfileImage.execute();
             }
-        });
+        },300);
 
     }
 
@@ -814,9 +835,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     private class GetRCPNameAndProfileImage extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... urls) {
+            getContactName();
             setRCPUserName();
             getPhoto();
-            getContactName();
             return null;
         }
 
@@ -834,85 +855,106 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     }
 
     private void getPhoto() {
+        try{
+            if (callLogTypeArrayList.size() > 0) {
+                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                    if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
+                        return;
+                    CallLogType callLogType = callLogTypeArrayList.get(i);
+                    String number = callLogType.getNumber();
+                    if (!StringUtils.isEmpty(number)) {
 
-        if (callLogTypeArrayList.size() > 0) {
-            for (int i = 0; i < callLogTypeArrayList.size(); i++) {
-                CallLogType callLogType = callLogTypeArrayList.get(i);
-                String number = callLogType.getNumber();
-                if (!StringUtils.isEmpty(number)) {
+                        String photoThumbNail = getPhotoUrlFromNumber(number);
+                        if (!TextUtils.isEmpty(photoThumbNail)) {
+                            callLogType.setProfileImage(photoThumbNail);
+                        } else {
+                            callLogType.setProfileImage("");
+                        }
 
-                    String photoThumbNail = getPhotoUrlFromNumber(number);
-                    if (!TextUtils.isEmpty(photoThumbNail)) {
-                        callLogType.setProfileImage(photoThumbNail);
-                    } else {
-                        callLogType.setProfileImage("");
+                        callLogTypeArrayList.set(i, callLogType);
                     }
-
-                    callLogTypeArrayList.set(i, callLogType);
                 }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
     private void getContactName() {
-        if (callLogTypeArrayList.size() > 0) {
-            for (int i = 0; i < callLogTypeArrayList.size(); i++) {
-                CallLogType callLogType = callLogTypeArrayList.get(i);
-                String number = callLogType.getNumber();
-                String name = callLogType.getName();
-                if (StringUtils.isEmpty(name)) {
-                    name = getNameFromNumber(number);
-                    if (!StringUtils.isEmpty(name))
-                        callLogType.setName(name);
-                    else
-                        callLogType.setName("");
+        try{
+            if (callLogTypeArrayList.size() > 0) {
+                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                    if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
+                        return;
+                    CallLogType callLogType = callLogTypeArrayList.get(i);
+                    String number = callLogType.getNumber();
+                    String name = callLogType.getName();
+                    if (StringUtils.isEmpty(name)) {
+                        name = getNameFromNumber(number);
+                        if (!StringUtils.isEmpty(name))
+                            callLogType.setName(name);
+                        else
+                            callLogType.setName("");
+                    }
+                    callLogTypeArrayList.set(i, callLogType);
                 }
-                callLogTypeArrayList.set(i, callLogType);
             }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
     private void setRCPUserName() {
 
-        if (callLogTypeArrayList.size() > 0) {
-            for (int i = 0; i < callLogTypeArrayList.size(); i++) {
-                CallLogType callLogType = callLogTypeArrayList.get(i);
+        try{
+            if (callLogTypeArrayList.size() > 0) {
+                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                    if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
+                        return;
+                    CallLogType callLogType = callLogTypeArrayList.get(i);
 
-                String number = callLogType.getNumber();
+                    String number = callLogType.getNumber();
 
-                if (!number.startsWith("+91")) {
-                    number = "+91" + number;
-                }
+                    if (!number.startsWith("+91")) {
+                        number = "+91" + number;
+                    }
 
-                if (!StringUtils.isEmpty(number)) {
+                    if (!StringUtils.isEmpty(number)) {
 
-                    ProfileMobileMapping profileMobileMapping =
-                            tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(number);
-                    if (profileMobileMapping != null) {
-                        String cloudPmId = profileMobileMapping.getMpmCloudPmId();
-                        if (!StringUtils.isEmpty(cloudPmId)) {
-                            UserProfile userProfile = tableProfileMaster
-                                    .getRCPProfileFromPmId(Integer.parseInt(cloudPmId));
-                            callLogType.setRcpUser(true);
-                            String firstName = userProfile.getPmFirstName();
-                            String lastName = userProfile.getPmLastName();
-                            String rcpId = userProfile.getPmRcpId();
-                            String imagePath = userProfile.getPmProfileImage();
-                            if (!StringUtils.isEmpty(firstName))
-                                callLogType.setRcpFirstName(firstName);
-                            if (!StringUtils.isEmpty(lastName))
-                                callLogType.setRcpLastName(lastName);
-                            if (!StringUtils.isEmpty(rcpId))
-                                callLogType.setRcpId(rcpId);
-                            if (!StringUtils.isEmpty(imagePath))
-                                callLogType.setProfileImage(imagePath);
+                        ProfileMobileMapping profileMobileMapping =
+                                tableProfileMobileMapping.getCloudPmIdFromProfileMappingFromNumber(number);
+                        if (profileMobileMapping != null) {
+                            String cloudPmId = profileMobileMapping.getMpmCloudPmId();
+                            if (!StringUtils.isEmpty(cloudPmId)) {
+                                UserProfile userProfile = tableProfileMaster
+                                        .getRCPProfileFromPmId(Integer.parseInt(cloudPmId));
+                                callLogType.setRcpUser(true);
+                                String firstName = userProfile.getPmFirstName();
+                                String lastName = userProfile.getPmLastName();
+                                String rcpId = userProfile.getPmRcpId();
+                                String imagePath = userProfile.getPmProfileImage();
+                                if (!StringUtils.isEmpty(firstName))
+                                    callLogType.setRcpFirstName(firstName);
+                                if (!StringUtils.isEmpty(lastName))
+                                    callLogType.setRcpLastName(lastName);
+                                if (!StringUtils.isEmpty(rcpId))
+                                    callLogType.setRcpId(rcpId);
+                                if (!StringUtils.isEmpty(imagePath))
+                                    callLogType.setProfileImage(imagePath);
 
-                            callLogTypeArrayList.set(i, callLogType);
+                                callLogTypeArrayList.set(i, callLogType);
+                            }
                         }
                     }
                 }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
     private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
@@ -1561,6 +1603,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 localBroadcastManagerDeleteLogs.unregisterReceiver
                         (localBroadcastReceiverDeleteLogs);
                 callLogTypeArrayList = new ArrayList<>();
+                isFromDeleteBroadcast =  true;
                 fetchCallLogs();
             }
         }
