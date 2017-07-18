@@ -785,7 +785,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 nameAndProfileImage = new GetRCPNameAndProfileImage();
                 nameAndProfileImage.execute();
             }
-        },300);
+        }, 300);
 
     }
 
@@ -855,7 +855,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     }
 
     private void getPhoto() {
-        try{
+        try {
             if (callLogTypeArrayList.size() > 0) {
                 for (int i = 0; i < callLogTypeArrayList.size(); i++) {
                     if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
@@ -875,14 +875,14 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
     private void getContactName() {
-        try{
+        try {
             if (callLogTypeArrayList.size() > 0) {
                 for (int i = 0; i < callLogTypeArrayList.size(); i++) {
                     if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
@@ -901,7 +901,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 }
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -909,7 +909,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     private void setRCPUserName() {
 
-        try{
+        try {
             if (callLogTypeArrayList.size() > 0) {
                 for (int i = 0; i < callLogTypeArrayList.size(); i++) {
                     if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
@@ -951,7 +951,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -1603,7 +1603,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 localBroadcastManagerDeleteLogs.unregisterReceiver
                         (localBroadcastReceiverDeleteLogs);
                 callLogTypeArrayList = new ArrayList<>();
-                isFromDeleteBroadcast =  true;
+                isFromDeleteBroadcast = true;
                 fetchCallLogs();
             }
         }
