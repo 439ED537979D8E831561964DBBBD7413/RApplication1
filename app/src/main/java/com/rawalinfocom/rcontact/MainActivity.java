@@ -956,20 +956,25 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         LinearLayout nav_ll_about = (LinearLayout) navigationView.findViewById(R.id.nav_ll_about);
         LinearLayout nav_ll_export = (LinearLayout) navigationView.findViewById(R.id.nav_ll_export);
 
+        nav_ll_invite.setEnabled(false);
+        nav_ll_share.setEnabled(false);
+
         nav_ll_account.setOnClickListener(this);
         nav_ll_timeline.setOnClickListener(this);
         nav_ll_events.setOnClickListener(this);
         nav_ll_rating.setOnClickListener(this);
-        nav_ll_invite.setOnClickListener(this);
-        nav_ll_share.setOnClickListener(this);
+//        nav_ll_invite.setOnClickListener(this);
+//        nav_ll_share.setOnClickListener(this);
         nav_ll_settings.setOnClickListener(this);
         nav_ll_rate.setOnClickListener(this);
         nav_ll_about.setOnClickListener(this);
         nav_ll_export.setOnClickListener(this);
 
-        if (BuildConfig.DEBUG) {
-            nav_txt_export.setVisibility(View.VISIBLE);
-        }
+        nav_txt_export.setVisibility(View.GONE);
+
+//        if (BuildConfig.DEBUG) {
+//            nav_txt_export.setVisibility(View.VISIBLE);
+//        }
 
         nav_txt_account.setTypeface(Utils.typefaceIcons(this));
         nav_txt_account.setText(R.string.im_icon_user);

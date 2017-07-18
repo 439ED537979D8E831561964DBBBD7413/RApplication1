@@ -20,9 +20,9 @@
         android:id="@+id/relative_contact"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_10dp"
-        android:layout_centerHorizontal="true"
         android:layout_above="@+id/linear_number"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/padding_10dp"
         android:visibility="gone">
 
         <android.support.v7.widget.RecyclerView
@@ -30,77 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="vertical"
-            android:visibility="visible">
-        </android.support.v7.widget.RecyclerView>
-       <!-- <ImageView
-            android:id="@+id/image_profile"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:contentDescription="@string/str_content_description"
-            android:background="@drawable/home_screen_profile" />
-
-        <TextView
-            android:id="@+id/text_temp_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:padding="@dimen/padding_10dp"
-            android:text=""
-            android:visibility="gone" />
-
-
-        <LinearLayout
-            android:id="@+id/linear_content_main"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/image_profile"
-            android:layout_toRightOf="@+id/image_profile"
-            android:orientation="vertical"
-            android:layout_centerVertical="true">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/text_contact_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    tools:text="Aniruddh" />
-
-                <TextView
-                    android:id="@+id/text_cloud_contact_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    tools:text=" (Aniruddh Pal)" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/text_contact_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="+917788951230"
-                    android:textSize="@dimen/text_size_12sp" />
-
-            </LinearLayout>
-
-        </LinearLayout>-->
-
+            android:visibility="visible" />
     </RelativeLayout>
-
 
     <LinearLayout
         android:id="@+id/linear_add_to_contact"
@@ -108,10 +39,10 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/linear_number"
         android:layout_centerHorizontal="true"
+        android:clickable="true"
         android:orientation="horizontal"
         android:padding="@dimen/padding_10dp"
-        android:visibility="visible"
-        android:clickable="true">
+        android:visibility="visible">
 
         <ImageButton
             android:id="@+id/image_button_add_to_contact"
@@ -120,9 +51,10 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:background="@drawable/circle_gray"
+            android:clickable="true"
+            android:contentDescription="@string/app_name"
             android:elevation="5dp"
-            android:src="@drawable/ic_person_add_to_contact"
-            android:clickable="true"/>
+            android:src="@drawable/ic_person_add_to_contact" />
 
         <TextView
             android:id="@+id/text_add_to_contact"
@@ -164,8 +96,8 @@
             android:layout_marginLeft="@dimen/margin_20dp"
             android:layout_toLeftOf="@+id/image_button_clear"
             android:background="@android:color/transparent"
-            android:singleLine="true"
             android:maxLines="1"
+            android:singleLine="true"
             android:textAlignment="center"
             android:textColor="@color/dialer_green" />
 
@@ -197,7 +129,7 @@
             android:orientation="horizontal">
 
             <com.rawalinfocom.rcontact.helper.RippleView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -210,7 +142,6 @@
                     android:id="@+id/linear1"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -229,14 +160,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="   "
+                        android:text=""
                         android:textColor="@color/dialer_text_gray" />
 
                 </LinearLayout>
             </com.rawalinfocom.rcontact.helper.RippleView>
 
             <com.rawalinfocom.rcontact.helper.RippleView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -249,7 +180,6 @@
                     android:id="@+id/linear2"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -274,7 +204,7 @@
             </com.rawalinfocom.rcontact.helper.RippleView>
 
             <com.rawalinfocom.rcontact.helper.RippleView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -287,7 +217,6 @@
                     android:id="@+id/linear3"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -296,7 +225,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:background="@color/colorWhite"
-                        android:padding="@dimen/padding_12dp"
+                        android:paddingBottom="@dimen/padding_12dp"
+                        android:paddingEnd="@dimen/padding_10dp"
+                        android:paddingStart="@dimen/padding_10dp"
+                        android:paddingTop="@dimen/padding_12dp"
                         android:text="3"
                         android:textColor="@color/dialer_green"
                         android:textSize="@dimen/text_size_32sp" />
@@ -319,7 +251,7 @@
             android:orientation="horizontal">
 
             <com.rawalinfocom.rcontact.helper.RippleView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -332,7 +264,6 @@
                     android:id="@+id/linear4"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -341,6 +272,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:background="@color/colorWhite"
+                        android:gravity="center"
                         android:padding="@dimen/padding_12dp"
                         android:text="4"
                         android:textColor="@color/dialer_green"
@@ -357,7 +289,7 @@
             </com.rawalinfocom.rcontact.helper.RippleView>
 
             <com.rawalinfocom.rcontact.helper.RippleView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -370,7 +302,6 @@
                     android:id="@+id/linear5"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -379,7 +310,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:background="@color/colorWhite"
-                        android:padding="@dimen/padding_12dp"
+                        android:paddingTop="@dimen/padding_12dp"
+                        android:paddingBottom="@dimen/padding_12dp"
+                        android:paddingStart="@dimen/padding_12dp"
+                        android:paddingEnd="@dimen/padding_14dp"
                         android:text="5"
                         android:textColor="@color/dialer_green"
                         android:textSize="@dimen/text_size_32sp" />
@@ -394,9 +328,8 @@
                 </LinearLayout>
             </com.rawalinfocom.rcontact.helper.RippleView>
 
-
             <com.rawalinfocom.rcontact.helper.RippleView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -409,7 +342,6 @@
                     android:id="@+id/linear6"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -442,7 +374,7 @@
             android:orientation="horizontal">
 
             <com.rawalinfocom.rcontact.helper.RippleView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -455,7 +387,6 @@
                     android:id="@+id/linear7"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -464,12 +395,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:background="@color/colorWhite"
-                        android:padding="@dimen/padding_14dp"
+                        android:paddingTop="@dimen/padding_12dp"
+                        android:paddingBottom="@dimen/padding_12dp"
+                        android:paddingStart="@dimen/padding_12dp"
+                        android:paddingEnd="@dimen/padding_10dp"
                         android:text="7"
                         android:textColor="@color/dialer_green"
                         android:textSize="@dimen/text_size_32sp" />
 
                     <TextView
+                        android:id="@+id/textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -480,7 +415,7 @@
             </com.rawalinfocom.rcontact.helper.RippleView>
 
             <com.rawalinfocom.rcontact.helper.RippleView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -493,7 +428,6 @@
                     android:id="@+id/linear8"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -517,9 +451,8 @@
                 </LinearLayout>
             </com.rawalinfocom.rcontact.helper.RippleView>
 
-
             <com.rawalinfocom.rcontact.helper.RippleView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -532,7 +465,6 @@
                     android:id="@+id/linear9"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -541,7 +473,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:background="@color/colorWhite"
-                        android:padding="@dimen/padding_12dp"
+
+                        android:paddingTop="@dimen/padding_12dp"
+                        android:paddingBottom="@dimen/padding_12dp"
+                        android:paddingStart="@dimen/padding_12dp"
+                        android:paddingEnd="@dimen/padding_10dp"
                         android:text="9"
                         android:textColor="@color/dialer_green"
                         android:textSize="@dimen/text_size_32sp" />
@@ -564,7 +500,7 @@
             android:orientation="horizontal">
 
             <com.rawalinfocom.rcontact.helper.RippleView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -603,7 +539,7 @@
 
 
             <com.rawalinfocom.rcontact.helper.RippleView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -642,7 +578,7 @@
 
 
             <com.rawalinfocom.rcontact.helper.RippleView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:rv_alpha="@integer/alpha_ripple"
@@ -655,6 +591,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <TextView
@@ -666,6 +603,7 @@
                         android:gravity="center"
                         android:paddingBottom="@dimen/padding_10dp"
                         android:paddingRight="@dimen/padding_10dp"
+                        android:paddingStart="@dimen/padding_10dp"
                         android:paddingTop="@dimen/padding_10dp"
                         android:text="#"
                         android:textColor="@color/dialer_green"
@@ -688,10 +626,10 @@
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_gravity="center"
+                android:layout_marginRight="@dimen/margin_25dp"
                 app:rv_alpha="@integer/alpha_ripple"
                 app:rv_centered="true"
                 app:rv_color="@color/dialer_green"
-                android:layout_marginRight="@dimen/margin_25dp"
                 app:rv_rippleDuration="@integer/duration_ripple">
 
                 <ImageButton
@@ -702,6 +640,7 @@
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:background="@color/colorWhite"
+                    android:contentDescription="@string/app_name"
                     android:src="@drawable/ic_dialer_textsms" />
             </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -723,6 +662,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
                     android:background="@drawable/circle_green"
+                    android:contentDescription="@string/app_name"
                     android:src="@drawable/ic_dialer_white" />
             </com.rawalinfocom.rcontact.helper.RippleView>
 
@@ -731,10 +671,10 @@
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/margin_25dp"
                 app:rv_alpha="@integer/alpha_ripple"
                 app:rv_centered="true"
                 app:rv_color="@color/dialer_green"
-                android:layout_marginLeft="@dimen/margin_25dp"
                 app:rv_rippleDuration="@integer/duration_ripple">
 
                 <ImageButton
@@ -745,6 +685,7 @@
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:background="@color/colorWhite"
+                    android:contentDescription="@string/app_name"
                     android:src="@drawable/ic_dialer_close" />
 
             </com.rawalinfocom.rcontact.helper.RippleView>
