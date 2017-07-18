@@ -13,7 +13,7 @@ public class WsConstants {
 
     // QA Server
 //    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
-
+//
     // Monal
 //    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 

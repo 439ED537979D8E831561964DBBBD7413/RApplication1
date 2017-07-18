@@ -285,28 +285,30 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             (callLogInsertionResponse
                                     .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                        if (Utils.getBooleanPreference(getActivity(), AppConstants
-                                .PREF_CALL_LOG_SYNCED, false)) {
-                            ArrayList<CallLogType> temp = divideCallLogByChunck(newList);
-                            if (temp.size() >= LIST_PARTITION_COUNT) {
-                                if (temp.size() > 0)
-                                    insertServiceCall(newList);
-                            } else {
-//                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All Call Logs Synced");
-                                System.out.println("RContact All Call Logs Synced");
-                            }
+                        Utils.setStringPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNC_TIME, callLogInsertionResponse.getCallDateAndTime());
 
+//                        if (Utils.getBooleanPreference(getActivity(), AppConstants
+//                                .PREF_CALL_LOG_SYNCED, false)) {
+//                            ArrayList<CallLogType> temp = divideCallLogByChunck(newList);
+//                            if (temp.size() >= LIST_PARTITION_COUNT) {
+//                                if (temp.size() > 0)
+//                                    insertServiceCall(newList);
+//                            } else {
+////                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All Call Logs Synced");
+//                                System.out.println("RContact All Call Logs Synced");
+//                            }
+//
+//                        } else {
+                        ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
+                        if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
+//                                insertServiceCall(callLogTypeArrayList);
                         } else {
-                            ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
-                            if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0)
-                                insertServiceCall(callLogTypeArrayList);
-                            else {
-                                System.out.println("RContact All Call Logs Synced");
+                            System.out.println("RContact All Call Logs Synced");
 //                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " +
 //                                        "" + "Call Logs Synced");
-                                Utils.setBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, true);
-                            }
+                            Utils.setBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, true);
                         }
+//                        }
                     } else {
                         if (callLogInsertionResponse != null) {
                             Log.e("error response", callLogInsertionResponse.getMessage());
@@ -758,7 +760,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             @Override
             public void run() {
                 makeSimpleData();
-                nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//                nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                nameAndProfileImage.execute();
             }
         });
 
@@ -850,20 +853,20 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         }
     }
 
-    private void getContactName(){
-        if(callLogTypeArrayList.size()>0){
-            for (int i=0; i<callLogTypeArrayList.size();i++){
-                CallLogType callLogType =  callLogTypeArrayList.get(i);
-                String number =  callLogType.getNumber();
-                String name =  callLogType.getName();
-                if (StringUtils.isEmpty(name)){
+    private void getContactName() {
+        if (callLogTypeArrayList.size() > 0) {
+            for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                CallLogType callLogType = callLogTypeArrayList.get(i);
+                String number = callLogType.getNumber();
+                String name = callLogType.getName();
+                if (StringUtils.isEmpty(name)) {
                     name = getNameFromNumber(number);
-                    if(!StringUtils.isEmpty(name))
+                    if (!StringUtils.isEmpty(name))
                         callLogType.setName(name);
                     else
                         callLogType.setName("");
                 }
-                callLogTypeArrayList.set(i,callLogType);
+                callLogTypeArrayList.set(i, callLogType);
             }
         }
     }
