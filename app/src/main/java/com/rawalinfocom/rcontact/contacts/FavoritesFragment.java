@@ -569,6 +569,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                             (ProfileData) arrayListPhoneBookContacts.get(i)).getRawContactId()));
                     String name = "0";
                     String rcpID = "0";
+                    String rcpProfileImage = "";
                     if (userProfiles.size() > 1) {
                         for (int j = 0; j < userProfiles.size();
                              j++) {
@@ -582,9 +583,12 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                         name = userProfiles.get(0).getPmFirstName() + " " + userProfiles.get(0)
                                 .getPmLastName();
                         rcpID = userProfiles.get(0).getPmRcpId();
+                        rcpProfileImage = userProfiles.get(0).getPmProfileImage();
                     }
                     ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
                     ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
+                    ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpImageURL
+                            (rcpProfileImage);
                 } else {
                     ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
                 }

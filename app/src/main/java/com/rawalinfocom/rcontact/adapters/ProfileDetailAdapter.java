@@ -1,7 +1,9 @@
 package com.rawalinfocom.rcontact.adapters;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
@@ -131,7 +133,18 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         holder.imgActionType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Utils.callIntent(activity, number);
+                if (ContextCompat.checkSelfPermission(activity, android.Manifest
+                        .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    activity.requestPermissions(new String[]{Manifest.permission
+                            .CALL_PHONE}, AppConstants
+                            .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                    if (activity instanceof ProfileDetailActivity) {
+                        ((ProfileDetailActivity) activity).callNumber = number;
+                    }
+                } else {
+                    Utils.callIntent(activity, number);
+                }
+
             }
         });
 

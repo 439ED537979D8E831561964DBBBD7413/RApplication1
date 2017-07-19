@@ -913,6 +913,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         textUserName.setTypeface(Utils.typefaceSemiBold(MainActivity.this));
         textNumber.setTypeface(Utils.typefaceRegular(MainActivity.this));
+        textRatingCount.setTypeface(Utils.typefaceRegular(
+
+                MainActivity.this));
+
+        textUserName.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
+        textNumber.setText(number);
+        textRatingCount.setText(Utils.getStringPreference(this, AppConstants
+        textUserName.setTypeface(Utils.typefaceSemiBold(MainActivity.this));
+        textNumber.setTypeface(Utils.typefaceRegular(MainActivity.this));
         textRatingCount.setTypeface(Utils.typefaceBold(MainActivity.this));
 
         textUserName.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
@@ -1076,10 +1085,16 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             case R.id.nav_ll_about:
                 break;
             case R.id.nav_ll_feedback:
-                Intent intent = new Intent(MainActivity.this, WebBrowserActivity.class);
-                intent.putExtra(AppConstants.EXTRA_FEEDBACK_URL, "http://feedback.rcontacts.in");
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter, R.anim.exit);
+
+                String url = "http://feedback.rcontacts.in";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+
+//                Intent intent = new Intent(MainActivity.this, WebBrowserActivity.class);
+//                intent.putExtra(AppConstants.EXTRA_FEEDBACK_URL, "http://feedback.rcontacts.in");
+//                startActivity(intent);
+//                overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
             case R.id.nav_ll_export:
 
