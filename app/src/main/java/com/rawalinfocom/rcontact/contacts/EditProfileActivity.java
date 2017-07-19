@@ -2393,6 +2393,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 inputValue.setInputType(InputType.TYPE_CLASS_PHONE);
                 if (detailObject != null) {
                     if (position == 0) {
+                        inputValue.setTypeface(Utils.typefaceIcons(EditProfileActivity.this));
                         inputValue.setEnabled(false);
                         spinnerType.setVisibility(View.GONE);
 //                        textImageCross.setVisibility(View.INVISIBLE);

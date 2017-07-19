@@ -209,16 +209,16 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mSectionPositions = new ArrayList<>();
         int startPosition = 0;
         if (fragment != null) {
-            if (fragment instanceof AllContactsListFragment) {
+            /*if (fragment instanceof AllContactsListFragment) {
                 startPosition = 2;
-            } else {
-                startPosition = 0;
-            }
+            } else {*/
+            startPosition = 0;
+//            }
         }
 
         for (int i = startPosition, size = arrayListUserContact.size(); i < size; i++) {
             if (arrayListUserContact.get(i) instanceof ProfileData) {
-                String contactDisplayName = "";
+                String contactDisplayName;
                 ProfileData profileData = (ProfileData) arrayListUserContact.get(i);
 //                String prefix = profileData.getTempPrefix();
 //                String firstName = profileData.getTempFirstName();
@@ -289,13 +289,13 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         final ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
         final String thumbnailUrl = profileData.getProfileUrl();
-        if (!TextUtils.isEmpty(thumbnailUrl)) {
+        if (StringUtils.length(thumbnailUrl) > 0) {
             Glide.with(activity)
                     .load(thumbnailUrl)
                     .placeholder(R.drawable.home_screen_profile)
                     .error(R.drawable.home_screen_profile)
                     .bitmapTransform(new CropCircleTransformation(activity))
-                    .override(500, 500)
+                    .override(300, 300)
                     .into(holder.imageProfile);
 
         } else {
@@ -338,15 +338,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
                 activity.getString(R.string.unknown));
 
-         /* Hide Divider if row is last in Section */
-        /*if ((position + 1) < arrayListUserContact.size()) {
-            if (arrayListUserContact.get(position + 1) instanceof String) {
-                holder.dividerAllContact.setVisibility(View.GONE);
-            } else {
-                holder.dividerAllContact.setVisibility(View.VISIBLE);
-            }
-        }*/
-
         if (profileData.getTempIsRcp()) {
             holder.textCloudContactName.setVisibility(View.VISIBLE);
             if (contactDisplayName.equalsIgnoreCase(profileData.getTempRcpName())) {
@@ -358,16 +349,16 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (!StringUtils.isEmpty(profileData.getTempRcpName())) {
                     holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
                     showPineGreen = false;
-
-                    Glide.with(activity)
-                            .load(thumbnailUrl)
-                            .placeholder(R.drawable.home_screen_profile)
-                            .error(R.drawable.home_screen_profile)
-                            .bitmapTransform(new CropCircleTransformation(activity))
-                            .override(500, 500)
-                            .into(holder.imageProfile);
                 }
             }
+
+            Glide.with(activity)
+                    .load(profileData.getTempRcpImageURL())
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(activity))
+                    .override(300, 300)
+                    .into(holder.imageProfile);
 
             holder.relativeRowAllContact.setTag(profileData.getTempRcpId());
 
@@ -448,7 +439,13 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                         bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText()
                                 .toString());
-                        bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+//                        bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                        if (StringUtils.length(profileData.getTempRcpImageURL()) > 0) {
+                            bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, profileData
+                                    .getTempRcpImageURL());
+                        } else {
+                            bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                        }
                         listClickedPosition = (int) textName.getTag();
                         bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
                         if (textCloudName.getVisibility() == View.VISIBLE) {

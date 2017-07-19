@@ -582,9 +582,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                 .getRawContactId()));
                         String name = "0";
                         String rcpID = "0";
+                        String rcpProfileImage = "";
                         if (userProfiles.size() > 1) {
-                            for (int j = 0; j < userProfiles.size();
-                                 j++) {
+                            for (int j = 0; j < userProfiles.size(); j++) {
                                 if (name.equalsIgnoreCase("0")) {
                                     name = userProfiles.get(j).getPmRcpId();
                                 } else {
@@ -596,9 +596,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     .get(0)
                                     .getPmLastName();
                             rcpID = userProfiles.get(0).getPmRcpId();
+                            rcpProfileImage = userProfiles.get(0).getPmProfileImage();
                         }
                         ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpName(name);
                         ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpId(rcpID);
+                        ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempRcpImageURL
+                                (rcpProfileImage);
                     } else {
                         ((ProfileData) arrayListPhoneBookContacts.get(i)).setTempIsRcp(false);
                     }
@@ -823,7 +826,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         email.setEmEmailType(arrayListEmailId.get(j).getEmType());
                         email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(j)
                                 .getEmPublic()));
-                        email.setEmIsVerified(String.valueOf(arrayListEmailId.get(j).getEmRcpType()));
+                        email.setEmIsVerified(String.valueOf(arrayListEmailId.get(j).getEmRcpType
+                                ()));
                         email.setEmIsPrivate(arrayListEmailId.get(j).getEmIsPrivate());
 
                         email.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
@@ -1349,15 +1353,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             phoneBookContact.setPbNameSuffix(cursor.getString
                                     (cursor.getColumnIndex(ContactsContract
                                             .CommonDataKinds.StructuredName.SUFFIX)));
-                            phoneBookContact.setPbPhoneticNameFirst(cursor.getString
-                                    (cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.StructuredName.PHONETIC_GIVEN_NAME)));
-                            phoneBookContact.setPbPhoneticNameMiddle(cursor.getString
-                                    (cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.StructuredName.PHONETIC_MIDDLE_NAME)));
-                            phoneBookContact.setPbPhoneticNameLast(cursor.getString
-                                    (cursor.getColumnIndex(ContactsContract
-                                            .CommonDataKinds.StructuredName.PHONETIC_FAMILY_NAME)));
                             break;
                         case ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE:
                             ProfileDataOperationPhoneNumber phoneNumber = new
@@ -1371,7 +1366,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                             (ContactsContract.CommonDataKinds.Phone.TYPE))));
                             phoneNumber.setPhonePublic(IntegerConstants.PRIVACY_EVERYONE);
 
-                            phoneBookContact.addPhone(phoneNumber);
+                            if (StringUtils.length(phoneNumber.getPhoneNumber()) > 0) {
+                                phoneBookContact.addPhone(phoneNumber);
+                            }
                             break;
                         case ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE:
                             ProfileDataOperationEmail emailId = new ProfileDataOperationEmail();
@@ -1385,8 +1382,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                                     .CommonDataKinds.Email.TYPE))));
                             emailId.setEmPublic(IntegerConstants.PRIVACY_EVERYONE);
 
-
-                            phoneBookContact.addEmail(emailId);
+                            if (StringUtils.length(emailId.getEmEmailId()) > 0) {
+                                phoneBookContact.addEmail(emailId);
+                            }
                             break;
                         case ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE:
                             ProfileDataOperationWebAddress webAddress = new
@@ -1399,7 +1397,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                             .Website.TYPE)))));
                             webAddress.setWebPublic(IntegerConstants.PRIVACY_EVERYONE);
 
-                            phoneBookContact.addWebsite(webAddress);
+                            if (StringUtils.length(webAddress.getWebAddress()) > 0) {
+                                phoneBookContact.addWebsite(webAddress);
+                            }
 
                             break;
                         case ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE:
@@ -1426,7 +1426,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                             .CommonDataKinds.Organization.OFFICE_LOCATION)));
                             organization.setOrgPublic(IntegerConstants.PRIVACY_EVERYONE);
 
-                            phoneBookContact.addOrganization(organization);
+                            if (StringUtils.length(organization.getOrgName()) > 0) {
+                                phoneBookContact.addOrganization(organization);
+                            }
                             break;
                         case ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE:
                             ProfileDataOperationAddress address = new ProfileDataOperationAddress();
@@ -1463,7 +1465,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                             .StructuredPostal.TYPE))));
                             address.setAddPublic(IntegerConstants.PRIVACY_EVERYONE);
 
-                            phoneBookContact.addAddress(address);
+                            if (StringUtils.length(address.getFormattedAddress()) > 0) {
+                                phoneBookContact.addAddress(address);
+                            }
                             break;
                         case ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE:
                             ProfileDataOperationImAccount imAccount = new
@@ -1483,8 +1487,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                             imAccount.setIMAccountPublic(IntegerConstants.PRIVACY_EVERYONE);
 
-
-                            phoneBookContact.addImAccount(imAccount);
+                            if (StringUtils.length(imAccount.getIMAccountDetails()) > 0) {
+                                phoneBookContact.addImAccount(imAccount);
+                            }
                             break;
                         case ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE:
 
@@ -1506,8 +1511,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                             event.setEventDateTime(eventDate);
 
                             event.setEventPublic(IntegerConstants.PRIVACY_EVERYONE);
-
-                            phoneBookContact.addEvent(event);
+                            if (StringUtils.length(event.getEventDateTime()) > 0) {
+                                phoneBookContact.addEvent(event);
+                            }
                             break;
                     }
                 }
