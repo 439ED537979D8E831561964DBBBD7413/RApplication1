@@ -289,13 +289,13 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         final ProfileData profileData = (ProfileData) arrayListUserContact.get(position);
         final String thumbnailUrl = profileData.getProfileUrl();
-        if (!TextUtils.isEmpty(thumbnailUrl)) {
+        if (StringUtils.length(thumbnailUrl) > 0) {
             Glide.with(activity)
                     .load(thumbnailUrl)
                     .placeholder(R.drawable.home_screen_profile)
                     .error(R.drawable.home_screen_profile)
                     .bitmapTransform(new CropCircleTransformation(activity))
-                    .override(500, 500)
+                    .override(300, 300)
                     .into(holder.imageProfile);
 
         } else {
@@ -338,15 +338,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
                 activity.getString(R.string.unknown));
 
-         /* Hide Divider if row is last in Section */
-        /*if ((position + 1) < arrayListUserContact.size()) {
-            if (arrayListUserContact.get(position + 1) instanceof String) {
-                holder.dividerAllContact.setVisibility(View.GONE);
-            } else {
-                holder.dividerAllContact.setVisibility(View.VISIBLE);
-            }
-        }*/
-
         if (profileData.getTempIsRcp()) {
             holder.textCloudContactName.setVisibility(View.VISIBLE);
             if (contactDisplayName.equalsIgnoreCase(profileData.getTempRcpName())) {
@@ -358,16 +349,16 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (!StringUtils.isEmpty(profileData.getTempRcpName())) {
                     holder.textCloudContactName.setText(" (" + profileData.getTempRcpName() + ")");
                     showPineGreen = false;
-
-                    Glide.with(activity)
-                            .load(thumbnailUrl)
-                            .placeholder(R.drawable.home_screen_profile)
-                            .error(R.drawable.home_screen_profile)
-                            .bitmapTransform(new CropCircleTransformation(activity))
-                            .override(500, 500)
-                            .into(holder.imageProfile);
                 }
             }
+
+            Glide.with(activity)
+                    .load(profileData.getTempRcpImageURL())
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(activity))
+                    .override(300, 300)
+                    .into(holder.imageProfile);
 
             holder.relativeRowAllContact.setTag(profileData.getTempRcpId());
 
