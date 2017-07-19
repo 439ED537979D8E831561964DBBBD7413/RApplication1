@@ -92,9 +92,9 @@ class WebServicePost {
                 ObjectWriter writer = getMapper().writer();
 
                 if (request != null) {
-                    /**
-                     * Json string passed as request
-                     */
+
+                    // Json string passed as request
+
                     jsonObject = writer.writeValueAsString(request);
                     System.out.println("RContact param -->  " + jsonObject);
 //					 FileUtilities utilities = new FileUtilities();
@@ -193,7 +193,7 @@ class WebServicePost {
                             .getInputStream()));
                     StringBuilder sb = new StringBuilder();
                     while ((line = br.readLine()) != null) {
-                        sb.append(line + "\n");
+                        sb.append(line).append("\n");
                     }
                     String responseString = sb.toString();
 //                    Log.e(TAG, "The Response NameValuePair is:::" + json);

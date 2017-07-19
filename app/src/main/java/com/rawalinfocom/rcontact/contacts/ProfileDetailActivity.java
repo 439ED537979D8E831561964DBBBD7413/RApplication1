@@ -112,6 +112,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -292,7 +293,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     String historyNumber = "";
     String historyName = "";
     long historyDate;
-    Date callReceiverDate;
     CallHistoryListAdapter callHistoryListAdapter;
     String profileContactNumber;
     String hashMapKey = "";
@@ -346,39 +346,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
 
         init();
-    }
-
-
-    private class GetRCPNameAndProfileImage extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-//            Utils.showProgressDialog(ProfileDetailActivity.this, "Please wait...", false);
-            rippleViewOldRecords.setVisibility(View.GONE);
-        }
-
-        protected Void doInBackground(Void... urls) {
-            if (!TextUtils.isEmpty(historyName)) {
-                fetchAllCallLogHistory(historyName);
-            } else {
-                fetchAllCallLogHistory(historyNumber);
-            }
-
-            return null;
-        }
-
-        protected void onPostExecute(Void result) {
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-//                    Utils.hideProgressDialog();
-                    setHistoryAdapter();
-
-                }
-            });
-        }
     }
 
     @Override
@@ -439,7 +406,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
     }
-
 
     @Override
     public void onComplete(RippleView rippleView) {
@@ -656,8 +622,10 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     showCallConfirmationDialog(historyNumber);
                     isFromReceiver = true;
 
-                } else {
-                    if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+                } else if (StringUtils.equals(imageRightCenter.getTag().toString(),
+                        TAG_IMAGE_SHARE)) {
+                    Toast.makeText(this, "Currently Unavailable!", Toast.LENGTH_SHORT).show();
+                    /*if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
                         TableProfileMaster tableProfileMaster = new TableProfileMaster
                                 (databaseHandler);
                         UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
@@ -666,7 +634,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 StringUtils.trimToEmpty(userProfile.getPmLastName()));
                     } else {
                         showChooseShareOption(null, null);
-                    }
+                    }*/
                 }
                 break;
             //</editor-fold>
@@ -734,8 +702,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             case R.id.ripple_action_right_right:
                 if (profileActivityCallInstance) {
                     ProfileMenuOptionDialog profileMenuOptionDialog;
-                    boolean isFromCallLogTab = false;
-                    isFromCallLogTab = true;
                     String blockedNumber = "";
                     ArrayList<CallLogType> callLogTypeList = new ArrayList<>();
                     HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
@@ -747,15 +713,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             callLogTypeList.addAll(blockProfileHashMapList.get(hashMapKey));
 
                     }
-                    if (callLogTypeList != null) {
-                        for (int j = 0; j < callLogTypeList.size(); j++) {
-                            // Log.i("value", callLogTypeList.get(j) + "");
-                            String tempNumber = callLogTypeList.get(j).getNumber();
-                            if (tempNumber.equalsIgnoreCase(historyNumber)) {
-                                blockedNumber = tempNumber;
-                            }
+                    for (int j = 0; j < callLogTypeList.size(); j++) {
+                        // Log.i("value", callLogTypeList.get(j) + "");
+                        String tempNumber = callLogTypeList.get(j).getNumber();
+                        if (tempNumber.equalsIgnoreCase(historyNumber)) {
+                            blockedNumber = tempNumber;
                         }
                     }
+
                     if (!TextUtils.isEmpty(blockedNumber)) {
                         if (!TextUtils.isEmpty(historyName)) {
                             ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
@@ -768,7 +733,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                             .delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                    arrayListName, historyNumber, historyDate, isFromCallLogTab,
+                                    arrayListName, historyNumber, historyDate, true,
                                     arrayListHistory, historyName, "", hashMapKey,
                                     profileThumbnail, pmId, isCallLogRcpUser);
                             profileMenuOptionDialog.showDialog();
@@ -788,7 +753,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                                         .clear_call_log)));
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                         arrayListNumber, historyNumber, historyDate,
-                                        isFromCallLogTab, arrayListHistory, "", uniqueContactId,
+                                        true, arrayListHistory, "", uniqueContactId,
                                         hashMapKey, profileThumbnail, pmId, isCallLogRcpUser);
                                 profileMenuOptionDialog.showDialog();
                             }
@@ -805,7 +770,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                             .delete),
                                     this.getString(R.string.clear_call_log)));
                             profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
-                                    arrayListName, historyNumber, historyDate, isFromCallLogTab,
+                                    arrayListName, historyNumber, historyDate, true,
                                     arrayListHistory, historyName, "", phoneBookId,
                                     profileThumbnail, pmId, isCallLogRcpUser);
                             //11/07/2017 : hashMapKey replaced with phoneBookId to solve edit
@@ -826,7 +791,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                                         .clear_call_log)));
                                 profileMenuOptionDialog = new ProfileMenuOptionDialog(this,
                                         arrayListNumber, historyNumber, historyDate,
-                                        isFromCallLogTab, arrayListHistory, "", uniqueContactId,
+                                        true, arrayListHistory, "", uniqueContactId,
                                         "", profileThumbnail, pmId, isCallLogRcpUser);
                                 profileMenuOptionDialog.showDialog();
                             }
@@ -907,324 +872,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             }
             break;
         }
-    }
-
-    private void showPermissionConfirmationDialog() {
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        permissionConfirmationDialog.dismissDialog();
-                        finish();
-                        break;
-
-                    case R.id.rippleRight:
-                        permissionConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.fromParts("package", getPackageName(), null));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        break;
-                }
-            }
-        };
-
-        permissionConfirmationDialog = new MaterialDialog(this, cancelListener);
-        permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
-        permissionConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
-        permissionConfirmationDialog.setDialogBody(getString(R.string.call_log_permission));
-
-        permissionConfirmationDialog.showDialog();
-
-    }
-
-    private void selectContactDialog(final ArrayList<ProfileDataOperationPhoneNumber>
-                                             phoneNumbers, ArrayList<ProfileDataOperationEmail>
-                                             emailIds) {
-
-        final ArrayList<Object> arrayList = new ArrayList<>();
-        arrayList.add(getString(R.string.str_all));
-        arrayList.addAll(phoneNumbers);
-        arrayList.addAll(emailIds);
-
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_all_organization);
-        dialog.setCancelable(false);
-
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        layoutParams.copyFrom(dialog.getWindow().getAttributes());
-        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
-        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
-
-        final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
-                .relative_root_dialog_list);
-        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        textDialogTitle.setText(String.format("%s %s", getString(R.string.str_invite),
-                contactName));
-        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
-
-        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
-        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
-        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
-        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
-
-        buttonRight.setTypeface(Utils.typefaceRegular(this));
-        buttonRight.setText(R.string.action_cancel);
-        buttonLeft.setTypeface(Utils.typefaceRegular(this));
-        buttonLeft.setText(getString(R.string.str_invite));
-
-        rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
-            @Override
-            public void onComplete(RippleView rippleView) {
-                dialog.dismiss();
-            }
-        });
-
-        RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
-                .recycler_view_dialog_list);
-        recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
-
-        final PhoneBookContactDetailAdapter adapter = new PhoneBookContactDetailAdapter(this,
-                arrayList);
-        recyclerViewDialogList.setAdapter(adapter);
-
-        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
-            @Override
-            public void onComplete(RippleView rippleView) {
-                if (adapter.getArrayListSelectedContacts().size() > 0) {
-                    dialog.dismiss();
-                    ArrayList<String> numbers = new ArrayList<>();
-                    ArrayList<String> emails = new ArrayList<>();
-                    for (int i = 0; i < arrayList.size(); i++) {
-                        if (adapter.getArrayListSelectedContacts().contains(i)) {
-                            if (arrayList.get(i) instanceof ProfileDataOperationPhoneNumber) {
-                                ProfileDataOperationPhoneNumber number =
-                                        (ProfileDataOperationPhoneNumber) arrayList.get(i);
-                                numbers.add(number.getPhoneNumber());
-                            }
-                            if (arrayList.get(i) instanceof ProfileDataOperationEmail) {
-                                ProfileDataOperationEmail email = (ProfileDataOperationEmail)
-                                        arrayList.get(i);
-                                emails.add(email.getEmEmailId());
-                            }
-                        }
-                    }
-                    inviteContact(numbers, emails);
-                } else {
-                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootDialogList,
-                            getString(R.string.please_select_one));
-                }
-            }
-        });
-
-        dialog.show();
-    }
-
-    private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            arrayListHistory.clear();
-            recyclerCallHistory.setVisibility(View.GONE);
-            setHistoryAdapter();
-
-        }
-    };
-
-    private void selectContactDialog(String contactName,
-                                     final ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers,
-                                     ArrayList<ProfileDataOperationEmail> emailIds) {
-
-        final ArrayList<Object> arrayList = new ArrayList<>();
-        arrayList.add("All");
-        arrayList.addAll(phoneNumbers);
-        arrayList.addAll(emailIds);
-
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_all_organization);
-        dialog.setCancelable(false);
-
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        layoutParams.copyFrom(dialog.getWindow().getAttributes());
-        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
-        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
-
-        final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
-                .relative_root_dialog_list);
-        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
-        textDialogTitle.setText(String.format("%s %s", getString(R.string.str_invite),
-                contactName));
-        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
-
-        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
-        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
-        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
-        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
-
-        buttonRight.setTypeface(Utils.typefaceRegular(this));
-        buttonRight.setText(R.string.action_cancel);
-        buttonLeft.setTypeface(Utils.typefaceRegular(this));
-        buttonLeft.setText(getString(R.string.str_invite));
-
-        rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
-            @Override
-            public void onComplete(RippleView rippleView) {
-                dialog.dismiss();
-            }
-        });
-
-
-        RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
-                .recycler_view_dialog_list);
-        recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
-
-        final PhoneBookContactDetailAdapter adapter = new PhoneBookContactDetailAdapter(this,
-                arrayList);
-        recyclerViewDialogList.setAdapter(adapter);
-
-        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
-            @Override
-            public void onComplete(RippleView rippleView) {
-                if (adapter.getArrayListSelectedContacts().size() > 0) {
-                    dialog.dismiss();
-                    ArrayList<String> numbers = new ArrayList<>();
-                    ArrayList<String> emails = new ArrayList<>();
-                    for (int i = 0; i < arrayList.size(); i++) {
-                        if (adapter.getArrayListSelectedContacts().contains(i)) {
-                            if (arrayList.get(i) instanceof ProfileDataOperationPhoneNumber) {
-                                ProfileDataOperationPhoneNumber number =
-                                        (ProfileDataOperationPhoneNumber) arrayList.get(i);
-                                numbers.add(number.getPhoneNumber());
-                            }
-                            if (arrayList.get(i) instanceof ProfileDataOperationEmail) {
-                                ProfileDataOperationEmail email = (ProfileDataOperationEmail)
-                                        arrayList.get(i);
-                                emails.add(email.getEmEmailId());
-                            }
-                        }
-                    }
-                    inviteContact(numbers, emails);
-                } else {
-                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootDialogList,
-                            getString(R.string.please_select_one));
-                }
-            }
-        });
-
-        dialog.show();
-    }
-
-    private void openCallLogHistoryDetailsActivity() {
-        Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
-        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
-        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, historyName);
-        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, historyDate);
-        intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
-        String rawId;
-        if (checkNumberFavourite == null) {
-            rawId = phoneBookId;
-        } else {
-            rawId = checkNumberFavourite;
-        }
-        intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, rawId);
-//        intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, phoneBookId);
-        intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
-        intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, cloudContactName);
-        intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, checkNumberFavourite);
-        intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
-        intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, hashMapKey);
-        intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueContactId);
-        intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isCallLogRcpUser);
-        if (!StringUtils.isEmpty(profileThumbnail)) {
-            intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileThumbnail);
-        } else {
-            intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, thumbnailUrl);
-        }
-        startActivity(intent);
-        overridePendingTransition(R.anim.enter, R.anim.exit);
-    }
-
-    private void getOldCallHistory() {
-        ArrayList<CallLogHistoryType> arrayListToSend = new ArrayList<>();
-        if (arrayListHistory != null && arrayListHistory.size() > 0) {
-            CallLogType callLogType = arrayListHistory.get(arrayListHistory.size() - 1);
-            String number = callLogType.getHistoryNumber();
-            String formattedNumber = "";
-            if (!StringUtils.isEmpty(number))
-                formattedNumber = Utils.getFormattedNumber(this, number);
-            long date = callLogType.getHistoryDate();
-                /*Date date1 = new Date(date);
-                String finalDate = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss").format(date1);*/
-            CallLogHistoryType callLogHistoryType = new CallLogHistoryType();
-            if (!StringUtils.isEmpty(formattedNumber))
-                callLogHistoryType.setHistoryNumber(formattedNumber);
-            callLogHistoryType.setHistoryDate(date);
-            arrayListToSend.add(callLogHistoryType);
-
-            fetchOldRecordsServiceCall(arrayListToSend);
-
-        } else {
-            rippleViewOldRecords.setVisibility(View.GONE);
-        }
-    }
-
-    private void fetchOldRecordsServiceCall(ArrayList<CallLogHistoryType> callLogTypeArrayList) {
-        // Log.i("HistoryServiceCalled", "Service Started");
-        WsRequestObject deviceDetailObject = new WsRequestObject();
-        deviceDetailObject.setHistoryTypeArrayList(callLogTypeArrayList);
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).executeOnExecutor(AsyncTask
-                            .THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
-        } else {
-            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
-                    .getString(R.string.msg_no_network));
-        }
-
-    }
-
-    private ArrayList<CallLogType> getNumbersFromName(String number) {
-        Cursor cursor = null;
-        ArrayList<CallLogType> listNumber = new ArrayList<>();
-        try {
-            final Uri Person = Uri.withAppendedPath(
-                    ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI,
-                    Uri.encode(number));
-
-            cursor = this.getContentResolver().query(Person, null,
-                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " =?", new
-                            String[]{number}, null);
-
-            if (cursor != null && cursor.getCount() > 0) {
-                int number1 = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-                while (cursor.moveToNext()) {
-                    CallLogType callLogType = new CallLogType();
-                    String profileNumber = cursor.getString(number1);
-                    String formattedNumber = Utils.getFormattedNumber(this, profileNumber);
-                    callLogType.setName(number);
-                    callLogType.setNumber(formattedNumber);
-                    listNumber.add(callLogType);
-                }
-            }
-            cursor.close();
-
-
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }
-        return listNumber;
     }
 
     @Override
@@ -1483,150 +1130,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     }
 
-    private void savePrivacySettingToDb(ProfileDataOperation profileDetail) {
-
-        // <editor-fold desc="Mobile Number">
-        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
-
-        // Remove Existing Number
-        tableMobileMaster.deleteMobileNumber(getUserPmId());
-
-        ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
-        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber =
-                profileDetail.getPbPhoneNumber();
-        if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber)) {
-            for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
-                MobileNumber mobileNumber = new MobileNumber();
-                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i)
-                        .getPhoneId());
-                mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i)
-                        .getPhoneType());
-                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i)
-                        .getPhoneNumber());
-                mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
-                        .get(i).getPhonePublic()));
-                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
-                        .getPbRcpType()));
-                mobileNumber.setRcProfileMasterPmId(getUserPmId());
-                arrayListMobileNumber.add(mobileNumber);
-            }
-            tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Email Master">
-
-        TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
-
-        // Remove Existing Number
-        tableEmailMaster.deleteEmail(getUserPmId());
-
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
-            ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
-            ArrayList<Email> arrayListEmail = new ArrayList<>();
-            for (int i = 0; i < arrayListEmailId.size(); i++) {
-                Email email = new Email();
-                email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
-                email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
-                email.setEmEmailType(arrayListEmailId.get(i).getEmType());
-                email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
-                email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
-                email.setRcProfileMasterPmId(getUserPmId());
-                arrayListEmail.add(email);
-            }
-
-
-            tableEmailMaster.addArrayEmail(arrayListEmail);
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Address Master">
-
-        TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
-
-        // Remove Existing Number
-        tableAddressMaster.deleteAddress(getUserPmId());
-
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
-            ArrayList<ProfileDataOperationAddress> arrayListAddress = profileDetail.getPbAddress();
-            ArrayList<Address> addressList = new ArrayList<>();
-            for (int j = 0; j < arrayListAddress.size(); j++) {
-                Address address = new Address();
-                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
-                address.setAmState(arrayListAddress.get(j).getState());
-                address.setAmCity(arrayListAddress.get(j).getCity());
-                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
-                address.setAmCountry(arrayListAddress.get(j).getCountry());
-                address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
-                address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
-                address.setAmPostCode(arrayListAddress.get(j).getPostCode());
-                address.setAmPoBox(arrayListAddress.get(j).getPoBox());
-                address.setAmStreet(arrayListAddress.get(j).getStreet());
-                address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-              /*  address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
-                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());*/
-                address.setRcProfileMasterPmId(getUserPmId());
-                addressList.add(address);
-            }
-
-            tableAddressMaster.addArrayAddress(addressList);
-        }
-        //</editor-fold>
-
-        // <editor-fold desc="Im Account Master">
-        TableImMaster tableImMaster = new TableImMaster(databaseHandler);
-
-        // Remove Existing Number
-        tableImMaster.deleteImAccount(getUserPmId());
-
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
-            ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileDetail
-                    .getPbIMAccounts();
-            ArrayList<ImAccount> imAccountsList = new ArrayList<>();
-            for (int j = 0; j < arrayListImAccount.size(); j++) {
-                ImAccount imAccount = new ImAccount();
-                imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
-                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
-//                imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
-                imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
-                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
-                        .getIMAccountPublic()));
-                imAccount.setRcProfileMasterPmId(getUserPmId());
-                imAccountsList.add(imAccount);
-            }
-
-            tableImMaster.addArrayImAccount(imAccountsList);
-        }
-        //</editor-fold>
-
-        // <editor-fold desc="Event Master">
-
-        TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
-
-        // Remove Existing Number
-        tableEventMaster.deleteEvent(getUserPmId());
-
-        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
-            ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail
-                    .getPbEvent();
-            ArrayList<Event> eventList = new ArrayList<>();
-            for (int j = 0; j < arrayListEvent.size(); j++) {
-                Event event = new Event();
-                event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
-                event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
-                event.setEvmEventType(arrayListEvent.get(j).getEventType());
-                event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
-                event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
-                event.setRcProfileMasterPmId(getUserPmId());
-                eventList.add(event);
-            }
-
-            tableEventMaster.addArrayEvent(eventList);
-        }
-        //</editor-fold>
-
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -1671,9 +1174,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             textDialogTitle.setText(String.format("%s %s", getString(R.string.text_rate),
                     contactName));
-            textRemainingCharacters.setText(String.format("%d %s", getResources().getInteger(R
-                    .integer
-                    .max_comment_length), getString(R.string.characters_left)));
+            textRemainingCharacters.setText(String.format(Locale.ENGLISH, "%d %s", getResources()
+                    .getInteger(R.integer.max_comment_length), getString(R.string
+                    .characters_left)));
 
             buttonRight.setText(R.string.action_submit);
             buttonLeft.setText(R.string.action_cancel);
@@ -1733,6 +1236,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     //<editor-fold desc="Private Methods">
 
+    @SuppressWarnings("unused")
     private void profileLayoutVisibility() {
         relativeContactDetails.setVisibility(View.GONE);
         relativeCallHistory.setVisibility(View.VISIBLE);
@@ -2054,6 +1558,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 (ProfileDetailActivity.this, R.color.colorAccent), 5, 0, ContextCompat.getColor
                 (ProfileDetailActivity.this, R.color.colorAccent));
 
+        imageRightRight.setImageResource(R.drawable.ic_action_more_vertical);
+
         recyclerViewContactNumber.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewEmail.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewWebsite.setLayoutManager(new LinearLayoutManager(this));
@@ -2137,8 +1643,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void setCallLogHistoryDetails() {
         if (!TextUtils.isEmpty(historyName)) {
-            Pattern numberPat = Pattern.compile("\\d+");
-            Matcher matcher1 = numberPat.matcher(historyName);
             if (StringUtils.containsOnly(historyName, "\\d+")) {
 //                textToolbarTitle.setText("Unknown number");
 //                textToolbarTitle.setText(historyName);
@@ -2421,8 +1925,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             ArrayList<String> arrayListCloudNumber = new ArrayList<>();
 
             if (profileDetail != null && !Utils.isArraylistNullOrEmpty(profileDetail
-                    .getPbPhoneNumber
-                            ())) {
+                    .getPbPhoneNumber())) {
                 arrayListPhoneNumber.addAll(profileDetail.getPbPhoneNumber());
                 for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
                     String number = Utils.getFormattedNumber(this, arrayListPhoneNumber.get(i)
@@ -2448,10 +1951,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 ProfileDataOperationPhoneNumber();
 
                         phoneNumber.setPhoneNumber(Utils.getFormattedNumber(this,
-                                contactNumberCursor
-                                        .getString(contactNumberCursor.getColumnIndex
-                                                (ContactsContract
-                                                        .CommonDataKinds.Phone.NUMBER))));
+                                contactNumberCursor.getString(contactNumberCursor.getColumnIndex
+                                        (ContactsContract.CommonDataKinds.Phone.NUMBER))));
                         phoneNumber.setPhoneType(phoneBookContacts.getPhoneNumberType
                                 (contactNumberCursor.getInt(contactNumberCursor.getColumnIndex
                                         (ContactsContract.CommonDataKinds.Phone.TYPE))));
@@ -2871,8 +2372,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                         eventOperation.setEventType(phoneBookContacts.getEventType
                                 (contactEventCursor,
                                         contactEventCursor
-                                                .getInt(contactEventCursor.getColumnIndex(ContactsContract
-                                                        .CommonDataKinds.Event.TYPE))));
+                                                .getInt(contactEventCursor.getColumnIndex
+                                                        (ContactsContract
+                                                                .CommonDataKinds.Event.TYPE))));
 
                         eventOperation.setEventDateTime(contactEventCursor.getString
                                 (contactEventCursor
@@ -2904,7 +2406,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             //</editor-fold>
 
             if (displayOwnProfile && StringUtils.length(StringUtils.defaultString(profileDetail
-                    != null ? profileDetail.getPbGender() : null)) > 0) {
+                    != null ? profileDetail.getPbGender() : "")) > 0) {
                 textGender.setText(profileDetail.getPbGender());
 
                 if (textGender.getText().toString().trim().equals("Male"))
@@ -2994,6 +2496,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                @SuppressWarnings("unused")
                 int position = viewHolder.getAdapterPosition();
                 String actionNumber;
                 if (displayOwnProfile) {
@@ -3033,7 +2536,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 if (viewHolder instanceof ProfileDetailAdapter.ProfileDetailViewHolder &&
-                        StringUtils.startsWithIgnoreCase(((ProfileDetailAdapter.ProfileDetailViewHolder) viewHolder).textMain1.getText().toString(), "+XX")) {
+                        StringUtils.startsWithIgnoreCase(((ProfileDetailAdapter
+                                .ProfileDetailViewHolder) viewHolder).textMain1.getText()
+                                .toString(), "+XX")) {
                     return 0;
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder);
@@ -3132,6 +2637,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         return relativeRootProfileDetail;
     }
 
+    @SuppressWarnings("unused")
     public int getListClickedPosition() {
         return listClickedPosition;
     }
@@ -3215,7 +2721,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         dialog.show();
     }
 
-    /*private void fetchCallLogHistoryDateWise(String value) {
+    @SuppressWarnings("unused")
+    private void fetchCallLogHistoryDateWise(String value) {
         ArrayList<CallLogType> tempList = new ArrayList<>();
         arrayListHistory = new ArrayList<>();
         if (!TextUtils.isEmpty(value)) {
@@ -3231,10 +2738,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             if (historyDate > 0) {
                 Date intentDate1 = new Date(historyDate);
                 intentDate = new SimpleDateFormat("yyyy-MM-dd").format(intentDate1);
-            } else {
-//                intentDate = new SimpleDateFormat("yyyy-MM-dd").format(CallLogFragment
-//                        .callLogTypeReceiver.getCallReceiverDate());
             }
+        /*    else {
+                intentDate = new SimpleDateFormat("yyyy-MM-dd").format(CallLogFragment
+                        .callLogTypeReceiver.getCallReceiverDate());
+            }*/
             if (intentDate.equalsIgnoreCase(arrayDate)) {
                 arrayListHistory.add(callLogTypeHistory);
             }
@@ -3242,7 +2750,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
         setHistoryAdapter();
     }
-    */
+
     private void fetchAllCallLogHistory(String value) {
         if (!TextUtils.isEmpty(value)) {
             arrayListHistory = callLogHistory(value);
@@ -3316,7 +2824,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private ArrayList callLogHistory(String number) {
         ArrayList<CallLogType> callDetails = new ArrayList<>();
-        Cursor cursor = null;
+        Cursor cursor;
 //        Pattern numberPat = Pattern.compile("\\d+");
         Pattern numberPat = Pattern.compile("[+][0-9]+");
         Matcher matcher1 = numberPat.matcher(number);
@@ -3336,15 +2844,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
                 int account = -1;
                 int account_id = -1;
-                int profileImage = -1;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     account = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME);
                     //for versions above lollipop
                     account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
-                    profileImage = cursor.getColumnIndex(CallLog.Calls.CACHED_PHOTO_URI);
-                } else {
-//                        account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
                 }
+              /*  else {
+                        account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
+                }*/
 
                 while (cursor.moveToNext()) {
                     String phNum = cursor.getString(number1);
@@ -3453,119 +2960,505 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         return getString(R.string.type_other);
     }
 
-    //</editor-fold>
+    private class GetRCPNameAndProfileImage extends AsyncTask<Void, Void, Void> {
 
-    //<editor-fold desc="Web Service Call">
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+//            Utils.showProgressDialog(ProfileDetailActivity.this, "Please wait...", false);
+            rippleViewOldRecords.setVisibility(View.GONE);
+        }
 
-    private void setFavouriteStatus(ArrayList<ProfileData> favourites) {
+        protected Void doInBackground(Void... urls) {
+            if (!TextUtils.isEmpty(historyName)) {
+                fetchAllCallLogHistory(historyName);
+            } else {
+                fetchAllCallLogHistory(historyNumber);
+            }
 
-        WsRequestObject favouriteStatusObject = new WsRequestObject();
-//        favouriteStatusObject.setPmId(Integer.parseInt(getUserPmId()));
-        favouriteStatusObject.setFavourites(favourites);
+            return null;
+        }
 
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    favouriteStatusObject, null, WsResponseObject.class, WsConstants
-                    .REQ_MARK_AS_FAVOURITE, null, true).executeOnExecutor(AsyncTask
-                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
-                    .REQ_MARK_AS_FAVOURITE);
-        } else {
-            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
-                    .string.msg_no_network));
+        protected void onPostExecute(Void result) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+//                    Utils.hideProgressDialog();
+                    setHistoryAdapter();
+
+                }
+            });
         }
     }
 
-    private void submitRating(String ratingStar, String comment) {
+    private void showPermissionConfirmationDialog() {
 
-        WsRequestObject ratingObject = new WsRequestObject();
-//        ratingObject.setPmId(Integer.parseInt(getUserPmId()));
-        ratingObject.setPrComment(comment);
-        ratingObject.setPrRatingStars(ratingStar);
-        ratingObject.setPrStatus(String.valueOf(IntegerConstants.RATING_DONE));
-        ratingObject.setPrToPmId(Integer.parseInt(pmId));
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
 
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    ratingObject, null, WsResponseObject.class, WsConstants.REQ_PROFILE_RATING,
-                    null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants
-                    .WS_ROOT + WsConstants.REQ_PROFILE_RATING);
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        permissionConfirmationDialog.dismissDialog();
+                        finish();
+                        break;
+
+                    case R.id.rippleRight:
+                        permissionConfirmationDialog.dismissDialog();
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", getPackageName(), null));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        permissionConfirmationDialog = new MaterialDialog(this, cancelListener);
+        permissionConfirmationDialog.setTitleVisibility(View.GONE);
+        permissionConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        permissionConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
+        permissionConfirmationDialog.setDialogBody(getString(R.string.call_log_permission));
+
+        permissionConfirmationDialog.showDialog();
+
+    }
+
+    private void selectContactDialog(final ArrayList<ProfileDataOperationPhoneNumber>
+                                             phoneNumbers, ArrayList<ProfileDataOperationEmail>
+                                             emailIds) {
+
+        final ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add(getString(R.string.str_all));
+        arrayList.addAll(phoneNumbers);
+        arrayList.addAll(emailIds);
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_all_organization);
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
+                .relative_root_dialog_list);
+        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
+        textDialogTitle.setText(String.format("%s %s", getString(R.string.str_invite),
+                contactName));
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
+
+        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
+        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
+        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+
+        buttonRight.setTypeface(Utils.typefaceRegular(this));
+        buttonRight.setText(R.string.action_cancel);
+        buttonLeft.setTypeface(Utils.typefaceRegular(this));
+        buttonLeft.setText(getString(R.string.str_invite));
+
+        rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                dialog.dismiss();
+            }
+        });
+
+        RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
+                .recycler_view_dialog_list);
+        recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
+
+        final PhoneBookContactDetailAdapter adapter = new PhoneBookContactDetailAdapter(this,
+                arrayList);
+        recyclerViewDialogList.setAdapter(adapter);
+
+        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                if (adapter.getArrayListSelectedContacts().size() > 0) {
+                    dialog.dismiss();
+                    ArrayList<String> numbers = new ArrayList<>();
+                    ArrayList<String> emails = new ArrayList<>();
+                    for (int i = 0; i < arrayList.size(); i++) {
+                        if (adapter.getArrayListSelectedContacts().contains(i)) {
+                            if (arrayList.get(i) instanceof ProfileDataOperationPhoneNumber) {
+                                ProfileDataOperationPhoneNumber number =
+                                        (ProfileDataOperationPhoneNumber) arrayList.get(i);
+                                numbers.add(number.getPhoneNumber());
+                            }
+                            if (arrayList.get(i) instanceof ProfileDataOperationEmail) {
+                                ProfileDataOperationEmail email = (ProfileDataOperationEmail)
+                                        arrayList.get(i);
+                                emails.add(email.getEmEmailId());
+                            }
+                        }
+                    }
+                    inviteContact(numbers, emails);
+                } else {
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootDialogList,
+                            getString(R.string.please_select_one));
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    private BroadcastReceiver localBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            arrayListHistory.clear();
+            recyclerCallHistory.setVisibility(View.GONE);
+            setHistoryAdapter();
+
+        }
+    };
+
+    @SuppressWarnings("unused")
+    private void selectContactDialog(String contactName,
+                                     final ArrayList<ProfileDataOperationPhoneNumber> phoneNumbers,
+                                     ArrayList<ProfileDataOperationEmail> emailIds) {
+
+        final ArrayList<Object> arrayList = new ArrayList<>();
+        arrayList.add("All");
+        arrayList.addAll(phoneNumbers);
+        arrayList.addAll(emailIds);
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_all_organization);
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+
+        final LinearLayout relativeRootDialogList = (LinearLayout) dialog.findViewById(R.id
+                .relative_root_dialog_list);
+        TextView textDialogTitle = (TextView) dialog.findViewById(R.id.text_dialog_title);
+        textDialogTitle.setText(String.format("%s %s", getString(R.string.str_invite),
+                contactName));
+        textDialogTitle.setTypeface(Utils.typefaceSemiBold(this));
+
+        Button buttonRight = (Button) dialog.findViewById(R.id.button_right);
+        Button buttonLeft = (Button) dialog.findViewById(R.id.button_left);
+        RippleView rippleRight = (RippleView) dialog.findViewById(R.id.ripple_right);
+        RippleView rippleLeft = (RippleView) dialog.findViewById(R.id.ripple_left);
+
+        buttonRight.setTypeface(Utils.typefaceRegular(this));
+        buttonRight.setText(R.string.action_cancel);
+        buttonLeft.setTypeface(Utils.typefaceRegular(this));
+        buttonLeft.setText(getString(R.string.str_invite));
+
+        rippleRight.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                dialog.dismiss();
+            }
+        });
+
+
+        RecyclerView recyclerViewDialogList = (RecyclerView) dialog.findViewById(R.id
+                .recycler_view_dialog_list);
+        recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
+
+        final PhoneBookContactDetailAdapter adapter = new PhoneBookContactDetailAdapter(this,
+                arrayList);
+        recyclerViewDialogList.setAdapter(adapter);
+
+        rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                if (adapter.getArrayListSelectedContacts().size() > 0) {
+                    dialog.dismiss();
+                    ArrayList<String> numbers = new ArrayList<>();
+                    ArrayList<String> emails = new ArrayList<>();
+                    for (int i = 0; i < arrayList.size(); i++) {
+                        if (adapter.getArrayListSelectedContacts().contains(i)) {
+                            if (arrayList.get(i) instanceof ProfileDataOperationPhoneNumber) {
+                                ProfileDataOperationPhoneNumber number =
+                                        (ProfileDataOperationPhoneNumber) arrayList.get(i);
+                                numbers.add(number.getPhoneNumber());
+                            }
+                            if (arrayList.get(i) instanceof ProfileDataOperationEmail) {
+                                ProfileDataOperationEmail email = (ProfileDataOperationEmail)
+                                        arrayList.get(i);
+                                emails.add(email.getEmEmailId());
+                            }
+                        }
+                    }
+                    inviteContact(numbers, emails);
+                } else {
+                    Utils.showErrorSnackBar(ProfileDetailActivity.this, relativeRootDialogList,
+                            getString(R.string.please_select_one));
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void openCallLogHistoryDetailsActivity() {
+        Intent intent = new Intent(ProfileDetailActivity.this, CallHistoryDetailsActivity.class);
+        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, historyNumber);
+        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NAME, historyName);
+        intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_DATE, historyDate);
+        intent.putExtra(AppConstants.EXTRA_PM_ID, pmId);
+        String rawId;
+        if (checkNumberFavourite == null) {
+            rawId = phoneBookId;
         } else {
-            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
-                    .string.msg_no_network));
+            rawId = checkNumberFavourite;
+        }
+        intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, rawId);
+//        intent.putExtra(AppConstants.EXTRA_PHONE_BOOK_ID, phoneBookId);
+        intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, contactName);
+        intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, cloudContactName);
+        intent.putExtra(AppConstants.EXTRA_CHECK_NUMBER_FAVOURITE, checkNumberFavourite);
+        intent.putExtra(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
+        intent.putExtra(AppConstants.EXTRA_CALL_UNIQUE_ID, hashMapKey);
+        intent.putExtra(AppConstants.EXTRA_UNIQUE_CONTACT_ID, uniqueContactId);
+        intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, isCallLogRcpUser);
+        if (!StringUtils.isEmpty(profileThumbnail)) {
+            intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, profileThumbnail);
+        } else {
+            intent.putExtra(AppConstants.EXTRA_CONTACT_PROFILE_IMAGE, thumbnailUrl);
+        }
+        startActivity(intent);
+        overridePendingTransition(R.anim.enter, R.anim.exit);
+    }
+
+    private void getOldCallHistory() {
+        ArrayList<CallLogHistoryType> arrayListToSend = new ArrayList<>();
+        if (arrayListHistory != null && arrayListHistory.size() > 0) {
+            CallLogType callLogType = arrayListHistory.get(arrayListHistory.size() - 1);
+            String number = callLogType.getHistoryNumber();
+            String formattedNumber = "";
+            if (!StringUtils.isEmpty(number))
+                formattedNumber = Utils.getFormattedNumber(this, number);
+            long date = callLogType.getHistoryDate();
+                /*Date date1 = new Date(date);
+                String finalDate = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss").format(date1);*/
+            CallLogHistoryType callLogHistoryType = new CallLogHistoryType();
+            if (!StringUtils.isEmpty(formattedNumber))
+                callLogHistoryType.setHistoryNumber(formattedNumber);
+            callLogHistoryType.setHistoryDate(date);
+            arrayListToSend.add(callLogHistoryType);
+
+            fetchOldRecordsServiceCall(arrayListToSend);
+
+        } else {
+            rippleViewOldRecords.setVisibility(View.GONE);
         }
     }
 
-    private void shareContact() {
-
-        WsRequestObject uploadContactObject = new WsRequestObject();
-//        uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
-        uploadContactObject.setSendProfileType(IntegerConstants.SEND_PROFILE_NON_RCP_SOCIAL);
-        uploadContactObject.setContactData(profileDataOperationVcard);
-
+    private void fetchOldRecordsServiceCall(ArrayList<CallLogHistoryType> callLogTypeArrayList) {
+        // Log.i("HistoryServiceCalled", "Service Started");
+        WsRequestObject deviceDetailObject = new WsRequestObject();
+        deviceDetailObject.setHistoryTypeArrayList(callLogTypeArrayList);
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    uploadContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_RCP_PROFILE_SHARING, getResources().getString(R.string.msg_please_wait),
-                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
-                    WsConstants.REQ_RCP_PROFILE_SHARING);
-        } else {
-            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
-                    .getString(R.string.msg_no_network));
-        }
-    }
-
-    private void getProfileDetails() {
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
-                    WsResponseObject.class, WsConstants.REQ_GET_PROFILE_DETAILS, getString(R
-                    .string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
-                            WsConstants.REQ_GET_PROFILE_DETAILS + "/" +
-                            pmId);
-        } else {
-            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
-                    .getString(R.string.msg_no_network));
-        }
-    }
-
-    private void profileVisit(ArrayList<ProfileVisit> arrayListProfileVisit) {
-
-        WsRequestObject profileVisitObject = new WsRequestObject();
-        profileVisitObject.setArrayListProfileVisit(arrayListProfileVisit);
-
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    profileVisitObject, null, WsResponseObject.class, WsConstants
-                    .REQ_ADD_PROFILE_VISIT, null, true).executeOnExecutor(AsyncTask
-                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
-                    .REQ_ADD_PROFILE_VISIT);
-        } else {
-            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
-                    .getString(R.string.msg_no_network));
-        }
-    }
-
-    private void inviteContact(ArrayList<String> arrayListContactNumber, ArrayList<String>
-            arrayListEmail) {
-
-        WsRequestObject inviteContactObject = new WsRequestObject();
-        inviteContactObject.setArrayListContactNumber(arrayListContactNumber);
-        inviteContactObject.setArrayListEmailAddress(arrayListEmail);
-
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    inviteContactObject, null, WsResponseObject.class, WsConstants
-                    .REQ_SEND_INVITATION, null, true).executeOnExecutor(AsyncTask
+                    deviceDetailObject, null, WsResponseObject.class, WsConstants
+                    .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).executeOnExecutor(AsyncTask
                             .THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
-        }
-        /*else {
-            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
+                    WsConstants.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
                     .getString(R.string.msg_no_network));
-        }*/
+        }
+
     }
 
-    //</editor-fold>
+    @SuppressWarnings("unused")
+    private ArrayList<CallLogType> getNumbersFromName(String number) {
+        Cursor cursor;
+        ArrayList<CallLogType> listNumber = new ArrayList<>();
+        try {
+            final Uri Person = Uri.withAppendedPath(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI,
+                    Uri.encode(number));
+
+            cursor = this.getContentResolver().query(Person, null,
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " =?", new
+                            String[]{number}, null);
+
+            if (cursor != null) {
+                if (cursor.getCount() > 0) {
+                    int number1 = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone
+                            .NUMBER);
+
+                    while (cursor.moveToNext()) {
+                        CallLogType callLogType = new CallLogType();
+                        String profileNumber = cursor.getString(number1);
+                        String formattedNumber = Utils.getFormattedNumber(this, profileNumber);
+                        callLogType.setName(number);
+                        callLogType.setNumber(formattedNumber);
+                        listNumber.add(callLogType);
+                    }
+                }
+                cursor.close();
+            }
+
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return listNumber;
+    }
+
+    private void savePrivacySettingToDb(ProfileDataOperation profileDetail) {
+
+        // <editor-fold desc="Mobile Number">
+        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+
+        // Remove Existing Number
+        tableMobileMaster.deleteMobileNumber(getUserPmId());
+
+        ArrayList<MobileNumber> arrayListMobileNumber = new ArrayList<>();
+        ArrayList<ProfileDataOperationPhoneNumber> arrayListPhoneNumber =
+                profileDetail.getPbPhoneNumber();
+        if (!Utils.isArraylistNullOrEmpty(arrayListPhoneNumber)) {
+            for (int i = 0; i < arrayListPhoneNumber.size(); i++) {
+                MobileNumber mobileNumber = new MobileNumber();
+                mobileNumber.setMnmRecordIndexId(arrayListPhoneNumber.get(i)
+                        .getPhoneId());
+                mobileNumber.setMnmNumberType(arrayListPhoneNumber.get(i)
+                        .getPhoneType());
+                mobileNumber.setMnmMobileNumber("+" + arrayListPhoneNumber.get(i)
+                        .getPhoneNumber());
+                mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber
+                        .get(i).getPhonePublic()));
+                mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(i)
+                        .getPbRcpType()));
+                mobileNumber.setRcProfileMasterPmId(getUserPmId());
+                arrayListMobileNumber.add(mobileNumber);
+            }
+            tableMobileMaster.addArrayMobileNumber(arrayListMobileNumber);
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Email Master">
+
+        TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
+
+        // Remove Existing Number
+        tableEmailMaster.deleteEmail(getUserPmId());
+
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
+            ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
+            ArrayList<Email> arrayListEmail = new ArrayList<>();
+            for (int i = 0; i < arrayListEmailId.size(); i++) {
+                Email email = new Email();
+                email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
+                email.setEmEmailAddress(arrayListEmailId.get(i).getEmEmailId());
+                email.setEmEmailType(arrayListEmailId.get(i).getEmType());
+                email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
+                email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
+                email.setRcProfileMasterPmId(getUserPmId());
+                arrayListEmail.add(email);
+            }
+
+
+            tableEmailMaster.addArrayEmail(arrayListEmail);
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Address Master">
+
+        TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
+
+        // Remove Existing Number
+        tableAddressMaster.deleteAddress(getUserPmId());
+
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbAddress())) {
+            ArrayList<ProfileDataOperationAddress> arrayListAddress = profileDetail.getPbAddress();
+            ArrayList<Address> addressList = new ArrayList<>();
+            for (int j = 0; j < arrayListAddress.size(); j++) {
+                Address address = new Address();
+                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
+                address.setAmState(arrayListAddress.get(j).getState());
+                address.setAmCity(arrayListAddress.get(j).getCity());
+                address.setAmAddressPrivacy(String.valueOf(arrayListAddress.get(j).getAddPublic()));
+                address.setAmCountry(arrayListAddress.get(j).getCountry());
+                address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
+                address.setAmNeighborhood(arrayListAddress.get(j).getNeighborhood());
+                address.setAmPostCode(arrayListAddress.get(j).getPostCode());
+                address.setAmPoBox(arrayListAddress.get(j).getPoBox());
+                address.setAmStreet(arrayListAddress.get(j).getStreet());
+                address.setAmAddressType(arrayListAddress.get(j).getAddressType());
+              /*  address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
+                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());*/
+                address.setRcProfileMasterPmId(getUserPmId());
+                addressList.add(address);
+            }
+
+            tableAddressMaster.addArrayAddress(addressList);
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Im Account Master">
+        TableImMaster tableImMaster = new TableImMaster(databaseHandler);
+
+        // Remove Existing Number
+        tableImMaster.deleteImAccount(getUserPmId());
+
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbIMAccounts())) {
+            ArrayList<ProfileDataOperationImAccount> arrayListImAccount = profileDetail
+                    .getPbIMAccounts();
+            ArrayList<ImAccount> imAccountsList = new ArrayList<>();
+            for (int j = 0; j < arrayListImAccount.size(); j++) {
+                ImAccount imAccount = new ImAccount();
+                imAccount.setImRecordIndexId(arrayListImAccount.get(j).getIMId());
+                imAccount.setImImDetail(arrayListImAccount.get(j).getIMAccountDetails());
+//                imAccount.setImImType(arrayListImAccount.get(j).getIMAccountType());
+                imAccount.setImImProtocol(arrayListImAccount.get(j).getIMAccountProtocol());
+                imAccount.setImImPrivacy(String.valueOf(arrayListImAccount.get(j)
+                        .getIMAccountPublic()));
+                imAccount.setRcProfileMasterPmId(getUserPmId());
+                imAccountsList.add(imAccount);
+            }
+
+            tableImMaster.addArrayImAccount(imAccountsList);
+        }
+        //</editor-fold>
+
+        // <editor-fold desc="Event Master">
+
+        TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
+
+        // Remove Existing Number
+        tableEventMaster.deleteEvent(getUserPmId());
+
+        if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEvent())) {
+            ArrayList<ProfileDataOperationEvent> arrayListEvent = profileDetail
+                    .getPbEvent();
+            ArrayList<Event> eventList = new ArrayList<>();
+            for (int j = 0; j < arrayListEvent.size(); j++) {
+                Event event = new Event();
+                event.setEvmRecordIndexId(arrayListEvent.get(j).getEventId());
+                event.setEvmStartDate(arrayListEvent.get(j).getEventDateTime());
+                event.setEvmEventType(arrayListEvent.get(j).getEventType());
+                event.setEvmIsYearHidden(arrayListEvent.get(j).getIsYearHidden());
+                event.setEvmEventPrivacy(String.valueOf(arrayListEvent.get(j).getEventPublic()));
+                event.setRcProfileMasterPmId(getUserPmId());
+                eventList.add(event);
+            }
+
+            tableEventMaster.addArrayEvent(eventList);
+        }
+        //</editor-fold>
+
+    }
 
     private void storeProfileDataToDb(ProfileDataOperation profileDetail) {
 
@@ -3754,4 +3647,120 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
         //</editor-fold>
     }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Web Service Call">
+
+    private void setFavouriteStatus(ArrayList<ProfileData> favourites) {
+
+        WsRequestObject favouriteStatusObject = new WsRequestObject();
+//        favouriteStatusObject.setPmId(Integer.parseInt(getUserPmId()));
+        favouriteStatusObject.setFavourites(favourites);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    favouriteStatusObject, null, WsResponseObject.class, WsConstants
+                    .REQ_MARK_AS_FAVOURITE, null, true).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    .REQ_MARK_AS_FAVOURITE);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
+                    .string.msg_no_network));
+        }
+    }
+
+    private void submitRating(String ratingStar, String comment) {
+
+        WsRequestObject ratingObject = new WsRequestObject();
+//        ratingObject.setPmId(Integer.parseInt(getUserPmId()));
+        ratingObject.setPrComment(comment);
+        ratingObject.setPrRatingStars(ratingStar);
+        ratingObject.setPrStatus(String.valueOf(IntegerConstants.RATING_DONE));
+        ratingObject.setPrToPmId(Integer.parseInt(pmId));
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    ratingObject, null, WsResponseObject.class, WsConstants.REQ_PROFILE_RATING,
+                    null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants
+                    .WS_ROOT + WsConstants.REQ_PROFILE_RATING);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources().getString(R
+                    .string.msg_no_network));
+        }
+    }
+
+    private void shareContact() {
+
+        WsRequestObject uploadContactObject = new WsRequestObject();
+//        uploadContactObject.setPmId(Integer.parseInt(getUserPmId()));
+        uploadContactObject.setSendProfileType(IntegerConstants.SEND_PROFILE_NON_RCP_SOCIAL);
+        uploadContactObject.setContactData(profileDataOperationVcard);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    uploadContactObject, null, WsResponseObject.class, WsConstants
+                    .REQ_RCP_PROFILE_SHARING, getResources().getString(R.string.msg_please_wait),
+                    true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                    WsConstants.REQ_RCP_PROFILE_SHARING);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
+    private void getProfileDetails() {
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
+                    WsResponseObject.class, WsConstants.REQ_GET_PROFILE_DETAILS, getString(R
+                    .string.msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                            WsConstants.REQ_GET_PROFILE_DETAILS + "/" +
+                            pmId);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
+    private void profileVisit(ArrayList<ProfileVisit> arrayListProfileVisit) {
+
+        WsRequestObject profileVisitObject = new WsRequestObject();
+        profileVisitObject.setArrayListProfileVisit(arrayListProfileVisit);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    profileVisitObject, null, WsResponseObject.class, WsConstants
+                    .REQ_ADD_PROFILE_VISIT, null, true).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                    .REQ_ADD_PROFILE_VISIT);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+    }
+
+    private void inviteContact(ArrayList<String> arrayListContactNumber, ArrayList<String>
+            arrayListEmail) {
+
+        WsRequestObject inviteContactObject = new WsRequestObject();
+        inviteContactObject.setArrayListContactNumber(arrayListContactNumber);
+        inviteContactObject.setArrayListEmailAddress(arrayListEmail);
+
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    inviteContactObject, null, WsResponseObject.class, WsConstants
+                    .REQ_SEND_INVITATION, null, true).executeOnExecutor(AsyncTask
+                            .THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_SEND_INVITATION);
+        }
+        /*else {
+            Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
+                    .getString(R.string.msg_no_network));
+        }*/
+    }
+
+    //</editor-fold>
+
+
 }
