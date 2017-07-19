@@ -1468,7 +1468,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             } else {
                 textFullScreenText.setText(contactName);
 
-                if (!TextUtils.isEmpty(thumbnailUrl)) {
+                if (StringUtils.length(thumbnailUrl) > 0) {
                     Glide.with(this)
                             .load(thumbnailUrl)
                             .placeholder(R.drawable.home_screen_profile)

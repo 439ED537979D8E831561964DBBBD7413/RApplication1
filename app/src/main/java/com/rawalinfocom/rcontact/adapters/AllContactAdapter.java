@@ -439,7 +439,13 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                         bundle.putString(AppConstants.EXTRA_CONTACT_NAME, textName.getText()
                                 .toString());
-                        bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+//                        bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                        if (StringUtils.length(profileData.getTempRcpImageURL()) > 0) {
+                            bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, profileData
+                                    .getTempRcpImageURL());
+                        } else {
+                            bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                        }
                         listClickedPosition = (int) textName.getTag();
                         bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, listClickedPosition);
                         if (textCloudName.getVisibility() == View.VISIBLE) {
