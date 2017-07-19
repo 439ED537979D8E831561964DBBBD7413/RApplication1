@@ -556,12 +556,16 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                         String publicUrl = globalSearchType.getPublicProfileUrl();
                                         if (!StringUtils.isEmpty(publicUrl)) {
                                             previousId = globalSearchType.getRcpPmId();
-                                            Intent intent = new Intent(SearchActivity.this,
+                                            String url = publicUrl;
+                                            Intent i = new Intent(Intent.ACTION_VIEW);
+                                            i.setData(Uri.parse(url));
+                                            startActivity(i);
+                                            /*Intent intent = new Intent(SearchActivity.this,
                                                     WebBrowserActivity.class);
                                             intent.putExtra(AppConstants
                                                     .EXTRA_GLOBAL_PUBLIC_PROFILE_URL, publicUrl);
                                             startActivity(intent);
-                                            overridePendingTransition(R.anim.enter, R.anim.exit);
+                                            overridePendingTransition(R.anim.enter, R.anim.exit);*/
                                         }
                                     }
                                 }

@@ -183,8 +183,10 @@ public class GlobalSearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }*/
 
         if (isRcpVerified == 1) {
-            if(!StringUtils.isEmpty(mobileNumber))
-                holder.image3dotsCallLog.setVisibility(View.VISIBLE);
+            if(!StringUtils.isEmpty(mobileNumber)){
+//                holder.image3dotsCallLog.setVisibility(View.VISIBLE);
+                holder.image3dotsCallLog.setVisibility(View.GONE);
+            }
             else {
                 holder.image3dotsCallLog.setVisibility(View.GONE);
                 holder.llNumber.setVisibility(View.GONE);

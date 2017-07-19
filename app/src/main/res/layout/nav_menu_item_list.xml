@@ -11,7 +11,8 @@
         android:layout_height="42dp"
         android:orientation="horizontal"
         android:paddingEnd="0dp"
-        android:paddingStart="@dimen/margin_20dp">
+        android:paddingStart="@dimen/margin_20dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/nav_txt_account"
@@ -35,7 +36,9 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@drawable/drawer_item_bg"/>
+        android:background="@drawable/drawer_item_bg"
+        android:visibility="gone"/>
+
 
     <LinearLayout
         android:id="@+id/nav_ll_timeline"
@@ -135,7 +138,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@drawable/drawer_item_bg"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/nav_ll_invite"
@@ -144,7 +147,7 @@
         android:orientation="horizontal"
         android:paddingEnd="0dp"
         android:paddingStart="@dimen/margin_20dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/nav_txt_invite"
@@ -170,7 +173,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@drawable/drawer_item_bg"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/nav_ll_share"
@@ -179,7 +182,7 @@
         android:orientation="horizontal"
         android:paddingEnd="0dp"
         android:paddingStart="@dimen/margin_20dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/nav_txt_share"
@@ -204,7 +207,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@drawable/drawer_item_bg"/>
+        android:background="@drawable/drawer_item_bg"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/nav_ll_settings"
@@ -212,7 +216,8 @@
         android:layout_height="42dp"
         android:orientation="horizontal"
         android:paddingEnd="0dp"
-        android:paddingStart="@dimen/margin_20dp">
+        android:paddingStart="@dimen/margin_20dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/nav_txt_settings"
@@ -236,7 +241,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@drawable/drawer_item_bg"/>
+        android:background="@drawable/drawer_item_bg"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/nav_ll_rate_us"
@@ -244,7 +250,8 @@
         android:layout_height="42dp"
         android:orientation="horizontal"
         android:paddingEnd="0dp"
-        android:paddingStart="@dimen/margin_20dp">
+        android:paddingStart="@dimen/margin_20dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/nav_txt_rate"
@@ -268,7 +275,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@drawable/drawer_item_bg"/>
+        android:background="@drawable/drawer_item_bg"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/nav_ll_about"
@@ -276,7 +284,8 @@
         android:layout_height="42dp"
         android:orientation="horizontal"
         android:paddingEnd="0dp"
-        android:paddingStart="@dimen/margin_20dp">
+        android:paddingStart="@dimen/margin_20dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/nav_txt_about"
