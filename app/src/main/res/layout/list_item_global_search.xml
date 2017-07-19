@@ -30,7 +30,8 @@
             android:paddingLeft="@dimen/padding_5dp"
             android:paddingTop="@dimen/padding_5dp"
             android:src="@drawable/ic_action_more_vertical"
-            android:tint="@color/colorDarkGray" />
+            android:tint="@color/colorDarkGray"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/text_temp_number"
