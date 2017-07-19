@@ -463,13 +463,14 @@ public class TableProfileMaster {
     public ArrayList<String> getAllRcpId() {
 
         ArrayList<String> arrayListRawId = new ArrayList<>();
+        SQLiteDatabase db = null;
         // Select All Query
 
         try {
 
             String selectQuery = "SELECT " + COLUMN_PM_RAW_ID + " FROM " + TABLE_RC_PROFILE_MASTER;
 
-            SQLiteDatabase db = databaseHandler.getWritableDatabase();
+            db = databaseHandler.getWritableDatabase();
             Cursor cursor = db.rawQuery(selectQuery, null);
 
             // looping through all rows and adding to list
@@ -493,6 +494,9 @@ public class TableProfileMaster {
             db.close();
         } catch (Exception e) {
             e.printStackTrace();
+            if (db != null) {
+                db.close();
+            }
         }
 
         // return user profile list

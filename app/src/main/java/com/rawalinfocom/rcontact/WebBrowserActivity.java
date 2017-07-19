@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
@@ -74,6 +75,7 @@ public class WebBrowserActivity extends BaseActivity implements RippleView
 
     private void populateWebView() {
         webviewPublicProfile.getSettings().setJavaScriptEnabled(true); // enable javascript
+        webviewPublicProfile.getSettings().setUserAgentString("wp-android-native");
         webviewPublicProfile.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String
                     failingUrl) {

@@ -460,31 +460,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
             arrayListPhoneBookContacts = new ArrayList<>();
             arrayListFavouriteContacts = new ArrayList<>();
-          /*  arrayListPhoneBookContacts.add(getActivity().getString(R.string.title_my_profile));
-
-            ProfileData myProfileData = new ProfileData();
-
-            TableMobileMaster tableMobileMaster = new TableMobileMaster(getDatabaseHandler());
-            String mobileNumber = tableMobileMaster.getUserMobileNumber(getUserPmId());
-
-            System.out.println("RContact firstName - LastName - Number --> " + userProfile
-                    .getPmFirstName()
-                    + " -- " + userProfile.getPmLastName() + " -- " + mobileNumber);
-
-            myProfileData.setName(userProfile.getPmFirstName() + " " + userProfile.getPmLastName());
-            myProfileData.setProfileUrl(userProfile.getPmProfileImage());
-            myProfileData.setName(Utils.getStringPreference(getActivity(), AppConstants
-            .PREF_USER_NAME, ""));
-            myProfileData.setTempNumber(mobileNumber);
-            myProfileData.setProfileUrl(Utils.getStringPreference(getActivity(), AppConstants
-            .PREF_USER_PHOTO, ""));
-            myProfileData.setTempIsRcp(true);
-            myProfileData.setTempRcpId(((BaseActivity) getActivity()).getUserPmId());
-
-            arrayListPhoneBookContacts.add(myProfileData);
-            arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));
-
-            arrayListPhoneBookContacts.add(getActivity().getString(R.string.privacy_my_contact));*/
 
             phoneBookContacts = new PhoneBookContacts(getActivity());
             isReload = false;
