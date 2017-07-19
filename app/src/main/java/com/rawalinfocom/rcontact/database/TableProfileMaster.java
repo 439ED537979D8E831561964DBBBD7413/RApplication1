@@ -195,8 +195,10 @@ public class TableProfileMaster {
         try {
             SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
-            Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_RCP_ID},
-                    COLUMN_PM_RCP_ID + "=?", new String[]{String.valueOf(cloudPmd)}, null, null, null, null);
+            Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_FIRST_NAME,
+                            COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_RCP_ID},
+                    COLUMN_PM_RCP_ID + "=?", new String[]{String.valueOf(cloudPmd)}, null, null,
+                    null, null);
             if (cursor != null)
                 cursor.moveToFirst();
 
@@ -231,7 +233,8 @@ public class TableProfileMaster {
             SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
             Cursor cursor = db.query(TABLE_RC_PROFILE_MASTER, new String[]{COLUMN_PM_RAW_ID,
-                    COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE, COLUMN_PM_RCP_ID,}, COLUMN_PM_RCP_ID
+                    COLUMN_PM_FIRST_NAME, COLUMN_PM_LAST_NAME, COLUMN_PM_PROFILE_IMAGE,
+                    COLUMN_PM_RCP_ID,}, COLUMN_PM_RCP_ID
                     + "=?", new String[]{String.valueOf(cloudPmd)}, null, null, null, null);
             if (cursor != null)
                 cursor.moveToFirst();
@@ -463,13 +466,14 @@ public class TableProfileMaster {
     public ArrayList<String> getAllRcpId() {
 
         ArrayList<String> arrayListRawId = new ArrayList<>();
+        SQLiteDatabase db = null;
         // Select All Query
 
         try {
 
             String selectQuery = "SELECT " + COLUMN_PM_RAW_ID + " FROM " + TABLE_RC_PROFILE_MASTER;
 
-            SQLiteDatabase db = databaseHandler.getWritableDatabase();
+            db = databaseHandler.getWritableDatabase();
             Cursor cursor = db.rawQuery(selectQuery, null);
 
             // looping through all rows and adding to list
@@ -493,6 +497,9 @@ public class TableProfileMaster {
             db.close();
         } catch (Exception e) {
             e.printStackTrace();
+            if (db != null) {
+                db.close();
+            }
         }
 
         // return user profile list
@@ -561,8 +568,8 @@ public class TableProfileMaster {
         ArrayList<UserProfile> userProfiles = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT " + COLUMN_PM_RCP_ID + "," + COLUMN_PM_FIRST_NAME + "," +
-                COLUMN_PM_LAST_NAME + " FROM " + TABLE_RC_PROFILE_MASTER + " WHERE " +
-                COLUMN_PM_RAW_ID + " LIKE '%" + rawId + "%'";
+                COLUMN_PM_PROFILE_IMAGE + "," + COLUMN_PM_LAST_NAME + " FROM " +
+                TABLE_RC_PROFILE_MASTER + " WHERE " + COLUMN_PM_RAW_ID + " LIKE '%" + rawId + "%'";
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -581,6 +588,8 @@ public class TableProfileMaster {
                             (COLUMN_PM_LAST_NAME)));
                     userProfile.setPmRcpId(cursor.getString(cursor.getColumnIndex
                             (COLUMN_PM_RCP_ID)));
+                    userProfile.setPmProfileImage(cursor.getString(cursor.getColumnIndex
+                            (COLUMN_PM_PROFILE_IMAGE)));
 //                        name = userProfile.getPmFirstName() + " " + userProfile.getPmLastName();
                    /* if (name.equalsIgnoreCase("0")) {
                         name = userProfile.getPmRcpId();

@@ -29,6 +29,7 @@ public class ProfileData {
     private String tempEmail;
     private String tempRcpName;
     private String tempRcpId;
+    private String tempRcpImageURL;
     private boolean tempIsRcp;
     private String tempRawId;
     private String name;
@@ -200,5 +201,14 @@ public class ProfileData {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @JsonIgnore
+    public String getTempRcpImageURL() {
+        return tempRcpImageURL;
+    }
+
+    public void setTempRcpImageURL(String tempRcpImageURL) {
+        this.tempRcpImageURL = tempRcpImageURL;
     }
 }
