@@ -313,6 +313,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     boolean isFromReceiver = false;
     boolean isContactEdited = false;
 
+    public String callNumber = "";
+
     //<editor-fold desc="Override Methods">
 
     @Override
@@ -869,6 +871,20 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     showPermissionConfirmationDialog();
 
                 }
+            }
+
+            case AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
+                    // Permission Granted
+                    Utils.callIntent(ProfileDetailActivity.this, callNumber);
+                }
+                /*else {
+                    // Permission Denied
+                    showPermissionConfirmationDialog(AppConstants
+                            .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                }*/
             }
             break;
         }
@@ -1619,6 +1635,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 // RC Profile
                 if (Utils.isNetworkAvailable(ProfileDetailActivity.this)) {
                     //call service
+                    cardContactDetails.setVisibility(View.GONE);
+                    cardOtherDetails.setVisibility(View.GONE);
                     getProfileDetails();
                 } else {
                     getDataFromDB();
@@ -1747,6 +1765,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void setUpView(final ProfileDataOperation profileDetail) {
 
         try {
+
+            cardContactDetails.setVisibility(View.VISIBLE);
+            cardOtherDetails.setVisibility(View.VISIBLE);
 
             profileDataOperationVcard = new ProfileDataOperation();
 
@@ -2436,8 +2457,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     }
 
-
-    //    private void showAllOrganizations(ProfileDataOperation profileDetail) {
     private void showAllOrganizations(ArrayList<ProfileDataOperationOrganization>
                                               arrayListOrganization) {
         final Dialog dialog = new Dialog(this);
@@ -2476,8 +2495,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 .recycler_view_dialog_list);
         recyclerViewDialogList.setLayoutManager(new LinearLayoutManager(this));
 
-        /*OrganizationListAdapter adapter = new OrganizationListAdapter(this, profileDetail
-                .getPbOrganization());*/
         OrganizationListAdapter adapter = new OrganizationListAdapter(this, arrayListOrganization);
         recyclerViewDialogList.setAdapter(adapter);
 
@@ -2520,6 +2537,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     startActivity(smsIntent);
 
                 } else {
+
+                    if (!actionNumber.startsWith("+91")) {
+                        callNumber = "+91" + actionNumber;
+                    } else {
+                        callNumber = actionNumber;
+                    }
+
                     showCallConfirmationDialog(actionNumber);
                 }
                 Handler handler = new Handler();
@@ -2616,7 +2640,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                        /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
                                 number));
                         startActivity(intent);*/
-                        Utils.callIntent(ProfileDetailActivity.this, finalNumber);
+                        if (ContextCompat.checkSelfPermission(ProfileDetailActivity.this, android
+                                .Manifest.permission.CALL_PHONE) != PackageManager
+                                .PERMISSION_GRANTED)
+                            requestPermissions(new String[]{Manifest.permission
+                                    .CALL_PHONE}, AppConstants
+                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                        else {
+                            Utils.callIntent(ProfileDetailActivity.this, finalNumber);
+                        }
+
                         break;
                 }
             }
@@ -2642,6 +2675,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         return listClickedPosition;
     }
 
+    @SuppressWarnings("unused")
     private void showChooseShareOption(final String firstName, final String lastName) {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -2820,7 +2854,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
         return cursor;
     }
-
 
     private ArrayList callLogHistory(String number) {
         ArrayList<CallLogType> callDetails = new ArrayList<>();
