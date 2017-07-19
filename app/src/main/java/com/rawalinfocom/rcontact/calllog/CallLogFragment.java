@@ -787,7 +787,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 nameAndProfileImage = new GetRCPNameAndProfileImage();
                 nameAndProfileImage.execute();
             }
-        }, 300);
+        }, 100);
 
     }
 
@@ -989,6 +989,29 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             );
         }
         return parts;
+    }
+
+    private String getNameFromNumber(String phoneNumber) {
+        String contactName = "";
+        try {
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return contactName;
     }
 
     /**
@@ -1653,26 +1676,5 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     };
     //</editor-fold>
 
-    private String getNameFromNumber(String phoneNumber) {
-        String contactName = "";
-        try {
 
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY};
-            Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
-
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
-                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
-                }
-                cursor.close();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return contactName;
-    }
 }

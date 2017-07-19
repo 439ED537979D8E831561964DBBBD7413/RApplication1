@@ -900,9 +900,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         textUserName.setTypeface(Utils.typefaceSemiBold(MainActivity.this));
         textNumber.setTypeface(Utils.typefaceRegular(MainActivity.this));
-        textRatingCount.setTypeface(Utils.typefaceRegular(
-
-                MainActivity.this));
+        textRatingCount.setTypeface(Utils.typefaceBold(MainActivity.this));
 
         textUserName.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
         textNumber.setText(number);
