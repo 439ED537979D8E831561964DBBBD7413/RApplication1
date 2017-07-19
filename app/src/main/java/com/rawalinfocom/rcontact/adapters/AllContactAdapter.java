@@ -209,16 +209,16 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mSectionPositions = new ArrayList<>();
         int startPosition = 0;
         if (fragment != null) {
-            if (fragment instanceof AllContactsListFragment) {
+            /*if (fragment instanceof AllContactsListFragment) {
                 startPosition = 2;
-            } else {
-                startPosition = 0;
-            }
+            } else {*/
+            startPosition = 0;
+//            }
         }
 
         for (int i = startPosition, size = arrayListUserContact.size(); i < size; i++) {
             if (arrayListUserContact.get(i) instanceof ProfileData) {
-                String contactDisplayName = "";
+                String contactDisplayName;
                 ProfileData profileData = (ProfileData) arrayListUserContact.get(i);
 //                String prefix = profileData.getTempPrefix();
 //                String firstName = profileData.getTempFirstName();
