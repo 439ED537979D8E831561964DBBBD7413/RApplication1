@@ -63,7 +63,8 @@
         android:id="@+id/liner_checkbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/input_value">
+        android:layout_below="@id/input_value"
+        android:visibility="gone">
 
         <CheckBox
             android:id="@+id/checkbox_hide_year"

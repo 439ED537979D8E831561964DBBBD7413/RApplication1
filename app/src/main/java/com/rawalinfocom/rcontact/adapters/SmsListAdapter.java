@@ -2,7 +2,6 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Telephony;
@@ -38,8 +37,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import butterknife.BindView;
 
 /**
  * Created by Aniruddh on 21/04/17.

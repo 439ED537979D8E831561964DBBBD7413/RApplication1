@@ -9,14 +9,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.adapters.CallConfirmationListAdapter;
-import com.rawalinfocom.rcontact.adapters.CallLogDialogListAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 
 import java.util.ArrayList;

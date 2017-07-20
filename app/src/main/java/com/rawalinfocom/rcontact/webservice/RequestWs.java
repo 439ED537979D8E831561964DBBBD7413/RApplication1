@@ -2,7 +2,6 @@ package com.rawalinfocom.rcontact.webservice;
 
 import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Context;
 
 /**
  * Created by Monal on 10/10/16.
