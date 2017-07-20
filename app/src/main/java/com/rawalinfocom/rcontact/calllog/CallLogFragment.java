@@ -1359,7 +1359,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     }
 
 
-    private ArrayList callLogHistory(String number) {
+    private ArrayList<CallLogType> callLogHistory(String number) {
         ArrayList<CallLogType> callDetails = new ArrayList<>();
         Cursor cursor = null;
         try {
