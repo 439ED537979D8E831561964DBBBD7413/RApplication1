@@ -1908,10 +1908,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempOrganization.addAll(arrayListPhoneBookOrganization);
 
                 linearOrganizationDetail.setVisibility(View.VISIBLE);
+
                 if (tempOrganization.size() == 1) {
                     textViewAllOrganization.setVisibility(View.GONE);
                 } else {
                     textViewAllOrganization.setVisibility(View.VISIBLE);
+                }
+
+                if (arrayListOrganization.size() > 0) {
+                    textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorAccent));
+                    textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorAccent));
+                } else {
+                    textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorBlack));
+                    textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorBlack));
                 }
                 textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
                 textOrganization.setText(tempOrganization.get(0).getOrgName());
@@ -3607,7 +3616,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             for (int j = 0; j < arrayListAddress.size(); j++) {
                 Address address = new Address();
 
-//                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
+                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                 address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
                 address.setAmCity(arrayListAddress.get(j).getCity());
                 address.setAmState(arrayListAddress.get(j).getState());

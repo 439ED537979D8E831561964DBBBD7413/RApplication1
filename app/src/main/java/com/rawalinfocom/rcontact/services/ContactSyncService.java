@@ -2,9 +2,7 @@ package com.rawalinfocom.rcontact.services;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.IBinder;
-import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.rawalinfocom.rcontact.constants.WsConstants;

@@ -2530,7 +2530,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 break;
 
             case AppConstants.EVENT:
-                linerCheckbox.setVisibility(View.VISIBLE);
+                linerCheckbox.setVisibility(View.GONE);
 //                textImageCross.setTag(AppConstants.EVENT);
                 imageViewDelete.setTag(AppConstants.EVENT);
                 inputValue.setHint("Choose date");
