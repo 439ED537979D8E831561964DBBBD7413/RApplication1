@@ -1011,12 +1011,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
                 } else {
 
-                    if (!actionNumber.startsWith("+91")) {
+                    /*if (!actionNumber.startsWith("+91")) {
                         callNumber = "+91" + actionNumber;
                     } else {
                         callNumber = actionNumber;
-                    }
-
+                    }*/
+                    callNumber =  Utils.getFormattedNumber(getActivity(),actionNumber);
                     showCallConfirmationDialog();
                 }
                 Handler handler = new Handler();
@@ -1120,10 +1120,11 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     .MY_PERMISSIONS_REQUEST_PHONE_CALL);
                         } else {
                             AppConstants.setIsFirstTime(false);
-                            Utils.callIntent(getActivity(), callNumber);
+                            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity(),callNumber));
                         }
                         break;
                 }
+
             }
         };
 
