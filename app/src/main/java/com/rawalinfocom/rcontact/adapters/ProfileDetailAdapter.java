@@ -635,8 +635,6 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
                     "MMM");
         } */
         else {
-        }
-        else {
             if (MoreObjects.firstNonNull(event.getIsYearHidden(), 0) == IntegerConstants
                     .IS_YEAR_HIDDEN) {
                 convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "dd-MM",

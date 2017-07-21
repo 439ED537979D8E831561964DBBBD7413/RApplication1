@@ -43,7 +43,7 @@
         android:protectionLevel="signature" />
 
     <application
-        android:name="com.rawalinfocom.rcontact.RContactApplication"
+        android:name=".RContactApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -74,7 +74,7 @@
         <!--activity-->
 
         <activity
-            android:name="com.rawalinfocom.rcontact.SplashActivity"
+            android:name=".SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -84,113 +84,113 @@
         </activity>
 
         <activity
-            android:name="com.rawalinfocom.rcontact.BaseActivity"
+            android:name=".BaseActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.MobileNumberRegistrationActivity"
+            android:name=".MobileNumberRegistrationActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.CountryListActivity"
+            android:name=".CountryListActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.OtpVerificationActivity"
+            android:name=".OtpVerificationActivity"
             android:screenOrientation="portrait" />
 
 
         <activity
-            android:name="com.rawalinfocom.rcontact.ProfileRegistrationActivity"
+            android:name=".ProfileRegistrationActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.rawalinfocom.rcontact.MainActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name="com.rawalinfocom.rcontact.contacts.ProfileDetailActivity"
+            android:name=".MainActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.ContactListingActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.rawalinfocom.rcontact.notifications.TimelineActivity"
+            android:name=".contacts.ProfileDetailActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.notifications.EventsActivity"
+            android:name=".ContactListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".notifications.TimelineActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.notifications.NotificationsActivity"
+            android:name=".notifications.EventsActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.notifications.NotificationsDetailActivity"
+            android:name=".notifications.NotificationsActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".notifications.NotificationsDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.contacts.MapsActivity"
+            android:name=".contacts.MapsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.calllog.CallLogDeleteActivity"
+            android:name=".calllog.CallLogDeleteActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.calllog.CallHistoryDetailsActivity"
+            android:name=".calllog.CallHistoryDetailsActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.BlockContactListActivity"
+            android:name=".BlockContactListActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.calldialer.DialerActivity"
+            android:name=".calldialer.DialerActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.notifications.RatingHistory"
+            android:name=".notifications.RatingHistory"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.SearchActivity"
+            android:name=".SearchActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.contacts.EditProfileActivity"
+            android:name=".contacts.EditProfileActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.SetPasswordActivity"
+            android:name=".SetPasswordActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.EnterPasswordActivity"
+            android:name=".EnterPasswordActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.ReLoginEnterPasswordActivity"
+            android:name=".ReLoginEnterPasswordActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.rawalinfocom.rcontact.WebBrowserActivity"
+            android:name=".WebBrowserActivity"
             android:screenOrientation="portrait" />
 
         <!--receiver-->
 
-        <receiver android:name="com.rawalinfocom.rcontact.receivers.OtpReceiver">
+        <receiver android:name=".receivers.OtpReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.rawalinfocom.rcontact.receivers.PhoneCallReceiver">
+        <receiver android:name=".receivers.PhoneCallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
@@ -199,7 +199,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.rawalinfocom.rcontact.receivers.SmsReceiver">
+        <receiver android:name=".receivers.SmsReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
@@ -207,24 +207,24 @@
 
         <!--Services-->
 
-        <service android:name="com.rawalinfocom.rcontact.services.NotificationFCMService">
+        <service android:name=".services.NotificationFCMService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <service android:name="com.rawalinfocom.rcontact.services.FCMNotificationInstanceIdService">
+        <service android:name=".services.FCMNotificationInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
         <service
-            android:name="com.rawalinfocom.rcontact.services.ContactSyncService"
+            android:name=".services.ContactSyncService"
             android:enabled="true" />
 
         <service
-            android:name="com.rawalinfocom.rcontact.services.CallLogIdFetchService"
+            android:name=".services.CallLogIdFetchService"
             android:enabled="true" />
 
     </application>

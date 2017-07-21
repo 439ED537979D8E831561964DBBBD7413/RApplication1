@@ -354,6 +354,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
                         logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
 
+                        Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
+                                logsSyncedCount);
+
                         if (callLogTypeArrayList.size() < CALL_LOG_CHUNK) {
                             Utils.setBooleanPreference(this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, true);
@@ -1384,10 +1387,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     .PREF_CALL_LOG_SYNC_TIME, "");
             String prefRowId = Utils.getStringPreference(MainActivity.this, AppConstants
                     .PREF_CALL_LOG_ROW_ID, "");
-            String dateToCompare="";
-            String currentDate ="";
-            long dateToConvert =0;
-            if(!StringUtils.isEmpty(prefDate)){
+            String dateToCompare = "";
+            String currentDate = "";
+            long dateToConvert = 0;
+            if (!StringUtils.isEmpty(prefDate)) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                 Date startDate = sdf.parse(prefDate);
                 dateToConvert = startDate.getTime();
@@ -1395,7 +1398,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 System.out.println("last Call-log date : " + dateToCompare);
                 currentDate = String.valueOf(System.currentTimeMillis());
             }
-
 
 
             Cursor cursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
@@ -1441,6 +1443,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                         log.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
                         log.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION)));
+
+                        System.out.println("RContact duration --> " + cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION)));
 
                         log.setCallDateAndTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format
                                 (cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE))));
@@ -1595,13 +1599,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                         CallLogType log = new CallLogType(this);
 
-                        String userNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
+                        String userNumber = Utils.getFormattedNumber(MainActivity.this, cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER)));
                         String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
 
                         log.setNumber(userNumber);
 
                         if (!TextUtils.isEmpty(userName))
-                            log.setName(userName);
+                            log.setName(getContactNameFromNumber(userNumber));
                         else
                             log.setName("");
 
@@ -2106,6 +2110,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                     String durationtoPass = logObject.getCoolDuration(Float.parseFloat
                             (callDuration));
+
+                    System.out.println("RContact history duration --> " + durationtoPass);
+
                     logObject.setDurationToPass(durationtoPass);
 
                     callDetails.add(logObject);

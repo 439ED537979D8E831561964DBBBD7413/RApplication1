@@ -664,33 +664,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         return callLogsListbyChunck;
     }
 
-    private class GetCallLogs extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            callLogTypeArrayList.clear();
-            simpleCallLogListAdapter = new SimpleCallLogListAdapter(getActivity(), callLogTypeArrayList);
-            recyclerCallLogs.setAdapter(simpleCallLogListAdapter);
-        }
-
-        protected Void doInBackground(Void... urls) {
-            fetchCallLogs();
-            return null;
-        }
-
-        protected void onPostExecute(Void result) {
-
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    makeSimpleData();
-                    nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
-            });
-        }
-    }
-
     private void fetchCallLogs() {
 
         callLogTypeArrayList.clear();
@@ -749,14 +722,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             @Override
             public void run() {
                 makeSimpleData();
-//                if(isFromDeleteBroadcast){
-//                    isFromDeleteBroadcast =  false;
-//                    new GetRCPNameAndProfileImage().execute();
-//                }else{
                 nameAndProfileImage = new GetRCPNameAndProfileImage();
                 nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//                }
-
             }
         });
 
@@ -764,18 +731,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 //            @Override
 //            public void run() {
 //                makeSimpleData();
-//                /*if(isFromDeleteBroadcast){
-//                    isFromDeleteBroadcast =  false;
-//                    nameAndProfileImage = new GetRCPNameAndProfileImage();
-//                    nameAndProfileImage.execute();
-//                }else{
-//                    nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//                }*/
-//
 //                nameAndProfileImage.execute();
 //            }
-//        }, 300);
-        }, 100);
+//        }, 100);
 
     }
 
@@ -857,11 +815,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         String photoThumbNail = getPhotoUrlFromNumber(number);
                         if (!TextUtils.isEmpty(photoThumbNail)) {
                             callLogType.setProfileImage(photoThumbNail);
-                        } else {
-                            callLogType.setProfileImage("");
+                            callLogTypeArrayList.set(i, callLogType);
                         }
-
-                        callLogTypeArrayList.set(i, callLogType);
                     }
                 }
             }
@@ -902,20 +857,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
                         return;
                     CallLogType callLogType = callLogTypeArrayList.get(i);
-                    String number = callLogType.getNumber();
-
-                    if (!number.startsWith("+91")) {
-                        number = "+91" + number;
-                    }
-
+                    String number = Utils.getFormattedNumber(getActivity(), callLogType.getNumber());
                     String name = callLogType.getName();
                     if (StringUtils.isEmpty(name)) {
                         name = getNameFromNumber(number);
                         if (!StringUtils.isEmpty(name)) {
                             callLogType.setName(name);
                             callLogTypeArrayList.set(i, callLogType);
-                        } else {
-                            callLogType.setName("");
                         }
                     }
                 }
@@ -924,9 +872,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
-
 
     private void setRCPUserName() {
 
@@ -937,13 +883,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         return;
                     CallLogType callLogType = callLogTypeArrayList.get(i);
 
-//                    String number = callLogType.getNumber();
-                    String number =  Utils.getFormattedNumber(getActivity(),callLogType.getNumber());
-
-                    /*if (!number.startsWith("+91")) {
-                        number = "+91" + number;
-                    }*/
-
+                    String number = Utils.getFormattedNumber(getActivity(), callLogType.getNumber());
 
                     if (!StringUtils.isEmpty(number)) {
 
@@ -1224,7 +1164,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                final int position = viewHolder.getAdapterPosition();
                 String actionNumber = StringUtils.defaultString(((SimpleCallLogListAdapter
                         .CallLogViewHolder) viewHolder).textTempNumber.getText()
                         .toString());
@@ -1245,7 +1185,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     public void run() {
                         simpleCallLogListAdapter.notifyItemChanged(position);
                     }
-                }, 1000);
+                }, 300);
             }
 
             @Override
