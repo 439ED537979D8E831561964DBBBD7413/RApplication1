@@ -1525,7 +1525,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             } else {
                 fetchCallLogsFromIds(tempIdsList);
             }
-
         } else {
             Utils.setBooleanPreference(this, AppConstants
                     .PREF_CALL_LOG_SYNCED, true);
