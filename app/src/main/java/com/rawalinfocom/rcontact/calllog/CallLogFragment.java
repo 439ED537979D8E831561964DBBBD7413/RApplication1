@@ -424,12 +424,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             CallLogType callLogType = new CallLogType(getActivity());
 
             String rowId = cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID));
-            String number = Utils.getFormattedNumber(getActivity(),
-                    cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER)));
+            String number = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
             String name = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
 
             if (StringUtils.isEmpty(name)) {
-                name = getNameFromNumber(number);
+                name = getNameFromNumber(Utils.getFormattedNumber(getActivity(),number));
             }
 
             Long date = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE));
@@ -448,7 +447,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             else
                 callLogType.setName("");
 
-            String photoThumbNail = getPhotoUrlFromNumber(number);
+            String photoThumbNail = getPhotoUrlFromNumber(Utils.getFormattedNumber(getActivity(),number));
 
             if (!TextUtils.isEmpty(photoThumbNail)) {
                 callLogType.setProfileImage(photoThumbNail);
@@ -457,7 +456,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             }
 
             callLogType.setUniqueContactId(rowId);
-            String uniquePhoneBookId = getStarredStatusFromNumber(number);
+            String uniquePhoneBookId = getStarredStatusFromNumber(Utils.getFormattedNumber(getActivity(),number));
             if (!TextUtils.isEmpty(uniquePhoneBookId))
                 callLogType.setLocalPbRowId(uniquePhoneBookId);
             else

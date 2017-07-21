@@ -642,7 +642,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/linear_call_sms"
-            android:background="@color/colorWhite"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <RelativeLayout
@@ -654,7 +653,6 @@
                     android:id="@+id/relative_call_history"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorWhite"
                     android:visibility="visible">
 
                     <TextView
@@ -686,6 +684,7 @@
                         android:layout_alignLeft="@+id/text_text_call_history"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
+                        android:background="@color/colorWhite"
                         android:layout_alignStart="@+id/text_text_call_history"
                         android:layout_below="@+id/text_text_call_history"
                         android:visibility="visible" />

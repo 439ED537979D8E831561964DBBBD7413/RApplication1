@@ -496,10 +496,10 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     selectedLogDate = date;
                 }
                 AppConstants.isFromReceiver = false;
-                String formatedNumber = Utils.getFormattedNumber(context, number);
+//                String formatedNumber = Utils.getFormattedNumber(context, number);
                 Intent intent = new Intent(context, ProfileDetailActivity.class);
                 intent.putExtra(AppConstants.EXTRA_PROFILE_ACTIVITY_CALL_INSTANCE, true);
-                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, formatedNumber);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, number);
 
                 if (selectedCallLogData.getRcpId() == null)
                     intent.putExtra(AppConstants.EXTRA_PM_ID, "-1");
