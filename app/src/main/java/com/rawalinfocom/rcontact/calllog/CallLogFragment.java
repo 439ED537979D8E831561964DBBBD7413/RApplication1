@@ -276,7 +276,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             getDatabaseHandler().close();
         }
 
-
         LocalBroadcastManager localBroadcastManagerTabChange = LocalBroadcastManager.getInstance
                 (getActivity());
         localBroadcastManagerTabChange.unregisterReceiver(localBroadcastReceiverTabChange);
@@ -294,18 +293,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                         Utils.setStringPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNC_TIME, callLogInsertionResponse.getCallDateAndTime());
 
-//                        if (Utils.getBooleanPreference(getActivity(), AppConstants
-//                                .PREF_CALL_LOG_SYNCED, false)) {
-//                            ArrayList<CallLogType> temp = divideCallLogByChunck(newList);
-//                            if (temp.size() >= LIST_PARTITION_COUNT) {
-//                                if (temp.size() > 0)
-//                                    insertServiceCall(newList);
-//                            } else {
-////                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All Call Logs Synced");
-//                                System.out.println("RContact All Call Logs Synced");
-//                            }
-//
-//                        } else {
                         ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
                         if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
 //                                insertServiceCall(callLogTypeArrayList);
@@ -759,35 +746,36 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             e.printStackTrace();
         }
 
-        /*getActivity().runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 makeSimpleData();
-                if(isFromDeleteBroadcast){
-                    isFromDeleteBroadcast =  false;
-                    new GetRCPNameAndProfileImage().execute();
-                }else{
-                    nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
-
-            }
-        });*/
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                makeSimpleData();
-                /*if(isFromDeleteBroadcast){
-                    isFromDeleteBroadcast =  false;
-                    nameAndProfileImage = new GetRCPNameAndProfileImage();
-                    nameAndProfileImage.execute();
-                }else{
-                    nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }*/
+//                if(isFromDeleteBroadcast){
+//                    isFromDeleteBroadcast =  false;
+//                    new GetRCPNameAndProfileImage().execute();
+//                }else{
                 nameAndProfileImage = new GetRCPNameAndProfileImage();
-                nameAndProfileImage.execute();
+                nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//                }
+
             }
-        }, 300);
+        });
+
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                makeSimpleData();
+//                /*if(isFromDeleteBroadcast){
+//                    isFromDeleteBroadcast =  false;
+//                    nameAndProfileImage = new GetRCPNameAndProfileImage();
+//                    nameAndProfileImage.execute();
+//                }else{
+//                    nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//                }*/
+//
+//                nameAndProfileImage.execute();
+//            }
+//        }, 300);
 
     }
 
@@ -839,7 +827,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         protected Void doInBackground(Void... urls) {
             setRCPUserName();
             getPhoto();
-            getContactName();
+//            getContactName();
             return null;
         }
 
@@ -891,18 +879,24 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         return;
                     CallLogType callLogType = callLogTypeArrayList.get(i);
                     String number = callLogType.getNumber();
+
+                    if (!number.startsWith("+91")) {
+                        number = "+91" + number;
+                    }
+
                     String name = callLogType.getName();
                     if (StringUtils.isEmpty(name)) {
                         name = getNameFromNumber(number);
-                        if (!StringUtils.isEmpty(name))
+                        if (!StringUtils.isEmpty(name)) {
                             callLogType.setName(name);
-                        else
+                            callLogTypeArrayList.set(i, callLogType);
+                        } else {
                             callLogType.setName("");
+                        }
                     }
-                    callLogTypeArrayList.set(i, callLogType);
                 }
             }
-
+//9374538264
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1180,7 +1174,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                final int position = viewHolder.getAdapterPosition();
                 String actionNumber = StringUtils.defaultString(((SimpleCallLogListAdapter
                         .CallLogViewHolder) viewHolder).textTempNumber.getText()
                         .toString());
@@ -1199,7 +1193,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        simpleCallLogListAdapter.notifyDataSetChanged();
+                        simpleCallLogListAdapter.notifyItemChanged(position);
                     }
                 }, 1000);
             }

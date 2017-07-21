@@ -627,10 +627,12 @@ public class ProfileDetailAdapter extends RecyclerView.Adapter<ProfileDetailAdap
         String convertedDate;
         if (StringUtils.startsWith(event.getEventDateTime(), "XXX")) {
             convertedDate = event.getEventDateTime();
-        } else if (StringUtils.startsWith(event.getEventDateTime(), "--")) {
+        }
+        else if (StringUtils.startsWith(event.getEventDateTime(), "--")) {
             convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "--MM-dd", "dd'th' " +
                     "MMM");
-        } else {
+        }
+        else {
             if (MoreObjects.firstNonNull(event.getIsYearHidden(), 0) == IntegerConstants
                     .IS_YEAR_HIDDEN) {
                 convertedDate = Utils.convertDateFormat(event.getEventDateTime(), "MM-dd",

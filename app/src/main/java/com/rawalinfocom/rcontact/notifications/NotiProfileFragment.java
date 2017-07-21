@@ -40,6 +40,8 @@ import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -482,18 +484,29 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                 ArrayList<PrivacyRequestDataItem> profileData = wsResponseObject.getPrivacyRequestData();
                 saveDataToDB(profileData);
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_PRIVACY_REQUEST)) {
-                String msg = wsResponseObject.getMessage();
-                PrivacyRequestDataItem item = wsResponseObject.getContactRequestData();
-                if (MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0) == 1 || MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0) == 2) {
-                    boolean deleted = tableRCContactRequest.removeRequest(item.getCarId());
-                    if (deleted) {
-                        refreshAllList();
-                    }
-                    Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
-                }
+                WsResponseObject privacyResponse = (WsResponseObject) data;
+                if (privacyResponse != null && StringUtils.equalsIgnoreCase
+                        (privacyResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+                    String msg = wsResponseObject.getMessage();
+                    PrivacyRequestDataItem item = wsResponseObject.getContactRequestData();
 
+                    try {
+
+                        if (MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0) == 1 ||
+                                MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0) == 2) {
+                            boolean deleted = tableRCContactRequest.removeRequest(item.getCarId());
+                            if (deleted) {
+                                refreshAllList();
+                            }
+                            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                    }
+
+                }
             }
             Utils.hideProgressDialog();
         } else {
@@ -501,6 +514,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
             Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void saveDataToDB(ArrayList<PrivacyRequestDataItem> profileData) {
         if (profileData == null) {

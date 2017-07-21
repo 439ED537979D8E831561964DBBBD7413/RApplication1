@@ -3607,7 +3607,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             for (int j = 0; j < arrayListAddress.size(); j++) {
                 Address address = new Address();
 
-//                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
+                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                 address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
                 address.setAmCity(arrayListAddress.get(j).getCity());
                 address.setAmState(arrayListAddress.get(j).getState());

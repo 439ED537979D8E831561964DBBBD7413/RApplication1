@@ -1005,9 +1005,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         LinearLayout nav_ll_feedback = (LinearLayout) navigationView.findViewById(R.id
                 .nav_ll_feedback);
 
-        nav_ll_invite.setEnabled(false);
         nav_ll_share.setEnabled(false);
-        nav_txt_invite.setTextColor(getResources().getColor(R.color.lightGrey));
         nav_txt_share.setTextColor(getResources().getColor(R.color.lightGrey));
         nav_txt_invite_contact.setTextColor(getResources().getColor(R.color.lightGrey));
         nav_txt_share_name.setTextColor(getResources().getColor(R.color.lightGrey));
@@ -1016,7 +1014,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         nav_ll_timeline.setOnClickListener(this);
         nav_ll_events.setOnClickListener(this);
         nav_ll_rating.setOnClickListener(this);
-//        nav_ll_invite.setOnClickListener(this);
+        nav_ll_invite.setOnClickListener(this);
 //        nav_ll_share.setOnClickListener(this);
         nav_ll_settings.setOnClickListener(this);
         nav_ll_rate.setOnClickListener(this);
@@ -1126,6 +1124,32 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
+
+//    private void openWebView() {
+//        new FinestWebView.Builder(this).theme(R.style.FinestWebViewTheme)
+//                .titleDefault(getString(R.string.app_name))
+//                .showUrl(false)
+//                .statusBarColorRes(R.color.colorPrimary)
+//                .toolbarColorRes(R.color.colorAccent)
+//                .titleColorRes(R.color.finestWhite)
+//                .urlColorRes(R.color.colorPrimaryDark)
+//                .iconDefaultColorRes(R.color.finestWhite)
+//                .progressBarColorRes(R.color.finestWhite)
+//                .stringResCopiedToClipboard(R.string.share_via_1)
+//                .stringResCopiedToClipboard(R.string.copy_link)
+//                .stringResCopiedToClipboard(R.string.open_with)
+//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                .showSwipeRefreshLayout(true)
+//                .swipeRefreshColorRes(R.color.colorAccent)
+//                .menuSelector(R.drawable.selector_light_theme)
+//                .menuTextGravity(Gravity.CENTER)
+//                .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
+//                .dividerHeight(0)
+//                .gradientDivider(false)
+//                .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
+//                .show("http://feedback.rcontacts.in");
+//
+//    }
 
     private void openDialer() {
         try {
