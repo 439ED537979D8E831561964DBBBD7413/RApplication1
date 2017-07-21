@@ -2626,13 +2626,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void showCallConfirmationDialog(final String number) {
 
-        final String finalNumber;
+        final String finalNumber = Utils.getFormattedNumber(ProfileDetailActivity.this,number);
 
-        if (!number.startsWith("+91")) {
+        /*if (!number.startsWith("+91")) {
             finalNumber = "+91" + number;
         } else {
             finalNumber = number;
-        }
+        }*/
 
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {

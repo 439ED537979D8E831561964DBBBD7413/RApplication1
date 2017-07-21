@@ -1312,13 +1312,13 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
     private void showCallConfirmationDialog(final String number, String name) {
 
-        final String finalNumber;
+        final String finalNumber = Utils.getFormattedNumber(getActivity(),number);
 
-        if (!number.startsWith("+91")) {
+        /*if (!number.startsWith("+91")) {
             finalNumber = "+91" + number;
         } else {
             finalNumber = number;
-        }
+        }*/
 
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
