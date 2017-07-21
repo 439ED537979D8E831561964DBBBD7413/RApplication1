@@ -2870,10 +2870,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //        Pattern numberPat = Pattern.compile("\\d+");
         Pattern numberPat = Pattern.compile("[+][0-9]+");
         Matcher matcher1 = numberPat.matcher(number);
-        if (matcher1.find()) {
+        if (matcher1.find() || number.matches("[0-9]+")) {
             cursor = getCallHistoryDataByNumber(number);
         } else {
             cursor = getCallHistoryDataByName(number);
+//            cursor = getCallHistoryDataByNumber(number);
         }
         try {
 
