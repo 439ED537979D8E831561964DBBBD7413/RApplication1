@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
-import com.rawalinfocom.rcontact.model.Comment;
 import com.rawalinfocom.rcontact.model.RcontactUpdatesData;
 import com.rawalinfocom.rcontact.adapters.NotiRContactsAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;

@@ -8,9 +8,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
-
-import butterknife.BindView;
 
 /**
  * Created by user on 24/12/16.

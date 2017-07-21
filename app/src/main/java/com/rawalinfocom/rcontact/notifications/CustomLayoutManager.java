@@ -3,7 +3,6 @@ package com.rawalinfocom.rcontact.notifications;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.ViewGroup;
 
 /**
  * Created by maulik on 11/03/17.

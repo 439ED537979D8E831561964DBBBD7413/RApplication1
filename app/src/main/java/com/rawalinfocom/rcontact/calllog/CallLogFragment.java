@@ -2,7 +2,6 @@ package com.rawalinfocom.rcontact.calllog;
 
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -776,6 +775,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 //                nameAndProfileImage.execute();
 //            }
 //        }, 300);
+        }, 100);
 
     }
 
@@ -827,7 +827,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         protected Void doInBackground(Void... urls) {
             setRCPUserName();
             getPhoto();
-//            getContactName();
+            getContactName();
             return null;
         }
 
@@ -871,6 +871,30 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     }
 
+    /*private void getContactName() {
+        try {
+            if (callLogTypeArrayList.size() > 0) {
+                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                    if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
+                        return;
+                    CallLogType callLogType = callLogTypeArrayList.get(i);
+                    String number = callLogType.getNumber();
+                    String name = callLogType.getName();
+                    if (StringUtils.isEmpty(name)) {
+                        name = getNameFromNumber(number);
+                        if (!StringUtils.isEmpty(name))
+                            callLogType.setName(name);
+                        else
+                            callLogType.setName("");
+                    }
+                    callLogTypeArrayList.set(i, callLogType);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
     private void getContactName() {
         try {
             if (callLogTypeArrayList.size() > 0) {
@@ -896,12 +920,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     }
                 }
             }
-//9374538264
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
 
     private void setRCPUserName() {
 
@@ -912,11 +937,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         return;
                     CallLogType callLogType = callLogTypeArrayList.get(i);
 
-                    String number = callLogType.getNumber();
+//                    String number = callLogType.getNumber();
+                    String number =  Utils.getFormattedNumber(getActivity(),callLogType.getNumber());
 
-                    if (!number.startsWith("+91")) {
+                    /*if (!number.startsWith("+91")) {
                         number = "+91" + number;
-                    }
+                    }*/
+
 
                     if (!StringUtils.isEmpty(number)) {
 
@@ -983,6 +1010,29 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             );
         }
         return parts;
+    }
+
+    private String getNameFromNumber(String phoneNumber) {
+        String contactName = "";
+        try {
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return contactName;
     }
 
     /**
@@ -1174,7 +1224,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                final int position = viewHolder.getAdapterPosition();
+                int position = viewHolder.getAdapterPosition();
                 String actionNumber = StringUtils.defaultString(((SimpleCallLogListAdapter
                         .CallLogViewHolder) viewHolder).textTempNumber.getText()
                         .toString());
@@ -1647,26 +1697,5 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     };
     //</editor-fold>
 
-    private String getNameFromNumber(String phoneNumber) {
-        String contactName = "";
-        try {
 
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY};
-            Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
-
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
-                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
-                }
-                cursor.close();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return contactName;
-    }
 }
