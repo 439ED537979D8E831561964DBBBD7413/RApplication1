@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.CallLogType;
 
 import java.text.SimpleDateFormat;
@@ -52,7 +53,7 @@ public class CallHistoryListAdapter extends RecyclerView.Adapter<CallHistoryList
         CallLogType callLogType = listCallHistory.get(position);
         String number = callLogType.getHistoryNumber();
         if (!TextUtils.isEmpty(number)) {
-            holder.textHistoryNumber.setText(number);
+            holder.textHistoryNumber.setText(Utils.getFormattedNumber(context,number));
         }
 
         String numberType = callLogType.getHistoryNumberType();

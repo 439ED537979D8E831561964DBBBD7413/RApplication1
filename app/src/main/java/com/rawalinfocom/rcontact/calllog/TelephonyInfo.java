@@ -5,9 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.Log;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**

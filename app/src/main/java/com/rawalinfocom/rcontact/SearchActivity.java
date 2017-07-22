@@ -915,6 +915,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             public void onTextChanged(CharSequence arg0, int arg1, int arg2,
                                       int arg3) {
                 // TODO Auto-generated method stub
+                String searchQuery =  String.valueOf(arg0);
+                System.out.println(searchQuery);
             }
         });
     }

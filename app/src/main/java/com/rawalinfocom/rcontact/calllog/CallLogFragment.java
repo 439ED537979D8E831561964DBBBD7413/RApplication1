@@ -2,7 +2,6 @@ package com.rawalinfocom.rcontact.calllog;
 
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -78,7 +77,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -426,12 +424,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             CallLogType callLogType = new CallLogType(getActivity());
 
             String rowId = cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID));
-            String number = Utils.getFormattedNumber(getActivity(),
-                    cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER)));
+            String number = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
             String name = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
 
             if (StringUtils.isEmpty(name)) {
-                name = getNameFromNumber(number);
+                name = getNameFromNumber(Utils.getFormattedNumber(getActivity(),number));
             }
 
             Long date = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE));
@@ -450,7 +447,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             else
                 callLogType.setName("");
 
-            String photoThumbNail = getPhotoUrlFromNumber(number);
+            String photoThumbNail = getPhotoUrlFromNumber(Utils.getFormattedNumber(getActivity(),number));
 
             if (!TextUtils.isEmpty(photoThumbNail)) {
                 callLogType.setProfileImage(photoThumbNail);
@@ -459,7 +456,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             }
 
             callLogType.setUniqueContactId(rowId);
-            String uniquePhoneBookId = getStarredStatusFromNumber(number);
+            String uniquePhoneBookId = getStarredStatusFromNumber(Utils.getFormattedNumber(getActivity(),number));
             if (!TextUtils.isEmpty(uniquePhoneBookId))
                 callLogType.setLocalPbRowId(uniquePhoneBookId);
             else
@@ -787,7 +784,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 nameAndProfileImage = new GetRCPNameAndProfileImage();
                 nameAndProfileImage.execute();
             }
-        }, 300);
+        }, 100);
 
     }
 
@@ -883,7 +880,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     }
 
-    private void getContactName() {
+    /*private void getContactName() {
         try {
             if (callLogTypeArrayList.size() > 0) {
                 for (int i = 0; i < callLogTypeArrayList.size(); i++) {
@@ -906,8 +903,39 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }*/
+    private void getContactName() {
+        try {
+            if (callLogTypeArrayList.size() > 0) {
+                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
+                    if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
+                        return;
+                    CallLogType callLogType = callLogTypeArrayList.get(i);
+                    String number = callLogType.getNumber();
+
+                    if (!number.startsWith("+91")) {
+                        number = "+91" + number;
+                    }
+
+                    String name = callLogType.getName();
+                    if (StringUtils.isEmpty(name)) {
+                        name = getNameFromNumber(number);
+                        if (!StringUtils.isEmpty(name)) {
+                            callLogType.setName(name);
+                            callLogTypeArrayList.set(i, callLogType);
+                        } else {
+                            callLogType.setName("");
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
+
 
     private void setRCPUserName() {
 
@@ -918,11 +946,13 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         return;
                     CallLogType callLogType = callLogTypeArrayList.get(i);
 
-                    String number = callLogType.getNumber();
+//                    String number = callLogType.getNumber();
+                    String number =  Utils.getFormattedNumber(getActivity(),callLogType.getNumber());
 
-                    if (!number.startsWith("+91")) {
+                    /*if (!number.startsWith("+91")) {
                         number = "+91" + number;
-                    }
+                    }*/
+
 
                     if (!StringUtils.isEmpty(number)) {
 
@@ -989,6 +1019,29 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             );
         }
         return parts;
+    }
+
+    private String getNameFromNumber(String phoneNumber) {
+        String contactName = "";
+        try {
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return contactName;
     }
 
     /**
@@ -1653,26 +1706,5 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
     };
     //</editor-fold>
 
-    private String getNameFromNumber(String phoneNumber) {
-        String contactName = "";
-        try {
 
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY};
-            Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
-
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
-                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
-                }
-                cursor.close();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return contactName;
-    }
 }

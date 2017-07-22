@@ -2,16 +2,11 @@ package com.rawalinfocom.rcontact.services;
 
 import android.app.Service;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.IBinder;
-import android.provider.ContactsContract;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.database.PhoneBookContacts;
-
-import java.util.ArrayList;
 
 public class ContactIdFetchService extends Service {
     public ContactIdFetchService() {

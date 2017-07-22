@@ -1908,10 +1908,19 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 tempOrganization.addAll(arrayListPhoneBookOrganization);
 
                 linearOrganizationDetail.setVisibility(View.VISIBLE);
+
                 if (tempOrganization.size() == 1) {
                     textViewAllOrganization.setVisibility(View.GONE);
                 } else {
                     textViewAllOrganization.setVisibility(View.VISIBLE);
+                }
+
+                if (arrayListOrganization.size() > 0) {
+                    textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorAccent));
+                    textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorAccent));
+                } else {
+                    textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorBlack));
+                    textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorBlack));
                 }
                 textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
                 textOrganization.setText(tempOrganization.get(0).getOrgName());
@@ -2617,13 +2626,13 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void showCallConfirmationDialog(final String number) {
 
-        final String finalNumber;
+        final String finalNumber = Utils.getFormattedNumber(ProfileDetailActivity.this,number);
 
-        if (!number.startsWith("+91")) {
+        /*if (!number.startsWith("+91")) {
             finalNumber = "+91" + number;
         } else {
             finalNumber = number;
-        }
+        }*/
 
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
@@ -2861,10 +2870,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 //        Pattern numberPat = Pattern.compile("\\d+");
         Pattern numberPat = Pattern.compile("[+][0-9]+");
         Matcher matcher1 = numberPat.matcher(number);
-        if (matcher1.find()) {
+        if (matcher1.find() || number.matches("[0-9]+")) {
             cursor = getCallHistoryDataByNumber(number);
         } else {
             cursor = getCallHistoryDataByName(number);
+//            cursor = getCallHistoryDataByNumber(number);
         }
         try {
 
@@ -3607,7 +3617,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             for (int j = 0; j < arrayListAddress.size(); j++) {
                 Address address = new Address();
 
-//                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
+                address.setAmRecordIndexId(arrayListAddress.get(j).getAddId());
                 address.setAmFormattedAddress(arrayListAddress.get(j).getFormattedAddress());
                 address.setAmCity(arrayListAddress.get(j).getCity());
                 address.setAmState(arrayListAddress.get(j).getState());

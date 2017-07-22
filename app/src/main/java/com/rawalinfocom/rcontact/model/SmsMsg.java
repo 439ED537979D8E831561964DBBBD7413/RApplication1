@@ -1,7 +1,5 @@
 package com.rawalinfocom.rcontact.model;
 
-import android.net.Uri;
-
 /**
  * Created by admin on 11/07/17.
  */

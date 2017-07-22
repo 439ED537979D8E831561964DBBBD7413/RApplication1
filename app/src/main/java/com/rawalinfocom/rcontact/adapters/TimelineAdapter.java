@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.drawable.LayerDrawable;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;

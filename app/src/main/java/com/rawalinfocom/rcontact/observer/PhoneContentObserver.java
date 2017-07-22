@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact.observer;
 
 import android.app.Activity;
-import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,10 +9,7 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 import android.util.Log;
 
-import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
-import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
@@ -33,8 +29,6 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by Monal on 24/02/17.

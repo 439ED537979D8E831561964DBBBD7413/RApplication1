@@ -2,7 +2,6 @@ package com.rawalinfocom.rcontact.notifications;
 
 import android.app.Activity;
 import android.app.Service;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;

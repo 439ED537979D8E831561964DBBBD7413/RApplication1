@@ -1882,13 +1882,13 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
     private void showCallConfirmationDialog(final String number) {
 
-        final String finalNumber;
+        final String finalNumber =  Utils.getFormattedNumber(CallHistoryDetailsActivity.this, number);
 
-        if (!number.startsWith("+91")) {
+       /* if (!number.startsWith("+91")) {
             finalNumber = "+91" + number;
         } else {
             finalNumber = number;
-        }
+        }*/
 
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {

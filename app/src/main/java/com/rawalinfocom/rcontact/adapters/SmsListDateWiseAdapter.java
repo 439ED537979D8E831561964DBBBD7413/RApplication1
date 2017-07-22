@@ -30,8 +30,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import butterknife.BindView;
-
 /**
  * Created by Aniruddh on 21/04/17.
  */
