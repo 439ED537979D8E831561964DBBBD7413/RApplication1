@@ -1,46 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.rawalinfocom.rcontact">
+          package="com.rawalinfocom.rcontact">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_CALL_LOG" />
-    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
-    <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.WRITE_SMS" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="com.app.loople.permission.MAPS_RECEIVE" />
-    <uses-permission android:name="com.rawalinfocom.rcontact.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.WRITE_SMS"/>
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="com.app.loople.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="com.rawalinfocom.rcontact.permission.C2D_MESSAGE"/>
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false" />
+        android:required="false"/>
     <uses-feature
         android:name="android.hardware.camera.autofocus"
-        android:required="false" />
+        android:required="false"/>
     <uses-feature
         android:name="android.hardware.camera.flash"
-        android:required="false" />
+        android:required="false"/>
 
     <permission
         android:name="com.app.loople.permission.MAPS_RECEIVE"
-        android:protectionLevel="signature" />
-
+        android:protectionLevel="signature"/>
     <permission
         android:name="com.rawalinfocom.rcontact.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
+        android:protectionLevel="signature"/>
 
     <application
         android:name=".RContactApplication"
@@ -51,181 +50,153 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-
-        <!--meta-data-->
+        <!-- meta-data -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@mipmap/ic_launcher" />
-
+            android:resource="@mipmap/ic_launcher"/>
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorAccent" />
+            android:resource="@color/colorAccent"/>
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
+            android:value="@string/facebook_app_id"/>
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7" />
+            android:value="06e70479d2ac89bbcd0f513bced81e424d0d41f7"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="@string/google_maps_key"/>
 
-
-        <!--activity-->
+        <!-- activity -->
 
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".BaseActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MobileNumberRegistrationActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".CountryListActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
-
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".OtpVerificationActivity"
-            android:screenOrientation="portrait" />
-
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ProfileRegistrationActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".contacts.ProfileDetailActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ContactListingActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".notifications.TimelineActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".notifications.EventsActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".notifications.NotificationsActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".notifications.NotificationsDetailActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".contacts.MapsActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
-
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".calllog.CallLogDeleteActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".calllog.CallHistoryDetailsActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".BlockContactListActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".calldialer.DialerActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".notifications.RatingHistory"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".SearchActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".contacts.EditProfileActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".SetPasswordActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".EnterPasswordActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ReLoginEnterPasswordActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".WebBrowserActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
 
-        <!--receiver-->
+        <!-- receiver -->
 
         <receiver android:name=".receivers.OtpReceiver">
             <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
-
         <receiver android:name=".receivers.PhoneCallReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.intent.action.PHONE_STATE"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
             </intent-filter>
         </receiver>
-
         <receiver android:name=".receivers.SmsReceiver">
             <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
 
-        <!--Services-->
+        <!-- Services -->
 
         <service android:name=".services.NotificationFCMService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
-
         <service android:name=".services.FCMNotificationInstanceIdService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
-
         <service
             android:name=".services.ContactSyncService"
-            android:enabled="true" />
-
+            android:enabled="true"/>
         <service
             android:name=".services.CallLogIdFetchService"
-            android:enabled="true" />
+            android:enabled="true"/>
 
+        <activity android:name=".TutorialActivity">
+        </activity>
     </application>
+
 </manifest>

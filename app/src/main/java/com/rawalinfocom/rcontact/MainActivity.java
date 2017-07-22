@@ -45,7 +45,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
@@ -382,7 +381,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //                    if (Utils.getBooleanPreference(this, AppConstants
 //                            .PREF_CALL_LOG_SYNCED, false)) {
 //
-//                        ArrayList<CallLogType> temp = divideCallLogByChunck(callLogTypeArrayListMain);
+//                        ArrayList<CallLogType> temp = divideCallLogByChunck
+// (callLogTypeArrayListMain);
 //                        if (!(temp .size() >= LIST_PARTITION_COUNT)) {
 //
 //                            Utils.setBooleanPreference(this, AppConstants
@@ -920,6 +920,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         textUserName.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
         textNumber.setText(number);
         textRatingCount.setText(Utils.getStringPreference(this, AppConstants
+                .PREF_USER_TOTAL_RATING, ""));
         textUserName.setTypeface(Utils.typefaceSemiBold(MainActivity.this));
         textNumber.setTypeface(Utils.typefaceRegular(MainActivity.this));
         textRatingCount.setTypeface(Utils.typefaceBold(MainActivity.this));
@@ -981,8 +982,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         TextView nav_txt_about = (TextView) navigationView.findViewById(R.id.nav_txt_about);
         TextView nav_txt_export = (TextView) navigationView.findViewById(R.id.nav_txt_export);
         TextView nav_txt_feedback = (TextView) navigationView.findViewById(R.id.nav_txt_feedback);
-        TextView nav_txt_invite_contact = (TextView) navigationView.findViewById(R.id.nav_txt_invite_contact);
-        TextView nav_txt_share_name = (TextView) navigationView.findViewById(R.id.nav_txt_share_name);
+        TextView nav_txt_invite_contact = (TextView) navigationView.findViewById(R.id
+                .nav_txt_invite_contact);
+        TextView nav_txt_share_name = (TextView) navigationView.findViewById(R.id
+                .nav_txt_share_name);
 
 
         LinearLayout nav_ll_account = (LinearLayout) navigationView.findViewById(R.id
@@ -1545,8 +1548,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                         CallLogType log = new CallLogType(this);
 
-                        String userNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
-                        String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
+                        String userNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls
+                                .NUMBER));
+                        String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls
+                                .CACHED_NAME));
 
                         log.setNumber(userNumber);
 
@@ -1556,12 +1561,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             log.setName("");
 
                         log.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
-                        log.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION)));
-                        log.setCallDateAndTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format
+                        log.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls
+                                .DURATION)));
+                        log.setCallDateAndTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a",
+                                Locale.getDefault()).format
                                 (cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE))));
                         log.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
                         log.setUniqueContactId(uniqueCallLogId);
-                        String numberTypeLog = getPhoneNumberType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE)));
+                        String numberTypeLog = getPhoneNumberType(cursor.getInt(cursor
+                                .getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE)));
                         log.setNumberType(numberTypeLog);
 
                         String uniquePhoneBookId = getRawContactIdFromNumber(userNumber);
