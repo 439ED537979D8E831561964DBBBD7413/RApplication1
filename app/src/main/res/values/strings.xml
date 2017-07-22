@@ -561,5 +561,17 @@
     <!-- Registration -->
     <string name="str_mobile_number">Mobile Number</string>
     <string name="error_custom_type">Please add valid custom type</string>
+    <string name="tutorial_header_1">Contacts Redefined</string>
+    <string name="tutorial_header_2">Smarter Management</string>
+    <string name="tutorial_header_3">Global Search</string>
+    <string name="tutorial_header_4">Spammers Banned</string>
+    <string name="tutorial_header_5">Get Rated</string>
+    <string name="tutorial_content_1"><![CDATA[A Contact is not just a number but a profile consisting of Auto-Synced data & Social Info!]]></string>
+    <string name="tutorial_content_2">Manage SMS and Call Logs from a single icon! RContacts serves you with both in one platter.</string>
+    <string name="tutorial_content_3">Just place this EARTH on your homescreen and search for any number that belongs to it.</string>
+    <string name="tutorial_content_4">RContacts like a Special Agent will alert and rescue you of the numbers marked as Spam</string>
+    <string name="tutorial_content_5">Earn reputation stars and get yourself authenticated in the world of Contacts</string>
+    <string name="tutorial_and">And?</string>
+    <string name="tutorial_lets_go">Let\'s Go!</string>
 
 </resources>

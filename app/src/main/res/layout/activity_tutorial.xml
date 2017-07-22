@@ -14,11 +14,11 @@
         android:paddingEnd="@dimen/activity_double_horizontal_margin"
         android:paddingStart="@dimen/activity_double_horizontal_margin"
         android:paddingTop="@dimen/activity_double_horizontal_margin"
-        android:text="Contacts Redefined"
         android:textAppearance="?android:textAppearanceLarge"
         android:textColor="@color/colorAccent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="Contacts Redefined"/>
 
     <TextView
         android:id="@+id/text_tutorial_content"
@@ -28,11 +28,11 @@
         android:paddingEnd="@dimen/activity_double_horizontal_margin"
         android:paddingStart="@dimen/activity_double_horizontal_margin"
         android:paddingTop="@dimen/activity_half_vertical_margin"
-        android:text="A Contact is not just a number but a profile consisting of Auto-Synced data &amp; Social Info!"
         android:textAppearance="?android:textAppearanceMedium"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_tutorial_header"/>
+        app:layout_constraintTop_toBottomOf="@+id/text_tutorial_header"
+        tools:text="A Contact is not just a number but a profile consisting of Auto-Synced data &amp; Social Info!"/>
 
     <RelativeLayout
         android:id="@+id/relative_indicator"
@@ -102,13 +102,14 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/text_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/activity_double_horizontal_margin"
-            android:text="And?"
-            android:textAppearance="?android:textAppearanceMedium"/>
+            android:textAppearance="?android:textAppearanceMedium"
+            tools:text="And?"/>
 
     </RelativeLayout>
 

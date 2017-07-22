@@ -131,7 +131,11 @@ class WebServicePost {
                     inputStream = new BufferedInputStream(urlConnection.getErrorStream());
                     String responseString = convertInputStreamToString(inputStream);
                     response = getMapper().readValue(responseString, responseType);
-//                    response = getMapper().readValue("{\"status\":false}", responseType);
+                } else if (statusCode == 429) {
+                    Log.e("Status Code: ", ": Due to throttling");
+                    inputStream = new BufferedInputStream(urlConnection.getErrorStream());
+                    String responseString = convertInputStreamToString(inputStream);
+                    response = getMapper().readValue(responseString, responseType);
                 } else if (statusCode == HttpsURLConnection.HTTP_INTERNAL_ERROR) {
                     Log.e("Status Code: ", HttpsURLConnection.HTTP_INTERNAL_ERROR + " : Internal " +
                             "Server Error : Due to any unhandled error on server");

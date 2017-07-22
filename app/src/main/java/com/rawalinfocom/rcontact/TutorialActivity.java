@@ -5,22 +5,29 @@ import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.adapters.TutorialPagerAdapter;
+import com.rawalinfocom.rcontact.helper.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class TutorialActivity extends BaseActivity {
 
+    private final int TUTORIAL_SCREENS = 5;
+
     @BindView(R.id.text_tutorial_header)
     TextView textTutorialHeader;
     @BindView(R.id.text_tutorial_content)
     TextView textTutorialContent;
+    @BindView(R.id.text_next)
+    TextView textNext;
     @BindView(R.id.linear_indicator)
     LinearLayout linearIndicator;
     @BindView(R.id.relative_indicator)
@@ -40,6 +47,8 @@ public class TutorialActivity extends BaseActivity {
 
     TutorialPagerAdapter tutorialPagerAdapter;
 
+    int pagerCurrentPosition = 0;
+
     //<editor-fold desc="Override Methods">
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +65,13 @@ public class TutorialActivity extends BaseActivity {
         tutorialPagerAdapter = new TutorialPagerAdapter(TutorialActivity.this);
         pagerTutorial.setAdapter(tutorialPagerAdapter);
         setIndicatorSelection(0);
+        textTutorialHeader.setText(getString(R.string.tutorial_header_1));
+        textTutorialContent.setText(R.string.tutorial_content_1);
+        textNext.setText(R.string.tutorial_and);
 
+        textTutorialHeader.setTypeface(Utils.typefaceSemiBold(TutorialActivity.this));
+        textTutorialContent.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
+        textNext.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
 
         pagerTutorial.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -68,22 +83,38 @@ public class TutorialActivity extends BaseActivity {
             @Override
             public void onPageSelected(int position) {
 
+                pagerCurrentPosition = position;
                 setIndicatorSelection(position);
 
                 switch (position) {
                     case 0:
+                        textTutorialHeader.setText(getString(R.string.tutorial_header_1));
+                        textTutorialContent.setText(R.string.tutorial_content_1);
+                        textNext.setText(R.string.tutorial_and);
                         break;
 
                     case 1:
+                        textTutorialHeader.setText(getString(R.string.tutorial_header_2));
+                        textTutorialContent.setText(R.string.tutorial_content_2);
+                        textNext.setText(R.string.tutorial_and);
                         break;
 
                     case 2:
+                        textTutorialHeader.setText(getString(R.string.tutorial_header_3));
+                        textTutorialContent.setText(R.string.tutorial_content_3);
+                        textNext.setText(R.string.tutorial_and);
                         break;
 
                     case 3:
+                        textTutorialHeader.setText(getString(R.string.tutorial_header_4));
+                        textTutorialContent.setText(R.string.tutorial_content_4);
+                        textNext.setText(R.string.tutorial_and);
                         break;
 
                     case 4:
+                        textTutorialHeader.setText(getString(R.string.tutorial_header_5));
+                        textTutorialContent.setText(R.string.tutorial_content_5);
+                        textNext.setText(R.string.tutorial_lets_go);
                         break;
                 }
             }
@@ -91,6 +122,17 @@ public class TutorialActivity extends BaseActivity {
             @Override
             public void onPageScrollStateChanged(int state) {
 
+            }
+        });
+
+        textNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pagerCurrentPosition != (TUTORIAL_SCREENS - 1)) {
+                    pagerTutorial.setCurrentItem(++pagerCurrentPosition);
+                } else {
+                    Toast.makeText(TutorialActivity.this, "Last!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
