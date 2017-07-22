@@ -88,7 +88,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                         notificationStateData.setNotificationState(1);
                         notificationStateData.setCloudNotificationId(obj.getId());
                         notificationStateData.setCreatedAt(obj.getCreatedAt());
-                        notificationStateData.setUpdatedAt(obj.getCreatedAt());
+                        notificationStateData.setUpdatedAt(obj.getUpdatedAt());
                         notificationStateData.setNotificationType(AppConstants
                                 .NOTIFICATION_TYPE_RUPDATE);
                         notificationStateData.setNotificationMasterId(obj.getId());
