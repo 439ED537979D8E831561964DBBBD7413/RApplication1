@@ -122,7 +122,7 @@ public class SettingsActivity extends BaseActivity implements RippleView
         llNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivityIntent(activity, NotificationSettingsActivity.class, null);
             }
         });
     }

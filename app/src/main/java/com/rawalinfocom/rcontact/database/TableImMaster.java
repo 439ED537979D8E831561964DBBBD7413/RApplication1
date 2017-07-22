@@ -92,6 +92,16 @@ public class TableImMaster {
         db.close(); // Closing database connection
     }
 
+    public void deleteData(String RcpPmId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_IM_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
+        db.close(); // Closing database connection
+    }
+
     // Adding or Updating array Im Account
     public void addUpdateArrayImAccount(ArrayList<ImAccount> arrayListImAccount, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();

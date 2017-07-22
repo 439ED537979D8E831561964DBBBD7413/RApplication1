@@ -577,5 +577,13 @@
     <string name="sd_card">SD card</string>
     <string name="google_drive">Google drive</string>
     <string name="abc_by_last_name">ABC by last name</string>
+    <string name="str_export">export</string>
+    <string name="str_short">short</string>
+    <string name="str_push_notification">Push Notification</string>
+    <string name="str_event_notification">Event Notification</string>
+    <string name="str_validation_short_type">Please select any short type</string>
+    <string name="str_validation_export_type">Please select any export type</string>
+    <string name="str_validation_push_notification">Disable it if you do not want receive Notifications</string>
+    <string name="str_validation_event_notification">Turn On/Off to manage All Event Notifications</string>
 
 </resources>

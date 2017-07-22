@@ -2,10 +2,17 @@ package com.rawalinfocom.rcontact;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.res.AssetFileDescriptor;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -23,6 +30,9 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.AppLanguage;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -55,7 +65,11 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
     TextView txtShortBy;
     @BindView(R.id.txt_export_contact)
     TextView txtExportContact;
+
     private Activity activity;
+    private Cursor cursor;
+    private ArrayList<String> vCard;
+    private String vfile;
 
     private ArrayList<AppLanguage> shortByContactArrayList;
 
@@ -130,7 +144,7 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
 
     private void setArrayList(String type) {
 
-        if (type.equals("short")) {
+        if (type.equals(getString(R.string.str_short))) {
             shortByContactArrayList = new ArrayList<>();
 
             if (Utils.getStringPreference(activity, AppConstants.PREF_SHORT_BY_CONTACT, "0").equalsIgnoreCase("0")) {
@@ -144,25 +158,15 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
 
             shortByContactArrayList = new ArrayList<>();
 
-            if (Utils.getStringPreference(activity, AppConstants.PREF_EXPORT_CONTACT, "0").equalsIgnoreCase("0")) {
-                shortByContactArrayList.add(new AppLanguage(getString(R.string.phone_storage), "0", true));
-                shortByContactArrayList.add(new AppLanguage(getString(R.string.sd_card), "1", false));
-                shortByContactArrayList.add(new AppLanguage(getString(R.string.google_drive), "2", false));
-            } else if (Utils.getStringPreference(activity, AppConstants.PREF_EXPORT_CONTACT, "0").equalsIgnoreCase("1")) {
-                shortByContactArrayList.add(new AppLanguage(getString(R.string.phone_storage), "0", false));
-                shortByContactArrayList.add(new AppLanguage(getString(R.string.sd_card), "1", true));
-                shortByContactArrayList.add(new AppLanguage(getString(R.string.google_drive), "2", false));
-            } else {
-                shortByContactArrayList.add(new AppLanguage(getString(R.string.phone_storage), "0", false));
-                shortByContactArrayList.add(new AppLanguage(getString(R.string.sd_card), "1", false));
-                shortByContactArrayList.add(new AppLanguage(getString(R.string.google_drive), "2", true));
-            }
+            shortByContactArrayList.add(new AppLanguage(getString(R.string.phone_storage), "0", true));
+            shortByContactArrayList.add(new AppLanguage(getString(R.string.sd_card), "1", false));
+            shortByContactArrayList.add(new AppLanguage(getString(R.string.google_drive), "2", false));
         }
     }
 
     public void ShortContactMaterialDialog() {
 
-        setArrayList("short");
+        setArrayList(getString(R.string.str_short));
 
         final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -194,7 +198,7 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
             @Override
             public void onComplete(RippleView rippleView) {
                 if (shortByContactListAdapter.getSelected().equals("")) {
-                    Utils.showErrorSnackBar(activity, activityContactSettings, "Please select any short type");
+                    Utils.showErrorSnackBar(activity, activityContactSettings, getString(R.string.str_validation_short_type));
                 } else {
 
                     AppConstants.isFromSettingActivity = true;
@@ -210,7 +214,7 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
 
     public void ExportContactMaterialDialog() {
 
-        setArrayList("export");
+        setArrayList(getString(R.string.str_export));
 
         final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -242,16 +246,94 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
             @Override
             public void onComplete(RippleView rippleView) {
                 if (shortByContactListAdapter.getSelected().equals("")) {
-                    Utils.showErrorSnackBar(activity, activityContactSettings, "Please select any export type");
+                    Utils.showErrorSnackBar(activity, activityContactSettings, getString(R.string.str_validation_export_type));
                 } else {
 
                     textExportContact.setText(shortByContactListAdapter.getSelected());
-                    Utils.setStringPreference(activity, AppConstants.PREF_EXPORT_CONTACT, shortByContactListAdapter.getSelectedType());
+//                    Utils.setStringPreference(activity, AppConstants.PREF_EXPORT_CONTACT, shortByContactListAdapter.getSelectedType());
                     dialog.dismiss();
+
+                    if (shortByContactListAdapter.getSelectedType().equals("0") || shortByContactListAdapter.getSelectedType().equals("1"))
+                        new ExportContact().execute();
                 }
             }
         });
 
         dialog.show();
+    }
+
+    private class ExportContact extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Utils.showProgressDialog(activity, "Please wait...", false);
+            vfile = "Contacts" + "_" + System.currentTimeMillis() + ".vcf";
+        }
+
+        protected Void doInBackground(Void... urls) {
+            getVcardString();
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+            Utils.hideProgressDialog();
+        }
+    }
+
+    private void getVcardString() {
+        // TODO Auto-generated method stub
+        vCard = new ArrayList<String>();
+        cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            for (int i = 0; i < cursor.getCount(); i++) {
+
+                get(cursor);
+                cursor.moveToNext();
+            }
+
+        } else {
+            Log.d("TAG", "No Contacts in Your Phone");
+        }
+
+    }
+
+    public void get(Cursor cursor) {
+
+
+        //cursor.moveToFirst();
+        String lookupKey = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY));
+        Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_VCARD_URI, lookupKey);
+        AssetFileDescriptor fd;
+        try {
+            fd = this.getContentResolver().openAssetFileDescriptor(uri, "r");
+
+            // Your Complex Code and you used function without loop so how can you get all Contacts Vcard.??
+
+
+           /* FileInputStream fis = fd.createInputStream();
+            byte[] buf = new byte[(int) fd.getDeclaredLength()];
+            fis.read(buf);
+            String VCard = new String(buf);
+            String path = Environment.getExternalStorageDirectory().toString() + File.separator + vfile;
+            FileOutputStream out = new FileOutputStream(path);
+            out.write(VCard.toString().getBytes());
+            Log.d("Vcard",  VCard);*/
+
+            FileInputStream fis = fd.createInputStream();
+            byte[] buf = new byte[(int) fd.getDeclaredLength()];
+            fis.read(buf);
+            String vcardstring = new String(buf);
+            vCard.add(vcardstring);
+
+            String storage_path = Environment.getExternalStorageDirectory().toString() + File.separator + vfile;
+            FileOutputStream mFileOutputStream = new FileOutputStream(storage_path, false);
+            mFileOutputStream.write(vcardstring.toString().getBytes());
+
+        } catch (Exception e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
     }
 }

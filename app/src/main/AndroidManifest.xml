@@ -188,7 +188,9 @@
         <activity
             android:name=".ContactsSettingsActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".NotificationSettingsActivity"
+            android:screenOrientation="portrait" />
 
         <!--receiver-->
 

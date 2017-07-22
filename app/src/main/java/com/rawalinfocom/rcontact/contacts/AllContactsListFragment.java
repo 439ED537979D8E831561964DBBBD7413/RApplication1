@@ -653,7 +653,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         profileData.setName(data.getString(display));
                         profileData.setTempFirstName(data.getString(givenName));
                         profileData.setTempLastName(data.getString(familyName));
-                        System.out.println("RContact name --> " + data.getString(givenName) + " -- " + data.getString(familyName));
                         break;
                 }
             } catch (Exception E) {

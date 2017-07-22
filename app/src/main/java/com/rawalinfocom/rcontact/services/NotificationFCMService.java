@@ -93,7 +93,11 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 .NOTIFICATION_TYPE_RUPDATE);
                         notificationStateData.setNotificationMasterId(obj.getId());
                         notificationStateMaster.addNotificationState(notificationStateData);
-                        sendNotification(obj.getDetails(), AppConstants.NOTIFICATION_TYPE_RUPDATE);
+                        if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
+                            sendNotification(obj.getDetails(), AppConstants.NOTIFICATION_TYPE_RUPDATE);
+                        else
+                            sendBroadcastForCountupdate();
+
                         updateNotificationCount(databaseHandler);
                         return;
                     }
@@ -204,7 +208,7 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     comment.setCrmProfileDetails(m.get("name"));
                     comment.setCrmImage(m.get("pm_profile_photo"));
                     comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_at")));
-                    comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_at")));
+                    comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
                     String avgRating = m.get("profile_rating");
                     String totalUniqueRater = m.get("total_profile_rate_user");
                     String toPmId = m.get("pr_to_pm_id");
@@ -222,7 +226,10 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     if (id != -1) {
                         notificationStateData.setNotificationMasterId(m.get("pr_id"));
                         notificationStateMaster.addNotificationState(notificationStateData);
-                        sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
+                        if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
+                            sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
+                        else
+                            sendBroadcastForCountupdate();
 //                        int badgeCount = 1;
 //                        ShortcutBadger.applyCount(this.getApplicationContext(), badgeCount);
                     }
@@ -238,7 +245,10 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     if (isUpdated > 0) {
                         notificationStateData.setNotificationMasterId(m.get("pr_id"));
                         notificationStateMaster.addNotificationState(notificationStateData);
-                        sendNotification(msg, AppConstants.NOTIFICATION_TYPE_RATE);
+                        if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
+                            sendNotification(msg, AppConstants.NOTIFICATION_TYPE_RATE);
+                        else
+                            sendBroadcastForCountupdate();
                     }
                     break;
                 case "eventComment":
@@ -250,17 +260,23 @@ public class NotificationFCMService extends FirebaseMessagingService {
                     comment.setRcProfileMasterPmId(Integer.parseInt(m.get("from_pm_id")));
                     comment.setCrmComment(m.get("comment"));
                     comment.setCrmCreatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_date")));
-                    comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("created_date")));
+                    comment.setCrmUpdatedAt(Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
                     comment.setEvmRecordIndexId(m.get("event_record_index_id"));
                     int eventId = tableCommentMaster.addComment(comment);
                     if (eventId != -1) {
                         notificationStateData.setCreatedAt(m.get("created_date"));
-                        notificationStateData.setUpdatedAt(m.get("created_date"));
+                        notificationStateData.setUpdatedAt(m.get("updated_at"));
                         notificationStateData.setNotificationType(AppConstants
                                 .NOTIFICATION_TYPE_TIMELINE);
                         notificationStateData.setNotificationMasterId(m.get("id"));
                         notificationStateMaster.addNotificationState(notificationStateData);
-                        sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
+                        if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false)) {
+                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_EVENT_PUSH, false))
+                                sendNotification(msg, AppConstants.NOTIFICATION_TYPE_TIMELINE);
+                            else
+                                sendBroadcastForCountupdate();
+                        } else
+                            sendBroadcastForCountupdate();
 
                     }
                     break;
@@ -275,7 +291,13 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 .NOTIFICATION_TYPE_COMMENTS);
                         notificationStateData.setNotificationMasterId(m.get("id"));
                         notificationStateMaster.addNotificationState(notificationStateData);
-                        sendNotification(msg, AppConstants.NOTIFICATION_TYPE_COMMENTS);
+                        if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false)) {
+                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_EVENT_PUSH, false))
+                                sendNotification(msg, AppConstants.NOTIFICATION_TYPE_COMMENTS);
+                            else
+                                sendBroadcastForCountupdate();
+                        } else
+                            sendBroadcastForCountupdate();
                     }
                     break;
                 case "sendContactRequest":
@@ -291,15 +313,18 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 Integer.parseInt(m.get("car_pm_id_from")),
                                 m.get("car_ppm_particular_text"),
                                 Utils.getLocalTimeFromUTCTime(m.get("created_at")),
-                                Utils.getLocalTimeFromUTCTime(m.get("created_at")));
+                                Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
                         if (requestId != -1) {
                             notificationStateData.setCreatedAt(m.get("created_at"));
-                            notificationStateData.setUpdatedAt(m.get("created_at"));
+                            notificationStateData.setUpdatedAt(m.get("updated_at"));
                             notificationStateData.setNotificationType(AppConstants
                                     .NOTIFICATION_TYPE_PROFILE_REQUEST);
                             notificationStateData.setNotificationMasterId(m.get("car_id"));
                             notificationStateMaster.addNotificationState(notificationStateData);
-                            sendNotification(msg, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
+                            if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
+                                sendNotification(msg, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
+                            else
+                                sendBroadcastForCountupdate();
                         }
                     }
                     break;
@@ -316,10 +341,10 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                 Integer.parseInt(m.get("car_pm_id_to")),
                                 m.get("car_ppm_particular_text"),
                                 Utils.getLocalTimeFromUTCTime(m.get("created_at")),
-                                Utils.getLocalTimeFromUTCTime(m.get("created_at")));
+                                Utils.getLocalTimeFromUTCTime(m.get("updated_at")));
                         if (requestId != -1) {
                             notificationStateData.setCreatedAt(m.get("created_at"));
-                            notificationStateData.setUpdatedAt(m.get("created_at"));
+                            notificationStateData.setUpdatedAt(m.get("updated_at"));
                             notificationStateData.setNotificationType(AppConstants
                                     .NOTIFICATION_TYPE_PROFILE_RESPONSE);
                             notificationStateData.setNotificationMasterId(m.get("car_id"));
@@ -331,8 +356,12 @@ public class NotificationFCMService extends FirebaseMessagingService {
                                         ContactRequestData.class);
                                 updatePrivacySetting(m.get("car_ppm_particular"), m.get
                                         ("car_mongodb_record_index"), obj, databaseHandler);
-                                sendNotification(msg, AppConstants
-                                        .NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                                if (!Utils.getBooleanPreference(this, AppConstants.PREF_DISABLE_PUSH, false))
+                                    sendNotification(msg, AppConstants
+                                            .NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                                else
+                                    sendBroadcastForCountupdate();
+
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
