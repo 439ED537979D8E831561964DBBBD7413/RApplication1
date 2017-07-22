@@ -34,31 +34,6 @@ public class AppConstants {
     public static boolean isRecentCallFromSMSTab = false;
     //</editor-fold>
 
-    //<editor-fold desc="Device Information">
-    public static final String CONTACT_STORAGES = "" +
-            // Google
-            "'com.google'," +
-            // Samsung default storage
-            "'vnd.sec.contact.phone'," +
-            // Samsung default sim
-            "'vnd.sec.contact.sim'," +
-            // Mi default storage
-            "'com.xiaomi'," +
-            // Asus/HTC/Panasonic/Sony Defalul storage
-            "'Local Phone Account'," +
-            // Asus Sim storage
-            "'USIM Account'," +
-            // Panasonic/Sony Sim storage
-            "'SIM Account'," +
-            // Lenovo/Letv Defalul storage
-            "'com.android.localphone'," +
-            // Oppo Defalul storage
-            "'com.oppo.contacts.device'," +
-            // Lenovo Sim storage
-            "'com.android.sim'" +
-            "";
-    //</editor-fold>
-
     //<editor-fold desc="App Specific final constants">
 
     public static final String OTP_CONFIRMED_STATUS = "2";
