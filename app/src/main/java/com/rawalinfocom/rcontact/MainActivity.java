@@ -125,6 +125,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends BaseActivity implements WsResponseListener, View.OnClickListener {
 
     private final int CALL_LOG_CHUNK = 100;
+    private final int SMS_CHUNK = 50;
 
     private static final String TAG = "MainActivity";
     @BindView(R.id.relative_root_contacts_main)
@@ -146,12 +147,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     RContactApplication rContactApplication;
     private ArrayList<ProfileData> arrayListReSyncUserContact;
     private String currentStamp;
-    int LIST_PARTITION_COUNT = 20;
+    //    int LIST_PARTITION_COUNT = 20;
     private ArrayList<CallLogType> callLogTypeArrayListMain;
     ArrayList<CallLogType> callLogsListbyChunck;
     //    ArrayList<CallLogType> newList;
     ArrayList<SmsDataType> newSmsList;
-    int logsSyncedCount = 20;
+    int logsSyncedCount = 0;
     MaterialDialog permissionConfirmationDialog;
     private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
             .permission.READ_CALL_LOG, Manifest.permission.READ_SMS};
@@ -354,6 +355,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
                         logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
 
+                        Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
+                                logsSyncedCount);
+
                         if (callLogTypeArrayList.size() < CALL_LOG_CHUNK) {
                             Utils.setBooleanPreference(this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, true);
@@ -377,8 +381,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                     }
-                    Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
-                            logsSyncedCount);
 
 //                    if (Utils.getBooleanPreference(this, AppConstants
 //                            .PREF_CALL_LOG_SYNCED, false)) {
@@ -417,8 +419,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     if (Utils.getBooleanPreference(this, AppConstants
                             .PREF_SMS_SYNCED, false)) {
                         ArrayList<SmsDataType> temp = divideSmsLogByChunck(newSmsList);
-                        LIST_PARTITION_COUNT = 20;
-                        if (temp.size() >= LIST_PARTITION_COUNT) {
+                        if (temp.size() >= SMS_CHUNK) {
                             if (temp != null && temp.size() > 0)
                                 insertSMSLogServiceCall(newSmsList);
                         } else {
@@ -918,8 +919,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         textUserName.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
         textNumber.setText(number);
-        textRatingCount.setText(Utils.getStringPreference(this, AppConstants
-                .PREF_USER_TOTAL_RATING, ""));
+        textRatingCount.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, ""));
         textUserName.setTypeface(Utils.typefaceSemiBold(MainActivity.this));
         textNumber.setTypeface(Utils.typefaceRegular(MainActivity.this));
         textRatingCount.setTypeface(Utils.typefaceBold(MainActivity.this));
@@ -1002,18 +1002,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         LinearLayout nav_ll_feedback = (LinearLayout) navigationView.findViewById(R.id
                 .nav_ll_feedback);
 
-        nav_ll_invite.setEnabled(false);
         nav_ll_share.setEnabled(false);
-        nav_txt_invite.setTextColor(getResources().getColor(R.color.lightGrey));
         nav_txt_share.setTextColor(getResources().getColor(R.color.lightGrey));
-        nav_txt_invite_contact.setTextColor(getResources().getColor(R.color.lightGrey));
         nav_txt_share_name.setTextColor(getResources().getColor(R.color.lightGrey));
 
         nav_ll_account.setOnClickListener(this);
         nav_ll_timeline.setOnClickListener(this);
         nav_ll_events.setOnClickListener(this);
         nav_ll_rating.setOnClickListener(this);
-//        nav_ll_invite.setOnClickListener(this);
+        nav_ll_invite.setOnClickListener(this);
 //        nav_ll_share.setOnClickListener(this);
         nav_ll_settings.setOnClickListener(this);
         nav_ll_rate.setOnClickListener(this);
@@ -1079,6 +1076,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                 break;
             case R.id.nav_ll_settings:
+                startActivityIntent(MainActivity.this, SettingsActivity.class, null);
                 break;
             case R.id.nav_ll_rate_us:
                 break;
@@ -1123,6 +1121,32 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
+
+//    private void openWebView() {
+//        new FinestWebView.Builder(this).theme(R.style.FinestWebViewTheme)
+//                .titleDefault(getString(R.string.app_name))
+//                .showUrl(false)
+//                .statusBarColorRes(R.color.colorPrimary)
+//                .toolbarColorRes(R.color.colorAccent)
+//                .titleColorRes(R.color.finestWhite)
+//                .urlColorRes(R.color.colorPrimaryDark)
+//                .iconDefaultColorRes(R.color.finestWhite)
+//                .progressBarColorRes(R.color.finestWhite)
+//                .stringResCopiedToClipboard(R.string.share_via_1)
+//                .stringResCopiedToClipboard(R.string.copy_link)
+//                .stringResCopiedToClipboard(R.string.open_with)
+//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                .showSwipeRefreshLayout(true)
+//                .swipeRefreshColorRes(R.color.colorAccent)
+//                .menuSelector(R.drawable.selector_light_theme)
+//                .menuTextGravity(Gravity.CENTER)
+//                .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
+//                .dividerHeight(0)
+//                .gradientDivider(false)
+//                .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
+//                .show("http://feedback.rcontacts.in");
+//
+//    }
 
     private void openDialer() {
         try {
@@ -1363,10 +1387,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     .PREF_CALL_LOG_SYNC_TIME, "");
             String prefRowId = Utils.getStringPreference(MainActivity.this, AppConstants
                     .PREF_CALL_LOG_ROW_ID, "");
-            String dateToCompare="";
-            String currentDate ="";
-            long dateToConvert =0;
-            if(!StringUtils.isEmpty(prefDate)){
+            String dateToCompare = "";
+            String currentDate = "";
+            long dateToConvert = 0;
+            if (!StringUtils.isEmpty(prefDate)) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                 Date startDate = sdf.parse(prefDate);
                 dateToConvert = startDate.getTime();
@@ -1374,8 +1398,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 System.out.println("last Call-log date : " + dateToCompare);
                 currentDate = String.valueOf(System.currentTimeMillis());
             }
-
-
 
             Cursor cursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
                     CallLog.Calls.DATE + " BETWEEN ? AND ?"
@@ -1419,18 +1441,16 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             log.setName("");
 
                         log.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
-                        log.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION)));
+                        log.setDurationToPass(log.getCoolDuration(Float.parseFloat
+                                (cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION)))));
 
                         log.setCallDateAndTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format
                                 (cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE))));
                         log.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
-
-                        System.out.println("RContact Log date " + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format
-                                (cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE))));
-
                         log.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
                         String numberTypeLog = getPhoneNumberType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE)));
                         log.setNumberType(numberTypeLog);
+
                         String uniquePhoneBookId = getRawContactIdFromNumber(userNumber);
                         if (!TextUtils.isEmpty(uniquePhoneBookId))
                             log.setLocalPbRowId(uniquePhoneBookId);
@@ -1468,7 +1488,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             log.setHistoryId(tempCallLogType.getHistoryId());
 //                            log.setCallDateAndTime(tempCallLogType.getCallDateAndTime());
                             log.setTypeOfCall(tempCallLogType.getTypeOfCall());
-                            log.setDurationToPass(tempCallLogType.getDurationToPass());
+//                            log.setDurationToPass(tempCallLogType.getDurationToPass());
                             if (!StringUtils.isEmpty(tempCallLogType.getHistoryCallSimNumber()))
                                 log.setHistoryCallSimNumber(tempCallLogType
                                         .getHistoryCallSimNumber());
@@ -1525,6 +1545,23 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             } else {
                 fetchCallLogsFromIds(tempIdsList);
             }
+
+            if (!Utils.getBooleanPreference(this, AppConstants
+                    .PREF_CALL_LOG_SYNCED, false))
+
+                if ((Utils.getIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT, 0) >=
+                        Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET).size())) {
+
+                    Utils.setBooleanPreference(this, AppConstants
+                            .PREF_CALL_LOG_SYNCED, true);
+
+                    Intent localBroadcastIntent = new Intent(AppConstants
+                            .ACTION_LOCAL_BROADCAST_SYNC_SMS);
+                    LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                            .getInstance(MainActivity.this);
+                    myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+                }
+
         } else {
             Utils.setBooleanPreference(this, AppConstants
                     .PREF_CALL_LOG_SYNCED, true);
@@ -1557,18 +1594,20 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                         CallLogType log = new CallLogType(this);
 
-                        String userNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
+                        String userNumber = Utils.getFormattedNumber(MainActivity.this, cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER)));
                         String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
 
                         log.setNumber(userNumber);
 
-                        if (!TextUtils.isEmpty(userName))
-                            log.setName(userName);
-                        else
+                        if (!TextUtils.isEmpty(userName)) {
+                            log.setName(getContactNameFromNumber(userNumber));
+                        } else
                             log.setName("");
 
                         log.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
-                        log.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION)));
+                        log.setDurationToPass(log.getCoolDuration(Float.parseFloat
+                                (cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION)))));
+
                         log.setCallDateAndTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format
                                 (cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE))));
                         log.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
@@ -1613,7 +1652,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             log.setHistoryId(tempCallLogType.getHistoryId());
 //                                log.setCallDateAndTime(tempCallLogType.getCallDateAndTime());
                             log.setTypeOfCall(tempCallLogType.getTypeOfCall());
-                            log.setDurationToPass(tempCallLogType.getDurationToPass());
+//                            log.setDurationToPass(tempCallLogType.getDurationToPass());
                             if (!StringUtils.isEmpty(tempCallLogType.getHistoryCallSimNumber()))
                                 log.setHistoryCallSimNumber(tempCallLogType
                                         .getHistoryCallSimNumber());
@@ -1632,8 +1671,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
             if (tempCallLogTypeArrayList.size() > 0)
                 syncCallLogDataToServer(tempCallLogTypeArrayList);
-            else
+            else {
                 Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, true);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1791,7 +1831,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         int size = smsLogTypeArrayListMain.size();
         smsLogsListbyChunck = new ArrayList<>();
         for (ArrayList<SmsDataType> partition : choppedSmsLog(smsLogTypeArrayListMain,
-                LIST_PARTITION_COUNT)) {
+                SMS_CHUNK)) {
             // do something with partition
 //            Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
             smsLogsListbyChunck.addAll(partition);
@@ -1804,12 +1844,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private ArrayList<SmsDataType> divideSmsLogByChunck(ArrayList<SmsDataType> list) {
         int size = 0;
         smsLogsListbyChunck = new ArrayList<>();
-        LIST_PARTITION_COUNT = 20;
         if (list != null && list.size() > 0) {
             size = list.size();
-            if (size > LIST_PARTITION_COUNT) {
-                for (ArrayList<SmsDataType> partition : choppedSmsLog(list,
-                        LIST_PARTITION_COUNT)) {
+            if (size > SMS_CHUNK) {
+                for (ArrayList<SmsDataType> partition : choppedSmsLog(list, SMS_CHUNK)) {
                     // do something with partition
 //                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
 
@@ -1831,12 +1869,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private ArrayList<CallLogType> divideCallLogByChunck(ArrayList<CallLogType> list) {
         int size = 0;
         callLogsListbyChunck = new ArrayList<>();
-        LIST_PARTITION_COUNT = 20;
         if (list != null && list.size() > 0) {
             size = list.size();
-            if (size > LIST_PARTITION_COUNT) {
-                for (ArrayList<CallLogType> partition : choppedCallLog(list,
-                        LIST_PARTITION_COUNT)) {
+            if (size > SMS_CHUNK) {
+                for (ArrayList<CallLogType> partition : choppedCallLog(list, SMS_CHUNK)) {
                     // do something with partition
 //                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
                     callLogsListbyChunck.addAll(partition);
@@ -2067,6 +2103,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                     String durationtoPass = logObject.getCoolDuration(Float.parseFloat
                             (callDuration));
+
                     logObject.setDurationToPass(durationtoPass);
 
                     callDetails.add(logObject);
@@ -2205,9 +2242,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 tempIdsList.add(ids);
             }
 
-            LIST_PARTITION_COUNT = 20;
-            if (tempIdsList.size() > LIST_PARTITION_COUNT) {
-                for (ArrayList<String> partition : chopped(tempIdsList, LIST_PARTITION_COUNT)) {
+            if (tempIdsList.size() > SMS_CHUNK) {
+                for (ArrayList<String> partition : chopped(tempIdsList, SMS_CHUNK)) {
                     // do something with partition
                     fetchSMSDataById(partition);
                 }
@@ -2347,8 +2383,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             if (Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
                     false) && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED,
                     false)) {
-                LIST_PARTITION_COUNT = 20;
-                if (list.size() > LIST_PARTITION_COUNT) {
+                if (list.size() > SMS_CHUNK) {
                     ArrayList<SmsDataType> callLogTypeArrayList = divideSmsLogByChunck();
                     if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
                         insertSMSLogServiceCall(callLogTypeArrayList);

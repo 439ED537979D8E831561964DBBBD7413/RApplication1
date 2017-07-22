@@ -2131,8 +2131,8 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                     callLogTypeArrayList.add(logObject);
                     rContactApplication.setArrayListCallLogType(callLogTypeArrayList);*/
                 }
+                cursor.close();
             }
-            cursor.close();
 
         } catch (Exception e) {
             e.printStackTrace();

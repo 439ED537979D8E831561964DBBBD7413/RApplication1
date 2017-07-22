@@ -46,7 +46,7 @@ import butterknife.ButterKnife;
  * Created by Aniruddh on 01/05/17.
  */
 
-public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SimpleCallLogListAdapter extends RecyclerView.Adapter<SimpleCallLogListAdapter.CallLogViewHolder> {
 
     private Context context;
     private ArrayList<CallLogType> arrayListCallLogs;
@@ -107,7 +107,6 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public SimpleCallLogListAdapter(Context context, ArrayList<CallLogType> callLogTypes) {
         this.context = context;
-//        this.arrayListCallLogs = arraylistCallLogs;
         if (AppConstants.isFromSearchActivity) {
             this.arrayListCallLogs = new ArrayList<>();
             this.arrayListCallLogs.addAll(callLogTypes);
@@ -127,8 +126,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder contactViewHolder, int position) {
-        SimpleCallLogListAdapter.CallLogViewHolder holder = (SimpleCallLogListAdapter.CallLogViewHolder) contactViewHolder;
+    public void onBindViewHolder(CallLogViewHolder contactViewHolder, int position) {
         final CallLogType callLogType = arrayListCallLogs.get(position);
         final String name = callLogType.getName();
         final String number = callLogType.getNumber();
@@ -138,17 +136,16 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         final String uniqueRowID = callLogType.getUniqueContactId();
 
         if (!TextUtils.isEmpty(number)) {
-            holder.textTempNumber.setText(formattedNumber);
+            contactViewHolder.textTempNumber.setText(formattedNumber);
         }
         if (!TextUtils.isEmpty(name)) {
-            holder.textContactName.setTypeface(Utils.typefaceBold(context));
-            holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
+            contactViewHolder.textContactName.setTypeface(Utils.typefaceBold(context));
+            contactViewHolder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                     .colorBlack));
             if (MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
                 String contactDisplayName = "";
                 String firstName = callLogType.getRcpFirstName();
                 String lastName = callLogType.getRcpLastName();
-                String middleName = callLogType.getMiddleName();
 
                 if (StringUtils.length(firstName) > 0) {
                     contactDisplayName = contactDisplayName + firstName + " ";
@@ -159,47 +156,46 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                 }
 
                 if (StringUtils.equalsIgnoreCase(name, contactDisplayName)) {
-                    holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
+                    contactViewHolder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                             .colorAccent));
-                    holder.textCloudContactName.setVisibility(View.GONE);
-                    holder.textContactName.setText(name);
+                    contactViewHolder.textCloudContactName.setVisibility(View.GONE);
+                    contactViewHolder.textContactName.setText(name);
                 } else {
-                    holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
+                    contactViewHolder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                             .colorBlack));
-                    holder.textCloudContactName.setVisibility(View.VISIBLE);
-                    holder.textCloudContactName.setTextColor(ContextCompat.getColor(context, R.color
+                    contactViewHolder.textCloudContactName.setVisibility(View.VISIBLE);
+                    contactViewHolder.textCloudContactName.setTextColor(ContextCompat.getColor(context, R.color
                             .colorAccent));
-                    holder.textContactName.setText(String.format("%s ", name));
-                    holder.textCloudContactName.setText("(" + contactDisplayName + ")");
+                    contactViewHolder.textContactName.setText(String.format("%s ", name));
+                    contactViewHolder.textCloudContactName.setText("(" + contactDisplayName + ")");
                 }
 
             } else {
-                holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
+                contactViewHolder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                         .colorBlack));
-                holder.textCloudContactName.setVisibility(View.GONE);
-                holder.textContactName.setText(name);
+                contactViewHolder.textCloudContactName.setVisibility(View.GONE);
+                contactViewHolder.textContactName.setText(name);
             }
             Pattern numberPat = Pattern.compile("\\d+");
             Matcher matcher1 = numberPat.matcher(name);
             if (StringUtils.containsOnly(name, "\\d+")) {
-                holder.textContactNumber.setText(context.getString(R.string.str_unsaved));
+                contactViewHolder.textContactNumber.setText(context.getString(R.string.str_unsaved));
             } else {
-                holder.textContactNumber.setText(String.format("%s,", formattedNumber));
+                contactViewHolder.textContactNumber.setText(String.format("%s,", formattedNumber));
             }
 
         } else {
-            holder.textCloudContactName.setVisibility(View.GONE);
+            contactViewHolder.textCloudContactName.setVisibility(View.GONE);
             if (!TextUtils.isEmpty(number)) {
-                holder.textContactName.setTypeface(Utils.typefaceBold(context));
-                holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
+                contactViewHolder.textContactName.setTypeface(Utils.typefaceBold(context));
+                contactViewHolder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                         .colorBlack));
-                holder.textContactName.setText(formattedNumber);
-                holder.textContactNumber.setText(context.getString(R.string.str_unsaved));
+                contactViewHolder.textContactName.setText(formattedNumber);
+                contactViewHolder.textContactNumber.setText(context.getString(R.string.str_unsaved));
             } else {
-                holder.textContactName.setText(" ");
+                contactViewHolder.textContactName.setText(" ");
             }
         }
-
 
         final long date = callLogType.getDate();
 //        long logDate1 = callLogType.getDate();
@@ -225,7 +221,6 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         String finalDate = "";
         if (date > 0) {
             Date dateCallLog = new Date(date);
-//            String logDateCallLog = new SimpleDateFormat("MMM dd, hh:mm a").format(date1);
             if (logDate.equalsIgnoreCase(currentDate)) {
                 finalDate = context.getString(R.string.str_today) + ", " + new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(dateCallLog);
             } else if (logDate.equalsIgnoreCase(yesterdayDate)) {
@@ -233,7 +228,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             } else {
                 finalDate = new SimpleDateFormat("MMM dd, hh:mm a", Locale.getDefault()).format(dateCallLog);
             }
-            holder.textContactDate.setText(finalDate);
+            contactViewHolder.textContactDate.setText(finalDate);
         } else {
             Date callDate = callLogType.getCallReceiverDate();
             if (callDate != null) {
@@ -244,46 +239,34 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                 } else {
                     finalDate = new SimpleDateFormat("MMM dd, hh:mm a", Locale.getDefault()).format(callDate);
                 }
-                holder.textContactDate.setText(finalDate);
+                contactViewHolder.textContactDate.setText(finalDate);
             }
-//            String callReceiverDate = new SimpleDateFormat("MMM dd, hh:mm a").format(callDate);
-
         }
 
 
         int blockedType = callLogType.getBlockedType();
 
         if (blockedType > 0) {
-            holder.imageCallType.setImageResource(R.drawable.ic_block);
+            contactViewHolder.imageCallType.setImageResource(R.drawable.ic_block);
         } else {
 
             int callType = callLogType.getType();
             if (callType > 0) {
                 switch (callType) {
                     case AppConstants.INCOMING:
-                        holder.imageCallType.setImageResource(R.drawable.ic_call_incoming);
+                        contactViewHolder.imageCallType.setImageResource(R.drawable.ic_call_incoming);
                         break;
                     case AppConstants.OUTGOING:
-                        holder.imageCallType.setImageResource(R.drawable.ic_call_outgoing);
+                        contactViewHolder.imageCallType.setImageResource(R.drawable.ic_call_outgoing);
                         break;
                     case AppConstants.MISSED:
-                        holder.imageCallType.setImageResource(R.drawable.ic_call_missed);
+                        contactViewHolder.imageCallType.setImageResource(R.drawable.ic_call_missed);
                         break;
                     default:
                         break;
 
                 }
             }
-
-//            if (strCallLogType.equals(AppConstants.LOG_LOG_ALL_CALLS)) {
-//
-//            } else if (strCallLogType.equals(AppConstants.LOG_LOG_INCOMING_CALLS)) {
-//                holder.imageCallType.setImageResource(R.drawable.ic_call_incoming);
-//            } else if (strCallLogType.equals(AppConstants.LOG_LOG_OUTGOING_CALLS)) {
-//                holder.imageCallType.setImageResource(R.drawable.ic_call_outgoing);
-//            } else if (strCallLogType.equals(AppConstants.LOG_LOG_MISSED_CALLS)) {
-//                holder.imageCallType.setImageResource(R.drawable.ic_call_missed);
-//            }
         }
 
         boolean isDual = AppConstants.isDualSimPhone();
@@ -292,23 +275,23 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         if (isDual) {
             if (!TextUtils.isEmpty(simNumber)) {
                 if (simNumber.equalsIgnoreCase("2")) {
-                    holder.textSimType.setTextColor(ContextCompat.getColor(context, R.color
+                    contactViewHolder.textSimType.setTextColor(ContextCompat.getColor(context, R.color
                             .darkCyan));
-                    holder.textSimType.setText(context.getString(R.string.im_sim_2));
-                    holder.textSimType.setTypeface(Utils.typefaceIcons(context));
+                    contactViewHolder.textSimType.setText(context.getString(R.string.im_sim_2));
+                    contactViewHolder.textSimType.setTypeface(Utils.typefaceIcons(context));
                 } else {
-                    holder.textSimType.setTextColor(ContextCompat.getColor(context, R.color
+                    contactViewHolder.textSimType.setTextColor(ContextCompat.getColor(context, R.color
                             .vividBlue));
-                    holder.textSimType.setText(context.getString(R.string.im_sim_1));
-                    holder.textSimType.setTypeface(Utils.typefaceIcons(context));
+                    contactViewHolder.textSimType.setText(context.getString(R.string.im_sim_1));
+                    contactViewHolder.textSimType.setTypeface(Utils.typefaceIcons(context));
                 }
             } else {
-                holder.textSimType.setVisibility(View.GONE);
+                contactViewHolder.textSimType.setVisibility(View.GONE);
             }
 
         } else {
 
-            holder.textSimType.setVisibility(View.GONE);
+            contactViewHolder.textSimType.setVisibility(View.GONE);
 
         }
 
@@ -320,14 +303,14 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                     .error(R.drawable.home_screen_profile)
                     .bitmapTransform(new CropCircleTransformation(context))
                     .override(200, 200)
-                    .into(holder.imageProfile);
+                    .into(contactViewHolder.imageProfile);
 
         } else {
-            holder.imageProfile.setImageResource(R.drawable.home_screen_profile);
+            contactViewHolder.imageProfile.setImageResource(R.drawable.home_screen_profile);
         }
 
-        holder.image3dotsCallLog.setTag(position);
-        holder.image3dotsCallLog.setOnClickListener(new View.OnClickListener() {
+        contactViewHolder.image3dotsCallLog.setTag(position);
+        contactViewHolder.image3dotsCallLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -456,10 +439,10 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             }
         });
 
-        holder.relativeRowMain.setTag(position);
-        holder.relativeRowMain.setClickable(true);
-        holder.relativeRowMain.setEnabled(true);
-        holder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
+        contactViewHolder.relativeRowMain.setTag(position);
+        contactViewHolder.relativeRowMain.setClickable(true);
+        contactViewHolder.relativeRowMain.setEnabled(true);
+        contactViewHolder.relativeRowMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
