@@ -133,8 +133,9 @@ class WebServicePost {
                     response = getMapper().readValue(responseString, responseType);
                 } else if (statusCode == 429) {
                     Log.e("Status Code: ", ": Due to throttling");
-                    inputStream = new BufferedInputStream(urlConnection.getErrorStream());
-                    String responseString = convertInputStreamToString(inputStream);
+                    final String header = urlConnection.getHeaderField(WsConstants
+                            .REQ_THROTTLING_HEADER);
+                    String responseString = "{\"message\":\"Retry after " + header + " seconds\"}";
                     response = getMapper().readValue(responseString, responseType);
                 } else if (statusCode == HttpsURLConnection.HTTP_INTERNAL_ERROR) {
                     Log.e("Status Code: ", HttpsURLConnection.HTTP_INTERNAL_ERROR + " : Internal " +
@@ -165,9 +166,6 @@ class WebServicePost {
                     activity.overridePendingTransition(R.anim.enter, R.anim.exit);
                     activity.finish();
 
-                } else if (statusCode == 429) {
-                    Log.e("Status Code: ", 429 + " :  Too many request :  Due to API throttling");
-                    response = null;
                 } else {
                     response = null;
                 }

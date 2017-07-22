@@ -55,6 +55,7 @@ public class WsConstants {
             ".com/maps/api/place/textsearch/json?";
 
     public static final String REQ_HEADER = "rcAuthToken";
+    public static final String REQ_THROTTLING_HEADER = "Retry-After";
 
     // API End Points
     public static final String REQ_CHECK_NUMBER = "check-number";

@@ -38,6 +38,7 @@ public class ContactStorageConstants {
             "'asus.local.phone'," +    // Default
             "'USIM Account'," +          // Sim
             "'asus.local.simcard2'," +   // Sim
+            "'asus.local.simcard'," +   // Sim
 
             // Coolpad
             "'com.coolpad.contacts'," +   // Default
