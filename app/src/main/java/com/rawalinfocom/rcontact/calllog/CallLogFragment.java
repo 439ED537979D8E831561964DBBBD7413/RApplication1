@@ -436,6 +436,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             else
                 callLogType.setName("");
 
+            callLogType.setDurationToPass(callLogType.getCoolDuration(Float.parseFloat
+                    (cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION)))));
+
             String photoThumbNail = getPhotoUrlFromNumber(number);
 
             if (!TextUtils.isEmpty(photoThumbNail)) {
@@ -462,7 +465,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     callLogType.setHistoryId(callLogType1.getHistoryId());
                     callLogType.setCallDateAndTime(callLogType1.getCallDateAndTime());
                     callLogType.setTypeOfCall(callLogType1.getTypeOfCall());
-                    callLogType.setDurationToPass(callLogType1.getDurationToPass());
+//                    callLogType.setDurationToPass(callLogType1.getDurationToPass());
                     if (!StringUtils.isEmpty(callLogType1.getHistoryCallSimNumber()))
                         callLogType.setHistoryCallSimNumber(callLogType1.getHistoryCallSimNumber());
                     else
@@ -1341,7 +1344,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         }
         return cursor;
     }
-
 
     private ArrayList<CallLogType> callLogHistory(String number) {
         ArrayList<CallLogType> callDetails = new ArrayList<>();

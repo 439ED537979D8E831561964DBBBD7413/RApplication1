@@ -182,6 +182,14 @@
             android:name=".WebBrowserActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".SettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ContactsSettingsActivity"
+            android:screenOrientation="portrait" />
+
+
         <!--receiver-->
 
         <receiver android:name=".receivers.OtpReceiver">
