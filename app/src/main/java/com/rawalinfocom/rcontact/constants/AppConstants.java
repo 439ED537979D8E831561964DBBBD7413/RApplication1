@@ -211,6 +211,10 @@ public class AppConstants {
     public static String PREF_USER_RATING = "pref_user_rating";
     public static String PREF_USER_TOTAL_RATING = "pref_user_total_rating";
     public static String PREF_USER_PHOTO = "pref_user_photo";
+    public static String PREF_USER_FIRST_NAME =  "pref_user_first_name";
+    public static String PREF_USER_LAST_NAME =  "pref_user_last_name";
+    public static String PREF_USER_JOINING_DATE =  "pref_user_joining_date";
+    public static String PREF_USER_VERIFIED_EMAIL =  "pref_user_verified_email";
 
     public static String KEY_PREFERENCES = "pref_rcontact";
 

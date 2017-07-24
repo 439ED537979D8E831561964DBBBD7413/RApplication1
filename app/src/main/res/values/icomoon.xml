@@ -35,6 +35,12 @@
     <string name="im_sim_2">&#xe91c;</string> <!--updated -->
     <string name="im_sim_1">&#xe91d;</string> <!--updated -->
 
+    
+    <!--view account-->
+    <string name="im_icon_view_account">&#xe958;</string>
+    <string name="im_icon_security">&#xe95b;</string>
+
+
     <!--<string name="im_check_square_o">&#xe900;</string>-->
     <!--<string name="im_caret_down">&#xe901;</string>-->
     <!--<string name="im_caret_left">&#xe902;</string>-->
