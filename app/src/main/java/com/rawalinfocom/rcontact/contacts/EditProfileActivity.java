@@ -552,8 +552,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             break;
                     }
 
-                    Utils.showSuccessSnackBar(this, relativeRootEditProfile, "Profile Updated " +
-                            "Successfully!");
+                    Utils.showSuccessSnackBar(this, relativeRootEditProfile, getString(R.string
+                            .success_profile_update));
                     isUpdated = false;
 
                 } else {
@@ -700,11 +700,11 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 } else {
 //                    if (StringUtils.length(firstName) <= 0) {
                     if (StringUtils.isBlank(firstName)) {
-                        Utils.showErrorSnackBar(this, relativeRootEditProfile, "Please add First " +
-                                "name!");
+                        Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string
+                                .error_requird_first_name));
                     } else {
-                        Utils.showErrorSnackBar(this, relativeRootEditProfile, "Please add Last " +
-                                "name!");
+                        Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string
+                                .error_requird_last_name));
                     }
                 }
                 break;
@@ -719,7 +719,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     profileDataOperation.setPbGender("Female");
                     editProfile(profileDataOperation, AppConstants.GENDER);
                 } else {
-                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "Select any gender!");
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string
+                            .error_select_gender));
                 }
                 break;
             //</editor-fold>
@@ -761,7 +762,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         if (i != 0) {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Number is required!");
+                                    getString(R.string.error_required_number));
                         }
                     }
                 }
@@ -774,8 +775,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             profileDataOperation.setPbPhoneNumber(arrayListNewPhone);
                             editProfile(profileDataOperation, AppConstants.PHONE_NUMBER);
                         } else {
-                            Utils.showErrorSnackBar(this, relativeRootEditProfile, "Nothing to " +
-                                    "Update");
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
+                                    .string.error_no_update));
                         }
                     }
                 }
@@ -817,13 +818,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         } else {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Invalid EmailId!");
+                                    getString(R.string.error_invalid_email));
                         }
                     } else {
                         if (i != 0) {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Email is required!");
+                                    getString(R.string.error_required_email));
                         }
                     }
 
@@ -837,8 +838,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             profileDataOperation.setPbEmailId(arrayListNewEmail);
                             editProfile(profileDataOperation, AppConstants.EMAIL);
                         } else {
-                            Utils.showErrorSnackBar(this, relativeRootEditProfile, "Nothing to " +
-                                    "Update");
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
+                                    .string.error_no_update));
                         }
                     }
                 }
@@ -878,7 +879,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         if (i != 0) {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Account is required!");
+                                    getString(R.string.error_required_account));
                         }
                     }
 
@@ -892,8 +893,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             profileDataOperation.setPbIMAccounts(arrayListNewImAccount);
                             editProfile(profileDataOperation, AppConstants.IM_ACCOUNT);
                         } else {
-                            Utils.showErrorSnackBar(this, relativeRootEditProfile, "Nothing to " +
-                                    "Update");
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
+                                    .string.error_no_update));
                         }
                     }
                 }
@@ -926,7 +927,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         if (i != 0) {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Web address is required!");
+                                    getString(R.string.error_required_web_address));
                         }
                     }
 
@@ -940,8 +941,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             profileDataOperation.setPbWebAddress(arrayListNewWebAddress);
                             editProfile(profileDataOperation, AppConstants.WEBSITE);
                         } else {
-                            Utils.showErrorSnackBar(this, relativeRootEditProfile, "Nothing to " +
-                                    "Update");
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
+                                    .string.error_no_update));
                         }
                     }
                 }
@@ -979,20 +980,20 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 arrayListNewOrganization.add(organization);
                             } else {
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                        "Organization designation is required!");
+                                        getString(R.string.error_required_org_designation));
                                 isValid = false;
                                 break;
                             }
                         } else {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Organization name is required!");
+                                    getString(R.string.error_required_org_name));
                             isValid = false;
                             break;
                         }
                     } else {
                         if (i != 0) {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Organization name is required!");
+                                    getString(R.string.error_required_org_name));
                             isValid = false;
                         }
                         break;
@@ -1011,8 +1012,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         editProfile(profileDataOperation, AppConstants.ORGANIZATION);*/
                     if (arrayListNewOrganization.size() > 0) {
                         if (!isCurrentSelected) {
-                            Utils.showErrorSnackBar(this, relativeRootEditProfile, "Select " +
-                                    "current Organization!");
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
+                                    .string.error_current_organization));
                         } else {
                             profileDataOperation.setPbOrganization(arrayListNewOrganization);
                             editProfile(profileDataOperation, AppConstants.ORGANIZATION);
@@ -1022,8 +1023,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             profileDataOperation.setPbOrganization(arrayListNewOrganization);
                             editProfile(profileDataOperation, AppConstants.ORGANIZATION);
                         } else {
-                            Utils.showErrorSnackBar(this, relativeRootEditProfile, "Nothing to " +
-                                    "Update");
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
+                                    .string.error_no_update));
                         }
                     }
                 }
@@ -1066,7 +1067,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         if (i != 0) {
                             isValid = false;
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Event date is required!");
+                                    getString(R.string.error_required_event_date));
                         }
                     }
                 }
@@ -1077,8 +1078,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 int birthDayCount = Collections.frequency(valueTypes, "birthday");
                 int anniversaryCount = Collections.frequency(valueTypes, "anniversary");
                 if (birthDayCount > 1 || anniversaryCount > 1) {
-                    Utils.showErrorSnackBar(this, relativeRootEditProfile, "You can add Birthday " +
-                            "and Anniversary only once!");
+                    Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string
+                            .error_once_birthday_anniversary));
                 } else {
                     if (isValid) {
                         if (arrayListNewEvent.size() > 0) {
@@ -1089,9 +1090,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 profileDataOperation.setPbEvent(arrayListNewEvent);
                                 editProfile(profileDataOperation, AppConstants.EVENT);
                             } else {
-                                Utils.showErrorSnackBar(this, relativeRootEditProfile, "Nothing " +
-                                        "to " +
-                                        "Update");
+                                Utils.showErrorSnackBar(this, relativeRootEditProfile, getString
+                                        (R.string.error_no_update));
                             }
                         }
                     }
@@ -1174,8 +1174,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                                 arrayListNewAddress.add(address);
                                             } else {
                                                 Utils.showErrorSnackBar(this,
-                                                        relativeRootEditProfile,
-                                                        "Address mapping on Map is required!");
+                                                        relativeRootEditProfile, getString(R
+                                                                .string
+                                                                .error_required_address_mapping));
                                                 textImageMapMarker.setTextColor(ContextCompat
                                                         .getColor(EditProfileActivity
                                                                 .this, R.color
@@ -1185,8 +1186,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                             }
                                         } else {
                                             Utils.showErrorSnackBar(this,
-                                                    relativeRootEditProfile,
-                                                    "Address mapping on Map is required!");
+                                                    relativeRootEditProfile, getString(R.string
+                                                            .error_required_address_mapping));
                                             textImageMapMarker.setTextColor(ContextCompat
                                                     .getColor(this, R.color
                                                             .colorSnackBarNegative));
@@ -1195,28 +1196,28 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         }
                                     } else {
                                         Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                                "Street is required!");
+                                                getString(R.string.error_required_street));
                                         street.requestFocus();
                                         isValid = false;
                                         break;
                                     }
                                 } else {
                                     Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                            "City is required!");
+                                            getString(R.string.error_required_city));
                                     city.requestFocus();
                                     isValid = false;
                                     break;
                                 }
                             } else {
                                 Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                        "State is required!");
+                                        getString(R.string.error_required_state));
                                 state.requestFocus();
                                 isValid = false;
                                 break;
                             }
                         } else {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Country is required!");
+                                    getString(R.string.error_required_country));
                             country.requestFocus();
                             isValid = false;
                             break;
@@ -1224,7 +1225,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     } else {
                         if (i != 0) {
                             Utils.showErrorSnackBar(this, relativeRootEditProfile,
-                                    "Country name is required!");
+                                    getString(R.string.error_required_country));
                             country.requestFocus();
                             isValid = false;
                         }
@@ -1247,8 +1248,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             profileDataOperation.setPbAddress(arrayListNewAddress);
                             editProfile(profileDataOperation, AppConstants.ADDRESS);
                         } else {
-                            Utils.showErrorSnackBar(this, relativeRootEditProfile, "Nothing " +
-                                    "to Update");
+                            Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R
+                                    .string.error_no_update));
                         }
                     }
 //                    }
@@ -2381,7 +2382,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case AppConstants.PHONE_NUMBER:
                 linerCheckbox.setVisibility(View.GONE);
                 imageViewDelete.setTag(AppConstants.PHONE_NUMBER);
-                inputValue.setHint("Number");
+                inputValue.setHint(R.string.hint_number);
                 spinnerType.setTag(AppConstants.PHONE_NUMBER);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_phone_number)));
@@ -2429,7 +2430,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             case AppConstants.EMAIL:
                 linerCheckbox.setVisibility(View.GONE);
                 imageViewDelete.setTag(AppConstants.EMAIL);
-                inputValue.setHint("Email");
+                inputValue.setHint(R.string.hint_email);
                 spinnerType.setTag(AppConstants.EMAIL);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_email_address)));
@@ -2461,7 +2462,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linerCheckbox.setVisibility(View.GONE);
 //                textImageCross.setTag(AppConstants.WEBSITE);
                 imageViewDelete.setTag(AppConstants.WEBSITE);
-                inputValue.setHint("Web Address");
+                inputValue.setHint(getString(R.string.hint_web_address));
                 spinnerType.setTag(AppConstants.WEBSITE);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_email_address)));
@@ -2496,7 +2497,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linerCheckbox.setVisibility(View.GONE);
 //                textImageCross.setTag(AppConstants.IM_ACCOUNT);
                 imageViewDelete.setTag(AppConstants.IM_ACCOUNT);
-                inputValue.setHint("Account Name");
+                inputValue.setHint(R.string.hint_account_name);
                 spinnerType.setTag(AppConstants.IM_ACCOUNT);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_social_media)));
@@ -2533,7 +2534,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 linerCheckbox.setVisibility(View.GONE);
 //                textImageCross.setTag(AppConstants.EVENT);
                 imageViewDelete.setTag(AppConstants.EVENT);
-                inputValue.setHint("Choose date");
+                inputValue.setHint(R.string.hint_choose_date);
                 inputValue.setFocusable(false);
                 spinnerType.setTag(AppConstants.EVENT);
                 imageViewCalender.setVisibility(View.VISIBLE);
@@ -2787,12 +2788,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputPinCode.setTypeface(Utils.typefaceRegular(this));
         inputPoBox.setTypeface(Utils.typefaceRegular(this));
 
-        inputCountry.setHint("Country (Required)");
-        inputState.setHint("State (Required)");
-        inputCity.setHint("City / Town (Required)");
-        inputStreet.setHint("Address Line 1 (Required)");
-        inputNeighborhood.setHint("Address Line 2 (Optional)");
-        inputPinCode.setHint("Pincode (Required)");
+        inputCountry.setHint(R.string.hint_country_required);
+        inputState.setHint(R.string.hint_state_required);
+        inputCity.setHint(R.string.hint_city_town_required);
+        inputStreet.setHint(R.string.hint_address_line_1_required);
+        inputNeighborhood.setHint(R.string.hint_address_line_2_optional);
+        inputPinCode.setHint(R.string.hint_pincode_required);
         inputPoBox.setHint("Po. Box No.");
 
         inputPoBox.setVisibility(View.GONE);
@@ -2977,10 +2978,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         textFromSocialMedia.setTypeface(Utils.typefaceRegular(this));
         buttonLeft.setTypeface(Utils.typefaceSemiBold(this));
 
-        textDialogTitle.setText("Upload Via");
-        textFromContact.setText("Take Photo");
-        textFromSocialMedia.setText("Choose Photo");
-        textRemovePhoto.setText("Remove Photo");
+        textDialogTitle.setText(R.string.str_upload_via);
+        textFromContact.setText(R.string.str_take_photo);
+        textFromSocialMedia.setText(R.string.str_choose_photo);
+        textRemovePhoto.setText(R.string.str_remove_photo);
 
         if (userProfile.getPmProfileImage().length() > 0) {
             textRemovePhoto.setVisibility(View.VISIBLE);
@@ -3074,10 +3075,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         backConfirmationDialog = new MaterialDialog(this, cancelListener);
         backConfirmationDialog.setTitleVisibility(View.GONE);
-        backConfirmationDialog.setLeftButtonText("Cancel");
-        backConfirmationDialog.setRightButtonText("OK");
-        backConfirmationDialog.setDialogBody("Some details are left unsaved. Are you sure you " +
-                "want to proceed?");
+        backConfirmationDialog.setLeftButtonText(getString(R.string.cancel));
+        backConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
+        backConfirmationDialog.setDialogBody(getString(R.string.confirmation_unsaved_back));
 
         backConfirmationDialog.showDialog();
     }

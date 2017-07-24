@@ -517,7 +517,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                         formattedNumber = "+" + formattedNumber;
                                     }
                                     ArrayList<String> arrayListForUnknownContact = new
-                                            ArrayList<>(Arrays.asList("Call " + formattedNumber,
+                                            ArrayList<>(Arrays.asList(getString(R.string.str_call) + formattedNumber,
                                             getString(R.string.add_to_contact),
                                             getString(R.string.add_to_existing_contact),
                                             getString(R.string.send_sms),
