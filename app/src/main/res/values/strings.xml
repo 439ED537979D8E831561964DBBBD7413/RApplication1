@@ -562,4 +562,23 @@
     <string name="str_mobile_number">Mobile Number</string>
     <string name="error_custom_type">Please add valid custom type</string>
 
+    <!--Account-->
+    <string name="action_bar_title">Account</string>
+    <string name="view_account">View account</string>
+    <string name="security">Security</string>
+
+    <!--View Account-->
+    <string name="lbl_first_name">First name</string>
+    <string name="lbl_last_name">Last name</string>
+    <string name="lbl_phone">Phone</string>
+    <string name="lbl_email">Email</string>
+    <string name="lbl_joining_date">Joining Date</string>
+
+    <!--Security-->
+    <string name="security_info">When possible, the messages you send and your calls are secured with end-to-end
+    encryption, which means RContacts app and third parties can\'t read or listen to them</string>
+
+    <string name="security_link_text">Learn more about RContacts app security</string>
+    <string name="security_link">http://webstaging.rcontacts.in/global/privacy-policy</string>
+
 </resources>

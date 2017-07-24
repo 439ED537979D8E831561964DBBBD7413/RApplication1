@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_view_account"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rawalinfocom.rcontact.account.ViewAccountActivity">
+
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_toolbar_public_profile_search"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rl_main_content"
+        android:layout_below="@+id/include_toolbar"
+        android:layout_marginTop="@dimen/margin_10dp"
+        android:layout_marginLeft="@dimen/margin_5dp"
+        android:layout_marginRight="@dimen/margin_5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_lable_first_name"
+                android:text="@string/lbl_first_name"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_first_name"
+                tools:text="Aniruddh"
+                android:textColor="@color/colorAccent"
+                android:layout_marginLeft="@dimen/margin_8dp"
+                android:textSize="@dimen/text_size_18sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_lable_last_name"
+                android:text="@string/lbl_last_name"
+                android:layout_marginTop="@dimen/margin_10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_last_name"
+                tools:text="Pal"
+                android:textColor="@color/colorAccent"
+                android:layout_marginLeft="@dimen/margin_8dp"
+                android:textSize="@dimen/text_size_18sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_lable_phone"
+                android:text="@string/lbl_phone"
+                android:layout_marginTop="@dimen/margin_10dp"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/text_phone_number"
+                    tools:text="+91 8888667145"
+                    android:textColor="@color/colorAccent"
+                    android:layout_marginLeft="@dimen/margin_8dp"
+                    android:textSize="@dimen/text_size_18sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/text_phone_verified"
+                    android:layout_marginLeft="@dimen/margin_5dp"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/text_size_18sp"/>
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_lable_email"
+                android:text="@string/lbl_email"
+                android:layout_marginTop="@dimen/margin_10dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_email"
+                tools:text="abc@rawalinfocom.com"
+                android:textColor="@color/colorAccent"
+                android:layout_marginLeft="@dimen/margin_8dp"
+                android:textSize="@dimen/text_size_18sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_email_verified"
+                android:layout_marginLeft="@dimen/margin_5dp"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/text_size_18sp"/>
+
+        </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_lable_joining_date"
+                android:text="@string/lbl_joining_date"
+                android:layout_marginTop="@dimen/margin_10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_joining_date"
+                tools:text="15th May,2016"
+                android:textColor="@color/colorAccent"
+                android:layout_marginLeft="@dimen/margin_8dp"
+                android:textSize="@dimen/text_size_18sp"/>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>
