@@ -17,8 +17,8 @@ import com.rawalinfocom.rcontact.R;
 public class TutorialPagerAdapter extends PagerAdapter {
 
     Context context;
-    private int images[] = {R.drawable.tutorial_1, R.drawable.tutorial_2, R.drawable.tutorial_3, R
-            .drawable.tutorial_4, R.drawable.tutorial_5};
+    private int images[] = {R.drawable.tutorial_1, R.drawable.tutorial_2,
+            R.drawable.tutorial_3, R.drawable.tutorial_4, R.drawable.tutorial_5};
     private LayoutInflater layoutInflater;
 
     public TutorialPagerAdapter(Context context) {

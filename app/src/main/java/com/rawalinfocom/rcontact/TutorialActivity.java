@@ -1,8 +1,12 @@
 package com.rawalinfocom.rcontact;
 
+import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -10,9 +14,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.adapters.TutorialPagerAdapter;
+import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 
 import butterknife.BindView;
@@ -50,6 +54,7 @@ public class TutorialActivity extends BaseActivity {
     int pagerCurrentPosition = 0;
 
     //<editor-fold desc="Override Methods">
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +63,27 @@ public class TutorialActivity extends BaseActivity {
 
         init();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case AppConstants.MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length <= 0 || grantResults[0] != PackageManager
+                        .PERMISSION_GRANTED) {
+                    // Permission Denied
+                    finish();
+                }
+                /*else {
+                    // Permission Granted
+                }*/
+            }
+            break;
+        }
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Private Methods">
@@ -74,17 +100,18 @@ public class TutorialActivity extends BaseActivity {
         textNext.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
 
         pagerTutorial.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
             @Override
             public void onPageScrolled(int position, float positionOffset, int
                     positionOffsetPixels) {
-
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onPageSelected(int position) {
 
-                pagerCurrentPosition = position;
                 setIndicatorSelection(position);
+                pagerCurrentPosition = position;
 
                 switch (position) {
                     case 0:
@@ -94,6 +121,13 @@ public class TutorialActivity extends BaseActivity {
                         break;
 
                     case 1:
+                        if (ContextCompat.checkSelfPermission(TutorialActivity.this, android
+                                .Manifest.permission.READ_CONTACTS) != PackageManager
+                                .PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{android.Manifest.permission
+                                    .READ_CONTACTS}, AppConstants
+                                    .MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                        }
                         textTutorialHeader.setText(getString(R.string.tutorial_header_2));
                         textTutorialContent.setText(R.string.tutorial_content_2);
                         textNext.setText(R.string.tutorial_and);
@@ -131,7 +165,8 @@ public class TutorialActivity extends BaseActivity {
                 if (pagerCurrentPosition != (TUTORIAL_SCREENS - 1)) {
                     pagerTutorial.setCurrentItem(++pagerCurrentPosition);
                 } else {
-                    Toast.makeText(TutorialActivity.this, "Last!", Toast.LENGTH_SHORT).show();
+                    startActivityIntent(TutorialActivity.this, TermsConditionsActivity.class, null);
+                    finish();
                 }
             }
         });

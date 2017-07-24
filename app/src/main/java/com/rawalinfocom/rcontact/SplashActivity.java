@@ -33,10 +33,10 @@ public class SplashActivity extends BaseActivity {
             @Override
             public void run() {
 
-              /*  startActivityIntent(SplashActivity.this, TutorialActivity.class, null);
-                finish();*/
+                startActivityIntent(SplashActivity.this, TutorialActivity.class, null);
+                finish();
 
-                if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
+               /* if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
                                 .PREF_LAUNCH_SCREEN_INT,
                         IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
                         .LAUNCH_MOBILE_REGISTRATION) {
@@ -85,7 +85,7 @@ public class SplashActivity extends BaseActivity {
                 } else {
                     startActivityIntent(SplashActivity.this, MainActivity.class, null);
                     finish();
-                }
+                }*/
             }
         }, SPLASH_TIME_OUT);
     }

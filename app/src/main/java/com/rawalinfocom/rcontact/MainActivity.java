@@ -1088,18 +1088,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 break;
             case R.id.nav_ll_about:
                 break;
+
             case R.id.nav_ll_feedback:
 
-                String url = "http://feedback.rcontacts.in";
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
+                i.setData(Uri.parse(WsConstants.URL_FEEDBACK));
                 startActivity(i);
-
-//                Intent intent = new Intent(MainActivity.this, WebBrowserActivity.class);
-//                intent.putExtra(AppConstants.EXTRA_FEEDBACK_URL, "http://feedback.rcontacts.in");
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
+
             case R.id.nav_ll_export:
 
                 if (BuildConfig.DEBUG) {
@@ -1367,10 +1363,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     .PREF_CALL_LOG_SYNC_TIME, "");
             String prefRowId = Utils.getStringPreference(MainActivity.this, AppConstants
                     .PREF_CALL_LOG_ROW_ID, "");
-            String dateToCompare="";
-            String currentDate ="";
-            long dateToConvert =0;
-            if(!StringUtils.isEmpty(prefDate)){
+            String dateToCompare = "";
+            String currentDate = "";
+            long dateToConvert = 0;
+            if (!StringUtils.isEmpty(prefDate)) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                 Date startDate = sdf.parse(prefDate);
                 dateToConvert = startDate.getTime();
@@ -1378,7 +1374,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 System.out.println("last Call-log date : " + dateToCompare);
                 currentDate = String.valueOf(System.currentTimeMillis());
             }
-
 
 
             Cursor cursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
@@ -1409,10 +1404,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             .getDefault()).format(date2);
 
                     if (!(dateToCompare1.equalsIgnoreCase(dateTodelete)) && !(prefRowId
-                            .equalsIgnoreCase(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID))))) {
+                            .equalsIgnoreCase(cursor.getString(cursor.getColumnIndex(CallLog
+                                    .Calls._ID))))) {
 
-                        String userNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
-                        String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
+                        String userNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls
+                                .NUMBER));
+                        String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls
+                                .CACHED_NAME));
 
                         CallLogType log = new CallLogType(this);
                         log.setNumber(userNumber);
@@ -1423,17 +1421,22 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             log.setName("");
 
                         log.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
-                        log.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION)));
+                        log.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls
+                                .DURATION)));
 
-                        log.setCallDateAndTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format
+                        log.setCallDateAndTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a",
+                                Locale.getDefault()).format
                                 (cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE))));
                         log.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
 
-                        System.out.println("RContact Log date " + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format
+                        System.out.println("RContact Log date " + new SimpleDateFormat
+                                ("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format
                                 (cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE))));
 
-                        log.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
-                        String numberTypeLog = getPhoneNumberType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE)));
+                        log.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog
+                                .Calls._ID)));
+                        String numberTypeLog = getPhoneNumberType(cursor.getInt(cursor
+                                .getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE)));
                         log.setNumberType(numberTypeLog);
                         String uniquePhoneBookId = getRawContactIdFromNumber(userNumber);
                         if (!TextUtils.isEmpty(uniquePhoneBookId))
@@ -2758,7 +2761,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         };
         String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " +
                 ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0 and " + ContactsContract
-                .RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE + ") and" +
+                .RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE +
+                ") and" +
                 ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID + " in " + inCaluse;
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
