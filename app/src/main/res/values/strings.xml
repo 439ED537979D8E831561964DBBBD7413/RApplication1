@@ -585,5 +585,6 @@
     <string name="str_validation_export_type">Please select any export type</string>
     <string name="str_validation_push_notification">Disable it if you do not want receive Notifications</string>
     <string name="str_validation_event_notification">Turn On/Off to manage All Event Notifications</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

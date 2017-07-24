@@ -48,7 +48,7 @@ android {
 }
 
 final SUPPORT_LIBRARY_VERSION = '25.3.1'
-final PLAY_SERVICES_VERSION = '10.2.6'
+final PLAY_SERVICES_VERSION = '11.0.1'
 final JACKSON_CORE_VERSION = '2.8.3'
 final BUTTER_KNIFE_VERSION = '8.4.0'
 
@@ -74,6 +74,7 @@ dependencies {
     compile "com.google.android.gms:play-services-plus:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-maps:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-places:$PLAY_SERVICES_VERSION"
+    compile "com.google.android.gms:play-services-drive:$PLAY_SERVICES_VERSION"
 
     compile "com.fasterxml.jackson.core:jackson-core:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-databind:$JACKSON_CORE_VERSION"
@@ -85,14 +86,16 @@ dependencies {
 
     compile project(path: ':linkedin-sdk')
     //    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    //    compile 'com.android.support.constraint:constraint-layout:1.0.0'
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'com.facebook.android:facebook-android-sdk:4.17.0'
     compile 'com.android.support:multidex:1.0.1'
-//    compile 'com.android.support.constraint:constraint-layout:1.0.0'
     compile 'com.flipkart.zjsonpatch:zjsonpatch:0.3.0'
     compile 'me.leolin:ShortcutBadger:1.1.16@aar'
+    compile 'com.google.android.gms:play-services:11.0.1'
+    compile 'com.android.support:appcompat-v7:25.3.1'
     testCompile 'junit:junit:4.12'
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
 }

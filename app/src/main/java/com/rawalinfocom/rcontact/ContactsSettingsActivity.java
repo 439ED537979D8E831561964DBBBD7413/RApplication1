@@ -2,6 +2,8 @@ package com.rawalinfocom.rcontact;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,6 +11,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +25,25 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFolder;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.DriveResource;
+import com.google.android.gms.drive.Metadata;
+import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.query.Filters;
+import com.google.android.gms.drive.query.Query;
+import com.google.android.gms.drive.query.SearchableField;
 import com.rawalinfocom.rcontact.adapters.AppLanguageListAdapter;
 import com.rawalinfocom.rcontact.adapters.ShortByContactListAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -30,9 +52,14 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.AppLanguage;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -41,7 +68,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ContactsSettingsActivity extends BaseActivity implements RippleView
-        .OnRippleCompleteListener, WsResponseListener {
+        .OnRippleCompleteListener, WsResponseListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     @BindView(R.id.image_action_back)
     ImageView imageActionBack;
@@ -67,11 +95,16 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
     TextView txtExportContact;
 
     private Activity activity;
-    private Cursor cursor;
-    private ArrayList<String> vCard;
     private String vfile;
+    private GoogleApiClient mGoogleApiClient;
+    protected static final int REQUEST_CODE_RESOLUTION = 1337;
+    protected static final int REQUEST_CODE_CREATOR = 101;
+    private String FOLDER_NAME = "ContactBackup";
+    public static String drive_id;
+    public static DriveId driveID;
 
     private ArrayList<AppLanguage> shortByContactArrayList;
+    private String filePath;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -81,8 +114,15 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
         ButterKnife.bind(this);
 
         activity = ContactsSettingsActivity.this;
-
         init();
+        buildGoogleApiClient();
+    }
+
+    private boolean checkExternalStorageState() {
+        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+            return !Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY);
+        } else
+            return false;
     }
 
     @Override
@@ -249,12 +289,25 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
                     Utils.showErrorSnackBar(activity, activityContactSettings, getString(R.string.str_validation_export_type));
                 } else {
 
-                    textExportContact.setText(shortByContactListAdapter.getSelected());
-//                    Utils.setStringPreference(activity, AppConstants.PREF_EXPORT_CONTACT, shortByContactListAdapter.getSelectedType());
                     dialog.dismiss();
 
-                    if (shortByContactListAdapter.getSelectedType().equals("0") || shortByContactListAdapter.getSelectedType().equals("1"))
-                        new ExportContact().execute();
+                    switch (shortByContactListAdapter.getSelectedType()) {
+                        case "0":
+                            new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
+                            break;
+                        case "1":
+                            if (checkExternalStorageState())
+                                new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
+                            else
+                                Utils.showErrorSnackBar(activity, activityContactSettings,
+                                        "External storage not available!!");
+                            break;
+                        case "2":
+                            new ExportContact(shortByContactListAdapter.getSelectedType()).execute();
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         });
@@ -264,76 +317,362 @@ public class ContactsSettingsActivity extends BaseActivity implements RippleView
 
     private class ExportContact extends AsyncTask<Void, Void, Void> {
 
+        private String selectedType;
+
+        ExportContact(String selectedType) {
+            this.selectedType = selectedType;
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             Utils.showProgressDialog(activity, "Please wait...", false);
-            vfile = "Contacts" + "_" + System.currentTimeMillis() + ".vcf";
+            vfile = "Contacts" + "_" + new SimpleDateFormat("yyyyMMdd_hhmmss", Locale.getDefault()).format(System.currentTimeMillis()) + ".vcf";
         }
 
         protected Void doInBackground(Void... urls) {
-            getVcardString();
+//            getVcardString();
+            getVCF();
             return null;
         }
 
         protected void onPostExecute(Void result) {
             Utils.hideProgressDialog();
+
+            if (selectedType.equals("2"))
+                Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
+//                check_folder_exists();
         }
     }
 
-    private void getVcardString() {
-        // TODO Auto-generated method stub
-        vCard = new ArrayList<String>();
-        cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-        if (cursor != null && cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            for (int i = 0; i < cursor.getCount(); i++) {
+    public void getVCF() {
 
-                get(cursor);
-                cursor.moveToNext();
-            }
-
-        } else {
-            Log.d("TAG", "No Contacts in Your Phone");
-        }
-
-    }
-
-    public void get(Cursor cursor) {
-
-
-        //cursor.moveToFirst();
-        String lookupKey = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY));
-        Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_VCARD_URI, lookupKey);
-        AssetFileDescriptor fd;
         try {
-            fd = this.getContentResolver().openAssetFileDescriptor(uri, "r");
+            Cursor phones = activity.getContentResolver().query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
+                    null, null);
+            if (phones != null) {
+                phones.moveToFirst();
 
-            // Your Complex Code and you used function without loop so how can you get all Contacts Vcard.??
+                while (phones.moveToNext()) {
+                    String lookupKey = phones.getString(phones
+                            .getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY));
 
+                    Uri uri = Uri.withAppendedPath(
+                            ContactsContract.Contacts.CONTENT_VCARD_URI, lookupKey);
+                    AssetFileDescriptor fd;
+                    try {
+                        fd = activity.getContentResolver().openAssetFileDescriptor(uri,
+                                "r");
+                        FileInputStream fis = fd.createInputStream();
+                        byte[] buf = new byte[(int) fd.getDeclaredLength()];
+                        fis.read(buf);
+                        String VCard = new String(buf);
+                        filePath = Environment.getExternalStorageDirectory()
+                                .toString() + File.separator + vfile;
+                        FileOutputStream mFileOutputStream = new FileOutputStream(filePath,
+                                true);
+                        mFileOutputStream.write(VCard.getBytes());
+//                        phones.moveToNext();
+                        Log.d("Vcard", VCard);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
-           /* FileInputStream fis = fd.createInputStream();
-            byte[] buf = new byte[(int) fd.getDeclaredLength()];
-            fis.read(buf);
-            String VCard = new String(buf);
-            String path = Environment.getExternalStorageDirectory().toString() + File.separator + vfile;
-            FileOutputStream out = new FileOutputStream(path);
-            out.write(VCard.toString().getBytes());
-            Log.d("Vcard",  VCard);*/
-
-            FileInputStream fis = fd.createInputStream();
-            byte[] buf = new byte[(int) fd.getDeclaredLength()];
-            fis.read(buf);
-            String vcardstring = new String(buf);
-            vCard.add(vcardstring);
-
-            String storage_path = Environment.getExternalStorageDirectory().toString() + File.separator + vfile;
-            FileOutputStream mFileOutputStream = new FileOutputStream(storage_path, false);
-            mFileOutputStream.write(vcardstring.toString().getBytes());
-
+                phones.close();
+            }
         } catch (Exception e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mGoogleApiClient == null) {
+
+            /**
+             * Create the API client and bind it to an instance variable.
+             * We use this instance as the callback for connection and connection failures.
+             * Since no account name is passed, the user is prompted to choose.
+             */
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mGoogleApiClient != null) {
+
+            // disconnect Google Android Drive API connection.
+            mGoogleApiClient.disconnect();
+        }
+        super.onPause();
+    }
+
+
+    /*Handles onConnectionFailed callbacks*/
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_RESOLUTION:
+                if (resultCode == Activity.RESULT_OK)
+                    mGoogleApiClient.connect();
+                break;
+
+            case REQUEST_CODE_CREATOR:
+                if (resultCode == Activity.RESULT_OK) {
+                    System.out.println("File added to Drive");
+                    Toast.makeText(activity, "File successfully added to Drive", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    System.out.println("Error creating the file");
+                    Toast.makeText(activity, "Error adding file to Drive", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    /* *//*handles connection callbacks*/
+    @Override
+    public void onConnected(Bundle bundle) {
+        Drive.DriveApi.newDriveContents(mGoogleApiClient);
+    }
+
+    /*callback when there there's an error connecting the client to the service.*/
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        System.out.println("Connection failed");
+        if (!result.hasResolution()) {
+            GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), this, 0).show();
+            return;
+        }
+        try {
+            System.out.println("trying to resolve the Connection failed error...");
+            result.startResolutionForResult(this, REQUEST_CODE_RESOLUTION);
+        } catch (IntentSender.SendIntentException e) {
+            System.out.println("Exception while starting resolution activity " + e);
+        }
+    }
+
+    /*build the google api client*/
+    private void buildGoogleApiClient() {
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+    }
+
+    /*handles suspended connection callbacks*/
+    @Override
+    public void onConnectionSuspended(int cause) {
+        switch (cause) {
+            case 1:
+                System.out.println("Connection suspended - Cause: " + "Service disconnected");
+                break;
+            case 2:
+                System.out.println("Connection suspended - Cause: " + "Connection lost");
+                break;
+            default:
+                System.out.println("Connection suspended - Cause: " + "Unknown");
+                break;
+        }
+    }
+
+    /*callback on getting the drive contents, contained in result*/
+    final private ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback = new
+            ResultCallback<DriveApi.DriveContentsResult>() {
+                @Override
+                public void onResult(@NonNull DriveApi.DriveContentsResult result) {
+                    if (!result.getStatus().isSuccess()) {
+                        System.out.println("Error creating new file contents");
+                        return;
+                    }
+                    final DriveContents driveContents = result.getDriveContents();
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            OutputStream outputStream = driveContents.getOutputStream();
+                            addTextfileToOutputStream(outputStream);
+
+                            MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
+                                    .setTitle(new File(vfile).getName())
+                                    .setMimeType("text/vcf")
+                                    .setDescription("This is a contact vcf file uploaded from device")
+                                    .setStarred(true).build();
+
+                            // Create an intent for the file chooser, and start it.
+                            IntentSender intentSender = Drive.DriveApi
+                                    .newCreateFileActivityBuilder()
+                                    .setInitialMetadata(changeSet)
+                                    .setInitialDriveContents(driveContents)
+                                    .build(mGoogleApiClient);
+                            try {
+                                startIntentSenderForResult(
+                                        intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
+                            } catch (IntentSender.SendIntentException e) {
+                                System.out.println("Failed to launch file chooser.");
+                            }
+
+//                            Drive.DriveApi.getRootFolder(mGoogleApiClient)
+//                                    .createFile(mGoogleApiClient, changeSet, driveContents)
+//                                    .setResultCallback(fileCallback);
+                        }
+                    }.start();
+                }
+            };
+
+    private void addTextfileToOutputStream(OutputStream outputStream) {
+        System.out.println("adding text file to outputstream...");
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        try {
+
+            File file = new File(filePath);
+
+            BufferedInputStream inputStream = new BufferedInputStream(
+                    new FileInputStream(file));
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            System.out.println("problem converting input stream to output stream: " + e);
+            e.printStackTrace();
+        }
+    }
+
+    /*callback after creating the file, can get file info out of the result*/
+    final private ResultCallback<DriveFolder.DriveFileResult> fileCallback = new
+            ResultCallback<DriveFolder.DriveFileResult>() {
+                @Override
+                public void onResult(DriveFolder.DriveFileResult result) {
+                    if (!result.getStatus().isSuccess()) {
+                        System.out.println("Error creating the file");
+                        Toast.makeText(activity, "Error adding file to Drive", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    System.out.println("File added to Drive");
+                    System.out.println("Created a file with content: "
+                            + result.getDriveFile().getDriveId());
+                    Toast.makeText(activity, "File successfully added to Drive", Toast.LENGTH_SHORT).show();
+                    final PendingResult<DriveResource.MetadataResult> metadata
+                            = result.getDriveFile().getMetadata(mGoogleApiClient);
+                    metadata.setResultCallback(new ResultCallback<DriveResource.MetadataResult>() {
+                        @Override
+                        public void onResult(DriveResource.MetadataResult metadataResult) {
+
+                            Metadata data = metadataResult.getMetadata();
+                            System.out.println("Title: " + data.getTitle());
+                            drive_id = data.getDriveId().encodeToString();
+                            System.out.println("DrivId: " + drive_id);
+                            driveID = data.getDriveId();
+                            System.out.println("Description: " + data.getDescription());
+                            System.out.println("MimeType: " + data.getMimeType());
+                            System.out.println("File size: " + String.valueOf(data.getFileSize()));
+                        }
+                    });
+                }
+            };
 }
+
+//    private void check_folder_exists() {
+//        Query query =
+//                new Query.Builder().addFilter(Filters.and(Filters.eq(SearchableField.TITLE, FOLDER_NAME),
+//                        Filters.eq(SearchableField.TRASHED, false))).build();
+//
+//        Drive.DriveApi.query(mGoogleApiClient, query).setResultCallback(new ResultCallback<DriveApi.MetadataBufferResult>() {
+//            @Override
+//            public void onResult(DriveApi.MetadataBufferResult result) {
+//                if (!result.getStatus().isSuccess()) {
+//                    System.out.println("RContact Cannot create folder in the root.");
+//                } else {
+//                    boolean isFound = false;
+//                    for (Metadata m : result.getMetadataBuffer()) {
+//                        if (m.getTitle().equals(FOLDER_NAME)) {
+//                            System.out.println("RContact Folder exists");
+//                            isFound = true;
+//                            DriveId driveId = m.getDriveId();
+//                            create_file_in_folder(driveId);
+//                            break;
+//                        }
+//                    }
+//                    if (!isFound) {
+//                        System.out.println("RContact Folder not found; creating it.");
+//                        MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(FOLDER_NAME).build();
+//                        Drive.DriveApi.getRootFolder(mGoogleApiClient)
+//                                .createFolder(mGoogleApiClient, changeSet)
+//                                .setResultCallback(new ResultCallback<DriveFolder.DriveFolderResult>() {
+//                                    @Override
+//                                    public void onResult(DriveFolder.DriveFolderResult result) {
+//                                        if (!result.getStatus().isSuccess()) {
+//                                            System.out.println("RContact U AR A MORON! Error while trying to create the folder");
+//                                        } else {
+//                                            System.out.println("RContact Created a folder");
+//                                            DriveId driveId = result.getDriveFolder().getDriveId();
+//                                            create_file_in_folder(driveId);
+//                                        }
+//                                    }
+//                                });
+//                    }
+//                }
+//            }
+//        });
+//    }
+//
+//    private void create_file_in_folder(final DriveId driveId) {
+//
+//        Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
+//            @Override
+//            public void onResult(@NonNull DriveApi.DriveContentsResult driveContentsResult) {
+//                if (!driveContentsResult.getStatus().isSuccess()) {
+//                    System.out.println("RContact U AR A MORON! Error while trying to create new file contents");
+//                    return;
+//                }
+//
+//                OutputStream outputStream = driveContentsResult.getDriveContents().getOutputStream();
+//
+//                //------ THIS IS AN EXAMPLE FOR FILE --------
+//                Toast.makeText(activity, "Uploading to drive. ", Toast.LENGTH_LONG).show();
+//                try {
+//                    FileInputStream fileInputStream = new FileInputStream(new File(vfile));
+//                    byte[] buffer = new byte[1024];
+//                    int bytesRead;
+//                    while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+//                        outputStream.write(buffer, 0, bytesRead);
+//                    }
+//                } catch (IOException e1) {
+//                    System.out.println("RContact U AR A MORON! Unable to write file contents.");
+//                }
+//
+//                MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(new File(vfile).getName())
+//                        .setMimeType("text/vcf").setStarred(false).build();
+//                DriveFolder folder = driveId.asDriveFolder();
+//                folder.createFile(mGoogleApiClient, changeSet, driveContentsResult.getDriveContents())
+//                        .setResultCallback(new ResultCallback<DriveFolder.DriveFileResult>() {
+//                            @Override
+//                            public void onResult(@NonNull DriveFolder.DriveFileResult driveFileResult) {
+//                                if (!driveFileResult.getStatus().isSuccess()) {
+//                                    System.out.println("RContact U AR A MORON!  Error while trying to create the file");
+//                                    return;
+//                                }
+//                                System.out.println("RContact Created a file: " + driveFileResult.getDriveFile().getDriveId());
+//                            }
+//                        });
+//            }
+//        });
+//    }
