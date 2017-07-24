@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.adapters.TutorialPagerAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 
 import butterknife.BindView;
@@ -165,6 +166,9 @@ public class TutorialActivity extends BaseActivity {
                 if (pagerCurrentPosition != (TUTORIAL_SCREENS - 1)) {
                     pagerTutorial.setCurrentItem(++pagerCurrentPosition);
                 } else {
+                    Utils.setIntegerPreference(TutorialActivity.this, AppConstants
+                            .PREF_LAUNCH_SCREEN_INT, IntegerConstants
+                            .LAUNCH_TERMS_CONDITIONS_ACTIVITY);
                     startActivityIntent(TutorialActivity.this, TermsConditionsActivity.class, null);
                     finish();
                 }

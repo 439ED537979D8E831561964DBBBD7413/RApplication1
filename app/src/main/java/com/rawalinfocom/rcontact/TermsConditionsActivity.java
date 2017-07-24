@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
@@ -65,7 +67,11 @@ public class TermsConditionsActivity extends BaseActivity implements RippleView
             //<editor-fold desc="ripple_get_started">
             case R.id.ripple_get_started:
                 if (checkboxTermsConditions.isChecked()) {
-
+                    Utils.setIntegerPreference(TermsConditionsActivity.this, AppConstants
+                            .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_MOBILE_REGISTRATION);
+                    startActivityIntent(TermsConditionsActivity.this,
+                            MobileNumberRegistrationActivity.class, null);
+                    finish();
                 } else {
                     Utils.showErrorSnackBar(TermsConditionsActivity.this,
                             relativeRootTermsConditions, getString(R.string
@@ -91,7 +97,7 @@ public class TermsConditionsActivity extends BaseActivity implements RippleView
         textTermsConditions.setTypeface(Utils.typefaceRegular(TermsConditionsActivity.this));
         buttonGetStarted.setTypeface(Utils.typefaceRegular(TermsConditionsActivity.this));
 
-        SpannableString ss = new SpannableString("By continuing you accept terms and conditions");
+        SpannableString ss = new SpannableString("By continuing you accept Terms and Conditions");
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {

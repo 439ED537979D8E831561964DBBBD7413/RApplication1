@@ -701,10 +701,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 //                    if (StringUtils.length(firstName) <= 0) {
                     if (StringUtils.isBlank(firstName)) {
                         Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string
-                                .error_requird_first_name));
+                                .error_required_first_name));
                     } else {
                         Utils.showErrorSnackBar(this, relativeRootEditProfile, getString(R.string
-                                .error_requird_last_name));
+                                .error_required_last_name));
                     }
                 }
                 break;

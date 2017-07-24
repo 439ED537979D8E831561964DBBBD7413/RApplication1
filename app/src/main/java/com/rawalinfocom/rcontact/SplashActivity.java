@@ -33,30 +33,42 @@ public class SplashActivity extends BaseActivity {
             @Override
             public void run() {
 
-                startActivityIntent(SplashActivity.this, TutorialActivity.class, null);
-                finish();
+                /*startActivityIntent(SplashActivity.this, TutorialActivity.class, null);
+                finish();*/
 
-               /* if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
-                                .PREF_LAUNCH_SCREEN_INT,
-                        IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
-                        .LAUNCH_MOBILE_REGISTRATION) {
+                if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
+                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY) ==
+                        IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY) {
+
+                    startActivityIntent(SplashActivity.this, TutorialActivity.class, null);
+                    finish();
+
+                } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
+                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY) ==
+                        IntegerConstants.LAUNCH_TERMS_CONDITIONS_ACTIVITY) {
+
+                    startActivityIntent(SplashActivity.this, TermsConditionsActivity.class, null);
+                    finish();
+
+                } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
+                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY) ==
+                        IntegerConstants.LAUNCH_MOBILE_REGISTRATION) {
 
                     startActivityIntent(SplashActivity.this, MobileNumberRegistrationActivity
                             .class, null);
                     finish();
+
                 } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
-                                .PREF_LAUNCH_SCREEN_INT,
-                        IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
-                        .LAUNCH_PROFILE_REGISTRATION) {
+                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY) ==
+                        IntegerConstants.LAUNCH_PROFILE_REGISTRATION) {
 
                     startActivityIntent(SplashActivity.this, ProfileRegistrationActivity.class,
                             null);
                     finish();
 
                 } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
-                                .PREF_LAUNCH_SCREEN_INT,
-                        IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
-                        .LAUNCH_SET_PASSWORD) {
+                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY) ==
+                        IntegerConstants.LAUNCH_SET_PASSWORD) {
 
                     Bundle bundle = new Bundle();
                     bundle.putString(AppConstants.EXTRA_IS_FROM, "splash");
@@ -64,17 +76,15 @@ public class SplashActivity extends BaseActivity {
                     finish();
 
                 } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
-                                .PREF_LAUNCH_SCREEN_INT,
-                        IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
-                        .LAUNCH_ENTER_PASSWORD) {
+                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY) ==
+                        IntegerConstants.LAUNCH_ENTER_PASSWORD) {
 
                     startActivityIntent(SplashActivity.this, EnterPasswordActivity.class, null);
                     finish();
 
                 } else if (Utils.getIntegerPreference(SplashActivity.this, AppConstants
-                                .PREF_LAUNCH_SCREEN_INT,
-                        IntegerConstants.LAUNCH_MOBILE_REGISTRATION) == IntegerConstants
-                        .LAUNCH_RE_LOGIN_PASSWORD) {
+                        .PREF_LAUNCH_SCREEN_INT, IntegerConstants.LAUNCH_TUTORIAL_ACTIVITY) ==
+                        IntegerConstants.LAUNCH_RE_LOGIN_PASSWORD) {
 
                     Intent intent = new Intent(SplashActivity.this, ReLoginEnterPasswordActivity
                             .class);
@@ -85,7 +95,7 @@ public class SplashActivity extends BaseActivity {
                 } else {
                     startActivityIntent(SplashActivity.this, MainActivity.class, null);
                     finish();
-                }*/
+                }
             }
         }, SPLASH_TIME_OUT);
     }
