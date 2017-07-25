@@ -38,6 +38,7 @@ import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.AllContactAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.ContactStorageConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
@@ -233,11 +234,9 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 //        String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
 //        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
 //        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and starred = ?";
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)" +
-                " and starred = ?" +
-                " and " + ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0" +
-                " and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + AppConstants
-                .CONTACT_STORAGES + ")";
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?) and starred = ? and " +
+                ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0 and " + ContactsContract
+                .RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE + ")";
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,

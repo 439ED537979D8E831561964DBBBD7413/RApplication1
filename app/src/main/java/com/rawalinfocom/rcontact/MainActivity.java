@@ -45,10 +45,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.rawalinfocom.rcontact.account.SlideMenuAccounts;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.ContactStorageConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.ContactsFragment;
@@ -981,8 +983,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         TextView nav_txt_about = (TextView) navigationView.findViewById(R.id.nav_txt_about);
         TextView nav_txt_export = (TextView) navigationView.findViewById(R.id.nav_txt_export);
         TextView nav_txt_feedback = (TextView) navigationView.findViewById(R.id.nav_txt_feedback);
-        TextView nav_txt_invite_contact = (TextView) navigationView.findViewById(R.id.nav_txt_invite_contact);
-        TextView nav_txt_share_name = (TextView) navigationView.findViewById(R.id.nav_txt_share_name);
+        TextView nav_txt_invite_contact = (TextView) navigationView.findViewById(R.id
+                .nav_txt_invite_contact);
+        TextView nav_txt_share_name = (TextView) navigationView.findViewById(R.id
+                .nav_txt_share_name);
 
 
         LinearLayout nav_ll_account = (LinearLayout) navigationView.findViewById(R.id
@@ -1053,6 +1057,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         switch (v.getId()) {
             case R.id.nav_ll_account:
+                startActivityIntent(MainActivity.this, SlideMenuAccounts.class, null);
                 break;
             case R.id.nav_ll_timeline:
                 startActivityIntent(MainActivity.this, TimelineActivity.class, null);
@@ -1084,16 +1089,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 break;
             case R.id.nav_ll_feedback:
 
-                String url = "http://feedback.rcontacts.in";
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
+                i.setData(Uri.parse(WsConstants.URL_FEEDBACK));
                 startActivity(i);
-
-//                Intent intent = new Intent(MainActivity.this, WebBrowserActivity.class);
-//                intent.putExtra(AppConstants.EXTRA_FEEDBACK_URL, "http://feedback.rcontacts.in");
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
+
             case R.id.nav_ll_export:
 
                 if (BuildConfig.DEBUG) {
@@ -1121,32 +1121,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
-
-//    private void openWebView() {
-//        new FinestWebView.Builder(this).theme(R.style.FinestWebViewTheme)
-//                .titleDefault(getString(R.string.app_name))
-//                .showUrl(false)
-//                .statusBarColorRes(R.color.colorPrimary)
-//                .toolbarColorRes(R.color.colorAccent)
-//                .titleColorRes(R.color.finestWhite)
-//                .urlColorRes(R.color.colorPrimaryDark)
-//                .iconDefaultColorRes(R.color.finestWhite)
-//                .progressBarColorRes(R.color.finestWhite)
-//                .stringResCopiedToClipboard(R.string.share_via_1)
-//                .stringResCopiedToClipboard(R.string.copy_link)
-//                .stringResCopiedToClipboard(R.string.open_with)
-//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-//                .showSwipeRefreshLayout(true)
-//                .swipeRefreshColorRes(R.color.colorAccent)
-//                .menuSelector(R.drawable.selector_light_theme)
-//                .menuTextGravity(Gravity.CENTER)
-//                .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
-//                .dividerHeight(0)
-//                .gradientDivider(false)
-//                .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
-//                .show("http://feedback.rcontacts.in");
-//
-//    }
 
     private void openDialer() {
         try {
@@ -1612,7 +1586,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 (cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE))));
                         log.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
                         log.setUniqueContactId(uniqueCallLogId);
-                        String numberTypeLog = getPhoneNumberType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE)));
+                        String numberTypeLog = getPhoneNumberType(cursor.getInt(cursor
+                                .getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE)));
                         log.setNumberType(numberTypeLog);
 
                         String uniquePhoneBookId = getRawContactIdFromNumber(userNumber);
@@ -2783,6 +2758,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         };
         String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " +
+                ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0 and " + ContactsContract
+                .RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE +
+                ") and" +
                 ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID + " in " + inCaluse;
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,

@@ -9,6 +9,7 @@ import android.provider.ContactsContract;
 
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.ContactStorageConstants;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.ContactPackage;
 
@@ -78,8 +79,8 @@ public class PhoneBookContacts {
         };
 
         String selection = ContactsContract.RawContacts._ID + " IN (" + rawId + ") AND starred = " +
-                "? and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + AppConstants
-                .CONTACT_STORAGES + ")";
+                "? and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" +
+                ContactStorageConstants.CONTACT_STORAGE + ")";
         String[] selectionArgs = new String[]{"1"};
 
         Cursor cursor = context.getContentResolver().query(uri, projection, selection,

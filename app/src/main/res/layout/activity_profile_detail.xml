@@ -117,7 +117,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:padding="2dp"
-                                    android:text="View All Organizations"
+                                    android:text="@string/str_view_all_organizations"
                                     android:visibility="gone"/>
 
                             </LinearLayout>

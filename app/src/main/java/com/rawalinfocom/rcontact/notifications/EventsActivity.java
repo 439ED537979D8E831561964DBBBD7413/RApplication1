@@ -84,7 +84,6 @@ public class EventsActivity extends BaseActivity implements RippleView
     @BindView(R.id.view_more)
     TextView viewMore;
 
-
     private EventAdapter todayEventAdapter;
     private EventAdapter recentEventAdapter;
     private EventAdapter upcomingEventAdapter;

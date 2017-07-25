@@ -9,13 +9,13 @@ package com.rawalinfocom.rcontact.constants;
 public class WsConstants {
 
     // Staging Env
-    public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
+//    public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
 
     // QA Server
 //    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
-//
+
     // Monal
-//    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
+    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 
     // Aniruddh
 //    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
@@ -35,16 +35,34 @@ public class WsConstants {
     // Vijay
 //     public static final String WS_ROOT = "http://10.0.21.16/api/v1/";
 
+
+    /**
+     * Redirection URL
+     */
+    // Staging Env
+    public static final String URL_TERMS_CONDITIONS = "http://webstaging.rcontacts.in/global/terms";
+
+    /**
+     * Feedback URL
+     */
+    public static final String URL_FEEDBACK = "http://feedback.rcontacts.in";
+
+    /**
+     * Profile View
+     */
+
     // Web Server
-//    public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
+    public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
 
     // QA Server
 //    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
 
     // Staging Env
-    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
+//    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
 
-    // WEBSITE URL
+    /**
+     * WEBSITE URL
+     */
     public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
 
 
@@ -53,9 +71,15 @@ public class WsConstants {
     public static final String REQ_GOOGLE_TEXT_BY_LOCATIONS = "https://maps.googleapis" +
             ".com/maps/api/place/textsearch/json?";
 
+    /**
+     * API Headers
+     */
     public static final String REQ_HEADER = "rcAuthToken";
+    public static final String REQ_THROTTLING_HEADER = "Retry-After";
 
-    // API End Points
+    /**
+     * API End Points
+     */
     public static final String REQ_CHECK_NUMBER = "check-number";
     public static final String REQ_OTP_CONFIRMED = "confirm-otp";
     public static final String REQ_PROFILE_REGISTRATION = "profile-registration";

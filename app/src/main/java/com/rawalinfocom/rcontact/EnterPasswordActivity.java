@@ -180,11 +180,22 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME, profileDetail.getCallLogTimestamp());
                     Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME, profileDetail.getSmsLogTimestamp());
 
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME, profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER, profileDetail.getVerifiedMobileNumber());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, profileDetail.getTotalProfileRateUser());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING, profileDetail.getProfileRating());
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO, profileDetail.getPbProfilePhoto());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NAME,
+                            profileDetail.getPbNameFirst() + " " + profileDetail.getPbNameLast());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_FIRST_NAME,
+                            profileDetail.getPbNameFirst());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_LAST_NAME,
+                             profileDetail.getPbNameLast());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_JOINING_DATE,
+                            profileDetail.getJoiningDate());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER,
+                            profileDetail.getVerifiedMobileNumber());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING,
+                            profileDetail.getTotalProfileRateUser());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_RATING,
+                            profileDetail.getProfileRating());
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO,
+                            profileDetail.getPbProfilePhoto());
 
                     storeProfileDataToDb(profileDetail);
 
@@ -373,6 +384,10 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
+                if(String.valueOf(arrayListEmailId.get(i).getEmRcpType()).equalsIgnoreCase("1")){
+                    Utils.setStringPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL,
+                            arrayListEmailId.get(i).getEmEmailId());
+                }
 //                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
                 email.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListEmail.add(email);

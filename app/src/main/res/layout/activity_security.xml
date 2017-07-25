@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rawalinfocom.rcontact.account.SecurityActivity">
+
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_toolbar_public_profile_search"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/include_toolbar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rl_main">
+
+            <ImageView
+                android:layout_width="@dimen/password_logo"
+                android:layout_height="@dimen/password_logo"
+                android:id="@+id/imageViewSecurityLogo"
+                android:layout_marginTop="@dimen/margin_15dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/security"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/imageViewSecurityLogo"
+                android:id="@+id/text_view_security_info"
+                android:layout_marginTop="@dimen/margin_15dp"
+                android:text="@string/security_info"
+                android:textAlignment="center"
+                android:layout_marginLeft="@dimen/margin_5dp"
+                android:layout_marginRight="@dimen/margin_5dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_view_security_link"
+                android:textColor="@color/colorAccent"
+                android:text="@string/security_link_text"
+                android:layout_below="@+id/text_view_security_info"
+                android:layout_marginTop="@dimen/margin_15dp"
+                android:textAlignment="center"
+                android:padding="@dimen/margin_5dp"/>
+        </RelativeLayout>
+
+
+    </ScrollView>
+</RelativeLayout>

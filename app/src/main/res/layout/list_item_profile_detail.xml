@@ -42,7 +42,7 @@
                 android:id="@+id/button_request"
                 android:layout_width="80dp"
                 android:layout_height="40dp"
-                android:text="Request"
+                android:text="@string/str_request"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_size_12sp"
                 android:visibility="gone"

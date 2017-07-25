@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_root_terms_conditions"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rawalinfocom.rcontact.TermsConditionsActivity">
+
+    <TextView
+        android:id="@+id/text_terms_conditions_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="@dimen/activity_double_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_double_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_double_horizontal_margin"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:textColor="@color/colorAccent"
+        tools:text="WELCOME"/>
+
+    <TextView
+        android:id="@+id/text_terms_conditions_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_terms_conditions_header"
+        android:layout_marginEnd="@dimen/activity_double_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_double_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_half_vertical_margin"
+        android:gravity="center"
+        android:textAppearance="?android:textAppearanceMedium"
+        tools:text="Get all your Contacts, SMS and Call at one Place"/>
+
+    <LinearLayout
+        android:id="@+id/linear_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/activity_double_horizontal_margin"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/checkbox_terms_conditions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/text_terms_conditions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:textAppearanceSmall"
+                tools:text="By continuing you accept terms and conditions"/>
+
+        </LinearLayout>
+
+        <com.rawalinfocom.rcontact.helper.RippleView
+            android:id="@+id/ripple_get_started"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/activity_vertical_margin"
+            android:layout_marginStart="@dimen/activity_vertical_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:rv_alpha="@integer/alpha_ripple"
+            app:rv_color="@color/colorWhite"
+            app:rv_rippleDuration="@integer/duration_ripple">
+
+            <Button
+                android:id="@+id/button_get_started"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorAccent"
+                android:text="@string/get_started"
+                android:textColor="@color/colorWhite"/>
+
+        </com.rawalinfocom.rcontact.helper.RippleView>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/image_terms_conditions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/linear_bottom"
+        android:layout_below="@id/text_terms_conditions_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/activity_double_horizontal_margin"
+        android:contentDescription="@string/str_content_description"
+        android:overScrollMode="never"
+        android:scaleType="fitCenter"
+        android:src="@drawable/image_terms_conditions"/>
+
+</RelativeLayout>

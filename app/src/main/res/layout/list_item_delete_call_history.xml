@@ -74,7 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_5dp"
-                android:text="Duration :" />
+                android:text="@string/str_duration" />
 
             <TextView
                 android:id="@+id/text_histroy_duration_value"

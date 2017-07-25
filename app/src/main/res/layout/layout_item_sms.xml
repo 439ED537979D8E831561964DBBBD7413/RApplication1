@@ -57,13 +57,13 @@
                 android:singleLine="true"
                 android:ellipsize="end"
                 android:id="@+id/text_body"
-                android:text="This is demo project This is demo project This is demo project" />
+                tools:text="This is demo project This is demo project This is demo project" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/text_date_n_time"
-                android:text="13 APR, 9:30 AM" />
+                tools:text="13 APR, 9:30 AM" />
         </LinearLayout>
 
         <ImageView

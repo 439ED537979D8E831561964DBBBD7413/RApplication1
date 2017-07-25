@@ -43,13 +43,17 @@
     <dimen name="margin_5dp">5dp</dimen>
     <dimen name="padding_10dp">10dp</dimen>
     <dimen name="margin_10dp">10dp</dimen>
+    <dimen name="margin_8dp">8dp</dimen>
     <dimen name="margin_15dp">15dp</dimen>
     <dimen name="padding_15dp">15dp</dimen>
+    <dimen name="padding_20dp">20dp</dimen>
+
     <dimen name="text_size_12sp">12sp</dimen>
     <dimen name="text_size_8sp">8sp</dimen>
     <dimen name="text_size_10sp">10sp</dimen>
     <dimen name="text_size_16sp">16sp</dimen>
     <dimen name="text_size_14sp">14sp</dimen>
+    <dimen name="text_size_18sp">18sp</dimen>
     <dimen name="margin_3dp">3dp</dimen>
 
 
