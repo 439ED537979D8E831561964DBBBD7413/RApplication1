@@ -100,8 +100,8 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
         firstName = Utils.getStringPreference(this, AppConstants.PREF_USER_FIRST_NAME, "");
         lastName = Utils.getStringPreference(this, AppConstants.PREF_USER_LAST_NAME, "");
         phoneNumber = Utils.getStringPreference(this, AppConstants.PREF_USER_NUMBER, "");
-//        emailIdList = Utils.getArrayListPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL);
-        emailIdList = new ArrayList<>(Arrays.asList("abc@gmail.com", "xyz@gmail.com","ka@gmail.com"));
+        emailIdList = Utils.getArrayListPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL);
+//        emailIdList = new ArrayList<>(Arrays.asList("abc@gmail.com", "xyz@gmail.com","ka@gmail.com"));
         joiningDate = Utils.getStringPreference(this, AppConstants.PREF_USER_JOINING_DATE, "");
 
         populateView();
