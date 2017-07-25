@@ -1,5 +1,6 @@
 package com.rawalinfocom.rcontact;
 
+import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -9,11 +10,17 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.TextViewCompat;
+import android.view.Gravity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.rawalinfocom.rcontact.adapters.TutorialPagerAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
@@ -29,8 +36,8 @@ public class TutorialActivity extends BaseActivity {
 
     @BindView(R.id.text_tutorial_header)
     TextView textTutorialHeader;
-    @BindView(R.id.text_tutorial_content)
-    TextView textTutorialContent;
+    /* @BindView(R.id.text_tutorial_content)
+     TextView textTutorialContent;*/
     @BindView(R.id.text_next)
     TextView textNext;
     @BindView(R.id.linear_indicator)
@@ -49,10 +56,18 @@ public class TutorialActivity extends BaseActivity {
     ImageView imageTutorial4;
     @BindView(R.id.image_tutorial_5)
     ImageView imageTutorial5;
+    @BindView(R.id.switcher_tutorial_content)
+    TextSwitcher switcherTutorialContent;
+
+    Integer[] tutorialContents = {R.string.tutorial_content_1, R.string
+            .tutorial_content_2, R.string.tutorial_content_3, R.string
+            .tutorial_content_4, R.string.tutorial_content_5};
+
 
     TutorialPagerAdapter tutorialPagerAdapter;
 
     int pagerCurrentPosition = 0;
+
 
     //<editor-fold desc="Override Methods">
 
@@ -89,15 +104,42 @@ public class TutorialActivity extends BaseActivity {
 
     //<editor-fold desc="Private Methods">
     private void init() {
+
         tutorialPagerAdapter = new TutorialPagerAdapter(TutorialActivity.this);
         pagerTutorial.setAdapter(tutorialPagerAdapter);
         setIndicatorSelection(0);
+
+        // Set the ViewFactory of the TextSwitcher that will create TextView object when asked
+        switcherTutorialContent.setFactory(new ViewSwitcher.ViewFactory() {
+
+            public View makeView() {
+                TextView textTutorial = new TextView(TutorialActivity.this);
+                textTutorial.setGravity(Gravity.CENTER);
+                textTutorial.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
+                TextViewCompat.setTextAppearance(textTutorial, android.R.style
+                        .TextAppearance_Medium);
+                return textTutorial;
+            }
+        });
+
+        // Declare the in and out animations and initialize them
+        Animation in = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
+        in.setDuration(200);
+        Animation out = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
+        out.setDuration(200);
+
+        // set the animation type of textSwitcher
+        switcherTutorialContent.setAlpha(1f);
+        switcherTutorialContent.setInAnimation(in);
+        switcherTutorialContent.setOutAnimation(out);
+
         textTutorialHeader.setText(getString(R.string.tutorial_header_1));
-        textTutorialContent.setText(R.string.tutorial_content_1);
+//        textTutorialContent.setText(R.string.tutorial_content_1);
+        switcherTutorialContent.setText(getString(tutorialContents[0]));
         textNext.setText(R.string.tutorial_and);
 
         textTutorialHeader.setTypeface(Utils.typefaceSemiBold(TutorialActivity.this));
-        textTutorialContent.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
+//        textTutorialContent.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
         textNext.setTypeface(Utils.typefaceRegular(TutorialActivity.this));
 
         pagerTutorial.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -112,43 +154,44 @@ public class TutorialActivity extends BaseActivity {
             public void onPageSelected(int position) {
 
                 setIndicatorSelection(position);
+                switcherTutorialContent.setText(getString(tutorialContents[position]));
                 pagerCurrentPosition = position;
 
                 switch (position) {
                     case 0:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_1));
-                        textTutorialContent.setText(R.string.tutorial_content_1);
+//                        textTutorialContent.setText(R.string.tutorial_content_1);
                         textNext.setText(R.string.tutorial_and);
                         break;
 
                     case 1:
-                        if (ContextCompat.checkSelfPermission(TutorialActivity.this, android
-                                .Manifest.permission.READ_CONTACTS) != PackageManager
+                        if (ContextCompat.checkSelfPermission(TutorialActivity.this,
+                                Manifest.permission.READ_CONTACTS) != PackageManager
                                 .PERMISSION_GRANTED) {
-                            requestPermissions(new String[]{android.Manifest.permission
+                            requestPermissions(new String[]{Manifest.permission
                                     .READ_CONTACTS}, AppConstants
                                     .MY_PERMISSIONS_REQUEST_READ_CONTACTS);
                         }
                         textTutorialHeader.setText(getString(R.string.tutorial_header_2));
-                        textTutorialContent.setText(R.string.tutorial_content_2);
+//                        textTutorialContent.setText(R.string.tutorial_content_2);
                         textNext.setText(R.string.tutorial_and);
                         break;
 
                     case 2:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_3));
-                        textTutorialContent.setText(R.string.tutorial_content_3);
+//                        textTutorialContent.setText(R.string.tutorial_content_3);
                         textNext.setText(R.string.tutorial_and);
                         break;
 
                     case 3:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_4));
-                        textTutorialContent.setText(R.string.tutorial_content_4);
+//                        textTutorialContent.setText(R.string.tutorial_content_4);
                         textNext.setText(R.string.tutorial_and);
                         break;
 
                     case 4:
                         textTutorialHeader.setText(getString(R.string.tutorial_header_5));
-                        textTutorialContent.setText(R.string.tutorial_content_5);
+//                        textTutorialContent.setText(R.string.tutorial_content_5);
                         textNext.setText(R.string.tutorial_lets_go);
                         break;
                 }

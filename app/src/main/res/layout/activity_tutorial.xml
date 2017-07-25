@@ -19,7 +19,7 @@
         android:textColor="@color/colorAccent"
         tools:text="Contacts Redefined"/>
 
-    <TextView
+    <!--<TextView
         android:id="@+id/text_tutorial_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +29,17 @@
         android:layout_marginTop="@dimen/activity_half_vertical_margin"
         android:gravity="center"
         android:textAppearance="?android:textAppearanceMedium"
-        tools:text="A Contact is not just a number but a profile consisting of Auto-Synced data &amp; Social Info!"/>
+        tools:text="A Contact is not just a number but a profile consisting of Auto-Synced data &amp; Social Info!"/>-->
+
+    <TextSwitcher
+        android:id="@+id/switcher_tutorial_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_tutorial_header"
+        android:layout_marginEnd="@dimen/activity_double_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_double_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_half_vertical_margin"
+        android:gravity="center"/>
 
     <RelativeLayout
         android:id="@+id/relative_indicator"
@@ -116,7 +126,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/relative_indicator"
-        android:layout_below="@+id/text_tutorial_content"
+        android:layout_below="@+id/switcher_tutorial_content"
         android:overScrollMode="never"/>
 
 </RelativeLayout>
