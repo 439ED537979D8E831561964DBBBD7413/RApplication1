@@ -45,6 +45,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.rawalinfocom.rcontact.account.SlideMenuAccounts;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.calldialer.DialerActivity;
 import com.rawalinfocom.rcontact.calllog.CallLogFragment;
@@ -1060,6 +1061,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         switch (v.getId()) {
             case R.id.nav_ll_account:
+                startActivityIntent(MainActivity.this, SlideMenuAccounts.class, null);
                 break;
             case R.id.nav_ll_timeline:
                 startActivityIntent(MainActivity.this, TimelineActivity.class, null);
