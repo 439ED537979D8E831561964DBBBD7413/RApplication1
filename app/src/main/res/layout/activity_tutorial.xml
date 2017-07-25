@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rawalinfocom.rcontact.TutorialActivity">
+
+    <TextView
+        android:id="@+id/text_tutorial_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="@dimen/activity_double_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_double_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_double_horizontal_margin"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:textColor="@color/colorAccent"
+        tools:text="Contacts Redefined"/>
+
+    <!--<TextView
+        android:id="@+id/text_tutorial_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_tutorial_header"
+        android:layout_marginEnd="@dimen/activity_double_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_double_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_half_vertical_margin"
+        android:gravity="center"
+        android:textAppearance="?android:textAppearanceMedium"
+        tools:text="A Contact is not just a number but a profile consisting of Auto-Synced data &amp; Social Info!"/>-->
+
+    <TextSwitcher
+        android:id="@+id/switcher_tutorial_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_tutorial_header"
+        android:layout_marginEnd="@dimen/activity_double_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_double_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_half_vertical_margin"
+        android:gravity="center"/>
+
+    <RelativeLayout
+        android:id="@+id/relative_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/activity_double_horizontal_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <LinearLayout
+            android:id="@+id/linear_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/image_tutorial_1"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginEnd="@dimen/margin_tiny"
+                android:contentDescription="@string/str_content_description"
+                android:src="@drawable/ic_filled_indicator"
+                tools:tint="@color/colorAccent"/>
+
+            <ImageView
+                android:id="@+id/image_tutorial_2"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginEnd="@dimen/margin_tiny"
+                android:layout_marginStart="@dimen/margin_tiny"
+                android:contentDescription="@string/str_content_description"
+                android:src="@drawable/ic_filled_indicator"
+                tools:tint="@color/lightGrey"/>
+
+            <ImageView
+                android:id="@+id/image_tutorial_3"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginEnd="@dimen/margin_tiny"
+                android:layout_marginStart="@dimen/margin_tiny"
+                android:contentDescription="@string/str_content_description"
+                android:src="@drawable/ic_filled_indicator"
+                tools:tint="@color/lightGrey"/>
+
+            <ImageView
+                android:id="@+id/image_tutorial_4"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginEnd="@dimen/margin_tiny"
+                android:layout_marginStart="@dimen/margin_tiny"
+                android:contentDescription="@string/str_content_description"
+                android:src="@drawable/ic_filled_indicator"
+                tools:tint="@color/lightGrey"/>
+
+            <ImageView
+                android:id="@+id/image_tutorial_5"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginStart="@dimen/margin_tiny"
+                android:contentDescription="@string/str_content_description"
+                android:src="@drawable/ic_filled_indicator"
+                tools:tint="@color/lightGrey"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/linear_indicator"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/activity_half_horizontal_margin"
+            android:textAppearance="?android:textAppearanceMedium"
+            tools:text="And?"/>
+
+    </RelativeLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager_tutorial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/relative_indicator"
+        android:layout_below="@+id/switcher_tutorial_content"
+        android:overScrollMode="never"/>
+
+</RelativeLayout>

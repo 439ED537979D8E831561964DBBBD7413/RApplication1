@@ -37,6 +37,7 @@
     <permission
         android:name="com.app.loople.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
+
     <permission
         android:name="com.rawalinfocom.rcontact.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
@@ -54,6 +55,7 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@mipmap/ic_launcher" />
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
@@ -78,79 +80,103 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".BaseActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".MobileNumberRegistrationActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".CountryListActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
+
         <activity
             android:name=".OtpVerificationActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ProfileRegistrationActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".contacts.ProfileDetailActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ContactListingActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".notifications.TimelineActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".notifications.EventsActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".notifications.NotificationsActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".notifications.NotificationsDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".contacts.MapsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
+
         <activity
             android:name=".calllog.CallLogDeleteActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".calllog.CallHistoryDetailsActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".BlockContactListActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".calldialer.DialerActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".notifications.RatingHistory"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".SearchActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".contacts.EditProfileActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".SetPasswordActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".EnterPasswordActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ReLoginEnterPasswordActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".WebBrowserActivity"
             android:screenOrientation="portrait" />
@@ -162,6 +188,7 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
         <receiver android:name=".receivers.PhoneCallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
@@ -170,6 +197,7 @@
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
+
         <receiver android:name=".receivers.SmsReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
@@ -183,21 +211,36 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <service android:name=".services.FCMNotificationInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
         <service
             android:name=".services.ContactSyncService"
             android:enabled="true" />
+
         <service
             android:name=".services.CallLogIdFetchService"
             android:enabled="true" />
 
-        <activity android:name=".account.SlideMenuAccounts" />
-        <activity android:name=".account.ViewAccountActivity" />
-        <activity android:name=".account.SecurityActivity"></activity>
+        <activity android:name=".account.SlideMenuAccounts"
+                  android:screenOrientation="portrait" />
+
+        <activity android:name=".account.ViewAccountActivity"
+                  android:screenOrientation="portrait" />
+
+        <activity android:name=".account.SecurityActivity"
+                  android:screenOrientation="portrait" />
+
+        <activity android:name=".TutorialActivity"
+                  android:screenOrientation="portrait" />
+
+        <activity android:name=".TermsConditionsActivity"
+                  android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>
