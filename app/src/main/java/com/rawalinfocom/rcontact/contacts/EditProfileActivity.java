@@ -688,7 +688,6 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         switch (view.getId()) {
 
-
             //<editor-fold desc="button_name_update">
             case R.id.button_name_update:
                 String firstName = inputFirstName.getText().toString();
@@ -3131,7 +3130,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         textDialogTitle.setText("Custom Label Name");
 
         buttonLeft.setText(R.string.action_cancel);
-        buttonRight.setText("OK");
+        buttonRight.setText(R.string.action_ok);
 
         rippleLeft.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
             @Override
