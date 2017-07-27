@@ -101,6 +101,9 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
         lastName = Utils.getStringPreference(this, AppConstants.PREF_USER_LAST_NAME, "");
         phoneNumber = Utils.getStringPreference(this, AppConstants.PREF_USER_NUMBER, "");
         emailIdList = Utils.getArrayListPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL);
+        if(emailIdList == null){
+            emailIdList = new ArrayList<>();
+        }
         joiningDate = Utils.getStringPreference(this, AppConstants.PREF_USER_JOINING_DATE, "");
 
         populateView();
@@ -163,6 +166,7 @@ public class ViewAccountActivity extends BaseActivity implements RippleView
             }
         } else {
             llEmailVertical.setVisibility(View.GONE);
+            textEmail = new TextView(this);
             textEmail.setVisibility(View.GONE);
             textLableEmail.setVisibility(View.GONE);
         }
