@@ -605,8 +605,8 @@
     <string name="error_invalid_email">Invalid EmailId!</string>
     <string name="error_required_event_date">Event date is required!</string>
     <string name="hint_email">Email</string>
-    <string name="error_required_first_name">Please add First name!</string>
-    <string name="error_required_last_name">Please add Last name!</string>
+    <string name="error_required_first_name">Please add valid First name!</string>
+    <string name="error_required_last_name">Please add valid Last name!</string>
     <string name="error_required_number">Number is required!</string>
     <string name="hint_number">Number</string>
     <string name="error_required_org_designation">Organization designation is required!</string>
