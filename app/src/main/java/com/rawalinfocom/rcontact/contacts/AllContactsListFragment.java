@@ -169,7 +169,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
     }
 
     @Override
-    public void onResume() {
+    public void
+    onResume() {
         super.onResume();
         if (isFromSettings) {
             isFromSettings = false;
@@ -181,6 +182,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     }
                 }
             }
+        } else if (AppConstants.isFromSettingActivity) {
+            AppConstants.isFromSettingActivity = false;
+            setRecyclerViewLayoutManager();
         }
 
 //        if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_USER_PROFILE_UPDATE,
@@ -424,6 +428,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         set.add(ContactsContract.Data.RAW_CONTACT_ID);
         set.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
         set.add(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+        set.add(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
         set.add(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI);
         set.add(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID);
         set.add(ContactsContract.RawContacts.ACCOUNT_NAME);
@@ -471,6 +477,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         getContactsFromPhoneBook(data);
         data.close();
         setRecyclerViewLayoutManager();
+        getRcpDetail();
         initSwipe();
 
         textTotalContacts.setVisibility(View.GONE);
@@ -538,7 +545,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         allContactListAdapter = new AllContactAdapter(this, arrayListPhoneBookContacts, null);
         recyclerViewContactList.setAdapter(allContactListAdapter);
         rContactApplication.setArrayListAllPhoneBookContacts(arrayListPhoneBookContacts);
-        getRcpDetail();
     }
 
     private void getRcpDetail() {
@@ -600,8 +606,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
         final int idIdx = data.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        final int givenName = data.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+        final int familyName = data.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
 
-//        final int lookUpKeyIdx = data.getColumnIndex(ContactsContract.Data.LOOKUP_KEY);
         final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
                 .PHOTO_THUMBNAIL_URI);
 
@@ -644,6 +651,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         break;
                     case ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE:
                         profileData.setName(data.getString(display));
+                        profileData.setTempFirstName(data.getString(givenName));
+                        profileData.setTempLastName(data.getString(familyName));
                         break;
                 }
             } catch (Exception E) {
@@ -1016,7 +1025,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     } else {
                         callNumber = actionNumber;
                     }*/
-                    callNumber =  Utils.getFormattedNumber(getActivity(),actionNumber);
+                    callNumber = Utils.getFormattedNumber(getActivity(), actionNumber);
                     showCallConfirmationDialog();
                 }
                 Handler handler = new Handler();
@@ -1120,7 +1129,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     .MY_PERMISSIONS_REQUEST_PHONE_CALL);
                         } else {
                             AppConstants.setIsFirstTime(false);
-                            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity(),callNumber));
+                            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity(), callNumber));
                         }
                         break;
                 }

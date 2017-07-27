@@ -1916,11 +1916,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 }
 
                 if (arrayListOrganization.size() > 0) {
-                    textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorAccent));
-                    textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorAccent));
+                    textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity
+                            .this, R.color.colorAccent));
+                    textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity
+                            .this, R.color.colorAccent));
                 } else {
-                    textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorBlack));
-                    textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity.this, R.color.colorBlack));
+                    textDesignation.setTextColor(ContextCompat.getColor(ProfileDetailActivity
+                            .this, R.color.colorBlack));
+                    textOrganization.setTextColor(ContextCompat.getColor(ProfileDetailActivity
+                            .this, R.color.colorBlack));
                 }
                 textDesignation.setText(tempOrganization.get(0).getOrgJobTitle());
                 textOrganization.setText(tempOrganization.get(0).getOrgName());
@@ -2626,7 +2630,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void showCallConfirmationDialog(final String number) {
 
-        final String finalNumber = Utils.getFormattedNumber(ProfileDetailActivity.this,number);
+        final String finalNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, number);
 
         /*if (!number.startsWith("+91")) {
             finalNumber = "+91" + number;
@@ -3306,22 +3310,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         }
     }
 
-    private void fetchOldRecordsServiceCall(ArrayList<CallLogHistoryType> callLogTypeArrayList) {
-        // Log.i("HistoryServiceCalled", "Service Started");
-        WsRequestObject deviceDetailObject = new WsRequestObject();
-        deviceDetailObject.setHistoryTypeArrayList(callLogTypeArrayList);
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).executeOnExecutor(AsyncTask
-                            .THREAD_POOL_EXECUTOR,
-                    WsConstants.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
-        } else {
-            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
-                    .getString(R.string.msg_no_network));
-        }
-
-    }
 
     @SuppressWarnings("unused")
     private ArrayList<CallLogType> getNumbersFromName(String number) {
@@ -3440,8 +3428,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 address.setAmPoBox(arrayListAddress.get(j).getPoBox());
                 address.setAmStreet(arrayListAddress.get(j).getStreet());
                 address.setAmAddressType(arrayListAddress.get(j).getAddressType());
-              /*  address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatitude());
-                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLongitude());*/
+                address.setAmGoogleLatitude(arrayListAddress.get(j).getGoogleLatLong().get(1));
+                address.setAmGoogleLongitude(arrayListAddress.get(j).getGoogleLatLong().get(0));
+                address.setAmGoogleAddress(arrayListAddress.get(j).getGoogleAddress());
                 address.setRcProfileMasterPmId(getUserPmId());
                 addressList.add(address);
             }
@@ -3564,6 +3553,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
             tableEmailMaster.addUpdateArrayEmail(arrayListEmail, profileDetail.getRcpPmId());
+        } else {
+            TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
+            tableEmailMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3587,6 +3579,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     (databaseHandler);
             tableOrganizationMaster.addUpdateArrayOrganization(organizationList, profileDetail
                     .getRcpPmId());
+        } else {
+            TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster(databaseHandler);
+            tableOrganizationMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3608,6 +3603,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
             tableWebsiteMaster.addUpdateArrayWebsite(websiteList, profileDetail.getRcpPmId());
+        } else {
+            TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
+            tableWebsiteMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3644,6 +3642,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
             tableAddressMaster.addUpdateArrayAddress(addressList, profileDetail.getRcpPmId());
+        } else {
+            TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
+            tableAddressMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3668,6 +3669,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             TableImMaster tableImMaster = new TableImMaster(databaseHandler);
             tableImMaster.addUpdateArrayImAccount(imAccountsList, profileDetail.getRcpPmId());
+        } else {
+            TableImMaster tableImMaster = new TableImMaster(databaseHandler);
+            tableImMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3688,6 +3692,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
             tableEventMaster.addUpdateArrayEvent(eventList, profileDetail.getRcpPmId());
+        } else {
+            TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
+            tableEventMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
     }
@@ -3802,6 +3809,23 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             Utils.showErrorSnackBar(getActivity(), relativeRootAllContacts, getResources()
                     .getString(R.string.msg_no_network));
         }*/
+    }
+
+    private void fetchOldRecordsServiceCall(ArrayList<CallLogHistoryType> callLogTypeArrayList) {
+        // Log.i("HistoryServiceCalled", "Service Started");
+        WsRequestObject deviceDetailObject = new WsRequestObject();
+        deviceDetailObject.setHistoryTypeArrayList(callLogTypeArrayList);
+        if (Utils.isNetworkAvailable(this)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    deviceDetailObject, null, WsResponseObject.class, WsConstants
+                    .REQ_GET_CALL_LOG_HISTORY_REQUEST, null, true).executeOnExecutor(AsyncTask
+                            .THREAD_POOL_EXECUTOR,
+                    WsConstants.WS_ROOT + WsConstants.REQ_GET_CALL_LOG_HISTORY_REQUEST);
+        } else {
+            Utils.showErrorSnackBar(this, relativeRootProfileDetail, getResources()
+                    .getString(R.string.msg_no_network));
+        }
+
     }
 
     //</editor-fold>

@@ -24,6 +24,8 @@ public class NotificationData {
     private Integer status;
     @JsonProperty("created_at")
     private String createdAt;
+    @JsonProperty("updated_at")
+    private String updatedAt;
     public String getSubject() {
         return subject;
     }
@@ -86,5 +88,12 @@ public class NotificationData {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

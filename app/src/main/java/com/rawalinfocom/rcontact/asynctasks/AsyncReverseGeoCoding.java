@@ -12,6 +12,8 @@ import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -57,7 +59,8 @@ public class AsyncReverseGeoCoding extends AsyncTask<LatLng, Void, Object> {
     protected void onPreExecute() {
         super.onPreExecute();
         if (showProgress) {
-            Utils.showProgressDialog(mContext, mContext.getString(R.string.str_fetching_address), true);
+            Utils.showProgressDialog(mContext, mContext.getString(R.string.str_fetching_address),
+                    true);
         }
     }
 
@@ -84,11 +87,11 @@ public class AsyncReverseGeoCoding extends AsyncTask<LatLng, Void, Object> {
             if (addresses != null && addresses.size() > 0) {
                 Address address = addresses.get(0);
 
-                if (address.getAddressLine(0).length() > 0) {
+                if (StringUtils.length(address.getAddressLine(0)) > 0) {
                     addressText = address.getAddressLine(0);
                 }
 
-                if (address.getLocality().length() > 0) {
+                if (StringUtils.length(address.getLocality()) > 0) {
                     if (addressText.length() > 0) {
                         addressText += ", " + address.getLocality();
                     } else {
@@ -97,7 +100,7 @@ public class AsyncReverseGeoCoding extends AsyncTask<LatLng, Void, Object> {
 
                 }
 
-                if (address.getAdminArea().length() > 0) {
+                if (StringUtils.length(address.getAdminArea()) > 0) {
                     if (addressText.length() > 0) {
                         addressText += ", " + address.getAdminArea();
                     } else {

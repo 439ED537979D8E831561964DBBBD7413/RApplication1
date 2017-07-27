@@ -399,11 +399,11 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
             if (listType == 0) {
 
                 item.setProfileNotiType(0);
-                item.setNotiInfo(item.getPersonName() + getActivity().getString(R.string.str_requested_for_your)
+                item.setNotiInfo(item.getPersonName() + " " + getActivity().getString(R.string.str_requested_for_your)
                         + request.getPpmTag());
             } else {
                 item.setProfileNotiType(1);
-                item.setNotiInfo(item.getPersonName() + getActivity().getString(R.string.str_confirmed_your_request_for)
+                item.setNotiInfo(item.getPersonName() + " " + getActivity().getString(R.string.str_confirmed_your_request_for)
                         + request.getPpmTag());
             }
             item.setRcpUserPmId(pmId + "");
@@ -513,6 +513,7 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
             Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void saveDataToDB(ArrayList<PrivacyRequestDataItem> profileData) {
         if (profileData == null) {

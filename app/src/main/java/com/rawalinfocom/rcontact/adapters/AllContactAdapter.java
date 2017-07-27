@@ -310,29 +310,21 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         boolean showPineGreen = false;
 
-        String contactDisplayName;
-//        String prefix = profileData.getTempPrefix();
-//        String firstName = profileData.getTempFirstName();
-//        String lastName = profileData.getTempLastName();
-//        String middleName = profileData.getTempMiddleName();
-//        String suffix = profileData.getTempSufix();
-//
-//        if (StringUtils.length(prefix) > 0) {
-//            contactDisplayName = prefix + " ";
-//        }
-//        if (StringUtils.length(firstName) > 0) {
-//            contactDisplayName = contactDisplayName + firstName + " ";
-//        }
-//        if (StringUtils.length(middleName) > 0) {
-//            contactDisplayName = contactDisplayName + middleName + " ";
-//        }
-//        if (StringUtils.length(lastName) > 0) {
-//            contactDisplayName = contactDisplayName + lastName + " ";
-//        }
-//        if (StringUtils.length(suffix) > 0) {
-//            contactDisplayName = contactDisplayName + suffix;
-//        }
-        contactDisplayName = StringUtils.defaultIfEmpty(profileData.getName(), "");
+        String contactDisplayName = "";
+
+        if (Utils.getStringPreference(activity, AppConstants.PREF_SHORT_BY_CONTACT, "0").equalsIgnoreCase("0")) {
+            contactDisplayName = StringUtils.defaultIfEmpty(profileData.getName(), "");
+        } else {
+
+            String firstName = profileData.getTempFirstName();
+            String lastName = profileData.getTempLastName();
+            if (StringUtils.length(lastName) > 0) {
+                contactDisplayName = contactDisplayName + lastName + " ";
+            }
+            if (StringUtils.length(firstName) > 0) {
+                contactDisplayName = contactDisplayName + firstName + " ";
+            }
+        }
 
         holder.textContactName.setText(contactDisplayName.length() > 0 ? contactDisplayName :
                 activity.getString(R.string.unknown));
