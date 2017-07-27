@@ -119,8 +119,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     UserProfile userProfileRegistered;
 
     //    int setLoginVia = 0;
-    int locationCall = 0;
-    String locationString;
     private String firstName, lastName, email;
 
     public static boolean isFromSettings;
@@ -132,7 +130,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
     // Google API Client
     private GoogleApiClient googleApiClient;
-    private double latitude, longitude;
 
     private static final int FACEBOOK_LOGIN_PERMISSION = 21;
     private static final int GOOGLE_LOGIN_PERMISSION = 22;
@@ -262,7 +259,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                     Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R
                             .string.str_valid_email));
                 } else {
-                    profileRegistration(firstName, lastName, email, IntegerConstants.REGISTRATION_VIA);
+                    profileRegistration(firstName, lastName, email, IntegerConstants
+                            .REGISTRATION_VIA);
                 }
                 break;
             //</editor-fold>
@@ -682,6 +680,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     /**
      * To get key hash
      */
+    @SuppressLint("PackageManagerGetSignatures")
+    @SuppressWarnings("unused")
     public void generateHashkey() {
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
@@ -701,40 +701,50 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         }
     }
 
+    private boolean isNameValid(String name) {
+        String pattern = ".*[a-zA-Z]+.*";
+        return name.matches(pattern);
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Web Service Call">w
 
     private void profileRegistration(String firstName, String lastName, String emailId, int type) {
 
-        WsRequestObject profileRegistrationObject = new WsRequestObject();
-        profileRegistrationObject.setFirstName(StringUtils.trimToEmpty(firstName));
-        profileRegistrationObject.setLastName(StringUtils.trimToEmpty(lastName));
-        profileRegistrationObject.setEmailId(StringUtils.trimToEmpty(emailId));
-        profileRegistrationObject.setCreatedBy("2"); // For Android Devices
-        profileRegistrationObject.setType(String.valueOf(type));
+        if (StringUtils.length(firstName) > 2 && StringUtils.length(firstName) < 51 &&
+                isNameValid(firstName)) {
+            if (StringUtils.length(lastName) > 2 && StringUtils.length(lastName) < 51 &&
+                    isNameValid(lastName)) {
+                WsRequestObject profileRegistrationObject = new WsRequestObject();
+                profileRegistrationObject.setFirstName(StringUtils.trimToEmpty(firstName));
+                profileRegistrationObject.setLastName(StringUtils.trimToEmpty(lastName));
+                profileRegistrationObject.setEmailId(StringUtils.trimToEmpty(emailId));
+                profileRegistrationObject.setCreatedBy("2"); // For Android Devices
+                profileRegistrationObject.setType(String.valueOf(type));
 //        profileRegistrationObject.setGcmToken(Utils.getStringPreference
 // (ProfileRegistrationActivity.this,
 //                AppConstants.PREF_DEVICE_TOKEN_ID, ""));
 
-        profileRegistrationObject.setGcmToken(getDeviceTokenId());
+                profileRegistrationObject.setGcmToken(getDeviceTokenId());
 
-//        userProfileRegistered = new UserProfile();
-//        userProfileRegistered.setPmId(userProfile.getPmId());
-//        userProfileRegistered.setPmFirstName(profileRegistrationObject.getFirstName());
-//        userProfileRegistered.setPmLastName(profileRegistrationObject.getLastName());
-//        userProfileRegistered.setPmSignupSocialMediaType(String.valueOf(type));
-//        userProfileRegistered.setPmAccessToken(getDeviceTokenId() + "_" + userProfile.getPmId());
-
-        if (Utils.isNetworkAvailable(this)) {
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    profileRegistrationObject, null, WsResponseObject.class, WsConstants
-                    .REQ_PROFILE_REGISTRATION, getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                            WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_REGISTRATION);
+                if (Utils.isNetworkAvailable(this)) {
+                    new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                            profileRegistrationObject, null, WsResponseObject.class, WsConstants
+                            .REQ_PROFILE_REGISTRATION, getString(R.string.msg_please_wait), true)
+                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                                    WsConstants.WS_ROOT + WsConstants.REQ_PROFILE_REGISTRATION);
+                } else {
+                    Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
+                            .getString(R.string.msg_no_network));
+                }
+            } else {
+                Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R.string
+                        .error_required_last_name));
+            }
         } else {
-            Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getResources()
-                    .getString(R.string.msg_no_network));
+            Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R.string
+                    .error_required_first_name));
         }
     }
 
@@ -878,6 +888,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    @SuppressWarnings("unused")
     private void signOut() {
         Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
@@ -889,6 +900,7 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 });
     }
 
+    @SuppressWarnings("unused")
     private void revokeAccess() {
         Auth.GoogleSignInApi.revokeAccess(googleApiClient).setResultCallback(
                 new ResultCallback<Status>() {

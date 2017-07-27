@@ -560,18 +560,13 @@ public class Utils {
     //</editor-fold>
 
     //<editor-fold desc="Keyboard Visibility">
+
     public static void hideSoftKeyboard(Context context, EditText editText) {
         InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService
                 (Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 
-
-    public static void showSoftKeyboard(Context context, EditText editText) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context
-                .INPUT_METHOD_SERVICE);
-        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
-    }
     //</editor-fold>
 
     //<editor-fold desc="Check Location Enability">
