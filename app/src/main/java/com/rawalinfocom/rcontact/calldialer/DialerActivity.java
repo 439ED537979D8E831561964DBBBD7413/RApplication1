@@ -836,7 +836,7 @@ public class DialerActivity extends BaseActivity {
 
     private void showCallConfirmationDialog(final String number) {
 
-        final String finalNumber = Utils.getFormattedNumber(DialerActivity.this, number);
+//        final String finalNumber = Utils.getFormattedNumber(DialerActivity.this, number);
 
        /* if (number.startsWith("*")) {
             finalNumber = number;
@@ -866,8 +866,9 @@ public class DialerActivity extends BaseActivity {
 
 
                         AppConstants.setIsFirstTime(false);
-                        Utils.callIntent(DialerActivity.this, finalNumber);
+                        Utils.callIntent(DialerActivity.this, number);
                         break;
+
                 }
             }
         };
@@ -876,7 +877,7 @@ public class DialerActivity extends BaseActivity {
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber
+        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + number
                 + " ?");
         callConfirmationDialog.showDialog();
     }

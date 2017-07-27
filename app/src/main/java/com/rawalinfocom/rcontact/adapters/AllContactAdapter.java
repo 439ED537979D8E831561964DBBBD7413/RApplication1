@@ -780,10 +780,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             } else {
                 for (int i = 0; i < arraylist.size(); i++) {
                     if (arraylist.get(i) instanceof ProfileData) {
+                        charText = charText.trim();
                         ProfileData profileData = (ProfileData) arraylist.get(i);
                         if (!StringUtils.isEmpty(profileData.getTempNumber())) {
                             String number =  profileData.getTempNumber();
-                            number = number.replace(" ","");
+                            number = number.replace(" ","").replace("-","");
                             if (number.contains(charText)) {
                                 arrayListUserContact.add(profileData);
                             }
@@ -793,6 +794,7 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         } else {
             charText = charText.toLowerCase(Locale.getDefault());
+            charText = charText.trim();
             arrayListUserContact.clear();
             if (charText.length() == 0) {
                 arrayListUserContact.addAll(arraylist);

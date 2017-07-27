@@ -587,6 +587,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             if (charText.length() == 0) {
                 arrayListCallLogs.addAll(arrayList);
             } else {
+                charText = charText.trim();
                 for (int i = 0; i < arrayList.size(); i++) {
                     if (arrayList.get(i) instanceof CallLogType) {
                         CallLogType profileData = arrayList.get(i);

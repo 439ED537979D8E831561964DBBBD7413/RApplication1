@@ -59,6 +59,7 @@ public class WsResponseObject {
 
     private ArrayList<CallLogType> arrayListCallLogHistory;
     private ArrayList<GlobalSearchType> globalSearchTypeArrayList;
+    private ArrayList<SpamDataType> spamDataTypeArrayList;
 
     private String profileSharingData;
 
@@ -235,5 +236,10 @@ public class WsResponseObject {
     @JsonProperty("result")
     public ArrayList<GlobalSearchType> getGlobalSearchTypeArrayList() {
         return globalSearchTypeArrayList;
+    }
+
+    @JsonProperty("spam_details")
+    public ArrayList<SpamDataType> getSpamDataTypeArrayList() {
+        return spamDataTypeArrayList;
     }
 }

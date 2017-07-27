@@ -13,13 +13,13 @@
         android:layout_height="?android:attr/actionBarSize" />
 
     <RelativeLayout
+        android:id="@+id/rl_main_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/rl_main_content"
         android:layout_below="@+id/include_toolbar"
-        android:layout_marginTop="@dimen/margin_10dp"
         android:layout_marginLeft="@dimen/margin_5dp"
-        android:layout_marginRight="@dimen/margin_5dp">
+        android:layout_marginRight="@dimen/margin_5dp"
+        android:layout_marginTop="@dimen/margin_10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,42 +27,43 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_10dp"
                 android:id="@+id/text_lable_first_name"
-                android:text="@string/lbl_first_name"/>
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/lbl_first_name" />
+
+            <TextView
                 android:id="@+id/text_first_name"
-                tools:text="Aniruddh"
-                android:textColor="@color/colorAccent"
-                android:layout_marginLeft="@dimen/margin_8dp"
-                android:textSize="@dimen/text_size_18sp"/>
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_15dp"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/text_size_16sp"
+                tools:text="Aniruddh" />
+
+            <TextView
                 android:id="@+id/text_lable_last_name"
-                android:text="@string/lbl_last_name"
-                android:layout_marginTop="@dimen/margin_10dp"/>
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:text="@string/lbl_last_name" />
+
+            <TextView
                 android:id="@+id/text_last_name"
-                tools:text="Pal"
-                android:textColor="@color/colorAccent"
-                android:layout_marginLeft="@dimen/margin_8dp"
-                android:textSize="@dimen/text_size_18sp"/>
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_15dp"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/text_size_16sp"
+                tools:text="Pal" />
+
+            <TextView
                 android:id="@+id/text_lable_phone"
-                android:text="@string/lbl_phone"
-                android:layout_marginTop="@dimen/margin_10dp"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:text="@string/lbl_phone" />
 
 
             <LinearLayout
@@ -71,71 +72,80 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/text_phone_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/text_phone_number"
-                    tools:text="+91 8888667145"
+                    android:layout_marginLeft="@dimen/margin_15dp"
                     android:textColor="@color/colorAccent"
-                    android:layout_marginLeft="@dimen/margin_8dp"
-                    android:textSize="@dimen/text_size_18sp"/>
+                    android:textSize="@dimen/text_size_16sp"
+                    tools:text="+91 8888667145" />
 
                 <TextView
+                    android:id="@+id/text_phone_verified"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/text_phone_verified"
                     android:layout_marginLeft="@dimen/margin_5dp"
                     android:textColor="@color/colorAccent"
-                    android:textSize="@dimen/text_size_18sp"/>
+                    android:textSize="@dimen/text_size_16sp" />
             </LinearLayout>
 
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/text_lable_email"
-                android:text="@string/lbl_email"
-                android:layout_marginTop="@dimen/margin_10dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/text_email"
-                tools:text="abc@rawalinfocom.com"
-                android:textColor="@color/colorAccent"
-                android:layout_marginLeft="@dimen/margin_8dp"
-                android:textSize="@dimen/text_size_18sp"/>
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:text="@string/lbl_email" />
+
+            <LinearLayout
+                android:id="@+id/ll_email_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!--<LinearLayout
+                    android:id="@+id/ll_email_ids"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">-->
+
+                   <!-- <TextView
+                        android:id="@+id/text_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_8dp"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="@dimen/text_size_18sp"
+                        tools:text="abc@rawalinfocom.com" />-->
+
+                   <!-- <TextView
+                        android:id="@+id/text_email_verified"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_5dp"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="@dimen/text_size_18sp"
+                        android:visibility="gone"/>
+
+                </LinearLayout>-->
+
+            </LinearLayout>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/text_email_verified"
-                android:layout_marginLeft="@dimen/margin_5dp"
-                android:textColor="@color/colorAccent"
-                android:textSize="@dimen/text_size_18sp"/>
-
-        </LinearLayout>
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/text_lable_joining_date"
-                android:text="@string/lbl_joining_date"
-                android:layout_marginTop="@dimen/margin_10dp"/>
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:text="@string/lbl_joining_date" />
+
+            <TextView
                 android:id="@+id/text_joining_date"
-                tools:text="15th May,2016"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_15dp"
                 android:textColor="@color/colorAccent"
-                android:layout_marginLeft="@dimen/margin_8dp"
-                android:textSize="@dimen/text_size_18sp"/>
+                android:textSize="@dimen/text_size_16sp"
+                tools:text="15th May,2016" />
 
         </LinearLayout>
 
