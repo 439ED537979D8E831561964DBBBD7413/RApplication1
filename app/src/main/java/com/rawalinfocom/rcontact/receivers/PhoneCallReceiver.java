@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.provider.Telephony;
 import android.support.v4.content.LocalBroadcastManager;
-import android.telecom.Call;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
@@ -28,10 +27,10 @@ public class PhoneCallReceiver extends BroadcastReceiver {
     //The receiver will be recreated whenever android feels like it.  We need a static variable
     // to remember data between instantiations
 
-    private int lastState = TelephonyManager.CALL_STATE_IDLE;
-    private Date callStartTime;
-    private boolean isIncoming;
-    private String savedNumber;  //because the passed incoming is only valid in ringing
+    private static int lastState = TelephonyManager.CALL_STATE_IDLE;
+    private static Date callStartTime;
+    private static boolean isIncoming;
+    private static String savedNumber;  //because the passed incoming is only valid in ringing
 
     public PhoneCallReceiver() {
     }
@@ -110,7 +109,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     onOutgoingCallStarted(context, savedNumber, callStartTime);
                 }
                 break;
-
             case TelephonyManager.CALL_STATE_IDLE:
 
                 //Went to idle-  this is the end of a call.  What type depends on previous state(s)
@@ -118,11 +116,33 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 if (lastState == TelephonyManager.CALL_STATE_RINGING) {
                     //Ring but no pickup-  a miss
                     onMissedCall(context, savedNumber, callStartTime);
+//                    String formattedNumber = Utils.getFormattedNumber(context, savedNumber);
+//                    CallLogFragment.callLogTypeReceiver.setNumber(formattedNumber);
+//                    CallLogFragment.callLogTypeReceiver.setType(3);
+//                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a", Locale.getDefault()).format(callStartTime);
+//                    CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
+//                    CallLogFragment.callLogTypeReceiver.setCallReceiverDate(callStartTime);
+
                 } else if (isIncoming) {
                     onIncomingCallEnded(context, savedNumber, callStartTime, new Date());
+//                    String formattedNumber = Utils.getFormattedNumber(context, savedNumber);
+//                    CallLogFragment.callLogTypeReceiver.setNumber(formattedNumber);
+//                    CallLogFragment.callLogTypeReceiver.setType(1);
+//                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a", Locale.getDefault()).format(callStartTime);
+//                    CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
+//                    CallLogFragment.callLogTypeReceiver.setCallReceiverDate(callStartTime);
+
 
                 } else {
+
                     onOutgoingCallEnded(context, savedNumber, callStartTime, new Date());
+//                    String formattedNumber = Utils.getFormattedNumber(context, savedNumber);
+//                    CallLogFragment.callLogTypeReceiver.setNumber(formattedNumber);
+//                    CallLogFragment.callLogTypeReceiver.setType(2);
+//                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a", Locale.getDefault()).format(callStartTime);
+//                    CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
+//                    CallLogFragment.callLogTypeReceiver.setCallReceiverDate(callStartTime);
+
                 }
 
                 Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_CALLS);

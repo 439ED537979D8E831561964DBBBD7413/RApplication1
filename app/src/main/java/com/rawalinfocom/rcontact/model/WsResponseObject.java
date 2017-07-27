@@ -46,6 +46,7 @@ public class WsResponseObject {
     private Integer flag;
     private Integer reSync;
     private String callDateAndTime;
+    private String smsLogTimestamp;
     private String callLogRowId;
 
     private OtpLog otpLog;
@@ -107,6 +108,15 @@ public class WsResponseObject {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @JsonProperty("smsLogTimestamp")
+    public String getSmsLogTimestamp() {
+        return smsLogTimestamp;
+    }
+
+    public void setSmsLogTimestamp(String smsLogTimestamp) {
+        this.smsLogTimestamp = smsLogTimestamp;
     }
 
     @JsonProperty("call_date_and_time")

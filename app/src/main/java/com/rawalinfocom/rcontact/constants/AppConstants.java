@@ -34,66 +34,6 @@ public class AppConstants {
     public static boolean isRecentCallFromSMSTab = false;
     //</editor-fold>
 
-    //<editor-fold desc="Device Information">
-    public static final String CONTACT_STORAGES = "" +
-            // Google
-            "'com.google'," +
-            // Asus
-            "'Local Phone Account'," +   // Default
-            "'asus.local.phone'," +    // Default
-            "'USIM Account'," +          // Sim
-            "'asus.local.simcard2'," +   // Sim
-            // Coolpad
-            "'com.coolpad.contacts'," +   // Default
-            "'com.coolpad.card.contacts'," +   // Sim
-            // GIONEE
-            "'Local Phone Account'," +   // Default
-            "'SIM Account'," +   // Sim
-            "'USIM Account'," +   // Sim
-            // HTC
-            "'Local Phone Account'," +   // Default
-            "'USIM Account'," +          // Sim
-            // HUAWEI
-            "'com.android.huawei.phone'," +   // Default
-            "'SIM Account'," +          // Sim
-            // Karbonn
-            "'sprd.com.android.account.phone'," +   // Default
-            "'Local Phone Account'," +   // Default
-            "'sprd.com.android.account.usim'," +     // Sim
-            "'USIM Account'," +     // Sim
-            // Lenovo
-            "'Local Phone Account'," +   // Default
-            "'com.android.localphone'," +   // Default
-            "'SIM Account'," +     // Sim
-            "'com.android.sim'," +     // Sim
-            "'USIM Account'," +     // Sim
-            // Letv
-            "'com.android.localphone'," + // Default
-            // motorola
-            // no storage
-            // OPLUS
-            "'USIM Account'," + // Sim
-            "'SIM Account'," +   // Sim
-            // Oppo
-            "'com.oppo.contacts.device'," +  // Default
-            // Samsung
-            "'vnd.sec.contact.phone'," + // Default
-            "'vnd.sec.contact.sim'," +   // Sim
-            "'vnd.sec.contact.sim2'," +   // Sim
-            // Sony
-            "'com.sonyericsson.localcontacts'," +   // Default
-            // vivo
-            "'Local Phone Account'," +   // Default
-            "'USIM Account'," +   // Sim
-            // xiaomi
-            "'com.xiaomi'," +            // Default
-            "'com.android.contacts.sim'," + // Sim
-            // Panasonic
-            "'Local Phone Account'," +   // Default
-            "'USIM Account'" +          // Sim
-            "";
-    //</editor-fold>
-
     //<editor-fold desc="App Specific final constants">
 
     public static final String OTP_CONFIRMED_STATUS = "2";
@@ -246,10 +186,10 @@ public class AppConstants {
     public static String PREF_USER_RATING = "pref_user_rating";
     public static String PREF_USER_TOTAL_RATING = "pref_user_total_rating";
     public static String PREF_USER_PHOTO = "pref_user_photo";
-    public static String PREF_USER_FIRST_NAME =  "pref_user_first_name";
-    public static String PREF_USER_LAST_NAME =  "pref_user_last_name";
-    public static String PREF_USER_JOINING_DATE =  "pref_user_joining_date";
-    public static String PREF_USER_VERIFIED_EMAIL =  "pref_user_verified_email";
+    public static String PREF_USER_FIRST_NAME = "pref_user_first_name";
+    public static String PREF_USER_LAST_NAME = "pref_user_last_name";
+    public static String PREF_USER_JOINING_DATE = "pref_user_joining_date";
+    public static String PREF_USER_VERIFIED_EMAIL = "pref_user_verified_email";
 
     public static String KEY_PREFERENCES = "pref_rcontact";
     public static String PREF_APP_LANGUAGE = "pref_app_language";
@@ -258,6 +198,8 @@ public class AppConstants {
 
     public static String PREF_DISABLE_PUSH = "pref_disable_push";
     public static String PREF_DISABLE_EVENT_PUSH = "pref_disable_event_push";
+
+    public static String PREF_LOGIN_TYPE = "pref_login_type";
 
     public static String PREF_RE_LOGIN = "pref_re_login";
     public static String PREF_FORGOT_PASSWORD = "pref_forgot_password";
