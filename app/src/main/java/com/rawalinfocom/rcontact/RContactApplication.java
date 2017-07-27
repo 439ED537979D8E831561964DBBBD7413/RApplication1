@@ -7,6 +7,7 @@ import android.support.multidex.MultiDex;
 import com.crashlytics.android.Crashlytics;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.SmsDataType;
+import com.rawalinfocom.rcontact.model.SpamDataType;
 
 import java.util.ArrayList;
 
@@ -42,6 +43,7 @@ public class RContactApplication extends Application {
 
     ArrayList<SmsDataType> arrayListSmsLogType;
     ArrayList<Object> arrayListObjectSmsLogs;
+    ArrayList<SpamDataType> arrayListSpamDataType;
 //    ArrayList<String> arrayListSmsLogsHeaders;
 
 
@@ -68,7 +70,7 @@ public class RContactApplication extends Application {
         mInstance = this;
 
 //         Fabric Initialization
-        Fabric.with(this, new Crashlytics());
+//        Fabric.with(this, new Crashlytics());
 
         arrayListAllPhoneBookContacts = new ArrayList<>();
 //        arrayListAllContactHeaders = new ArrayList<>();
@@ -79,6 +81,7 @@ public class RContactApplication extends Application {
         arrayListCallLogType = new ArrayList<>();
 
         arrayListObjectSmsLogs = new ArrayList<>();
+        arrayListSpamDataType =  new ArrayList<>();
 //        arrayListSmsLogsHeaders = new ArrayList<>();
 
         // Facebook Initialization
@@ -222,7 +225,15 @@ public class RContactApplication extends Application {
         this.arrayListObjectSmsLogs = arrayListObjectSmsLogs;
     }
 
-//    public ArrayList<String> getArrayListSmsLogsHeaders() {
+    public ArrayList<SpamDataType> getArrayListSpamDataType() {
+        return arrayListSpamDataType;
+    }
+
+    public void setArrayListSpamDataType(ArrayList<SpamDataType> arrayListSpamDataType) {
+        this.arrayListSpamDataType = arrayListSpamDataType;
+    }
+
+    //    public ArrayList<String> getArrayListSmsLogsHeaders() {
 //        return arrayListSmsLogsHeaders;
 //    }
 //

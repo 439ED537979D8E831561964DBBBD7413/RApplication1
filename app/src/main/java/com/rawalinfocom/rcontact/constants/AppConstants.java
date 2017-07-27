@@ -166,6 +166,8 @@ public class AppConstants {
             "action_local_broadcast_update_notification_count";
     public static String ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED =
             "action_local_broadcast_contact_displayed";
+    public static String ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA =
+            "action_local_broadcast_get_global_profile_data";
 
     //</editor-fold>
 
@@ -238,6 +240,8 @@ public class AppConstants {
             "pref_recent_calls_broadcast_receiver_main_instance_call_log_tab";
     public static String PREF_SMS_LOG_SYNCED_COUNT = "pref_sms_log_synced_count";
     public static String PREF_SMS_LOG_SYNCED = "pref_sms_log_synced";
+    public static String PREF_GOT_ALL_PROFILE_DATA = "pref_got_all_profile_data";
+
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,

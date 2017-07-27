@@ -250,6 +250,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                         isResumeCalled = true;
                         getRecentCallLog();
 
+
                     }
                 }
             }, 1500);
@@ -292,6 +293,10 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                         Utils.setStringPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNC_TIME, callLogInsertionResponse.getCallDateAndTime());
 
+                        System.out.println("RContact All Call Logs Synced");
+//                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " +
+//                                        "" + "Call Logs Synced");
+                        Utils.setBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, true);
 //                        if (Utils.getBooleanPreference(getActivity(), AppConstants
 //                                .PREF_CALL_LOG_SYNCED, false)) {
 //                            ArrayList<CallLogType> temp = divideCallLogByChunck(newList);
@@ -304,15 +309,15 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 //                            }
 //
 //                        } else {
-                        ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
-                        if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
+//                        ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
+                        /*if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
 //                                insertServiceCall(callLogTypeArrayList);
                         } else {
                             System.out.println("RContact All Call Logs Synced");
 //                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " +
 //                                        "" + "Call Logs Synced");
                             Utils.setBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, true);
-                        }
+                        }*/
 //                        }
                     } else {
                         if (callLogInsertionResponse != null) {
@@ -640,7 +645,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         });
     }
 
-    private ArrayList<CallLogType> divideCallLogByChunck() {
+    /*private ArrayList<CallLogType> divideCallLogByChunck() {
         int size = callLogTypeArrayList.size();
         callLogsListbyChunck = new ArrayList<>();
         for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayList, LIST_PARTITION_COUNT)) {
@@ -650,9 +655,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             break;
         }
         return callLogsListbyChunck;
-    }
+    }*/
 
-    private ArrayList<CallLogType> divideCallLogByChunck(ArrayList<CallLogType> list) {
+    /*private ArrayList<CallLogType> divideCallLogByChunck(ArrayList<CallLogType> list) {
         int size = 0;
         callLogsListbyChunck = new ArrayList<>();
         if (list != null && list.size() > 0) {
@@ -673,7 +678,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         }
 
         return callLogsListbyChunck;
-    }
+    }*/
 
     private class GetCallLogs extends AsyncTask<Void, Void, Void> {
 
@@ -1233,7 +1238,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                final int position = viewHolder.getAdapterPosition();
                 String actionNumber = StringUtils.defaultString(((SimpleCallLogListAdapter
                         .CallLogViewHolder) viewHolder).textTempNumber.getText()
                         .toString());
@@ -1252,9 +1257,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+//                        int position = simpleCallLogListAdapter.getSelectedPosition();
+//                        simpleCallLogListAdapter.notifyItemChanged(position);
                         simpleCallLogListAdapter.notifyDataSetChanged();
                     }
-                }, 1000);
+                }, 300);
             }
 
             @Override

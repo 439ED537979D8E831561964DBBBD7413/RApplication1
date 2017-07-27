@@ -96,6 +96,7 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
 import com.rawalinfocom.rcontact.model.SmsDataType;
+import com.rawalinfocom.rcontact.model.SpamDataType;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
@@ -161,8 +162,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
     private ReSyncContactAsyncTask reSyncContactAsyncTask;
     private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
+    private GetSpamAndRCPDetailAsyncTask getSpamAndRCPDetailAsyncTask;
     private ArrayList<SmsDataType> smsLogTypeArrayListMain;
     ArrayList<SmsDataType> smsLogsListbyChunck;
+    private ArrayList<CallLogType> callLogTypeListForGlobalProfile;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -175,6 +178,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         phoneBookContacts = new PhoneBookContacts(this);
         callLogTypeArrayListMain = new ArrayList<>();
         smsLogTypeArrayListMain = new ArrayList<>();
+        callLogTypeListForGlobalProfile =  new ArrayList<>();
 //        CallLogFragment.callLogTypeReceiver = new CallLogType();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -215,10 +219,22 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             if (Utils.isNetworkAvailable(this)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+                    && !Utils.getBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false)
                     && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
-                syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                getSpamAndRCPDetailAsyncTask = new GetSpamAndRCPDetailAsyncTask();
+                getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+            } else {
+                if (Utils.isNetworkAvailable(this)
+                        && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
+                        && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+                        && Utils.getBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false)
+                        && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
+                    syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                    syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
             }
+
         }
         if (contacts) {
             if (Utils.isNetworkAvailable(this)
@@ -359,9 +375,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         if (callLogTypeArrayList.size() < CALL_LOG_CHUNK) {
                             Utils.setBooleanPreference(this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, true);
-
                             Intent localBroadcastIntent = new Intent(AppConstants
-                                    .ACTION_LOCAL_BROADCAST_SYNC_SMS);
+                                    .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
                             LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
                                     .getInstance(MainActivity.this);
                             myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
@@ -371,12 +386,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                         Utils.setBooleanPreference(this, AppConstants
                                 .PREF_CALL_LOG_SYNCED, true);
-
-                        Intent localBroadcastIntent = new Intent(AppConstants
-                                .ACTION_LOCAL_BROADCAST_SYNC_SMS);
-                        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
-                                .getInstance(MainActivity.this);
-                        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
 
                     }
                     Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
@@ -409,6 +418,35 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
             //</editor-fold>
 
+            // <editor-fold desc="REQ_GET_PROFILE_DATA">
+            else if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_PROFILE_DATA)) {
+                WsResponseObject getProfileDataResponse = (WsResponseObject) data;
+                if (getProfileDataResponse != null && StringUtils.equalsIgnoreCase
+                        (getProfileDataResponse
+                                .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    ArrayList<SpamDataType> spamDataTypeList =  getProfileDataResponse.getSpamDataTypeArrayList();
+                    if(spamDataTypeList.size()>0){
+                        rContactApplication.setArrayListSpamDataType(spamDataTypeList);
+                    }
+                    Utils.setBooleanPreference(this, AppConstants
+                            .PREF_GOT_ALL_PROFILE_DATA, true);
+
+                    Intent localBroadcastIntent = new Intent(AppConstants
+                            .ACTION_LOCAL_BROADCAST_SYNC_SMS);
+                    LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                            .getInstance(MainActivity.this);
+                    myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+
+                } else {
+                    if (getProfileDataResponse != null) {
+                        Log.e("error response", getProfileDataResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "getProfileDataResponse null");
+                    }
+                }
+            }
+            //</editor-fold>
             // <editor-fold desc="REQ_UPLOAD_SMS_LOGS">
             else if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_SMS_LOGS)) {
 
@@ -834,6 +872,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             syncSmsLogAsyncTask.cancel(true);
         if (reSyncContactAsyncTask != null)
             reSyncContactAsyncTask.cancel(true);
+        if (getSpamAndRCPDetailAsyncTask != null)
+            getSpamAndRCPDetailAsyncTask.cancel(true);
         if (networkConnectionReceiver != null) {
             unregisterBroadcastReceiver();
         }
@@ -1343,6 +1383,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         contactDisplayed.registerReceiver
                 (localBroadcastReceiverContactDisplayed, intentFilterContactDisplayed);
 
+        LocalBroadcastManager getGlobalProfileData = LocalBroadcastManager.getInstance(MainActivity
+                .this);
+        IntentFilter intentFiltergetGlobalProfileData = new IntentFilter(AppConstants
+                .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
+        getGlobalProfileData.registerReceiver
+                (localBroadCastReceiverGetGlobalProfileData, intentFiltergetGlobalProfileData);
+
+
     }
 
     private void unRegisterLocalBroadCastReceiver() {
@@ -1355,6 +1403,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         localBroadcastManager.unregisterReceiver(localBroadcastReceiverSmsLogSync);
         localBroadcastManager.unregisterReceiver(localBroadCastReceiverUpdateCount);
         localBroadcastManager.unregisterReceiver(localBroadcastReceiverContactDisplayed);
+        localBroadcastManager.unregisterReceiver(localBroadCastReceiverGetGlobalProfileData);
     }
 
     private void getLatestCallLogsByRawId() {
@@ -1488,6 +1537,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         int logCount = arrayListHistoryCount.size();
                         log.setHistoryLogCount(logCount);
                         callLogTypeArrayListMain.add(log);
+                        callLogTypeListForGlobalProfile.add(log);
                     }
                 }
                 cursor.close();
@@ -1639,6 +1689,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         log.setHistoryLogCount(logCount);
                         tempCallLogTypeArrayList.add(log);
                         callLogTypeArrayListMain.add(log);
+                        callLogTypeListForGlobalProfile.add(log);
 //                            rContactApplication.setArrayListCallLogType(callLogTypeArrayListMain);
                         cursor.close();
                     }
@@ -1701,6 +1752,31 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
         }
     };
+
+
+    private BroadcastReceiver localBroadCastReceiverGetGlobalProfileData = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                checkPermissionToExecute();
+            } else {
+                if (Utils.isNetworkAvailable(MainActivity.this)
+                        && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                        .PREF_CONTACT_SYNCED, false)
+                        && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                        .PREF_CALL_LOG_SYNCED, false)
+                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                        .PREF_GOT_ALL_PROFILE_DATA, false)
+                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                        .PREF_SMS_SYNCED, false)) {
+
+                        getSpamAndRCPDetailAsyncTask =  new GetSpamAndRCPDetailAsyncTask();
+                        getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }
+        }
+    };
+
 
     private void syncRecentCallLogDataToServer(ArrayList<CallLogType> list) {
         if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.isCancelled())
@@ -2189,12 +2265,36 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
+    private class GetSpamAndRCPDetailAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            makeListOfNumbersForSpamCount();
+            return null;
+        }
+    }
+
+
     private class SyncSmsLogAsyncTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
             getSmsLogsByRawIds();
             return null;
+        }
+    }
+
+    private void makeListOfNumbersForSpamCount() {
+        ArrayList<String> listOfNumbers = new ArrayList<>();
+        if (callLogTypeListForGlobalProfile != null && callLogTypeListForGlobalProfile.size() > 0) {
+            for (int i = 0; i < callLogTypeListForGlobalProfile.size(); i++) {
+                String number = callLogTypeListForGlobalProfile.get(i).getNumber();
+                if(!number.startsWith("+91"))
+                    number =  "+91"+number;
+
+                listOfNumbers.add(number);
+            }
+            getProfileDataServiceCall(listOfNumbers);
         }
     }
 
@@ -2394,6 +2494,20 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     }
 
+    private void getProfileDataServiceCall(ArrayList<String> numbersList) {
+
+        if (Utils.isNetworkAvailable(MainActivity.this)) {
+            WsRequestObject deviceDetailObject = new WsRequestObject();
+            deviceDetailObject.setUnknownNumberList(numbersList);
+
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    deviceDetailObject, null, WsResponseObject.class, WsConstants
+                    .REQ_GET_PROFILE_DATA, null, true).execute(
+                    WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_DATA);
+
+        }
+    }
+
     private String getContactNameFromNumber(String phoneNumber) {
         String contactName = "";
         try {
@@ -2475,12 +2589,30 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                     .PREF_CONTACT_SYNCED, false)
                                     && Utils.getBooleanPreference(MainActivity.this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, false)
+                                    && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_GOT_ALL_PROFILE_DATA, false)
                                     && !Utils.getBooleanPreference(MainActivity.this,
                                     AppConstants.PREF_SMS_SYNCED, false)) {
+
+                                getSpamAndRCPDetailAsyncTask = new GetSpamAndRCPDetailAsyncTask();
+                                getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            }
+
+                            if (Utils.isNetworkAvailable(MainActivity.this)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CONTACT_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_GOT_ALL_PROFILE_DATA, false)
+                                    && !Utils.getBooleanPreference(MainActivity.this,
+                                    AppConstants.PREF_SMS_SYNCED, false)) {
+
                                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                                 syncSmsLogAsyncTask.executeOnExecutor(AsyncTask
                                         .THREAD_POOL_EXECUTOR);
                             }
+
                             if (Utils.isNetworkAvailable(MainActivity.this)
                                     && Utils.getBooleanPreference(MainActivity.this, AppConstants
                                     .PREF_CONTACT_SYNCED, false)
@@ -2764,7 +2896,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " +
                 ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0 and " + ContactsContract
                 .RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE +
-                ") and" +
+                ") and " +
                 ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID + " in " + inCaluse;
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,

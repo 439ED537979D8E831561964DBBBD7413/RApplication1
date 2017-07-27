@@ -2865,6 +2865,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     }
 
     private ArrayList callLogHistory(String number) {
+
         ArrayList<CallLogType> callDetails = new ArrayList<>();
         Cursor cursor;
 //        Pattern numberPat = Pattern.compile("\\d+");
