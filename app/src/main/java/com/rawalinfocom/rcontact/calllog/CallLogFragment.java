@@ -522,17 +522,16 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 if (simpleCallLogListAdapter != null)
                     simpleCallLogListAdapter.notifyItemInserted(0);
 //                    simpleCallLogListAdapter.notifyItemChanged(0);
-                    simpleCallLogListAdapter.notifyDataSetChanged();
-                }
+                simpleCallLogListAdapter.notifyDataSetChanged();
+            }
 
-                recyclerCallLogs.smoothScrollToPosition(0);
-                ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
-                callLogTypeArrayList.add(callLogType);
-                if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false) &&
-                        Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, false)) {
-                    if (!TextUtils.isEmpty(callLogType.getNumber()))
-                        insertServiceCall(callLogTypeArrayList);
-                }
+            recyclerCallLogs.smoothScrollToPosition(0);
+            ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
+            callLogTypeArrayList.add(callLogType);
+            if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false) &&
+                    Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                if (!TextUtils.isEmpty(callLogType.getNumber()))
+                    insertServiceCall(callLogTypeArrayList);
             }
         }
     }
@@ -750,7 +749,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
                         return;
                     CallLogType callLogType = callLogTypeArrayList.get(i);
-                    String number =  Utils.getFormattedNumber(getActivity(), callLogType.getNumber());
+                    String number = Utils.getFormattedNumber(getActivity(), callLogType.getNumber());
                     if (!StringUtils.isEmpty(number)) {
 
                         String photoThumbNail = getPhotoUrlFromNumber(number);
@@ -1272,7 +1271,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 int numberType = cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE);
                 int account_id = -1;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                        //for versions above lollipop
+                    //for versions above lollipop
                     account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
                 } else {
                     account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
