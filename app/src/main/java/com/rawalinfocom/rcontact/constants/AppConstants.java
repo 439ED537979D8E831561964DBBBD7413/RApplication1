@@ -188,12 +188,20 @@ public class AppConstants {
     public static String PREF_USER_RATING = "pref_user_rating";
     public static String PREF_USER_TOTAL_RATING = "pref_user_total_rating";
     public static String PREF_USER_PHOTO = "pref_user_photo";
-    public static String PREF_USER_FIRST_NAME =  "pref_user_first_name";
-    public static String PREF_USER_LAST_NAME =  "pref_user_last_name";
-    public static String PREF_USER_JOINING_DATE =  "pref_user_joining_date";
-    public static String PREF_USER_VERIFIED_EMAIL =  "pref_user_verified_email";
+    public static String PREF_USER_FIRST_NAME = "pref_user_first_name";
+    public static String PREF_USER_LAST_NAME = "pref_user_last_name";
+    public static String PREF_USER_JOINING_DATE = "pref_user_joining_date";
+    public static String PREF_USER_VERIFIED_EMAIL = "pref_user_verified_email";
 
     public static String KEY_PREFERENCES = "pref_rcontact";
+    public static String PREF_APP_LANGUAGE = "pref_app_language";
+    public static String PREF_SHORT_BY_CONTACT = "pref_short_by_contact";
+    public static String PREF_EXPORT_CONTACT = "pref_export_contact";
+
+    public static String PREF_DISABLE_PUSH = "pref_disable_push";
+    public static String PREF_DISABLE_EVENT_PUSH = "pref_disable_event_push";
+
+    public static String PREF_LOGIN_TYPE = "pref_login_type";
 
     public static String PREF_RE_LOGIN = "pref_re_login";
     public static String PREF_FORGOT_PASSWORD = "pref_forgot_password";
@@ -286,6 +294,7 @@ public class AppConstants {
     public static boolean isSMSFromReceiver = false;
     public static boolean isComposingSMS = false;
     public static boolean isFromSearchActivity = false;
+    public static boolean isFromSettingActivity = false;
 
     //<editor-fold desc="Call-log constants">
     public static final int READ_LOGS = 725;

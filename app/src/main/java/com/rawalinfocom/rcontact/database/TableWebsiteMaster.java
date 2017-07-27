@@ -116,6 +116,16 @@ public class TableWebsiteMaster {
         db.close(); // Closing database connection
     }
 
+    public void deleteData(String RcpPmId) {
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+
+        int count = db.delete(TABLE_RC_WEBSITE_MASTER, COLUMN_RC_PROFILE_MASTER_PM_ID + " = " +
+                RcpPmId, null);
+        if (count > 0) System.out.println("RContact data delete ");
+
+        db.close(); // Closing database connection
+    }
+
     // Adding or Updating array website
     public void addUpdateArrayWebsite(ArrayList<Website> arrayListWebsite, String RcpPmId) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();

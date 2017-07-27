@@ -2626,7 +2626,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
     private void showCallConfirmationDialog(final String number) {
 
-        final String finalNumber = Utils.getFormattedNumber(ProfileDetailActivity.this,number);
+        final String finalNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, number);
 
         /*if (!number.startsWith("+91")) {
             finalNumber = "+91" + number;
@@ -3564,6 +3564,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
             tableEmailMaster.addUpdateArrayEmail(arrayListEmail, profileDetail.getRcpPmId());
+        } else {
+            TableEmailMaster tableEmailMaster = new TableEmailMaster(databaseHandler);
+            tableEmailMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3587,6 +3590,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     (databaseHandler);
             tableOrganizationMaster.addUpdateArrayOrganization(organizationList, profileDetail
                     .getRcpPmId());
+        } else {
+            TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster(databaseHandler);
+            tableOrganizationMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3608,6 +3614,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
             tableWebsiteMaster.addUpdateArrayWebsite(websiteList, profileDetail.getRcpPmId());
+        } else {
+            TableWebsiteMaster tableWebsiteMaster = new TableWebsiteMaster(databaseHandler);
+            tableWebsiteMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3644,6 +3653,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
             tableAddressMaster.addUpdateArrayAddress(addressList, profileDetail.getRcpPmId());
+        } else {
+            TableAddressMaster tableAddressMaster = new TableAddressMaster(databaseHandler);
+            tableAddressMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3668,6 +3680,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             TableImMaster tableImMaster = new TableImMaster(databaseHandler);
             tableImMaster.addUpdateArrayImAccount(imAccountsList, profileDetail.getRcpPmId());
+        } else {
+            TableImMaster tableImMaster = new TableImMaster(databaseHandler);
+            tableImMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
 
@@ -3688,6 +3703,9 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
             TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
             tableEventMaster.addUpdateArrayEvent(eventList, profileDetail.getRcpPmId());
+        } else {
+            TableEventMaster tableEventMaster = new TableEventMaster(databaseHandler);
+            tableEventMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
     }

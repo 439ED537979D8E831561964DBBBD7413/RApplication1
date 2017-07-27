@@ -754,8 +754,13 @@ public class PhoneBookContacts {
                 ContactsContract.Data.MIMETYPE,
                 ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
         };
+
         String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " +
-                ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP + ">=?";
+                ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP + ">=? and " + ContactsContract
+                .RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE + ")";
+
+//        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " +
+//                ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP + ">=?";
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
@@ -815,9 +820,11 @@ public class PhoneBookContacts {
         String[] projection = {
                 ContactsContract.Data.MIMETYPE,
                 ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,
-
         };
-        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        String selection = ContactsContract.Data.MIMETYPE + " in (?, ?, ?, ?, ?, ?, ?, ?) and " + ContactsContract
+                .RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE + ")";
+
         String[] selectionArgs = {
                 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
                 ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
