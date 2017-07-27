@@ -40,6 +40,14 @@ public class CallLogType implements Serializable {
     private String suffix;
     @JsonIgnore
     private String middleName;
+    @JsonIgnore
+    private String isRcpVerfied;
+    @JsonIgnore
+    private String spamCount;
+    @JsonIgnore
+    private String callLogProfileRating;
+    @JsonIgnore
+    private String callLogTotalProfileRateUser;
 
     @JsonIgnore
     private Long date;
@@ -573,5 +581,37 @@ public class CallLogType implements Serializable {
 
     public void setMiddleName(String middleName) {
         this.middleName = middleName;
+    }
+
+    public String getIsRcpVerfied() {
+        return isRcpVerfied;
+    }
+
+    public void setIsRcpVerfied(String isRcpVerfied) {
+        this.isRcpVerfied = isRcpVerfied;
+    }
+
+    public String getSpamCount() {
+        return spamCount;
+    }
+
+    public void setSpamCount(String spamCount) {
+        this.spamCount = spamCount;
+    }
+
+    public String getCallLogProfileRating() {
+        return callLogProfileRating;
+    }
+
+    public void setCallLogProfileRating(String callLogProfileRating) {
+        this.callLogProfileRating = callLogProfileRating;
+    }
+
+    public String getCallLogTotalProfileRateUser() {
+        return callLogTotalProfileRateUser;
+    }
+
+    public void setCallLogTotalProfileRateUser(String callLogTotalProfileRateUser) {
+        this.callLogTotalProfileRateUser = callLogTotalProfileRateUser;
     }
 }

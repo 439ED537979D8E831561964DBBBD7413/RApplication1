@@ -70,6 +70,7 @@ import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
+import com.rawalinfocom.rcontact.database.TableSpamDetailMaster;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
@@ -426,9 +427,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         (getProfileDataResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    ArrayList<SpamDataType> spamDataTypeList = getProfileDataResponse.getSpamDataTypeArrayList();
-                    if (spamDataTypeList.size() > 0) {
-                        rContactApplication.setArrayListSpamDataType(spamDataTypeList);
+                    ArrayList<SpamDataType> spamDataTypeList =  getProfileDataResponse.getSpamDataTypeArrayList();
+                    if(spamDataTypeList.size()>0){
+                        try {
+                            TableSpamDetailMaster tableSpamDetailMaster =  new TableSpamDetailMaster(getDatabaseHandler());
+                            tableSpamDetailMaster.insertSpamDetails(spamDataTypeList);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                     }
                     Utils.setBooleanPreference(this, AppConstants
                             .PREF_GOT_ALL_PROFILE_DATA, true);
@@ -2704,6 +2711,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             if (!Utils.getStringPreference(MainActivity.this, AppConstants
                                     .PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0"))
                                 getLatestCallLogsByRawId();
+
+//                            CallLogFragment.isIdsFetchedFirstTime = false;
+//                                rContactApplication.setArrayListCallLogType(null);
                         }
                     }
                 }, 300);
