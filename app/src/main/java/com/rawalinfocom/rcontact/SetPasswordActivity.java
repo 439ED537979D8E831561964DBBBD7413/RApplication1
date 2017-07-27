@@ -363,6 +363,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
             ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
             ArrayList<Email> arrayListEmail = new ArrayList<>();
+            ArrayList<String> listOfVerifiedEmailIds =  new ArrayList<>();
             for (int i = 0; i < arrayListEmailId.size(); i++) {
                 Email email = new Email();
                 email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
@@ -372,8 +373,9 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
 //                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
                 if(String.valueOf(arrayListEmailId.get(i).getEmRcpType()).equalsIgnoreCase("1")){
-                    Utils.setStringPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL,
-                            profileDetail.getRcpPmId());
+                    listOfVerifiedEmailIds.add(arrayListEmailId.get(i).getEmEmailId());
+                    Utils.setArrayListPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL,
+                            listOfVerifiedEmailIds);
                 }
                 email.setRcProfileMasterPmId(profileDetail.getRcpPmId());
                 arrayListEmail.add(email);

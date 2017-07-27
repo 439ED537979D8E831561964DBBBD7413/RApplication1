@@ -432,6 +432,7 @@ public class SmsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void filter(String charText) {
         Pattern numberPat = Pattern.compile("\\d+");
         Matcher matcher1 = numberPat.matcher(charText);
+        charText =  charText.trim();
         if (matcher1.find()) {
             typeArrayList.clear();
             if (charText.length() == 0) {

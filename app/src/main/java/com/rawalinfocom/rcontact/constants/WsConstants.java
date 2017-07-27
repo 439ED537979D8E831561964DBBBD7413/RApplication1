@@ -60,6 +60,10 @@ public class WsConstants {
     // Staging Env
 //    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
 
+
+
+
+
     /**
      * WEBSITE URL
      */
@@ -109,6 +113,6 @@ public class WsConstants {
     public static final String REQ_ADD_EVENT_COMMENT = "event-comment";
     public static final String REQ_GET_EVENT_COMMENT = "get-event-comment";
     public static final String REQ_GET_RCONTACT_UPDATES = "get-rcontact-update";
-
+    public static final String REQ_GET_PROFILE_DATA= "get-global-profile";
 
 }

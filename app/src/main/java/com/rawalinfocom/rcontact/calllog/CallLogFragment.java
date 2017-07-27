@@ -222,9 +222,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         textNoCallsFound = (TextView) mainView.findViewById(R.id.text_no_logs_found);
 
-//        recyclerCallLogs.setLayoutManager(new WrapContentLinearLayoutManager
-//                (getActivity(), LinearLayoutManager.VERTICAL, false));
-        recyclerCallLogs.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerCallLogs.setLayoutManager(new WrapContentLinearLayoutManager
+                (getActivity(), LinearLayoutManager.VERTICAL, false));
 
         rContactApplication = (RContactApplication) getActivity().getApplicationContext();
 //        makeBlockedNumberList();
@@ -520,9 +519,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                 }
 
-                Toast.makeText(getActivity(), "recent size --> " + callLogTypeArrayList.size(), Toast.LENGTH_SHORT).show();
-
-                if (simpleCallLogListAdapter != null) {
+                if (simpleCallLogListAdapter != null)
                     simpleCallLogListAdapter.notifyItemInserted(0);
 //                    simpleCallLogListAdapter.notifyItemChanged(0);
                     simpleCallLogListAdapter.notifyDataSetChanged();
