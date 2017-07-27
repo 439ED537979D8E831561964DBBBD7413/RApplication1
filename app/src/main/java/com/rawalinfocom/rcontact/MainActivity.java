@@ -179,7 +179,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         phoneBookContacts = new PhoneBookContacts(this);
         callLogTypeArrayListMain = new ArrayList<>();
         smsLogTypeArrayListMain = new ArrayList<>();
-        callLogTypeListForGlobalProfile =  new ArrayList<>();
+        callLogTypeListForGlobalProfile = new ArrayList<>();
 //        CallLogFragment.callLogTypeReceiver = new CallLogType();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -426,8 +426,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         (getProfileDataResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    ArrayList<SpamDataType> spamDataTypeList =  getProfileDataResponse.getSpamDataTypeArrayList();
-                    if(spamDataTypeList.size()>0){
+                    ArrayList<SpamDataType> spamDataTypeList = getProfileDataResponse.getSpamDataTypeArrayList();
+                    if (spamDataTypeList.size() > 0) {
                         rContactApplication.setArrayListSpamDataType(spamDataTypeList);
                     }
                     Utils.setBooleanPreference(this, AppConstants
@@ -1570,7 +1570,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             .PREF_CALL_LOG_SYNCED, true);
 
                     Intent localBroadcastIntent = new Intent(AppConstants
-                            .ACTION_LOCAL_BROADCAST_SYNC_SMS);
+                            .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
                     LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
                             .getInstance(MainActivity.this);
                     myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
@@ -1579,8 +1579,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         } else {
             Utils.setBooleanPreference(this, AppConstants
                     .PREF_CALL_LOG_SYNCED, true);
+
             Intent localBroadcastIntent = new Intent(AppConstants
-                    .ACTION_LOCAL_BROADCAST_SYNC_SMS);
+                    .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
             LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
                     .getInstance(MainActivity.this);
             myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
@@ -1743,7 +1744,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     };
 
-
     private BroadcastReceiver localBroadCastReceiverGetGlobalProfileData = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1760,8 +1760,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         && !Utils.getBooleanPreference(MainActivity.this, AppConstants
                         .PREF_SMS_SYNCED, false)) {
 
-                        getSpamAndRCPDetailAsyncTask =  new GetSpamAndRCPDetailAsyncTask();
-                        getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    getSpamAndRCPDetailAsyncTask = new GetSpamAndRCPDetailAsyncTask();
+                    getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
         }
@@ -2265,8 +2265,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         if (callLogTypeListForGlobalProfile != null && callLogTypeListForGlobalProfile.size() > 0) {
             for (int i = 0; i < callLogTypeListForGlobalProfile.size(); i++) {
                 String number = callLogTypeListForGlobalProfile.get(i).getNumber();
-                if(!number.startsWith("+91"))
-                    number =  "+91"+number;
+                if (!number.startsWith("+91"))
+                    number = "+91" + number;
 
                 listOfNumbers.add(number);
             }
