@@ -46,6 +46,7 @@ public class WsResponseObject {
     private Integer flag;
     private Integer reSync;
     private String callDateAndTime;
+    private String smsLogTimestamp;
     private String callLogRowId;
 
     private OtpLog otpLog;
@@ -59,6 +60,7 @@ public class WsResponseObject {
 
     private ArrayList<CallLogType> arrayListCallLogHistory;
     private ArrayList<GlobalSearchType> globalSearchTypeArrayList;
+    private ArrayList<SpamDataType> spamDataTypeArrayList;
 
     private String profileSharingData;
 
@@ -107,6 +109,15 @@ public class WsResponseObject {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @JsonProperty("smsLogTimestamp")
+    public String getSmsLogTimestamp() {
+        return smsLogTimestamp;
+    }
+
+    public void setSmsLogTimestamp(String smsLogTimestamp) {
+        this.smsLogTimestamp = smsLogTimestamp;
     }
 
     @JsonProperty("call_date_and_time")
@@ -235,5 +246,10 @@ public class WsResponseObject {
     @JsonProperty("result")
     public ArrayList<GlobalSearchType> getGlobalSearchTypeArrayList() {
         return globalSearchTypeArrayList;
+    }
+
+    @JsonProperty("spam_details")
+    public ArrayList<SpamDataType> getSpamDataTypeArrayList() {
+        return spamDataTypeArrayList;
     }
 }

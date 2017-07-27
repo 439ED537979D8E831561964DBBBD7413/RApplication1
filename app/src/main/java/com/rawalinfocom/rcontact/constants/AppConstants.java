@@ -166,6 +166,8 @@ public class AppConstants {
             "action_local_broadcast_update_notification_count";
     public static String ACTION_LOCAL_BROADCAST_CONTACT_DISPLAYED =
             "action_local_broadcast_contact_displayed";
+    public static String ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA =
+            "action_local_broadcast_get_global_profile_data";
 
     //</editor-fold>
 
@@ -186,12 +188,20 @@ public class AppConstants {
     public static String PREF_USER_RATING = "pref_user_rating";
     public static String PREF_USER_TOTAL_RATING = "pref_user_total_rating";
     public static String PREF_USER_PHOTO = "pref_user_photo";
-    public static String PREF_USER_FIRST_NAME =  "pref_user_first_name";
-    public static String PREF_USER_LAST_NAME =  "pref_user_last_name";
-    public static String PREF_USER_JOINING_DATE =  "pref_user_joining_date";
-    public static String PREF_USER_VERIFIED_EMAIL =  "pref_user_verified_email";
+    public static String PREF_USER_FIRST_NAME = "pref_user_first_name";
+    public static String PREF_USER_LAST_NAME = "pref_user_last_name";
+    public static String PREF_USER_JOINING_DATE = "pref_user_joining_date";
+    public static String PREF_USER_VERIFIED_EMAIL = "pref_user_verified_email";
 
     public static String KEY_PREFERENCES = "pref_rcontact";
+    public static String PREF_APP_LANGUAGE = "pref_app_language";
+    public static String PREF_SHORT_BY_CONTACT = "pref_short_by_contact";
+    public static String PREF_EXPORT_CONTACT = "pref_export_contact";
+
+    public static String PREF_DISABLE_PUSH = "pref_disable_push";
+    public static String PREF_DISABLE_EVENT_PUSH = "pref_disable_event_push";
+
+    public static String PREF_LOGIN_TYPE = "pref_login_type";
 
     public static String PREF_RE_LOGIN = "pref_re_login";
     public static String PREF_FORGOT_PASSWORD = "pref_forgot_password";
@@ -238,6 +248,8 @@ public class AppConstants {
             "pref_recent_calls_broadcast_receiver_main_instance_call_log_tab";
     public static String PREF_SMS_LOG_SYNCED_COUNT = "pref_sms_log_synced_count";
     public static String PREF_SMS_LOG_SYNCED = "pref_sms_log_synced";
+    public static String PREF_GOT_ALL_PROFILE_DATA = "pref_got_all_profile_data";
+
 
     public static String[] arrayPrefKeys = {PREF_SELECTED_COUNTRY_OBJECT, PREF_DEVICE_TOKEN_ID,
             PREF_LAUNCH_SCREEN_INT, PREF_REGS_USER_OBJECT, PREF_REGS_MOBILE_NUMBER,
@@ -282,6 +294,7 @@ public class AppConstants {
     public static boolean isSMSFromReceiver = false;
     public static boolean isComposingSMS = false;
     public static boolean isFromSearchActivity = false;
+    public static boolean isFromSettingActivity = false;
 
     //<editor-fold desc="Call-log constants">
     public static final int READ_LOGS = 725;

@@ -157,7 +157,24 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi
                 (Auth.GOOGLE_SIGN_IN_API, gso).build();
 
-        IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_EMAIL;
+        switch (Utils.getIntegerPreference(ProfileRegistrationActivity.this, AppConstants.PREF_LOGIN_TYPE, IntegerConstants.REGISTRATION_VIA)) {
+            case 0:
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_EMAIL;
+                inputEmailId.setEnabled(true);
+                break;
+            case 1:
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_FACEBOOK;
+                inputEmailId.setEnabled(false);
+                break;
+            case 2:
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_GOOGLE;
+                inputEmailId.setEnabled(false);
+                break;
+            case 3:
+                IntegerConstants.REGISTRATION_VIA = IntegerConstants.REGISTRATION_VIA_LINED_IN;
+                inputEmailId.setEnabled(false);
+                break;
+        }
 
         init();
 
@@ -370,8 +387,9 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 //                                userProfileRegistered.getPmId());
 //                    }
 
-                    // Redirect to SetPasswordActivity
+                    Utils.setIntegerPreference(ProfileRegistrationActivity.this, AppConstants.PREF_LOGIN_TYPE, IntegerConstants.REGISTRATION_VIA);
 
+                    // Redirect to SetPasswordActivity
                     Bundle bundle = new Bundle();
                     bundle.putString(AppConstants.EXTRA_IS_FROM, "profile");
                     startActivityIntent(ProfileRegistrationActivity.this, SetPasswordActivity
@@ -625,12 +643,14 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 //                    String imageToBase64 = Utils.convertBitmapToBase64(BitmapFactory.decodeFile
 //                            (fileUtils.getrContactDir().getAbsolutePath()));
 //
+//                    // TODO: 09/02/17 social id
 //                    profileRegistration(finalFirstName, finalLastName, finalEmailAddress,
 //                            imageToBase64, finalId, null, IntegerConstants
 //                                    .REGISTRATION_VIA_LINED_IN);
 //
 //                } else {
 //
+//                    // TODO: 09/02/17 social id
 //                    Log.e("onResourceReady: ", "There is some error in storing Image!");
 //                    profileRegistration(finalFirstName, finalLastName, finalEmailAddress, null,
 //                            finalId, null, IntegerConstants.REGISTRATION_VIA_LINED_IN);
@@ -664,7 +684,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
     @SuppressWarnings("unused")
     public void generateHashkey() {
         try {
-            PackageInfo info = getPackageManager().getPackageInfo("com.rawalinfocom.rcontact",
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.rawalinfocom.rcontact",
                     PackageManager.GET_SIGNATURES);
             for (Signature signature : info.signatures) {
                 MessageDigest md = MessageDigest.getInstance("SHA");
@@ -725,8 +746,6 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
             Utils.showErrorSnackBar(this, relativeRootProfileRegistration, getString(R.string
                     .error_required_first_name));
         }
-
-
     }
 
 //    private void deviceDetail() {
@@ -787,8 +806,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                                     inputEmailId.setEnabled(false);
 
-                                    profileRegistration(firstName, lastName, email,
-                                            IntegerConstants.REGISTRATION_VIA_FACEBOOK);
+//                                    profileRegistration(firstName, lastName, email,
+//                                            IntegerConstants.REGISTRATION_VIA_FACEBOOK);
 
 //                                    if (StringUtils.length(facebookData.getString(PROFILE_IMAGE))
 //                                            > 0) {
@@ -912,8 +931,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                 inputEmailId.setEnabled(false);
 
-                profileRegistration(firstName, lastName, email, IntegerConstants
-                        .REGISTRATION_VIA_GOOGLE);
+//                profileRegistration(firstName, lastName, email, IntegerConstants
+//                        .REGISTRATION_VIA_GOOGLE);
 
 //                getGoogleBitmapFromUrl(acct);
 
@@ -975,8 +994,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
 
                     inputEmailId.setEnabled(false);
 
-                    profileRegistration(firstName, lastName, email, IntegerConstants
-                            .REGISTRATION_VIA_LINED_IN);
+//                    profileRegistration(firstName, lastName, email, IntegerConstants
+//                            .REGISTRATION_VIA_LINED_IN);
 
 //                    profileRegistration(response.get("firstName").toString(), response.get
 //                                    ("lastName").toString(), response.get("emailAddress")

@@ -63,6 +63,7 @@
     <dimen name="text_size_32sp">32sp</dimen>
     <dimen name="text_size_45sp">45sp</dimen>
     <dimen name="text_size_25sp">25sp</dimen>
+    <dimen name="text_size_20sp">20sp</dimen>
     <dimen name="padding_14dp">14dp</dimen>
     <dimen name="margin_28dp">28dp</dimen>
     <dimen name="margin_20dp">20dp</dimen>

@@ -358,7 +358,6 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         return smsLogIdsListByChunck;
     }
 
-
     private void loadData() {
         ArrayList<String> listOfIds = Utils.getArrayListPreference(getActivity(), AppConstants
                 .PREF_SMS_LOGS_ID_SET);
@@ -376,7 +375,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             Utils.setArrayListPreference(getActivity(), AppConstants.PREF_SMS_LOGS_ID_SET,
                     listOfIds);
         } else {
-            if (listOfIds != null && listOfIds.size() > 0) {
+            if (listOfIds.size() > 0) {
                 textNoSmsFound.setVisibility(View.GONE);
                 int indexToBeginSync = logsDisplayed;
                 ArrayList<String> tempIdsList = new ArrayList<>();
@@ -1312,7 +1311,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
     private void showCallConfirmationDialog(final String number, String name) {
 
-        final String finalNumber = Utils.getFormattedNumber(getActivity(),number);
+        final String finalNumber = Utils.getFormattedNumber(getActivity(), number);
 
         /*if (!number.startsWith("+91")) {
             finalNumber = "+91" + number;

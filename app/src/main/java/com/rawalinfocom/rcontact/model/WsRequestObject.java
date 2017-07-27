@@ -56,6 +56,9 @@ public class WsRequestObject {
     @JsonProperty("privacy_data")
     private List<PrivacyDataItem> privacyData;
 
+    @JsonProperty("mobile_numbers")
+    private ArrayList<String> unknownNumberList;
+
     private String countryCode;
     private String mobileNumber;
     private Integer forgotPassword;
@@ -738,5 +741,14 @@ public class WsRequestObject {
 
     public void setArrayListPackageData(ArrayList<ContactPackage> arrayListPackageData) {
         this.arrayListPackageData = arrayListPackageData;
+    }
+
+    @JsonProperty("mobile_numbers")
+    public ArrayList<String> getUnknownNumberList() {
+        return unknownNumberList;
+    }
+
+    public void setUnknownNumberList(ArrayList<String> unknownNumberList) {
+        this.unknownNumberList = unknownNumberList;
     }
 }

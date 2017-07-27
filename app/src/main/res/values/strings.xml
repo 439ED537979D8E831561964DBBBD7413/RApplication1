@@ -85,6 +85,12 @@
     <string name="tab_r_contact">RContacts</string>
     <string name="str_designation">Current Designation</string>
 
+    <string-array name="types_language">
+        <item>English</item>
+        <item>हिंदी</item>
+        <item>ગુજરાતી</item>
+    </string-array>
+
     <string-array name="phonebook_contact_array_share">
         <item>Share all</item>
         <item>Share via sms</item>
@@ -254,7 +260,7 @@
     <string name="add_contacts_to_block_list">Add contacts to block list</string>
     <string name="unblock_All">Unblock All</string>
     <string name="block_action_title">Blocked contacts list</string>
-    <string name="contacts"> Contacts</string>
+    <string name="contacts">Contacts</string>
 
     <!-- Call History Details -->
     <string name="sms">SMS</string>
@@ -636,5 +642,24 @@
 
     <string name="security_link_text">Learn more about RContacts app security</string>
     <string name="security_link">http://webstaging.rcontacts.in/global/privacy-policy</string>
+
+    <!-- Settings -->
+    <string name="app_language">App Language</string>
+    <string name="short_by">Short contact by</string>
+    <string name="export_format">Export contact</string>
+    <string name="abc_by_first_name">ABC by first name</string>
+    <string name="phone_storage">Phone Storage</string>
+    <string name="sd_card">SD card</string>
+    <string name="google_drive">Google drive</string>
+    <string name="abc_by_last_name">ABC by last name</string>
+    <string name="str_export">export</string>
+    <string name="str_short">short</string>
+    <string name="str_push_notification">Push Notification</string>
+    <string name="str_event_notification">Event Notification</string>
+    <string name="str_validation_short_type">Please select any short type</string>
+    <string name="str_validation_export_type">Please select any export type</string>
+    <string name="str_validation_push_notification">Disable it if you do not want receive Notifications</string>
+    <string name="str_validation_event_notification">Turn On/Off to manage All Event Notifications</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

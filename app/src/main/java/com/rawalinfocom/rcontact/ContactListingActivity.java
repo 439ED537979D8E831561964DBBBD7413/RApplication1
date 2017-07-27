@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.rawalinfocom.rcontact.adapters.PhoneBookContactListAdapter;
 import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.ContactStorageConstants;
 import com.rawalinfocom.rcontact.constants.IntegerConstants;
 import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
@@ -410,7 +411,9 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
                 Uri uri = ContactsContract.Data.CONTENT_URI;
                 String[] projection = set.toArray(new String[0]);
-                String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)";
+
+                String selection = ContactsContract.Data.MIMETYPE + " in (?, ?)" +
+                        " and " + ContactsContract.RawContacts.ACCOUNT_TYPE + " in (" + ContactStorageConstants.CONTACT_STORAGE + ")";
                 String[] selectionArgs = {
                         ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
                         ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE,
