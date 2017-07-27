@@ -60,6 +60,7 @@ import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
+import com.rawalinfocom.rcontact.database.TableSpamDetailMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RippleView;
@@ -68,6 +69,7 @@ import com.rawalinfocom.rcontact.helper.WrapContentLinearLayoutManager;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
+import com.rawalinfocom.rcontact.model.SpamDataType;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
@@ -519,14 +521,17 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                             callLogType.setRcpUser(true);
 
+                            callLogType =  setRCPDetailsAndSpamCountforUnsavedNumbers(number,callLogType);
                             callLogTypeArrayList.add(0, callLogType);
                             rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                         }
                     } else {
+                        callLogType =  setRCPDetailsAndSpamCountforUnsavedNumbers(number,callLogType);
                         callLogTypeArrayList.add(0, callLogType);
                         rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                     }
                 } else {
+                    callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number, callLogType);
                     callLogTypeArrayList.add(0, callLogType);
                     rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                 }
@@ -788,6 +793,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 }*/
                 nameAndProfileImage = new GetRCPNameAndProfileImage();
                 nameAndProfileImage.execute();
+
             }
         }, 100);
 
@@ -840,6 +846,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
         protected Void doInBackground(Void... urls) {
             setRCPUserName();
+            setRCPDetailsAndSpamCountforUnsavedNumbers();
             getPhoto();
             getContactName();
             return null;
@@ -858,6 +865,132 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         }
     }
 
+    private CallLogType setRCPDetailsAndSpamCountforUnsavedNumbers(String number, CallLogType callLogType){
+        try{
+            TableSpamDetailMaster tableSpamDetailMaster =  new TableSpamDetailMaster(getDatabaseHandler());
+            if(!StringUtils.isEmpty(number)){
+                if(number.startsWith("+91"))
+                    number =  number.replace("+","");
+                else
+                    number =  "91" + number;
+
+                SpamDataType spamDataType = tableSpamDetailMaster.getSpamDetailsFromNumber(number);
+                if(spamDataType != null && !StringUtils.isEmpty(spamDataType.getSpamCount()))
+                {
+                    String lastName =  spamDataType.getLastName();
+                    String firstName = spamDataType .getFirstName();
+                    String prefix =  spamDataType.getPrefix();
+                    String suffix =  spamDataType.getSuffix();
+                    String middleName =  spamDataType.getMiddleName();
+                    String isRcpVerified =  spamDataType.getRcpVerfiy();
+                    String rcpId =  spamDataType.getRcpPmId();
+                    String profileRating =  spamDataType.getProfileRating();
+                    String totalProfileRateUser = spamDataType.getTotalProfileRateUser();
+                    String spamCount =  spamDataType.getSpamCount();
+
+                    if(MoreObjects.firstNonNull(callLogType.isRcpUser(), false)){
+                        callLogType.setRcpFirstName(callLogType.getRcpFirstName());
+                        callLogType.setRcpLastName(callLogType.getRcpLastName());
+                        if(!StringUtils.isEmpty(spamCount))
+                            callLogType.setSpamCount(spamCount);
+                    }else{
+                        if(!StringUtils.isEmpty(lastName))
+                            callLogType.setRcpLastName(lastName);
+                        if(!StringUtils.isEmpty(firstName))
+                            callLogType.setRcpFirstName(firstName);
+                        if(!StringUtils.isEmpty(prefix))
+                            callLogType.setPrefix(prefix);
+                        if(!StringUtils.isEmpty(suffix))
+                            callLogType.setSuffix(suffix);
+                        if(!StringUtils.isEmpty(middleName))
+                            callLogType.setMiddleName(middleName);
+                        if(!StringUtils.isEmpty(isRcpVerified))
+                            callLogType.setIsRcpVerfied(isRcpVerified);
+                        if(!StringUtils.isEmpty(rcpId))
+                            callLogType.setRcpId(rcpId);
+                        if(!StringUtils.isEmpty(profileRating))
+                            callLogType.setCallLogProfileRating(profileRating);
+                        if(!StringUtils.isEmpty(totalProfileRateUser))
+                            callLogType.setCallLogTotalProfileRateUser(totalProfileRateUser);
+                        if(!StringUtils.isEmpty(spamCount))
+                            callLogType.setSpamCount(spamCount);
+                    }
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return callLogType;
+    }
+
+    private void setRCPDetailsAndSpamCountforUnsavedNumbers(){
+        try{
+            if(callLogTypeArrayList.size()>0){
+                TableSpamDetailMaster tableSpamDetailMaster =  new TableSpamDetailMaster(getDatabaseHandler());
+                for(int i =0 ; i < callLogTypeArrayList.size() ; i++){
+                    if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
+                        return;
+                    CallLogType callLogType = callLogTypeArrayList.get(i);
+                    String number = callLogType.getNumber();
+                    if(!StringUtils.isEmpty(number)){
+                        if(number.startsWith("+91"))
+                            number =  number.replace("+","");
+                        else
+                            number =  "91" + number;
+
+                        SpamDataType spamDataType = tableSpamDetailMaster.getSpamDetailsFromNumber(number);
+                        if(spamDataType != null && !StringUtils.isEmpty(spamDataType.getSpamCount()))
+                        {
+                            String lastName =  spamDataType.getLastName();
+                            String firstName = spamDataType .getFirstName();
+                            String prefix =  spamDataType.getPrefix();
+                            String suffix =  spamDataType.getSuffix();
+                            String middleName =  spamDataType.getMiddleName();
+                            String isRcpVerified =  spamDataType.getRcpVerfiy();
+                            String rcpId =  spamDataType.getRcpPmId();
+                            String profileRating =  spamDataType.getProfileRating();
+                            String totalProfileRateUser = spamDataType.getTotalProfileRateUser();
+                            String spamCount =  spamDataType.getSpamCount();
+
+                            if(MoreObjects.firstNonNull(callLogType.isRcpUser(), false)){
+                                callLogType.setRcpFirstName(callLogType.getRcpFirstName());
+                                callLogType.setRcpLastName(callLogType.getRcpLastName());
+                                if(!StringUtils.isEmpty(spamCount))
+                                    callLogType.setSpamCount(spamCount);
+                            }else{
+                                if(!StringUtils.isEmpty(lastName))
+                                    callLogType.setRcpLastName(lastName);
+                                if(!StringUtils.isEmpty(firstName))
+                                    callLogType.setRcpFirstName(firstName);
+                                if(!StringUtils.isEmpty(prefix))
+                                    callLogType.setPrefix(prefix);
+                                if(!StringUtils.isEmpty(suffix))
+                                    callLogType.setSuffix(suffix);
+                                if(!StringUtils.isEmpty(middleName))
+                                    callLogType.setMiddleName(middleName);
+                                if(!StringUtils.isEmpty(isRcpVerified))
+                                    callLogType.setIsRcpVerfied(isRcpVerified);
+                                if(!StringUtils.isEmpty(rcpId))
+                                    callLogType.setRcpId(rcpId);
+                                if(!StringUtils.isEmpty(profileRating))
+                                    callLogType.setCallLogProfileRating(profileRating);
+                                if(!StringUtils.isEmpty(totalProfileRateUser))
+                                    callLogType.setCallLogTotalProfileRateUser(totalProfileRateUser);
+                                if(!StringUtils.isEmpty(spamCount))
+                                    callLogType.setSpamCount(spamCount);
+                            }
+
+                            callLogTypeArrayList.set(i,callLogType);
+                        }
+                    }
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     private void getPhoto() {
         try {
             if (callLogTypeArrayList.size() > 0) {

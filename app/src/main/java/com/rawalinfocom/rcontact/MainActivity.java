@@ -70,6 +70,7 @@ import com.rawalinfocom.rcontact.database.TableOrganizationMaster;
 import com.rawalinfocom.rcontact.database.TableProfileEmailMapping;
 import com.rawalinfocom.rcontact.database.TableProfileMaster;
 import com.rawalinfocom.rcontact.database.TableProfileMobileMapping;
+import com.rawalinfocom.rcontact.database.TableSpamDetailMaster;
 import com.rawalinfocom.rcontact.database.TableWebsiteMaster;
 import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.MaterialDialog;
@@ -427,7 +428,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                     ArrayList<SpamDataType> spamDataTypeList =  getProfileDataResponse.getSpamDataTypeArrayList();
                     if(spamDataTypeList.size()>0){
-                        rContactApplication.setArrayListSpamDataType(spamDataTypeList);
+                        try {
+                            TableSpamDetailMaster tableSpamDetailMaster =  new TableSpamDetailMaster(getDatabaseHandler());
+                            tableSpamDetailMaster.insertSpamDetails(spamDataTypeList);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                     }
                     Utils.setBooleanPreference(this, AppConstants
                             .PREF_GOT_ALL_PROFILE_DATA, true);

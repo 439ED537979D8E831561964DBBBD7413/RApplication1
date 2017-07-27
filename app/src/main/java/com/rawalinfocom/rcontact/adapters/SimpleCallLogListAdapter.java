@@ -2,7 +2,6 @@ package com.rawalinfocom.rcontact.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -47,6 +46,7 @@ import butterknife.ButterKnife;
  */
 
 public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
 
     private Context context;
     private ArrayList<CallLogType> arrayListCallLogs;
@@ -128,7 +128,7 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder contactViewHolder, int position) {
-        SimpleCallLogListAdapter.CallLogViewHolder holder = (SimpleCallLogListAdapter.CallLogViewHolder) contactViewHolder;
+        CallLogViewHolder holder = (CallLogViewHolder) contactViewHolder;
         final CallLogType callLogType = arrayListCallLogs.get(position);
         final String name = callLogType.getName();
         final String number = callLogType.getNumber();
@@ -144,6 +144,15 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             holder.textContactName.setTypeface(Utils.typefaceBold(context));
             holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                     .colorBlack));
+            if(!StringUtils.isEmpty(callLogType.getSpamCount())){
+                holder.imageViewSpam.setVisibility(View.VISIBLE);
+                holder.textSpamCount.setVisibility(View.VISIBLE);
+                holder.textSpamCount.setText(callLogType.getSpamCount());
+            }else{
+                holder.imageViewSpam.setVisibility(View.GONE);
+                holder.textSpamCount.setVisibility(View.GONE);
+            }
+
             if (MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
                 String contactDisplayName = "";
                 String firstName = callLogType.getRcpFirstName();
@@ -190,11 +199,114 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         } else {
             holder.textCloudContactName.setVisibility(View.GONE);
             if (!TextUtils.isEmpty(number)) {
-                holder.textContactName.setTypeface(Utils.typefaceBold(context));
+                if (!MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
+                    if (StringUtils.equalsIgnoreCase(callLogType.getIsRcpVerfied(),"0")) {
+                        holder.textContactName.setTypeface(Utils.typefaceBold(context));
+                        holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
+                                .textColorBlue));
+                        holder.textContactName.setText(formattedNumber);
+                        holder.textContactNumber.setText(context.getString(R.string.str_unsaved));
+                        String contactNameToDisplay = "";
+                        String prefix =  callLogType.getPrefix();
+                        String suffix =  callLogType.getSuffix();
+                        String firstName =  callLogType.getRcpFirstName();
+                        String middleName =  callLogType.getMiddleName();
+                        String lastName =  callLogType.getRcpLastName();
+
+                        if(StringUtils.length(prefix) > 0)
+                            contactNameToDisplay =  contactNameToDisplay + prefix + " ";
+                        if(StringUtils.length(suffix) > 0)
+                            contactNameToDisplay =  contactNameToDisplay + suffix + " ";
+                        if(StringUtils.length(firstName) > 0)
+                            contactNameToDisplay =  contactNameToDisplay +  firstName + " ";
+                        if(StringUtils.length(middleName) > 0)
+                            contactNameToDisplay =  contactNameToDisplay + middleName + " ";
+                        if(StringUtils.length(lastName) > 0)
+                            contactNameToDisplay = contactNameToDisplay +  lastName + "";
+
+                        if(!StringUtils.isEmpty(contactNameToDisplay)){
+                            holder.textCloudContactName.setVisibility(View.VISIBLE);
+                            holder.textCloudContactName.setTextColor(ContextCompat.getColor(context, R.color
+                                    .textColorBlue));
+                            holder.textCloudContactName.setText(" (" + contactNameToDisplay + ")");
+                        }else{
+                            holder.textCloudContactName.setVisibility(View.GONE);
+                        }
+
+
+                        if(!StringUtils.isEmpty(callLogType.getSpamCount())){
+                            holder.imageViewSpam.setVisibility(View.VISIBLE);
+                            holder.textSpamCount.setVisibility(View.VISIBLE);
+                            holder.textSpamCount.setText(callLogType.getSpamCount());
+
+                        }else{
+                            holder.imageViewSpam.setVisibility(View.GONE);
+                            holder.textSpamCount.setVisibility(View.GONE);
+                        }
+
+                    } else if (StringUtils.equalsIgnoreCase(callLogType.getIsRcpVerfied(),"1")) {
+                        holder.textContactName.setTypeface(Utils.typefaceBold(context));
+                        holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
+                                .colorAccent));
+                        holder.textContactName.setText(formattedNumber);
+                        holder.textContactNumber.setText(context.getString(R.string.str_unsaved));
+
+                        String contactNameToDisplay = "";
+                        String prefix =  callLogType.getPrefix();
+                        String suffix =  callLogType.getSuffix();
+                        String firstName =  callLogType.getRcpFirstName();
+                        String middleName =  callLogType.getMiddleName();
+                        String lastName =  callLogType.getRcpLastName();
+
+                        if(StringUtils.length(prefix) > 0)
+                            contactNameToDisplay =  contactNameToDisplay + prefix + " ";
+                        if(StringUtils.length(suffix) > 0)
+                            contactNameToDisplay =  contactNameToDisplay + suffix + " ";
+                        if(StringUtils.length(firstName) > 0)
+                            contactNameToDisplay =  contactNameToDisplay +  firstName + " ";
+                        if(StringUtils.length(middleName) > 0)
+                            contactNameToDisplay =  contactNameToDisplay + middleName + " ";
+                        if(StringUtils.length(lastName) > 0)
+                            contactNameToDisplay = contactNameToDisplay +  lastName + "";
+
+                        if(!StringUtils.isEmpty(contactNameToDisplay)){
+                            holder.textCloudContactName.setVisibility(View.VISIBLE);
+                            holder.textCloudContactName.setTextColor(ContextCompat.getColor(context, R.color
+                                    .colorAccent));
+                            holder.textCloudContactName.setText(" (" + contactNameToDisplay + ")");
+                        }else{
+                            holder.textCloudContactName.setVisibility(View.GONE);
+                        }
+
+                        if(!StringUtils.isEmpty(callLogType.getSpamCount())){
+                            holder.imageViewSpam.setVisibility(View.VISIBLE);
+                            holder.textSpamCount.setVisibility(View.VISIBLE);
+                            holder.textSpamCount.setText(callLogType.getSpamCount());
+                        }else {
+                            holder.imageViewSpam.setVisibility(View.GONE);
+                            holder.textSpamCount.setVisibility(View.GONE);
+                        }
+                    } else {
+                        holder.textContactName.setTypeface(Utils.typefaceBold(context));
+                        holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
+                                .colorBlack));
+                        holder.textContactName.setText(formattedNumber);
+                        holder.textContactNumber.setText(context.getString(R.string.str_unsaved));
+                        if(!StringUtils.isEmpty(callLogType.getSpamCount())){
+                            holder.imageViewSpam.setVisibility(View.VISIBLE);
+                            holder.textSpamCount.setVisibility(View.VISIBLE);
+                            holder.textSpamCount.setText(callLogType.getSpamCount());
+                        }else{
+                            holder.imageViewSpam.setVisibility(View.GONE);
+                            holder.textSpamCount.setVisibility(View.GONE);
+                        }
+                    }
+                }
+                /*holder.textContactName.setTypeface(Utils.typefaceBold(context));
                 holder.textContactName.setTextColor(ContextCompat.getColor(context, R.color
                         .colorBlack));
                 holder.textContactName.setText(formattedNumber);
-                holder.textContactNumber.setText(context.getString(R.string.str_unsaved));
+                holder.textContactNumber.setText(context.getString(R.string.str_unsaved));*/
             } else {
                 holder.textContactName.setText(" ");
             }
@@ -563,6 +675,10 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
         public TextView textTempNumber;
         @BindView(R.id.text_contact_number)
         TextView textContactNumber;
+        @BindView(R.id.image_view_spam)
+        ImageView imageViewSpam;
+        @BindView(R.id.text_spam_count)
+        TextView textSpamCount;
 
         CallLogViewHolder(View itemView) {
             super(itemView);

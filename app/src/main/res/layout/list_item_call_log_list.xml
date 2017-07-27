@@ -157,6 +157,25 @@
                     android:textColor="@color/vividBlue"
                     android:visibility="gone"/>
 
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:id="@+id/image_view_spam"
+                    android:layout_marginLeft="@dimen/margin_5dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="2dp"
+                    android:src="@drawable/ico_spam_svg"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/text_spam_count"
+                    android:layout_gravity="center"
+                    tools:text="01"
+                    android:textColor="@color/spamRed"
+                    android:layout_marginBottom="2dp"
+                    android:visibility="gone"/>
 
             </LinearLayout>
 
