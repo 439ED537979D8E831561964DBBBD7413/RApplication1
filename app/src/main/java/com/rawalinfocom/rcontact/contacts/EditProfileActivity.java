@@ -306,13 +306,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     @BindView(R.id.relative_action_back)
     RelativeLayout relativeActionBack;
 
-    EditText inputCountry;
+/*    EditText inputCountry;
     EditText inputState;
     EditText inputCity;
     EditText inputStreet;
     EditText inputNeighborhood;
     EditText inputPinCode;
-    TextView textImageMapMarker;
+    TextView textImageMapMarker;*/
 
     ArrayAdapter<String> spinnerPhoneAdapter, spinnerEmailAdapter, spinnerAddressAdapter,
             spinnerWebsiteAdapter,
@@ -351,7 +351,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     MaterialDialog backConfirmationDialog;
 
     ColorStateList defaultMarkerColor;
-    boolean isAddressModified = false;
+//    boolean isAddressModified = false;
 
     //<editor-fold desc="Override Methods">
 
@@ -474,8 +474,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 textLongitude.setText(objAddress.getLongitude());
                 textGoogleAddress.setText(objAddress.getAddress());
                 textImageMapMarker.setTextColor(defaultMarkerColor);
-                isAddressModified = false;
-//                inputIsAddressModified.setText("false");
+//                isAddressModified = false;
+                inputIsAddressModified.setText("false");
 //                }
 
             }
@@ -1129,6 +1129,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             .input_google_address);
                     TextView textIsPublic = (TextView) linearAddress.findViewById(R.id
                             .text_is_public);
+                    TextView inputIsAddressModified = (TextView) linearAddress.findViewById(R.id
+                            .input_is_address_modified);
+                    TextView textImageMapMarker = (TextView) linearAddress.findViewById(R.id
+                            .text_image_map_marker);
 
                     String countryName = country.getText().toString();
                     String stateName = state.getText().toString();
@@ -1169,7 +1173,10 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                         if (!StringUtils.isBlank(address.getGoogleLatLong().get(0))
                                                 && !StringUtils.isBlank(address.getGoogleLatLong
                                                 ().get(1))) {
-                                            if (!isAddressModified) {
+//                                            if (!isAddressModified) {
+                                            if (!StringUtils.equalsAnyIgnoreCase
+                                                    (inputIsAddressModified.getText().toString(),
+                                                            "true")) {
                                                 arrayListNewAddress.add(address);
                                             } else {
                                                 Utils.showErrorSnackBar(this,
@@ -1412,7 +1419,32 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         }
     };
 
-    TextWatcher addressTextWatcher = new TextWatcher() {
+    private void setAddressTextWatcher(EditText applyWatcher, final TextView textImageMapMarker,
+                                       final TextView inputIsAddressModified) {
+
+        TextWatcher addressTextWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                textImageMapMarker.setTextColor(defaultMarkerColor);
+                inputIsAddressModified.setText("true");
+                isUpdated = true;
+            }
+        };
+
+        applyWatcher.addTextChangedListener(addressTextWatcher);
+
+    }
+
+    /*TextWatcher addressTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -1429,7 +1461,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             isAddressModified = true;
             isUpdated = true;
         }
-    };
+    };*/
 
     private void setFonts() {
 
@@ -2261,18 +2293,33 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             for (int i = 0; i < arrayListAddressObject.size(); i++) {
                 addAddressView(arrayListAddressObject.get(i), i);
             }
-           /* inputCountry.addTextChangedListener(valueTextWatcher);
-            inputState.addTextChangedListener(valueTextWatcher);
-            inputCity.addTextChangedListener(valueTextWatcher);
-            inputStreet.addTextChangedListener(valueTextWatcher);
-            inputNeighborhood.addTextChangedListener(valueTextWatcher);
-            inputPinCode.addTextChangedListener(valueTextWatcher);*/
-            inputCountry.addTextChangedListener(addressTextWatcher);
+            for (int i = 0; i < linearAddressDetails.getChildCount(); i++) {
+                View linearAddress = linearAddressDetails.getChildAt(i);
+                EditText inputCountry = (EditText) linearAddress.findViewById(R.id.input_country);
+                EditText inputState = (EditText) linearAddress.findViewById(R.id.input_state);
+                EditText inputCity = (EditText) linearAddress.findViewById(R.id.input_city);
+                EditText inputStreet = (EditText) linearAddress.findViewById(R.id.input_street);
+                EditText inputNeighborhood = (EditText) linearAddress.findViewById(R.id
+                        .input_neighborhood);
+                EditText inputPinCode = (EditText) linearAddress.findViewById(R.id.input_pin_code);
+                TextView inputIsAddressModified = (TextView) linearAddress.findViewById(R.id
+                        .input_is_address_modified);
+                TextView textImageMapMarker = (TextView) linearAddress.findViewById(R.id
+                        .text_image_map_marker);
+                setAddressTextWatcher(inputCountry, textImageMapMarker, inputIsAddressModified);
+                setAddressTextWatcher(inputState, textImageMapMarker, inputIsAddressModified);
+                setAddressTextWatcher(inputCity, textImageMapMarker, inputIsAddressModified);
+                setAddressTextWatcher(inputStreet, textImageMapMarker, inputIsAddressModified);
+                setAddressTextWatcher(inputNeighborhood, textImageMapMarker,
+                        inputIsAddressModified);
+                setAddressTextWatcher(inputPinCode, textImageMapMarker, inputIsAddressModified);
+            }
+           /* inputCountry.addTextChangedListener(addressTextWatcher);
             inputState.addTextChangedListener(addressTextWatcher);
             inputCity.addTextChangedListener(addressTextWatcher);
             inputStreet.addTextChangedListener(addressTextWatcher);
             inputNeighborhood.addTextChangedListener(addressTextWatcher);
-            inputPinCode.addTextChangedListener(addressTextWatcher);
+            inputPinCode.addTextChangedListener(addressTextWatcher);*/
         } else {
             addAddressView(null, 0);
         }
@@ -2752,19 +2799,22 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 null);
 //        TextView textImageCross = (TextView) view.findViewById(R.id.text_image_cross);
         ImageView imageViewDelete = (ImageView) view.findViewById(R.id.image_delete);
-        textImageMapMarker = (TextView) view.findViewById(R.id.text_image_map_marker);
+        final TextView textImageMapMarker = (TextView) view.findViewById(R.id
+                .text_image_map_marker);
         Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
-        inputCountry = (EditText) view.findViewById(R.id.input_country);
-        inputState = (EditText) view.findViewById(R.id.input_state);
-        inputCity = (EditText) view.findViewById(R.id.input_city);
-        inputStreet = (EditText) view.findViewById(R.id.input_street);
-        inputNeighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
-        inputPinCode = (EditText) view.findViewById(R.id.input_pin_code);
+        final EditText inputCountry = (EditText) view.findViewById(R.id.input_country);
+        final EditText inputState = (EditText) view.findViewById(R.id.input_state);
+        final EditText inputCity = (EditText) view.findViewById(R.id.input_city);
+        final EditText inputStreet = (EditText) view.findViewById(R.id.input_street);
+        final EditText inputNeighborhood = (EditText) view.findViewById(R.id.input_neighborhood);
+        final EditText inputPinCode = (EditText) view.findViewById(R.id.input_pin_code);
         final EditText inputPoBox = (EditText) view.findViewById(R.id.input_po_box);
         final TextView textLatitude = (TextView) view.findViewById(R.id.input_latitude);
         final TextView textLongitude = (TextView) view.findViewById(R.id.input_longitude);
         final TextView textGoogleAddress = (TextView) view.findViewById(R.id.input_google_address);
         final TextView textIsPublic = (TextView) view.findViewById(R.id.text_is_public);
+        final TextView inputIsAddressModified = (TextView) view.findViewById(R.id
+                .input_is_address_modified);
 
         final RelativeLayout relativeRowEditProfile = (RelativeLayout) view.findViewById(R.id
                 .relative_row_edit_profile);
@@ -2808,6 +2858,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         inputNeighborhood.addTextChangedListener(addressTextWatcher);
         inputPinCode.addTextChangedListener(addressTextWatcher);*/
 
+        /*setAddressTextWatcher(inputCountry, textImageMapMarker, inputIsAddressModified);
+        setAddressTextWatcher(inputState, textImageMapMarker, inputIsAddressModified);
+        setAddressTextWatcher(inputCity, textImageMapMarker, inputIsAddressModified);
+        setAddressTextWatcher(inputStreet, textImageMapMarker, inputIsAddressModified);
+        setAddressTextWatcher(inputNeighborhood, textImageMapMarker, inputIsAddressModified);
+        setAddressTextWatcher(inputPinCode, textImageMapMarker, inputIsAddressModified);*/
+
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, R.layout
                 .list_item_spinner, getResources().getStringArray(R.array.types_email_address));
         spinnerType.setAdapter(spinnerAdapter);
@@ -2842,12 +2899,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
             spinnerType.setSelection(spinnerPosition);
             relativeRowEditProfile.setTag(address.getAddId());
         } else {
-            inputCountry.addTextChangedListener(addressTextWatcher);
+          /*  inputCountry.addTextChangedListener(addressTextWatcher);
             inputState.addTextChangedListener(addressTextWatcher);
             inputCity.addTextChangedListener(addressTextWatcher);
             inputStreet.addTextChangedListener(addressTextWatcher);
             inputNeighborhood.addTextChangedListener(addressTextWatcher);
-            inputPinCode.addTextChangedListener(addressTextWatcher);
+            inputPinCode.addTextChangedListener(addressTextWatcher);*/
+            setAddressTextWatcher(inputCountry, textImageMapMarker, inputIsAddressModified);
+            setAddressTextWatcher(inputState, textImageMapMarker, inputIsAddressModified);
+            setAddressTextWatcher(inputCity, textImageMapMarker, inputIsAddressModified);
+            setAddressTextWatcher(inputStreet, textImageMapMarker, inputIsAddressModified);
+            setAddressTextWatcher(inputNeighborhood, textImageMapMarker, inputIsAddressModified);
+            setAddressTextWatcher(inputPinCode, textImageMapMarker, inputIsAddressModified);
         }
 
 
@@ -2911,7 +2974,9 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     intent.putExtra(AppConstants.EXTRA_LATITUDE, mapLatitude);
                     intent.putExtra(AppConstants.EXTRA_LONGITUDE, mapLongitude);*/
 
-                        if (!isAddressModified) {
+//                        if (!isAddressModified) {
+                        if (!StringUtils.equalsAnyIgnoreCase(inputIsAddressModified.getText()
+                                .toString(), "true")) {
                             intent.putExtra(AppConstants.EXTRA_LATITUDE, Double.parseDouble
                                     (StringUtils.defaultIfEmpty(textLatitude.getText().toString(),
                                             "0")));
