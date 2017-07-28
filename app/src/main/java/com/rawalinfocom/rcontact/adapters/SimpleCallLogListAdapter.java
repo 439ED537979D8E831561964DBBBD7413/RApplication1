@@ -490,41 +490,84 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                         }
                     }
                 } else {
-                    if (!TextUtils.isEmpty(name)) {
-                        if (StringUtils.containsOnly(name, "\\d+")) {
-                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
-                                            " " + name, mActivity.getString(R.string.add_to_contact),
-                                    mActivity.getString(R.string.add_to_existing_contact)
-                                    , mActivity.getString(R.string.send_sms), mActivity.getString(R.string.remove_from_call_log),
-                                    mActivity.getString(R.string.copy_phone_number)/*,mActivity.getString(R.string.call_reminder), mActivity.getString(R.string.block)*/));
 
-                        } else {
-                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
-                                            " " + name, mActivity.getString(R.string.send_sms),
-                                    mActivity.getString(R.string.remove_from_call_log), mActivity.getString(R.string.copy_phone_number)
-                                    /*mActivity.getString(R.string.call_reminder), mActivity.getString(R.string.block)*/));
-                        }
+                    arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
+                                    (!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)), mActivity.getString(R.string.send_sms),
+                            mActivity.getString(R.string.remove_from_call_log), mActivity.getString(R.string.copy_phone_number)));
 
-                        materialListDialog = new MaterialListDialog(mActivity, arrayListForKnownContact, number, date, name, uniqueRowID, "");
-                        materialListDialog.setDialogTitle(name);
-                        materialListDialog.showDialog();
+                    materialListDialog = new MaterialListDialog(mActivity, arrayListForKnownContact, number, date, name, uniqueRowID, "");
+                    materialListDialog.setDialogTitle((!TextUtils.isEmpty(name) ? (" " + name) : (" " + number)));
+                    materialListDialog.showDialog();
 
-                    } else {
-                        if (!TextUtils.isEmpty(number)) {
-                            String formatedNumber = Utils.getFormattedNumber(mActivity, number);
-                            arrayListForUnknownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
-                                            " " + formatedNumber, mActivity.getString(R.string.add_to_contact),
-                                    mActivity.getString(R.string.add_to_existing_contact)
-                                    , mActivity.getString(R.string.send_sms), mActivity.getString(R.string.remove_from_call_log),
-                                    mActivity.getString(R.string.copy_phone_number)/*,mActivity.getString(R.string.call_reminder), mActivity.getString(R.string.block)*/));
-
-                            materialListDialog = new MaterialListDialog(mActivity, arrayListForUnknownContact, number, date, "", uniqueRowID,
-                                    "");
-                            materialListDialog.setDialogTitle(number);
-                            materialListDialog.setCallingAdapter(SimpleCallLogListAdapter.this);
-                            materialListDialog.showDialog();
-                        }
-                    }
+//                    if (!TextUtils.isEmpty(name)) {
+//                        if (StringUtils.containsOnly(name, "\\d+")) {
+//                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
+//                                            " " + name, mActivity.getString(R.string.add_to_contact),
+//                                    mActivity.getString(R.string.add_to_existing_contact)
+//                                    , mActivity.getString(R.string.send_sms), mActivity.getString(R.string.remove_from_call_log),
+//                                    mActivity.getString(R.string.copy_phone_number)/*,mActivity.getString(R.string.call_reminder), mActivity.getString(R.string.block)*/));
+//
+//                        } else {
+//                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
+//                                            " " + name, mActivity.getString(R.string.send_sms),
+//                                    mActivity.getString(R.string.remove_from_call_log), mActivity.getString(R.string.copy_phone_number)
+//                                    /*mActivity.getString(R.string.call_reminder), mActivity.getString(R.string.block)*/));
+//                        }
+//
+//                        materialListDialog = new MaterialListDialog(mActivity, arrayListForKnownContact, number, date, name, uniqueRowID, "");
+//                        materialListDialog.setDialogTitle(name);
+//                        materialListDialog.showDialog();
+//
+//                    } else {
+//                        if (!TextUtils.isEmpty(number)) {
+//                            String formatedNumber = Utils.getFormattedNumber(mActivity, number);
+//                            arrayListForUnknownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
+//                                            " " + formatedNumber, mActivity.getString(R.string.add_to_contact),
+//                                    mActivity.getString(R.string.add_to_existing_contact)
+//                                    , mActivity.getString(R.string.send_sms), mActivity.getString(R.string.remove_from_call_log),
+//                                    mActivity.getString(R.string.copy_phone_number)/*,mActivity.getString(R.string.call_reminder), mActivity.getString(R.string.block)*/));
+//
+//                            materialListDialog = new MaterialListDialog(mActivity, arrayListForUnknownContact, number, date, "", uniqueRowID,
+//                                    "");
+//                            materialListDialog.setDialogTitle(number);
+//                            materialListDialog.setCallingAdapter(SimpleCallLogListAdapter.this);
+//                            materialListDialog.showDialog();
+//                        }
+//                    }if (!TextUtils.isEmpty(name)) {
+//                        if (StringUtils.containsOnly(name, "\\d+")) {
+//                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
+//                                            " " + name, mActivity.getString(R.string.add_to_contact),
+//                                    mActivity.getString(R.string.add_to_existing_contact)
+//                                    , mActivity.getString(R.string.send_sms), mActivity.getString(R.string.remove_from_call_log),
+//                                    mActivity.getString(R.string.copy_phone_number)/*,mActivity.getString(R.string.call_reminder), mActivity.getString(R.string.block)*/));
+//
+//                        } else {
+//                            arrayListForKnownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
+//                                            " " + name, mActivity.getString(R.string.send_sms),
+//                                    mActivity.getString(R.string.remove_from_call_log), mActivity.getString(R.string.copy_phone_number)
+//                                    /*mActivity.getString(R.string.call_reminder), mActivity.getString(R.string.block)*/));
+//                        }
+//
+//                        materialListDialog = new MaterialListDialog(mActivity, arrayListForKnownContact, number, date, name, uniqueRowID, "");
+//                        materialListDialog.setDialogTitle(name);
+//                        materialListDialog.showDialog();
+//
+//                    } else {
+//                        if (!TextUtils.isEmpty(number)) {
+//                            String formatedNumber = Utils.getFormattedNumber(mActivity, number);
+//                            arrayListForUnknownContact = new ArrayList<>(Arrays.asList(mActivity.getString(R.string.action_call) +
+//                                            " " + formatedNumber, mActivity.getString(R.string.add_to_contact),
+//                                    mActivity.getString(R.string.add_to_existing_contact)
+//                                    , mActivity.getString(R.string.send_sms), mActivity.getString(R.string.remove_from_call_log),
+//                                    mActivity.getString(R.string.copy_phone_number)/*,mActivity.getString(R.string.call_reminder), mActivity.getString(R.string.block)*/));
+//
+//                            materialListDialog = new MaterialListDialog(mActivity, arrayListForUnknownContact, number, date, "", uniqueRowID,
+//                                    "");
+//                            materialListDialog.setDialogTitle(number);
+//                            materialListDialog.setCallingAdapter(SimpleCallLogListAdapter.this);
+//                            materialListDialog.showDialog();
+//                        }
+//                    }
                 }
 
             }

@@ -466,7 +466,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     } else {
                         ArrayList<SmsDataType> callLogTypeArrayList = divideSmsLogByChunck();
                         if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
-                            insertSMSLogServiceCall(callLogTypeArrayList);
+//                            insertSMSLogServiceCall(callLogTypeArrayList);
                             logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
                         } else {
 //                            Toast.makeText(this,"All Call Logs Synced",Toast.LENGTH_SHORT).show();
@@ -2251,10 +2251,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     .PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0")) {
                 getLatestCallLogsByRawId();
             }
-
             if (!Utils.getStringPreference(MainActivity.this, AppConstants.PREF_SMS_SYNC_TIME, "0").equalsIgnoreCase("0")) {
                 getLatestSms();
             }
+
+
             return null;
         }
     }
