@@ -111,7 +111,7 @@ public class WsResponseObject {
         this.status = status;
     }
 
-    @JsonProperty("smsLogTimestamp")
+    @JsonProperty("sms_date")
     public String getSmsLogTimestamp() {
         return smsLogTimestamp;
     }
