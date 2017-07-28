@@ -92,29 +92,42 @@ public class NotificationsActivity extends BaseActivity implements RippleView
 
     private void initData() {
 
-        int timeLineCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_TIMELINE);
-        int profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
-        int profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
-        int ratingCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RATE);
-        int commentsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_COMMENTS);
-        int rContactsCount = getNotificationCountByType(databaseHandler, AppConstants.NOTIFICATION_TYPE_RUPDATE);
+        int timeLineCount = getNotificationCountByType(databaseHandler, AppConstants
+                .NOTIFICATION_TYPE_TIMELINE);
+        int profileRequestCount = getNotificationCountByType(databaseHandler, AppConstants
+                .NOTIFICATION_TYPE_PROFILE_REQUEST);
+        int profileResponseCount = getNotificationCountByType(databaseHandler, AppConstants
+                .NOTIFICATION_TYPE_PROFILE_RESPONSE);
+        int ratingCount = getNotificationCountByType(databaseHandler, AppConstants
+                .NOTIFICATION_TYPE_RATE);
+        int commentsCount = getNotificationCountByType(databaseHandler, AppConstants
+                .NOTIFICATION_TYPE_COMMENTS);
+        int rContactsCount = getNotificationCountByType(databaseHandler, AppConstants
+                .NOTIFICATION_TYPE_RUPDATE);
 
         int profileCount = profileRequestCount + profileResponseCount;
 
-        int totalCount = timeLineCount + profileCount + ratingCount + commentsCount + rContactsCount;
+        int totalCount = timeLineCount + profileCount + ratingCount + commentsCount +
+                rContactsCount;
         if (totalCount > 0) {
             textNotificationsCount.setText(String.valueOf(totalCount));
             textNotificationsCount.setVisibility(View.VISIBLE);
         } else {
             textNotificationsCount.setVisibility(View.GONE);
         }
-        NotificationItem item1 = new NotificationItem(getResources().getString(R.string.nav_text_timeline), timeLineCount, 1);
-        NotificationItem item2 = new NotificationItem(getResources().getString(R.string.text_tab_profile), profileCount, 2);
-        NotificationItem item3 = new NotificationItem(getResources().getString(R.string.str_tab_rating), ratingCount, 3);
-        NotificationItem item4 = new NotificationItem(getResources().getString(R.string.text_tab_comments), commentsCount, 4);
-        NotificationItem item5 = new NotificationItem(getResources().getString(R.string.text_tab_rcontact), rContactsCount, 5);
+        NotificationItem item1 = new NotificationItem(getResources().getString(R.string
+                .nav_text_timeline), timeLineCount, 1);
+        NotificationItem item2 = new NotificationItem(getResources().getString(R.string
+                .text_tab_profile), profileCount, 2);
+        NotificationItem item3 = new NotificationItem(getResources().getString(R.string
+                .str_tab_rating), ratingCount, 3);
+        NotificationItem item4 = new NotificationItem(getResources().getString(R.string
+                .text_tab_comments), commentsCount, 4);
+        NotificationItem item5 = new NotificationItem(getResources().getString(R.string
+                .text_tab_rcontact), rContactsCount, 5);
 
-        List<NotificationItem> listNotificationsMain = Arrays.asList(item1, item2, item3, item4, item5);
+        List<NotificationItem> listNotificationsMain = Arrays.asList(item1, item2, item3, item4,
+                item5);
         notificationsMainAdapter = new NotificationsMainAdapter(listNotificationsMain, this);
         recyclerNotificationMain.setAdapter(notificationsMainAdapter);
         recyclerNotificationMain.setLayoutManager(new LinearLayoutManager(this));
@@ -124,7 +137,8 @@ public class NotificationsActivity extends BaseActivity implements RippleView
 
     private int getNotificationCountByType(DatabaseHandler databaseHandler, int type) {
 
-        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster(databaseHandler);
+        TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster
+                (databaseHandler);
         return notificationStateMaster.getTotalUnreadCountByType(type);
     }
 
@@ -133,7 +147,8 @@ public class NotificationsActivity extends BaseActivity implements RippleView
                 .getInstance(NotificationsActivity.this);
         IntentFilter intentFilterUpdateCount = new IntentFilter(AppConstants
                 .ACTION_LOCAL_BROADCAST_UPDATE_NOTIFICATION_COUNT);
-        localBroadcastManagerUpdateNotificationCount.registerReceiver(localBroadCastReceiverUpdateCount, intentFilterUpdateCount);
+        localBroadcastManagerUpdateNotificationCount.registerReceiver
+                (localBroadCastReceiverUpdateCount, intentFilterUpdateCount);
     }
 
     private BroadcastReceiver localBroadCastReceiverUpdateCount = new BroadcastReceiver() {

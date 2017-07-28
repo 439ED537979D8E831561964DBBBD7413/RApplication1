@@ -25,6 +25,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -2399,11 +2400,13 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
         List<String> typeList;
 
         switch (viewType) {
+
+            //<editor-fold desc="PHONE_NUMBER">
             case AppConstants.PHONE_NUMBER:
                 linerCheckbox.setVisibility(View.GONE);
                 imageViewDelete.setTag(AppConstants.PHONE_NUMBER);
                 inputValue.setHint(R.string.hint_number);
-                spinnerType.setTag(AppConstants.PHONE_NUMBER);
+                spinnerType.setTag(R.id.spinner_type, AppConstants.PHONE_NUMBER);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_phone_number)));
                 spinnerPhoneAdapter = new ArrayAdapter<>(this, R.layout.list_item_spinner,
@@ -2441,15 +2444,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 .getPhoneType());
                     }
                     spinnerType.setSelection(spinnerPosition);
+                    spinnerType.setTag(R.id.spinner_position, spinnerPosition);
                     relativeRowEditProfile.setTag(phoneNumber.getPhoneId());
                 }
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="EMAIL">
             case AppConstants.EMAIL:
                 linerCheckbox.setVisibility(View.GONE);
                 imageViewDelete.setTag(AppConstants.EMAIL);
                 inputValue.setHint(R.string.hint_email);
-                spinnerType.setTag(AppConstants.EMAIL);
+                spinnerType.setTag(R.id.spinner_type, AppConstants.EMAIL);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_email_address)));
                 spinnerEmailAdapter = new ArrayAdapter<>(this, R.layout
@@ -2471,15 +2477,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         spinnerPosition = spinnerEmailAdapter.getPosition(email.getEmType());
                     }
                     spinnerType.setSelection(spinnerPosition);
+                    spinnerType.setTag(R.id.spinner_position, spinnerPosition);
                     relativeRowEditProfile.setTag(email.getEmId());
                 }
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="WEBSITE">
             case AppConstants.WEBSITE:
                 linerCheckbox.setVisibility(View.GONE);
                 imageViewDelete.setTag(AppConstants.WEBSITE);
                 inputValue.setHint(getString(R.string.hint_web_address));
-                spinnerType.setTag(AppConstants.WEBSITE);
+                spinnerType.setTag(R.id.spinner_type, AppConstants.WEBSITE);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_email_address)));
                 spinnerWebsiteAdapter = new ArrayAdapter<>(this, R.layout
@@ -2504,15 +2513,18 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 ());
                     }
                     spinnerType.setSelection(spinnerPosition);
+                    spinnerType.setTag(R.id.spinner_position, spinnerPosition);
                     relativeRowEditProfile.setTag(webAddress.getWebId());
                 }
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="IM_ACCOUNT">
             case AppConstants.IM_ACCOUNT:
                 linerCheckbox.setVisibility(View.GONE);
                 imageViewDelete.setTag(AppConstants.IM_ACCOUNT);
                 inputValue.setHint(R.string.hint_account_name);
-                spinnerType.setTag(AppConstants.IM_ACCOUNT);
+                spinnerType.setTag(R.id.spinner_type, AppConstants.IM_ACCOUNT);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_social_media)));
                 spinnerImAccountAdapter = new ArrayAdapter<>(this, R.layout
@@ -2539,16 +2551,19 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                                 .getIMAccountProtocol());
                     }
                     spinnerType.setSelection(spinnerPosition);
+                    spinnerType.setTag(R.id.spinner_position, spinnerPosition);
                     relativeRowEditProfile.setTag(imAccount.getIMId());
                 }
                 break;
+            //</editor-fold>
 
+            //<editor-fold desc="EVENT">
             case AppConstants.EVENT:
                 linerCheckbox.setVisibility(View.GONE);
                 imageViewDelete.setTag(AppConstants.EVENT);
                 inputValue.setHint(R.string.hint_choose_date);
                 inputValue.setFocusable(false);
-                spinnerType.setTag(AppConstants.EVENT);
+                spinnerType.setTag(R.id.spinner_type, AppConstants.EVENT);
                 imageViewCalender.setVisibility(View.VISIBLE);
                 typeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                         .array.types_Event)));
@@ -2574,6 +2589,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                         spinnerPosition = spinnerEventAdapter.getPosition(event.getEventType());
                     }
                     spinnerType.setSelection(spinnerPosition);
+                    spinnerType.setTag(R.id.spinner_position, spinnerPosition);
                     relativeRowEditProfile.setTag(event.getEventId());
                 }
 
@@ -2585,12 +2601,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     }
                 });
                 break;
+            //</editor-fold>
 
             default:
                 getResources().getStringArray(R.array.types_email_address);
                 break;
         }
 
+        //<editor-fold desc="imageViewDelete Click">
         imageViewDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -2641,10 +2659,17 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 }
             }
         });
+        //</editor-fold>
 
         spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                if (((Integer) spinnerType.getTag(R.id.spinner_position)) == position) {
+                if (spinnerType.getTag(R.id.spinner_position) != null && ((Integer) spinnerType
+                        .getTag(R.id.spinner_position)) == position) {
+                    return;
+                }
+                spinnerType.setTag(R.id.spinner_position, position);
                 String items = spinnerType.getSelectedItem().toString();
                 if (items.equalsIgnoreCase("Custom")) {
                     showCustomTypeDialog(spinnerType);
@@ -2737,12 +2762,12 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
     @SuppressLint("InflateParams")
     private void addAddressView(final Object detailObject, final int position) {
-        View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_address,
+        final View view = LayoutInflater.from(this).inflate(R.layout.list_item_edit_profile_address,
                 null);
         ImageView imageViewDelete = (ImageView) view.findViewById(R.id.image_delete);
         final TextView textImageMapMarker = (TextView) view.findViewById(R.id
                 .text_image_map_marker);
-        Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
+        final Spinner spinnerType = (Spinner) view.findViewById(R.id.spinner_type);
         final EditText inputCountry = (EditText) view.findViewById(R.id.input_country);
         final EditText inputState = (EditText) view.findViewById(R.id.input_state);
         final EditText inputCity = (EditText) view.findViewById(R.id.input_city);
@@ -2789,6 +2814,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
 
         defaultMarkerColor = textImageMapMarker.getTextColors();
 
+        spinnerType.setTag(R.id.spinner_type, AppConstants.ADDRESS);
+
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, R.layout
                 .list_item_spinner, getResources().getStringArray(R.array.types_email_address));
         spinnerType.setAdapter(spinnerAdapter);
@@ -2821,6 +2848,7 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 spinnerPosition = spinnerAddressAdapter.getPosition(address.getAddressType());
             }
             spinnerType.setSelection(spinnerPosition);
+            spinnerType.setTag(R.id.spinner_position, spinnerPosition);
             relativeRowEditProfile.setTag(address.getAddId());
         } else {
             setAddressTextWatcher(inputCountry, textImageMapMarker, inputIsAddressModified);
@@ -2921,6 +2949,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                     Utils.showErrorSnackBar(EditProfileActivity.this, relativeRootEditProfile,
                             "Please add address!");
                 }
+            }
+        });
+
+        spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (spinnerType.getTag(R.id.spinner_position) != null && ((Integer) spinnerType
+                        .getTag(R.id.spinner_position)) == position) {
+                    return;
+                }
+                spinnerType.setTag(R.id.spinner_position, position);
+                String items = spinnerType.getSelectedItem().toString();
+                if (items.equalsIgnoreCase("Custom")) {
+                    showCustomTypeDialog(spinnerType);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -3122,12 +3170,14 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                 if (!StringUtils.isBlank(inputCustomName.getText().toString())) {
                     Utils.hideSoftKeyboard(EditProfileActivity.this, inputCustomName);
                     dialog.dismiss();
-                    switch ((Integer) spinnerType.getTag()) {
+                    switch ((Integer) spinnerType.getTag(R.id.spinner_type)) {
                         case AppConstants.PHONE_NUMBER:
                             spinnerPhoneAdapter.add(inputCustomName.getText().toString());
                             spinnerPhoneAdapter.notifyDataSetChanged();
                             spinnerType.setSelection(spinnerPhoneAdapter.getPosition(inputCustomName
                                     .getText().toString()));
+                            spinnerType.setTag(R.id.spinner_position, spinnerPhoneAdapter
+                                    .getPosition(inputCustomName.getText().toString()));
                             break;
 
                         case AppConstants.EMAIL:
@@ -3135,6 +3185,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             spinnerEmailAdapter.notifyDataSetChanged();
                             spinnerType.setSelection(spinnerEmailAdapter.getPosition(inputCustomName
                                     .getText().toString()));
+                            spinnerType.setTag(R.id.spinner_position, spinnerEmailAdapter
+                                    .getPosition(inputCustomName.getText().toString()));
                             break;
 
                         case AppConstants.WEBSITE:
@@ -3143,6 +3195,8 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             spinnerType.setSelection(spinnerWebsiteAdapter.getPosition
                                     (inputCustomName
                                             .getText().toString()));
+                            spinnerType.setTag(R.id.spinner_position, spinnerWebsiteAdapter
+                                    .getPosition(inputCustomName.getText().toString()));
                             break;
 
                         case AppConstants.EVENT:
@@ -3150,14 +3204,26 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
                             spinnerEventAdapter.notifyDataSetChanged();
                             spinnerType.setSelection(spinnerEventAdapter.getPosition(inputCustomName
                                     .getText().toString()));
+                            spinnerType.setTag(R.id.spinner_position, spinnerEventAdapter
+                                    .getPosition(inputCustomName.getText().toString()));
                             break;
 
                         case AppConstants.IM_ACCOUNT:
                             spinnerImAccountAdapter.add(inputCustomName.getText().toString());
                             spinnerImAccountAdapter.notifyDataSetChanged();
                             spinnerType.setSelection(spinnerImAccountAdapter.getPosition
-                                    (inputCustomName
-                                            .getText().toString()));
+                                    (inputCustomName.getText().toString()));
+                            spinnerType.setTag(R.id.spinner_position, spinnerImAccountAdapter
+                                    .getPosition(inputCustomName.getText().toString()));
+                            break;
+
+                        case AppConstants.ADDRESS:
+                            spinnerAddressAdapter.add(inputCustomName.getText().toString());
+                            spinnerAddressAdapter.notifyDataSetChanged();
+                            spinnerType.setSelection(spinnerAddressAdapter.getPosition
+                                    (inputCustomName.getText().toString()));
+                            spinnerType.setTag(R.id.spinner_position, spinnerAddressAdapter
+                                    .getPosition(inputCustomName.getText().toString()));
                             break;
                     }
                 } else {
@@ -3495,5 +3561,31 @@ public class EditProfileActivity extends BaseActivity implements WsResponseListe
     }
 
     //</editor-fold>
+
+    class SpinnerInteractionListener implements AdapterView.OnItemSelectedListener, View
+            .OnTouchListener {
+
+        boolean userSelect = false;
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            userSelect = true;
+            return false;
+        }
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            if (userSelect) {
+                // Your selection handling code here
+                userSelect = false;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+
+    }
 
 }

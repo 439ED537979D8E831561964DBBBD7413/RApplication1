@@ -182,8 +182,7 @@ public class TableCommentMaster {
         values.put(COLUMN_CRM_UPDATED_AT, updatedDate);
 
         int isUpdated = db.update(TABLE_RC_COMMENT_MASTER, values, COLUMN_CRM_CLOUD_COMMENT_ID +
-                        " = ?",
-                new String[]{id});
+                " = ?", new String[]{id});
 
         db.close();
 
