@@ -12,13 +12,13 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
 
     // QA Server
-//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
 
     // Monal
 //    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 
     // Aniruddh
-    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
 
     // Maulik
 //    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
@@ -48,14 +48,25 @@ public class WsConstants {
     public static final String URL_FEEDBACK = "http://feedback.rcontacts.in";
 
     /**
+     * FAQ URL
+     */
+    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
+
+
+    /**
+     * ContactUs URL
+     */
+    public static final String URL_CONTACT_US = "http://webstaging.rcontacts.in/global/contact-us";
+
+    /**
      * Profile View
      */
 
     // Web Server
-    public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
+//    public static final String WS_PROFILE_VIEW_ROOT = "http://web.rcontacts.in/global/public/";
 
     // QA Server
-//    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
+    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
 
     // Staging Env
 //    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
@@ -65,6 +76,9 @@ public class WsConstants {
      * WEBSITE URL
      */
     public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
+
+    public static final String WS_FACEBOOK_URL = "https://www.facebook.com/RContacts/";
+    public static final String WS_TWITTER_URL = "https://twitter.com/RContactsApp";
 
 
     public static final String RESPONSE_STATUS_TRUE = "true";

@@ -70,7 +70,7 @@ public class RContactApplication extends Application {
         mInstance = this;
 
 //         Fabric Initialization
-//        Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
 
         arrayListAllPhoneBookContacts = new ArrayList<>();
 //        arrayListAllContactHeaders = new ArrayList<>();

@@ -23,8 +23,8 @@ android {
         applicationId "com.rawalinfocom.rcontact"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 3
-        versionName "1.0.2"
+        versionCode 2
+        versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -97,6 +97,11 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
+
+    /* Web View */
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.thefinestartist:utils:0.9.0'
+    apt 'com.thefinestartist:compilers:0.9.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
