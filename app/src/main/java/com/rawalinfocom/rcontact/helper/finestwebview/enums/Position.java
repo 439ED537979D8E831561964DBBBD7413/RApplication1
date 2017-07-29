@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.finestwebview.enums;
+package com.rawalinfocom.rcontact.helper.finestwebview.enums;
 
 /**
  * Created by Leonardo on 11/14/15.

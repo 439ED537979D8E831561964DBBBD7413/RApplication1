@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.finestwebview;
+package com.rawalinfocom.rcontact.helper.finestwebview;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -46,13 +46,13 @@ import android.widget.TextView;
 
 import com.nineoldandroids.view.ViewHelper;
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.finestwebview.enums.Position;
-import com.rawalinfocom.rcontact.finestwebview.helpers.BitmapHelper;
-import com.rawalinfocom.rcontact.finestwebview.helpers.ColorHelper;
-import com.rawalinfocom.rcontact.finestwebview.helpers.TypefaceHelper;
-import com.rawalinfocom.rcontact.finestwebview.helpers.UrlParser;
-import com.rawalinfocom.rcontact.finestwebview.listeners.BroadCastManager;
-import com.rawalinfocom.rcontact.finestwebview.views.ShadowLayout;
+import com.rawalinfocom.rcontact.helper.finestwebview.enums.Position;
+import com.rawalinfocom.rcontact.helper.finestwebview.helpers.BitmapHelper;
+import com.rawalinfocom.rcontact.helper.finestwebview.helpers.ColorHelper;
+import com.rawalinfocom.rcontact.helper.finestwebview.helpers.TypefaceHelper;
+import com.rawalinfocom.rcontact.helper.finestwebview.helpers.UrlParser;
+import com.rawalinfocom.rcontact.helper.finestwebview.listeners.BroadCastManager;
+import com.rawalinfocom.rcontact.helper.finestwebview.views.ShadowLayout;
 import com.thefinestartist.converters.UnitConverter;
 import com.thefinestartist.utils.etc.APILevel;
 import com.thefinestartist.utils.service.ClipboardManagerUtil;

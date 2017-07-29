@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_contact_settings"
+    android:id="@+id/activity_contact_us"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rawalinfocom.rcontact.ContactListingActivity">
@@ -68,7 +68,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_15dp" />
+            android:layout_height="@dimen/margin_10dp" />
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -103,15 +103,15 @@
                         android:layout_width="0dp"
                         android:layout_height="140dp"
                         android:layout_margin="@dimen/margin_5dp"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:background="@drawable/background_imageview">
 
                         <ImageView
                             android:id="@+id/imgScreenshot1"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@drawable/background_imageview"
                             android:contentDescription="@string/app_name"
-                            android:scaleType="fitCenter"
+                            android:scaleType="fitXY"
                             android:visibility="gone" />
 
                         <ImageView
@@ -130,15 +130,15 @@
                         android:layout_width="0dp"
                         android:layout_height="140dp"
                         android:layout_margin="@dimen/margin_5dp"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:background="@drawable/background_imageview">
 
                         <ImageView
                             android:id="@+id/imgScreenshot2"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@drawable/background_imageview"
                             android:contentDescription="@string/app_name"
-                            android:scaleType="fitCenter"
+                            android:scaleType="fitXY"
                             android:visibility="gone" />
 
                         <ImageView
@@ -157,15 +157,15 @@
                         android:layout_width="0dp"
                         android:layout_height="140dp"
                         android:layout_margin="@dimen/margin_5dp"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:background="@drawable/background_imageview">
 
                         <ImageView
                             android:id="@+id/imgScreenshot3"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@drawable/background_imageview"
                             android:contentDescription="@string/app_name"
-                            android:scaleType="fitCenter"
+                            android:scaleType="fitXY"
                             android:visibility="gone" />
 
                         <ImageView

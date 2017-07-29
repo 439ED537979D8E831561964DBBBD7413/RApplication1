@@ -380,6 +380,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                         if (callLogTypeArrayList.size() < CALL_LOG_CHUNK) {
 
+                            Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
+                                    Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET).size());
+
                             Utils.setBooleanPreference(this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, true);
 
@@ -1556,6 +1559,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         if (callLogsIdsList.size() > 0) {
             int indexToBeginSync = Utils.getIntegerPreference(this, AppConstants
                     .PREF_CALL_LOG_SYNCED_COUNT, 0);
+
+            if(indexToBeginSync > 0){
+                logsSyncedCount = indexToBeginSync;
+            }
+
             ArrayList<String> tempIdsList = new ArrayList<>();
             for (int i = indexToBeginSync; i < callLogsIdsList.size(); i++) {
                 String ids = callLogsIdsList.get(i);
@@ -1576,6 +1584,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                 if ((Utils.getIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT, 0) >=
                         Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET).size())) {
+
+                    Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
+                            Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET).size());
 
                     Utils.setBooleanPreference(this, AppConstants
                             .PREF_CALL_LOG_SYNCED, true);

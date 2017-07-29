@@ -10,12 +10,15 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -27,28 +30,41 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
 import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.contacts.EditProfileActivity;
+import com.rawalinfocom.rcontact.enumerations.WSRequestType;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
+import com.rawalinfocom.rcontact.helper.finestwebview.FinestWebView;
 import com.rawalinfocom.rcontact.helper.imagetransformation.CropCircleTransformation;
+import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.ProfileDataOperation;
 import com.rawalinfocom.rcontact.model.ReverseGeocodingAddress;
+import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ContactUsActivity extends BaseActivity implements RippleView
-        .OnRippleCompleteListener {
+        .OnRippleCompleteListener, View.OnClickListener, WsResponseListener {
 
     @BindView(R.id.image_action_back)
     ImageView imageActionBack;
@@ -82,8 +98,8 @@ public class ContactUsActivity extends BaseActivity implements RippleView
     ImageView imgScreenshot3;
     @BindView(R.id.img3)
     ImageView img3;
-    @BindView(R.id.activity_contact_settings)
-    RelativeLayout activityContactSettings;
+    @BindView(R.id.activity_contact_us)
+    RelativeLayout activityContactUs;
     @BindView(R.id.frameImageView1)
     FrameLayout frameImageView1;
     @BindView(R.id.frameImageView2)
@@ -91,14 +107,14 @@ public class ContactUsActivity extends BaseActivity implements RippleView
     @BindView(R.id.frameImageView3)
     FrameLayout frameImageView3;
     private Activity activity;
-    private String strImage1 = "", strImage2 = "", strImage3 = "", selectedImageNumber = "";
-    private Bitmap selectedBitmap;
+    private String strImage1 = "", strImage2 = "", strImage3 = "", selectedImageNumber = "", strDescription;
 
     //<editor-fold desc="Override Methods">
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_us);
+
         ButterKnife.bind(this);
 
         activity = ContactUsActivity.this;
@@ -113,7 +129,23 @@ public class ContactUsActivity extends BaseActivity implements RippleView
                 onBackPressed();
                 break;
             case R.id.ripple_action_right:
-                onBackPressed();
+
+                strDescription = editTextProblem.getText().toString().trim();
+                ArrayList<String> arrayListScreenShot = new ArrayList<>();
+                if (!strImage1.equals(""))
+                    arrayListScreenShot.add(strImage1);
+                if (!strImage2.equals(""))
+                    arrayListScreenShot.add(strImage2);
+                if (!strImage3.equals(""))
+                    arrayListScreenShot.add(strImage3);
+
+                if (strDescription.length() > 0) {
+                    // Service call
+                    contactUs(arrayListScreenShot);
+                } else {
+                    Utils.showErrorSnackBar(activity, activityContactUs, getString(R.string.str_describe_problem));
+                }
+
                 break;
         }
     }
@@ -121,38 +153,68 @@ public class ContactUsActivity extends BaseActivity implements RippleView
     //</editor-fold>
     private void init() {
 
-        rippleActionRight.setVisibility(View.GONE);
+        rippleActionRight.setVisibility(View.VISIBLE);
 
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionRight.setOnRippleCompleteListener(this);
 
-        frameImageView1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedImageNumber = "1";
-                showChooseImageIntent();
-            }
-        });
-        frameImageView2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedImageNumber = "2";
-                showChooseImageIntent();
-            }
-        });
-        frameImageView3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedImageNumber = "3";
-                showChooseImageIntent();
-            }
-        });
+        editTextReadFaq.setOnClickListener(this);
+        frameImageView1.setOnClickListener(this);
+        frameImageView2.setOnClickListener(this);
+        frameImageView3.setOnClickListener(this);
 
         textToolbarTitle.setText(getResources().getString(R.string.str_contact_us));
         textToolbarTitle.setTypeface(Utils.typefaceRegular(this));
 
         textDescribeProblem.setTypeface(Utils.typefaceRegular(this));
         textAddScreenShot.setTypeface(Utils.typefaceRegular(this));
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+
+            case R.id.edit_text_read_faq:
+                showWebView(getString(R.string.str_faq), WsConstants.URL_FAQ);
+                break;
+            case R.id.frameImageView1:
+                selectedImageNumber = "1";
+                showChooseImageIntent();
+                break;
+            case R.id.frameImageView2:
+                selectedImageNumber = "2";
+                showChooseImageIntent();
+                break;
+            case R.id.frameImageView3:
+                selectedImageNumber = "3";
+                showChooseImageIntent();
+                break;
+        }
+    }
+
+    private void showWebView(String title, String url) {
+
+        new FinestWebView.Builder(this).theme(R.style.FinestWebViewTheme)
+                .titleDefault(title).showUrl(false)
+                .statusBarColorRes(R.color.colorPrimaryDark)
+                .toolbarColorRes(R.color.colorPrimary)
+                .titleColorRes(R.color.finestWhite)
+                .urlColorRes(R.color.colorPrimary)
+                .iconDefaultColorRes(R.color.finestWhite)
+                .progressBarColorRes(R.color.finestWhite)
+                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+                .showSwipeRefreshLayout(true)
+                .swipeRefreshColorRes(R.color.colorPrimaryDark)
+                .menuSelector(R.drawable.selector_light_theme)
+                .menuTextGravity(Gravity.CENTER)
+                .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
+                .dividerHeight(0)
+                .gradientDivider(false)
+                .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
+                .show(url);
     }
 
     private void showChooseImageIntent() {
@@ -357,6 +419,7 @@ public class ContactUsActivity extends BaseActivity implements RippleView
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Bitmap selectedBitmap;
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
 
             selectedBitmap = BitmapFactory.decodeFile(fileUri.getPath());
@@ -381,8 +444,7 @@ public class ContactUsActivity extends BaseActivity implements RippleView
                         strImage1 = bitmapString;
 
                         Glide.with(this)
-                                .load(fileUri)
-                                .bitmapTransform(new CropCircleTransformation(activity))
+                                .load(mFileTemp)
                                 .into(imgScreenshot1);
 
                         break;
@@ -393,9 +455,8 @@ public class ContactUsActivity extends BaseActivity implements RippleView
                         strImage2 = bitmapString;
 
                         Glide.with(this)
-                                .load(fileUri)
-                                .bitmapTransform(new CropCircleTransformation(activity))
-                                .into(imgScreenshot1);
+                                .load(mFileTemp)
+                                .into(imgScreenshot2);
 
                         break;
                     case "3":
@@ -405,9 +466,8 @@ public class ContactUsActivity extends BaseActivity implements RippleView
                         strImage3 = bitmapString;
 
                         Glide.with(this)
-                                .load(fileUri)
-                                .bitmapTransform(new CropCircleTransformation(activity))
-                                .into(imgScreenshot1);
+                                .load(mFileTemp)
+                                .into(imgScreenshot3);
 
                         break;
                 }
@@ -462,8 +522,7 @@ public class ContactUsActivity extends BaseActivity implements RippleView
                             strImage1 = bitmapString;
 
                             Glide.with(this)
-                                    .load(fileUri)
-                                    .bitmapTransform(new CropCircleTransformation(activity))
+                                    .load(mFileTemp)
                                     .into(imgScreenshot1);
 
                             break;
@@ -474,9 +533,8 @@ public class ContactUsActivity extends BaseActivity implements RippleView
                             strImage2 = bitmapString;
 
                             Glide.with(this)
-                                    .load(fileUri)
-                                    .bitmapTransform(new CropCircleTransformation(activity))
-                                    .into(imgScreenshot1);
+                                    .load(mFileTemp)
+                                    .into(imgScreenshot2);
 
                             break;
                         case "3":
@@ -486,9 +544,8 @@ public class ContactUsActivity extends BaseActivity implements RippleView
                             strImage3 = bitmapString;
 
                             Glide.with(this)
-                                    .load(fileUri)
-                                    .bitmapTransform(new CropCircleTransformation(activity))
-                                    .into(imgScreenshot1);
+                                    .load(mFileTemp)
+                                    .into(imgScreenshot3);
 
                             break;
                     }
@@ -497,6 +554,66 @@ public class ContactUsActivity extends BaseActivity implements RippleView
             } catch (Exception e) {
                 Log.e("TAG", "Error while creating temp file", e);
             }
+        }
+    }
+
+    private void contactUs(ArrayList<String> arrayListScreenShot) {
+
+//        Log.i("savePackages", phoneBookContacts.getContactStorageAccounts().toString());
+
+        WsRequestObject contactus = new WsRequestObject();
+        contactus.setArrayListScreenShot(arrayListScreenShot);
+        contactus.setType("Android");
+        contactus.setDescription(strDescription);
+
+        if (Utils.isNetworkAvailable(activity)) {
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    contactus, null, WsResponseObject.class, WsConstants
+                    .REQ_CONTACT_US, getResources().getString(R.string.msg_please_wait), true).executeOnExecutor(AsyncTask
+                    .THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_CONTACT_US);
+        } else {
+            Utils.showErrorSnackBar(activity, activityContactUs, getResources().getString(R.string.msg_no_network));
+        }
+    }
+
+    @Override
+    public void onDeliveryResponse(String serviceType, Object data, Exception error) {
+
+        if (error == null) {
+            // <editor-fold desc="REQ_RCP_PROFILE_SHARING">
+            if (serviceType.equalsIgnoreCase(WsConstants.REQ_CONTACT_US)) {
+
+                Utils.hideProgressDialog();
+
+                WsResponseObject contactUsResponse = (WsResponseObject) data;
+                Utils.hideProgressDialog();
+                if (contactUsResponse != null && StringUtils.equalsIgnoreCase
+                        (contactUsResponse.getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    Utils.showSuccessSnackBar(this, activityContactUs, getString(R.string.str_msg_problem));
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onBackPressed();
+                        }
+                    }, 1000);
+
+                } else {
+                    if (contactUsResponse != null) {
+                        Log.e("error response", contactUsResponse.getMessage());
+                        Utils.showErrorSnackBar(this, activityContactUs,
+                                contactUsResponse.getMessage());
+                    } else {
+                        Log.e("onDeliveryResponse: ", "contactUs null");
+                        Utils.showErrorSnackBar(this, activityContactUs, getString(R
+                                .string.msg_try_later));
+                    }
+                }
+
+            }
+        } else {
+            Utils.hideProgressDialog();
         }
     }
 }

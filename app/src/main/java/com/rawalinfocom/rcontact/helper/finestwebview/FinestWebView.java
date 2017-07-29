@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.finestwebview;
+package com.rawalinfocom.rcontact.helper.finestwebview;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,9 +16,9 @@ import android.support.design.widget.AppBarLayout.LayoutParams.ScrollFlags;
 import android.webkit.WebSettings;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.finestwebview.enums.Position;
-import com.rawalinfocom.rcontact.finestwebview.listeners.BroadCastManager;
-import com.rawalinfocom.rcontact.finestwebview.listeners.WebViewListener;
+import com.rawalinfocom.rcontact.helper.finestwebview.enums.Position;
+import com.rawalinfocom.rcontact.helper.finestwebview.listeners.BroadCastManager;
+import com.rawalinfocom.rcontact.helper.finestwebview.listeners.WebViewListener;
 import com.thefinestartist.Base;
 import com.thefinestartist.utils.content.Ctx;
 import com.thefinestartist.utils.content.Res;

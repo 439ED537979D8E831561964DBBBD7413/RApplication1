@@ -30,7 +30,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://10.0.21.14:8001/api/v1/";
 
     // Jignesh
-//    public static final String WS_ROOT = "  http://10.0.21.15:8000/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.15:8000/api/v1/";
 
     // Vijay
 //     public static final String WS_ROOT = "http://10.0.21.16/api/v1/";
@@ -56,7 +56,8 @@ public class WsConstants {
     /**
      * ContactUs URL
      */
-    public static final String URL_CONTACT_US = "http://webstaging.rcontacts.in/global/contact-us";
+//    public static final String URL_CONTACT_US = "http://api.rcontacts.in/global/";
+//    public static final String URL_CONTACT_US = "http://10.0.21.15:8000/api/v1/contact-us";
 
     /**
      * Profile View
@@ -125,5 +126,6 @@ public class WsConstants {
     public static final String REQ_GET_EVENT_COMMENT = "get-event-comment";
     public static final String REQ_GET_RCONTACT_UPDATES = "get-rcontact-update";
     public static final String REQ_GET_PROFILE_DATA = "get-global-profile";
+    public static final String REQ_CONTACT_US = "contact-us";
 
 }
