@@ -1,4 +1,4 @@
-package com.rawalinfocom.rcontact.finestwebview.helpers;
+package com.rawalinfocom.rcontact.helper.finestwebview.helpers;
 
 import android.content.Context;
 import android.graphics.Bitmap;
