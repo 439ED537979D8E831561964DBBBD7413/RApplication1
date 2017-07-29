@@ -147,7 +147,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     TabLayout tabMain;
     ContactsFragment contactsFragment;
     CallLogFragment callLogFragment;
-//    SmsFragment smsFragment;
+    //    SmsFragment smsFragment;
     private PhoneBookContacts phoneBookContacts;
     NetworkConnectionReceiver networkConnectionReceiver;
     RContactApplication rContactApplication;
@@ -165,9 +165,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     boolean isCompaseIcon = false;
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
     private ReSyncContactAsyncTask reSyncContactAsyncTask;
-//    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
+    //    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
     private GetSpamAndRCPDetailAsyncTask getSpamAndRCPDetailAsyncTask;
-//    private ArrayList<SmsDataType> smsLogTypeArrayListMain;
+    //    private ArrayList<SmsDataType> smsLogTypeArrayListMain;
 //    ArrayList<SmsDataType> smsLogsListbyChunck;
     private ArrayList<CallLogType> callLogTypeListForGlobalProfile;
 
@@ -1543,8 +1543,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
             if (tempCallLogTypeArrayList.size() > 0) {
                 syncRecentCallLogDataToServer(tempCallLogTypeArrayList);
-            } else
+            } else {
                 Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, true);
+
+                Intent localBroadcastIntent = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                        .getInstance(MainActivity.this);
+                myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+            }
 
 
         } catch (Exception e) {
@@ -1570,10 +1577,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             int indexToBeginSync = Utils.getIntegerPreference(this, AppConstants
                     .PREF_CALL_LOG_SYNCED_COUNT, 0);
 
-            if(indexToBeginSync > 0){
-                logsSyncedCount = indexToBeginSync;
-            }
-
             ArrayList<String> tempIdsList = new ArrayList<>();
             for (int i = indexToBeginSync; i < callLogsIdsList.size(); i++) {
                 String ids = callLogsIdsList.get(i);
@@ -1582,36 +1585,35 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
             if (tempIdsList.size() > CALL_LOG_CHUNK) {
                 for (ArrayList<String> partition : chopped(tempIdsList, CALL_LOG_CHUNK)) {
-                    // do something with partition
-                    fetchCallLogsFromIds(partition);
+                    fetchCallLogsFromIds(partition);// do something with partition
                 }
             } else {
                 fetchCallLogsFromIds(tempIdsList);
             }
 
-            if (!Utils.getBooleanPreference(this, AppConstants
-                    .PREF_CALL_LOG_SYNCED, false))
-
-                if ((Utils.getIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT, 0) >=
-                        Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET).size())) {
-
-                    Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
-                            Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET).size());
-
-                    Utils.setBooleanPreference(this, AppConstants
-                            .PREF_CALL_LOG_SYNCED, true);
-
-                    if (callLogTypeListForGlobalProfile.size() > 0) {
-                        if (Utils.getBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false))
-                            Utils.setBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false);
-                    }
-
-                    Intent localBroadcastIntent = new Intent(AppConstants
-                            .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
-                    LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
-                            .getInstance(MainActivity.this);
-                    myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
-                }
+//            if (!Utils.getBooleanPreference(this, AppConstants
+//                    .PREF_CALL_LOG_SYNCED, false))
+//
+//                if ((Utils.getIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT, 0) >=
+//                        Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET).size())) {
+//
+//                    Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
+//                            Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET).size());
+//
+//                    Utils.setBooleanPreference(this, AppConstants
+//                            .PREF_CALL_LOG_SYNCED, true);
+//
+//                    if (callLogTypeListForGlobalProfile.size() > 0) {
+//                        if (Utils.getBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false))
+//                            Utils.setBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false);
+//                    }
+//
+//                    Intent localBroadcastIntent = new Intent(AppConstants
+//                            .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
+//                    LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+//                            .getInstance(MainActivity.this);
+//                    myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+//                }
 
         } else {
             Utils.setBooleanPreference(this, AppConstants
@@ -1731,6 +1733,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 syncCallLogDataToServer(tempCallLogTypeArrayList);
             else {
                 Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, true);
+
+                Intent localBroadcastIntent = new Intent(AppConstants
+                        .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
+                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                        .getInstance(MainActivity.this);
+                myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
             }
 
         } catch (Exception e) {
@@ -1867,18 +1875,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         return parts;
     }
 
-    private ArrayList<ArrayList<CallLogType>> choppedCallLog(ArrayList<CallLogType> list, final
-    int L) {
-        ArrayList<ArrayList<CallLogType>> parts = new ArrayList<>();
-        final int N = list.size();
-        for (int i = 0; i < N; i += L) {
-            parts.add(new ArrayList<>(
-                    list.subList(i, Math.min(N, i + L)))
-            );
-        }
-        return parts;
-    }
-
     /*private ArrayList<ArrayList<SmsDataType>> choppedSmsLog(ArrayList<SmsDataType> list, final
     int L) {
         ArrayList<ArrayList<SmsDataType>> parts = new ArrayList<ArrayList<SmsDataType>>();
@@ -1898,10 +1894,21 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 CALL_LOG_CHUNK)) {
             // do something with partition
             callLogsListbyChunck.addAll(partition);
-//            callLogTypeArrayListMain.removeAll(partition);
+            callLogTypeArrayListMain.removeAll(partition);
             break;
         }
         return callLogsListbyChunck;
+    }
+
+    private ArrayList<ArrayList<CallLogType>> choppedCallLog(ArrayList<CallLogType> list, final int L) {
+        ArrayList<ArrayList<CallLogType>> parts = new ArrayList<>();
+        final int N = list.size();
+        for (int i = 0; i < N; i += L) {
+            parts.add(new ArrayList<>(
+                    list.subList(i, Math.min(N, i + L)))
+            );
+        }
+        return parts;
     }
 
     /*private ArrayList<SmsDataType> divideSmsLogByChunck() {
@@ -2320,10 +2327,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
             getProfileDataServiceCall(listOfNumbers);
 
-        } else {
-
-            Utils.setBooleanPreference(this, AppConstants
-                    .PREF_GOT_ALL_PROFILE_DATA, true);
         }
     }
 
