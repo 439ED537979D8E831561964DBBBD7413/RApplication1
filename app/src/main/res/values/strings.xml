@@ -668,4 +668,15 @@
     <string name="str_contact_us">Contact us</string>
     <string name="str_join_us">Join us on social media</string>
 
+    <!--Call-popup-->
+    <string name="network_warning_msg">You need a 3G/4G or wifi connection for Caller ID to function. Please check
+    your connection and try again.</string>
+    <string name="call_received_from">Call received from</string>
+    <string name="btn_view_profile">VIEW PROFILE</string>
+    <string name="btn_view_call_history">VIEW CALL HISTORY</string>
+    <string name="txt_call">CALL</string>
+    <string name="txt_message">MESSAGE</string>
+    <string name="txt_save">SAVE</string>
+    <string name="report_spam">Report as spam</string>
+
 </resources>

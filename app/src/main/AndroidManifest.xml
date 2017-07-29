@@ -40,6 +40,7 @@
     <permission
         android:name="com.rawalinfocom.rcontact.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:name=".RContactApplication"
@@ -185,11 +186,11 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receivers.SmsReceiver">
+        <!--<receiver android:name=".receivers.SmsReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
         <!-- Services -->
 

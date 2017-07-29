@@ -131,7 +131,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends BaseActivity implements WsResponseListener, View.OnClickListener {
 
     private final int CALL_LOG_CHUNK = 100;
-    private final int SMS_CHUNK = 50;
+//    private final int SMS_CHUNK = 50;
 
     private static final String TAG = "MainActivity";
     @BindView(R.id.relative_root_contacts_main)
@@ -147,7 +147,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     TabLayout tabMain;
     ContactsFragment contactsFragment;
     CallLogFragment callLogFragment;
-    SmsFragment smsFragment;
+//    SmsFragment smsFragment;
     private PhoneBookContacts phoneBookContacts;
     NetworkConnectionReceiver networkConnectionReceiver;
     RContactApplication rContactApplication;
@@ -161,14 +161,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     int logsSyncedCount = 0;
     MaterialDialog permissionConfirmationDialog;
     private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
-            .permission.READ_CALL_LOG, Manifest.permission.READ_SMS};
+            .permission.READ_CALL_LOG/*, Manifest.permission.READ_SMS*/};
     boolean isCompaseIcon = false;
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
     private ReSyncContactAsyncTask reSyncContactAsyncTask;
-    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
+//    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
     private GetSpamAndRCPDetailAsyncTask getSpamAndRCPDetailAsyncTask;
-    private ArrayList<SmsDataType> smsLogTypeArrayListMain;
-    ArrayList<SmsDataType> smsLogsListbyChunck;
+//    private ArrayList<SmsDataType> smsLogTypeArrayListMain;
+//    ArrayList<SmsDataType> smsLogsListbyChunck;
     private ArrayList<CallLogType> callLogTypeListForGlobalProfile;
 
     //<editor-fold desc="Override Methods">
@@ -181,7 +181,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         rContactApplication = (RContactApplication) getApplicationContext();
         phoneBookContacts = new PhoneBookContacts(this);
         callLogTypeArrayListMain = new ArrayList<>();
-        smsLogTypeArrayListMain = new ArrayList<>();
+//        smsLogTypeArrayListMain = new ArrayList<>();
         callLogTypeListForGlobalProfile = new ArrayList<>();
 //        CallLogFragment.callLogTypeReceiver = new CallLogType();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -206,9 +206,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         boolean logs = ContextCompat.checkSelfPermission(MainActivity.this,
                 requiredPermissions[1]) ==
                 PackageManager.PERMISSION_GRANTED;
-        boolean smsLogs = ContextCompat.checkSelfPermission(MainActivity.this,
+        /*boolean smsLogs = ContextCompat.checkSelfPermission(MainActivity.this,
                 requiredPermissions[2]) ==
-                PackageManager.PERMISSION_GRANTED;
+                PackageManager.PERMISSION_GRANTED;*/
         if (logs) {
             if (Utils.isNetworkAvailable(this)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
@@ -219,7 +219,17 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
 
         }
-        if (smsLogs) {
+
+        if (Utils.isNetworkAvailable(this)
+                && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
+                && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+                && !Utils.getBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false)) {
+            getSpamAndRCPDetailAsyncTask = new GetSpamAndRCPDetailAsyncTask();
+            getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        }
+
+        /*if (smsLogs) {
             if (Utils.isNetworkAvailable(this)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
@@ -238,14 +248,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 }
             }
 
-        }
+        }*/
         if (contacts) {
             if (Utils.isNetworkAvailable(this)
                     && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
                     && (Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
                     false) || !logs)
-                    && (Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false) ||
-                    !smsLogs)) {
+                    /*&& (Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false) ||
+                    !smsLogs)*/) {
                 reSyncContactAsyncTask = new ReSyncContactAsyncTask();
                 reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
@@ -431,11 +441,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     Utils.setBooleanPreference(this, AppConstants
                             .PREF_GOT_ALL_PROFILE_DATA, true);
 
-                    Intent localBroadcastIntent = new Intent(AppConstants
+                    /*Intent localBroadcastIntent = new Intent(AppConstants
                             .ACTION_LOCAL_BROADCAST_SYNC_SMS);
                     LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
                             .getInstance(MainActivity.this);
-                    myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+                    myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);*/
 
                 } else {
                     if (getProfileDataResponse != null) {
@@ -446,7 +456,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 }
             }
             //</editor-fold>
-            // <editor-fold desc="REQ_UPLOAD_SMS_LOGS">
+            /*// <editor-fold desc="REQ_UPLOAD_SMS_LOGS">
             else if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_SMS_LOGS)) {
 
                 WsResponseObject smsLogInsertionResponse = (WsResponseObject) data;
@@ -484,7 +494,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     }
                 }
             }
-            //</editor-fold>
+            //</editor-fold>*/
         } else {
             Log.e("error", error.toString());
         }
@@ -866,8 +876,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     protected void onDestroy() {
         if (syncCallLogAsyncTask != null)
             syncCallLogAsyncTask.cancel(true);
-        if (syncSmsLogAsyncTask != null)
-            syncSmsLogAsyncTask.cancel(true);
+        /*if (syncSmsLogAsyncTask != null)
+            syncSmsLogAsyncTask.cancel(true);*/
         if (reSyncContactAsyncTask != null)
             reSyncContactAsyncTask.cancel(true);
         if (getSpamAndRCPDetailAsyncTask != null)
@@ -915,8 +925,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 if (!isCompaseIcon)
                     openDialer();
                 else {
-                    AppConstants.isComposingSMS = true;
-                    openSMSComposerPage();
+                    /*AppConstants.isComposingSMS = true;
+                    openSMSComposerPage();*/
                 }
             }
         });
@@ -1221,10 +1231,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     private void setupTabLayout() {
         contactsFragment = ContactsFragment.newInstance();
         callLogFragment = CallLogFragment.newInstance();
-        smsFragment = SmsFragment.newInstance();
+//        smsFragment = SmsFragment.newInstance();
         tabMain.addTab(tabMain.newTab().setText(getString(R.string.tab_contact)), true);
         tabMain.addTab(tabMain.newTab().setText(getString(R.string.tab_call)));
-        tabMain.addTab(tabMain.newTab().setText(getString(R.string.tab_sms)));
+//        tabMain.addTab(tabMain.newTab().setText(getString(R.string.tab_sms)));
     }
 
     int tabPosition = -1;
@@ -1312,11 +1322,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 replaceFragment(callLogFragment);
                 break;
             case 2:
-                showAddToContact(true);
+                /*showAddToContact(true);
                 fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable
                         .ic_mode_edit));
                 isCompaseIcon = true;
-                replaceFragment(smsFragment);
+                replaceFragment(smsFragment);*/
                 break;
         }
     }
@@ -1356,7 +1366,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 (localBroadcastReceiverRecentCalls, intentFilter5);
 
 
-        LocalBroadcastManager localBroadcastManagerReceiveRecentSms = LocalBroadcastManager
+        /*LocalBroadcastManager localBroadcastManagerReceiveRecentSms = LocalBroadcastManager
                 .getInstance(MainActivity.this);
         IntentFilter intentFilter2 = new IntentFilter(AppConstants
                 .ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_SMS);
@@ -1367,7 +1377,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 .getInstance(this);
         IntentFilter intentFilter1 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_SYNC_SMS);
         localBroadcastManagerSyncSmsLogs.registerReceiver(localBroadcastReceiverSmsLogSync,
-                intentFilter1);
+                intentFilter1);*/
 
         LocalBroadcastManager localBroadcastManagerUpdateNotificationCount = LocalBroadcastManager
                 .getInstance(MainActivity.this);
@@ -1399,8 +1409,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         localBroadcastManager.unregisterReceiver(localBroadcastReceiverCallLogSync);
         localBroadcastManager.unregisterReceiver(localBroadcastReceiverRecentCalls);
-        localBroadcastManager.unregisterReceiver(localBroadCastReceiverRecentSMS);
-        localBroadcastManager.unregisterReceiver(localBroadcastReceiverSmsLogSync);
+//        localBroadcastManager.unregisterReceiver(localBroadCastReceiverRecentSMS);
+//        localBroadcastManager.unregisterReceiver(localBroadcastReceiverSmsLogSync);
         localBroadcastManager.unregisterReceiver(localBroadCastReceiverUpdateCount);
         localBroadcastManager.unregisterReceiver(localBroadcastReceiverContactDisplayed);
         localBroadcastManager.unregisterReceiver(localBroadCastReceiverGetGlobalProfileData);
@@ -1739,7 +1749,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     };
 
-    private BroadcastReceiver localBroadcastReceiverSmsLogSync = new BroadcastReceiver() {
+    /*private BroadcastReceiver localBroadcastReceiverSmsLogSync = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (smsLogTypeArrayListMain != null && smsLogTypeArrayListMain.size() > 0)
@@ -1761,7 +1771,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                 }
             }
         }
-    };
+    };*/
 
     private BroadcastReceiver localBroadCastReceiverGetGlobalProfileData = new BroadcastReceiver() {
         @Override
@@ -1858,7 +1868,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         return parts;
     }
 
-    private ArrayList<ArrayList<SmsDataType>> choppedSmsLog(ArrayList<SmsDataType> list, final
+    /*private ArrayList<ArrayList<SmsDataType>> choppedSmsLog(ArrayList<SmsDataType> list, final
     int L) {
         ArrayList<ArrayList<SmsDataType>> parts = new ArrayList<ArrayList<SmsDataType>>();
         final int N = list.size();
@@ -1868,7 +1878,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             );
         }
         return parts;
-    }
+    }*/
 
     private ArrayList<CallLogType> divideCallLogByChunck() {
         callLogsListbyChunck = new ArrayList<>();
@@ -1883,7 +1893,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         return callLogsListbyChunck;
     }
 
-    private ArrayList<SmsDataType> divideSmsLogByChunck() {
+    /*private ArrayList<SmsDataType> divideSmsLogByChunck() {
         int size = smsLogTypeArrayListMain.size();
         smsLogsListbyChunck = new ArrayList<>();
         for (ArrayList<SmsDataType> partition : choppedSmsLog(smsLogTypeArrayListMain,
@@ -1895,9 +1905,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             break;
         }
         return smsLogsListbyChunck;
-    }
+    }*/
 
-    private ArrayList<SmsDataType> divideSmsLogByChunck(ArrayList<SmsDataType> list) {
+    /*private ArrayList<SmsDataType> divideSmsLogByChunck(ArrayList<SmsDataType> list) {
         int size = 0;
         smsLogsListbyChunck = new ArrayList<>();
         if (list != null && list.size() > 0) {
@@ -1919,10 +1929,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
 
         return smsLogsListbyChunck;
-    }
+    }*/
 
 
-    private ArrayList<CallLogType> divideCallLogByChunck(ArrayList<CallLogType> list) {
+    /*private ArrayList<CallLogType> divideCallLogByChunck(ArrayList<CallLogType> list) {
         int size = 0;
         callLogsListbyChunck = new ArrayList<>();
         if (list != null && list.size() > 0) {
@@ -1943,7 +1953,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
 
         return callLogsListbyChunck;
-    }
+    }*/
 
 
     private String getPhoneNumberType(int type) {
@@ -2251,9 +2261,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     .PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0")) {
                 getLatestCallLogsByRawId();
             }
-            if (!Utils.getStringPreference(MainActivity.this, AppConstants.PREF_SMS_SYNC_TIME, "0").equalsIgnoreCase("0")) {
+            /*if (!Utils.getStringPreference(MainActivity.this, AppConstants.PREF_SMS_SYNC_TIME, "0").equalsIgnoreCase("0")) {
                 getLatestSms();
-            }
+
+            }*/
 
 
             return null;
@@ -2303,16 +2314,16 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private class SyncSmsLogAsyncTask extends AsyncTask<Void, Void, Void> {
+    /*private class SyncSmsLogAsyncTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
             getSmsLogsByRawIds();
             return null;
         }
-    }
+    }*/
 
-    private void getLatestSms() {
+    /*private void getLatestSms() {
 
         try {
             String prefDate = Utils.getStringPreference(MainActivity.this, AppConstants.PREF_SMS_SYNC_TIME, "");
@@ -2368,9 +2379,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
-    private void getSmsLogsByRawIds() {
+    /*private void getSmsLogsByRawIds() {
         PhoneBookSMSLogs phoneBookSmsLogs = new PhoneBookSMSLogs(MainActivity.this);
         ArrayList<String> listOfIds = new ArrayList<>();
         Cursor cursor = phoneBookSmsLogs.getAllSMSLogId();
@@ -2409,10 +2420,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             Utils.setBooleanPreference(this, AppConstants
                     .PREF_SMS_SYNCED, true);
         }
-    }
+    }*/
 
     // Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME, profileDetail.getSmsLogTimestamp());
-    private void fetchSMSDataById(ArrayList<String> listOfRowIds) {
+    /*private void fetchSMSDataById(ArrayList<String> listOfRowIds) {
 
         try {
             ArrayList<SmsDataType> smsDataTypeList = new ArrayList<>();
@@ -2492,7 +2503,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 //    private void makeSimpleDataThreadWise(ArrayList<SmsDataType> filteredList) {
 //        if (filteredList != null && filteredList.size() > 0) {
@@ -2525,7 +2536,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //        }
 //    }
 
-    private void syncSMSLogDataToServer(ArrayList<SmsDataType> list) {
+    /*private void syncSMSLogDataToServer(ArrayList<SmsDataType> list) {
         if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask.isCancelled())
             return;
         if (Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)) {
@@ -2544,10 +2555,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
 
         }
-    }
+    }*/
 
 
-    private void insertSMSLogServiceCall(ArrayList<SmsDataType> smsLogTypeArrayList) {
+    /*private void insertSMSLogServiceCall(ArrayList<SmsDataType> smsLogTypeArrayList) {
 
         if (Utils.isNetworkAvailable(MainActivity.this)) {
             WsRequestObject deviceDetailObject = new WsRequestObject();
@@ -2562,7 +2573,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
         }
 
-    }
+    }*/
 
     private void getProfileDataServiceCall(ArrayList<String> numbersList) {
 
@@ -2666,7 +2677,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                             }
 
-                            if (Utils.isNetworkAvailable(MainActivity.this)
+                            /*if (Utils.isNetworkAvailable(MainActivity.this)
                                     && Utils.getBooleanPreference(MainActivity.this, AppConstants
                                     .PREF_CONTACT_SYNCED, false)
                                     && Utils.getBooleanPreference(MainActivity.this, AppConstants
@@ -2679,15 +2690,15 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                                 syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
                                 syncSmsLogAsyncTask.executeOnExecutor(AsyncTask
                                         .THREAD_POOL_EXECUTOR);
-                            }
+                            }*/
 
                             if (Utils.isNetworkAvailable(MainActivity.this)
                                     && Utils.getBooleanPreference(MainActivity.this, AppConstants
                                     .PREF_CONTACT_SYNCED, false)
                                     && Utils.getBooleanPreference(MainActivity.this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, false)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_SMS_SYNCED, false)) {
+                                    /*&& Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_SMS_SYNCED, false)*/) {
 //                                Log.i("MAULIK", " looking for updated contacts");
                                 reSyncContactAsyncTask = new ReSyncContactAsyncTask();
                                 reSyncContactAsyncTask.executeOnExecutor(AsyncTask
@@ -2750,7 +2761,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     };
 
-    private BroadcastReceiver localBroadCastReceiverRecentSMS = new BroadcastReceiver() {
+    /*private BroadcastReceiver localBroadCastReceiverRecentSMS = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -2769,7 +2780,7 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
 
         }
-    };
+    };*/
 
     private String getPhotoUrlFromNumber(String phoneNumber) {
         String photoThumbUrl = "";
