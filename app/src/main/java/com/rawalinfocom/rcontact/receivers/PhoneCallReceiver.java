@@ -169,33 +169,10 @@ public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseLi
                 if (lastState == TelephonyManager.CALL_STATE_RINGING) {
                     //Ring but no pickup-  a miss
                     onMissedCall(context, savedNumber, callStartTime);
-                    /*String formattedNumber = Utils.getFormattedNumber(context, savedNumber);
-                    CallLogFragment.callLogTypeReceiver.setNumber(formattedNumber);
-                    CallLogFragment.callLogTypeReceiver.setType(3);
-                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a", Locale.getDefault()).format(callStartTime);
-                    CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
-                    CallLogFragment.callLogTypeReceiver.setCallReceiverDate(callStartTime);*/
-
                 } else if (isIncoming) {
                     onIncomingCallEnded(context, savedNumber, callStartTime, new Date());
-                    /*String formattedNumber = Utils.getFormattedNumber(context, savedNumber);
-                    CallLogFragment.callLogTypeReceiver.setNumber(formattedNumber);
-                    CallLogFragment.callLogTypeReceiver.setType(1);
-                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a", Locale.getDefault()).format(callStartTime);
-                    CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
-                    CallLogFragment.callLogTypeReceiver.setCallReceiverDate(callStartTime);*/
-
-
                 } else {
-
                     onOutgoingCallEnded(context, savedNumber, callStartTime, new Date());
-                    /*String formattedNumber = Utils.getFormattedNumber(context, savedNumber);
-                    CallLogFragment.callLogTypeReceiver.setNumber(formattedNumber);
-                    CallLogFragment.callLogTypeReceiver.setType(2);
-                    String logDate = new SimpleDateFormat("MMMM dd, hh:mm a", Locale.getDefault()).format(callStartTime);
-                    CallLogFragment.callLogTypeReceiver.setLogDate(logDate);
-                    CallLogFragment.callLogTypeReceiver.setCallReceiverDate(callStartTime);*/
-
                 }
                 initializeEndCallDialog();
 
