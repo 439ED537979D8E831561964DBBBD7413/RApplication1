@@ -70,7 +70,7 @@ import butterknife.Unbinder;
 public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderCallbacks<Cursor>*/ {
 
 
-    @BindView(R.id.recycler_sms_logs)
+    /*@BindView(R.id.recycler_sms_logs)
     RecyclerView recyclerSmsLogs;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
@@ -99,7 +99,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     ArrayList<String> listOfIds;
     ArrayList<String> smsLogIdsListByChunck;
     public static SmsDataType smsDataTypeReceiver;
-    private MaterialDialog callConfirmationDialog;
+    private MaterialDialog callConfirmationDialog;*/
 
     public SmsFragment() {
         // Required empty public constructor
@@ -112,7 +112,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Utils.getBooleanPreference(getActivity(), AppConstants
+       /* if (Utils.getBooleanPreference(getActivity(), AppConstants
                 .PREF_SMS_LOG_STARTS_FIRST_TIME, true)) {
             isFirstTime = true;
             Utils.setBooleanPreference(getActivity(), AppConstants
@@ -126,7 +126,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         Utils.setBooleanPreference(getActivity(), AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_CALL_LOG_TAB, false);
 
         registerLocalBroadcast();
-        smsDataTypeReceiver = new SmsDataType();
+        smsDataTypeReceiver = new SmsDataType();*/
     }
 
     @Override
@@ -137,7 +137,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
     @Override
     public void onPause() {
         super.onPause();
-        isFirstTime = false;
+//        isFirstTime = false;
 //        AppConstants.isComposingSMS = true;
     }
 
@@ -146,14 +146,14 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sms, container, false);
-        unbinder = ButterKnife.bind(this, view);
+//        unbinder = ButterKnife.bind(this, view);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermissionToExecute();
         } else {
             textGrantPermission.setVisibility(View.GONE);
@@ -174,12 +174,12 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 //                    fetchSMSData();
                 }
             }
-        }
+        }*/
     }
 
     @TargetApi(Build.VERSION_CODES.M)
     private void checkPermissionToExecute() {
-        boolean smsLogs = ContextCompat.checkSelfPermission(getActivity(),
+        /*boolean smsLogs = ContextCompat.checkSelfPermission(getActivity(),
                 requiredPermissions[0]) ==
                 PackageManager.PERMISSION_GRANTED;
         if (smsLogs) {
@@ -206,13 +206,13 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             isFromSettings = true;
             textGrantPermission.setVisibility(View.VISIBLE);
             recyclerSmsLogs.setVisibility(View.GONE);
-        }
+        }*/
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (AppConstants.isFromReceiver) {
+        /*if (AppConstants.isFromReceiver) {
             AppConstants.isRecentCallFromSMSTab = true;
         }
 
@@ -271,26 +271,26 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             } else {
                 loadData();
             }
-        }
+        }*/
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unbinder.unbind();
+//        unbinder.unbind();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unRegisterLocalBroadcast();
+        /*unRegisterLocalBroadcast();
         smsListAdapter = null;
         logsDisplayed = 0;
-        AppConstants.setIsFirstTime(true);
+        AppConstants.setIsFirstTime(true);*/
 
     }
 
-    private void registerLocalBroadcast() {
+    /*private void registerLocalBroadcast() {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance
                 (getActivity());
         IntentFilter intentFilter = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_SMS_RECEIVER);
@@ -300,9 +300,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 (getActivity());
         IntentFilter intentFilter1 = new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_DELETE_SMS_RECEIVER);
         localBroadcastManagerDeleteSMS.registerReceiver(localBroadcastReceiverDeleteSMS, intentFilter1);
-    }
+    }*/
 
-    private void unRegisterLocalBroadcast() {
+    /*private void unRegisterLocalBroadcast() {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance
                 (getActivity());
         localBroadcastManager.unregisterReceiver(localBroadcastSmsReceiver);
@@ -310,11 +310,11 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         LocalBroadcastManager localBroadcastManagerDeleteSMS = LocalBroadcastManager.getInstance
                 (getActivity());
         localBroadcastManagerDeleteSMS.unregisterReceiver(localBroadcastReceiverDeleteSMS);
-    }
+    }*/
 
     private void init() {
 //        progressBar.setVisibility(View.GONE);
-        mLinearLayoutManager = new LinearLayoutManager(getActivity());
+        /*mLinearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerSmsLogs.setLayoutManager(mLinearLayoutManager);
         rContactApplication = (RContactApplication)
                 getActivity().getApplicationContext();
@@ -333,10 +333,10 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
         cursor.close();
         Utils.setArrayListPreference(getActivity(), AppConstants.PREF_SMS_LOGS_ID_SET,
-                listOfIds);
+                listOfIds);*/
     }
 
-    private ArrayList<String> divideSMSLogIdsByChunck() {
+    /*private ArrayList<String> divideSMSLogIdsByChunck() {
         int size = listOfIds.size();
         smsLogIdsListByChunck = new ArrayList<>();
         if (isFirstChuck) {
@@ -356,9 +356,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             break;
         }
         return smsLogIdsListByChunck;
-    }
+    }*/
 
-    private void loadData() {
+    /*private void loadData() {
         ArrayList<String> listOfIds = Utils.getArrayListPreference(getActivity(), AppConstants
                 .PREF_SMS_LOGS_ID_SET);
         if (listOfIds == null) {
@@ -416,10 +416,10 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             }
         }
 
-    }
+    }*/
 
 
-    private ArrayList<ArrayList<String>> chopped(ArrayList<String> list, final int L) {
+    /*private ArrayList<ArrayList<String>> chopped(ArrayList<String> list, final int L) {
         ArrayList<ArrayList<String>> parts = new ArrayList<ArrayList<String>>();
         final int N = list.size();
         for (int i = 0; i < N; i += L) {
@@ -428,9 +428,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             );
         }
         return parts;
-    }
+    }*/
 
-    private void fetchSMSData() {
+    /*private void fetchSMSData() {
 
         HashSet<String> threadIds = new HashSet<>();
 
@@ -450,9 +450,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         }
 
         getSMS(threadIds);
-    }
+    }*/
 
-    private void getSMS(HashSet<String> threadIds) {
+    /*private void getSMS(HashSet<String> threadIds) {
 
         smsDataTypeArrayList = new ArrayList<>();
 
@@ -541,9 +541,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         }
 
         initSwipe();
-    }
+    }*/
 
-    public Uri getContactPhotoUri(long contactId) {
+    /*public Uri getContactPhotoUri(long contactId) {
 
         Uri photoUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,
                 contactId);
@@ -551,9 +551,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
         return photoUri;
 
-    }
+    }*/
 
-    private void fetchSMSDataById(ArrayList<String> listOfRowIds) {
+    /*private void fetchSMSDataById(ArrayList<String> listOfRowIds) {
 
         try {
             ArrayList<SmsDataType> smsDataTypeList = new ArrayList<>();
@@ -625,9 +625,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
-    private void makeSimpleDataThreadWise(ArrayList<SmsDataType> filteredList) {
+    /*private void makeSimpleDataThreadWise(ArrayList<SmsDataType> filteredList) {
 
         ArrayList<SmsDataType> savedContactList = new ArrayList<>();
         if (filteredList != null && filteredList.size() > 0) {
@@ -724,9 +724,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             recyclerSmsLogs.setVisibility(View.GONE);
             textNoSmsFound.setVisibility(View.VISIBLE);
         }
-    }
+    }*/
 
-    private void makeData(ArrayList<SmsDataType> filteredList) {
+    /*private void makeData(ArrayList<SmsDataType> filteredList) {
         try {
 
             if (filteredList != null && filteredList.size() > 0) {
@@ -857,9 +857,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         }
 
 
-    }
+    }*/
 
-    private void setAdapter() {
+    /*private void setAdapter() {
 //        progressBar.setVisibility(View.GONE);
 
 //        progressBar.setVisibility(View.GONE);
@@ -897,8 +897,8 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                         logsDisplayed = logsDisplayed + smsLogIdsArrayList.size();
                                         loadData();
                                     } else {
-                                    /*Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "Last" +
-                                            " log shown.");*/
+                                    *//*Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "Last" +
+                                            " log shown.");*//*
 //                                    llLoading.setVisibility(View.GONE);
                                         isLastRecord = true;
 //                                        smsListAdapter.setMoreData(true);
@@ -911,8 +911,8 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                                             logsDisplayed = logsDisplayed + smsLogIdsArrayList.size();
                                             loadData();
                                         } else {
-                                        /*Utils.showSuccessSnackBar(getActivity(), linearCallLogMain,
-                                                "Last log shown.");*/
+                                        *//*Utils.showSuccessSnackBar(getActivity(), linearCallLogMain,
+                                                "Last log shown.");*//*
 //                                        llLoading.setVisibility(View.GONE);
                                             isLastRecord = true;
 //                                          smsListAdapter.setMoreData(true);
@@ -934,9 +934,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             }
         });
 
-    }
+    }*/
 
-    public String getMessageType(int type) {
+    /*public String getMessageType(int type) {
         switch (type) {
 
             case Telephony.Sms.MESSAGE_TYPE_DRAFT:
@@ -959,9 +959,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
         }
         return getActivity().getString(R.string.type_other);
-    }
+    }*/
 
-    private String getPhotoUrlFromNumber(String phoneNumber) {
+    /*private String getPhotoUrlFromNumber(String phoneNumber) {
         String photoThumbUrl = "";
         try {
 
@@ -993,10 +993,10 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
 
         return photoThumbUrl;
-    }
+    }*/
 
 
-    private String getContactNameFromNumber(String phoneNumber) {
+    /*private String getContactNameFromNumber(String phoneNumber) {
         String contactName = "";
         try {
 
@@ -1024,9 +1024,9 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
 
         return contactName;
-    }
+    }*/
 
-    private BroadcastReceiver localBroadcastSmsReceiver = new BroadcastReceiver() {
+    /*private BroadcastReceiver localBroadcastSmsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Log.i("SmsFragment", "onReceive() of LocalBroadcast");
@@ -1119,11 +1119,11 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
                                     smsDataTypeArrayList.add(0, smsDataTypeFromReceiver);
                                     rContactApplication.setArrayListSmsLogType(smsDataTypeArrayList);
-                                    /*if(smsListAdapter!= null){
+                                    *//*if(smsListAdapter!= null){
                                         smsListAdapter.notifyItemInserted(0);
                                     }else{
                                         setAdapter();
-                                    }*/
+                                    }*//*
                                     setAdapter();
                                     recyclerSmsLogs.scrollToPosition(0);
                                 }
@@ -1141,10 +1141,10 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             }
         }
 
-    };
+    };*/
 
 
-    private BroadcastReceiver localBroadcastReceiverDeleteSMS = new BroadcastReceiver() {
+    /*private BroadcastReceiver localBroadcastReceiverDeleteSMS = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Log.i("SmsFragment", "onReceive() of LocalBroadcast");
@@ -1173,10 +1173,10 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             }
 
         }
-    };
+    };*/
 
 
-    private void initSwipe() {
+    /*private void initSwipe() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper
                 .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
@@ -1205,7 +1205,7 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
                 }
 
                 if (direction == ItemTouchHelper.LEFT) {
-                    /* SMS */
+                    *//* SMS *//*
                     Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
                     smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
                     smsIntent.setType("vnd.android-dir/mms-sms");
@@ -1227,10 +1227,10 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
 
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                /* Disable swiping in headers */
-                /*if (viewHolder instanceof SimpleCallLogListAdapter.CallLogViewHolder) {
+                *//* Disable swiping in headers *//*
+                *//*if (viewHolder instanceof SimpleCallLogListAdapter.CallLogViewHolder) {
                     return 0;
-                }*/
+                }*//*
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
 
@@ -1278,17 +1278,17 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(recyclerSmsLogs);
-    }
+    }*/
 
-    private String getNumberFromName(String name) {
+    /*private String getNumberFromName(String name) {
         String number = "";
 //        Cursor cursor = null;
         try {
-           /* Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_FILTER_URI, Uri
+           *//* Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_FILTER_URI, Uri
                     .encode(name));
 
             String[] projection = new String[]{ContactsContract.Contacts.DISPLAY_NAME,
-                    ContactsContract.Contacts.LOOKUP_KEY};*/
+                    ContactsContract.Contacts.LOOKUP_KEY};*//*
 
             Cursor cursor =
                     getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
@@ -1307,17 +1307,17 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
             e.printStackTrace();
         }
         return number;
-    }
+    }*/
 
-    private void showCallConfirmationDialog(final String number, String name) {
+    /*private void showCallConfirmationDialog(final String number, String name) {
 
         final String finalNumber = Utils.getFormattedNumber(getActivity(), number);
 
-        /*if (!number.startsWith("+91")) {
+        *//*if (!number.startsWith("+91")) {
             finalNumber = "+91" + number;
         } else {
             finalNumber = number;
-        }*/
+        }*//*
 
         RippleView.OnRippleCompleteListener cancelListener = new RippleView
                 .OnRippleCompleteListener() {
@@ -1350,5 +1350,5 @@ public class SmsFragment extends BaseFragment /*implements LoaderManager.LoaderC
         callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
         callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " " + name + "?");
         callConfirmationDialog.showDialog();
-    }
+    }*/
 }

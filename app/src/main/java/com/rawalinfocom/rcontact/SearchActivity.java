@@ -144,6 +144,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
     int maxRecords = 5;
     int startAt = 0;
     GlobalSearchType globalSearchType;
+    public String numberToSend = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -915,7 +916,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
             public void onTextChanged(CharSequence arg0, int arg1, int arg2,
                                       int arg3) {
                 // TODO Auto-generated method stub
-                String searchQuery =  String.valueOf(arg0);
+                String searchQuery = String.valueOf(arg0);
                 System.out.println(searchQuery);
             }
         });
@@ -1255,7 +1256,6 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                String numberToSend = "";
                 String actionNumber = "";
                 try {
                     int position = viewHolder.getAdapterPosition();
@@ -1278,50 +1278,63 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                                     }
                                 }
                             } else {
-                                if (smsListAdapter != null && smsListAdapter.getSearchCount() > 0) {
-                                    actionNumber = StringUtils.defaultString(((SmsListAdapter
-                                            .SMSViewHolder) viewHolder).textNumber.getText()
-                                            .toString());
-                                    Pattern numberPat = Pattern.compile("\\d+");
-                                    Matcher matcher1 = numberPat.matcher(actionNumber);
-                                    if (matcher1.find()) {
-                                        numberToSend = actionNumber;
-                                    } else {
-                                        numberToSend = getNumberFromName(actionNumber);
-                                        if (TextUtils.isEmpty(numberToSend)) {
-                                            numberToSend = actionNumber;
-                                        }
-                                    }
-                                } else {
-                                    numberToSend = StringUtils.defaultString((
-                                            (SimpleCallLogListAdapter
-                                                    .CallLogViewHolder) viewHolder)
-                                            .textTempNumber.getText()
-                                            .toString());
-                                }
+
+                                numberToSend = StringUtils.defaultString((
+                                        (SimpleCallLogListAdapter
+                                                .CallLogViewHolder) viewHolder)
+                                        .textTempNumber.getText()
+                                        .toString());
+
+//                                if (smsListAdapter != null && smsListAdapter.getSearchCount() > 0) {
+//                                    actionNumber = StringUtils.defaultString(((SmsListAdapter
+//                                            .SMSViewHolder) viewHolder).textNumber.getText()
+//                                            .toString());
+//                                    Pattern numberPat = Pattern.compile("\\d+");
+//                                    Matcher matcher1 = numberPat.matcher(actionNumber);
+//                                    if (matcher1.find()) {
+//                                        numberToSend = actionNumber;
+//                                    } else {
+//                                        numberToSend = getNumberFromName(actionNumber);
+//                                        if (TextUtils.isEmpty(numberToSend)) {
+//                                            numberToSend = actionNumber;
+//                                        }
+//                                    }
+//                                } else {
+//                                    numberToSend = StringUtils.defaultString((
+//                                            (SimpleCallLogListAdapter
+//                                                    .CallLogViewHolder) viewHolder)
+//                                            .textTempNumber.getText()
+//                                            .toString());
+//                                }
                             }
 
                         } else {
-                            if (smsListAdapter != null && smsListAdapter.getSearchCount() > 0) {
-                                actionNumber = StringUtils.defaultString(((SmsListAdapter
-                                        .SMSViewHolder) viewHolder).textNumber.getText()
-                                        .toString());
-                                Pattern numberPat = Pattern.compile("\\d+");
-                                Matcher matcher1 = numberPat.matcher(actionNumber);
-                                if (matcher1.find()) {
-                                    numberToSend = actionNumber;
-                                } else {
-                                    numberToSend = getNumberFromName(actionNumber);
-                                    if (TextUtils.isEmpty(numberToSend)) {
-                                        numberToSend = actionNumber;
-                                    }
-                                }
-                            } else {
-                                numberToSend = StringUtils.defaultString(((AllContactAdapter
-                                        .AllContactViewHolder) viewHolder).textContactNumber
-                                        .getText()
-                                        .toString());
-                            }
+
+                            numberToSend = StringUtils.defaultString(((AllContactAdapter
+                                    .AllContactViewHolder) viewHolder).textContactNumber
+                                    .getText()
+                                    .toString());
+
+//                            if (smsListAdapter != null && smsListAdapter.getSearchCount() > 0) {
+//                                actionNumber = StringUtils.defaultString(((SmsListAdapter
+//                                        .SMSViewHolder) viewHolder).textNumber.getText()
+//                                        .toString());
+//                                Pattern numberPat = Pattern.compile("\\d+");
+//                                Matcher matcher1 = numberPat.matcher(actionNumber);
+//                                if (matcher1.find()) {
+//                                    numberToSend = actionNumber;
+//                                } else {
+//                                    numberToSend = getNumberFromName(actionNumber);
+//                                    if (TextUtils.isEmpty(numberToSend)) {
+//                                        numberToSend = actionNumber;
+//                                    }
+//                                }
+//                            } else {
+//                                numberToSend = StringUtils.defaultString(((AllContactAdapter
+//                                        .AllContactViewHolder) viewHolder).textContactNumber
+//                                        .getText()
+//                                        .toString());
+//                            }
 
                         }
                     }
@@ -1390,6 +1403,20 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                 /*if (viewHolder instanceof SimpleCallLogListAdapter.CallLogViewHolder) {
                     return 0;
                 }*/
+
+                if (viewHolder instanceof AllContactAdapter.AllContactViewHolder) {
+                    /* Disable swiping in multiple RC case */
+                    if (((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .recyclerViewMultipleRc.getVisibility() == View.VISIBLE) {
+                        return 0;
+                    }
+                    /* Disable swiping for No number */
+                    if (StringUtils.length(((AllContactAdapter.AllContactViewHolder) viewHolder)
+                            .textContactNumber.getText().toString()) <= 0) {
+                        return 0;
+                    }
+                }
+
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
 

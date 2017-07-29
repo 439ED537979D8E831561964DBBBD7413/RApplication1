@@ -30,7 +30,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://10.0.21.14:8001/api/v1/";
 
     // Jignesh
-//    public static final String WS_ROOT = "  http://10.0.21.15:8000/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.15:8000/api/v1/";
 
     // Vijay
 //     public static final String WS_ROOT = "http://10.0.21.16/api/v1/";
@@ -48,6 +48,18 @@ public class WsConstants {
     public static final String URL_FEEDBACK = "http://feedback.rcontacts.in";
 
     /**
+     * FAQ URL
+     */
+    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
+
+
+    /**
+     * ContactUs URL
+     */
+//    public static final String URL_CONTACT_US = "http://api.rcontacts.in/global/";
+//    public static final String URL_CONTACT_US = "http://10.0.21.15:8000/api/v1/contact-us";
+
+    /**
      * Profile View
      */
 
@@ -58,17 +70,16 @@ public class WsConstants {
 //    public static final String WS_PROFILE_VIEW_ROOT = "http://webqa.rcontacts.in/global/public/";
 
     // Staging Env
-    /*public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts" +
-            ".in/global/public/";*/
-
-
-
+//    public static final String WS_PROFILE_VIEW_ROOT = "http://webstaging.rcontacts.in/global/public/";
 
 
     /**
      * WEBSITE URL
      */
     public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
+
+    public static final String WS_FACEBOOK_URL = "https://www.facebook.com/RContacts/";
+    public static final String WS_TWITTER_URL = "https://twitter.com/RContactsApp";
 
 
     public static final String RESPONSE_STATUS_TRUE = "true";
@@ -114,6 +125,7 @@ public class WsConstants {
     public static final String REQ_ADD_EVENT_COMMENT = "event-comment";
     public static final String REQ_GET_EVENT_COMMENT = "get-event-comment";
     public static final String REQ_GET_RCONTACT_UPDATES = "get-rcontact-update";
-    public static final String REQ_GET_PROFILE_DATA= "get-global-profile";
+    public static final String REQ_GET_PROFILE_DATA = "get-global-profile";
+    public static final String REQ_CONTACT_US = "contact-us";
 
 }

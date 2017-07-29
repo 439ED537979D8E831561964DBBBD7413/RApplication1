@@ -662,4 +662,32 @@
     <string name="str_validation_event_notification">Turn On/Off to manage All Event Notifications</string>
     <string name="title_activity_maps">Map</string>
 
+    <string name="str_about">About</string>
+    <string name="str_faq">FAQ</string>
+    <string name="str_terms">Terms and conditions</string>
+    <string name="str_contact_us">Contact us</string>
+    <string name="str_join_us">Join us on social media</string>
+    <string name="str_describe_problem">Please describe your problem</string>
+    <string name="str_read_faq">Have you read our faq yet?</string>
+    <string name="str_add_screen_shot">Add screenshots(Optional):</string>
+    <string name="str_msg_problem">Your query has been send successfully.</string>
+
+    <!-- Web View -->
+    <string name="refresh">Refresh</string>
+    <string name="find">Find</string>
+    <string name="copy_link">Copy Link</string>
+    <string name="open_with">Open with</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
+
+    <!--Call-popup-->
+    <string name="network_warning_msg">You need a 3G/4G or wifi connection for Caller ID to function. Please check
+    your connection and try again.</string>
+    <string name="call_received_from">Call received from</string>
+    <string name="btn_view_profile">VIEW PROFILE</string>
+    <string name="btn_view_call_history">VIEW CALL HISTORY</string>
+    <string name="txt_call">CALL</string>
+    <string name="txt_message">MESSAGE</string>
+    <string name="txt_save">SAVE</string>
+    <string name="report_spam">Report as spam</string>
+
 </resources>

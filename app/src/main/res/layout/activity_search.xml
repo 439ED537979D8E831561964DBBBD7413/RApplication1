@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/rl_title"
             android:scrollbars="vertical"
-            android:visibility="visible"></android.support.v7.widget.RecyclerView>
+            android:visibility="visible"/>
     </RelativeLayout>
 
 

@@ -283,47 +283,37 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
     @Override
     public void onDeliveryResponse(String serviceType, Object data, Exception error) {
-        try {
-            if (error == null) {
-                if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)) {
-                    WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
-                    if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase
-                            (callLogInsertionResponse
-                                    .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
-                        Utils.setStringPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNC_TIME, callLogInsertionResponse.getCallDateAndTime());
-                        Utils.setStringPreference(getActivity(), AppConstants.PREF_CALL_LOG_ROW_ID, callLogInsertionResponse.getCallLogRowId());
-                        Utils.setBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, true);
-
-//                        ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
-//                        if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
-////                                insertServiceCall(callLogTypeArrayList);
+//        try {
+//            if (error == null) {
+//                if (serviceType.equalsIgnoreCase(WsConstants.REQ_UPLOAD_CALL_LOGS)) {
+//                    WsResponseObject callLogInsertionResponse = (WsResponseObject) data;
+//                    if (callLogInsertionResponse != null && StringUtils.equalsIgnoreCase
+//                            (callLogInsertionResponse
+//                                    .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+//
+//                        Utils.setStringPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNC_TIME, callLogInsertionResponse.getCallDateAndTime());
+//                        Utils.setStringPreference(getActivity(), AppConstants.PREF_CALL_LOG_ROW_ID, callLogInsertionResponse.getCallLogRowId());
+//                        Utils.setBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, true);
+//
+//                    } else {
+//                        if (callLogInsertionResponse != null) {
+//                            Log.e("error response", callLogInsertionResponse.getMessage());
+//                            Utils.showErrorSnackBar(getActivity(), linearMainContent, callLogInsertionResponse.getMessage());
 //                        } else {
-//                            System.out.println("RContact All Call Logs Synced");
-////                                Utils.showSuccessSnackBar(getActivity(), linearCallLogMain, "All " +
-////                                        "" + "Call Logs Synced");
-//                            Utils.setBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, true);
+//                            Log.e("onDeliveryResponse: ", "userProfileResponse null");
+//                            Utils.showErrorSnackBar(getActivity(), linearMainContent, getString(R
+//                                    .string.msg_try_later));
 //                        }
-//                        }
-                    } else {
-                        if (callLogInsertionResponse != null) {
-                            Log.e("error response", callLogInsertionResponse.getMessage());
-                            Utils.showErrorSnackBar(getActivity(), linearMainContent, callLogInsertionResponse.getMessage());
-                        } else {
-                            Log.e("onDeliveryResponse: ", "userProfileResponse null");
-                            Utils.showErrorSnackBar(getActivity(), linearMainContent, getString(R
-                                    .string.msg_try_later));
-                        }
-                    }
-
-                } else {
-                    Utils.showErrorSnackBar(getActivity(), linearMainContent, "" + error
-                            .getLocalizedMessage());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//                    }
+//
+//                } else {
+//                    Utils.showErrorSnackBar(getActivity(), linearMainContent, "" + error
+//                            .getLocalizedMessage());
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
@@ -508,12 +498,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                             callLogType.setRcpUser(true);
 
-                            callLogType =  setRCPDetailsAndSpamCountforUnsavedNumbers(number,callLogType);
+                            callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number, callLogType);
                             callLogTypeArrayList.add(0, callLogType);
                             rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                         }
                     } else {
-                        callLogType =  setRCPDetailsAndSpamCountforUnsavedNumbers(number,callLogType);
+                        callLogType = setRCPDetailsAndSpamCountforUnsavedNumbers(number, callLogType);
                         callLogTypeArrayList.add(0, callLogType);
                         rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                     }
@@ -530,15 +520,17 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             }
 
             recyclerCallLogs.smoothScrollToPosition(0);
-            ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
-            callLogTypeArrayList.add(callLogType);
-            if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false) &&
-                    Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, false)) {
-                if (!TextUtils.isEmpty(callLogType.getNumber()))
-                    insertServiceCall(callLogTypeArrayList);
-            }
+
+//            ArrayList<CallLogType> callLogTypeArrayList = new ArrayList<>();
+//            callLogTypeArrayList.add(callLogType);
+//            if (Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CONTACT_SYNCED, false) &&
+//                    Utils.getBooleanPreference(getActivity(), AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+//                if (!TextUtils.isEmpty(callLogType.getNumber()))
+//                    insertServiceCall(callLogTypeArrayList);
+//            }
         }
     }
+
 
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
@@ -747,132 +739,131 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         }
     }
 
-    private CallLogType setRCPDetailsAndSpamCountforUnsavedNumbers(String number, CallLogType callLogType){
-        try{
-            TableSpamDetailMaster tableSpamDetailMaster =  new TableSpamDetailMaster(getDatabaseHandler());
-            if(!StringUtils.isEmpty(number)){
-                if(number.startsWith("+91"))
-                    number =  number.replace("+","");
+    private CallLogType setRCPDetailsAndSpamCountforUnsavedNumbers(String number, CallLogType callLogType) {
+        try {
+            TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(getDatabaseHandler());
+            if (!StringUtils.isEmpty(number)) {
+                if (number.startsWith("+91"))
+                    number = number.replace("+", "");
                 else
-                    number =  "91" + number;
+                    number = "91" + number;
 
                 SpamDataType spamDataType = tableSpamDetailMaster.getSpamDetailsFromNumber(number);
-                if(spamDataType != null && !StringUtils.isEmpty(spamDataType.getSpamCount()))
-                {
-                    String lastName =  spamDataType.getLastName();
-                    String firstName = spamDataType .getFirstName();
-                    String prefix =  spamDataType.getPrefix();
-                    String suffix =  spamDataType.getSuffix();
-                    String middleName =  spamDataType.getMiddleName();
-                    String isRcpVerified =  spamDataType.getRcpVerfiy();
-                    String rcpId =  spamDataType.getRcpPmId();
-                    String profileRating =  spamDataType.getProfileRating();
+                if (spamDataType != null && !StringUtils.isEmpty(spamDataType.getSpamCount())) {
+                    String lastName = spamDataType.getLastName();
+                    String firstName = spamDataType.getFirstName();
+                    String prefix = spamDataType.getPrefix();
+                    String suffix = spamDataType.getSuffix();
+                    String middleName = spamDataType.getMiddleName();
+                    String isRcpVerified = spamDataType.getRcpVerfiy();
+                    String rcpId = spamDataType.getRcpPmId();
+                    String profileRating = spamDataType.getProfileRating();
                     String totalProfileRateUser = spamDataType.getTotalProfileRateUser();
-                    String spamCount =  spamDataType.getSpamCount();
+                    String spamCount = spamDataType.getSpamCount();
 
-                    if(MoreObjects.firstNonNull(callLogType.isRcpUser(), false)){
+                    if (MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
                         callLogType.setRcpFirstName(callLogType.getRcpFirstName());
                         callLogType.setRcpLastName(callLogType.getRcpLastName());
-                        if(!StringUtils.isEmpty(spamCount))
+                        if (!StringUtils.isEmpty(spamCount))
                             callLogType.setSpamCount(spamCount);
-                    }else{
-                        if(!StringUtils.isEmpty(lastName))
+                    } else {
+                        if (!StringUtils.isEmpty(lastName))
                             callLogType.setRcpLastName(lastName);
-                        if(!StringUtils.isEmpty(firstName))
+                        if (!StringUtils.isEmpty(firstName))
                             callLogType.setRcpFirstName(firstName);
-                        if(!StringUtils.isEmpty(prefix))
+                        if (!StringUtils.isEmpty(prefix))
                             callLogType.setPrefix(prefix);
-                        if(!StringUtils.isEmpty(suffix))
+                        if (!StringUtils.isEmpty(suffix))
                             callLogType.setSuffix(suffix);
-                        if(!StringUtils.isEmpty(middleName))
+                        if (!StringUtils.isEmpty(middleName))
                             callLogType.setMiddleName(middleName);
-                        if(!StringUtils.isEmpty(isRcpVerified))
+                        if (!StringUtils.isEmpty(isRcpVerified))
                             callLogType.setIsRcpVerfied(isRcpVerified);
-                        if(!StringUtils.isEmpty(rcpId))
+                        if (!StringUtils.isEmpty(rcpId))
                             callLogType.setRcpId(rcpId);
-                        if(!StringUtils.isEmpty(profileRating))
+                        if (!StringUtils.isEmpty(profileRating))
                             callLogType.setCallLogProfileRating(profileRating);
-                        if(!StringUtils.isEmpty(totalProfileRateUser))
+                        if (!StringUtils.isEmpty(totalProfileRateUser))
                             callLogType.setCallLogTotalProfileRateUser(totalProfileRateUser);
-                        if(!StringUtils.isEmpty(spamCount))
+                        if (!StringUtils.isEmpty(spamCount))
                             callLogType.setSpamCount(spamCount);
                     }
                 }
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return callLogType;
     }
 
-    private void setRCPDetailsAndSpamCountforUnsavedNumbers(){
-        try{
-            if(callLogTypeArrayList.size()>0){
-                TableSpamDetailMaster tableSpamDetailMaster =  new TableSpamDetailMaster(getDatabaseHandler());
-                for(int i =0 ; i < callLogTypeArrayList.size() ; i++){
+    private void setRCPDetailsAndSpamCountforUnsavedNumbers() {
+        try {
+            if (callLogTypeArrayList.size() > 0) {
+                TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(getDatabaseHandler());
+                for (int i = 0; i < callLogTypeArrayList.size(); i++) {
                     if (nameAndProfileImage != null && nameAndProfileImage.isCancelled())
                         return;
                     CallLogType callLogType = callLogTypeArrayList.get(i);
                     String number = callLogType.getNumber();
-                    if(!StringUtils.isEmpty(number)){
-                        if(number.startsWith("+91"))
-                            number =  number.replace("+","");
+                    if (!StringUtils.isEmpty(number)) {
+                        if (number.startsWith("+91"))
+                            number = number.replace("+", "");
                         else
-                            number =  "91" + number;
+                            number = "91" + number;
 
                         SpamDataType spamDataType = tableSpamDetailMaster.getSpamDetailsFromNumber(number);
-                        if(spamDataType != null && !StringUtils.isEmpty(spamDataType.getSpamCount()))
-                        {
-                            String lastName =  spamDataType.getLastName();
-                            String firstName = spamDataType .getFirstName();
-                            String prefix =  spamDataType.getPrefix();
-                            String suffix =  spamDataType.getSuffix();
-                            String middleName =  spamDataType.getMiddleName();
-                            String isRcpVerified =  spamDataType.getRcpVerfiy();
-                            String rcpId =  spamDataType.getRcpPmId();
-                            String profileRating =  spamDataType.getProfileRating();
+                        if (spamDataType != null && !StringUtils.isEmpty(spamDataType.getSpamCount())) {
+                            String lastName = spamDataType.getLastName();
+                            String firstName = spamDataType.getFirstName();
+                            String prefix = spamDataType.getPrefix();
+                            String suffix = spamDataType.getSuffix();
+                            String middleName = spamDataType.getMiddleName();
+                            String isRcpVerified = spamDataType.getRcpVerfiy();
+                            String rcpId = spamDataType.getRcpPmId();
+                            String profileRating = spamDataType.getProfileRating();
                             String totalProfileRateUser = spamDataType.getTotalProfileRateUser();
-                            String spamCount =  spamDataType.getSpamCount();
+                            String spamCount = spamDataType.getSpamCount();
 
-                            if(MoreObjects.firstNonNull(callLogType.isRcpUser(), false)){
+                            if (MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
                                 callLogType.setRcpFirstName(callLogType.getRcpFirstName());
                                 callLogType.setRcpLastName(callLogType.getRcpLastName());
-                                if(!StringUtils.isEmpty(spamCount))
+                                if (!StringUtils.isEmpty(spamCount))
                                     callLogType.setSpamCount(spamCount);
-                            }else{
-                                if(!StringUtils.isEmpty(lastName))
+                            } else {
+                                if (!StringUtils.isEmpty(lastName))
                                     callLogType.setRcpLastName(lastName);
-                                if(!StringUtils.isEmpty(firstName))
+                                if (!StringUtils.isEmpty(firstName))
                                     callLogType.setRcpFirstName(firstName);
-                                if(!StringUtils.isEmpty(prefix))
+                                if (!StringUtils.isEmpty(prefix))
                                     callLogType.setPrefix(prefix);
-                                if(!StringUtils.isEmpty(suffix))
+                                if (!StringUtils.isEmpty(suffix))
                                     callLogType.setSuffix(suffix);
-                                if(!StringUtils.isEmpty(middleName))
+                                if (!StringUtils.isEmpty(middleName))
                                     callLogType.setMiddleName(middleName);
-                                if(!StringUtils.isEmpty(isRcpVerified))
+                                if (!StringUtils.isEmpty(isRcpVerified))
                                     callLogType.setIsRcpVerfied(isRcpVerified);
-                                if(!StringUtils.isEmpty(rcpId))
+                                if (!StringUtils.isEmpty(rcpId))
                                     callLogType.setRcpId(rcpId);
-                                if(!StringUtils.isEmpty(profileRating))
+                                if (!StringUtils.isEmpty(profileRating))
                                     callLogType.setCallLogProfileRating(profileRating);
-                                if(!StringUtils.isEmpty(totalProfileRateUser))
+                                if (!StringUtils.isEmpty(totalProfileRateUser))
                                     callLogType.setCallLogTotalProfileRateUser(totalProfileRateUser);
-                                if(!StringUtils.isEmpty(spamCount))
+                                if (!StringUtils.isEmpty(spamCount))
                                     callLogType.setSpamCount(spamCount);
                             }
 
-                            callLogTypeArrayList.set(i,callLogType);
+                            callLogTypeArrayList.set(i, callLogType);
                         }
                     }
                 }
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     private void getPhoto() {
         try {
             if (callLogTypeArrayList.size() > 0) {
@@ -970,24 +961,24 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         }
     }
 
-    private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
-
-        if (Utils.isNetworkAvailable(getActivity())) {
-            WsRequestObject deviceDetailObject = new WsRequestObject();
-            deviceDetailObject.setFlag(IntegerConstants.SYNC_INSERT_CALL_LOG);
-            deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
-            if (Utils.isNetworkAvailable(getActivity())) {
-                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                        deviceDetailObject, null, WsResponseObject.class, WsConstants
-                        .REQ_UPLOAD_CALL_LOGS, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                        WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
-            } else {
-                Utils.showErrorSnackBar(getActivity(), linearCallLogMain, getResources()
-                        .getString(R.string.msg_no_network));
-            }
-        }
-
-    }
+//    private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
+//
+//        if (Utils.isNetworkAvailable(getActivity())) {
+//            WsRequestObject deviceDetailObject = new WsRequestObject();
+//            deviceDetailObject.setFlag(IntegerConstants.SYNC_INSERT_CALL_LOG);
+//            deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
+//            if (Utils.isNetworkAvailable(getActivity())) {
+//                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+//                        deviceDetailObject, null, WsResponseObject.class, WsConstants
+//                        .REQ_UPLOAD_CALL_LOGS, null, true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+//                        WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
+//            } else {
+//                Utils.showErrorSnackBar(getActivity(), linearCallLogMain, getResources()
+//                        .getString(R.string.msg_no_network));
+//            }
+//        }
+//
+//    }
 
     private String getNameFromNumber(String phoneNumber) {
         String contactName = "";
