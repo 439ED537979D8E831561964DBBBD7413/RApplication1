@@ -899,13 +899,14 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                 WsResponseObject getProfileResponse = (WsResponseObject) data;
                 Utils.hideProgressDialog();
                 if (getProfileResponse != null && StringUtils.equalsIgnoreCase(getProfileResponse
-                                .getStatus(),
-                        WsConstants.RESPONSE_STATUS_TRUE)) {
+                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
                     ProfileDataOperation profileDetail = getProfileResponse.getProfileDetail();
                     storeProfileDataToDb(profileDetail);
 
                     getDataFromDB();
+                    Toast.makeText(ProfileDetailActivity.this, "Refreshed!", Toast.LENGTH_SHORT)
+                            .show();
 
                     ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
                     ProfileVisit profileVisit = new ProfileVisit();
@@ -914,11 +915,12 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     profileVisits.add(profileVisit);
                     profileVisit(profileVisits);
 
-                } else {
+                }
+                /*else {
                     Log.e("onDeliveryResponse: ", "otpDetailResponse null");
                     Utils.showErrorSnackBar(this, relativeRootProfileDetail, getString(R
                             .string.msg_try_later));
-                }
+                }*/
             }
             //</editor-fold>
 
@@ -1633,14 +1635,16 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         if (!displayOwnProfile)
             if (!StringUtils.equalsIgnoreCase(pmId, "-1")) {
                 // RC Profile
+                getDataFromDB();
                 if (Utils.isNetworkAvailable(ProfileDetailActivity.this)) {
                     //call service
-                    cardContactDetails.setVisibility(View.GONE);
-                    cardOtherDetails.setVisibility(View.GONE);
+                    /*cardContactDetails.setVisibility(View.GONE);
+                    cardOtherDetails.setVisibility(View.GONE);*/
                     getProfileDetails();
-                } else {
-                    getDataFromDB();
                 }
+                /*else {
+                    getDataFromDB();
+                }*/
 //            }
             } else {
                 // Non-RC Profile
@@ -3580,7 +3584,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             tableOrganizationMaster.addUpdateArrayOrganization(organizationList, profileDetail
                     .getRcpPmId());
         } else {
-            TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster(databaseHandler);
+            TableOrganizationMaster tableOrganizationMaster = new TableOrganizationMaster
+                    (databaseHandler);
             tableOrganizationMaster.deleteData(profileDetail.getRcpPmId());
         }
         //</editor-fold>
@@ -3763,8 +3768,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
     private void getProfileDetails() {
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), null, null,
-                    WsResponseObject.class, WsConstants.REQ_GET_PROFILE_DETAILS, getString(R
-                    .string.msg_please_wait), true)
+                    WsResponseObject.class, WsConstants.REQ_GET_PROFILE_DETAILS, null, true)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
                             WsConstants.REQ_GET_PROFILE_DETAILS + "/" +
                             pmId);

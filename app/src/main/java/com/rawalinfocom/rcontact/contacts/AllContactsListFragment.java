@@ -606,8 +606,10 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         final int mimeTypeIdx = data.getColumnIndex(ContactsContract.Data.MIMETYPE);
         final int idIdx = data.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID);
         final int phoneIdx = data.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-        final int givenName = data.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
-        final int familyName = data.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
+        final int givenName = data.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName
+                .GIVEN_NAME);
+        final int familyName = data.getColumnIndex(ContactsContract.CommonDataKinds
+                .StructuredName.FAMILY_NAME);
 
         final int photoURIIdx = data.getColumnIndex(ContactsContract.PhoneLookup
                 .PHOTO_THUMBNAIL_URI);
@@ -781,15 +783,17 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     mobileNumber.setMnmNumberPrivacy(String.valueOf(arrayListPhoneNumber.get(j)
                             .getPhonePublic()));
                     mobileNumber.setMnmIsPrivate(arrayListPhoneNumber.get(j).getIsPrivate());
+                    mobileNumber.setMnmIsPrimary(String.valueOf(arrayListPhoneNumber.get(j)
+                            .getPbRcpType()));
                     mobileNumber.setRcProfileMasterPmId(profileData.get(i).getRcpPmId());
-                    if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber()
+                   /* if (StringUtils.equalsIgnoreCase(profileData.get(i).getVerifiedMobileNumber()
                             , mobileNumber.getMnmMobileNumber())) {
                         mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
                                 .RCP_TYPE_PRIMARY));
                     } else {
                         mobileNumber.setMnmIsPrimary(String.valueOf(IntegerConstants
                                 .RCP_TYPE_SECONDARY));
-                    }
+                    }*/
                     arrayListMobileNumber.add(mobileNumber);
                 }
 
@@ -1129,7 +1133,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                                     .MY_PERMISSIONS_REQUEST_PHONE_CALL);
                         } else {
                             AppConstants.setIsFirstTime(false);
-                            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity(), callNumber));
+                            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity
+                                    (), callNumber));
                         }
                         break;
                 }
