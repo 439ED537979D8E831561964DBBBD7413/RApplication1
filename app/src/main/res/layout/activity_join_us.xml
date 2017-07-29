@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_contact_settings"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rawalinfocom.rcontact.ContactListingActivity">
+
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_toolbar_settings"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/include_toolbar"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_20dp"
+            android:gravity="center|start"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/activity_horizontal_margin">
+
+            <ImageView
+                android:id="@+id/imgFacebook"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/app_name"
+                android:gravity="center|start"
+                android:padding="5dp"
+                android:src="@drawable/ico_facebook_color_svg" />
+
+            <ImageView
+                android:id="@+id/imgTwitter"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/app_name"
+                android:gravity="center|start"
+                android:padding="5dp"
+                android:src="@drawable/ico_twitter_color_svg" />
+
+            <ImageView
+                android:id="@+id/imgLinkedin"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/app_name"
+                android:gravity="center|start"
+                android:padding="5dp"
+                android:src="@drawable/ico_linkedin_color_svg" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_20dp"
+            android:gravity="center|start"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/activity_horizontal_margin">
+
+            <ImageView
+                android:id="@+id/imgPintrest"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/app_name"
+                android:gravity="center|start"
+                android:padding="5dp"
+                android:src="@drawable/ico_pintrest_color_svg" />
+
+            <ImageView
+                android:id="@+id/imgYouTube"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/app_name"
+                android:gravity="center|start"
+                android:padding="5dp"
+                android:src="@drawable/ico_youtube_color_svg" />
+
+            <ImageView
+                android:id="@+id/imgGooglePlus"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/app_name"
+                android:gravity="center|start"
+                android:padding="5dp"
+                android:src="@drawable/ico_google_plus_color_svg" />
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

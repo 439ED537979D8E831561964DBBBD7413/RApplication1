@@ -28,6 +28,37 @@
         <item name="android:textSize">11sp</item>
     </style>
 
+    <style name="MyCustomTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowAnimationStyle">@style/MyAnimation.Window</item>
+    </style>
+
+    <style name="MyAnimation.Window" parent="@android:style/Animation.Activity">
+        <item name="android:windowEnterAnimation">@anim/enter</item>
+        <item name="android:windowExitAnimation">@anim/exit</item>
+    </style>
+
+    <style name="FinestWebViewTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/finestWhite</item>
+        <item name="colorPrimaryDark">@color/finestGray</item>
+        <item name="colorAccent">@color/finestBlack</item>
+        <item name="android:textColorPrimary">@color/finestBlack</item>
+        <item name="android:textColorSecondary">@color/finestSilver</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="FinestWebViewTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/finestWhite</item>
+        <item name="colorPrimaryDark">@color/finestGray</item>
+        <item name="colorAccent">@color/finestBlack</item>
+        <item name="android:textColorPrimary">@color/finestBlack</item>
+        <item name="android:textColorSecondary">@color/finestSilver</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+
     <!--<style name="DarkGrayCheck">
         <item name="colorDarkGray">#E6444444</item>
     </style>-->

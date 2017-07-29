@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <declare-styleable name="ShadowLayout">
+        <attr name="slCornerRadius" format="dimension" />
+        <attr name="slShadowSize" format="dimension" />
+        <attr name="slShadowColor" format="color" />
+        <attr name="slDx" format="dimension" />
+        <attr name="slDy" format="dimension" />
+    </declare-styleable>
+
+
     <declare-styleable name="RippleView">
         <attr name="rv_alpha" format="integer" />
         <attr name="rv_framerate" format="integer" />

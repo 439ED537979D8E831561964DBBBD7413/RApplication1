@@ -2266,7 +2266,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
             }*/
 
-
+//            if (!Utils.getStringPreference(MainActivity.this, AppConstants.PREF_SMS_SYNC_TIME, "0").equalsIgnoreCase("0")) {
+//                getLatestSms();
+//            }
             return null;
         }
     }

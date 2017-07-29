@@ -48,6 +48,17 @@ public class WsConstants {
     public static final String URL_FEEDBACK = "http://feedback.rcontacts.in";
 
     /**
+     * FAQ URL
+     */
+    public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
+
+
+    /**
+     * ContactUs URL
+     */
+    public static final String URL_CONTACT_US = "http://webstaging.rcontacts.in/global/contact-us";
+
+    /**
      * Profile View
      */
 
@@ -65,6 +76,9 @@ public class WsConstants {
      * WEBSITE URL
      */
     public static final String WS_WEBSITE_URL = "http://webstaging.rcontacts.in";
+
+    public static final String WS_FACEBOOK_URL = "https://www.facebook.com/RContacts/";
+    public static final String WS_TWITTER_URL = "https://twitter.com/RContactsApp";
 
 
     public static final String RESPONSE_STATUS_TRUE = "true";
