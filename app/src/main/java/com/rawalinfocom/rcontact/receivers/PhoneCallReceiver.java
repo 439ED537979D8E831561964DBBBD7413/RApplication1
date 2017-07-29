@@ -185,81 +185,81 @@ public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseLi
         lastState = state;
     }
 
-    private void blockCall(Context context, String numberToBlock) {
-        if (Utils.getHashMapPreferenceForBlock(context, AppConstants
-                .PREF_BLOCK_CONTACT_LIST) != null) {
-            HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
-                    Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
-            ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
-            String blockedNumber = "";
-            String hashKey = "";
-            if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
-                for (String key : blockProfileHashMapList.keySet()) {
-                    System.out.println(key);
-                    hashKey = key;
-                    if (blockProfileHashMapList.containsKey(hashKey)) {
-                        callLogTypeList.addAll(blockProfileHashMapList.get(hashKey));
-                        if (callLogTypeList != null) {
-                            for (int j = 0; j < callLogTypeList.size(); j++) {
-                                String tempNumber = callLogTypeList.get(j).getNumber();
-                                if (tempNumber.equalsIgnoreCase(numberToBlock)) {
-                                    blockedNumber = tempNumber;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (!TextUtils.isEmpty(blockedNumber)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    Telephony telephonyService;
-                    try {
-                        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-                        Method m1 = tm.getClass().getDeclaredMethod("getITelephony");
-                        m1.setAccessible(true);
-                        Object iTelephony = m1.invoke(tm);
-
-                        Method m2 = iTelephony.getClass().getDeclaredMethod("silenceRinger");
-                        Method m3 = iTelephony.getClass().getDeclaredMethod("endCall");
-
-                        m2.invoke(iTelephony);
-                        m3.invoke(iTelephony);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    try {
-
-                        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-
-                        // Get the getITelephony() method
-                        Class classTelephony = Class.forName(telephonyManager.getClass().getName());
-                        Method methodGetITelephony = classTelephony.getDeclaredMethod("getITelephony");
-
-                        // Ignore that the method is supposed to be private
-                        methodGetITelephony.setAccessible(true);
-
-                        // Invoke getITelephony() to get the ITelephony interface
-                        Object telephonyInterface = methodGetITelephony.invoke(telephonyManager);
-
-                        // Get the endCall method from ITelephony
-                        Class telephonyInterfaceClass = Class.forName(telephonyInterface.getClass().getName());
-                        Method methodEndCall = telephonyInterfaceClass.getDeclaredMethod("endCall");
-
-                        // Invoke endCall()
-                        methodEndCall.invoke(telephonyInterface);
-
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
+//    private void blockCall(Context context, String numberToBlock) {
+//        if (Utils.getHashMapPreferenceForBlock(context, AppConstants
+//                .PREF_BLOCK_CONTACT_LIST) != null) {
+//            HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
+//                    Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
+//            ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
+//            String blockedNumber = "";
+//            String hashKey = "";
+//            if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
+//                for (String key : blockProfileHashMapList.keySet()) {
+//                    System.out.println(key);
+//                    hashKey = key;
+//                    if (blockProfileHashMapList.containsKey(hashKey)) {
+//                        callLogTypeList.addAll(blockProfileHashMapList.get(hashKey));
+//                        if (callLogTypeList != null) {
+//                            for (int j = 0; j < callLogTypeList.size(); j++) {
+//                                String tempNumber = callLogTypeList.get(j).getNumber();
+//                                if (tempNumber.equalsIgnoreCase(numberToBlock)) {
+//                                    blockedNumber = tempNumber;
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//            if (!TextUtils.isEmpty(blockedNumber)) {
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                    Telephony telephonyService;
+//                    try {
+//                        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+//                        Method m1 = tm.getClass().getDeclaredMethod("getITelephony");
+//                        m1.setAccessible(true);
+//                        Object iTelephony = m1.invoke(tm);
+//
+//                        Method m2 = iTelephony.getClass().getDeclaredMethod("silenceRinger");
+//                        Method m3 = iTelephony.getClass().getDeclaredMethod("endCall");
+//
+//                        m2.invoke(iTelephony);
+//                        m3.invoke(iTelephony);
+//
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                } else {
+//                    try {
+//
+//                        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+//
+//                        // Get the getITelephony() method
+//                        Class classTelephony = Class.forName(telephonyManager.getClass().getName());
+//                        Method methodGetITelephony = classTelephony.getDeclaredMethod("getITelephony");
+//
+//                        // Ignore that the method is supposed to be private
+//                        methodGetITelephony.setAccessible(true);
+//
+//                        // Invoke getITelephony() to get the ITelephony interface
+//                        Object telephonyInterface = methodGetITelephony.invoke(telephonyManager);
+//
+//                        // Get the endCall method from ITelephony
+//                        Class telephonyInterfaceClass = Class.forName(telephonyInterface.getClass().getName());
+//                        Method methodEndCall = telephonyInterfaceClass.getDeclaredMethod("endCall");
+//
+//                        // Invoke endCall()
+//                        methodEndCall.invoke(telephonyInterface);
+//
+//
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private void callSpamServiceApi() {
 
