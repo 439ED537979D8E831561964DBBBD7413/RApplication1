@@ -79,6 +79,7 @@ public class WsRequestObject {
     private String lastName;
     private String emailId;
     private String type;
+    private String description;
     private String deviceId;
     private String socialMediaTokenId;
     private String createdBy;
@@ -110,6 +111,8 @@ public class WsRequestObject {
     private ArrayList<ProfileData> profileData;
     private ArrayList<ProfileData> favourites;
     private ProfileDataOperation contactData;
+
+    private ArrayList<String> arrayListScreenShot;
 
     private ArrayList<String> arrayListContactNumber;
     private ArrayList<String> arrayListEmailAddress;
@@ -346,6 +349,15 @@ public class WsRequestObject {
         this.type = type;
     }
 
+    @JsonProperty("description")
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @JsonProperty("pb_social_id")
     public String getPbSocialId() {
         return pbSocialId;
@@ -470,6 +482,15 @@ public class WsRequestObject {
 
     public void setArrayListContactNumber(ArrayList<String> arrayListContactNumber) {
         this.arrayListContactNumber = arrayListContactNumber;
+    }
+
+    @JsonProperty("screenshot")
+    public ArrayList<String> getArrayListScreenShot() {
+        return arrayListScreenShot;
+    }
+
+    public void setArrayListScreenShot(ArrayList<String> arrayListScreenShot) {
+        this.arrayListScreenShot = arrayListScreenShot;
     }
 
     @JsonProperty("email_address")

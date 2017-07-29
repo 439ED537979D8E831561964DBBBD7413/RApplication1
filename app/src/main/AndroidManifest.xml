@@ -174,9 +174,12 @@
         <activity
             android:name=".SocialMediaJoinUsActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ContactUsActivity"
+            android:screenOrientation="portrait" />
 
         <activity
-            android:name=".finestwebview.FinestWebViewActivity"
+            android:name=".helper.finestwebview.FinestWebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="sensor"
             android:theme="@style/FinestWebViewTheme.Light" />

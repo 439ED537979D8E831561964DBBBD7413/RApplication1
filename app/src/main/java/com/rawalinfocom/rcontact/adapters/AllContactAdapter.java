@@ -536,8 +536,10 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 } else {
                     if (fragment instanceof AllContactsListFragment) {
                         ((AllContactsListFragment) fragment).callNumber = actionNumber;
+                    } else if (activity instanceof SearchActivity) {
+                        ((SearchActivity) activity).numberToSend = actionNumber;
                     } else if (fragment instanceof FavoritesFragment) {
-//                        ((FavoritesFragment) fragment).callNumber = actionNumber;
+                        ((FavoritesFragment) fragment).callNumber = actionNumber;
                     }
                     showCallConfirmationDialog();
                 }
@@ -635,9 +637,12 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             if (fragment instanceof AllContactsListFragment) {
                                 Utils.callIntent(activity, ((AllContactsListFragment) fragment)
                                         .callNumber);
+                            } else if (activity instanceof SearchActivity) {
+                                Utils.callIntent(activity, ((SearchActivity) activity)
+                                        .numberToSend);
                             } else if (fragment instanceof FavoritesFragment) {
-                               /* Utils.callIntent(activity, ((FavoritesFragment) fragment)
-                                        .callNumber);*/
+                                Utils.callIntent(activity, ((FavoritesFragment) fragment)
+                                        .callNumber);
                             }
                         }
                         break;
@@ -653,8 +658,11 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             callConfirmationDialog.setDialogBody(activity.getString(R.string.action_call)
                     + " " + ((AllContactsListFragment) fragment).callNumber + "?");
         } else if (fragment instanceof FavoritesFragment) {
-           /* callConfirmationDialog.setDialogBody(activity.getString(R.string.action_call)
-                    + " " + ((FavoritesFragment) fragment).callNumber + "?");*/
+            callConfirmationDialog.setDialogBody(activity.getString(R.string.action_call)
+                    + " " + ((FavoritesFragment) fragment).callNumber + "?");
+        } else if (activity instanceof SearchActivity) {
+            callConfirmationDialog.setDialogBody(activity.getString(R.string.action_call)
+                    + " " + ((SearchActivity) activity).numberToSend + "?");
         }
 
         callConfirmationDialog.showDialog();
@@ -775,8 +783,8 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         charText = charText.trim();
                         ProfileData profileData = (ProfileData) arraylist.get(i);
                         if (!StringUtils.isEmpty(profileData.getTempNumber())) {
-                            String number =  profileData.getTempNumber();
-                            number = number.replace(" ","").replace("-","");
+                            String number = profileData.getTempNumber();
+                            number = number.replace(" ", "").replace("-", "");
                             if (number.contains(charText)) {
                                 arrayListUserContact.add(profileData);
                             }

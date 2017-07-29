@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -11,17 +12,17 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.finestwebview.FinestWebView;
+import com.rawalinfocom.rcontact.helper.finestwebview.FinestWebView;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
+import com.rawalinfocom.rcontact.model.Contact;
 
 import java.util.Calendar;
 
@@ -135,7 +136,8 @@ public class AboutHelpActivity extends BaseActivity implements RippleView
         txtContactUs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showWebView(getString(R.string.str_contact_us), WsConstants.URL_CONTACT_US);
+                startActivity(new Intent(activity, ContactUsActivity.class));
+                //showWebView(getString(R.string.str_contact_us), WsConstants.URL_CONTACT_US);
             }
         });
 

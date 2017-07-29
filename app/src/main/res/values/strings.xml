@@ -670,6 +670,7 @@
     <string name="str_describe_problem">Please describe your problem</string>
     <string name="str_read_faq">Have you read our faq yet?</string>
     <string name="str_add_screen_shot">Add screenshots(Optional):</string>
+    <string name="str_msg_problem">Your query has been send successfully.</string>
 
     <!-- Web View -->
     <string name="refresh">Refresh</string>

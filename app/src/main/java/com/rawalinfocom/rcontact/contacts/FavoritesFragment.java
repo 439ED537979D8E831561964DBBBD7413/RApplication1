@@ -457,11 +457,7 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
 
                 } else {
 
-                    if (!actionNumber.startsWith("+91")) {
-                        callNumber = "+91" + actionNumber;
-                    } else {
-                        callNumber = actionNumber;
-                    }
+                    callNumber = Utils.getFormattedNumber(getActivity(), actionNumber);
 
                     showCallConfirmationDialog();
                 }
