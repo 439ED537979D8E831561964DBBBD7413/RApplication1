@@ -2251,11 +2251,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     .PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0")) {
                 getLatestCallLogsByRawId();
             }
-            if (!Utils.getStringPreference(MainActivity.this, AppConstants.PREF_SMS_SYNC_TIME, "0").equalsIgnoreCase("0")) {
-                getLatestSms();
-            }
 
-
+//            if (!Utils.getStringPreference(MainActivity.this, AppConstants.PREF_SMS_SYNC_TIME, "0").equalsIgnoreCase("0")) {
+//                getLatestSms();
+//            }
             return null;
         }
     }

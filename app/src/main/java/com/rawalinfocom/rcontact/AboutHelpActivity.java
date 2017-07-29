@@ -1,23 +1,33 @@
 package com.rawalinfocom.rcontact;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.rawalinfocom.rcontact.constants.WsConstants;
+import com.rawalinfocom.rcontact.finestwebview.FinestWebView;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 
+import java.util.Calendar;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class AboutHelpActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
@@ -53,6 +63,7 @@ public class AboutHelpActivity extends BaseActivity implements RippleView
     @BindView(R.id.activity_contact_settings)
     RelativeLayout activityContactSettings;
     private Activity activity;
+    private static String version;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -99,26 +110,158 @@ public class AboutHelpActivity extends BaseActivity implements RippleView
                 showDialog();
             }
         });
+
+        llTerms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showWebView(getString(R.string.str_terms), WsConstants.URL_TERMS_CONDITIONS);
+            }
+        });
+
+        llFaq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showWebView(getString(R.string.str_faq), WsConstants.URL_FAQ);
+            }
+        });
+
+        txtJoinUs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityIntent(activity, SocialMediaJoinUsActivity.class, null);
+            }
+        });
+
+        txtContactUs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showWebView(getString(R.string.str_contact_us), WsConstants.URL_CONTACT_US);
+            }
+        });
+
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            version = pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     void showDialog() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        DialogFragment newFragment = MyDialogFragment.newInstance();
+        DialogFragment newFragment = new MyDialogFragment();
         newFragment.show(ft, "dialog");
     }
 
     public static class MyDialogFragment extends DialogFragment {
 
-        static MyDialogFragment newInstance() {
-            MyDialogFragment f = new MyDialogFragment();
-            return f;
+        @BindView(R.id.txt_version_number)
+        TextView txtVersionNumber;
+        @BindView(R.id.image_splash)
+        ImageView imageSplash;
+        @BindView(R.id.txt_copy_right)
+        TextView txtCopyRight;
+        @BindView(R.id.txt_terms)
+        TextView txtTerms;
+        Unbinder unbinder;
+        @BindView(R.id.txt_app_name)
+        TextView txtAppName;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setStyle(DialogFragment.STYLE_NORMAL, R.style.MyCustomTheme);
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            Dialog d = getDialog();
+            if (d != null) {
+                int width = ViewGroup.LayoutParams.MATCH_PARENT;
+                int height = ViewGroup.LayoutParams.MATCH_PARENT;
+                d.getWindow().setLayout(width, height);
+            }
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View v = inflater.inflate(R.layout.activity_splash, container, false);
+            View v = inflater.inflate(R.layout.activity_about, container, false);
+            unbinder = ButterKnife.bind(this, v);
+
+            txtAppName.setTypeface(Utils.typefaceBold(getActivity()));
+            txtVersionNumber.setTypeface(Utils.typefaceRegular(getActivity()));
+            txtCopyRight.setTypeface(Utils.typefaceRegular(getActivity()));
+            txtTerms.setTypeface(Utils.typefaceRegular(getActivity()));
+
+            txtVersionNumber.setText(String.format("Version %s", version));
+            txtCopyRight.setText("Copyright \u00A9 " + Calendar.getInstance().get(Calendar.YEAR) +
+                    " RContacts App inc.\nAll rights reserved");
+
+            txtTerms.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showWebView(getString(R.string.str_terms), WsConstants.URL_TERMS_CONDITIONS);
+                }
+            });
+
             return v;
         }
+
+        private void showWebView(String title, String url) {
+
+            new FinestWebView.Builder(getActivity()).theme(R.style.FinestWebViewTheme)
+                    .titleDefault(title)
+                    .showUrl(false)
+                    .statusBarColorRes(R.color.colorPrimaryDark)
+                    .toolbarColorRes(R.color.colorPrimary)
+                    .titleColorRes(R.color.finestWhite)
+                    .urlColorRes(R.color.colorPrimary)
+                    .iconDefaultColorRes(R.color.finestWhite)
+                    .progressBarColorRes(R.color.finestWhite)
+                    .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+                    .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+                    .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+                    .showSwipeRefreshLayout(true)
+                    .swipeRefreshColorRes(R.color.colorPrimaryDark)
+                    .menuSelector(R.drawable.selector_light_theme)
+                    .menuTextGravity(Gravity.CENTER)
+                    .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
+                    .dividerHeight(0)
+                    .gradientDivider(false)
+                    .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
+                    .show(url);
+        }
+
+        @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+            unbinder.unbind();
+        }
+    }
+
+    private void showWebView(String title, String url) {
+
+        new FinestWebView.Builder(this).theme(R.style.FinestWebViewTheme)
+                .titleDefault(title).showUrl(false)
+                .statusBarColorRes(R.color.colorPrimaryDark)
+                .toolbarColorRes(R.color.colorPrimary)
+                .titleColorRes(R.color.finestWhite)
+                .urlColorRes(R.color.colorPrimary)
+                .iconDefaultColorRes(R.color.finestWhite)
+                .progressBarColorRes(R.color.finestWhite)
+                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+                .showSwipeRefreshLayout(true)
+                .swipeRefreshColorRes(R.color.colorPrimaryDark)
+                .menuSelector(R.drawable.selector_light_theme)
+                .menuTextGravity(Gravity.CENTER)
+                .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
+                .dividerHeight(0)
+                .gradientDivider(false)
+                .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
+                .show(url);
     }
 }
