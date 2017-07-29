@@ -58,10 +58,10 @@ public class TableRCContactRequest {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_CAR_STATUS, status);
-        values.put(COLUMN_CARTYPE, requestType);
-        values.put(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID, carPmIdFrom);
         values.put(COLUMN_CAR_CLOUD_REQUEST_ID, carId);
         values.put(COLUMN_CAR_RECORD_INDEX_ID, carMongodbRecordIndex);
+        values.put(COLUMN_CRM_RC_PROFILE_MASTER_PM_ID, carPmIdFrom);
+        values.put(COLUMN_CARTYPE, requestType);
         values.put(COLUMN_CAR_CREATED_AT, createdAt);
         values.put(COLUMN_CAR_UPDATED_AT, updatedAt);
         try {

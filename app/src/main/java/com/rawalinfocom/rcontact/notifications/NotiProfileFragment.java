@@ -145,8 +145,10 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
 
     private void setUpTabLayout() {
         if (tabProfile != null) {
-            tabProfile.addTab(tabProfile.newTab().setText(getResources().getString(R.string.text_tab_request)), true);
-            tabProfile.addTab(tabProfile.newTab().setText(getResources().getString(R.string.text_tab_response)));
+            tabProfile.addTab(tabProfile.newTab().setText(getResources().getString(R.string
+                    .text_tab_request)), true);
+            tabProfile.addTab(tabProfile.newTab().setText(getResources().getString(R.string
+                    .text_tab_response)));
         }
         if (tabProfile != null)
             tabProfile.getTabAt(tab).select();
@@ -168,7 +170,9 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                             @Override
                             public void run() {
                                 if (getActivity() != null)
-                                    ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_PROFILE_REQUEST);
+                                    ((NotificationsDetailActivity) getActivity())
+                                            .updateNotificationCount(AppConstants
+                                                    .NOTIFICATION_TYPE_PROFILE_REQUEST);
                             }
                         }, 800);
                     }
@@ -185,7 +189,9 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                                 @Override
                                 public void run() {
                                     if (getActivity() != null)
-                                        ((NotificationsDetailActivity) getActivity()).updateNotificationCount(AppConstants.NOTIFICATION_TYPE_PROFILE_RESPONSE);
+                                        ((NotificationsDetailActivity) getActivity())
+                                                .updateNotificationCount(AppConstants
+                                                        .NOTIFICATION_TYPE_PROFILE_RESPONSE);
                                 }
                             }, 800);
                             isFirstTime = false;
@@ -214,16 +220,20 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
         if (Utils.isNetworkAvailable(getActivity())) {
             new AsyncWebServiceCall(fragment, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     requestObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_PROFILE_PRIVACY_REQUEST, getResources().getString(R.string.msg_please_wait), true)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_PRIVACY_REQUEST);
+                    .REQ_GET_PROFILE_PRIVACY_REQUEST, getResources().getString(R.string
+                    .msg_please_wait), true)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT +
+                            WsConstants.REQ_GET_PROFILE_PRIVACY_REQUEST);
         } else {
-            Toast.makeText(getActivity(), getResources().getString(R.string.msg_no_network), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getResources().getString(R.string.msg_no_network),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
     private void init() {
         tableRCContactRequest = new TableRCContactRequest(getDatabaseHandler());
-        InputMethodManager im = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
+        InputMethodManager im = (InputMethodManager) getActivity().getSystemService(Service
+                .INPUT_METHOD_SERVICE);
         softKeyboard = new SoftKeyboard(layoutRoot, im);
         softKeyboard.setSoftKeyboardCallback(new SoftKeyboard.SoftKeyboardChanged() {
 
@@ -364,11 +374,15 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
         today = getDate(0);
         yesterDay = getDate(-1);
         pastday6thDay = getDate(-6);
-        ArrayList<PrivacyRequestDataItem> pendingRequestToday = tableRCContactRequest.getAllPendingRequest(today, today);
-        ArrayList<PrivacyRequestDataItem> pendingRequestPastDays = tableRCContactRequest.getAllPendingRequest(pastday6thDay, yesterDay);
+        ArrayList<PrivacyRequestDataItem> pendingRequestToday = tableRCContactRequest
+                .getAllPendingRequest(today, today);
+        ArrayList<PrivacyRequestDataItem> pendingRequestPastDays = tableRCContactRequest
+                .getAllPendingRequest(pastday6thDay, yesterDay);
 
-        ArrayList<PrivacyRequestDataItem> responseReceivedToday = tableRCContactRequest.getAllResponseReceived(today, today);
-        ArrayList<PrivacyRequestDataItem> responseReceivedPastDays = tableRCContactRequest.getAllResponseReceived(pastday6thDay, yesterDay);
+        ArrayList<PrivacyRequestDataItem> responseReceivedToday = tableRCContactRequest
+                .getAllResponseReceived(today, today);
+        ArrayList<PrivacyRequestDataItem> responseReceivedPastDays = tableRCContactRequest
+                .getAllResponseReceived(pastday6thDay, yesterDay);
 
         listTodayRequest = createRatingList(pendingRequestToday, 0);
         listPastRequest = createRatingList(pendingRequestPastDays, 0);
@@ -386,7 +400,8 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
         recyclerPastProfile.setVisibility(View.GONE);
     }
 
-    private List<NotiProfileItem> createRatingList(ArrayList<PrivacyRequestDataItem> listRequests, int listType) {
+    private List<NotiProfileItem> createRatingList(ArrayList<PrivacyRequestDataItem>
+                                                           listRequests, int listType) {
         List<NotiProfileItem> list = new ArrayList<>();
         for (PrivacyRequestDataItem request : listRequests) {
             NotiProfileItem item = new NotiProfileItem();
@@ -399,11 +414,13 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
             if (listType == 0) {
 
                 item.setProfileNotiType(0);
-                item.setNotiInfo(item.getPersonName() + " " + getActivity().getString(R.string.str_requested_for_your)
+                item.setNotiInfo(item.getPersonName() + " " + getActivity().getString(R.string
+                        .str_requested_for_your)
                         + request.getPpmTag());
             } else {
                 item.setProfileNotiType(1);
-                item.setNotiInfo(item.getPersonName() + " " + getActivity().getString(R.string.str_confirmed_your_request_for)
+                item.setNotiInfo(item.getPersonName() + " " + getActivity().getString(R.string
+                        .str_confirmed_your_request_for)
                         + request.getPpmTag());
             }
             item.setRcpUserPmId(pmId + "");
@@ -480,7 +497,8 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
         if (error == null) {
             WsResponseObject wsResponseObject = (WsResponseObject) data;
             if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_PROFILE_PRIVACY_REQUEST)) {
-                ArrayList<PrivacyRequestDataItem> profileData = wsResponseObject.getPrivacyRequestData();
+                ArrayList<PrivacyRequestDataItem> profileData = wsResponseObject
+                        .getPrivacyRequestData();
                 saveDataToDB(profileData);
             } else if (serviceType.equalsIgnoreCase(WsConstants.REQ_PROFILE_PRIVACY_REQUEST)) {
                 WsResponseObject privacyResponse = (WsResponseObject) data;
@@ -492,17 +510,20 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                     try {
 
                         if (MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0) == 1 ||
-                                MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0) == 2) {
+                                MoreObjects.firstNonNull(item.getCarAccessPermissionStatus(), 0)
+                                        == 2) {
                             boolean deleted = tableRCContactRequest.removeRequest(item.getCarId());
                             if (deleted) {
                                 refreshAllList();
                             }
                             Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), getResources().getString(R.string
+                                    .msg_try_later), Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
-                        Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getResources().getString(R.string
+                                .msg_try_later), Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -510,7 +531,8 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
             Utils.hideProgressDialog();
         } else {
             Utils.hideProgressDialog();
-            Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getResources().getString(R.string.msg_try_later), Toast
+                    .LENGTH_SHORT).show();
         }
     }
 
@@ -521,7 +543,8 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
         }
         for (PrivacyRequestDataItem data : profileData) {
 
-            if (data.getCarPmIdTo() == Integer.parseInt(getUserPmId()) && data.getCarAccessPermissionStatus() == 0) {
+            if (data.getCarPmIdTo() == Integer.parseInt(getUserPmId()) && data
+                    .getCarAccessPermissionStatus() == 0) {
                 //Request
                 tableRCContactRequest.addRequest(AppConstants.COMMENT_STATUS_RECEIVED,
                         data.getCarId() + "",
@@ -530,7 +553,8 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
                         data.getPpmParticular(),
                         Utils.getLocalTimeFromUTCTime(data.getCreatedAt()),
                         Utils.getLocalTimeFromUTCTime(data.getUpdatedAt()));
-            } else if (data.getCarPmIdFrom() == Integer.parseInt(getUserPmId()) && data.getCarAccessPermissionStatus() == 1) {
+            } else if (data.getCarPmIdFrom() == Integer.parseInt(getUserPmId()) && data
+                    .getCarAccessPermissionStatus() == 1) {
                 //Response
                 tableRCContactRequest.addRequest(AppConstants.COMMENT_STATUS_SENT,
                         data.getCarId() + "",
@@ -548,10 +572,14 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
 
     private void refreshAllList() {
 
-        ArrayList<PrivacyRequestDataItem> pendingRequestToday = tableRCContactRequest.getAllPendingRequest(today, today);
-        ArrayList<PrivacyRequestDataItem> pendingRequestPastDays = tableRCContactRequest.getAllPendingRequest(pastday6thDay, yesterDay);
-        ArrayList<PrivacyRequestDataItem> responseReceivedToday = tableRCContactRequest.getAllResponseReceived(today, today);
-        ArrayList<PrivacyRequestDataItem> responseReceivedPastDays = tableRCContactRequest.getAllResponseReceived(pastday6thDay, yesterDay);
+        ArrayList<PrivacyRequestDataItem> pendingRequestToday = tableRCContactRequest
+                .getAllPendingRequest(today, today);
+        ArrayList<PrivacyRequestDataItem> pendingRequestPastDays = tableRCContactRequest
+                .getAllPendingRequest(pastday6thDay, yesterDay);
+        ArrayList<PrivacyRequestDataItem> responseReceivedToday = tableRCContactRequest
+                .getAllResponseReceived(today, today);
+        ArrayList<PrivacyRequestDataItem> responseReceivedPastDays = tableRCContactRequest
+                .getAllResponseReceived(pastday6thDay, yesterDay);
 
 
         listTodayRequest = createRatingList(pendingRequestToday, 0);
@@ -581,7 +609,8 @@ public class NotiProfileFragment extends BaseFragment implements WsResponseListe
 //                tableEmailMaster.updatePrivacySetting(cloudMongoId);
 //                break;
 //            case "pb_address":
-//                TableAddressMaster tableAddressMaster= new TableAddressMaster(getDatabaseHandler());
+//                TableAddressMaster tableAddressMaster= new TableAddressMaster
+// (getDatabaseHandler());
 //                tableAddressMaster.updatePrivacySetting(cloudMongoId);
 //                break;
 //            case "pb_im_accounts":
