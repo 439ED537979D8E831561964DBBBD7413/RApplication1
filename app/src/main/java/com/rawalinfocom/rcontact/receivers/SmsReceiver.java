@@ -23,7 +23,7 @@ public class SmsReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")){
+        /*if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")){
             Bundle bundle = intent.getExtras();           //---get the SMS message passed in---
             SmsMessage[] msgs = null;
             String msg_from;
@@ -63,6 +63,6 @@ public class SmsReceiver extends BroadcastReceiver {
 //                            Log.d("Exception caught",e.getMessage());
                 }
             }
-        }
+        }*/
     }
 }

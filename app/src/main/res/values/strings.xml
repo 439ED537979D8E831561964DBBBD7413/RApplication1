@@ -679,4 +679,15 @@
     <string name="open_with">Open with</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
 
+    <!--Call-popup-->
+    <string name="network_warning_msg">You need a 3G/4G or wifi connection for Caller ID to function. Please check
+    your connection and try again.</string>
+    <string name="call_received_from">Call received from</string>
+    <string name="btn_view_profile">VIEW PROFILE</string>
+    <string name="btn_view_call_history">VIEW CALL HISTORY</string>
+    <string name="txt_call">CALL</string>
+    <string name="txt_message">MESSAGE</string>
+    <string name="txt_save">SAVE</string>
+    <string name="report_spam">Report as spam</string>
+
 </resources>
