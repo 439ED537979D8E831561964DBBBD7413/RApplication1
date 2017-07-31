@@ -197,6 +197,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     @BindView(R.id.progressBarLoadCallLogs)
     ProgressBar progressBarLoadCallLogs;
     private boolean isCallLogRcpUser;
+    private String isRcpVerifiedUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,6 +213,10 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
             if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER)) {
                 historyNumber = intent.getStringExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER);
+            }
+
+            if (intent.hasExtra(AppConstants.EXTRA_IS_RCP_VERIFIED_SPAM)) {
+                isRcpVerifiedUser = intent.getStringExtra(AppConstants.EXTRA_IS_RCP_VERIFIED_SPAM);
             }
 
             if (intent.hasExtra(AppConstants.EXTRA_CALL_HISTORY_NAME)) {
@@ -688,27 +693,35 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             case R.id.ripple_action_right_center:
 
                 if (StringUtils.equals(imageRightCenter.getTag().toString(), TAG_IMAGE_CALL)) {
-                    if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
-                        int count = tempPhoneNumber.size();
-                        ArrayList<String> listPhoneNumber = new ArrayList<>();
-                        if (count > 1) {
-                            for (int i = 0; i < tempPhoneNumber.size(); i++) {
-                                ProfileDataOperationPhoneNumber phoneNumber =
-                                        (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(i);
-                                String number = phoneNumber.getPhoneNumber();
-                                listPhoneNumber.add(number);
+                    if (tempPhoneNumber == null) {
+                        if (!StringUtils.isEmpty(historyNumber)) {
+                            if (historyNumber.matches("[+][0-9]+") || historyNumber.matches("[0-9]+"))
+                                showCallConfirmationDialog(historyNumber);
+                        }
+                    } else {
+                        if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
+                            int count = tempPhoneNumber.size();
+                            ArrayList<String> listPhoneNumber = new ArrayList<>();
+                            if (count > 1) {
+                                for (int i = 0; i < tempPhoneNumber.size(); i++) {
+                                    ProfileDataOperationPhoneNumber phoneNumber =
+                                            (ProfileDataOperationPhoneNumber) tempPhoneNumber.get(i);
+                                    String number = phoneNumber.getPhoneNumber();
+                                    listPhoneNumber.add(number);
+                                }
+
+                                CallConfirmationListDialog callConfirmationListDialog = new
+                                        CallConfirmationListDialog(this, listPhoneNumber, true);
+                                callConfirmationListDialog.setDialogTitle(getString(R.string
+                                        .please_select_number_call));
+                                callConfirmationListDialog.showDialog();
+
+                            } else {
+                                showCallConfirmationDialog(profileContactNumber);
                             }
-
-                            CallConfirmationListDialog callConfirmationListDialog = new
-                                    CallConfirmationListDialog(this, listPhoneNumber, true);
-                            callConfirmationListDialog.setDialogTitle(getString(R.string
-                                    .please_select_number_call));
-                            callConfirmationListDialog.showDialog();
-
-                        } else {
-                            showCallConfirmationDialog(profileContactNumber);
                         }
                     }
+
                 }
                 break;
 
@@ -824,11 +837,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 } else {
                     if (!TextUtils.isEmpty(contactName) /*&& !contactName.equalsIgnoreCase
                     ("[Unknown]")*/) {
-                        String number =  "";
-                        if(StringUtils.isEmpty(historyNumber)){
+                        String number = "";
+                        if (StringUtils.isEmpty(historyNumber)) {
                             number = contactName;
-                        }else{
-                            number =  historyNumber;
+                        } else {
+                            number = historyNumber;
                         }
                         ArrayList<String> arrayListName = new ArrayList<>(Arrays.asList(this
                                         .getString(R.string.edit), this.getString(R.string
@@ -1125,9 +1138,33 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     private void layoutVisibility() {
 
         textFullScreenText.setText(contactName);
+        if (StringUtils.equalsIgnoreCase(isRcpVerifiedUser, "0")) {
+            textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
+                    .textColorBlue));
+            textFullScreenText.setText(contactName);
+        } else if (StringUtils.equalsIgnoreCase(isRcpVerifiedUser, "1")) {
+            textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
+                    .colorAccent));
+            textFullScreenText.setText(contactName);
+        } else {
+            textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color
+                    .colorBlack));
+            textFullScreenText.setText(contactName);
+        }
+
         if (StringUtils.length(cloudContactName) > 0) {
-            textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
-            textName.setText(cloudContactName);
+            if (StringUtils.equalsIgnoreCase(isRcpVerifiedUser, "0")) {
+                textName.setTextColor(ContextCompat.getColor(this, R.color
+                        .textColorBlue));
+                textName.setText(cloudContactName);
+            } else if (StringUtils.equalsIgnoreCase(isRcpVerifiedUser, "1")) {
+                textName.setTextColor(ContextCompat.getColor(this, R.color
+                        .colorAccent));
+                textName.setText(cloudContactName);
+            } else {
+                textFullScreenText.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
+                textName.setText(cloudContactName);
+            }
 
         } else {
             if (StringUtils.equalsIgnoreCase(pmId, "-1")) {
@@ -1140,7 +1177,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
             textName.setVisibility(View.GONE);
         }
 
-        if(StringUtils.isEmpty(profileThumbnail)){
+        if (StringUtils.isEmpty(profileThumbnail)) {
             profileThumbnail = getPhotoUrlFromNumber();
         }
         if (!TextUtils.isEmpty(profileThumbnail)) {
@@ -1882,7 +1919,7 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
 
     private void showCallConfirmationDialog(final String number) {
 
-        final String finalNumber =  Utils.getFormattedNumber(CallHistoryDetailsActivity.this, number);
+        final String finalNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, number);
 
        /* if (!number.startsWith("+91")) {
             finalNumber = "+91" + number;

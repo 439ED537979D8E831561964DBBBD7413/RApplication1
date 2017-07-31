@@ -37,6 +37,8 @@ public class TableSpamDetailMaster {
     private static final String COLUMN_SPAM_COUNT = "spam_count";
     private static final String COLUMN_PROFILE_RATING = "profile_rating";
     private static final String COLUMN_TOTAL_PROFILE_RATE_USER = "total_profile_rate_user";
+    private static final String COLUMN_PUBLIC_URL = "public_url";
+    private static final String COLUMN_PHOTO_URL = "pb_profile_photo";
 
     // Table Create Statements
     static final String CREATE_TABLE_SPAM_DETAIL_MASTER = "CREATE TABLE table_spam_detail_master (" +
@@ -50,7 +52,9 @@ public class TableSpamDetailMaster {
             " " + COLUMN_PB_NAME_PREFIX + " text," +
             " " + COLUMN_SPAM_COUNT + " text," +
             " " + COLUMN_PROFILE_RATING + " text," +
-            " " + COLUMN_TOTAL_PROFILE_RATE_USER + " text" +
+            " " + COLUMN_TOTAL_PROFILE_RATE_USER + " text," +
+            " " + COLUMN_PUBLIC_URL + " text," +
+            " " + COLUMN_PHOTO_URL + " text" +
             ");";
 
     public void insertSpamDetails(ArrayList<SpamDataType> spamDataTypeList) {
@@ -70,6 +74,9 @@ public class TableSpamDetailMaster {
             values.put(COLUMN_SPAM_COUNT, spamDataTypeList.get(i).getSpamCount());
             values.put(COLUMN_PROFILE_RATING, spamDataTypeList.get(i).getProfileRating());
             values.put(COLUMN_TOTAL_PROFILE_RATE_USER, spamDataTypeList.get(i).getTotalProfileRateUser());
+            values.put(COLUMN_PUBLIC_URL, spamDataTypeList.get(i).getSpamPublicUrl());
+            values.put(COLUMN_PHOTO_URL, spamDataTypeList.get(i).getSpamPhotoUrl());
+
 
             // Inserting Row
             db.insert(TABLE_SPAM_DETAIL_MASTER, null, values);
@@ -103,6 +110,8 @@ public class TableSpamDetailMaster {
                 spamDataType.setSpamCount(cursor.getString(cursor.getColumnIndex(COLUMN_SPAM_COUNT)));
                 spamDataType.setProfileRating(cursor.getString(cursor.getColumnIndex(COLUMN_PROFILE_RATING)));
                 spamDataType.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex(COLUMN_TOTAL_PROFILE_RATE_USER)));
+                spamDataType.setSpamPublicUrl(cursor.getString(cursor.getColumnIndex(COLUMN_PUBLIC_URL)));
+                spamDataType.setSpamPhotoUrl(cursor.getString(cursor.getColumnIndex(COLUMN_PHOTO_URL)));
                 // Adding Address to list
                 arrayListSpamDetails.add(spamDataType);
             } while (cursor.moveToNext());
@@ -143,6 +152,8 @@ public class TableSpamDetailMaster {
             spamDataType.setSpamCount(cursor.getString(cursor.getColumnIndex(COLUMN_SPAM_COUNT)));
             spamDataType.setProfileRating(cursor.getString(cursor.getColumnIndex(COLUMN_PROFILE_RATING)));
             spamDataType.setTotalProfileRateUser(cursor.getString(cursor.getColumnIndex(COLUMN_TOTAL_PROFILE_RATE_USER)));
+            spamDataType.setSpamPublicUrl(cursor.getString(cursor.getColumnIndex(COLUMN_PUBLIC_URL)));
+            spamDataType.setSpamPhotoUrl(cursor.getString(cursor.getColumnIndex(COLUMN_PHOTO_URL)));
             cursor.close();
         }
         db.close();
