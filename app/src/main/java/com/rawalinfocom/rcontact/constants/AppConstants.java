@@ -125,6 +125,8 @@ public class AppConstants {
     public static String EXTRA_FEEDBACK_URL = "extra_feedback_url";
     public static String EXTRA_IS_RCP_USER = "extra_is_rcp_user";
     public static String EXTRA_CALL_LOG_CLOUD_NAME = "extra_call_log_cloud_name";
+    public static String EXTRA_IS_RCP_VERIFIED_SPAM = "extra_is_rcp_verified_spam";
+
 
 
     //</editor-fold>
