@@ -12,7 +12,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://apistaging.rcontacts.in/api/v1/";
 
     // QA Server
-    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
+//    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
 
     // Monal
 //    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
@@ -27,7 +27,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://10.0.30.11/api/v1/";
 
     // Shailesh
-//    public static final String WS_ROOT = "http://10.0.21.14:8001/api/v1/";
+    public static final String WS_ROOT = "http://10.0.21.14:8001/api/v1/";
 
     // Jignesh
 //    public static final String WS_ROOT = "http://10.0.21.15:8000/api/v1/";
@@ -51,13 +51,6 @@ public class WsConstants {
      * FAQ URL
      */
     public static final String URL_FAQ = "http://webstaging.rcontacts.in/global/faqs";
-
-
-    /**
-     * ContactUs URL
-     */
-//    public static final String URL_CONTACT_US = "http://api.rcontacts.in/global/";
-//    public static final String URL_CONTACT_US = "http://10.0.21.15:8000/api/v1/contact-us";
 
     /**
      * Profile View

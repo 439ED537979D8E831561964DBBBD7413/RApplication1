@@ -257,7 +257,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         Utils.setIntegerPreference(getActivity(), AppConstants.PREF_SYNCED_CONTACTS,
                                 lastSyncedData);
 
-                        if (lastSyncedData < arrayListSyncUserContact.size()) {
+                        if (lastSyncedData < (arrayListSyncUserContact.size() + CONTACT_CHUNK)) {
                             backgroundSync(true, uploadContactResponse);
                         } else {
                             if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
@@ -1588,8 +1588,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         Runnable run = new Runnable() {
             @Override
             public void run() {
+                String responseKey = "";
                 if (addToDatabase) {
                     if (uploadContactResponse != null) {
+                        responseKey = uploadContactResponse.getResponseKey();
+                        Utils.setStringPreference(getActivity(), AppConstants.PREF_RESPONSE_KEY,
+                                responseKey);
                         if (syncingTask != null && syncingTask.isCancelled()) {
                             return;
                         }
@@ -1617,9 +1621,12 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                 }
                 if (lastSyncedData <= limit) {
                     ArrayList<ProfileData> subList = new ArrayList<>(arrayListSyncUserContact
-                            .subList
-                                    (lastSyncedData, limit));
-                    uploadContacts(lastSyncedData, subList);
+                            .subList(lastSyncedData, limit));
+                    uploadContacts(lastSyncedData, Utils.getStringPreference(getActivity(),
+                            AppConstants.PREF_RESPONSE_KEY, ""), subList);
+                } else {
+                    uploadContacts(lastSyncedData, Utils.getStringPreference(getActivity(),
+                            AppConstants.PREF_RESPONSE_KEY, ""), new ArrayList<ProfileData>());
                 }
             }
         };
@@ -1637,14 +1644,13 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
 
     //<editor-fold desc="Private Methods">
 
-    private void uploadContacts(int previouslySyncedData, ArrayList<ProfileData>
-            arrayListUserContact) {
+    private void uploadContacts(int previouslySyncedData, String responseKey,
+                                ArrayList<ProfileData> arrayListUserContact) {
         if (syncingTask != null && syncingTask.isCancelled()) {
             return;
         }
         WsRequestObject uploadContactObject = new WsRequestObject();
-//        uploadContactObject.setPmId(Integer.parseInt(((BaseActivity) getActivity()).getUserPmId
-// ()));
+        uploadContactObject.setResponseKey(responseKey);
         uploadContactObject.setProfileData(arrayListUserContact);
 
         if (Utils.isNetworkAvailable(getActivity())) {

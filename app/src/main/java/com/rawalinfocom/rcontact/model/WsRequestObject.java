@@ -109,6 +109,7 @@ public class WsRequestObject {
     private String dmLocation;
 
     private ArrayList<ProfileData> profileData;
+    private String responseKey;
     private ArrayList<ProfileData> favourites;
     private ProfileDataOperation contactData;
 
@@ -383,6 +384,15 @@ public class WsRequestObject {
 
     public void setProfileData(ArrayList<ProfileData> profileData) {
         this.profileData = profileData;
+    }
+
+    @JsonProperty("response_key")
+    public String getResponseKey() {
+        return responseKey;
+    }
+
+    public void setResponseKey(String responseKey) {
+        this.responseKey = responseKey;
     }
 
     @JsonProperty("cm_id")
