@@ -16,19 +16,22 @@
         <ImageView
             android:id="@+id/image_icon"
             android:layout_width="150dp"
-            android:layout_height="30dp"
+            android:layout_height="36dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/margin_10dp"
+            android:layout_margin="@dimen/margin_5dp"
+            android:contentDescription="@string/app_name"
+            android:padding="@dimen/padding_5dp"
             android:src="@drawable/call_end_app_icon" />
 
         <ImageView
             android:id="@+id/image_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/margin_5dp"
-            android:padding="@dimen/margin_15dp"
+            android:contentDescription="@string/app_name"
+            android:padding="@dimen/margin_10dp"
             android:src="@drawable/ico_close" />
 
     </RelativeLayout>

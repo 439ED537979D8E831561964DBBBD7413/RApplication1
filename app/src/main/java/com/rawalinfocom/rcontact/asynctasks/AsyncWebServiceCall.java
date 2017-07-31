@@ -10,6 +10,8 @@ import android.util.Log;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
+import com.rawalinfocom.rcontact.model.WsResponseObject;
+import com.rawalinfocom.rcontact.receivers.PhoneCallReceiver;
 import com.rawalinfocom.rcontact.webservice.RequestWs;
 
 /**
@@ -24,6 +26,7 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
     private Exception error = null;
 
     private Activity activity;
+    private Context context;
     private WsRequestObject requestObject;
     private WsResponseListener wsResponseListener;
     private String progressDialogMessage;
@@ -73,6 +76,43 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
 
     }
 
+    public AsyncWebServiceCall(Context context, int requestType, WsRequestObject requestObject,
+                               ContentValues contentValues, Class responseClass, String
+                                       serviceType, String progressDialogMessage, boolean
+                                       setHeader) {
+
+        this.context = context;
+        this.requestObject = requestObject;
+        this.serviceType = serviceType;
+        this.progressDialogMessage = progressDialogMessage;
+        this.responseClass = responseClass;
+        this.requestType = requestType;
+        this.contentValues = contentValues;
+        this.setHeader = setHeader;
+
+        wsResponseListener = (WsResponseListener) context;
+
+    }
+
+    public AsyncWebServiceCall(Context context, int requestType, WsRequestObject requestObject,
+                               ContentValues contentValues, Class responseClass, String
+                                       serviceType, String progressDialogMessage, boolean
+                                       setHeader, WsResponseListener wsResponseListener) {
+
+        this.context = context;
+        this.requestObject = requestObject;
+        this.serviceType = serviceType;
+        this.progressDialogMessage = progressDialogMessage;
+        this.responseClass = responseClass;
+        this.requestType = requestType;
+        this.contentValues = contentValues;
+        this.setHeader = setHeader;
+
+        this.wsResponseListener = wsResponseListener;
+
+    }
+
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -84,8 +124,15 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
     @Override
     protected Object doInBackground(String... params) {
         try {
-            return new RequestWs().getPostRequest(activity, params[0], requestType, requestObject,
-                    responseClass, contentValues, setHeader);
+            if (activity != null) {
+                return new RequestWs().getPostRequest(activity, params[0], requestType, requestObject,
+                        responseClass, contentValues, setHeader);
+            } else {
+                return new com.rawalinfocom.rcontact.webservicedialog.RequestWs().getPostRequest(
+                        context, params[0], requestType, requestObject,
+                        responseClass, contentValues, setHeader);
+            }
+
         } catch (Exception e) {
             Utils.hideProgressDialog();
             this.error = e;
