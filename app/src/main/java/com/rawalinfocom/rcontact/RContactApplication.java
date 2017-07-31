@@ -2,14 +2,18 @@ package com.rawalinfocom.rcontact;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
+import com.rawalinfocom.rcontact.constants.AppConstants;
+import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.SmsDataType;
 import com.rawalinfocom.rcontact.model.SpamDataType;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -50,22 +54,6 @@ public class RContactApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-//        Log.d("KeyHash:", "We are here");
-//        try {
-//            PackageInfo info = getPackageManager().getPackageInfo(
-//                    "com.rawalinfocom.rcontact",
-//                    PackageManager.GET_SIGNATURES);
-//            for (Signature signature : info.signatures) {
-//                MessageDigest md = MessageDigest.getInstance("SHA");
-//                md.update(signature.toByteArray());
-//                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-//            }
-//        } catch (PackageManager.NameNotFoundException e) {
-//
-//        } catch (NoSuchAlgorithmException e) {
-//
-//        }
-//        Log.d("KeyHash:", "We are here end");
 
         mInstance = this;
 
@@ -81,49 +69,40 @@ public class RContactApplication extends Application {
         arrayListCallLogType = new ArrayList<>();
 
         arrayListObjectSmsLogs = new ArrayList<>();
-        arrayListSpamDataType =  new ArrayList<>();
+        arrayListSpamDataType = new ArrayList<>();
 //        arrayListSmsLogsHeaders = new ArrayList<>();
 
-        // Facebook Initialization
-//        AppEventsLogger.activateApp(this);
+        setLanguage();
 
-//        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
-//
-//            @Override
-//            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-//                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//            }
-//
-//            @Override
-//            public void onActivityStarted(Activity activity) {
-//
-//            }
-//
-//            @Override
-//            public void onActivityResumed(Activity activity) {
-//
-//            }
-//
-//            @Override
-//            public void onActivityPaused(Activity activity) {
-//
-//            }
-//
-//            @Override
-//            public void onActivityStopped(Activity activity) {
-//
-//            }
-//
-//            @Override
-//            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-//
-//            }
-//
-//            @Override
-//            public void onActivityDestroyed(Activity activity) {
-//
-//            }
-//        });
+    }
+
+    public void setLanguage() {
+
+        String languageToLoad = "en"; // your language
+
+        switch (Utils.getStringPreference(mInstance, AppConstants.PREF_APP_LANGUAGE, "0")) {
+
+            case "0":
+                languageToLoad = "en";
+                break;
+
+            case "1":
+                languageToLoad = "hi";
+                break;
+
+            case "2":
+                languageToLoad = "gu";
+                break;
+
+
+        }
+
+        Locale locale = new Locale(languageToLoad);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config,
+                getBaseContext().getResources().getDisplayMetrics());
     }
 
     public static synchronized RContactApplication getInstance() {

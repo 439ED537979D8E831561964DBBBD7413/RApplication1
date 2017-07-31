@@ -176,7 +176,10 @@ public class ContactUsActivity extends BaseActivity implements RippleView
         switch (v.getId()) {
 
             case R.id.edit_text_read_faq:
-                showWebView(getString(R.string.str_faq), WsConstants.URL_FAQ);
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(WsConstants.URL_FAQ));
+                startActivity(i);
+//                showWebView(getString(R.string.str_faq), WsConstants.URL_FAQ);
                 break;
             case R.id.frameImageView1:
                 selectedImageNumber = "1";
@@ -193,29 +196,29 @@ public class ContactUsActivity extends BaseActivity implements RippleView
         }
     }
 
-    private void showWebView(String title, String url) {
-
-        new FinestWebView.Builder(this).theme(R.style.FinestWebViewTheme)
-                .titleDefault(title).showUrl(false)
-                .statusBarColorRes(R.color.colorPrimaryDark)
-                .toolbarColorRes(R.color.colorPrimary)
-                .titleColorRes(R.color.finestWhite)
-                .urlColorRes(R.color.colorPrimary)
-                .iconDefaultColorRes(R.color.finestWhite)
-                .progressBarColorRes(R.color.finestWhite)
-                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-                .showSwipeRefreshLayout(true)
-                .swipeRefreshColorRes(R.color.colorPrimaryDark)
-                .menuSelector(R.drawable.selector_light_theme)
-                .menuTextGravity(Gravity.CENTER)
-                .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
-                .dividerHeight(0)
-                .gradientDivider(false)
-                .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
-                .show(url);
-    }
+//    private void showWebView(String title, String url) {
+//
+//        new FinestWebView.Builder(this).theme(R.style.FinestWebViewTheme)
+//                .titleDefault(title).showUrl(false)
+//                .statusBarColorRes(R.color.colorPrimaryDark)
+//                .toolbarColorRes(R.color.colorPrimary)
+//                .titleColorRes(R.color.finestWhite)
+//                .urlColorRes(R.color.colorPrimary)
+//                .iconDefaultColorRes(R.color.finestWhite)
+//                .progressBarColorRes(R.color.finestWhite)
+//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                .showSwipeRefreshLayout(true)
+//                .swipeRefreshColorRes(R.color.colorPrimaryDark)
+//                .menuSelector(R.drawable.selector_light_theme)
+//                .menuTextGravity(Gravity.CENTER)
+//                .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
+//                .dividerHeight(0)
+//                .gradientDivider(false)
+//                .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
+//                .show(url);
+//    }
 
     private void showChooseImageIntent() {
         final Dialog dialog = new Dialog(this);

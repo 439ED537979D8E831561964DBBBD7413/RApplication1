@@ -1,7 +1,6 @@
 package com.rawalinfocom.rcontact.receivers;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,53 +11,40 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
-import android.provider.Telephony;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rawalinfocom.rcontact.R;
-import com.rawalinfocom.rcontact.asynctasks.AsyncWebServiceCall;
+import com.rawalinfocom.rcontact.calllog.CallHistoryDetailsActivity;
 import com.rawalinfocom.rcontact.constants.AppConstants;
-import com.rawalinfocom.rcontact.constants.WsConstants;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.database.TableSpamDetailMaster;
-import com.rawalinfocom.rcontact.enumerations.WSRequestType;
-import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
-import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
-import com.rawalinfocom.rcontact.model.CallLogType;
 import com.rawalinfocom.rcontact.model.SpamDataType;
 import com.rawalinfocom.rcontact.model.WsRequestObject;
-import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-
-import butterknife.BindView;
 
 /**
  * Created by Aniruddh on 22/02/17.
  */
 
-public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseListener {
+public class PhoneCallReceiver extends BroadcastReceiver {
 
     //The receiver will be recreated whenever android feels like it.  We need a static variable
     // to remember data between instantiations
@@ -71,7 +57,9 @@ public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseLi
     private Context context;
     private DatabaseHandler databaseHandler;
     private SpamDataType spamDataType;
+    boolean isCallEnded = false;
 
+    private Dialog endCallDialog, incomingDialog;
 
     public PhoneCallReceiver() {
     }
@@ -145,10 +133,11 @@ public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseLi
                 isIncoming = true;
                 callStartTime = new Date();
                 savedNumber = number;
-                /*String name = getNameFromNumber(Utils.getFormattedNumber(context, savedNumber));
+                isCallEnded = false;
+                String name = getNameFromNumber(Utils.getFormattedNumber(context, savedNumber));
                 if (StringUtils.isEmpty(name)) {
                     callSpamServiceApi();
-                }*/
+                }
 //                blockCall(context,savedNumber);
                 onIncomingCallStarted(context, number, callStartTime);
                 break;
@@ -174,7 +163,17 @@ public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseLi
                 } else {
                     onOutgoingCallEnded(context, savedNumber, callStartTime, new Date());
                 }
-                initializeEndCallDialog();
+                isCallEnded = true;
+                String contactName = getNameFromNumber(Utils.getFormattedNumber(context, savedNumber));
+                if (StringUtils.isEmpty(contactName)) {
+                    final SpamDataType spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
+                    if (StringUtils.length(spamDataType.getRcpVerfiy()) > 0) {
+                        initializeEndCallDialog();
+                    } else {
+                        callSpamServiceApi();
+                    }
+                }
+
 
                 Intent localBroadcastIntent = new Intent(AppConstants.ACTION_LOCAL_BROADCAST_RECEIVE_RECENT_CALLS);
                 LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
@@ -185,120 +184,93 @@ public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseLi
         lastState = state;
     }
 
-//    private void blockCall(Context context, String numberToBlock) {
-//        if (Utils.getHashMapPreferenceForBlock(context, AppConstants
-//                .PREF_BLOCK_CONTACT_LIST) != null) {
-//            HashMap<String, ArrayList<CallLogType>> blockProfileHashMapList =
-//                    Utils.getHashMapPreferenceForBlock(context, AppConstants.PREF_BLOCK_CONTACT_LIST);
-//            ArrayList<CallLogType> callLogTypeList = new ArrayList<CallLogType>();
-//            String blockedNumber = "";
-//            String hashKey = "";
-//            if (blockProfileHashMapList != null && blockProfileHashMapList.size() > 0) {
-//                for (String key : blockProfileHashMapList.keySet()) {
-//                    System.out.println(key);
-//                    hashKey = key;
-//                    if (blockProfileHashMapList.containsKey(hashKey)) {
-//                        callLogTypeList.addAll(blockProfileHashMapList.get(hashKey));
-//                        if (callLogTypeList != null) {
-//                            for (int j = 0; j < callLogTypeList.size(); j++) {
-//                                String tempNumber = callLogTypeList.get(j).getNumber();
-//                                if (tempNumber.equalsIgnoreCase(numberToBlock)) {
-//                                    blockedNumber = tempNumber;
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//
-//            if (!TextUtils.isEmpty(blockedNumber)) {
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                    Telephony telephonyService;
-//                    try {
-//                        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-//                        Method m1 = tm.getClass().getDeclaredMethod("getITelephony");
-//                        m1.setAccessible(true);
-//                        Object iTelephony = m1.invoke(tm);
-//
-//                        Method m2 = iTelephony.getClass().getDeclaredMethod("silenceRinger");
-//                        Method m3 = iTelephony.getClass().getDeclaredMethod("endCall");
-//
-//                        m2.invoke(iTelephony);
-//                        m3.invoke(iTelephony);
-//
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                } else {
-//                    try {
-//
-//                        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-//
-//                        // Get the getITelephony() method
-//                        Class classTelephony = Class.forName(telephonyManager.getClass().getName());
-//                        Method methodGetITelephony = classTelephony.getDeclaredMethod("getITelephony");
-//
-//                        // Ignore that the method is supposed to be private
-//                        methodGetITelephony.setAccessible(true);
-//
-//                        // Invoke getITelephony() to get the ITelephony interface
-//                        Object telephonyInterface = methodGetITelephony.invoke(telephonyManager);
-//
-//                        // Get the endCall method from ITelephony
-//                        Class telephonyInterfaceClass = Class.forName(telephonyInterface.getClass().getName());
-//                        Method methodEndCall = telephonyInterfaceClass.getDeclaredMethod("endCall");
-//
-//                        // Invoke endCall()
-//                        methodEndCall.invoke(telephonyInterface);
-//
-//
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     private void callSpamServiceApi() {
+
+        if (isCallEnded) {
+            isCallEnded = false;
+
+            if (incomingDialog != null && incomingDialog.isShowing())
+                incomingDialog.dismiss();
+
+            initializeEndCallDialog();
+
+        } else {
+
+            if (endCallDialog != null && endCallDialog.isShowing())
+                endCallDialog.dismiss();
+
+            initializeIncomingCallDialog();
+        }
 
         if (Utils.isNetworkAvailable(context)) {
             WsRequestObject deviceDetailObject = new WsRequestObject();
             deviceDetailObject.setUnknownNumberList(new ArrayList<String>(Arrays.asList(savedNumber)));
 
-            new AsyncWebServiceCall((Activity) context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_PROFILE_DATA, null, true).execute(
-                    WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_DATA);
+//            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+//                    deviceDetailObject, null, WsResponseObject.class, WsConstants
+//                    .REQ_GET_PROFILE_DATA, true, new WsResponseListener() {
+//                @Override
+//                public void onDeliveryResponse(String serviceType, Object data, Exception error) {
+//
+//                    // <editor-fold desc="REQ_GET_PROFILE_DATA">
+//                    if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_PROFILE_DATA)) {
+//                        WsResponseObject getProfileDataResponse = (WsResponseObject) data;
+//                        if (getProfileDataResponse != null && StringUtils.equalsIgnoreCase
+//                                (getProfileDataResponse
+//                                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+//
+//                            ArrayList<SpamDataType> spamDataTypeList = getProfileDataResponse.getSpamDataTypeArrayList();
+//                            if (spamDataTypeList.size() > 0) {
+//                                try {
+//                                    TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(databaseHandler);
+//                                    tableSpamDetailMaster.insertSpamDetails(spamDataTypeList);
+//                                    spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                        } else {
+//                            if (getProfileDataResponse != null) {
+//                                Log.e("error response", getProfileDataResponse.getMessage());
+//                            } else {
+//                                Log.e("onDeliveryResponse: ", "getProfileDataResponse null");
+//                            }
+//                        }
+//
+//                    }
+//                    //</editor-fold>
+//                }
+//            }).execute(WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_DATA);
 
         }
     }
 
     private void initializeIncomingCallDialog() {
 
-        final Dialog dialog = new Dialog(context);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_incoming_call);
+        incomingDialog = new Dialog(context);
+        incomingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        incomingDialog.setContentView(R.layout.dialog_incoming_call);
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        incomingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        incomingDialog.setCancelable(false);
+        layoutParams.copyFrom(incomingDialog.getWindow().getAttributes());
         layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+        incomingDialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        ImageView imageClose = (ImageView) dialog.findViewById(R.id.image_close);
-        TextView textViewLastCallTime = (TextView) dialog.findViewById(R.id.text_last_call_time);
-        ImageView imageProfile = (ImageView) dialog.findViewById(R.id.image_profile);
-        TextView textNumber = (TextView) dialog.findViewById(R.id.text_number);
-        TextView textInternetStrenght = (TextView) dialog.findViewById(R.id.text_internet_strenght);
-        TextView textSpamReport = (TextView) dialog.findViewById(R.id.text_spam_report);
-        LinearLayout llSpam = (LinearLayout) dialog.findViewById(R.id.ll_spam);
+        ImageView imageClose = (ImageView) incomingDialog.findViewById(R.id.image_close);
+        TextView textViewLastCallTime = (TextView) incomingDialog.findViewById(R.id.text_last_call_time);
+        ImageView imageProfile = (ImageView) incomingDialog.findViewById(R.id.image_profile);
+        TextView textNumber = (TextView) incomingDialog.findViewById(R.id.text_number);
+        TextView textInternetStrenght = (TextView) incomingDialog.findViewById(R.id.text_internet_strenght);
+        TextView textSpamReport = (TextView) incomingDialog.findViewById(R.id.text_spam_report);
+        LinearLayout llSpam = (LinearLayout) incomingDialog.findViewById(R.id.ll_spam);
 
         imageClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                incomingDialog.dismiss();
             }
         });
 
@@ -330,6 +302,20 @@ public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseLi
             textViewLastCallTime.setVisibility(View.GONE);
         }
 
+
+//        String profileImage =  spamDataType.getSpamPhotoUrl();
+//        if (!TextUtils.isEmpty(profileImage)) {
+//            Glide.with(context)
+//                    .load(profileImage)
+//                    .placeholder(R.drawable.home_screen_profile)
+//                    .error(R.drawable.home_screen_profile)
+//                    .bitmapTransform(new CropCircleTransformation(context))
+//                    .override(200, 200)
+//                    .into(imageProfile);
+//
+//        } else {
+        imageProfile.setImageResource(R.drawable.home_screen_profile);
+//        }
 
         if (StringUtils.equalsIgnoreCase(spamDataType.getRcpVerfiy(), "0")) {
             textNumber.setTypeface(Utils.typefaceBold(context));
@@ -418,46 +404,65 @@ public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseLi
 
         }
 
-        dialog.show();
-
-
+        incomingDialog.show();
     }
 
     private void initializeEndCallDialog() {
 
-        final Dialog dialog = new Dialog(context);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_layout_end_call);
+        endCallDialog = new Dialog(context);
+        endCallDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        endCallDialog.setContentView(R.layout.dialog_layout_end_call);
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        endCallDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        endCallDialog.setCancelable(false);
+        endCallDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        layoutParams.copyFrom(endCallDialog.getWindow().getAttributes());
 //        layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.90);
-        layoutParams.width =  WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        dialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
+        endCallDialog.getWindow().setLayout(layoutParams.width, layoutParams.height);
 
-        ImageView imageClose = (ImageView) dialog.findViewById(R.id.image_close);
-        ImageView imageIcon = (ImageView) dialog.findViewById(R.id.image_icon);
-        ImageView imageProfile = (ImageView) dialog.findViewById(R.id.image_profile);
-        TextView textStaticInfo  =(TextView) dialog.findViewById(R.id.text_static_info);
-        TextView textNumber  =(TextView) dialog.findViewById(R.id.text_number);
-        TextView textInternetStrenght  =(TextView) dialog.findViewById(R.id.text_internet_strenght);
-        TextView textSpamReport  =(TextView) dialog.findViewById(R.id.text_spam_report);
-        LinearLayout llSpam  =(LinearLayout) dialog.findViewById(R.id.ll_spam);
-        LinearLayout llCall  =(LinearLayout) dialog.findViewById(R.id.ll_call);
-        LinearLayout llMessage  =(LinearLayout) dialog.findViewById(R.id.ll_message);
-        LinearLayout llSave  =(LinearLayout) dialog.findViewById(R.id.ll_save);
-        Button buttonViewProfile = (Button) dialog.findViewById(R.id.button_view_profile);
-        Button buttonViewCallHistory = (Button) dialog.findViewById(R.id.button_view_call_history);
+        ImageView imageClose = (ImageView) endCallDialog.findViewById(R.id.image_close);
+        ImageView imageIcon = (ImageView) endCallDialog.findViewById(R.id.image_icon);
+        ImageView imageProfile = (ImageView) endCallDialog.findViewById(R.id.image_profile);
+        TextView textStaticInfo = (TextView) endCallDialog.findViewById(R.id.text_static_info);
+        TextView textNumber = (TextView) endCallDialog.findViewById(R.id.text_number);
+        TextView textInternetStrenght = (TextView) endCallDialog.findViewById(R.id.text_internet_strenght);
+        TextView textSpamReport = (TextView) endCallDialog.findViewById(R.id.text_spam_report);
+        LinearLayout llSpam = (LinearLayout) endCallDialog.findViewById(R.id.ll_spam);
+        LinearLayout llCall = (LinearLayout) endCallDialog.findViewById(R.id.ll_call);
+        LinearLayout llMessage = (LinearLayout) endCallDialog.findViewById(R.id.ll_message);
+        LinearLayout llSave = (LinearLayout) endCallDialog.findViewById(R.id.ll_save);
+        Button buttonViewProfile = (Button) endCallDialog.findViewById(R.id.button_view_profile);
+        Button buttonViewCallHistory = (Button) endCallDialog.findViewById(R.id.button_view_call_history);
 
+
+        final SpamDataType spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
+
+//        String profileImage =  spamDataType.getSpamPhotoUrl();
+//        if (!TextUtils.isEmpty(profileImage)) {
+//            Glide.with(context)
+//                    .load(profileImage)
+//                    .placeholder(R.drawable.home_screen_profile)
+//                    .error(R.drawable.home_screen_profile)
+//                    .bitmapTransform(new CropCircleTransformation(context))
+//                    .override(200, 200)
+//                    .into(imageProfile);
+//
+//        } else {
+//            imageProfile.setImageResource(R.drawable.home_screen_profile);
+//        }
+
+        imageProfile.setImageResource(R.drawable.home_screen_profile);
+//        final String publicProfileUrl = spamDataType.getSpamPublicUrl();
 
         imageClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                endCallDialog.dismiss();
             }
         });
+
         llSpam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -468,16 +473,15 @@ public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseLi
         llCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try{
+                try {
                     String unicodeNumber = savedNumber.replace("*", Uri.encode("*")).replace("#", Uri.encode("#"));
                     Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + unicodeNumber));
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
 
-                }catch (SecurityException e){
+                } catch (SecurityException e) {
                     e.printStackTrace();
                 }
-
             }
         });
 
@@ -504,18 +508,57 @@ public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseLi
         buttonViewProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+//                if(!StringUtils.isEmpty(publicProfileUrl)){
+//                    Intent i = new Intent(Intent.ACTION_VIEW);
+//                    i.setData(Uri.parse(publicProfileUrl));
+//                    context.startActivity(i);
+//                }
             }
         });
 
         buttonViewCallHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(context, CallHistoryDetailsActivity.class);
+                intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, savedNumber);
+                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, savedNumber);
+                String contactNameToDisplay = "";
+                String prefix = spamDataType.getPrefix();
+                String suffix = spamDataType.getSuffix();
+                String firstName = spamDataType.getFirstName();
+                String middleName = spamDataType.getMiddleName();
+                String lastName = spamDataType.getLastName();
+
+                if (StringUtils.length(prefix) > 0)
+                    contactNameToDisplay = contactNameToDisplay + prefix + " ";
+                if (StringUtils.length(suffix) > 0)
+                    contactNameToDisplay = contactNameToDisplay + suffix + " ";
+                if (StringUtils.length(firstName) > 0)
+                    contactNameToDisplay = contactNameToDisplay + firstName + " ";
+                if (StringUtils.length(middleName) > 0)
+                    contactNameToDisplay = contactNameToDisplay + middleName + " ";
+                if (StringUtils.length(lastName) > 0)
+                    contactNameToDisplay = contactNameToDisplay + lastName + "";
+
+                if (StringUtils.equalsIgnoreCase(spamDataType.getRcpVerfiy(), "0")) {
+                    if (contactNameToDisplay.length() > 0)
+                        intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, contactNameToDisplay);
+
+                    intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, false);
+                } else {
+                    if (StringUtils.equalsIgnoreCase(spamDataType.getRcpVerfiy(), "1")) {
+                        if (contactNameToDisplay.length() > 0)
+                            intent.putExtra(AppConstants.EXTRA_CLOUD_CONTACT_NAME, contactNameToDisplay);
+
+                        intent.putExtra(AppConstants.EXTRA_IS_RCP_USER, true);
+                    }
+                }
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                dialog.dismiss();
+                context.startActivity(intent);
 
             }
         });
-
-        SpamDataType spamDataType =  setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
 
         if (StringUtils.equalsIgnoreCase(spamDataType.getRcpVerfiy(), "0")) {
             textNumber.setTypeface(Utils.typefaceBold(context));
@@ -608,43 +651,9 @@ public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseLi
 
         }
 
-        dialog.show();
+        endCallDialog.show();
 
     }
-
-    @Override
-    public void onDeliveryResponse(String serviceType, Object data, Exception error) {
-
-        // <editor-fold desc="REQ_GET_PROFILE_DATA">
-        if (serviceType.equalsIgnoreCase(WsConstants.REQ_GET_PROFILE_DATA)) {
-            WsResponseObject getProfileDataResponse = (WsResponseObject) data;
-            if (getProfileDataResponse != null && StringUtils.equalsIgnoreCase
-                    (getProfileDataResponse
-                            .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
-
-                ArrayList<SpamDataType> spamDataTypeList = getProfileDataResponse.getSpamDataTypeArrayList();
-                if (spamDataTypeList.size() > 0) {
-                    try {
-                        TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(databaseHandler);
-                        tableSpamDetailMaster.insertSpamDetails(spamDataTypeList);
-                        spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            } else {
-                if (getProfileDataResponse != null) {
-                    Log.e("error response", getProfileDataResponse.getMessage());
-                } else {
-                    Log.e("onDeliveryResponse: ", "getProfileDataResponse null");
-                }
-            }
-            initializeIncomingCallDialog();
-        }
-        //</editor-fold>
-    }
-
 
     private SpamDataType setRCPDetailsAndSpamCountforUnsavedNumbers(String number) {
         SpamDataType spamDataType = new SpamDataType();
@@ -668,7 +677,8 @@ public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseLi
                     String profileRating = spamDataType.getProfileRating();
                     String totalProfileRateUser = spamDataType.getTotalProfileRateUser();
                     String spamCount = spamDataType.getSpamCount();
-
+//                    String publicUrl =  spamDataType.getSpamPublicUrl();
+//                    String photoUrl =  spamDataType.getSpamPhotoUrl();
 
                     if (!StringUtils.isEmpty(lastName))
                         spamDataType.setLastName(lastName);
@@ -690,6 +700,10 @@ public class PhoneCallReceiver extends BroadcastReceiver implements WsResponseLi
                         spamDataType.setTotalProfileRateUser(totalProfileRateUser);
                     if (!StringUtils.isEmpty(spamCount))
                         spamDataType.setSpamCount(spamCount);
+//                    if(!StringUtils.isEmpty(publicUrl))
+//                        spamDataType.setSpamPublicUrl(publicUrl);
+//                    if(!StringUtils.isEmpty(photoUrl))
+//                        spamDataType.setSpamPhotoUrl(photoUrl);
 
                 }
             }
