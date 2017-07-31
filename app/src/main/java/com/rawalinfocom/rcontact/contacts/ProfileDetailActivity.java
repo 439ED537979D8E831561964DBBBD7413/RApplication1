@@ -905,8 +905,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     storeProfileDataToDb(profileDetail);
 
                     getDataFromDB();
-                    Toast.makeText(ProfileDetailActivity.this, "Refreshed!", Toast.LENGTH_SHORT)
-                            .show();
 
                     ArrayList<ProfileVisit> profileVisits = new ArrayList<>();
                     ProfileVisit profileVisit = new ProfileVisit();
@@ -1105,18 +1103,15 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
 
                     getDataFromDB();
 
-                    Toast.makeText(ProfileDetailActivity.this, getString(R.string
-                                    .str_privacy_setting_update),
-                            Toast.LENGTH_SHORT).show();
+                    Utils.showSuccessSnackBar(this, relativeRootProfileDetail, getString(R.string
+                            .str_privacy_setting_update));
                 } else {
                     if (editProfileResponse != null) {
                         Log.e("error response", editProfileResponse.getMessage());
-                        Toast.makeText(ProfileDetailActivity.this, editProfileResponse.getMessage
-                                (), Toast.LENGTH_SHORT).show();
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, editProfileResponse.getMessage());
                     } else {
                         Log.e("onDeliveryResponse: ", "otpDetailResponse null");
-                        Toast.makeText(ProfileDetailActivity.this, "Privacy Setting Update " +
-                                "failed", Toast.LENGTH_SHORT).show();
+                        Utils.showErrorSnackBar(this, relativeRootProfileDetail, "Privacy Setting Update failed");
                     }
                 }
             }
