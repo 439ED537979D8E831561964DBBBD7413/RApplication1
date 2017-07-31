@@ -107,15 +107,15 @@ public class NotificationSettingsActivity extends BaseActivity implements Ripple
         textEventNotification.setTypeface(Utils.typefaceRegular(this));
 
         if (Utils.getBooleanPreference(activity, AppConstants.PREF_DISABLE_PUSH, false)) {
-            sbPushNotification.setChecked(true);
-        } else {
             sbPushNotification.setChecked(false);
+        } else {
+            sbPushNotification.setChecked(true);
         }
 
         if (Utils.getBooleanPreference(activity, AppConstants.PREF_DISABLE_EVENT_PUSH, false)) {
-            sbEventNotification.setChecked(true);
-        } else {
             sbEventNotification.setChecked(false);
+        } else {
+            sbEventNotification.setChecked(true);
         }
 
         sbPushNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -123,10 +123,10 @@ public class NotificationSettingsActivity extends BaseActivity implements Ripple
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     // If the switch button is on
-                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_PUSH, true);
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_PUSH, false);
                 } else {
                     // If the switch button is off
-                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_PUSH, false);
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_PUSH, true);
                 }
             }
         });
@@ -136,10 +136,10 @@ public class NotificationSettingsActivity extends BaseActivity implements Ripple
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     // If the switch button is on
-                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_EVENT_PUSH, true);
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_EVENT_PUSH, false);
                 } else {
                     // If the switch button is off
-                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_EVENT_PUSH, false);
+                    Utils.setBooleanPreference(activity, AppConstants.PREF_DISABLE_EVENT_PUSH, true);
                 }
             }
         });

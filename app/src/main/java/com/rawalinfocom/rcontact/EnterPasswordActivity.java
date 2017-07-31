@@ -197,6 +197,9 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO,
                             profileDetail.getPbProfilePhoto());
 
+                    Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants.PREF_DISABLE_PUSH, false);
+                    Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants.PREF_DISABLE_EVENT_PUSH, false);
+
                     storeProfileDataToDb(profileDetail);
 
                     if (MoreObjects.firstNonNull(enterPassWordResponse.getReSync(), 0).equals(1)) {

@@ -193,6 +193,9 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                         Utils.setStringPreference(this, AppConstants.PREF_USER_PHOTO,
                                 profileDetail.getPbProfilePhoto());
 
+                        Utils.setBooleanPreference(SetPasswordActivity.this, AppConstants.PREF_DISABLE_PUSH, false);
+                        Utils.setBooleanPreference(SetPasswordActivity.this, AppConstants.PREF_DISABLE_EVENT_PUSH, false);
+
                         storeProfileDataToDb(profileDetail);
 
                         deviceDetail();
@@ -363,7 +366,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
             ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
             ArrayList<Email> arrayListEmail = new ArrayList<>();
-            ArrayList<String> listOfVerifiedEmailIds =  new ArrayList<>();
+            ArrayList<String> listOfVerifiedEmailIds = new ArrayList<>();
             for (int i = 0; i < arrayListEmailId.size(); i++) {
                 Email email = new Email();
                 email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
@@ -372,7 +375,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
 //                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
-                if(String.valueOf(arrayListEmailId.get(i).getEmRcpType()).equalsIgnoreCase("1")){
+                if (String.valueOf(arrayListEmailId.get(i).getEmRcpType()).equalsIgnoreCase("1")) {
                     listOfVerifiedEmailIds.add(arrayListEmailId.get(i).getEmEmailId());
                     Utils.setArrayListPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL,
                             listOfVerifiedEmailIds);
