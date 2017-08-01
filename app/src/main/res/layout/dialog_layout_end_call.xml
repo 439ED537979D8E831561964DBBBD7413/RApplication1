@@ -96,7 +96,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="@dimen/margin_10dp"
                     android:visibility="visible">
 
                     <ImageView
@@ -113,6 +112,8 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="@dimen/margin_5dp"
                         android:textColor="@color/spamRed"
+                        android:padding="@dimen/margin_10dp"
+
                         android:textSize="@dimen/text_size_14sp" />
 
                 </LinearLayout>
