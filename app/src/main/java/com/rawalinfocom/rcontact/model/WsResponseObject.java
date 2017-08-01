@@ -48,6 +48,7 @@ public class WsResponseObject {
     private String callDateAndTime;
     private String smsLogTimestamp;
     private String callLogRowId;
+    private String responseKey;
 
     private OtpLog otpLog;
     private UserProfile userProfile;
@@ -257,5 +258,14 @@ public class WsResponseObject {
     @JsonProperty("spam_count")
     public String getSpamCount() {
         return spamCount;
+    }
+
+    @JsonProperty("response_key")
+    public String getResponseKey() {
+        return responseKey;
+    }
+
+    public void setResponseKey(String responseKey) {
+        this.responseKey = responseKey;
     }
 }
