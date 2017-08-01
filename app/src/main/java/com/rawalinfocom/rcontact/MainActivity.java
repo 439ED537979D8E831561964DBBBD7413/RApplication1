@@ -360,13 +360,22 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         (callLogInsertionResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME,
-                            callLogInsertionResponse.getCallDateAndTime());
-                    Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID,
-                            callLogInsertionResponse.getCallLogRowId());
+                    if (!StringUtils.isEmpty(callLogInsertionResponse.getCallDateAndTime()))
+                        Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_SYNC_TIME,
+                                callLogInsertionResponse.getCallDateAndTime());
+
+                    if (!StringUtils.isEmpty(callLogInsertionResponse.getCallLogRowId()))
+                        Utils.setStringPreference(this, AppConstants.PREF_CALL_LOG_ROW_ID,
+                                callLogInsertionResponse.getCallLogRowId());
+
+                    Utils.setStringPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_RESPONSE_KEY,
+                            callLogInsertionResponse.getResponseKey());
 
                     ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
-                    if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
+
+                    System.out.println("RContact callLogTypeArrayList response --> " + callLogTypeArrayList.size());
+
+                    if (callLogTypeArrayList.size() > 0) {
                         logsSyncedCount = logsSyncedCount + callLogTypeArrayList.size();
 
                         Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
@@ -374,33 +383,26 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                         if (callLogTypeArrayList.size() < CALL_LOG_CHUNK) {
 
-                            Utils.setIntegerPreference(this, AppConstants
-                                            .PREF_CALL_LOG_SYNCED_COUNT,
-                                    Utils.getArrayListPreference(this, AppConstants
-                                            .PREF_CALL_LOGS_ID_SET).size());
-
-                            Utils.setBooleanPreference(this, AppConstants
-                                    .PREF_CALL_LOG_SYNCED, true);
-
-                            if (callLogTypeListForGlobalProfile.size() > 0) {
-                                if (Utils.getBooleanPreference(this, AppConstants
-                                        .PREF_GOT_ALL_PROFILE_DATA, false))
-                                    Utils.setBooleanPreference(this, AppConstants
-                                            .PREF_GOT_ALL_PROFILE_DATA, false);
+                            if (Utils.getBooleanPreference(this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED, false)) {
+                                System.out.println("RContact callLogType sync --> ");
+                                callLogSynced();
+                            } else {
+                                System.out.println("RContact last callLog chunk -->");
+                                insertServiceCall(new ArrayList<CallLogType>());
                             }
-
-                            Intent localBroadcastIntent = new Intent(AppConstants
-                                    .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
-                            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
-                                    .getInstance(MainActivity.this);
-                            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+                        } else {
+                            if ((Utils.getIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT, 0) >=
+                                    Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET)
+                                            .size())) {
+                                System.out.println("RContact last callLog chunk same as CALL_LOG_CHUNK -->");
+                                insertServiceCall(new ArrayList<CallLogType>());
+                            }
                         }
 
                     } else {
-
-                        Utils.setBooleanPreference(this, AppConstants
-                                .PREF_CALL_LOG_SYNCED, true);
-
+                        System.out.println("RContact callLogType sync else -->");
+                        callLogSynced();
                     }
                 } else {
                     if (callLogInsertionResponse != null) {
@@ -426,6 +428,9 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                             TableSpamDetailMaster tableSpamDetailMaster = new
                                     TableSpamDetailMaster(getDatabaseHandler());
                             tableSpamDetailMaster.insertSpamDetails(spamDataTypeList);
+
+                            callLogTypeListForGlobalProfile.clear();
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -492,6 +497,30 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         } else {
             Log.e("error", error.toString());
         }
+    }
+
+    private void callLogSynced() {
+
+        Utils.setIntegerPreference(this, AppConstants
+                        .PREF_CALL_LOG_SYNCED_COUNT,
+                Utils.getArrayListPreference(this, AppConstants
+                        .PREF_CALL_LOGS_ID_SET).size());
+
+        Utils.setBooleanPreference(this, AppConstants
+                .PREF_CALL_LOG_SYNCED, true);
+
+        if (callLogTypeListForGlobalProfile.size() > 0) {
+            if (Utils.getBooleanPreference(this, AppConstants
+                    .PREF_GOT_ALL_PROFILE_DATA, false))
+                Utils.setBooleanPreference(this, AppConstants
+                        .PREF_GOT_ALL_PROFILE_DATA, false);
+        }
+
+        Intent localBroadcastIntent = new Intent(AppConstants
+                .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
+        LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+                .getInstance(MainActivity.this);
+        myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
     }
 
     @Override
@@ -1669,17 +1698,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         } else {
             Utils.setBooleanPreference(this, AppConstants
                     .PREF_CALL_LOG_SYNCED, true);
-
-            if (callLogTypeListForGlobalProfile.size() > 0) {
-                if (Utils.getBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false))
-                    Utils.setBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false);
-            }
-
-            Intent localBroadcastIntent = new Intent(AppConstants
-                    .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
-            LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
-                    .getInstance(MainActivity.this);
-            myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
         }
     }
 
@@ -1788,11 +1806,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             else {
                 Utils.setBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, true);
 
-                Intent localBroadcastIntent = new Intent(AppConstants
-                        .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
-                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
-                        .getInstance(MainActivity.this);
-                myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
+//                Intent localBroadcastIntent = new Intent(AppConstants
+//                        .ACTION_LOCAL_BROADCAST_GET_GLOBAL_PROFILE_DATA);
+//                LocalBroadcastManager myLocalBroadcastManager = LocalBroadcastManager
+//                        .getInstance(MainActivity.this);
+//                myLocalBroadcastManager.sendBroadcast(localBroadcastIntent);
             }
 
         } catch (Exception e) {
@@ -2665,6 +2683,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         if (Utils.isNetworkAvailable(MainActivity.this)) {
             WsRequestObject deviceDetailObject = new WsRequestObject();
             deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
+            deviceDetailObject.setResponseKey(Utils.getStringPreference(MainActivity.this,
+                    AppConstants.PREF_CALL_LOG_RESPONSE_KEY, ""));
             deviceDetailObject.setFlag(IntegerConstants.SYNC_INSERT_CALL_LOG);
             if (Utils.isNetworkAvailable(this)) {
                 new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),

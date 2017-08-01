@@ -25,7 +25,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class WebServiceGet {
 
-    private static final String TAG_LOG = "WebServiceGet";
+    private static final String TAG_LOG = "WebServiceGetForCallPopup";
     private final Lock lock = new ReentrantLock();
     private String url;
     private ObjectMapper mapper = null;
@@ -71,7 +71,7 @@ public class WebServiceGet {
 
 
         } catch (Exception e) {
-            Log.e(TAG_LOG, "Status code: " + Integer.toString(statusCode)
+            System.out.println("Status code: " + Integer.toString(statusCode)
                     + " Exception thrown: " + e.getMessage());
             throw e;
         }
@@ -110,7 +110,7 @@ public class WebServiceGet {
             }
             lock.unlock();
         } catch (Exception ex) {
-            Log.e(TAG_LOG, "Mapper Initialization Failed Exception : "
+            System.out.println("Mapper Initialization Failed Exception : "
                     + ex.getMessage());
         }
 

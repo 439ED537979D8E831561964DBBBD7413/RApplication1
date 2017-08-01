@@ -83,10 +83,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
     boolean isCallEnded = false;
     static Dialog incomingDialog, endCallDialog;
 
-
     public PhoneCallReceiver() {
     }
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -708,16 +706,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 if (endCallDialog != null) {
                     endCallDialog.dismiss();
                 }
-                /*if (incomingDialog != null) {
-                    incomingDialog.dismiss();
-                    incomingDialog = null;
-                }else{
-                    if(incomingDialog ==  null)
-                    {
-                        incomingDialog = new Dialog(context);
-                        incomingDialog.dismiss();
-                    }
-                }*/
             }
         });
 

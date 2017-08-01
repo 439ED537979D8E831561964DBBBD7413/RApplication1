@@ -47,7 +47,7 @@ public class AsyncGetGoogleLocation extends AsyncTask<String, Void, Object> {
     @Override
     protected Object doInBackground(String... params) {
         try {
-            // return new RequestWs().getPostRequest(params[0],
+            // return new RequestWsForCallPopup().getPostRequest(params[0],
             // GetGoogleLocationResponse.class, addLocationReqObject, null);
             return new RequestWs().getGetRequest(params[0],
                     GetGoogleLocationResponse.class);

@@ -45,6 +45,12 @@ android {
     packagingOptions {
         pickFirst 'META-INF/LICENSE'
     }
+
+    sourceSets {
+        main {
+            jni.srcDirs = ["jniLibs"]
+        }
+    }
 }
 
 final SUPPORT_LIBRARY_VERSION = '25.3.1'
@@ -53,21 +59,18 @@ final JACKSON_CORE_VERSION = '2.8.3'
 final BUTTER_KNIFE_VERSION = '8.4.0'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     /* androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })*/
-
+            exclude group: 'com.android.support', module: 'support-annotations'
+        })*/
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
     }
-
     compile "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:support-v4:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:palette-v7:$SUPPORT_LIBRARY_VERSION"
-
     compile "com.google.android.gms:play-services-gcm:$PLAY_SERVICES_VERSION"
     compile "com.google.firebase:firebase-messaging:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-auth:$PLAY_SERVICES_VERSION"
@@ -75,15 +78,11 @@ dependencies {
     compile "com.google.android.gms:play-services-maps:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-places:$PLAY_SERVICES_VERSION"
     compile "com.google.android.gms:play-services-drive:$PLAY_SERVICES_VERSION"
-
     compile "com.fasterxml.jackson.core:jackson-core:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-databind:$JACKSON_CORE_VERSION"
     compile "com.fasterxml.jackson.core:jackson-annotations:$JACKSON_CORE_VERSION"
-
     compile "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
     apt "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
-
-
     compile project(path: ':linkedin-sdk')
     //    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
     //    compile 'com.android.support.constraint:constraint-layout:1.0.0'
@@ -97,7 +96,6 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
     debugCompile 'com.amitshekhar.android:debug-db:0.4.0'
-
     /* Web View */
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.thefinestartist:utils:0.9.0'

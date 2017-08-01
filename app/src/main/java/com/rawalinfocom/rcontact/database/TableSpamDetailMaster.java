@@ -136,7 +136,7 @@ public class TableSpamDetailMaster {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        if (cursor != null && cursor.getCount()>0) {
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             spamDataType.setLastName(cursor.getString(cursor.getColumnIndex(COLUMN_PB_LAST_NAME)));
             spamDataType.setSuffix(cursor.getString(cursor.getColumnIndex

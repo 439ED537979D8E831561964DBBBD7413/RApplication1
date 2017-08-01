@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -115,14 +116,22 @@ public class AboutHelpActivity extends BaseActivity implements RippleView
         llTerms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showWebView(getString(R.string.str_terms), WsConstants.URL_TERMS_CONDITIONS);
+
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(WsConstants.URL_TERMS_CONDITIONS));
+                startActivity(i);
+//                showWebView(getString(R.string.str_terms), WsConstants.URL_TERMS_CONDITIONS);
             }
         });
 
         llFaq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showWebView(getString(R.string.str_faq), WsConstants.URL_FAQ);
+
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(WsConstants.URL_FAQ));
+                startActivity(i);
+//                showWebView(getString(R.string.str_faq), WsConstants.URL_FAQ);
             }
         });
 
@@ -204,37 +213,41 @@ public class AboutHelpActivity extends BaseActivity implements RippleView
             txtTerms.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showWebView(getString(R.string.str_terms), WsConstants.URL_TERMS_CONDITIONS);
+
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(WsConstants.URL_TERMS_CONDITIONS));
+                    startActivity(i);
+//                    showWebView(getString(R.string.str_terms), WsConstants.URL_TERMS_CONDITIONS);
                 }
             });
 
             return v;
         }
 
-        private void showWebView(String title, String url) {
-
-            new FinestWebView.Builder(getActivity()).theme(R.style.FinestWebViewTheme)
-                    .titleDefault(title)
-                    .showUrl(false)
-                    .statusBarColorRes(R.color.colorPrimaryDark)
-                    .toolbarColorRes(R.color.colorPrimary)
-                    .titleColorRes(R.color.finestWhite)
-                    .urlColorRes(R.color.colorPrimary)
-                    .iconDefaultColorRes(R.color.finestWhite)
-                    .progressBarColorRes(R.color.finestWhite)
-                    .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-                    .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-                    .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-                    .showSwipeRefreshLayout(true)
-                    .swipeRefreshColorRes(R.color.colorPrimaryDark)
-                    .menuSelector(R.drawable.selector_light_theme)
-                    .menuTextGravity(Gravity.CENTER)
-                    .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
-                    .dividerHeight(0)
-                    .gradientDivider(false)
-                    .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
-                    .show(url);
-        }
+//        private void showWebView(String title, String url) {
+//
+//            new FinestWebView.Builder(getActivity()).theme(R.style.FinestWebViewTheme)
+//                    .titleDefault(title)
+//                    .showUrl(false)
+//                    .statusBarColorRes(R.color.colorPrimaryDark)
+//                    .toolbarColorRes(R.color.colorPrimary)
+//                    .titleColorRes(R.color.finestWhite)
+//                    .urlColorRes(R.color.colorPrimary)
+//                    .iconDefaultColorRes(R.color.finestWhite)
+//                    .progressBarColorRes(R.color.finestWhite)
+//                    .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                    .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                    .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                    .showSwipeRefreshLayout(true)
+//                    .swipeRefreshColorRes(R.color.colorPrimaryDark)
+//                    .menuSelector(R.drawable.selector_light_theme)
+//                    .menuTextGravity(Gravity.CENTER)
+//                    .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
+//                    .dividerHeight(0)
+//                    .gradientDivider(false)
+//                    .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
+//                    .show(url);
+//        }
 
         @Override
         public void onDestroyView() {
@@ -243,27 +256,27 @@ public class AboutHelpActivity extends BaseActivity implements RippleView
         }
     }
 
-    private void showWebView(String title, String url) {
-
-        new FinestWebView.Builder(this).theme(R.style.FinestWebViewTheme)
-                .titleDefault(title).showUrl(false)
-                .statusBarColorRes(R.color.colorPrimaryDark)
-                .toolbarColorRes(R.color.colorPrimary)
-                .titleColorRes(R.color.finestWhite)
-                .urlColorRes(R.color.colorPrimary)
-                .iconDefaultColorRes(R.color.finestWhite)
-                .progressBarColorRes(R.color.finestWhite)
-                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-                .showSwipeRefreshLayout(true)
-                .swipeRefreshColorRes(R.color.colorPrimaryDark)
-                .menuSelector(R.drawable.selector_light_theme)
-                .menuTextGravity(Gravity.CENTER)
-                .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
-                .dividerHeight(0)
-                .gradientDivider(false)
-                .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
-                .show(url);
-    }
+//    private void showWebView(String title, String url) {
+//
+//        new FinestWebView.Builder(this).theme(R.style.FinestWebViewTheme)
+//                .titleDefault(title).showUrl(false)
+//                .statusBarColorRes(R.color.colorPrimaryDark)
+//                .toolbarColorRes(R.color.colorPrimary)
+//                .titleColorRes(R.color.finestWhite)
+//                .urlColorRes(R.color.colorPrimary)
+//                .iconDefaultColorRes(R.color.finestWhite)
+//                .progressBarColorRes(R.color.finestWhite)
+//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                .showSwipeRefreshLayout(true)
+//                .swipeRefreshColorRes(R.color.colorPrimaryDark)
+//                .menuSelector(R.drawable.selector_light_theme)
+//                .menuTextGravity(Gravity.CENTER)
+//                .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
+//                .dividerHeight(0)
+//                .gradientDivider(false)
+//                .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
+//                .show(url);
+//    }
 }

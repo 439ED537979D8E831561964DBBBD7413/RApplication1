@@ -3,6 +3,7 @@ package com.rawalinfocom.rcontact;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 
 import com.rawalinfocom.rcontact.asynctasks.AsyncGetDeviceToken;
@@ -45,6 +46,11 @@ public class BaseActivity extends AppCompatActivity {
         }
         startActivity(intent);
         overridePendingTransition(R.anim.enter, R.anim.exit);
+    }
+
+    public String getDeviceId() {
+        return Settings.Secure.getString(getContentResolver(), Settings
+                .Secure.ANDROID_ID);
     }
 
     public String getDeviceTokenId() {

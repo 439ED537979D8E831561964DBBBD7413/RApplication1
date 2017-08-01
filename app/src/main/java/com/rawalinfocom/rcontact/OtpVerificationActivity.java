@@ -265,6 +265,7 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
         WsRequestObject otpObject = new WsRequestObject();
         otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
         otpObject.setMobileNumber(mobileNumber.replace("+91", ""));
+//        otpObject.setDeviceId(getDeviceId());
         if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD))
             otpObject.setForgotPassword(1);
 
@@ -286,7 +287,10 @@ public class OtpVerificationActivity extends BaseActivity implements RippleView
 
         WsRequestObject otpObject = new WsRequestObject();
         otpObject.setOtp(otp);
+//        otpObject.setDeviceId(getDeviceId());
         otpObject.setMobileNumber(mobileNumber.replace("+", ""));
+        if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD))
+            otpObject.setForgotPassword(1);
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,

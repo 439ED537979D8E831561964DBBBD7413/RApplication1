@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -17,9 +16,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -55,41 +54,46 @@ import butterknife.ButterKnife;
 public class ContactListingActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
 
-    @BindView(R.id.include_toolbar)
-    Toolbar includeToolbar;
-    TextView textToolbarTitle;
-    RippleView rippleActionBack;
-    RippleView rippleActionRightLeft;
-    RippleView rippleActionRightCenter;
-    ImageView imageRightLeft;
-    EditText inputSearch;
-
-    @BindView(R.id.relative_action_back)
-    RelativeLayout relativeActionBack;
-    @BindView(R.id.spinner_share_via)
-    Spinner spinnerShareVia;
-    @BindView(R.id.relative_select_options)
-    RelativeLayout relativeSelectOptions;
-    @BindView(R.id.recycler_view_contacts)
-    RecyclerView recyclerViewContacts;
-    @BindView(R.id.activity_contact_listing)
-    RelativeLayout activityContactListing;
-    @BindView(R.id.text_select_all)
-    TextView textSelectAll;
-    @BindView(R.id.checkbox_select_all)
-    CheckBox checkboxSelectAll;
 
     PhoneBookContacts phoneBookContacts;
     ArrayList<UserProfile> arrayListUserProfile;
     ArrayList<UserProfile> arrayListNumberUserProfile;
     ArrayList<UserProfile> arrayListEmailUserProfile;
     ArrayList<UserProfile> arrayListFilteredUserProfile;
+    @BindView(R.id.image_action_back)
+    ImageView imageActionBack;
+    @BindView(R.id.ripple_action_back)
+    RippleView rippleActionBack;
+    @BindView(R.id.image_right_center)
+    ImageView imageRightCenter;
+    @BindView(R.id.ripple_action_right_center)
+    RippleView rippleActionRightCenter;
+    @BindView(R.id.linear_action_right)
+    LinearLayout linearActionRight;
+    @BindView(R.id.input_search)
+    EditText inputSearch;
+    @BindView(R.id.relative_action_back)
+    RelativeLayout relativeActionBack;
+    @BindView(R.id.recycler_view_contacts)
+    RecyclerView recyclerViewContacts;
+    @BindView(R.id.spinner_share_via)
+    Spinner spinnerShareVia;
+    @BindView(R.id.text_select_all)
+    TextView textSelectAll;
+    @BindView(R.id.checkbox_select_all)
+    CheckBox checkboxSelectAll;
+    @BindView(R.id.relative_select_options)
+    RelativeLayout relativeSelectOptions;
+    @BindView(R.id.activity_contact_listing)
+    RelativeLayout activityContactListing;
+    @BindView(R.id.text_toolbar_title)
+    TextView textToolbarTitle;
 //    public ArrayList<Object> arrayListPhoneBookContacts;
 
     private ProfileMobileMapping profileMobileMapping;
     private TableProfileMobileMapping tableProfileMobileMapping;
 
-    PhoneBookContactListAdapter phoneBookContactListAdapter;
+    private PhoneBookContactListAdapter phoneBookContactListAdapter;
 
 //    public ArrayList<UserProfile> arrayListTempUserProfile;
 
@@ -107,6 +111,8 @@ public class ContactListingActivity extends BaseActivity implements RippleView
         arrayListUserProfile = new ArrayList<>();
         arrayListNumberUserProfile = new ArrayList<>();
         arrayListEmailUserProfile = new ArrayList<>();
+
+        rippleActionRightCenter.setVisibility(View.VISIBLE);
 
         Intent intent = getIntent();
 
@@ -139,44 +145,66 @@ public class ContactListingActivity extends BaseActivity implements RippleView
                 break;
 
             case R.id.ripple_action_right_center:
-               /* Log.i("onComplete", phoneBookContactListAdapter.getArrayListCheckedPositions()
-                        .toString());*/
-                if (phoneBookContactListAdapter.getArrayListCheckedPositions().size() > 0) {
 
-                    ContactReceiver receiver = new ContactReceiver();
-                    ArrayList<String> mobileNumbers = new ArrayList<>();
-                    ArrayList<String> emailIds = new ArrayList<>();
+                if (inputSearch.getVisibility() == View.VISIBLE) {
+                    inputSearch.setVisibility(View.GONE);
+                    textToolbarTitle.setVisibility(View.VISIBLE);
 
-                    for (int i = 0; i < phoneBookContactListAdapter.getArrayListCheckedPositions
-                            ().size(); i++) {
-                        int position = phoneBookContactListAdapter.getArrayListCheckedPositions()
-                                .get(i);
-                        if (StringUtils.length(arrayListFilteredUserProfile.get(position)
-                                .getMobileNumber()) > 0) {
-                            mobileNumbers.add(arrayListFilteredUserProfile.get(position)
-                                    .getMobileNumber());
-                        } else if (StringUtils.length(arrayListFilteredUserProfile.get(position)
-                                .getEmailId()) > 0) {
-                            emailIds.add(arrayListFilteredUserProfile.get(position)
-                                    .getEmailId());
-                        }
+                    imageRightCenter.setImageResource(R.drawable.ic_action_search);
+
+                    if (inputSearch.getText().toString().length() > 0) {
+                        phoneBookContactListAdapter.filter("");
+                        recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
+                        phoneBookContactListAdapter.notifyDataSetChanged();
                     }
-                    receiver.setEmailId(emailIds);
-                    receiver.setMobileNumber(mobileNumbers);
 
-                    if (!pmId.equalsIgnoreCase("-1")) {
-                        shareContactRcp(receiver);
-                    } else if (profileDataOperationVcard == null) {
-                        inviteContact(mobileNumbers, emailIds);
-                    } else {
-                        shareContactNonRcp(receiver);
-                    }
                 } else {
-                    Utils.showErrorSnackBar(this, activityContactListing, getString(R.string
-                            .please_select_one_contact));
+                    inputSearch.setVisibility(View.VISIBLE);
+                    textToolbarTitle.setVisibility(View.GONE);
+
+                    imageRightCenter.setImageResource(R.drawable.ic_close);
                 }
 
                 break;
+//            case R.id.ripple_action_right_center:
+//               /* Log.i("onComplete", phoneBookContactListAdapter.getArrayListCheckedPositions()
+//                        .toString());*/
+//                if (phoneBookContactListAdapter.getArrayListCheckedPositions().size() > 0) {
+//
+//                    ContactReceiver receiver = new ContactReceiver();
+//                    ArrayList<String> mobileNumbers = new ArrayList<>();
+//                    ArrayList<String> emailIds = new ArrayList<>();
+//
+//                    for (int i = 0; i < phoneBookContactListAdapter.getArrayListCheckedPositions
+//                            ().size(); i++) {
+//                        int position = phoneBookContactListAdapter.getArrayListCheckedPositions()
+//                                .get(i);
+//                        if (StringUtils.length(arrayListFilteredUserProfile.get(position)
+//                                .getMobileNumber()) > 0) {
+//                            mobileNumbers.add(arrayListFilteredUserProfile.get(position)
+//                                    .getMobileNumber());
+//                        } else if (StringUtils.length(arrayListFilteredUserProfile.get(position)
+//                                .getEmailId()) > 0) {
+//                            emailIds.add(arrayListFilteredUserProfile.get(position)
+//                                    .getEmailId());
+//                        }
+//                    }
+//                    receiver.setEmailId(emailIds);
+//                    receiver.setMobileNumber(mobileNumbers);
+//
+//                    if (!pmId.equalsIgnoreCase("-1")) {
+//                        shareContactRcp(receiver);
+//                    } else if (profileDataOperationVcard == null) {
+//                        inviteContact(mobileNumbers, emailIds);
+//                    } else {
+//                        shareContactNonRcp(receiver);
+//                    }
+//                } else {
+//                    Utils.showErrorSnackBar(this, activityContactListing, getString(R.string
+//                            .please_select_one_contact));
+//                }
+//
+//                break;
         }
 
     }
@@ -254,25 +282,21 @@ public class ContactListingActivity extends BaseActivity implements RippleView
     //</editor-fold>
 
     private void init() {
-        rippleActionBack = ButterKnife.findById(includeToolbar, R.id.ripple_action_back);
-        textToolbarTitle = ButterKnife.findById(includeToolbar, R.id.text_toolbar_title);
-        imageRightLeft = ButterKnife.findById(includeToolbar, R.id.image_right_left);
-        rippleActionRightCenter = ButterKnife.findById(includeToolbar, R.id
-                .ripple_action_right_center);
-        inputSearch = ButterKnife.findById(includeToolbar, R.id.input_search);
+
+        textToolbarTitle.setText(getString(R.string.str_invite));
 
         rippleActionBack.setOnRippleCompleteListener(this);
         rippleActionRightCenter.setOnRippleCompleteListener(this);
 
-        checkboxSelectAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                phoneBookContactListAdapter.isSelectAll(isChecked);
-                if (!isChecked) {
-                    phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
-                }
-            }
-        });
+//        checkboxSelectAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                phoneBookContactListAdapter.isSelectAll(isChecked);
+//                if (!isChecked) {
+//                    phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
+//                }
+//            }
+//        });
     }
 
     //<editor-fold desc="Private Methods">
@@ -283,7 +307,20 @@ public class ContactListingActivity extends BaseActivity implements RippleView
 
         recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
         phoneBookContactListAdapter = new PhoneBookContactListAdapter(this,
-                arrayListFilteredUserProfile);
+                arrayListFilteredUserProfile, new PhoneBookContactListAdapter.OnClickListener() {
+            @Override
+            public void onClick(String number, String email) {
+
+                ArrayList<String> mobileNumbers = new ArrayList<>();
+                ArrayList<String> emailIds = new ArrayList<>();
+
+                mobileNumbers.add(number);
+                emailIds.add(email);
+
+                inviteContact(mobileNumbers, emailIds);
+
+            }
+        });
         recyclerViewContacts.setAdapter(phoneBookContactListAdapter);
 
         ArrayAdapter<String> spinnerAdapter;
@@ -304,9 +341,9 @@ public class ContactListingActivity extends BaseActivity implements RippleView
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 arrayListFilteredUserProfile.clear();
-                phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
-                phoneBookContactListAdapter.isSelectAll(false);
-                checkboxSelectAll.setChecked(false);
+//                phoneBookContactListAdapter.getArrayListCheckedPositions().clear();
+//                phoneBookContactListAdapter.isSelectAll(false);
+//                checkboxSelectAll.setChecked(false);
                 inputSearch.getText().clear();
                 Utils.hideSoftKeyboard(ContactListingActivity.this, inputSearch);
                 if (position == 0) {

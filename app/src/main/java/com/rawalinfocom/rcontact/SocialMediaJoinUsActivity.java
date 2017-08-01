@@ -1,15 +1,15 @@
 package com.rawalinfocom.rcontact;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.constants.WsConstants;
-import com.rawalinfocom.rcontact.helper.finestwebview.FinestWebView;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 
@@ -75,14 +75,20 @@ public class SocialMediaJoinUsActivity extends BaseActivity implements RippleVie
         imgFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showWebView(getString(R.string.app_name), WsConstants.WS_FACEBOOK_URL);
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(WsConstants.WS_FACEBOOK_URL));
+                startActivity(i);
+//                showWebView(getString(R.string.app_name), WsConstants.WS_FACEBOOK_URL);
             }
         });
 
         imgTwitter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showWebView(getString(R.string.app_name), WsConstants.WS_TWITTER_URL);
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(WsConstants.WS_TWITTER_URL));
+                startActivity(i);
+//                showWebView(getString(R.string.app_name), WsConstants.WS_TWITTER_URL);
             }
         });
 
@@ -111,28 +117,28 @@ public class SocialMediaJoinUsActivity extends BaseActivity implements RippleVie
         });
     }
 
-    private void showWebView(String title, String url) {
-
-        new FinestWebView.Builder(activity).theme(R.style.FinestWebViewTheme)
-                .titleDefault(title)
-                .showUrl(false)
-                .statusBarColorRes(R.color.colorPrimaryDark)
-                .toolbarColorRes(R.color.colorPrimary)
-                .titleColorRes(R.color.finestWhite)
-                .urlColorRes(R.color.colorPrimary)
-                .iconDefaultColorRes(R.color.finestWhite)
-                .progressBarColorRes(R.color.finestWhite)
-                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
-                .showSwipeRefreshLayout(true)
-                .swipeRefreshColorRes(R.color.colorPrimaryDark)
-                .menuSelector(R.drawable.selector_light_theme)
-                .menuTextGravity(Gravity.CENTER)
-                .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
-                .dividerHeight(0)
-                .gradientDivider(false)
-                .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
-                .show(url);
-    }
+//    private void showWebView(String title, String url) {
+//
+//        new FinestWebView.Builder(activity).theme(R.style.FinestWebViewTheme)
+//                .titleDefault(title)
+//                .showUrl(false)
+//                .statusBarColorRes(R.color.colorPrimaryDark)
+//                .toolbarColorRes(R.color.colorPrimary)
+//                .titleColorRes(R.color.finestWhite)
+//                .urlColorRes(R.color.colorPrimary)
+//                .iconDefaultColorRes(R.color.finestWhite)
+//                .progressBarColorRes(R.color.finestWhite)
+//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                .stringResCopiedToClipboard(R.string.copied_to_clipboard)
+//                .showSwipeRefreshLayout(true)
+//                .swipeRefreshColorRes(R.color.colorPrimaryDark)
+//                .menuSelector(R.drawable.selector_light_theme)
+//                .menuTextGravity(Gravity.CENTER)
+//                .menuTextPaddingRightRes(R.dimen.defaultMenuTextPaddingLeft)
+//                .dividerHeight(0)
+//                .gradientDivider(false)
+//                .setCustomAnimations(R.anim.slide_up, R.anim.hold, R.anim.hold, R.anim.slide_down)
+//                .show(url);
+//    }
 }
