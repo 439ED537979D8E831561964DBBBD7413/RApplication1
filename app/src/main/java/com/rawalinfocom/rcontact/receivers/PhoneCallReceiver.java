@@ -706,16 +706,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 if (endCallDialog != null) {
                     endCallDialog.dismiss();
                 }
-                /*if (incomingDialog != null) {
-                    incomingDialog.dismiss();
-                    incomingDialog = null;
-                }else{
-                    if(incomingDialog ==  null)
-                    {
-                        incomingDialog = new Dialog(context);
-                        incomingDialog.dismiss();
-                    }
-                }*/
             }
         });
 
