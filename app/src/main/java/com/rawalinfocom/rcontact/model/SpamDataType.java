@@ -35,6 +35,10 @@ public class SpamDataType implements Serializable {
     private String profileRating;
     @JsonProperty("total_profile_rate_user")
     private String totalProfileRateUser;
+    @JsonProperty("public_url")
+    private String spamPublicUrl;
+    @JsonProperty("pb_profile_photo")
+    private String spamPhotoUrl;
 
     public String getLastName() {
         return lastName;
@@ -122,5 +126,21 @@ public class SpamDataType implements Serializable {
 
     public void setTotalProfileRateUser(String totalProfileRateUser) {
         this.totalProfileRateUser = totalProfileRateUser;
+    }
+
+    public String getSpamPublicUrl() {
+        return spamPublicUrl;
+    }
+
+    public void setSpamPublicUrl(String spamPublicUrl) {
+        this.spamPublicUrl = spamPublicUrl;
+    }
+
+    public String getSpamPhotoUrl() {
+        return spamPhotoUrl;
+    }
+
+    public void setSpamPhotoUrl(String spamPhotoUrl) {
+        this.spamPhotoUrl = spamPhotoUrl;
     }
 }

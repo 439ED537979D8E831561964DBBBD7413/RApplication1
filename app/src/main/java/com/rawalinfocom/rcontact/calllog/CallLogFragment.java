@@ -756,10 +756,11 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     String suffix = spamDataType.getSuffix();
                     String middleName = spamDataType.getMiddleName();
                     String isRcpVerified = spamDataType.getRcpVerfiy();
-                    String rcpId = spamDataType.getRcpPmId();
+//                    String rcpId = spamDataType.getRcpPmId();
                     String profileRating = spamDataType.getProfileRating();
                     String totalProfileRateUser = spamDataType.getTotalProfileRateUser();
                     String spamCount = spamDataType.getSpamCount();
+                    String photoUrl =  spamDataType.getSpamPhotoUrl();
 
                     if (MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
                         callLogType.setRcpFirstName(callLogType.getRcpFirstName());
@@ -779,14 +780,16 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             callLogType.setMiddleName(middleName);
                         if (!StringUtils.isEmpty(isRcpVerified))
                             callLogType.setIsRcpVerfied(isRcpVerified);
-                        if (!StringUtils.isEmpty(rcpId))
-                            callLogType.setRcpId(rcpId);
+                        /*if (!StringUtils.isEmpty(rcpId))
+                            callLogType.setRcpId(rcpId);*/
                         if (!StringUtils.isEmpty(profileRating))
                             callLogType.setCallLogProfileRating(profileRating);
                         if (!StringUtils.isEmpty(totalProfileRateUser))
                             callLogType.setCallLogTotalProfileRateUser(totalProfileRateUser);
                         if (!StringUtils.isEmpty(spamCount))
                             callLogType.setSpamCount(spamCount);
+                        if(!StringUtils.isEmpty(photoUrl))
+                            callLogType.setProfileImage(photoUrl);
                     }
                 }
             }
@@ -820,10 +823,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             String suffix = spamDataType.getSuffix();
                             String middleName = spamDataType.getMiddleName();
                             String isRcpVerified = spamDataType.getRcpVerfiy();
-                            String rcpId = spamDataType.getRcpPmId();
+//                            String rcpId = spamDataType.getRcpPmId();
                             String profileRating = spamDataType.getProfileRating();
                             String totalProfileRateUser = spamDataType.getTotalProfileRateUser();
                             String spamCount = spamDataType.getSpamCount();
+                            String publicUrl =  spamDataType.getSpamPublicUrl();
+                            String photoUrl =  spamDataType.getSpamPhotoUrl();
 
                             if (MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
                                 callLogType.setRcpFirstName(callLogType.getRcpFirstName());
@@ -843,14 +848,16 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                     callLogType.setMiddleName(middleName);
                                 if (!StringUtils.isEmpty(isRcpVerified))
                                     callLogType.setIsRcpVerfied(isRcpVerified);
-                                if (!StringUtils.isEmpty(rcpId))
-                                    callLogType.setRcpId(rcpId);
+                                /*if (!StringUtils.isEmpty(rcpId))
+                                    callLogType.setRcpId(rcpId);*/
                                 if (!StringUtils.isEmpty(profileRating))
                                     callLogType.setCallLogProfileRating(profileRating);
                                 if (!StringUtils.isEmpty(totalProfileRateUser))
                                     callLogType.setCallLogTotalProfileRateUser(totalProfileRateUser);
                                 if (!StringUtils.isEmpty(spamCount))
                                     callLogType.setSpamCount(spamCount);
+                                if(!StringUtils.isEmpty(photoUrl))
+                                    callLogType.setProfileImage(photoUrl);
                             }
 
                             callLogTypeArrayList.set(i, callLogType);
