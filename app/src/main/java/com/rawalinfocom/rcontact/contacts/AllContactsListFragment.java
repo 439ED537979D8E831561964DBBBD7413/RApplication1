@@ -260,6 +260,8 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         if (lastSyncedData < (arrayListSyncUserContact.size() + CONTACT_CHUNK)) {
                             backgroundSync(true, uploadContactResponse);
                         } else {
+                            Utils.setStringPreference(getActivity(), AppConstants.PREF_RESPONSE_KEY,
+                                    "");
                             if (!Utils.isArraylistNullOrEmpty(uploadContactResponse
                                     .getArrayListUserRcProfile())) {
 

@@ -336,6 +336,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     }
                     Log.i(TAG, "Sync Successful");
 
+                    uploadContacts(uploadContactResponse.getResponseKey(), new ArrayList
+                            <ProfileData>());
                     String currentTimeStamp = (StringUtils.split(serviceType, "_"))[1];
                     PhoneBookContacts phoneBookContacts = new PhoneBookContacts(this);
                     phoneBookContacts.saveRawIdsToPref();
@@ -1893,12 +1895,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         }
         if (Utils.isNetworkAvailable(this) && arrayListReSyncUserContact.size() > 0) {
-            if (arrayListReSyncUserContact.size() <= 100) {
-                Log.i(TAG, "sending updated contacts to server");
+            uploadContacts("", arrayListReSyncUserContact);
+//            if (arrayListReSyncUserContact.size() <= 100) {
+//                Log.i(TAG, "sending updated contacts to server");
 //                uploadContacts();
-            } else {
-                Log.i(TAG, "need to apply resync mechanism:");
-            }
+//            } else {
+//                Log.i(TAG, "need to apply resync mechanism:");
+//            }
         }
     }
 
@@ -2708,11 +2711,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private void uploadContacts(String responseKey) {
+    private void uploadContacts(String responseKey, ArrayList<ProfileData>
+            arrayListUserContact) {
 
         WsRequestObject uploadContactObject = new WsRequestObject();
         uploadContactObject.setResponseKey(responseKey);
-        uploadContactObject.setProfileData(arrayListReSyncUserContact);
+        uploadContactObject.setProfileData(arrayListUserContact);
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),

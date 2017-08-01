@@ -162,16 +162,16 @@ public class TableSpamDetailMaster {
         return spamDataType;
     }
 
-    public void updateSpamCount(String number) {
+    public void updateSpamCount(String number, String spamCount){
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        SpamDataType spamDataType = new SpamDataType();
         ContentValues values = new ContentValues();
 
-        values.put(COLUMN_SPAM_COUNT, spamDataType.getSpamCount());
+        values.put(COLUMN_SPAM_COUNT, spamCount);
 
         // Update Row
-        db.update(TABLE_SPAM_DETAIL_MASTER, values, COLUMN_MOBILE_NUMBER + " = ", new String[]{number});
+        db.update(TABLE_SPAM_DETAIL_MASTER, values,  COLUMN_MOBILE_NUMBER + " = \'" + number + "\'", null);
         db.close(); // Closing database connection
 
     }
+
 }
