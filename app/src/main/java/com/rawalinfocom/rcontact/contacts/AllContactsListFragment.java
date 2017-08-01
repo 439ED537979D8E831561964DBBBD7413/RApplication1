@@ -1588,7 +1588,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         Runnable run = new Runnable() {
             @Override
             public void run() {
-                String responseKey = "";
+                String responseKey;
                 if (addToDatabase) {
                     if (uploadContactResponse != null) {
                         responseKey = uploadContactResponse.getResponseKey();
@@ -1642,7 +1642,7 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         }
     }
 
-    //<editor-fold desc="Private Methods">
+    //<editor-fold desc="Web Service Call">
 
     private void uploadContacts(int previouslySyncedData, String responseKey,
                                 ArrayList<ProfileData> arrayListUserContact) {
@@ -1682,7 +1682,6 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                     .getString(R.string.msg_no_network));
         }
     }
-
 
     //</editor-fold>
 }
