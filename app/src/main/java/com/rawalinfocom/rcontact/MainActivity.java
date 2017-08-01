@@ -59,7 +59,6 @@ import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.database.DatabaseHandler;
 import com.rawalinfocom.rcontact.database.PhoneBookCallLogs;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
-import com.rawalinfocom.rcontact.database.PhoneBookSMSLogs;
 import com.rawalinfocom.rcontact.database.QueryManager;
 import com.rawalinfocom.rcontact.database.TableAddressMaster;
 import com.rawalinfocom.rcontact.database.TableEmailMaster;
@@ -97,7 +96,6 @@ import com.rawalinfocom.rcontact.model.ProfileDataOperationPhoneNumber;
 import com.rawalinfocom.rcontact.model.ProfileDataOperationWebAddress;
 import com.rawalinfocom.rcontact.model.ProfileEmailMapping;
 import com.rawalinfocom.rcontact.model.ProfileMobileMapping;
-import com.rawalinfocom.rcontact.model.SmsDataType;
 import com.rawalinfocom.rcontact.model.SpamDataType;
 import com.rawalinfocom.rcontact.model.UserProfile;
 import com.rawalinfocom.rcontact.model.Website;
@@ -108,7 +106,6 @@ import com.rawalinfocom.rcontact.notifications.NotificationsActivity;
 import com.rawalinfocom.rcontact.notifications.RatingHistory;
 import com.rawalinfocom.rcontact.notifications.TimelineActivity;
 import com.rawalinfocom.rcontact.receivers.NetworkConnectionReceiver;
-import com.rawalinfocom.rcontact.sms.SmsFragment;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -131,9 +128,9 @@ import butterknife.ButterKnife;
 public class MainActivity extends BaseActivity implements WsResponseListener, View.OnClickListener {
 
     private final int CALL_LOG_CHUNK = 100;
-//    private final int SMS_CHUNK = 50;
 
     private static final String TAG = "MainActivity";
+
     @BindView(R.id.relative_root_contacts_main)
     RelativeLayout relativeRootContactsMain;
     Toolbar toolbar;
@@ -143,33 +140,33 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
     FloatingActionButton fab;
     DrawerLayout drawer;
     NavigationView navigationView;
-
     TabLayout tabMain;
+
     ContactsFragment contactsFragment;
     CallLogFragment callLogFragment;
-    //    SmsFragment smsFragment;
+
     private PhoneBookContacts phoneBookContacts;
-    NetworkConnectionReceiver networkConnectionReceiver;
-    RContactApplication rContactApplication;
-    private ArrayList<ProfileData> arrayListReSyncUserContact;
-    private String currentStamp;
-    //    int LIST_PARTITION_COUNT = 20;
-    private ArrayList<CallLogType> callLogTypeArrayListMain;
-    ArrayList<CallLogType> callLogsListbyChunck;
-    //    ArrayList<CallLogType> newList;
-    ArrayList<SmsDataType> newSmsList;
-    int logsSyncedCount = 0;
-    MaterialDialog permissionConfirmationDialog;
-    private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
-            .permission.READ_CALL_LOG/*, Manifest.permission.READ_SMS*/};
-    boolean isCompaseIcon = false;
     private SyncCallLogAsyncTask syncCallLogAsyncTask;
     private ReSyncContactAsyncTask reSyncContactAsyncTask;
-    //    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
     private GetSpamAndRCPDetailAsyncTask getSpamAndRCPDetailAsyncTask;
-    //    private ArrayList<SmsDataType> smsLogTypeArrayListMain;
-//    ArrayList<SmsDataType> smsLogsListbyChunck;
+    NetworkConnectionReceiver networkConnectionReceiver;
+    MaterialDialog permissionConfirmationDialog;
+    MaterialDialog callConfirmationDialog;
+
+    RContactApplication rContactApplication;
+
+    private ArrayList<ProfileData> arrayListReSyncUserContact;
+    private ArrayList<CallLogType> callLogTypeArrayListMain;
     private ArrayList<CallLogType> callLogTypeListForGlobalProfile;
+    ArrayList<CallLogType> callLogsListbyChunck;
+
+    private String[] requiredPermissions = {Manifest.permission.READ_CONTACTS, Manifest
+            .permission.READ_CALL_LOG/*, Manifest.permission.READ_SMS*/};
+
+    private String currentStamp;
+    int logsSyncedCount = 0;
+    boolean isCompaseIcon = false;
+    int tabPosition = -1;
 
     //<editor-fold desc="Override Methods">
     @Override
@@ -198,70 +195,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         setNavigationHeaderData();
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    private void checkPermissionToExecute() {
-        boolean contacts = ContextCompat.checkSelfPermission(MainActivity.this,
-                requiredPermissions[0]) ==
-                PackageManager.PERMISSION_GRANTED;
-        boolean logs = ContextCompat.checkSelfPermission(MainActivity.this,
-                requiredPermissions[1]) ==
-                PackageManager.PERMISSION_GRANTED;
-        /*boolean smsLogs = ContextCompat.checkSelfPermission(MainActivity.this,
-                requiredPermissions[2]) ==
-                PackageManager.PERMISSION_GRANTED;*/
-        if (logs) {
-            if (Utils.isNetworkAvailable(this)
-                    && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
-                    && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
-                    false)) {
-                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-
-        }
-
-        if (Utils.isNetworkAvailable(this)
-                && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
-                && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                && !Utils.getBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false)) {
-            getSpamAndRCPDetailAsyncTask = new GetSpamAndRCPDetailAsyncTask();
-            getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-        }
-
-        /*if (smsLogs) {
-            if (Utils.isNetworkAvailable(this)
-                    && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
-                    && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                    && !Utils.getBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false)) {
-                getSpamAndRCPDetailAsyncTask = new GetSpamAndRCPDetailAsyncTask();
-                getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-            } else {
-                if (Utils.isNetworkAvailable(this)
-                        && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
-                        && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
-                        && Utils.getBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false)
-                        && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
-                    syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                    syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
-            }
-
-        }*/
-        if (contacts) {
-            if (Utils.isNetworkAvailable(this)
-                    && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
-                    && (Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
-                    false) || !logs)
-                    /*&& (Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false) ||
-                    !smsLogs)*/) {
-                reSyncContactAsyncTask = new ReSyncContactAsyncTask();
-                reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-        }
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -273,24 +206,74 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         updateNotificationCount();
     }
 
-    private void updateNotificationCount() {
-        int count = getNotificationCount(databaseHandler);
-        if (count > 0) {
-            badgeLayout.setVisibility(View.VISIBLE);
-            badgeTextView.setText(String.valueOf(count));
-        } else {
-            badgeLayout.setVisibility(View.GONE);
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.nav_ll_account:
+                startActivityIntent(MainActivity.this, SlideMenuAccounts.class, null);
+                break;
+            case R.id.nav_ll_timeline:
+                startActivityIntent(MainActivity.this, TimelineActivity.class, null);
+                break;
+            case R.id.nav_ll_events:
+                startActivityIntent(MainActivity.this, EventsActivity.class, null);
+                break;
+            case R.id.nav_ll_rating_history:
+                startActivityIntent(this, RatingHistory.class, new Bundle());
+                break;
+            case R.id.nav_ll_invite:
+                startActivityIntent(MainActivity.this, ContactListingActivity.class, null);
+                break;
+            case R.id.nav_ll_share:
+
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName();
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
+
+                break;
+            case R.id.nav_ll_settings:
+                startActivityIntent(MainActivity.this, SettingsActivity.class, null);
+                break;
+            case R.id.nav_ll_rate_us:
+                rateUs();
+                break;
+            case R.id.nav_ll_about:
+                startActivityIntent(MainActivity.this, AboutHelpActivity.class, null);
+                break;
+            case R.id.nav_ll_feedback:
+
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(WsConstants.URL_FEEDBACK));
+                startActivity(i);
+                break;
+
+            case R.id.nav_ll_export:
+
+                String exportedFileName = Utils.exportDB(this);
+                if (exportedFileName != null) {
+                    File fileLocation = new File(Environment.getExternalStorageDirectory()
+                            .getAbsolutePath(), exportedFileName);
+                    Uri path = Uri.fromFile(fileLocation);
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("vnd.android.cursor.dir/email");
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, path);
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
+                    startActivity(Intent.createChooser(emailIntent, getString(R.string
+                            .str_send_email)));
+                } else {
+                    Toast.makeText(getApplicationContext(), getString(R.string.db_dump_failed),
+                            Toast.LENGTH_SHORT)
+                            .show();
+                }
+
+                break;
         }
-        count = getTimeLineNotificationCount(databaseHandler);
-//        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id
-//                .nav_user_timeline).getActionView();
-        TextView badge_count = (TextView) navigationView.findViewById(R.id.badge_count);
-        if (count > 0) {
-            badge_count.setVisibility(View.VISIBLE);
-            badge_count.setText(String.valueOf(count));
-        } else {
-            badge_count.setVisibility(View.GONE);
-        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
     }
 
     @Override
@@ -354,7 +337,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     Log.i(TAG, "Sync Successful");
 
                     String currentTimeStamp = (StringUtils.split(serviceType, "_"))[1];
-//                    Log.i("MAULIK", "currentTimeStamp" + currentTimeStamp);
                     PhoneBookContacts phoneBookContacts = new PhoneBookContacts(this);
                     phoneBookContacts.saveRawIdsToPref();
                     Utils.setStringPreference(this, AppConstants.PREF_CONTACT_LAST_SYNC_TIME,
@@ -390,15 +372,19 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                         if (callLogTypeArrayList.size() < CALL_LOG_CHUNK) {
 
-                            Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
-                                    Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET).size());
+                            Utils.setIntegerPreference(this, AppConstants
+                                            .PREF_CALL_LOG_SYNCED_COUNT,
+                                    Utils.getArrayListPreference(this, AppConstants
+                                            .PREF_CALL_LOGS_ID_SET).size());
 
                             Utils.setBooleanPreference(this, AppConstants
                                     .PREF_CALL_LOG_SYNCED, true);
 
                             if (callLogTypeListForGlobalProfile.size() > 0) {
-                                if (Utils.getBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false))
-                                    Utils.setBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false);
+                                if (Utils.getBooleanPreference(this, AppConstants
+                                        .PREF_GOT_ALL_PROFILE_DATA, false))
+                                    Utils.setBooleanPreference(this, AppConstants
+                                            .PREF_GOT_ALL_PROFILE_DATA, false);
                             }
 
                             Intent localBroadcastIntent = new Intent(AppConstants
@@ -431,10 +417,12 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         (getProfileDataResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    ArrayList<SpamDataType> spamDataTypeList = getProfileDataResponse.getSpamDataTypeArrayList();
+                    ArrayList<SpamDataType> spamDataTypeList = getProfileDataResponse
+                            .getSpamDataTypeArrayList();
                     if (spamDataTypeList.size() > 0) {
                         try {
-                            TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(getDatabaseHandler());
+                            TableSpamDetailMaster tableSpamDetailMaster = new
+                                    TableSpamDetailMaster(getDatabaseHandler());
                             tableSpamDetailMaster.insertSpamDetails(spamDataTypeList);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -467,7 +455,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         (smsLogInsertionResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
 
-                    Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME, smsLogInsertionResponse.getSmsLogTimestamp());
+                    Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME,
+                    smsLogInsertionResponse.getSmsLogTimestamp());
 
                     if (Utils.getBooleanPreference(this, AppConstants
                             .PREF_SMS_SYNCED, false)) {
@@ -503,6 +492,319 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
+    @Override
+    @TargetApi(Build.VERSION_CODES.M)
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (syncCallLogAsyncTask != null)
+            syncCallLogAsyncTask.cancel(true);
+        /*if (syncSmsLogAsyncTask != null)
+            syncSmsLogAsyncTask.cancel(true);*/
+        if (reSyncContactAsyncTask != null)
+            reSyncContactAsyncTask.cancel(true);
+        if (getSpamAndRCPDetailAsyncTask != null)
+            getSpamAndRCPDetailAsyncTask.cancel(true);
+        if (networkConnectionReceiver != null) {
+            unregisterBroadcastReceiver();
+        }
+
+        unRegisterLocalBroadCastReceiver();
+
+        Utils.setBooleanPreference(this, AppConstants
+                .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
+
+        super.onDestroy();
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Private Methods">
+
+    private void init() {
+
+        imageNotification = (ImageView) toolbar.findViewById(R.id.image_notification);
+        ImageView imageViewSearch = (ImageView) toolbar.findViewById(R.id.image_search);
+        badgeLayout = (LinearLayout) toolbar.findViewById(R.id.badge_layout);
+        badgeTextView = (TextView) toolbar.findViewById(R.id.badge_count);
+        imageNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityIntent(MainActivity.this, NotificationsActivity.class, null);
+            }
+        });
+
+        imageViewSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityIntent(MainActivity.this, SearchActivity.class, null);
+            }
+        });
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isCompaseIcon)
+                    openDialer();
+                /* else {
+                   AppConstants.isComposingSMS = true;
+                    openSMSComposerPage();
+                }*/
+            }
+        });
+
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string
+                .navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        // setNavigationHeaderData();
+        setNavigationListData();
+
+        tabMain = (TabLayout) findViewById(R.id.tab_main);
+
+        bindWidgetsWithAnEvent();
+        setupTabLayout();
+        Utils.changeTabsFont(this, tabMain);
+
+    }
+
+    private void setNavigationHeaderData() {
+
+        LinearLayout mainContent = (LinearLayout) navigationView.findViewById(R.id.main_content);
+        TextView textUserName = (TextView) navigationView.findViewById(R.id.text_user_name);
+        TextView textNumber = (TextView) navigationView.findViewById(R.id.text_number);
+        TextView textRatingCount = (TextView) navigationView.findViewById(R.id.text_rating_count);
+        RatingBar ratingUser = (RatingBar) navigationView.findViewById(R.id.rating_user);
+        ImageView userProfileImage = (ImageView) navigationView.findViewById(R.id.userProfileImage);
+
+        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
+        String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
+
+        textUserName.setTypeface(Utils.typefaceSemiBold(MainActivity.this));
+        textNumber.setTypeface(Utils.typefaceRegular(MainActivity.this));
+        textRatingCount.setTypeface(Utils.typefaceBold(MainActivity.this));
+
+        textUserName.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
+        textNumber.setText(number);
+        textRatingCount.setText(Utils.getStringPreference(this, AppConstants
+                .PREF_USER_TOTAL_RATING, ""));
+        textUserName.setTypeface(Utils.typefaceSemiBold(MainActivity.this));
+        textNumber.setTypeface(Utils.typefaceRegular(MainActivity.this));
+        textRatingCount.setTypeface(Utils.typefaceBold(MainActivity.this));
+
+        textUserName.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
+        textNumber.setText(number);
+        textRatingCount.setText(Utils.getStringPreference(this, AppConstants
+                .PREF_USER_TOTAL_RATING, ""));
+        ratingUser.setRating(Float.parseFloat(Utils.getStringPreference(this, AppConstants
+                .PREF_USER_RATING, "")));
+
+        final String thumbnailUrl = Utils.getStringPreference(this, AppConstants.PREF_USER_PHOTO,
+                "");
+        if (!TextUtils.isEmpty(thumbnailUrl)) {
+            Glide.with(MainActivity.this)
+                    .load(thumbnailUrl)
+                    .placeholder(R.drawable.home_screen_profile)
+                    .error(R.drawable.home_screen_profile)
+                    .bitmapTransform(new CropCircleTransformation(MainActivity.this))
+                    .override(500, 500)
+                    .into(userProfileImage);
+        } else {
+            userProfileImage.setImageResource(R.drawable.home_screen_profile);
+        }
+
+        Utils.setRatingColor(MainActivity.this, ratingUser);
+
+        mainContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+                Bundle bundle = new Bundle();
+                bundle.putString(AppConstants.EXTRA_PM_ID, getUserPmId());
+                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "");
+                bundle.putString(AppConstants.EXTRA_CONTACT_NAME, Utils.getStringPreference
+                        (MainActivity.this, AppConstants.PREF_USER_NAME, ""));
+                bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
+                bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, 1);
+                startActivityIntent(MainActivity.this, ProfileDetailActivity.class, bundle);
+
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+            }
+        });
+
+//        Utils.setBooleanPreference(this, AppConstants.PREF_USER_PROFILE_UPDATE, false);
+    }
+
+    private void setNavigationListData() {
+
+        TextView nav_txt_account = (TextView) navigationView.findViewById(R.id.nav_txt_account);
+        TextView nav_txt_timeline = (TextView) navigationView.findViewById(R.id.nav_txt_timeline);
+        TextView nav_txt_events = (TextView) navigationView.findViewById(R.id.nav_txt_events);
+        TextView nav_txt_rating = (TextView) navigationView.findViewById(R.id.nav_txt_rating);
+        TextView nav_txt_invite = (TextView) navigationView.findViewById(R.id.nav_txt_invite);
+        TextView nav_txt_share = (TextView) navigationView.findViewById(R.id.nav_txt_share);
+        TextView nav_txt_settings = (TextView) navigationView.findViewById(R.id.nav_txt_settings);
+        TextView nav_txt_rate = (TextView) navigationView.findViewById(R.id.nav_txt_rate);
+        TextView nav_txt_about = (TextView) navigationView.findViewById(R.id.nav_txt_about);
+        TextView nav_txt_export = (TextView) navigationView.findViewById(R.id.nav_txt_export);
+        TextView nav_txt_feedback = (TextView) navigationView.findViewById(R.id.nav_txt_feedback);
+
+        LinearLayout nav_ll_account = (LinearLayout) navigationView.findViewById(R.id
+                .nav_ll_account);
+        LinearLayout nav_ll_timeline = (LinearLayout) navigationView.findViewById(R.id
+                .nav_ll_timeline);
+        LinearLayout nav_ll_events = (LinearLayout) navigationView.findViewById(R.id.nav_ll_events);
+        LinearLayout nav_ll_rating = (LinearLayout) navigationView.findViewById(R.id
+                .nav_ll_rating_history);
+        LinearLayout nav_ll_invite = (LinearLayout) navigationView.findViewById(R.id.nav_ll_invite);
+        LinearLayout nav_ll_share = (LinearLayout) navigationView.findViewById(R.id.nav_ll_share);
+        LinearLayout nav_ll_settings = (LinearLayout) navigationView.findViewById(R.id
+                .nav_ll_settings);
+        LinearLayout nav_ll_rate = (LinearLayout) navigationView.findViewById(R.id.nav_ll_rate_us);
+        LinearLayout nav_ll_about = (LinearLayout) navigationView.findViewById(R.id.nav_ll_about);
+        LinearLayout nav_ll_export = (LinearLayout) navigationView.findViewById(R.id.nav_ll_export);
+        LinearLayout nav_ll_feedback = (LinearLayout) navigationView.findViewById(R.id
+                .nav_ll_feedback);
+
+        nav_ll_share.setEnabled(false);
+        nav_txt_share.setTextColor(getResources().getColor(R.color.lightGrey));
+
+        nav_ll_account.setOnClickListener(this);
+        nav_ll_timeline.setOnClickListener(this);
+        nav_ll_events.setOnClickListener(this);
+        nav_ll_rating.setOnClickListener(this);
+        nav_ll_invite.setOnClickListener(this);
+//        nav_ll_share.setOnClickListener(this);
+        nav_ll_settings.setOnClickListener(this);
+        nav_ll_rate.setOnClickListener(this);
+        nav_ll_about.setOnClickListener(this);
+        nav_ll_export.setOnClickListener(this);
+        nav_ll_feedback.setOnClickListener(this);
+
+        nav_txt_export.setVisibility(View.GONE);
+
+        nav_txt_account.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_account.setText(R.string.im_icon_user);
+        nav_txt_timeline.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_timeline.setText(R.string.im_icon_timeline);
+        nav_txt_events.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_events.setText(R.string.im_icon_events);
+        nav_txt_rating.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_rating.setText(R.string.im_icon_rating_history);
+        nav_txt_invite.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_invite.setText(R.string.im_icon_invite_contact);
+        nav_txt_share.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_share.setText(R.string.im_icon_share);
+        nav_txt_settings.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_settings.setText(R.string.im_icon_setting);
+        nav_txt_rate.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_rate.setText(R.string.im_icon_rate_us);
+        nav_txt_about.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_about.setText(R.string.im_icon_about_help);
+        nav_txt_export.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_export.setText(R.string.im_icon_about_help);
+        nav_txt_feedback.setTypeface(Utils.typefaceIcons(this));
+        nav_txt_feedback.setText(R.string.im_icon_about_help);
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissionToExecute() {
+        boolean contacts = ContextCompat.checkSelfPermission(MainActivity.this,
+                requiredPermissions[0]) ==
+                PackageManager.PERMISSION_GRANTED;
+        boolean logs = ContextCompat.checkSelfPermission(MainActivity.this,
+                requiredPermissions[1]) ==
+                PackageManager.PERMISSION_GRANTED;
+        /*boolean smsLogs = ContextCompat.checkSelfPermission(MainActivity.this,
+                requiredPermissions[2]) ==
+                PackageManager.PERMISSION_GRANTED;*/
+        if (logs) {
+            if (Utils.isNetworkAvailable(this)
+                    && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
+                    && !Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
+                    false)) {
+                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+
+        }
+
+        if (Utils.isNetworkAvailable(this)
+                && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
+                && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+                && !Utils.getBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA,
+                false)) {
+            getSpamAndRCPDetailAsyncTask = new GetSpamAndRCPDetailAsyncTask();
+            getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        }
+
+        /*if (smsLogs) {
+            if (Utils.isNetworkAvailable(this)
+                    && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
+                    && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)
+                    && !Utils.getBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA,
+                    false)) {
+                getSpamAndRCPDetailAsyncTask = new GetSpamAndRCPDetailAsyncTask();
+                getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+            } else {
+                if (Utils.isNetworkAvailable(this)
+                        && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
+                        && Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
+                        false)
+                        && Utils.getBooleanPreference(this, AppConstants
+                        .PREF_GOT_ALL_PROFILE_DATA, false)
+                        && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false)) {
+                    syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                    syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }
+
+        }*/
+        if (contacts) {
+            if (Utils.isNetworkAvailable(this)
+                    && Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)
+                    && (Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
+                    false) || !logs)
+                    /*&& (Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED, false) ||
+                    !smsLogs)*/) {
+                reSyncContactAsyncTask = new ReSyncContactAsyncTask();
+                reSyncContactAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+        }
+    }
+
+    private void updateNotificationCount() {
+        int count = getNotificationCount(databaseHandler);
+        if (count > 0) {
+            badgeLayout.setVisibility(View.VISIBLE);
+            badgeTextView.setText(String.valueOf(count));
+        } else {
+            badgeLayout.setVisibility(View.GONE);
+        }
+        count = getTimeLineNotificationCount(databaseHandler);
+//        LinearLayout view = (LinearLayout) navigationView.getMenu().findItem(R.id
+//                .nav_user_timeline).getActionView();
+        TextView badge_count = (TextView) navigationView.findViewById(R.id.badge_count);
+        if (count > 0) {
+            badge_count.setVisibility(View.VISIBLE);
+            badge_count.setText(String.valueOf(count));
+        } else {
+            badge_count.setVisibility(View.GONE);
+        }
+    }
 
     private void storeToMobileMapping(ArrayList<ProfileDataOperation> profileData) {
         TableProfileMobileMapping tableProfileMobileMapping = new TableProfileMobileMapping
@@ -868,301 +1170,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    @Override
-    @TargetApi(Build.VERSION_CODES.M)
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (syncCallLogAsyncTask != null)
-            syncCallLogAsyncTask.cancel(true);
-        /*if (syncSmsLogAsyncTask != null)
-            syncSmsLogAsyncTask.cancel(true);*/
-        if (reSyncContactAsyncTask != null)
-            reSyncContactAsyncTask.cancel(true);
-        if (getSpamAndRCPDetailAsyncTask != null)
-            getSpamAndRCPDetailAsyncTask.cancel(true);
-        if (networkConnectionReceiver != null) {
-            unregisterBroadcastReceiver();
-        }
-
-        unRegisterLocalBroadCastReceiver();
-
-        Utils.setBooleanPreference(this, AppConstants
-                .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
-
-        super.onDestroy();
-    }
-
-    //</editor-fold>
-
-    //<editor-fold desc="Private Methods">
-
-    private void init() {
-
-        imageNotification = (ImageView) toolbar.findViewById(R.id.image_notification);
-        ImageView imageViewSearch = (ImageView) toolbar.findViewById(R.id.image_search);
-        badgeLayout = (LinearLayout) toolbar.findViewById(R.id.badge_layout);
-        badgeTextView = (TextView) toolbar.findViewById(R.id.badge_count);
-        imageNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityIntent(MainActivity.this, NotificationsActivity.class, null);
-            }
-        });
-
-        imageViewSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityIntent(MainActivity.this, SearchActivity.class, null);
-            }
-        });
-
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!isCompaseIcon)
-                    openDialer();
-                else {
-                    /*AppConstants.isComposingSMS = true;
-                    openSMSComposerPage();*/
-                }
-            }
-        });
-
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string
-                .navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-
-        // setNavigationHeaderData();
-        setNavigationListData();
-
-        tabMain = (TabLayout) findViewById(R.id.tab_main);
-
-        bindWidgetsWithAnEvent();
-        setupTabLayout();
-        Utils.changeTabsFont(this, tabMain);
-
-    }
-
-    private void setNavigationHeaderData() {
-
-        LinearLayout mainContent = (LinearLayout) navigationView.findViewById(R.id.main_content);
-        TextView textUserName = (TextView) navigationView.findViewById(R.id.text_user_name);
-        TextView textNumber = (TextView) navigationView.findViewById(R.id.text_number);
-        TextView textRatingCount = (TextView) navigationView.findViewById(R.id.text_rating_count);
-        RatingBar ratingUser = (RatingBar) navigationView.findViewById(R.id.rating_user);
-        ImageView userProfileImage = (ImageView) navigationView.findViewById(R.id.userProfileImage);
-
-        TableMobileMaster tableMobileMaster = new TableMobileMaster(databaseHandler);
-        String number = tableMobileMaster.getUserMobileNumber(getUserPmId());
-
-        textUserName.setTypeface(Utils.typefaceSemiBold(MainActivity.this));
-        textNumber.setTypeface(Utils.typefaceRegular(MainActivity.this));
-        textRatingCount.setTypeface(Utils.typefaceBold(MainActivity.this));
-
-        textUserName.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
-        textNumber.setText(number);
-        textRatingCount.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_TOTAL_RATING, ""));
-        textUserName.setTypeface(Utils.typefaceSemiBold(MainActivity.this));
-        textNumber.setTypeface(Utils.typefaceRegular(MainActivity.this));
-        textRatingCount.setTypeface(Utils.typefaceBold(MainActivity.this));
-
-        textUserName.setText(Utils.getStringPreference(this, AppConstants.PREF_USER_NAME, ""));
-        textNumber.setText(number);
-        textRatingCount.setText(Utils.getStringPreference(this, AppConstants
-                .PREF_USER_TOTAL_RATING, ""));
-        ratingUser.setRating(Float.parseFloat(Utils.getStringPreference(this, AppConstants
-                .PREF_USER_RATING, "")));
-
-        final String thumbnailUrl = Utils.getStringPreference(this, AppConstants.PREF_USER_PHOTO,
-                "");
-        if (!TextUtils.isEmpty(thumbnailUrl)) {
-            Glide.with(MainActivity.this)
-                    .load(thumbnailUrl)
-                    .placeholder(R.drawable.home_screen_profile)
-                    .error(R.drawable.home_screen_profile)
-                    .bitmapTransform(new CropCircleTransformation(MainActivity.this))
-                    .override(500, 500)
-                    .into(userProfileImage);
-        } else {
-            userProfileImage.setImageResource(R.drawable.home_screen_profile);
-        }
-
-        Utils.setRatingColor(MainActivity.this, ratingUser);
-
-        mainContent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
-                Bundle bundle = new Bundle();
-                bundle.putString(AppConstants.EXTRA_PM_ID, getUserPmId());
-                bundle.putString(AppConstants.EXTRA_PHONE_BOOK_ID, "");
-                bundle.putString(AppConstants.EXTRA_CONTACT_NAME, Utils.getStringPreference
-                        (MainActivity.this, AppConstants.PREF_USER_NAME, ""));
-                bundle.putString(AppConstants.EXTRA_PROFILE_IMAGE_URL, thumbnailUrl);
-                bundle.putInt(AppConstants.EXTRA_CONTACT_POSITION, 1);
-                startActivityIntent(MainActivity.this, ProfileDetailActivity.class, bundle);
-
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
-            }
-        });
-
-//        Utils.setBooleanPreference(this, AppConstants.PREF_USER_PROFILE_UPDATE, false);
-    }
-
-    private void setNavigationListData() {
-
-        TextView nav_txt_account = (TextView) navigationView.findViewById(R.id.nav_txt_account);
-        TextView nav_txt_timeline = (TextView) navigationView.findViewById(R.id.nav_txt_timeline);
-        TextView nav_txt_events = (TextView) navigationView.findViewById(R.id.nav_txt_events);
-        TextView nav_txt_rating = (TextView) navigationView.findViewById(R.id.nav_txt_rating);
-        TextView nav_txt_invite = (TextView) navigationView.findViewById(R.id.nav_txt_invite);
-        TextView nav_txt_share = (TextView) navigationView.findViewById(R.id.nav_txt_share);
-        TextView nav_txt_settings = (TextView) navigationView.findViewById(R.id.nav_txt_settings);
-        TextView nav_txt_rate = (TextView) navigationView.findViewById(R.id.nav_txt_rate);
-        TextView nav_txt_about = (TextView) navigationView.findViewById(R.id.nav_txt_about);
-        TextView nav_txt_export = (TextView) navigationView.findViewById(R.id.nav_txt_export);
-        TextView nav_txt_feedback = (TextView) navigationView.findViewById(R.id.nav_txt_feedback);
-
-        LinearLayout nav_ll_account = (LinearLayout) navigationView.findViewById(R.id
-                .nav_ll_account);
-        LinearLayout nav_ll_timeline = (LinearLayout) navigationView.findViewById(R.id
-                .nav_ll_timeline);
-        LinearLayout nav_ll_events = (LinearLayout) navigationView.findViewById(R.id.nav_ll_events);
-        LinearLayout nav_ll_rating = (LinearLayout) navigationView.findViewById(R.id
-                .nav_ll_rating_history);
-        LinearLayout nav_ll_invite = (LinearLayout) navigationView.findViewById(R.id.nav_ll_invite);
-        LinearLayout nav_ll_share = (LinearLayout) navigationView.findViewById(R.id.nav_ll_share);
-        LinearLayout nav_ll_settings = (LinearLayout) navigationView.findViewById(R.id
-                .nav_ll_settings);
-        LinearLayout nav_ll_rate = (LinearLayout) navigationView.findViewById(R.id.nav_ll_rate_us);
-        LinearLayout nav_ll_about = (LinearLayout) navigationView.findViewById(R.id.nav_ll_about);
-        LinearLayout nav_ll_export = (LinearLayout) navigationView.findViewById(R.id.nav_ll_export);
-        LinearLayout nav_ll_feedback = (LinearLayout) navigationView.findViewById(R.id
-                .nav_ll_feedback);
-
-        nav_ll_share.setEnabled(false);
-        nav_txt_share.setTextColor(getResources().getColor(R.color.lightGrey));
-
-        nav_ll_account.setOnClickListener(this);
-        nav_ll_timeline.setOnClickListener(this);
-        nav_ll_events.setOnClickListener(this);
-        nav_ll_rating.setOnClickListener(this);
-        nav_ll_invite.setOnClickListener(this);
-//        nav_ll_share.setOnClickListener(this);
-        nav_ll_settings.setOnClickListener(this);
-        nav_ll_rate.setOnClickListener(this);
-        nav_ll_about.setOnClickListener(this);
-        nav_ll_export.setOnClickListener(this);
-        nav_ll_feedback.setOnClickListener(this);
-
-        nav_txt_export.setVisibility(View.GONE);
-
-        nav_txt_account.setTypeface(Utils.typefaceIcons(this));
-        nav_txt_account.setText(R.string.im_icon_user);
-        nav_txt_timeline.setTypeface(Utils.typefaceIcons(this));
-        nav_txt_timeline.setText(R.string.im_icon_timeline);
-        nav_txt_events.setTypeface(Utils.typefaceIcons(this));
-        nav_txt_events.setText(R.string.im_icon_events);
-        nav_txt_rating.setTypeface(Utils.typefaceIcons(this));
-        nav_txt_rating.setText(R.string.im_icon_rating_history);
-        nav_txt_invite.setTypeface(Utils.typefaceIcons(this));
-        nav_txt_invite.setText(R.string.im_icon_invite_contact);
-        nav_txt_share.setTypeface(Utils.typefaceIcons(this));
-        nav_txt_share.setText(R.string.im_icon_share);
-        nav_txt_settings.setTypeface(Utils.typefaceIcons(this));
-        nav_txt_settings.setText(R.string.im_icon_setting);
-        nav_txt_rate.setTypeface(Utils.typefaceIcons(this));
-        nav_txt_rate.setText(R.string.im_icon_rate_us);
-        nav_txt_about.setTypeface(Utils.typefaceIcons(this));
-        nav_txt_about.setText(R.string.im_icon_about_help);
-        nav_txt_export.setTypeface(Utils.typefaceIcons(this));
-        nav_txt_export.setText(R.string.im_icon_about_help);
-        nav_txt_feedback.setTypeface(Utils.typefaceIcons(this));
-        nav_txt_feedback.setText(R.string.im_icon_about_help);
-    }
-
-    @Override
-    public void onClick(View v) {
-
-        switch (v.getId()) {
-            case R.id.nav_ll_account:
-                startActivityIntent(MainActivity.this, SlideMenuAccounts.class, null);
-                break;
-            case R.id.nav_ll_timeline:
-                startActivityIntent(MainActivity.this, TimelineActivity.class, null);
-                break;
-            case R.id.nav_ll_events:
-                startActivityIntent(MainActivity.this, EventsActivity.class, null);
-                break;
-            case R.id.nav_ll_rating_history:
-                startActivityIntent(this, RatingHistory.class, new Bundle());
-                break;
-            case R.id.nav_ll_invite:
-                startActivityIntent(MainActivity.this, ContactListingActivity.class, null);
-                break;
-            case R.id.nav_ll_share:
-
-                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                sharingIntent.setType("text/plain");
-                String shareBody = AppConstants.PLAY_STORE_LINK + getPackageName();
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
-
-                break;
-            case R.id.nav_ll_settings:
-                startActivityIntent(MainActivity.this, SettingsActivity.class, null);
-                break;
-            case R.id.nav_ll_rate_us:
-                rateUs();
-                break;
-            case R.id.nav_ll_about:
-                startActivityIntent(MainActivity.this, AboutHelpActivity.class, null);
-                break;
-            case R.id.nav_ll_feedback:
-
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(WsConstants.URL_FEEDBACK));
-                startActivity(i);
-                break;
-
-            case R.id.nav_ll_export:
-
-                String exportedFileName = Utils.exportDB(this);
-                if (exportedFileName != null) {
-                    File fileLocation = new File(Environment.getExternalStorageDirectory()
-                            .getAbsolutePath(), exportedFileName);
-                    Uri path = Uri.fromFile(fileLocation);
-                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                    emailIntent.setType("vnd.android.cursor.dir/email");
-                    emailIntent.putExtra(Intent.EXTRA_STREAM, path);
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database");
-                    startActivity(Intent.createChooser(emailIntent, getString(R.string
-                            .str_send_email)));
-                } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.db_dump_failed),
-                            Toast.LENGTH_SHORT)
-                            .show();
-                }
-
-                break;
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-    }
-
     private void rateUs() {
         Uri uri = Uri.parse("market://details?id=" + getPackageName());
         Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
@@ -1199,20 +1206,34 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     }
 
-    private void openSMSComposerPage() {
+    private String getContactNameFromNumber(String phoneNumber) {
+        String contactName = "";
+        try {
 
-        Intent intent = new Intent("android.intent.action.VIEW");
+            ContentResolver contentResolver = MainActivity.this.getContentResolver();
 
-        /** creates an sms uri */
-        Uri data = Uri.parse("sms:");
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
 
-        /** Setting sms uri to the intent */
-        intent.setData(data);
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
 
-        /** Initiates the SMS compose screen, because the activity contain ACTION_VIEW and sms
-         * uri */
-        startActivity(intent);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                }
+                cursor.close();
+            }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return contactName;
     }
 
     private void showAddToContact(boolean value) {
@@ -1231,6 +1252,21 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
+    private void makeListOfNumbersForSpamCount() {
+        ArrayList<String> listOfNumbers = new ArrayList<>();
+        if (callLogTypeListForGlobalProfile != null && callLogTypeListForGlobalProfile.size() > 0) {
+            for (int i = 0; i < callLogTypeListForGlobalProfile.size(); i++) {
+                String number = callLogTypeListForGlobalProfile.get(i).getNumber();
+                if (!number.startsWith("+91"))
+                    number = "+91" + number;
+
+                listOfNumbers.add(number);
+            }
+            getProfileDataServiceCall(listOfNumbers);
+
+        }
+    }
+
     private void setupTabLayout() {
         contactsFragment = ContactsFragment.newInstance();
         callLogFragment = CallLogFragment.newInstance();
@@ -1239,8 +1275,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         tabMain.addTab(tabMain.newTab().setText(getString(R.string.tab_call)));
 //        tabMain.addTab(tabMain.newTab().setText(getString(R.string.tab_sms)));
     }
-
-    int tabPosition = -1;
 
     private void bindWidgetsWithAnEvent() {
         tabMain.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -1265,8 +1299,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             }
         });
     }
-
-    MaterialDialog callConfirmationDialog;
 
     private void showFragmentSwitchAlertDialog() {
 
@@ -1425,15 +1457,19 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
         try {
             String order = CallLog.Calls.DATE + " ASC";
-            String prefDate = Utils.getStringPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_SYNC_TIME, "");
-            String prefRowId = Utils.getStringPreference(MainActivity.this, AppConstants.PREF_CALL_LOG_ROW_ID, "");
+            String prefDate = Utils.getStringPreference(MainActivity.this, AppConstants
+                    .PREF_CALL_LOG_SYNC_TIME, "");
+            String prefRowId = Utils.getStringPreference(MainActivity.this, AppConstants
+                    .PREF_CALL_LOG_ROW_ID, "");
             String dateToCompare = "", tempDate = "";
             String currentDate = "";
             long dateToConvert = 0;
             if (!StringUtils.isEmpty(prefDate)) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale
+                        .getDefault());
                 dateToConvert = sdf.parse(prefDate).getTime();
-                tempDate = String.valueOf(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault()).parse(prefDate).getTime());
+                tempDate = String.valueOf(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
+                        .getDefault()).parse(prefDate).getTime());
                 dateToCompare = String.valueOf(dateToConvert);
 //                System.out.println("RContact last Call-log date : " + dateToCompare);
                 currentDate = String.valueOf(System.currentTimeMillis());
@@ -1450,9 +1486,11 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.isCancelled())
                         return;
 
-                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault());
+                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale
+                            .getDefault());
 
-                    Date cursorDate = new Date(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
+                    Date cursorDate = new Date(cursor.getLong(cursor.getColumnIndex(CallLog.Calls
+                            .DATE)));
                     String cursorDateToCompare = sdf.format(cursorDate);
 
                     Date compareDate = new Date(dateToConvert);
@@ -1461,11 +1499,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                     Date curDate = sdf.parse(cursorDateToCompare);
                     Date preferenceDate = sdf.parse(prefDateToCompare);
 
-                    if (curDate.getTime() > preferenceDate.getTime() && (Integer.parseInt(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)))
+                    if (curDate.getTime() > preferenceDate.getTime() && (Integer.parseInt(cursor
+                            .getString(cursor.getColumnIndex(CallLog.Calls._ID)))
                             > Integer.parseInt(prefRowId))) {
 
-                        String userNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
-                        String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
+                        String userNumber = cursor.getString(cursor.getColumnIndex(CallLog.Calls
+                                .NUMBER));
+                        String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls
+                                .CACHED_NAME));
 
                         CallLogType log = new CallLogType(this);
                         log.setNumber(userNumber);
@@ -1479,11 +1520,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         log.setDurationToPass(log.getCoolDuration(Float.parseFloat
                                 (cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION)))));
 
-                        log.setCallDateAndTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format
+                        log.setCallDateAndTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a",
+                                Locale.getDefault()).format
                                 (cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE))));
                         log.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
-                        log.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
-                        String numberTypeLog = getPhoneNumberType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE)));
+                        log.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog
+                                .Calls._ID)));
+                        String numberTypeLog = getPhoneNumberType(cursor.getInt(cursor
+                                .getColumnIndex(CallLog.Calls.CACHED_NUMBER_TYPE)));
                         log.setNumberType(numberTypeLog);
 
                         String uniquePhoneBookId = getRawContactIdFromNumber(userNumber);
@@ -1594,18 +1638,23 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 //            if (!Utils.getBooleanPreference(this, AppConstants
 //                    .PREF_CALL_LOG_SYNCED, false))
 //
-//                if ((Utils.getIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT, 0) >=
-//                        Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET).size())) {
+//                if ((Utils.getIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
+// 0) >=
+//                        Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET)
+// .size())) {
 //
 //                    Utils.setIntegerPreference(this, AppConstants.PREF_CALL_LOG_SYNCED_COUNT,
-//                            Utils.getArrayListPreference(this, AppConstants.PREF_CALL_LOGS_ID_SET).size());
+//                            Utils.getArrayListPreference(this, AppConstants
+// .PREF_CALL_LOGS_ID_SET).size());
 //
 //                    Utils.setBooleanPreference(this, AppConstants
 //                            .PREF_CALL_LOG_SYNCED, true);
 //
 //                    if (callLogTypeListForGlobalProfile.size() > 0) {
-//                        if (Utils.getBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false))
-//                            Utils.setBooleanPreference(this, AppConstants.PREF_GOT_ALL_PROFILE_DATA, false);
+//                        if (Utils.getBooleanPreference(this, AppConstants
+// .PREF_GOT_ALL_PROFILE_DATA, false))
+//                            Utils.setBooleanPreference(this, AppConstants
+// .PREF_GOT_ALL_PROFILE_DATA, false);
 //                    }
 //
 //                    Intent localBroadcastIntent = new Intent(AppConstants
@@ -1652,8 +1701,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
                         CallLogType log = new CallLogType(this);
 
-                        String userNumber = Utils.getFormattedNumber(MainActivity.this, cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER)));
-                        String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
+                        String userNumber = Utils.getFormattedNumber(MainActivity.this, cursor
+                                .getString(cursor.getColumnIndex(CallLog.Calls.NUMBER)));
+                        String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls
+                                .CACHED_NAME));
 
                         log.setNumber(userNumber);
 
@@ -1666,7 +1717,8 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
                         log.setDurationToPass(log.getCoolDuration(Float.parseFloat
                                 (cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION)))));
 
-                        log.setCallDateAndTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format
+                        log.setCallDateAndTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a",
+                                Locale.getDefault()).format
                                 (cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE))));
                         log.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
                         log.setUniqueContactId(uniqueCallLogId);
@@ -1746,1101 +1798,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private BroadcastReceiver localBroadcastReceiverCallLogSync = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (callLogTypeArrayListMain != null && callLogTypeArrayListMain.size() > 0)
-                syncCallLogDataToServer(callLogTypeArrayListMain);
-            else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    checkPermissionToExecute();
-                } else {
-                    if (Utils.isNetworkAvailable(MainActivity.this)
-                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                            .PREF_CONTACT_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
-                            .PREF_CALL_LOG_SYNCED, false)) {
-                        syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                        syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    }
-                }
-            }
-        }
-    };
-
-    /*private BroadcastReceiver localBroadcastReceiverSmsLogSync = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (smsLogTypeArrayListMain != null && smsLogTypeArrayListMain.size() > 0)
-                syncSMSLogDataToServer(smsLogTypeArrayListMain);
-            else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    checkPermissionToExecute();
-                } else {
-                    if (Utils.isNetworkAvailable(MainActivity.this)
-                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                            .PREF_CONTACT_SYNCED, false)
-                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                            .PREF_CALL_LOG_SYNCED, false)
-                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
-                            .PREF_SMS_SYNCED, false)) {
-                        syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                        syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    }
-                }
-            }
-        }
-    };*/
-
-    private BroadcastReceiver localBroadCastReceiverGetGlobalProfileData = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                checkPermissionToExecute();
-            } else {
-                if (Utils.isNetworkAvailable(MainActivity.this)
-                        && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                        .PREF_CONTACT_SYNCED, false)
-                        && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                        .PREF_CALL_LOG_SYNCED, false)
-                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants
-                        .PREF_GOT_ALL_PROFILE_DATA, false)) {
-
-                    getSpamAndRCPDetailAsyncTask = new GetSpamAndRCPDetailAsyncTask();
-                    getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
-            }
-        }
-    };
-
-
-    private void syncRecentCallLogDataToServer(ArrayList<CallLogType> list) {
-        if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.isCancelled())
-            return;
-        if (Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)) {
-
-            if (list.size() > CALL_LOG_CHUNK) {
-                ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
-                if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
-                    insertServiceCall(callLogTypeArrayList);
-                }
-            } else {
-                insertServiceCall(list);
-            }
-        }
-    }
-
-    private void syncCallLogDataToServer(ArrayList<CallLogType> list) {
-        if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.isCancelled())
-            return;
-        if (Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)) {
-            if (!Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
-                if (list.size() > CALL_LOG_CHUNK) {
-                    ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
-                    if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
-                        insertServiceCall(callLogTypeArrayList);
-                    }
-                } else {
-                    insertServiceCall(list);
-                }
-            }
-        }
-    }
-
-    private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
-
-        if (Utils.isNetworkAvailable(MainActivity.this)) {
-            WsRequestObject deviceDetailObject = new WsRequestObject();
-            deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
-            deviceDetailObject.setFlag(IntegerConstants.SYNC_INSERT_CALL_LOG);
-            if (Utils.isNetworkAvailable(this)) {
-                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                        deviceDetailObject, null, WsResponseObject.class, WsConstants
-                        .REQ_UPLOAD_CALL_LOGS, null, true).executeOnExecutor(AsyncTask
-                                .THREAD_POOL_EXECUTOR,
-                        WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
-            }
-        }
-
-    }
-
-    private ArrayList<ArrayList<String>> chopped(ArrayList<String> list, final int L) {
-        ArrayList<ArrayList<String>> parts = new ArrayList<>();
-        final int N = list.size();
-        for (int i = 0; i < N; i += L) {
-            parts.add(new ArrayList<>(
-                    list.subList(i, Math.min(N, i + L)))
-            );
-        }
-        return parts;
-    }
-
-    /*private ArrayList<ArrayList<SmsDataType>> choppedSmsLog(ArrayList<SmsDataType> list, final
-    int L) {
-        ArrayList<ArrayList<SmsDataType>> parts = new ArrayList<ArrayList<SmsDataType>>();
-        final int N = list.size();
-        for (int i = 0; i < N; i += L) {
-            parts.add(new ArrayList<SmsDataType>(
-                    list.subList(i, Math.min(N, i + L)))
-            );
-        }
-        return parts;
-    }*/
-
-    private ArrayList<CallLogType> divideCallLogByChunck() {
-        callLogsListbyChunck = new ArrayList<>();
-
-        for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayListMain,
-                CALL_LOG_CHUNK)) {
-            // do something with partition
-            callLogsListbyChunck.addAll(partition);
-            callLogTypeArrayListMain.removeAll(partition);
-            break;
-        }
-        return callLogsListbyChunck;
-    }
-
-    private ArrayList<ArrayList<CallLogType>> choppedCallLog(ArrayList<CallLogType> list, final int L) {
-        ArrayList<ArrayList<CallLogType>> parts = new ArrayList<>();
-        final int N = list.size();
-        for (int i = 0; i < N; i += L) {
-            parts.add(new ArrayList<>(
-                    list.subList(i, Math.min(N, i + L)))
-            );
-        }
-        return parts;
-    }
-
-    /*private ArrayList<SmsDataType> divideSmsLogByChunck() {
-        int size = smsLogTypeArrayListMain.size();
-        smsLogsListbyChunck = new ArrayList<>();
-        for (ArrayList<SmsDataType> partition : choppedSmsLog(smsLogTypeArrayListMain,
-                SMS_CHUNK)) {
-            // do something with partition
-//            Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
-            smsLogsListbyChunck.addAll(partition);
-            smsLogTypeArrayListMain.removeAll(partition);
-            break;
-        }
-        return smsLogsListbyChunck;
-    }*/
-
-    /*private ArrayList<SmsDataType> divideSmsLogByChunck(ArrayList<SmsDataType> list) {
-        int size = 0;
-        smsLogsListbyChunck = new ArrayList<>();
-        if (list != null && list.size() > 0) {
-            size = list.size();
-            if (size > SMS_CHUNK) {
-                for (ArrayList<SmsDataType> partition : choppedSmsLog(list, SMS_CHUNK)) {
-                    // do something with partition
-//                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
-
-                    smsLogsListbyChunck.addAll(partition);
-                    newSmsList.removeAll(partition);
-                    break;
-                }
-            } else {
-                smsLogsListbyChunck.addAll(list);
-                newSmsList.removeAll(list);
-
-            }
-        }
-
-        return smsLogsListbyChunck;
-    }*/
-
-
-    /*private ArrayList<CallLogType> divideCallLogByChunck(ArrayList<CallLogType> list) {
-        int size = 0;
-        callLogsListbyChunck = new ArrayList<>();
-        if (list != null && list.size() > 0) {
-            size = list.size();
-            if (size > SMS_CHUNK) {
-                for (ArrayList<CallLogType> partition : choppedCallLog(list, SMS_CHUNK)) {
-                    // do something with partition
-//                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
-                    callLogsListbyChunck.addAll(partition);
-                    callLogTypeArrayListMain.removeAll(partition);
-                    break;
-                }
-            } else {
-                callLogsListbyChunck.addAll(list);
-                callLogTypeArrayListMain.removeAll(list);
-
-            }
-        }
-
-        return callLogsListbyChunck;
-    }*/
-
-
-    private String getPhoneNumberType(int type) {
-        switch (type) {
-            case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
-                return getString(R.string.type_home);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
-                return getString(R.string.type_mobile);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
-                return getString(R.string.type_work);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
-                return getString(R.string.type_fax_work);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
-                return getString(R.string.type_fax_home);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_PAGER:
-                return getString(R.string.type_pager);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
-                return getString(R.string.type_other);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK:
-                return getString(R.string.type_callback);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_CAR:
-                return getString(R.string.type_car);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
-                return getString(R.string.type_company_main);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
-                return getString(R.string.type_isdn);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
-                return getString(R.string.type_main);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX:
-                return getString(R.string.type_other_fax);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_RADIO:
-                return getString(R.string.type_radio);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_TELEX:
-                return getString(R.string.type_telex);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD:
-                return getString(R.string.type_tty_tdd);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
-                return getString(R.string.type_work_mobile);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER:
-                return getString(R.string.type_work_pager);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT:
-                return getString(R.string.type_assistant);
-
-            case ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
-                return getString(R.string.type_mms);
-
-        }
-        return getString(R.string.type_other);
-    }
-
-    private String getLogType(int type) {
-        switch (type) {
-            case CallLog.Calls.INCOMING_TYPE:
-                return getString(R.string.call_log_incoming);
-            case CallLog.Calls.OUTGOING_TYPE:
-                return getString(R.string.call_log_outgoing);
-            case CallLog.Calls.MISSED_TYPE:
-                return getString(R.string.call_log_missed);
-            case CallLog.Calls.REJECTED_TYPE:
-                return getString(R.string.call_log_rejected);
-            case CallLog.Calls.BLOCKED_TYPE:
-                return getString(R.string.call_log_blocked);
-            case CallLog.Calls.VOICEMAIL_TYPE:
-                return getString(R.string.call_log_voice_mail);
-
-        }
-//        return getString(R.string.type_other);
-        return getString(R.string.call_log_missed);
-    }
-
-    private String getRawContactIdFromNumber(String phoneNumber) {
-        String numberId, rawId = "";
-        try {
-
-//            numberId = "";
-            ContentResolver contentResolver = this.getContentResolver();
-
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
-                    .encode(phoneNumber));
-
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
-                    ContactsContract.PhoneLookup.LOOKUP_KEY};
-            Cursor cursor =
-                    contentResolver.query(uri, projection, null, null, null);
-
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                   /* String contactName = cursor.getString(cursor.getColumnIndexOrThrow
-                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
-                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
-                            .PhoneLookup.LOOKUP_KEY));*/
-                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
-                            .PhoneLookup.LOOKUP_KEY));
-                    Uri uri1 = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-                    String[] projection1 = new String[]{
-                            ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
-                            ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID
-                    };
-
-                    String selection = ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ?";
-                    String[] selectionArgs = new String[]{numberId};
-
-                    Cursor cursor1 = getContentResolver().query(uri1, projection1, selection,
-                            selectionArgs, null);
-                    if (cursor1 != null) {
-                        while (cursor1.moveToNext()) {
-                            rawId = cursor1.getString(cursor1.getColumnIndexOrThrow
-                                    (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID));
-                        }
-                        cursor1.close();
-                    }
-                }
-                cursor.close();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return rawId;
-    }
-
-    private ArrayList<CallLogType> callLogHistory(String number) {
-        ArrayList<CallLogType> callDetails = new ArrayList<>();
-        Cursor cursor;
-
-        Pattern numberPat = Pattern.compile("\\d+");
-//        Pattern numberPat = Pattern.compile("[+][0-9]+");
-        Matcher matcher1 = numberPat.matcher(number);
-        if (matcher1.find()) {
-            cursor = getCallHistoryDataByNumber(number);
-        } else {
-            cursor = getCallHistoryDataByName(number);
-        }
-
-        try {
-            if (cursor != null && cursor.getCount() > 0) {
-                int number1 = cursor.getColumnIndex(CallLog.Calls.NUMBER);
-                int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
-                int date = cursor.getColumnIndex(CallLog.Calls.DATE);
-                int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
-                int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
-                int account = -1;
-                int account_id = -1;
-                int profileImage = -1;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    account = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME);
-                    //for versions above lollipop
-                    account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
-                    profileImage = cursor.getColumnIndex(CallLog.Calls.CACHED_PHOTO_URI);
-                } else {
-                    account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
-                }
-                while (cursor.moveToNext()) {
-                    String phNum = cursor.getString(number1);
-                    int callType = Integer.parseInt(cursor.getString(type));
-                    String callDate = cursor.getString(date);
-                    long dateOfCall = Long.parseLong(callDate);
-                    String callDuration = cursor.getString(duration);
-                    String accountId = " ";
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        accountId = cursor.getString(account_id);
-//                        if (!TextUtils.isEmpty(accountId) && account_id > 0)
-//                            Log.e("Sim Type", accountId);
-
-                        String accountName = cursor.getString(account);
-//                        if (!TextUtils.isEmpty(accountName))
-//                            Log.e("Sim Name", accountName);
-
-                    } else {
-                        if (account_id > 0) {
-                            accountId = cursor.getString(account_id);
-//                            Log.e("Sim Type", accountId);
-                        }
-                    }
-                    int histroyId = Integer.parseInt(cursor.getString(callLogId));
-                    CallLogType logObject = new CallLogType();
-                    logObject.setHistoryNumber(phNum);
-                    logObject.setHistoryType(callType);
-                    logObject.setHistoryDate(dateOfCall);
-                    logObject.setHistoryDuration(Integer.parseInt(callDuration));
-                    logObject.setHistoryCallSimNumber(accountId);
-                    logObject.setHistoryId(histroyId);
-
-//                    Date date1 = new Date(dateOfCall);
-//                    String callDataAndTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a").format
-//                            (date1);
-//                    logObject.setCallDateAndTime(callDataAndTime);
-
-                    String typeOfCall = getLogType(callType);
-                    if (typeOfCall.equalsIgnoreCase(getString(R.string.call_log_rejected))) {
-                        typeOfCall = getString(R.string.call_log_missed);
-                    }
-                    logObject.setTypeOfCall(typeOfCall);
-
-//                    String durationtoPass = logObject.getCoolDuration(Float.parseFloat
-//                            (callDuration));
-//
-//                    logObject.setDurationToPass(durationtoPass);
-
-                    callDetails.add(logObject);
-                    break;
-                }
-
-                cursor.close();
-            }
-
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }
-
-        return callDetails;
-    }
-
-    private Cursor getCallHistoryDataByNumber(String number) {
-        Cursor cursor = null;
-        String order = CallLog.Calls.DATE + " DESC";
-        try {
-            cursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
-                    CallLog.Calls.NUMBER + " =?", new String[]{number}, order);
-
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }
-        return cursor;
-    }
-
-
-    private Cursor getCallHistoryDataByName(String name) {
-        Cursor cursor = null;
-        String order = CallLog.Calls.DATE + " DESC";
-        try {
-            cursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
-                    CallLog.Calls.CACHED_NAME + " =?", new String[]{name}, order);
-
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }
-        return cursor;
-    }
-
-    private void showPermissionConfirmationDialog() {
-
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        permissionConfirmationDialog.dismissDialog();
-                        finish();
-                        break;
-
-                    case R.id.rippleRight:
-                        permissionConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.fromParts("package", getPackageName(), null));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        break;
-                }
-            }
-        };
-
-        permissionConfirmationDialog = new MaterialDialog(this, cancelListener);
-        permissionConfirmationDialog.setTitleVisibility(View.GONE);
-        permissionConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
-        permissionConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
-        permissionConfirmationDialog.setDialogBody(getString(R.string.call_log_permission));
-
-        permissionConfirmationDialog.showDialog();
-
-    }
-
-    //</editor-fold>
-
-
-    private class ReSyncContactAsyncTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            reSyncPhoneBookContactList();
-
-            if (!Utils.getStringPreference(MainActivity.this, AppConstants
-                    .PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0")) {
-                getLatestCallLogsByRawId();
-            }
-            /*if (!Utils.getStringPreference(MainActivity.this, AppConstants.PREF_SMS_SYNC_TIME, "0").equalsIgnoreCase("0")) {
-                getLatestSms();
-
-            }*/
-
-//            if (!Utils.getStringPreference(MainActivity.this, AppConstants.PREF_SMS_SYNC_TIME, "0").equalsIgnoreCase("0")) {
-//                getLatestSms();
-//            }
-            return null;
-        }
-    }
-
-    private class SyncCallLogAsyncTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            if (Utils.getStringPreference(MainActivity.this,
-                    AppConstants.PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0"))
-                getCallLogsByRawId();
-            else {
-                getLatestCallLogsByRawId();
-            }
-            return null;
-        }
-    }
-
-    private class GetSpamAndRCPDetailAsyncTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            makeListOfNumbersForSpamCount();
-            return null;
-        }
-    }
-
-    private void makeListOfNumbersForSpamCount() {
-        ArrayList<String> listOfNumbers = new ArrayList<>();
-        if (callLogTypeListForGlobalProfile != null && callLogTypeListForGlobalProfile.size() > 0) {
-            for (int i = 0; i < callLogTypeListForGlobalProfile.size(); i++) {
-                String number = callLogTypeListForGlobalProfile.get(i).getNumber();
-                if (!number.startsWith("+91"))
-                    number = "+91" + number;
-
-                listOfNumbers.add(number);
-            }
-            getProfileDataServiceCall(listOfNumbers);
-
-        }
-    }
-
-    /*private class SyncSmsLogAsyncTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            getSmsLogsByRawIds();
-            return null;
-        }
-    }*/
-
-    /*private void getLatestSms() {
-
-        try {
-            String prefDate = Utils.getStringPreference(MainActivity.this, AppConstants.PREF_SMS_SYNC_TIME, "");
-            String dateToCompare = "";
-            String currentDate = "";
-            long dateToConvert = 0;
-            if (!StringUtils.isEmpty(prefDate)) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
-                dateToConvert = sdf.parse(prefDate).getTime();
-                dateToCompare = String.valueOf(dateToConvert);
-                currentDate = String.valueOf(System.currentTimeMillis());
-            }
-
-            Cursor cursor = this.getContentResolver().query(Telephony.Sms.CONTENT_URI, null,
-                    Telephony.Sms.DATE + " BETWEEN ? AND ?"
-                    , new String[]{dateToCompare, currentDate}, Telephony.Sms.DEFAULT_SORT_ORDER);
-
-            ArrayList<String> listOfIds = new ArrayList<>();
-
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    listOfIds.add(cursor.getString(cursor.getColumnIndex(Telephony.Sms._ID)));
-                }
-                cursor.close();
-            }
-
-            if (listOfIds.size() > 0) {
-                int indexToBeginSync = Utils.getIntegerPreference(this, AppConstants
-                        .PREF_SMS_LOG_SYNCED_COUNT, 0);
-                ArrayList<String> tempIdsList = new ArrayList<>();
-                for (int i = indexToBeginSync; i < listOfIds.size(); i++) {
-                    String ids = listOfIds.get(i);
-                    tempIdsList.add(ids);
-                }
-
-                if (tempIdsList.size() > SMS_CHUNK) {
-                    for (ArrayList<String> partition : chopped(tempIdsList, SMS_CHUNK)) {
-                        // do something with partition
-                        fetchSMSDataById(partition);
-                    }
-                } else {
-                    if (tempIdsList.size() <= 0)
-                        fetchSMSDataById(listOfIds);
-                    else {
-                        fetchSMSDataById(tempIdsList);
-                    }
-                }
-
-            } else {
-                Utils.setBooleanPreference(this, AppConstants
-                        .PREF_SMS_SYNCED, true);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
-    /*private void getSmsLogsByRawIds() {
-        PhoneBookSMSLogs phoneBookSmsLogs = new PhoneBookSMSLogs(MainActivity.this);
-        ArrayList<String> listOfIds = new ArrayList<>();
-        Cursor cursor = phoneBookSmsLogs.getAllSMSLogId();
-        if (cursor != null) {
-            int rowId = cursor.getColumnIndex(Telephony.Sms._ID);
-            while (cursor.moveToNext()) {
-                listOfIds.add(cursor.getString(rowId));
-            }
-            cursor.close();
-        }
-
-        if (listOfIds.size() > 0) {
-            int indexToBeginSync = Utils.getIntegerPreference(this, AppConstants
-                    .PREF_SMS_LOG_SYNCED_COUNT, 0);
-            ArrayList<String> tempIdsList = new ArrayList<>();
-            for (int i = indexToBeginSync; i < listOfIds.size(); i++) {
-                String ids = listOfIds.get(i);
-                tempIdsList.add(ids);
-            }
-
-            if (tempIdsList.size() > SMS_CHUNK) {
-                for (ArrayList<String> partition : chopped(tempIdsList, SMS_CHUNK)) {
-                    // do something with partition
-                    fetchSMSDataById(partition);
-                }
-            } else {
-                if (tempIdsList.size() <= 0)
-                    fetchSMSDataById(listOfIds);
-                else {
-                    fetchSMSDataById(tempIdsList);
-
-                }
-            }
-
-        } else {
-            Utils.setBooleanPreference(this, AppConstants
-                    .PREF_SMS_SYNCED, true);
-        }
-    }*/
-
-    // Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME, profileDetail.getSmsLogTimestamp());
-    /*private void fetchSMSDataById(ArrayList<String> listOfRowIds) {
-
-        try {
-            ArrayList<SmsDataType> smsDataTypeList = new ArrayList<>();
-            for (int i = 0; i < listOfRowIds.size(); i++) {
-                String uniqueCallLogId = listOfRowIds.get(i);
-                if (!TextUtils.isEmpty(uniqueCallLogId)) {
-                    String order = Telephony.Sms.DEFAULT_SORT_ORDER;
-                    Cursor cursor = MainActivity.this.getContentResolver().query(Telephony.Sms
-                                    .CONTENT_URI,
-                            null, Telephony.Sms._ID + " = " + uniqueCallLogId, null, order);
-
-                    if (cursor != null) {
-                        if (cursor.getCount() > 0) {
-                            int number = cursor.getColumnIndexOrThrow(Telephony.Sms.ADDRESS);
-                            int id = cursor.getColumnIndexOrThrow(Telephony.Sms._ID);
-                            int body = cursor.getColumnIndexOrThrow(Telephony.Sms.BODY);
-                            int date = cursor.getColumnIndexOrThrow(Telephony.Sms.DATE);
-                            int read = cursor.getColumnIndexOrThrow(Telephony.Sms.READ);
-                            int type = cursor.getColumnIndexOrThrow(Telephony.Sms.TYPE);
-                            int thread_id = cursor.getColumnIndexOrThrow(Telephony.Sms.THREAD_ID);
-                            while (cursor.moveToNext()) {
-                                if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask
-                                        .isCancelled())
-                                    return;
-                                SmsDataType smsDataType = new SmsDataType();
-                                String address = cursor.getString(number);
-                                String contactNumber = "";
-                                if (!TextUtils.isEmpty(address)) {
-                                    Pattern numberPat = Pattern.compile("[a-zA-Z]+");
-                                    Matcher matcher1 = numberPat.matcher(address);
-                                    if (matcher1.find()) {
-                                        smsDataType.setAddress(address);
-                                    } else {
-                                        // Todo: Add format number method before setting the address
-                                        final String formattedNumber = Utils.getFormattedNumber
-                                                (MainActivity.this, address);
-                                        String contactName = getContactNameFromNumber
-                                                (formattedNumber);
-                                        if (!TextUtils.isEmpty(contactName)) {
-                                            smsDataType.setAddress(contactName);
-                                            smsDataType.setNumber(formattedNumber);
-                                        } else {
-                                            smsDataType.setAddress(formattedNumber);
-                                            smsDataType.setNumber(formattedNumber);
-                                        }
-                                        contactNumber = formattedNumber;
-                                    }
-                                    smsDataType.setBody(cursor.getString(body));
-                                    smsDataType.setDataAndTime(cursor.getLong(date));
-                                    smsDataType.setIsRead(cursor.getString(read));
-                                    smsDataType.setUniqueRowId(cursor.getString(id));
-                                    smsDataType.setThreadId(cursor.getString(thread_id));
-                                    String smsType = getMessageType(cursor.getInt(type));
-                                    smsDataType.setTypeOfMessage(smsType);
-                                    smsDataType.setFlag(11);
-                                    String photoThumbNail = getPhotoUrlFromNumber(contactNumber);
-                                    if (!TextUtils.isEmpty(photoThumbNail)) {
-                                        smsDataType.setProfileImage(photoThumbNail);
-                                    } else {
-                                        smsDataType.setProfileImage("");
-                                    }
-                                    smsDataTypeList.add(smsDataType);
-                                    smsLogTypeArrayListMain.add(smsDataType);
-                                }
-
-                            }
-                            cursor.close();
-
-                        }
-
-                    }
-                }
-            }
-            syncSMSLogDataToServer(smsLogTypeArrayListMain);
-//            makeSimpleDataThreadWise(smsDataTypeList);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
-//    private void makeSimpleDataThreadWise(ArrayList<SmsDataType> filteredList) {
-//        if (filteredList != null && filteredList.size() > 0) {
-//            ArrayList<SmsDataType> smsLogTypeArrayListMain = new ArrayList<>();
-//            for (int k = 0; k < filteredList.size(); k++) {
-//                SmsDataType smsDataType = filteredList.get(k);
-//                String threadId = smsDataType.getThreadId();
-//                if (smsLogTypeArrayListMain.size() == 0) {
-//                    smsLogTypeArrayListMain.add(smsDataType);
-//
-//                } else {
-//                    boolean isNumberExists = false;
-//                    for (int j = 0; j < smsLogTypeArrayListMain.size(); j++) {
-//                        if (smsLogTypeArrayListMain.get(j) instanceof SmsDataType) {
-//                            if (!((smsLogTypeArrayListMain.get(j))
-//                                    .getThreadId().equalsIgnoreCase(threadId))) {
-//                                isNumberExists = false;
-//                            } else {
-//                                isNumberExists = true;
-//                                break;
-//                            }
-//                        }
-//                    }
-//                    if (!isNumberExists) {
-//                        smsLogTypeArrayListMain.add(smsDataType);
-//                    }
-//                }
-//            }
-//            rContactApplication.setArrayListSmsLogType(smsLogTypeArrayListMain);
-//        }
-//    }
-
-    /*private void syncSMSLogDataToServer(ArrayList<SmsDataType> list) {
-        if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask.isCancelled())
-            return;
-        if (Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)) {
-            if (Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
-                    false) && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED,
-                    false)) {
-                if (list.size() > SMS_CHUNK) {
-                    ArrayList<SmsDataType> callLogTypeArrayList = divideSmsLogByChunck();
-                    if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
-                        insertSMSLogServiceCall(callLogTypeArrayList);
-                    }
-                } else {
-                    insertSMSLogServiceCall(list);
-                }
-
-            }
-
-        }
-    }*/
-
-
-    /*private void insertSMSLogServiceCall(ArrayList<SmsDataType> smsLogTypeArrayList) {
-
-        if (Utils.isNetworkAvailable(MainActivity.this)) {
-            WsRequestObject deviceDetailObject = new WsRequestObject();
-            deviceDetailObject.setArrayListSmsDataType(smsLogTypeArrayList);
-            deviceDetailObject.setFlag(11);
-            if (Utils.isNetworkAvailable(this)) {
-                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                        deviceDetailObject, null, WsResponseObject.class, WsConstants
-                        .REQ_UPLOAD_SMS_LOGS, null, true).executeOnExecutor(AsyncTask
-                                .THREAD_POOL_EXECUTOR,
-                        WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_SMS_LOGS);
-            }
-        }
-
-    }*/
-
-    private void getProfileDataServiceCall(ArrayList<String> numbersList) {
-
-        if (Utils.isNetworkAvailable(MainActivity.this)) {
-            WsRequestObject deviceDetailObject = new WsRequestObject();
-            deviceDetailObject.setUnknownNumberList(numbersList);
-
-            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
-                    deviceDetailObject, null, WsResponseObject.class, WsConstants
-                    .REQ_GET_PROFILE_DATA, null, true).execute(
-                    WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_DATA);
-
-        }
-    }
-
-    private String getContactNameFromNumber(String phoneNumber) {
-        String contactName = "";
-        try {
-
-            ContentResolver contentResolver = MainActivity.this.getContentResolver();
-
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
-                    .encode(phoneNumber));
-
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
-                    ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
-            Cursor cursor =
-                    contentResolver.query(uri, projection, null, null, null);
-
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    contactName = cursor.getString(cursor.getColumnIndexOrThrow
-                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
-                }
-                cursor.close();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        return contactName;
-    }
-
-    private String getMessageType(int type) {
-        switch (type) {
-            case Telephony.Sms.MESSAGE_TYPE_DRAFT:
-                return getString(R.string.msg_draft);
-
-            case Telephony.Sms.MESSAGE_TYPE_FAILED:
-                return getString(R.string.msg_failed);
-
-            case Telephony.Sms.MESSAGE_TYPE_INBOX:
-                return getString(R.string.msg_received);
-
-            case Telephony.Sms.MESSAGE_TYPE_OUTBOX:
-                return getString(R.string.msg_outbox);
-
-            case Telephony.Sms.MESSAGE_TYPE_QUEUED:
-                return getString(R.string.msg_queued);
-
-            case Telephony.Sms.MESSAGE_TYPE_SENT:
-                return getString(R.string.msg_sent);
-
-        }
-        return getString(R.string.type_other);
-    }
-
-    private BroadcastReceiver localBroadcastReceiverContactDisplayed = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-//            Log.i("MAULIK", "onReceive() of localBroadcastReceiverContactDisplayed");
-            try {
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            checkPermissionToExecute();
-                        } else {
-                            if (Utils.isNetworkAvailable(MainActivity.this)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_CONTACT_SYNCED, false)
-                                    && !Utils.getBooleanPreference(MainActivity.this,
-                                    AppConstants.PREF_CALL_LOG_SYNCED, false)) {
-                                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
-                                syncCallLogAsyncTask.executeOnExecutor(AsyncTask
-                                        .THREAD_POOL_EXECUTOR);
-                            }
-
-                            if (Utils.isNetworkAvailable(MainActivity.this)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_CONTACT_SYNCED, false)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_CALL_LOG_SYNCED, false)
-                                    && !Utils.getBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_GOT_ALL_PROFILE_DATA, false)) {
-
-                                getSpamAndRCPDetailAsyncTask = new GetSpamAndRCPDetailAsyncTask();
-                                getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                            }
-
-                            /*if (Utils.isNetworkAvailable(MainActivity.this)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_CONTACT_SYNCED, false)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_CALL_LOG_SYNCED, false)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_GOT_ALL_PROFILE_DATA, false)
-                                    && !Utils.getBooleanPreference(MainActivity.this,
-                                    AppConstants.PREF_SMS_SYNCED, false)) {
-
-                                syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
-                                syncSmsLogAsyncTask.executeOnExecutor(AsyncTask
-                                        .THREAD_POOL_EXECUTOR);
-                            }*/
-
-                            if (Utils.isNetworkAvailable(MainActivity.this)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_CONTACT_SYNCED, false)
-                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_CALL_LOG_SYNCED, false)
-                                    /*&& Utils.getBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_SMS_SYNCED, false)*/) {
-//                                Log.i("MAULIK", " looking for updated contacts");
-                                reSyncContactAsyncTask = new ReSyncContactAsyncTask();
-                                reSyncContactAsyncTask.executeOnExecutor(AsyncTask
-                                        .THREAD_POOL_EXECUTOR);
-                            }
-                        }
-                    }
-                }, 200);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
-    private BroadcastReceiver localBroadcastReceiverRecentCalls = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-//            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
-            try {
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        if (Utils.getBooleanPreference(MainActivity.this,
-                                AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,
-                                false)) {
-                            Utils.setBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
-                            Utils.setBooleanPreference(MainActivity.this, AppConstants
-                                    .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
-                            AppConstants.isFromReceiver = false;
-
-                            if (!Utils.getStringPreference(MainActivity.this, AppConstants
-                                    .PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0"))
-                                getLatestCallLogsByRawId();
-                        }
-                    }
-                }, 300);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
-    private BroadcastReceiver localBroadCastReceiverUpdateCount = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            try {
-
-                updateNotificationCount();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-    };
-
-    /*private BroadcastReceiver localBroadCastReceiverRecentSMS = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            try {
-
-                if (Utils.getBooleanPreference(MainActivity.this,
-                        AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false)) {
-                    Utils.setBooleanPreference(MainActivity.this, AppConstants
-                            .PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
-                    Utils.setBooleanPreference(MainActivity.this, AppConstants
-                            .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-    };*/
-
-    private String getPhotoUrlFromNumber(String phoneNumber) {
-        String photoThumbUrl = "";
-        try {
-
-            photoThumbUrl = "";
-            ContentResolver contentResolver = getContentResolver();
-
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
-                    .encode(phoneNumber));
-
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
-                    ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
-            Cursor cursor =
-                    contentResolver.query(uri, projection, null, null, null);
-
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    /*String contactName = cursor.getString(cursor.getColumnIndexOrThrow
-                            (ContactsContract.PhoneLookup.DISPLAY_NAME));*/
-                    photoThumbUrl = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
-                            .PhoneLookup.PHOTO_THUMBNAIL_URI));
-//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
-                }
-                cursor.close();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        return photoThumbUrl;
-    }
-
     private int getNotificationCount(DatabaseHandler databaseHandler) {
         TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster
                 (databaseHandler);
         return notificationStateMaster.getTotalUnreadCount();
-
     }
 
     private int getTimeLineNotificationCount(DatabaseHandler databaseHandler) {
-
         TableNotificationStateMaster notificationStateMaster = new TableNotificationStateMaster
                 (databaseHandler);
         return notificationStateMaster.getTotalUnreadCountByType(AppConstants
@@ -2849,7 +1813,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
 
     private void reSyncPhoneBookContactList() {
         currentStamp = String.valueOf(System.currentTimeMillis());
-//        Log.i("MAULIK", "reSyncPhoneBookContactList.currentStamp: " + currentStamp);
         String lastStamp = Utils.getStringPreference(this, AppConstants
                 .PREF_CONTACT_LAST_SYNC_TIME, currentStamp);
 
@@ -2869,7 +1832,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         Set<String> arrayListOldContactIds = new HashSet<>();
         arrayListOldContactIds.addAll(Utils.getArrayListPreference(this, AppConstants
                 .PREF_CONTACT_ID_SET));
-//        Log.i("MAULIK", " getAllContactRawId");
 
         Cursor contactNameCursor = phoneBookContacts.getAllContactRawId();
 
@@ -2880,19 +1842,13 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
 
         contactNameCursor.close();
-//        Log.i("MAULIK", " getAllContactRawId Complete");
 
         Set<String> removedContactIds = new HashSet<>(arrayListOldContactIds);
         Set<String> insertedContactIds = new HashSet<>(arrayListNewContactId);
         removedContactIds.removeAll(insertedContactIds);
         insertedContactIds.removeAll(arrayListOldContactIds);
 
-//        Log.i("MAULIK", "inserted" + insertedContactIds.toString());
-//
-//        Log.i("MAULIK", "removed" + removedContactIds.toString());
-
         updatedContactIds.removeAll(insertedContactIds);
-//        Log.i("MAULIK", "updated" + updatedContactIds.toString());
 
         arrayListReSyncUserContact = new ArrayList<>();
 
@@ -2907,7 +1863,6 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             String inClause = list.toString();
             inClause = inClause.replace("[", "(");
             inClause = inClause.replace("]", ")");
-//            Log.i("MAULIK", "updated inCaluse:" + inClause);
             prepareData(IntegerConstants.SYNC_UPDATE_CONTACT, inClause);
         }
         if (insertedContactIds.size() > 0) {
@@ -2916,17 +1871,14 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
             String inClause = list.toString();
             inClause = inClause.replace("[", "(");
             inClause = inClause.replace("]", ")");
-//            Log.i("MAULIK", "inserted inCaluse:" + inClause);
             prepareData(IntegerConstants.SYNC_INSERT_CONTACT, inClause);
 
         }
-//        Log.i("MAULIK", "arrayListReSyncUserContact.size: " + arrayListReSyncUserContact.size());
         if (Utils.isNetworkAvailable(this) && arrayListReSyncUserContact.size() > 0) {
             if (arrayListReSyncUserContact.size() <= 100) {
                 Log.i(TAG, "sending updated contacts to server");
-                uploadContacts();
+//                uploadContacts();
             } else {
-
                 Log.i(TAG, "need to apply resync mechanism:");
             }
         }
@@ -3267,12 +2219,10 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
         //</editor-fold>
 
-
     }
 
     private void prepareForDeletion(ArrayList<String> list) {
         for (String deletedRawId : list) {
-//            Log.i("MAULIK", "actually deleted" + deletedRawId);
 
             ProfileData profileData = new ProfileData();
             profileData.setLocalPhoneBookId(deletedRawId);
@@ -3290,18 +2240,1103 @@ public class MainActivity extends BaseActivity implements WsResponseListener, Vi
         }
     }
 
-    private void uploadContacts() {
+    private void syncRecentCallLogDataToServer(ArrayList<CallLogType> list) {
+        if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.isCancelled())
+            return;
+        if (Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)) {
+
+            if (list.size() > CALL_LOG_CHUNK) {
+                ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
+                if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
+                    insertServiceCall(callLogTypeArrayList);
+                }
+            } else {
+                insertServiceCall(list);
+            }
+        }
+    }
+
+    private void syncCallLogDataToServer(ArrayList<CallLogType> list) {
+        if (syncCallLogAsyncTask != null && syncCallLogAsyncTask.isCancelled())
+            return;
+        if (Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)) {
+            if (!Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                if (list.size() > CALL_LOG_CHUNK) {
+                    ArrayList<CallLogType> callLogTypeArrayList = divideCallLogByChunck();
+                    if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
+                        insertServiceCall(callLogTypeArrayList);
+                    }
+                } else {
+                    insertServiceCall(list);
+                }
+            }
+        }
+    }
+
+    private ArrayList<ArrayList<String>> chopped(ArrayList<String> list, final int L) {
+        ArrayList<ArrayList<String>> parts = new ArrayList<>();
+        final int N = list.size();
+        for (int i = 0; i < N; i += L) {
+            parts.add(new ArrayList<>(
+                    list.subList(i, Math.min(N, i + L)))
+            );
+        }
+        return parts;
+    }
+
+    private ArrayList<CallLogType> divideCallLogByChunck() {
+        callLogsListbyChunck = new ArrayList<>();
+
+        for (ArrayList<CallLogType> partition : choppedCallLog(callLogTypeArrayListMain,
+                CALL_LOG_CHUNK)) {
+            // do something with partition
+            callLogsListbyChunck.addAll(partition);
+            callLogTypeArrayListMain.removeAll(partition);
+            break;
+        }
+        return callLogsListbyChunck;
+    }
+
+    private ArrayList<ArrayList<CallLogType>> choppedCallLog(ArrayList<CallLogType> list, final
+    int L) {
+        ArrayList<ArrayList<CallLogType>> parts = new ArrayList<>();
+        final int N = list.size();
+        for (int i = 0; i < N; i += L) {
+            parts.add(new ArrayList<>(
+                    list.subList(i, Math.min(N, i + L)))
+            );
+        }
+        return parts;
+    }
+
+    private String getPhoneNumberType(int type) {
+        switch (type) {
+            case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
+                return getString(R.string.type_home);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
+                return getString(R.string.type_mobile);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
+                return getString(R.string.type_work);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
+                return getString(R.string.type_fax_work);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
+                return getString(R.string.type_fax_home);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_PAGER:
+                return getString(R.string.type_pager);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
+                return getString(R.string.type_other);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK:
+                return getString(R.string.type_callback);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_CAR:
+                return getString(R.string.type_car);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
+                return getString(R.string.type_company_main);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
+                return getString(R.string.type_isdn);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
+                return getString(R.string.type_main);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX:
+                return getString(R.string.type_other_fax);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_RADIO:
+                return getString(R.string.type_radio);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_TELEX:
+                return getString(R.string.type_telex);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD:
+                return getString(R.string.type_tty_tdd);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
+                return getString(R.string.type_work_mobile);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER:
+                return getString(R.string.type_work_pager);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT:
+                return getString(R.string.type_assistant);
+
+            case ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
+                return getString(R.string.type_mms);
+
+        }
+        return getString(R.string.type_other);
+    }
+
+    private String getLogType(int type) {
+        switch (type) {
+            case CallLog.Calls.INCOMING_TYPE:
+                return getString(R.string.call_log_incoming);
+            case CallLog.Calls.OUTGOING_TYPE:
+                return getString(R.string.call_log_outgoing);
+            case CallLog.Calls.MISSED_TYPE:
+                return getString(R.string.call_log_missed);
+            case CallLog.Calls.REJECTED_TYPE:
+                return getString(R.string.call_log_rejected);
+            case CallLog.Calls.BLOCKED_TYPE:
+                return getString(R.string.call_log_blocked);
+            case CallLog.Calls.VOICEMAIL_TYPE:
+                return getString(R.string.call_log_voice_mail);
+
+        }
+//        return getString(R.string.type_other);
+        return getString(R.string.call_log_missed);
+    }
+
+    private String getRawContactIdFromNumber(String phoneNumber) {
+        String numberId, rawId = "";
+        try {
+
+//            numberId = "";
+            ContentResolver contentResolver = this.getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.LOOKUP_KEY};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                   /* String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));
+                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.LOOKUP_KEY));*/
+                    numberId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.LOOKUP_KEY));
+                    Uri uri1 = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                    String[] projection1 = new String[]{
+                            ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
+                            ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID
+                    };
+
+                    String selection = ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY + " = ?";
+                    String[] selectionArgs = new String[]{numberId};
+
+                    Cursor cursor1 = getContentResolver().query(uri1, projection1, selection,
+                            selectionArgs, null);
+                    if (cursor1 != null) {
+                        while (cursor1.moveToNext()) {
+                            rawId = cursor1.getString(cursor1.getColumnIndexOrThrow
+                                    (ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID));
+                        }
+                        cursor1.close();
+                    }
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return rawId;
+    }
+
+    private ArrayList<CallLogType> callLogHistory(String number) {
+        ArrayList<CallLogType> callDetails = new ArrayList<>();
+        Cursor cursor;
+
+        Pattern numberPat = Pattern.compile("\\d+");
+//        Pattern numberPat = Pattern.compile("[+][0-9]+");
+        Matcher matcher1 = numberPat.matcher(number);
+        if (matcher1.find()) {
+            cursor = getCallHistoryDataByNumber(number);
+        } else {
+            cursor = getCallHistoryDataByName(number);
+        }
+
+        try {
+            if (cursor != null && cursor.getCount() > 0) {
+                int number1 = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+                int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
+                int date = cursor.getColumnIndex(CallLog.Calls.DATE);
+                int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
+                int callLogId = cursor.getColumnIndex(CallLog.Calls._ID);
+                int account = -1;
+                int account_id = -1;
+                int profileImage = -1;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    account = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_COMPONENT_NAME);
+                    //for versions above lollipop
+                    account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
+                    profileImage = cursor.getColumnIndex(CallLog.Calls.CACHED_PHOTO_URI);
+                } else {
+                    account_id = cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
+                }
+                while (cursor.moveToNext()) {
+                    String phNum = cursor.getString(number1);
+                    int callType = Integer.parseInt(cursor.getString(type));
+                    String callDate = cursor.getString(date);
+                    long dateOfCall = Long.parseLong(callDate);
+                    String callDuration = cursor.getString(duration);
+                    String accountId = " ";
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        accountId = cursor.getString(account_id);
+//                        if (!TextUtils.isEmpty(accountId) && account_id > 0)
+//                            Log.e("Sim Type", accountId);
+
+                        String accountName = cursor.getString(account);
+//                        if (!TextUtils.isEmpty(accountName))
+//                            Log.e("Sim Name", accountName);
+
+                    } else {
+                        if (account_id > 0) {
+                            accountId = cursor.getString(account_id);
+//                            Log.e("Sim Type", accountId);
+                        }
+                    }
+                    int histroyId = Integer.parseInt(cursor.getString(callLogId));
+                    CallLogType logObject = new CallLogType();
+                    logObject.setHistoryNumber(phNum);
+                    logObject.setHistoryType(callType);
+                    logObject.setHistoryDate(dateOfCall);
+                    logObject.setHistoryDuration(Integer.parseInt(callDuration));
+                    logObject.setHistoryCallSimNumber(accountId);
+                    logObject.setHistoryId(histroyId);
+
+//                    Date date1 = new Date(dateOfCall);
+//                    String callDataAndTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a").format
+//                            (date1);
+//                    logObject.setCallDateAndTime(callDataAndTime);
+
+                    String typeOfCall = getLogType(callType);
+                    if (typeOfCall.equalsIgnoreCase(getString(R.string.call_log_rejected))) {
+                        typeOfCall = getString(R.string.call_log_missed);
+                    }
+                    logObject.setTypeOfCall(typeOfCall);
+
+//                    String durationtoPass = logObject.getCoolDuration(Float.parseFloat
+//                            (callDuration));
+//
+//                    logObject.setDurationToPass(durationtoPass);
+
+                    callDetails.add(logObject);
+                    break;
+                }
+
+                cursor.close();
+            }
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+
+        return callDetails;
+    }
+
+    private Cursor getCallHistoryDataByNumber(String number) {
+        Cursor cursor = null;
+        String order = CallLog.Calls.DATE + " DESC";
+        try {
+            cursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
+                    CallLog.Calls.NUMBER + " =?", new String[]{number}, order);
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return cursor;
+    }
+
+    private Cursor getCallHistoryDataByName(String name) {
+        Cursor cursor = null;
+        String order = CallLog.Calls.DATE + " DESC";
+        try {
+            cursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
+                    CallLog.Calls.CACHED_NAME + " =?", new String[]{name}, order);
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return cursor;
+    }
+
+    @SuppressWarnings("unused")
+    private void showPermissionConfirmationDialog() {
+
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        permissionConfirmationDialog.dismissDialog();
+                        finish();
+                        break;
+
+                    case R.id.rippleRight:
+                        permissionConfirmationDialog.dismissDialog();
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", getPackageName(), null));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        };
+
+        permissionConfirmationDialog = new MaterialDialog(this, cancelListener);
+        permissionConfirmationDialog.setTitleVisibility(View.GONE);
+        permissionConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+        permissionConfirmationDialog.setRightButtonText(getString(R.string.action_ok));
+        permissionConfirmationDialog.setDialogBody(getString(R.string.call_log_permission));
+
+        permissionConfirmationDialog.showDialog();
+
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Async Tasks">
+
+    private class ReSyncContactAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            reSyncPhoneBookContactList();
+
+            if (!Utils.getStringPreference(MainActivity.this, AppConstants
+                    .PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0")) {
+                getLatestCallLogsByRawId();
+            }
+            /*if (!Utils.getStringPreference(MainActivity.this, AppConstants.PREF_SMS_SYNC_TIME,
+            "0").equalsIgnoreCase("0")) {
+                getLatestSms();
+
+            }*/
+
+//            if (!Utils.getStringPreference(MainActivity.this, AppConstants.PREF_SMS_SYNC_TIME,
+// "0").equalsIgnoreCase("0")) {
+//                getLatestSms();
+//            }
+            return null;
+        }
+    }
+
+    private class SyncCallLogAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            if (Utils.getStringPreference(MainActivity.this,
+                    AppConstants.PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0"))
+                getCallLogsByRawId();
+            else {
+                getLatestCallLogsByRawId();
+            }
+            return null;
+        }
+    }
+
+    private class GetSpamAndRCPDetailAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            makeListOfNumbersForSpamCount();
+            return null;
+        }
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Web Service Call">
+
+    private void insertServiceCall(ArrayList<CallLogType> callLogTypeArrayList) {
+
+        if (Utils.isNetworkAvailable(MainActivity.this)) {
+            WsRequestObject deviceDetailObject = new WsRequestObject();
+            deviceDetailObject.setArrayListCallLogType(callLogTypeArrayList);
+            deviceDetailObject.setFlag(IntegerConstants.SYNC_INSERT_CALL_LOG);
+            if (Utils.isNetworkAvailable(this)) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                        deviceDetailObject, null, WsResponseObject.class, WsConstants
+                        .REQ_UPLOAD_CALL_LOGS, null, true).executeOnExecutor(AsyncTask
+                                .THREAD_POOL_EXECUTOR,
+                        WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CALL_LOGS);
+            }
+        }
+
+    }
+
+    private void getProfileDataServiceCall(ArrayList<String> numbersList) {
+
+        if (Utils.isNetworkAvailable(MainActivity.this)) {
+            WsRequestObject deviceDetailObject = new WsRequestObject();
+            deviceDetailObject.setUnknownNumberList(numbersList);
+
+            new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    deviceDetailObject, null, WsResponseObject.class, WsConstants
+                    .REQ_GET_PROFILE_DATA, null, true).execute(
+                    WsConstants.WS_ROOT + WsConstants.REQ_GET_PROFILE_DATA);
+
+        }
+    }
+
+    private void uploadContacts(String responseKey) {
 
         WsRequestObject uploadContactObject = new WsRequestObject();
-        uploadContactObject.setPmId(Integer.parseInt(Utils.getStringPreference(this, AppConstants
-                .PREF_USER_PM_ID, "0")));
+        uploadContactObject.setResponseKey(responseKey);
         uploadContactObject.setProfileData(arrayListReSyncUserContact);
+
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
                     uploadContactObject, null, WsResponseObject.class, WsConstants
                     .REQ_UPLOAD_CONTACTS + "_" + currentStamp, null, true).executeOnExecutor
-                    (AsyncTask.THREAD_POOL_EXECUTOR,
-                            WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_CONTACTS);
+                    (AsyncTask.THREAD_POOL_EXECUTOR, WsConstants.WS_ROOT + WsConstants
+                            .REQ_UPLOAD_CONTACTS);
         }
     }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Broadcast Receiver">
+
+    private BroadcastReceiver localBroadcastReceiverContactDisplayed = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            checkPermissionToExecute();
+                        } else {
+                            if (Utils.isNetworkAvailable(MainActivity.this)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CONTACT_SYNCED, false)
+                                    && !Utils.getBooleanPreference(MainActivity.this,
+                                    AppConstants.PREF_CALL_LOG_SYNCED, false)) {
+                                syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                                syncCallLogAsyncTask.executeOnExecutor(AsyncTask
+                                        .THREAD_POOL_EXECUTOR);
+                            }
+
+                            if (Utils.isNetworkAvailable(MainActivity.this)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CONTACT_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED, false)
+                                    && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_GOT_ALL_PROFILE_DATA, false)) {
+
+                                getSpamAndRCPDetailAsyncTask = new GetSpamAndRCPDetailAsyncTask();
+                                getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask
+                                        .THREAD_POOL_EXECUTOR);
+                            }
+
+                            /*if (Utils.isNetworkAvailable(MainActivity.this)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CONTACT_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_GOT_ALL_PROFILE_DATA, false)
+                                    && !Utils.getBooleanPreference(MainActivity.this,
+                                    AppConstants.PREF_SMS_SYNCED, false)) {
+
+                                syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                                syncSmsLogAsyncTask.executeOnExecutor(AsyncTask
+                                        .THREAD_POOL_EXECUTOR);
+                            }*/
+
+                            if (Utils.isNetworkAvailable(MainActivity.this)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CONTACT_SYNCED, false)
+                                    && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_SYNCED, false)
+                                    /*&& Utils.getBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_SMS_SYNCED, false)*/) {
+                                reSyncContactAsyncTask = new ReSyncContactAsyncTask();
+                                reSyncContactAsyncTask.executeOnExecutor(AsyncTask
+                                        .THREAD_POOL_EXECUTOR);
+                            }
+                        }
+                    }
+                }, 200);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private BroadcastReceiver localBroadcastReceiverRecentCalls = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+//            Log.i("CallLogFragment", "onReceive() of LocalBroadcast");
+            try {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (Utils.getBooleanPreference(MainActivity.this,
+                                AppConstants.PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE,
+                                false)) {
+                            Utils.setBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_RECENT_CALLS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
+                            Utils.setBooleanPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_STARTS_FIRST_TIME, true);
+                            AppConstants.isFromReceiver = false;
+
+                            if (!Utils.getStringPreference(MainActivity.this, AppConstants
+                                    .PREF_CALL_LOG_SYNC_TIME, "0").equalsIgnoreCase("0"))
+                                getLatestCallLogsByRawId();
+                        }
+                    }
+                }, 300);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private BroadcastReceiver localBroadCastReceiverUpdateCount = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            try {
+
+                updateNotificationCount();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    };
+
+    private BroadcastReceiver localBroadcastReceiverCallLogSync = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (callLogTypeArrayListMain != null && callLogTypeArrayListMain.size() > 0)
+                syncCallLogDataToServer(callLogTypeArrayListMain);
+            else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkPermissionToExecute();
+                } else {
+                    if (Utils.isNetworkAvailable(MainActivity.this)
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CONTACT_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CALL_LOG_SYNCED, false)) {
+                        syncCallLogAsyncTask = new SyncCallLogAsyncTask();
+                        syncCallLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }
+                }
+            }
+        }
+    };
+
+    private BroadcastReceiver localBroadCastReceiverGetGlobalProfileData = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                checkPermissionToExecute();
+            } else {
+                if (Utils.isNetworkAvailable(MainActivity.this)
+                        && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                        .PREF_CONTACT_SYNCED, false)
+                        && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                        .PREF_CALL_LOG_SYNCED, false)
+                        && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                        .PREF_GOT_ALL_PROFILE_DATA, false)) {
+
+                    getSpamAndRCPDetailAsyncTask = new GetSpamAndRCPDetailAsyncTask();
+                    getSpamAndRCPDetailAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }
+        }
+    };
+
+    //</editor-fold>
+
+    //<editor-fold desc="SMS Module">
+
+//    private final int SMS_CHUNK = 50;
+//    int LIST_PARTITION_COUNT = 20;
+//    SmsFragment smsFragment;
+//    ArrayList<SmsDataType> newSmsList;
+//    private SyncSmsLogAsyncTask syncSmsLogAsyncTask;
+//    ArrayList<CallLogType> newList;
+//    private ArrayList<SmsDataType> smsLogTypeArrayListMain;
+//    ArrayList<SmsDataType> smsLogsListbyChunck;
+
+    @SuppressWarnings("unused")
+    private void openSMSComposerPage() {
+
+        Intent intent = new Intent("android.intent.action.VIEW");
+
+        /** creates an sms uri */
+        Uri data = Uri.parse("sms:");
+
+        /** Setting sms uri to the intent */
+        intent.setData(data);
+
+        /** Initiates the SMS compose screen, because the activity contain ACTION_VIEW and sms
+         * uri */
+        startActivity(intent);
+
+    }
+
+    @SuppressWarnings("unused")
+    private String getMessageType(int type) {
+        switch (type) {
+            case Telephony.Sms.MESSAGE_TYPE_DRAFT:
+                return getString(R.string.msg_draft);
+
+            case Telephony.Sms.MESSAGE_TYPE_FAILED:
+                return getString(R.string.msg_failed);
+
+            case Telephony.Sms.MESSAGE_TYPE_INBOX:
+                return getString(R.string.msg_received);
+
+            case Telephony.Sms.MESSAGE_TYPE_OUTBOX:
+                return getString(R.string.msg_outbox);
+
+            case Telephony.Sms.MESSAGE_TYPE_QUEUED:
+                return getString(R.string.msg_queued);
+
+            case Telephony.Sms.MESSAGE_TYPE_SENT:
+                return getString(R.string.msg_sent);
+
+        }
+        return getString(R.string.type_other);
+    }
+
+        /*private BroadcastReceiver localBroadcastReceiverSmsLogSync = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (smsLogTypeArrayListMain != null && smsLogTypeArrayListMain.size() > 0)
+                syncSMSLogDataToServer(smsLogTypeArrayListMain);
+            else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkPermissionToExecute();
+                } else {
+                    if (Utils.isNetworkAvailable(MainActivity.this)
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CONTACT_SYNCED, false)
+                            && Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_CALL_LOG_SYNCED, false)
+                            && !Utils.getBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_SMS_SYNCED, false)) {
+                        syncSmsLogAsyncTask = new SyncSmsLogAsyncTask();
+                        syncSmsLogAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }
+                }
+            }
+        }
+    };*/
+
+    /*private ArrayList<ArrayList<SmsDataType>> choppedSmsLog(ArrayList<SmsDataType> list, final
+    int L) {
+        ArrayList<ArrayList<SmsDataType>> parts = new ArrayList<ArrayList<SmsDataType>>();
+        final int N = list.size();
+        for (int i = 0; i < N; i += L) {
+            parts.add(new ArrayList<SmsDataType>(
+                    list.subList(i, Math.min(N, i + L)))
+            );
+        }
+        return parts;
+    }*/
+
+     /*private ArrayList<SmsDataType> divideSmsLogByChunck() {
+        int size = smsLogTypeArrayListMain.size();
+        smsLogsListbyChunck = new ArrayList<>();
+        for (ArrayList<SmsDataType> partition : choppedSmsLog(smsLogTypeArrayListMain,
+                SMS_CHUNK)) {
+            // do something with partition
+//            Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+            smsLogsListbyChunck.addAll(partition);
+            smsLogTypeArrayListMain.removeAll(partition);
+            break;
+        }
+        return smsLogsListbyChunck;
+    }*/
+
+    /*private ArrayList<SmsDataType> divideSmsLogByChunck(ArrayList<SmsDataType> list) {
+        int size = 0;
+        smsLogsListbyChunck = new ArrayList<>();
+        if (list != null && list.size() > 0) {
+            size = list.size();
+            if (size > SMS_CHUNK) {
+                for (ArrayList<SmsDataType> partition : choppedSmsLog(list, SMS_CHUNK)) {
+                    // do something with partition
+//                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+
+                    smsLogsListbyChunck.addAll(partition);
+                    newSmsList.removeAll(partition);
+                    break;
+                }
+            } else {
+                smsLogsListbyChunck.addAll(list);
+                newSmsList.removeAll(list);
+
+            }
+        }
+
+        return smsLogsListbyChunck;
+    }*/
+
+
+    /*private ArrayList<CallLogType> divideCallLogByChunck(ArrayList<CallLogType> list) {
+        int size = 0;
+        callLogsListbyChunck = new ArrayList<>();
+        if (list != null && list.size() > 0) {
+            size = list.size();
+            if (size > SMS_CHUNK) {
+                for (ArrayList<CallLogType> partition : choppedCallLog(list, SMS_CHUNK)) {
+                    // do something with partition
+//                    Log.i("Partition of Call Logs", partition.size() + " from " + size + "");
+                    callLogsListbyChunck.addAll(partition);
+                    callLogTypeArrayListMain.removeAll(partition);
+                    break;
+                }
+            } else {
+                callLogsListbyChunck.addAll(list);
+                callLogTypeArrayListMain.removeAll(list);
+
+            }
+        }
+
+        return callLogsListbyChunck;
+    }*/
+
+    private String getPhotoUrlFromNumber(String phoneNumber) {
+        String photoThumbUrl = "";
+        try {
+
+            photoThumbUrl = "";
+            ContentResolver contentResolver = getContentResolver();
+
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri
+                    .encode(phoneNumber));
+
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                    ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI};
+            Cursor cursor =
+                    contentResolver.query(uri, projection, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    /*String contactName = cursor.getString(cursor.getColumnIndexOrThrow
+                            (ContactsContract.PhoneLookup.DISPLAY_NAME));*/
+                    photoThumbUrl = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract
+                            .PhoneLookup.PHOTO_THUMBNAIL_URI));
+//                Log.d("LocalPBId", "contactMatch id: " + numberId + " of " + contactName);
+                }
+                cursor.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return photoThumbUrl;
+    }
+
+     /*private BroadcastReceiver localBroadCastReceiverRecentSMS = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            try {
+
+                if (Utils.getBooleanPreference(MainActivity.this,
+                        AppConstants.PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false)) {
+                    Utils.setBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_RECENT_SMS_BROADCAST_RECEIVER_MAIN_INSTANCE, false);
+                    Utils.setBooleanPreference(MainActivity.this, AppConstants
+                            .PREF_SMS_LOG_STARTS_FIRST_TIME, true);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    };*/
+
+    /*private class SyncSmsLogAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            getSmsLogsByRawIds();
+            return null;
+        }
+    }*/
+
+    /*private void getLatestSms() {
+
+        try {
+            String prefDate = Utils.getStringPreference(MainActivity.this, AppConstants
+            .PREF_SMS_SYNC_TIME, "");
+            String dateToCompare = "";
+            String currentDate = "";
+            long dateToConvert = 0;
+            if (!StringUtils.isEmpty(prefDate)) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
+                .getDefault());
+                dateToConvert = sdf.parse(prefDate).getTime();
+                dateToCompare = String.valueOf(dateToConvert);
+                currentDate = String.valueOf(System.currentTimeMillis());
+            }
+
+            Cursor cursor = this.getContentResolver().query(Telephony.Sms.CONTENT_URI, null,
+                    Telephony.Sms.DATE + " BETWEEN ? AND ?"
+                    , new String[]{dateToCompare, currentDate}, Telephony.Sms.DEFAULT_SORT_ORDER);
+
+            ArrayList<String> listOfIds = new ArrayList<>();
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    listOfIds.add(cursor.getString(cursor.getColumnIndex(Telephony.Sms._ID)));
+                }
+                cursor.close();
+            }
+
+            if (listOfIds.size() > 0) {
+                int indexToBeginSync = Utils.getIntegerPreference(this, AppConstants
+                        .PREF_SMS_LOG_SYNCED_COUNT, 0);
+                ArrayList<String> tempIdsList = new ArrayList<>();
+                for (int i = indexToBeginSync; i < listOfIds.size(); i++) {
+                    String ids = listOfIds.get(i);
+                    tempIdsList.add(ids);
+                }
+
+                if (tempIdsList.size() > SMS_CHUNK) {
+                    for (ArrayList<String> partition : chopped(tempIdsList, SMS_CHUNK)) {
+                        // do something with partition
+                        fetchSMSDataById(partition);
+                    }
+                } else {
+                    if (tempIdsList.size() <= 0)
+                        fetchSMSDataById(listOfIds);
+                    else {
+                        fetchSMSDataById(tempIdsList);
+                    }
+                }
+
+            } else {
+                Utils.setBooleanPreference(this, AppConstants
+                        .PREF_SMS_SYNCED, true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
+
+    /*private void getSmsLogsByRawIds() {
+        PhoneBookSMSLogs phoneBookSmsLogs = new PhoneBookSMSLogs(MainActivity.this);
+        ArrayList<String> listOfIds = new ArrayList<>();
+        Cursor cursor = phoneBookSmsLogs.getAllSMSLogId();
+        if (cursor != null) {
+            int rowId = cursor.getColumnIndex(Telephony.Sms._ID);
+            while (cursor.moveToNext()) {
+                listOfIds.add(cursor.getString(rowId));
+            }
+            cursor.close();
+        }
+
+        if (listOfIds.size() > 0) {
+            int indexToBeginSync = Utils.getIntegerPreference(this, AppConstants
+                    .PREF_SMS_LOG_SYNCED_COUNT, 0);
+            ArrayList<String> tempIdsList = new ArrayList<>();
+            for (int i = indexToBeginSync; i < listOfIds.size(); i++) {
+                String ids = listOfIds.get(i);
+                tempIdsList.add(ids);
+            }
+
+            if (tempIdsList.size() > SMS_CHUNK) {
+                for (ArrayList<String> partition : chopped(tempIdsList, SMS_CHUNK)) {
+                    // do something with partition
+                    fetchSMSDataById(partition);
+                }
+            } else {
+                if (tempIdsList.size() <= 0)
+                    fetchSMSDataById(listOfIds);
+                else {
+                    fetchSMSDataById(tempIdsList);
+
+                }
+            }
+
+        } else {
+            Utils.setBooleanPreference(this, AppConstants
+                    .PREF_SMS_SYNCED, true);
+        }
+    }*/
+
+    // Utils.setStringPreference(this, AppConstants.PREF_SMS_SYNC_TIME, profileDetail
+    // .getSmsLogTimestamp());
+    /*private void fetchSMSDataById(ArrayList<String> listOfRowIds) {
+
+        try {
+            ArrayList<SmsDataType> smsDataTypeList = new ArrayList<>();
+            for (int i = 0; i < listOfRowIds.size(); i++) {
+                String uniqueCallLogId = listOfRowIds.get(i);
+                if (!TextUtils.isEmpty(uniqueCallLogId)) {
+                    String order = Telephony.Sms.DEFAULT_SORT_ORDER;
+                    Cursor cursor = MainActivity.this.getContentResolver().query(Telephony.Sms
+                                    .CONTENT_URI,
+                            null, Telephony.Sms._ID + " = " + uniqueCallLogId, null, order);
+
+                    if (cursor != null) {
+                        if (cursor.getCount() > 0) {
+                            int number = cursor.getColumnIndexOrThrow(Telephony.Sms.ADDRESS);
+                            int id = cursor.getColumnIndexOrThrow(Telephony.Sms._ID);
+                            int body = cursor.getColumnIndexOrThrow(Telephony.Sms.BODY);
+                            int date = cursor.getColumnIndexOrThrow(Telephony.Sms.DATE);
+                            int read = cursor.getColumnIndexOrThrow(Telephony.Sms.READ);
+                            int type = cursor.getColumnIndexOrThrow(Telephony.Sms.TYPE);
+                            int thread_id = cursor.getColumnIndexOrThrow(Telephony.Sms.THREAD_ID);
+                            while (cursor.moveToNext()) {
+                                if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask
+                                        .isCancelled())
+                                    return;
+                                SmsDataType smsDataType = new SmsDataType();
+                                String address = cursor.getString(number);
+                                String contactNumber = "";
+                                if (!TextUtils.isEmpty(address)) {
+                                    Pattern numberPat = Pattern.compile("[a-zA-Z]+");
+                                    Matcher matcher1 = numberPat.matcher(address);
+                                    if (matcher1.find()) {
+                                        smsDataType.setAddress(address);
+                                    } else {
+                                        final String formattedNumber = Utils.getFormattedNumber
+                                                (MainActivity.this, address);
+                                        String contactName = getContactNameFromNumber
+                                                (formattedNumber);
+                                        if (!TextUtils.isEmpty(contactName)) {
+                                            smsDataType.setAddress(contactName);
+                                            smsDataType.setNumber(formattedNumber);
+                                        } else {
+                                            smsDataType.setAddress(formattedNumber);
+                                            smsDataType.setNumber(formattedNumber);
+                                        }
+                                        contactNumber = formattedNumber;
+                                    }
+                                    smsDataType.setBody(cursor.getString(body));
+                                    smsDataType.setDataAndTime(cursor.getLong(date));
+                                    smsDataType.setIsRead(cursor.getString(read));
+                                    smsDataType.setUniqueRowId(cursor.getString(id));
+                                    smsDataType.setThreadId(cursor.getString(thread_id));
+                                    String smsType = getMessageType(cursor.getInt(type));
+                                    smsDataType.setTypeOfMessage(smsType);
+                                    smsDataType.setFlag(11);
+                                    String photoThumbNail = getPhotoUrlFromNumber(contactNumber);
+                                    if (!TextUtils.isEmpty(photoThumbNail)) {
+                                        smsDataType.setProfileImage(photoThumbNail);
+                                    } else {
+                                        smsDataType.setProfileImage("");
+                                    }
+                                    smsDataTypeList.add(smsDataType);
+                                    smsLogTypeArrayListMain.add(smsDataType);
+                                }
+
+                            }
+                            cursor.close();
+
+                        }
+
+                    }
+                }
+            }
+            syncSMSLogDataToServer(smsLogTypeArrayListMain);
+//            makeSimpleDataThreadWise(smsDataTypeList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
+
+//    private void makeSimpleDataThreadWise(ArrayList<SmsDataType> filteredList) {
+//        if (filteredList != null && filteredList.size() > 0) {
+//            ArrayList<SmsDataType> smsLogTypeArrayListMain = new ArrayList<>();
+//            for (int k = 0; k < filteredList.size(); k++) {
+//                SmsDataType smsDataType = filteredList.get(k);
+//                String threadId = smsDataType.getThreadId();
+//                if (smsLogTypeArrayListMain.size() == 0) {
+//                    smsLogTypeArrayListMain.add(smsDataType);
+//
+//                } else {
+//                    boolean isNumberExists = false;
+//                    for (int j = 0; j < smsLogTypeArrayListMain.size(); j++) {
+//                        if (smsLogTypeArrayListMain.get(j) instanceof SmsDataType) {
+//                            if (!((smsLogTypeArrayListMain.get(j))
+//                                    .getThreadId().equalsIgnoreCase(threadId))) {
+//                                isNumberExists = false;
+//                            } else {
+//                                isNumberExists = true;
+//                                break;
+//                            }
+//                        }
+//                    }
+//                    if (!isNumberExists) {
+//                        smsLogTypeArrayListMain.add(smsDataType);
+//                    }
+//                }
+//            }
+//            rContactApplication.setArrayListSmsLogType(smsLogTypeArrayListMain);
+//        }
+//    }
+
+    /*private void syncSMSLogDataToServer(ArrayList<SmsDataType> list) {
+        if (syncSmsLogAsyncTask != null && syncSmsLogAsyncTask.isCancelled())
+            return;
+        if (Utils.getBooleanPreference(this, AppConstants.PREF_CONTACT_SYNCED, false)) {
+            if (Utils.getBooleanPreference(this, AppConstants.PREF_CALL_LOG_SYNCED,
+                    false) && !Utils.getBooleanPreference(this, AppConstants.PREF_SMS_SYNCED,
+                    false)) {
+                if (list.size() > SMS_CHUNK) {
+                    ArrayList<SmsDataType> callLogTypeArrayList = divideSmsLogByChunck();
+                    if (callLogTypeArrayList != null && callLogTypeArrayList.size() > 0) {
+                        insertSMSLogServiceCall(callLogTypeArrayList);
+                    }
+                } else {
+                    insertSMSLogServiceCall(list);
+                }
+
+            }
+
+        }
+    }*/
+
+
+    /*private void insertSMSLogServiceCall(ArrayList<SmsDataType> smsLogTypeArrayList) {
+
+        if (Utils.isNetworkAvailable(MainActivity.this)) {
+            WsRequestObject deviceDetailObject = new WsRequestObject();
+            deviceDetailObject.setArrayListSmsDataType(smsLogTypeArrayList);
+            deviceDetailObject.setFlag(11);
+            if (Utils.isNetworkAvailable(this)) {
+                new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                        deviceDetailObject, null, WsResponseObject.class, WsConstants
+                        .REQ_UPLOAD_SMS_LOGS, null, true).executeOnExecutor(AsyncTask
+                                .THREAD_POOL_EXECUTOR,
+                        WsConstants.WS_ROOT + WsConstants.REQ_UPLOAD_SMS_LOGS);
+            }
+        }
+
+    }*/
+    //</editor-fold>
+
 }

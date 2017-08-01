@@ -13,7 +13,7 @@ import com.rawalinfocom.rcontact.helper.Utils;
 public class SplashActivity extends BaseActivity {
 
     // Splash screen timer
-    private final static int SPLASH_TIME_OUT = 500;
+    private final static int SPLASH_TIME_OUT = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
