@@ -57,7 +57,6 @@ public class TableRCNotificationUpdates {
             db.close();
             return id;
         } catch (Exception E) {
-            Log.i("MAULIK", "error duplicate entry");
             return -1;
         }
     }

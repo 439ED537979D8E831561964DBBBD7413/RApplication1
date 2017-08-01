@@ -194,6 +194,7 @@ public class AppConstants {
     public static String PREF_USER_LAST_NAME = "pref_user_last_name";
     public static String PREF_USER_JOINING_DATE = "pref_user_joining_date";
     public static String PREF_USER_VERIFIED_EMAIL = "pref_user_verified_email";
+    public static String PREF_RESPONSE_KEY = "pref_response_key";
 
     public static String KEY_PREFERENCES = "pref_rcontact";
     public static String PREF_APP_LANGUAGE = "pref_app_language";
