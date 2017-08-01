@@ -304,8 +304,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
         WsRequestObject setPassWordObject = new WsRequestObject();
         setPassWordObject.setPassword(StringUtils.trimToEmpty(password));
         setPassWordObject.setPassword_confirmation(StringUtils.trimToEmpty(confirmPassword));
-        setPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings
-                .Secure.ANDROID_ID));
+//        setPassWordObject.setDeviceId(getDeviceId());
         setPassWordObject.setCreatedBy("2"); // For Android Devices
 
         if (Utils.isNetworkAvailable(this)) {

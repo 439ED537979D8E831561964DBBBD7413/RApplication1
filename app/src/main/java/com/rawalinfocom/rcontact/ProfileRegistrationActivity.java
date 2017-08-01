@@ -722,11 +722,8 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 profileRegistrationObject.setEmailId(StringUtils.trimToEmpty(emailId));
                 profileRegistrationObject.setCreatedBy("2"); // For Android Devices
                 profileRegistrationObject.setType(String.valueOf(type));
-//        profileRegistrationObject.setGcmToken(Utils.getStringPreference
-// (ProfileRegistrationActivity.this,
-//                AppConstants.PREF_DEVICE_TOKEN_ID, ""));
-
                 profileRegistrationObject.setGcmToken(getDeviceTokenId());
+//                profileRegistrationObject.setDeviceId(getDeviceId());
 
                 if (Utils.isNetworkAvailable(this)) {
                     new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),

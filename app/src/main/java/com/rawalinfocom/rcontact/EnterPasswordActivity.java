@@ -185,7 +185,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                     Utils.setStringPreference(this, AppConstants.PREF_USER_FIRST_NAME,
                             profileDetail.getPbNameFirst());
                     Utils.setStringPreference(this, AppConstants.PREF_USER_LAST_NAME,
-                             profileDetail.getPbNameLast());
+                            profileDetail.getPbNameLast());
                     Utils.setStringPreference(this, AppConstants.PREF_USER_JOINING_DATE,
                             profileDetail.getJoiningDate());
                     Utils.setStringPreference(this, AppConstants.PREF_USER_NUMBER,
@@ -298,6 +298,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
         otpObject.setMobileNumber(mobileNumber.replace("+91", ""));
         otpObject.setForgotPassword(1);
+        otpObject.setDeviceId(getDeviceId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
@@ -318,8 +319,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         enterPassWordObject.setPassword(StringUtils.trimToEmpty(password));
         enterPassWordObject.setCreatedBy("2"); // For Android Devices
         enterPassWordObject.setGcmToken(getDeviceTokenId());
-        enterPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings
-                .Secure.ANDROID_ID));
+//        enterPassWordObject.setDeviceId(getDeviceId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
@@ -380,7 +380,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
             ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
             ArrayList<Email> arrayListEmail = new ArrayList<>();
-            ArrayList<String> listOfVerifiedEmailIds =  new ArrayList<>();
+            ArrayList<String> listOfVerifiedEmailIds = new ArrayList<>();
             for (int i = 0; i < arrayListEmailId.size(); i++) {
                 Email email = new Email();
                 email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
@@ -388,7 +388,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                 email.setEmEmailType(arrayListEmailId.get(i).getEmType());
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
-                if(String.valueOf(arrayListEmailId.get(i).getEmRcpType()).equalsIgnoreCase("1")){
+                if (String.valueOf(arrayListEmailId.get(i).getEmRcpType()).equalsIgnoreCase("1")) {
                     listOfVerifiedEmailIds.add(arrayListEmailId.get(i).getEmEmailId());
                     Utils.setArrayListPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL,
                             listOfVerifiedEmailIds);
