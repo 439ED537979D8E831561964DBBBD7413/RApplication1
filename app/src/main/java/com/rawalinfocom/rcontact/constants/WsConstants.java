@@ -27,7 +27,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://10.0.30.11/api/v1/";
 
     // Shailesh
-    public static final String WS_ROOT = "http://10.0.21.14:8001/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.14:8001/api/v1/";
 
     // Jignesh
 //    public static final String WS_ROOT = "http://10.0.21.15:8000/api/v1/";
