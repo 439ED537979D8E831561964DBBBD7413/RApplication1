@@ -512,7 +512,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             }
         } catch (ParseException e) {
             e.printStackTrace();
-//            textViewLastCallTime.setText("Last call " + 0 + " hr. ago");
             textViewLastCallTime.setVisibility(View.GONE);
 
         }
