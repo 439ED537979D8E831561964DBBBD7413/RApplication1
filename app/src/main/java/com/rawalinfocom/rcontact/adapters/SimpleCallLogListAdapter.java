@@ -138,7 +138,13 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
             if(!StringUtils.isEmpty(callLogType.getSpamCount())){
                 holder.imageViewSpam.setVisibility(View.VISIBLE);
                 holder.textSpamCount.setVisibility(View.VISIBLE);
-                holder.textSpamCount.setText(callLogType.getSpamCount());
+                if(!StringUtils.equalsIgnoreCase(callLogType.getSpamCount(),"0"))
+                    holder.textSpamCount.setText(callLogType.getSpamCount());
+                else{
+                    holder.imageViewSpam.setVisibility(View.GONE);
+                    holder.textSpamCount.setVisibility(View.GONE);
+                }
+
             }else{
                 holder.imageViewSpam.setVisibility(View.GONE);
                 holder.textSpamCount.setVisibility(View.GONE);
@@ -227,7 +233,12 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                         if(!StringUtils.isEmpty(callLogType.getSpamCount())){
                             holder.imageViewSpam.setVisibility(View.VISIBLE);
                             holder.textSpamCount.setVisibility(View.VISIBLE);
-                            holder.textSpamCount.setText(callLogType.getSpamCount());
+                            if(!StringUtils.equalsIgnoreCase(callLogType.getSpamCount(),"0")){
+                                holder.textSpamCount.setText(callLogType.getSpamCount());
+                            }else{
+                                holder.imageViewSpam.setVisibility(View.GONE);
+                                holder.textSpamCount.setVisibility(View.GONE);
+                            }
 
                         }else{
                             holder.imageViewSpam.setVisibility(View.GONE);
@@ -271,7 +282,11 @@ public class SimpleCallLogListAdapter extends RecyclerView.Adapter<RecyclerView.
                         if(!StringUtils.isEmpty(callLogType.getSpamCount())){
                             holder.imageViewSpam.setVisibility(View.VISIBLE);
                             holder.textSpamCount.setVisibility(View.VISIBLE);
-                            holder.textSpamCount.setText(callLogType.getSpamCount());
+                            if(!StringUtils.equalsIgnoreCase(callLogType.getSpamCount(),"0")){
+                                holder.textSpamCount.setText(callLogType.getSpamCount());
+                            }else{
+                                holder.imageViewSpam.setVisibility(View.GONE);
+                                holder.textSpamCount.setVisibility(View.GONE);                            }
                         }else {
                             holder.imageViewSpam.setVisibility(View.GONE);
                             holder.textSpamCount.setVisibility(View.GONE);

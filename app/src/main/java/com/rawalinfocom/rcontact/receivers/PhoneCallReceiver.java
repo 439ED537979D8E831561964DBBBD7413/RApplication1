@@ -53,11 +53,13 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import butterknife.BindView;
 
@@ -79,7 +81,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
     private DatabaseHandler databaseHandler;
     private SpamDataType spamDataType;
     boolean isCallEnded = false;
-    static  Dialog incomingDialog, endCallDialog ;
+    static Dialog incomingDialog, endCallDialog;
 
 
     public PhoneCallReceiver() {
@@ -151,7 +153,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 isIncoming = true;
                 callStartTime = new Date();
                 savedNumber = number;
-                isCallEnded =  false;
+                isCallEnded = false;
                 String name = getNameFromNumber(Utils.getFormattedNumber(context, savedNumber));
                 if (StringUtils.isEmpty(name)) {
                     callSpamServiceApi();
@@ -186,9 +188,9 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 String contactName = getNameFromNumber(Utils.getFormattedNumber(context, savedNumber));
                 if (StringUtils.isEmpty(contactName)) {
                     final SpamDataType spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
-                    if(StringUtils.length(spamDataType.getRcpVerfiy())>0){
+                    if (StringUtils.length(spamDataType.getRcpVerfiy()) > 0) {
                         initializeEndCallDialog();
-                    }else {
+                    } else {
                         callSpamServiceApi();
                     }
                 }
@@ -278,6 +280,78 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 //        }
 //    }
 
+    private void insertSpamServiceApi() {
+        if (Utils.isNetworkAvailable(context)) {
+            WsRequestObject deviceDetailObject = new WsRequestObject();
+            deviceDetailObject.setMobileNumber(Utils.getFormattedNumber(context, savedNumber));
+            new AsyncWebServiceCall(context, WSRequestType.REQUEST_TYPE_JSON.getValue(),
+                    deviceDetailObject, null, WsResponseObject.class, WsConstants
+                    .REQ_MAKE_SPAM, null, true, new WsResponseListener() {
+
+                @Override
+                public void onDeliveryResponse(String serviceType, Object data, Exception error) {
+                    // <editor-fold desc="REQ_MAKE_SPAM">
+                    if (serviceType.equalsIgnoreCase(WsConstants.REQ_MAKE_SPAM)) {
+                        WsResponseObject getSpamResponse = (WsResponseObject) data;
+                        if (getSpamResponse != null && StringUtils.equalsIgnoreCase
+                                (getSpamResponse
+                                        .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                            String spamCount = getSpamResponse.getSpamCount();
+                            TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(databaseHandler);
+                            if (spamDataType != null) {
+                                if (StringUtils.isEmpty(spamDataType.getMobileNumber())) {
+                                    spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
+                                    String numberToUpdate = spamDataType.getMobileNumber();
+                                    String savedNumberFormat = savedNumber;
+                                    if (savedNumberFormat.startsWith("+91"))
+                                        savedNumberFormat = savedNumberFormat.replace("+", "");
+                                    else
+                                        savedNumberFormat = "91" + savedNumberFormat;
+
+                                    spamDataType.setSpamCount(spamCount);
+
+                                    if (StringUtils.equalsIgnoreCase(numberToUpdate, savedNumberFormat)) {
+                                        tableSpamDetailMaster.updateSpamCount(numberToUpdate, spamCount);
+                                    } else {
+                                        tableSpamDetailMaster.insertSpamDetails(new ArrayList<SpamDataType>(Arrays.asList(spamDataType)));
+                                    }
+                                } else {
+
+                                    String numberToUpdate = spamDataType.getMobileNumber();
+                                    String savedNumberFormat = savedNumber;
+                                    if (savedNumberFormat.startsWith("+91"))
+                                        savedNumberFormat = savedNumberFormat.replace("+", "");
+                                    else
+                                        savedNumberFormat = "91" + savedNumberFormat;
+
+                                    spamDataType.setSpamCount(spamCount);
+
+                                    if (StringUtils.equalsIgnoreCase(numberToUpdate, savedNumberFormat)) {
+                                        tableSpamDetailMaster.updateSpamCount(numberToUpdate, spamCount);
+                                    } else {
+                                        tableSpamDetailMaster.insertSpamDetails(new ArrayList<SpamDataType>(Arrays.asList(spamDataType)));
+                                    }
+                                }
+                            }
+
+
+                        } else {
+                            if (getSpamResponse != null) {
+                                Log.e("error response", getSpamResponse.getMessage());
+                            } else {
+                                Log.e("onDeliveryResponse: ", "getProfileDataResponse null");
+                            }
+                        }
+                    }
+                    //</editor-fold>
+                }
+            }).execute(
+                    WsConstants.WS_ROOT + WsConstants.REQ_MAKE_SPAM);
+
+        }
+    }
+
     private void callSpamServiceApi() {
 
         if (Utils.isNetworkAvailable(context)) {
@@ -301,8 +375,19 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                             if (spamDataTypeList.size() > 0) {
                                 try {
                                     TableSpamDetailMaster tableSpamDetailMaster = new TableSpamDetailMaster(databaseHandler);
-                                    tableSpamDetailMaster.insertSpamDetails(spamDataTypeList);
                                     spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
+                                    String numberToUpdate = spamDataType.getMobileNumber();
+                                    String savedNumberFormat = savedNumber;
+                                    if (savedNumberFormat.startsWith("+91"))
+                                        savedNumberFormat = savedNumberFormat.replace("+", "");
+                                    else
+                                        savedNumberFormat = "91" + savedNumberFormat;
+
+                                    if (!StringUtils.equalsIgnoreCase(numberToUpdate, savedNumberFormat)) {
+                                        tableSpamDetailMaster.insertSpamDetails(spamDataTypeList);
+                                        spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
+                                    }
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -316,10 +401,10 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                             }
                         }
 
-                        if(isCallEnded){
+                        if (isCallEnded) {
                             isCallEnded = false;
                             initializeEndCallDialog();
-                        }else{
+                        } else {
                             initializeIncomingCallDialog();
                         }
 
@@ -334,15 +419,15 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
     private void initializeIncomingCallDialog() {
 
-        if(endCallDialog !=null)
-        {
+        if (endCallDialog != null) {
             endCallDialog.dismiss();
-            endCallDialog =  null;
+            endCallDialog = null;
         }
 
-        if(incomingDialog == null)
-            incomingDialog = new Dialog(context);
+        /*if (incomingDialog == null)
+            incomingDialog = new Dialog(context);*/
 
+        incomingDialog = new Dialog(context);
         incomingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         incomingDialog.setContentView(R.layout.dialog_incoming_call);
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
@@ -373,36 +458,67 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         textInternetStrenght.setVisibility(View.GONE);
 
         textViewLastCallTime.setVisibility(View.VISIBLE);
-        textViewLastCallTime.setText("Last call 10 hr. ago");
+        try {
 
-        /*String compareCurr = "";
-        String compareHistDate = "";
-        String currentDate = String.valueOf(System.currentTimeMillis());
-        Date currDate = new Date(currentDate);
-        compareCurr = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format
-                (currDate);
-        compareHistDate = callLastHistoryTime(savedNumber);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
 
-        if (StringUtils.length(compareHistDate) > 0) {
-            textViewLastCallTime.setVisibility(View.VISIBLE);
-            String subCurrent = compareCurr.substring(0, 10);
-            String subHistDate = compareHistDate.substring(0, 10);
-            if (subCurrent.equalsIgnoreCase(subHistDate)) {
-                String currHour = compareCurr.substring(12, 13);
-                String hisHour = compareHistDate.substring(12, 13);
-                int diff = (Integer.parseInt(currHour)) - (Integer.parseInt(hisHour));
-                if (diff > 0) {
-                    textViewLastCallTime.setText("Last call " + diff + " hrs. ago");
+            String currentDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault()).format
+                    (new Date(System.currentTimeMillis()));
+            String compareHistDate = callLastHistoryTime(savedNumber);
+
+            if(!StringUtils.isEmpty(compareHistDate)){
+
+                Date currDate = simpleDateFormat.parse(currentDate);
+                Date compareDate = simpleDateFormat.parse(compareHistDate);
+
+                long difference = currDate.getTime() - compareDate.getTime();
+
+                long secondsInMilli = 1000;
+                long minutesInMilli = secondsInMilli * 60;
+                long hoursInMilli = minutesInMilli * 60;
+                long daysInMilli = hoursInMilli * 24;
+                long monthInMilli = daysInMilli * 30;
+
+//            long elapsedMonth = difference / monthInMilli;
+//            difference = difference % monthInMilli;
+
+                long elapsedDays = difference / daysInMilli;
+                difference = difference % daysInMilli;
+
+                long elapsedHours = difference / hoursInMilli;
+                difference = difference % hoursInMilli;
+
+                long elapsedMinutes = difference / minutesInMilli;
+                difference = difference % minutesInMilli;
+
+                if (elapsedDays > 0) {
+                    textViewLastCallTime.setVisibility(View.VISIBLE);
+                    textViewLastCallTime.setText("Last call " + elapsedDays + "days " + elapsedHours + " hr. ago");
+                } else if (elapsedHours > 0) {
+                    textViewLastCallTime.setVisibility(View.VISIBLE);
+                    if (elapsedMinutes > 0)
+                        textViewLastCallTime.setText("Last call " + elapsedHours + " hr. " + elapsedMinutes + " min. ago");
+                    else
+                        textViewLastCallTime.setText("Last call " + elapsedHours + " hr. ago");
+                } else if (elapsedMinutes > 0) {
+                    textViewLastCallTime.setVisibility(View.VISIBLE);
+                    textViewLastCallTime.setText("Last call " + elapsedMinutes + " min. ago");
+                } else {
+                    textViewLastCallTime.setVisibility(View.GONE);
                 }
-            } else {
-                //To do :  Day diffs to display
+
+            }else{
+                textViewLastCallTime.setVisibility(View.GONE);
             }
-        } else {
+        } catch (ParseException e) {
+            e.printStackTrace();
+//            textViewLastCallTime.setText("Last call " + 0 + " hr. ago");
             textViewLastCallTime.setVisibility(View.GONE);
-        }*/
+
+        }
 
 
-        String profileImage =  spamDataType.getSpamPhotoUrl();
+        String profileImage = spamDataType.getSpamPhotoUrl();
         if (!TextUtils.isEmpty(profileImage)) {
             Glide.with(context)
                     .load(profileImage)
@@ -445,11 +561,25 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                 textNumber.setText(savedNumber);
             }
 
+            llSpam.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    insertSpamServiceApi();
+                    Toast.makeText(context, R.string.reported_spam, Toast.LENGTH_SHORT).show();
+                    if (incomingDialog != null)
+                        incomingDialog.dismiss();
+                }
+            });
 
             if (!StringUtils.isEmpty(spamDataType.getSpamCount())) {
                 llSpam.setVisibility(View.VISIBLE);
                 textSpamReport.setTypeface(Utils.typefaceBold(context));
-                textSpamReport.setText(context.getString(R.string.report_spam) + " (" + spamDataType.getSpamCount() + ")");
+                if (!StringUtils.equalsIgnoreCase(spamDataType.getSpamCount(), "0")) {
+                    textSpamReport.setText(context.getString(R.string.report_spam) + " (" + spamDataType.getSpamCount() + ")");
+                } else {
+                    textSpamReport.setText(context.getString(R.string.report_spam));
+                }
+
 
             } else {
                 llSpam.setVisibility(View.GONE);
@@ -487,8 +617,11 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             if (!StringUtils.isEmpty(spamDataType.getSpamCount())) {
                 llSpam.setVisibility(View.VISIBLE);
                 textSpamReport.setTypeface(Utils.typefaceBold(context));
-                textSpamReport.setText(context.getString(R.string.report_spam) + " (" + spamDataType.getSpamCount() + ")");
-
+                if (!StringUtils.equalsIgnoreCase(spamDataType.getSpamCount(), "0")) {
+                    textSpamReport.setText(context.getString(R.string.report_spam) + " (" + spamDataType.getSpamCount() + ")");
+                } else {
+                    textSpamReport.setText(context.getString(R.string.report_spam));
+                }
             } else {
                 llSpam.setVisibility(View.GONE);
             }
@@ -497,8 +630,8 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             textNumber.setTypeface(Utils.typefaceBold(context));
             textNumber.setTextColor(ContextCompat.getColor(context, R.color
                     .colorBlack));
-
             textNumber.setText(savedNumber);
+            llSpam.setVisibility(View.GONE);
 
         }
 
@@ -507,15 +640,15 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
     private void initializeEndCallDialog() {
 
-        if(incomingDialog !=null)
-        {
+        if (incomingDialog != null) {
             incomingDialog.dismiss();
             incomingDialog = null;
         }
 
-        if(endCallDialog ==  null)
-            endCallDialog = new Dialog(context);
+        /*if (endCallDialog == null)
+            endCallDialog = new Dialog(context);*/
 
+        endCallDialog = new Dialog(context);
         endCallDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         endCallDialog.setContentView(R.layout.dialog_layout_end_call);
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
@@ -545,7 +678,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
 
         final SpamDataType spamDataType = setRCPDetailsAndSpamCountforUnsavedNumbers(savedNumber);
 
-        String profileImage =  spamDataType.getSpamPhotoUrl();
+        String profileImage = spamDataType.getSpamPhotoUrl();
         if (!TextUtils.isEmpty(profileImage)) {
             Glide.with(context)
                     .load(profileImage)
@@ -571,7 +704,21 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         llSpam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                insertSpamServiceApi();
+                Toast.makeText(context, R.string.reported_spam, Toast.LENGTH_SHORT).show();
+                if (endCallDialog != null) {
+                    endCallDialog.dismiss();
+                }
+                /*if (incomingDialog != null) {
+                    incomingDialog.dismiss();
+                    incomingDialog = null;
+                }else{
+                    if(incomingDialog ==  null)
+                    {
+                        incomingDialog = new Dialog(context);
+                        incomingDialog.dismiss();
+                    }
+                }*/
             }
         });
 
@@ -621,7 +768,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         buttonViewProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!StringUtils.isEmpty(publicProfileUrl)){
+                if (!StringUtils.isEmpty(publicProfileUrl)) {
                     Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(Uri.parse(publicProfileUrl));
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -636,7 +783,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             public void onClick(View v) {
                 Intent intent = new Intent(context, CallHistoryDetailsActivity.class);
                 intent.putExtra(AppConstants.EXTRA_CALL_HISTORY_NUMBER, savedNumber);
-                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME,savedNumber);
+                intent.putExtra(AppConstants.EXTRA_CONTACT_NAME, savedNumber);
                 String contactNameToDisplay = "";
                 String prefix = spamDataType.getPrefix();
                 String suffix = spamDataType.getSuffix();
@@ -669,7 +816,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     }
                 }
 
-                intent.putExtra(AppConstants.EXTRA_IS_RCP_VERIFIED_SPAM,spamDataType.getRcpVerfiy());
+                intent.putExtra(AppConstants.EXTRA_IS_RCP_VERIFIED_SPAM, spamDataType.getRcpVerfiy());
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 endCallDialog.dismiss();
                 context.startActivity(intent);
@@ -712,11 +859,16 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             if (!StringUtils.isEmpty(spamDataType.getSpamCount())) {
                 llSpam.setVisibility(View.VISIBLE);
                 textSpamReport.setTypeface(Utils.typefaceBold(context));
-                textSpamReport.setText(context.getString(R.string.report_spam) + " (" + spamDataType.getSpamCount() + ")");
+                if (!StringUtils.equalsIgnoreCase(spamDataType.getSpamCount(), "0")) {
+                    textSpamReport.setText(context.getString(R.string.report_spam) + " (" + spamDataType.getSpamCount() + ")");
+                } else {
+                    textSpamReport.setText(context.getString(R.string.report_spam));
+                }
 
             } else {
                 llSpam.setVisibility(View.GONE);
             }
+
         } else if (StringUtils.equalsIgnoreCase(spamDataType.getRcpVerfiy(), "1")) {
 
             textNumber.setTypeface(Utils.typefaceBold(context));
@@ -753,7 +905,11 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             if (!StringUtils.isEmpty(spamDataType.getSpamCount())) {
                 llSpam.setVisibility(View.VISIBLE);
                 textSpamReport.setTypeface(Utils.typefaceBold(context));
-                textSpamReport.setText(context.getString(R.string.report_spam) + " (" + spamDataType.getSpamCount() + ")");
+                if (!StringUtils.equalsIgnoreCase(spamDataType.getSpamCount(), "0")) {
+                    textSpamReport.setText(context.getString(R.string.report_spam) + " (" + spamDataType.getSpamCount() + ")");
+                } else {
+                    textSpamReport.setText(context.getString(R.string.report_spam));
+                }
 
             } else {
                 llSpam.setVisibility(View.GONE);
@@ -763,9 +919,19 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             textNumber.setTypeface(Utils.typefaceBold(context));
             textNumber.setTextColor(ContextCompat.getColor(context, R.color
                     .colorBlack));
-
             textNumber.setText(savedNumber);
-
+            buttonViewProfile.setVisibility(View.GONE);
+            llSpam.setVisibility(View.VISIBLE);
+            textSpamReport.setTypeface(Utils.typefaceBold(context));
+            if (!StringUtils.isEmpty(spamDataType.getSpamCount())){
+                if (!StringUtils.equalsIgnoreCase(spamDataType.getSpamCount(), "0")) {
+                    textSpamReport.setText(context.getString(R.string.report_spam) + " (" + spamDataType.getSpamCount() + ")");
+                } else {
+                    textSpamReport.setText(context.getString(R.string.report_spam));
+                }
+            }else{
+                textSpamReport.setText(context.getString(R.string.report_spam));
+            }
         }
 
         endCallDialog.show();
@@ -794,8 +960,9 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                     String profileRating = spamDataType.getProfileRating();
                     String totalProfileRateUser = spamDataType.getTotalProfileRateUser();
                     String spamCount = spamDataType.getSpamCount();
-                    String publicUrl =  spamDataType.getSpamPublicUrl();
-                    String photoUrl =  spamDataType.getSpamPhotoUrl();
+                    String publicUrl = spamDataType.getSpamPublicUrl();
+                    String photoUrl = spamDataType.getSpamPhotoUrl();
+                    String mobileNumber = spamDataType.getMobileNumber();
 
                     if (!StringUtils.isEmpty(lastName))
                         spamDataType.setLastName(lastName);
@@ -817,10 +984,12 @@ public class PhoneCallReceiver extends BroadcastReceiver {
                         spamDataType.setTotalProfileRateUser(totalProfileRateUser);
                     if (!StringUtils.isEmpty(spamCount))
                         spamDataType.setSpamCount(spamCount);
-                    if(!StringUtils.isEmpty(publicUrl))
+                    if (!StringUtils.isEmpty(publicUrl))
                         spamDataType.setSpamPublicUrl(publicUrl);
-                    if(!StringUtils.isEmpty(photoUrl))
+                    if (!StringUtils.isEmpty(photoUrl))
                         spamDataType.setSpamPhotoUrl(photoUrl);
+                    if (!StringUtils.isEmpty(mobileNumber))
+                        spamDataType.setMobileNumber(mobileNumber);
 
                 }
             }
@@ -877,11 +1046,10 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             }
 
             if (cursor != null && cursor.getCount() > 0) {
-                int date = cursor.getColumnIndex(CallLog.Calls.DATE);
-                String callDate = cursor.getString(date);
-                Date date1 = new Date(callDate);
-                callDataAndTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format
-                        (date1);
+
+                cursor.moveToFirst();
+                callDataAndTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault()).format
+                        (new Date(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE))));
                 cursor.close();
             }
         } catch (SecurityException e) {
