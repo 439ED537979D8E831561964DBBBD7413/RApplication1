@@ -15,10 +15,10 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://apiqa.rcontacts.in/api/v1/";
 
     // Monal
-//    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
+    public static final String WS_ROOT = "http://10.0.21.163/api/v1/";
 
     // Aniruddh
-    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.122/api/v1/";
 
     // Maulik
 //    public static final String WS_ROOT = "http://10.0.51.119/api/v1/";
@@ -27,7 +27,7 @@ public class WsConstants {
 //    public static final String WS_ROOT = "http://10.0.30.11/api/v1/";
 
     // Shailesh
-    public static final String WS_ROOT = "http://10.0.21.14:8001/api/v1/";
+//    public static final String WS_ROOT = "http://10.0.21.14:8001/api/v1/";
 
     // Jignesh
 //    public static final String WS_ROOT = "http://10.0.21.15:8000/api/v1/";
