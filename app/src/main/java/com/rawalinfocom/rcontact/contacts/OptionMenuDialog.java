@@ -23,7 +23,9 @@ import com.rawalinfocom.rcontact.adapters.OptionMenuAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
 import com.rawalinfocom.rcontact.database.PhoneBookContacts;
 import com.rawalinfocom.rcontact.database.QueryManager;
+import com.rawalinfocom.rcontact.helper.MaterialDialog;
 import com.rawalinfocom.rcontact.helper.RecyclerItemClickListener;
+import com.rawalinfocom.rcontact.helper.RippleView;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -52,6 +54,8 @@ class OptionMenuDialog {
     private String rawId;
     private PhoneBookContacts phoneBookContacts;
     private RContactApplication rContactApplication;
+
+    MaterialDialog deleteConfirmationDialog;
 
     //<editor-fold desc="Constructor">
     OptionMenuDialog(final Context context, String rawId, final int menuType, boolean
@@ -157,6 +161,7 @@ class OptionMenuDialog {
     public void setDialogTag(String dialogTag) {
         this.dialogTag = dialogTag;
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Menu Item Click listener">
@@ -184,7 +189,8 @@ class OptionMenuDialog {
 
             // <editor-fold desc="Delete">
             case 1:
-                PhoneBookContacts phoneBookContacts = new PhoneBookContacts(context);
+                showDeleteConfirmationDialog(ALL_CONTACT_NON_RCP);
+               /* PhoneBookContacts phoneBookContacts = new PhoneBookContacts(context);
                 phoneBookContacts.deleteContact(rawId);
                 IS_CONTACT_DELETED = true;
                 if (context instanceof ProfileDetailActivity) {
@@ -196,7 +202,7 @@ class OptionMenuDialog {
                 if (isFromFavourite) {
                     AllContactsListFragment.arrayListPhoneBookContacts = null;
 //                    rContactApplication.setArrayListAllPhoneBookContacts(new ArrayList<>());
-                }
+                }*/
                 break;
             //</editor-fold>
         }
@@ -278,7 +284,8 @@ class OptionMenuDialog {
                         queryManager.deleteRcProfileDetail(((ProfileDetailActivity) context).pmId);
                     }
                 }*/
-                phoneBookContacts.deleteContact(rawId);
+                showDeleteConfirmationDialog(ALL_CONTACT_RCP);
+               /* phoneBookContacts.deleteContact(rawId);
                 if (context instanceof ProfileDetailActivity) {
                     ((ProfileDetailActivity) context).onBackPressed();
                 }
@@ -290,8 +297,8 @@ class OptionMenuDialog {
                     AllContactsListFragment.arrayListPhoneBookContacts = null;
 //                    rContactApplication.setArrayListAllPhoneBookContacts(new ArrayList<>());
                 }
-                break;
-            //</editor-fold>
+                break;*/
+                //</editor-fold>
         }
     }
 
@@ -377,7 +384,8 @@ class OptionMenuDialog {
                     }
                 }*/
 
-                phoneBookContacts.deleteContact(rawId);
+                showDeleteConfirmationDialog(R_CONTACT_RCP);
+               /* phoneBookContacts.deleteContact(rawId);
                 if (context instanceof ProfileDetailActivity) {
                     ((ProfileDetailActivity) context).onBackPressed();
                 }
@@ -385,11 +393,94 @@ class OptionMenuDialog {
                 if (isFavourite) {
                     rContactApplication.setFavouriteStatus(RContactApplication.FAVOURITE_REMOVED);
                 }
-                AllContactsListFragment.arrayListPhoneBookContacts = null;
+                AllContactsListFragment.arrayListPhoneBookContacts = null;*/
 //                rContactApplication.setArrayListAllPhoneBookContacts(new ArrayList<>());
                 break;
             //</editor-fold>
         }
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Private Methods">
+
+    private void showDeleteConfirmationDialog(final int deleteFrom) {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        deleteConfirmationDialog.dismissDialog();
+                        break;
+
+                    case R.id.rippleRight:
+                        deleteConfirmationDialog.dismissDialog();
+                        PhoneBookContacts phoneBookContacts = new PhoneBookContacts
+                                (context);
+                        switch (deleteFrom) {
+                            case ALL_CONTACT_NON_RCP:
+                              /*  PhoneBookContacts phoneBookContacts = new PhoneBookContacts
+                                        (context);*/
+                                phoneBookContacts.deleteContact(rawId);
+                                IS_CONTACT_DELETED = true;
+                                if (context instanceof ProfileDetailActivity) {
+                                    ((ProfileDetailActivity) context).onBackPressed();
+                                }
+                                if (isFavourite) {
+                                    rContactApplication.setFavouriteStatus(RContactApplication
+                                            .FAVOURITE_REMOVED);
+                                }
+                                if (isFromFavourite) {
+                                    AllContactsListFragment.arrayListPhoneBookContacts = null;
+//                    rContactApplication.setArrayListAllPhoneBookContacts(new ArrayList<>());
+                                }
+                                break;
+
+                            case ALL_CONTACT_RCP:
+                                phoneBookContacts.deleteContact(rawId);
+                                if (context instanceof ProfileDetailActivity) {
+                                    ((ProfileDetailActivity) context).onBackPressed();
+                                }
+                                IS_CONTACT_DELETED = true;
+                                if (isFavourite) {
+                                    rContactApplication.setFavouriteStatus(RContactApplication
+                                            .FAVOURITE_REMOVED);
+                                }
+                                if (isFromFavourite) {
+                                    AllContactsListFragment.arrayListPhoneBookContacts = null;
+                                }
+                                break;
+
+                            case R_CONTACT_RCP:
+                                phoneBookContacts.deleteContact(rawId);
+                                if (context instanceof ProfileDetailActivity) {
+                                    ((ProfileDetailActivity) context).onBackPressed();
+                                }
+                                IS_CONTACT_DELETED = true;
+                                if (isFavourite) {
+                                    rContactApplication.setFavouriteStatus(RContactApplication
+                                            .FAVOURITE_REMOVED);
+                                }
+                                AllContactsListFragment.arrayListPhoneBookContacts = null;
+                                break;
+                        }
+                        break;
+                }
+
+            }
+        };
+
+        deleteConfirmationDialog = new MaterialDialog(context, cancelListener);
+        deleteConfirmationDialog.setTitleVisibility(View.GONE);
+        deleteConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
+        deleteConfirmationDialog.setRightButtonText("Yes");
+        deleteConfirmationDialog.setDialogBody("Are you sure you want to delete this contact?");
+
+        deleteConfirmationDialog.showDialog();
+
+    }
+
     //</editor-fold>
 }
