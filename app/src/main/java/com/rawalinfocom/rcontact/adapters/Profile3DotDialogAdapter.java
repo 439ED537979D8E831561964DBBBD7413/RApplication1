@@ -63,6 +63,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
     private String pmId;
     private boolean isCallLogRcpUser;
 
+    MaterialDialog clearConfirmationDialog;
+
     public Profile3DotDialogAdapter(Context context, ArrayList<String> arrayList, String number,
                                     long date, boolean isFromCallLogs, ArrayList<CallLogType>
                                             list, String name, String uniqueRowId, String key,
@@ -258,7 +260,7 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.clear_call_log))) {
 
-                    if (isFromCallLogFragment) {
+                    /*if (isFromCallLogFragment) {
 
                         deleteCallLogByNumber(numberToCall);
 
@@ -272,7 +274,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
                             deleteCallHistoryByName(numberToCall);
                         }
 
-                    }
+                    }*/
+                    showClearConfirmationDialog();
 
                 } else if (value.equalsIgnoreCase(context.getString(R.string.delete))) {
 
@@ -622,7 +625,8 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
         callConfirmationDialog.setTitleVisibility(View.GONE);
         callConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
         callConfirmationDialog.setRightButtonText(context.getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " + finalNumber + "?");
+        callConfirmationDialog.setDialogBody(context.getString(R.string.action_call) + " " +
+                finalNumber + "?");
         callConfirmationDialog.showDialog();
 
     }
@@ -661,5 +665,49 @@ public class Profile3DotDialogAdapter extends RecyclerView.Adapter<Profile3DotDi
         }
 
         return callDateToDelete;
+    }
+
+    private void showClearConfirmationDialog() {
+
+        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+                .OnRippleCompleteListener() {
+
+            @Override
+            public void onComplete(RippleView rippleView) {
+                switch (rippleView.getId()) {
+                    case R.id.rippleLeft:
+                        clearConfirmationDialog.dismissDialog();
+                        break;
+
+                    case R.id.rippleRight:
+                        if (isFromCallLogFragment) {
+
+                            deleteCallLogByNumber(numberToCall);
+
+                        } else {
+
+                            Pattern numberPat = Pattern.compile("\\d+");
+                            Matcher matcher1 = numberPat.matcher(numberToCall);
+                            if (matcher1.find()) {
+                                deleteCallHistoryByNumber(numberToCall);
+                            } else {
+                                deleteCallHistoryByName(numberToCall);
+                            }
+
+                        }
+                        break;
+                }
+
+            }
+        };
+
+        clearConfirmationDialog = new MaterialDialog(context, cancelListener);
+        clearConfirmationDialog.setTitleVisibility(View.GONE);
+        clearConfirmationDialog.setLeftButtonText(context.getString(R.string.action_cancel));
+        clearConfirmationDialog.setRightButtonText("Yes");
+        clearConfirmationDialog.setDialogBody("Are you sure you want to clear all call logs?");
+
+        clearConfirmationDialog.showDialog();
+
     }
 }
