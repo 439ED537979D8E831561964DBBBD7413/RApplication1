@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
@@ -13,6 +14,8 @@ import com.rawalinfocom.rcontact.model.WsRequestObject;
 import com.rawalinfocom.rcontact.model.WsResponseObject;
 import com.rawalinfocom.rcontact.receivers.PhoneCallReceiver;
 import com.rawalinfocom.rcontact.webservice.RequestWs;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by Monal on 20/10/16.
@@ -47,6 +50,10 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
 
         this.activity = activity;
         this.requestObject = requestObject;
+        if (requestObject != null && StringUtils.isEmpty(requestObject.getDeviceId())) {
+            this.requestObject.setDeviceId(Settings.Secure.getString(activity.getContentResolver(), Settings
+                    .Secure.ANDROID_ID));
+        }
         this.serviceType = serviceType;
         this.progressDialogMessage = progressDialogMessage;
         this.responseClass = responseClass;
@@ -65,6 +72,10 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
 
         this.activity = fragment.getActivity();
         this.requestObject = requestObject;
+        if (requestObject != null && StringUtils.isEmpty(requestObject.getDeviceId())) {
+            this.requestObject.setDeviceId(Settings.Secure.getString(activity.getContentResolver(), Settings
+                    .Secure.ANDROID_ID));
+        }
         this.serviceType = serviceType;
         this.progressDialogMessage = progressDialogMessage;
         this.responseClass = responseClass;
@@ -79,28 +90,14 @@ public class AsyncWebServiceCall extends AsyncTask<String, Void, Object> {
     public AsyncWebServiceCall(Context context, int requestType, WsRequestObject requestObject,
                                ContentValues contentValues, Class responseClass, String
                                        serviceType, String progressDialogMessage, boolean
-                                       setHeader) {
-
-        this.context = context;
-        this.requestObject = requestObject;
-        this.serviceType = serviceType;
-        this.progressDialogMessage = progressDialogMessage;
-        this.responseClass = responseClass;
-        this.requestType = requestType;
-        this.contentValues = contentValues;
-        this.setHeader = setHeader;
-
-        wsResponseListener = (WsResponseListener) context;
-
-    }
-
-    public AsyncWebServiceCall(Context context, int requestType, WsRequestObject requestObject,
-                               ContentValues contentValues, Class responseClass, String
-                                       serviceType, String progressDialogMessage, boolean
                                        setHeader, WsResponseListener wsResponseListener) {
 
         this.context = context;
         this.requestObject = requestObject;
+        if (requestObject != null && StringUtils.isEmpty(requestObject.getDeviceId())) {
+            this.requestObject.setDeviceId(Settings.Secure.getString(activity.getContentResolver(), Settings
+                    .Secure.ANDROID_ID));
+        }
         this.serviceType = serviceType;
         this.progressDialogMessage = progressDialogMessage;
         this.responseClass = responseClass;

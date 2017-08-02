@@ -268,7 +268,7 @@ public class MobileNumberRegistrationActivity extends BaseActivity implements Ri
         WsRequestObject otpObject = new WsRequestObject();
         otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
         otpObject.setMobileNumber(inputNumber.getText().toString());
-//        otpObject.setCmId(selectedCountry.getCountryId());
+//        otpObject.setDeviceId(getDeviceId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,

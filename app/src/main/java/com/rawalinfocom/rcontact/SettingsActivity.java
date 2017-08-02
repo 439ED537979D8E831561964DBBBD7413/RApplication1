@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.view.ContextThemeWrapper;
@@ -133,12 +134,12 @@ public class SettingsActivity extends BaseActivity implements RippleView
         ArrayList<String> temp = new ArrayList<>(Arrays.asList(getResources().getStringArray(R
                 .array.types_language)));
 
-        if (Utils.getStringPreference(activity, AppConstants.PREF_APP_LANGUAGE, "0").equalsIgnoreCase("0"))
-            languageArrayList.add(new AppLanguage("Phone's Language (" + Locale.getDefault().getDisplayLanguage() + ")", "0", true));
-        else
-            languageArrayList.add(new AppLanguage("Phone's Language (" + Locale.getDefault().getDisplayLanguage() + ")", "0", false));
+//        if (Utils.getStringPreference(activity, AppConstants.PREF_APP_LANGUAGE, "0").equalsIgnoreCase("0"))
+//            languageArrayList.add(new AppLanguage(Locale.getDefault().getDisplayLanguage(), "0", true));
+//        else
+//            languageArrayList.add(new AppLanguage(Locale.getDefault().getDisplayLanguage(), "0", false));
 
-        for (int i = 1; i < temp.size(); i++) {
+        for (int i = 0; i < temp.size(); i++) {
             if (Utils.getStringPreference(activity, AppConstants.PREF_APP_LANGUAGE, "0").equalsIgnoreCase(String.valueOf(i))) {
                 languageArrayList.add(new AppLanguage(temp.get(i), String.valueOf(i), true));
             } else {
@@ -186,6 +187,18 @@ public class SettingsActivity extends BaseActivity implements RippleView
 
                     Utils.setStringPreference(activity, AppConstants.PREF_APP_LANGUAGE, appLanguageListAdapter.getSelectedLanguageType());
                     dialog.dismiss();
+
+                    RContactApplication.getInstance().setLanguage();
+
+                    // Redirect to MainActivity
+                    Intent intent = new Intent(activity, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    intent.putExtra(AppConstants.PREF_IS_FROM, AppConstants.PREF_RE_LOGIN);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                    finish();
                 }
             }
         });

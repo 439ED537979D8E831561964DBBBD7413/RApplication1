@@ -1,10 +1,12 @@
 package com.rawalinfocom.rcontact.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -13,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.R;
+import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.model.UserProfile;
 
@@ -34,16 +37,22 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
     private Context context;
     private ArrayList<UserProfile> arrayListUserProfile;
     private ArrayList<UserProfile> arrayListTempUserProfile;
+    private OnClickListener onClickListener;
 
-    private boolean isSelectedAll;
-    private ArrayList<Integer> arrayListCheckedPositions;
+    public interface OnClickListener {
+        void onClick(String number, String email);
+    }
+
+//    private boolean isSelectedAll;
+//    private ArrayList<Integer> arrayListCheckedPositions;
 
     public PhoneBookContactListAdapter(Context context, ArrayList<UserProfile>
-            arrayListUserProfile) {
+            arrayListUserProfile, OnClickListener onClickListener) {
         this.context = context;
         this.arrayListUserProfile = arrayListUserProfile;
         arrayListTempUserProfile = new ArrayList<>();
-        arrayListCheckedPositions = new ArrayList<>();
+        this.onClickListener = onClickListener;
+//        arrayListCheckedPositions = new ArrayList<>();
     }
 
     @Override
@@ -62,7 +71,7 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
         UserProfile userProfile = arrayListUserProfile.get(position);
 
         holder.textContactName.setText(userProfile.getPmFirstName());
-        holder.checkboxSelectContact.setTag(position);
+        holder.buttonInvite.setTag(position);
 
         String contactInformation = userProfile.getMobileNumber();
         if (StringUtils.length(contactInformation) <= 0) {
@@ -71,34 +80,51 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
 
         holder.textContactNumber.setText(contactInformation);
 
-        if (!isSelectedAll) {
-            holder.checkboxSelectContact.setChecked(false);
-            if (arrayListCheckedPositions.contains(position)) {
-                holder.checkboxSelectContact.setChecked(true);
-            } else {
-                holder.checkboxSelectContact.setChecked(false);
-            }
-        } else {
-            holder.checkboxSelectContact.setChecked(true);
-        }
+//        if (!isSelectedAll) {
+//            holder.checkboxSelectContact.setChecked(false);
+//            if (arrayListCheckedPositions.contains(position)) {
+//                holder.checkboxSelectContact.setChecked(true);
+//            } else {
+//                holder.checkboxSelectContact.setChecked(false);
+//            }
+//        } else {
+//            holder.checkboxSelectContact.setChecked(true);
+//        }
 
-        holder.checkboxSelectContact.setOnCheckedChangeListener(new CompoundButton
-                .OnCheckedChangeListener() {
+//        holder.checkboxSelectContact.setOnCheckedChangeListener(new CompoundButton
+//                .OnCheckedChangeListener() {
+//
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    if (!arrayListCheckedPositions.contains((Integer) buttonView.getTag())) {
+//                        arrayListCheckedPositions.add((Integer) buttonView.getTag());
+//                    }
+//                } else {
+//                    if (arrayListCheckedPositions.contains((Integer) buttonView.getTag())) {
+//                        arrayListCheckedPositions.remove(buttonView.getTag());
+//                    }
+//                }
+//            }
+//        });
 
+        holder.buttonInvite.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    if (!arrayListCheckedPositions.contains((Integer) buttonView.getTag())) {
-                        arrayListCheckedPositions.add((Integer) buttonView.getTag());
+            public void onClick(View v) {
+
+                int pos = (int) v.getTag();
+
+                if (onClickListener != null) {
+
+                    if (StringUtils.length(arrayListUserProfile.get(pos).getMobileNumber()) <= 0) {
+                        onClickListener.onClick("", arrayListUserProfile.get(pos).getEmailId());
+                    } else {
+                        onClickListener.onClick(arrayListUserProfile.get(pos).getMobileNumber(), "");
                     }
-                } else {
-                    if (arrayListCheckedPositions.contains((Integer) buttonView.getTag())) {
-                        arrayListCheckedPositions.remove(buttonView.getTag());
-                    }
+
                 }
             }
         });
-
     }
 
     @Override
@@ -127,8 +153,8 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
 
         @BindView(R.id.image_profile)
         ImageView imageProfile;
-        @BindView(R.id.checkbox_select_contact)
-        CheckBox checkboxSelectContact;
+        //        @BindView(R.id.checkbox_select_contact)
+//        CheckBox checkboxSelectContact;
         @BindView(R.id.text_contact_name)
         TextView textContactName;
         @BindView(R.id.text_contact_number)
@@ -136,11 +162,13 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
         @BindView(R.id.linear_content_main)
         LinearLayout linearContentMain;
         @BindView(R.id.relative_row_main)
-        RelativeLayout relativeRowMain;
+        LinearLayout relativeRowMain;
         @BindView(R.id.divider_all_contact)
         View dividerAllContact;
         @BindView(R.id.relative_row_contact)
         RelativeLayout relativeRowContact;
+        @BindView(R.id.button_invite)
+        Button buttonInvite;
 
         contactViewHolder(View itemView) {
             super(itemView);
@@ -149,23 +177,26 @@ public class PhoneBookContactListAdapter extends RecyclerView.Adapter<PhoneBookC
             textContactName.setTypeface(Utils.typefaceSemiBold(context));
             textContactNumber.setTypeface(Utils.typefaceRegular(context));
 
+            Utils.setRoundedCornerBackground(buttonInvite, ContextCompat.getColor
+                    (context, R.color.colorAccent), 5, 0, ContextCompat.getColor
+                    (context, R.color.colorAccent));
         }
     }
 
-    public void isSelectAll(boolean checked) {
-        isSelectedAll = checked;
-        arrayListCheckedPositions.clear();
-        if (checked) {
-            for (int i = 0; i < getItemCount(); i++) {
-                if (!arrayListCheckedPositions.contains(i)) {
-                    arrayListCheckedPositions.add(i);
-                }
-            }
-        }
-        notifyDataSetChanged();
-    }
+//    public void isSelectAll(boolean checked) {
+//        isSelectedAll = checked;
+//        arrayListCheckedPositions.clear();
+//        if (checked) {
+//            for (int i = 0; i < getItemCount(); i++) {
+//                if (!arrayListCheckedPositions.contains(i)) {
+//                    arrayListCheckedPositions.add(i);
+//                }
+//            }
+//        }
+//        notifyDataSetChanged();
+//    }
 
-    public ArrayList<Integer> getArrayListCheckedPositions() {
-        return arrayListCheckedPositions;
-    }
+//    public ArrayList<Integer> getArrayListCheckedPositions() {
+//        return arrayListCheckedPositions;
+//    }
 }

@@ -92,14 +92,14 @@
                     android:layout_height="wrap_content"
                     android:text="@string/network_warning_msg"
                     android:textColor="@color/lightGrey"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/ll_spam"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <ImageView
                         android:id="@+id/image_spam"
@@ -116,7 +116,8 @@
                         android:layout_marginLeft="@dimen/margin_5dp"
                         android:textColor="@color/spamRed"
                         android:textSize="@dimen/text_size_14sp"
-                        tools:text="Report as spam (01)" />
+                        tools:text="Report as spam (01)"
+                        android:padding="@dimen/margin_5dp"/>
 
                 </LinearLayout>
 

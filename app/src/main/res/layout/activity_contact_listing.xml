@@ -12,11 +12,18 @@
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_contacts"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/relative_select_options" />
+
     <RelativeLayout
         android:id="@+id/relative_select_options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/include_toolbar"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/include_toolbar"
         android:padding="@dimen/margin_small">
 
         <Spinner
@@ -28,8 +35,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:orientation="horizontal"
             android:paddingRight="@dimen/margin_small"
-            android:orientation="horizontal">
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/text_select_all"
@@ -46,11 +54,5 @@
         </LinearLayout>
 
     </RelativeLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_contacts"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/relative_select_options" />
 
 </RelativeLayout>

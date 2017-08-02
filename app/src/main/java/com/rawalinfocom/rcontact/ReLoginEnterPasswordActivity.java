@@ -300,6 +300,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         otpObject.setCountryCode(selectedCountry.getCountryCodeNumber());
         otpObject.setMobileNumber(mobileNumber.replace("+91", ""));
         otpObject.setForgotPassword(1);
+        otpObject.setDeviceId(getDeviceId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(), otpObject,
@@ -325,9 +326,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         }
         enterPassWordObject.setCreatedBy("2"); // For Android Devices
         enterPassWordObject.setGcmToken(getDeviceTokenId());
-        enterPassWordObject.setDeviceId(Settings.Secure.getString(getContentResolver(), Settings
-                .Secure
-                .ANDROID_ID));
+//        enterPassWordObject.setDeviceId(getDeviceId());
 
         if (Utils.isNetworkAvailable(this)) {
             new AsyncWebServiceCall(this, WSRequestType.REQUEST_TYPE_JSON.getValue(),
@@ -388,7 +387,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
         if (!Utils.isArraylistNullOrEmpty(profileDetail.getPbEmailId())) {
             ArrayList<ProfileDataOperationEmail> arrayListEmailId = profileDetail.getPbEmailId();
             ArrayList<Email> arrayListEmail = new ArrayList<>();
-            ArrayList<String> listOfVerifiedEmailIds =  new ArrayList<>();
+            ArrayList<String> listOfVerifiedEmailIds = new ArrayList<>();
             for (int i = 0; i < arrayListEmailId.size(); i++) {
                 Email email = new Email();
                 email.setEmRecordIndexId(arrayListEmailId.get(i).getEmId());
@@ -397,7 +396,7 @@ public class ReLoginEnterPasswordActivity extends BaseActivity implements Ripple
                 email.setEmEmailPrivacy(String.valueOf(arrayListEmailId.get(i).getEmPublic()));
                 email.setEmIsVerified(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
 //                email.setEmIsPrimary(String.valueOf(arrayListEmailId.get(i).getEmRcpType()));
-                if(String.valueOf(arrayListEmailId.get(i).getEmRcpType()).equalsIgnoreCase("1")){
+                if (String.valueOf(arrayListEmailId.get(i).getEmRcpType()).equalsIgnoreCase("1")) {
                     listOfVerifiedEmailIds.add(arrayListEmailId.get(i).getEmEmailId());
                     Utils.setArrayListPreference(this, AppConstants.PREF_USER_VERIFIED_EMAIL,
                             listOfVerifiedEmailIds);
