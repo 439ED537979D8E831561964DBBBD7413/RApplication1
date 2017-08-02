@@ -195,6 +195,7 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
 
                         Utils.setBooleanPreference(SetPasswordActivity.this, AppConstants.PREF_DISABLE_PUSH, false);
                         Utils.setBooleanPreference(SetPasswordActivity.this, AppConstants.PREF_DISABLE_EVENT_PUSH, false);
+                        Utils.setBooleanPreference(SetPasswordActivity.this, AppConstants.PREF_DISABLE_POPUP, false);
 
                         storeProfileDataToDb(profileDetail);
 
@@ -268,6 +269,20 @@ public class SetPasswordActivity extends BaseActivity implements RippleView
             case R.id.ripple_register:
                 registerButtonClicked();
                 break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (isFrom.equals(AppConstants.PREF_FORGOT_PASSWORD)) {
+            startActivity(new Intent(SetPasswordActivity.this, OtpVerificationActivity
+                    .class));
+            finish();
+        } else {
+            startActivity(new Intent(SetPasswordActivity.this,
+                    ProfileRegistrationActivity.class));
+            finish();
         }
     }
 

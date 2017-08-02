@@ -590,8 +590,11 @@ public class DialerActivity extends BaseActivity {
                         String simSerialNumber = telephonyInfo.simSerialNumber;
                         if (!StringUtils.isEmpty(simSerialNumber)) {
                             String numberToCall = editTextNumber.getText().toString();
-                            if (!TextUtils.isEmpty(numberToCall))
-                                showCallConfirmationDialog(numberToCall);
+                            if (!TextUtils.isEmpty(numberToCall)) {
+                                numberToCall = Utils.getFormattedNumber(DialerActivity.this, numberToCall);
+                                Utils.callIntent(DialerActivity.this, numberToCall);
+//                                showCallConfirmationDialog(numberToCall);
+                            }
                         } else {
                             Toast.makeText(DialerActivity.this, getString(R.string.str_no_sim),
                                     Toast.LENGTH_SHORT).show();
@@ -781,7 +784,7 @@ public class DialerActivity extends BaseActivity {
             numberToCall = number;
             requestPermissions(permissions, requestCode);
         } else {
-            showCallConfirmationDialog(number);
+            Utils.callIntent(DialerActivity.this, number);
         }
     }
 
@@ -795,7 +798,8 @@ public class DialerActivity extends BaseActivity {
                 .READ_CALL_LOG)) {
             if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED) {
                 if (!TextUtils.isEmpty(numberToCall))
-                    showCallConfirmationDialog(numberToCall);
+                    AppConstants.setIsFirstTime(false);
+                Utils.callIntent(DialerActivity.this, numberToCall);
             } else {
                 showPermissionConfirmationDialog();
             }
@@ -834,53 +838,53 @@ public class DialerActivity extends BaseActivity {
         permissionConfirmationDialog.showDialog();
     }
 
-    private void showCallConfirmationDialog(final String number) {
-
-//        final String finalNumber = Utils.getFormattedNumber(DialerActivity.this, number);
-
-       /* if (number.startsWith("*")) {
-            finalNumber = number;
-        } else {
-            finalNumber = Utils.getFormattedNumber(DialerActivity.this,number);
-        }*/
-
-//        final String formattedNumber = Utils.getFormattedNumber(DialerActivity.this, number);
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-
-                       /* String unicodeNumber = number.replace("*", Uri.encode("*")).replace("#",
-                                Uri.encode("#"));
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                unicodeNumber));
-                        startActivity(intent);*/
-
-
-                        AppConstants.setIsFirstTime(false);
-                        Utils.callIntent(DialerActivity.this, number);
-                        break;
-
-                }
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(DialerActivity.this, cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + number
-                + " ?");
-        callConfirmationDialog.showDialog();
-    }
+//    private void showCallConfirmationDialog(final String number) {
+//
+////        final String finalNumber = Utils.getFormattedNumber(DialerActivity.this, number);
+//
+//       /* if (number.startsWith("*")) {
+//            finalNumber = number;
+//        } else {
+//            finalNumber = Utils.getFormattedNumber(DialerActivity.this,number);
+//        }*/
+//
+////        final String formattedNumber = Utils.getFormattedNumber(DialerActivity.this, number);
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//
+//                       /* String unicodeNumber = number.replace("*", Uri.encode("*")).replace("#",
+//                                Uri.encode("#"));
+//                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+//                                unicodeNumber));
+//                        startActivity(intent);*/
+//
+//
+//                        AppConstants.setIsFirstTime(false);
+//                        Utils.callIntent(DialerActivity.this, number);
+//                        break;
+//
+//                }
+//            }
+//        };
+//
+//        callConfirmationDialog = new MaterialDialog(DialerActivity.this, cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + number
+//                + " ?");
+//        callConfirmationDialog.showDialog();
+//    }
 
     private String getPhotoUrlFromNumber(String phoneNumber) {
         String photoThumbUrl = "";
@@ -992,10 +996,10 @@ public class DialerActivity extends BaseActivity {
                         checkPermissionToExecute(requiredPermissions, AppConstants.READ_LOGS,
                                 actionNumber);
                     } else {
-                        showCallConfirmationDialog(actionNumber);
+                        actionNumber = Utils.getFormattedNumber(DialerActivity.this, actionNumber);
+                        Utils.callIntent(DialerActivity.this, actionNumber);
+//                        showCallConfirmationDialog(actionNumber);
                     }
-
-//                    showCallConfirmationDialog(actionNumber);
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {

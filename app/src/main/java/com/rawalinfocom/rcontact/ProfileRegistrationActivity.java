@@ -969,6 +969,12 @@ public class ProfileRegistrationActivity extends BaseActivity implements RippleV
                 }, true);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.setIntegerPreference(ProfileRegistrationActivity.this, AppConstants.PREF_LOGIN_TYPE, 0);
+    }
+
     public void getUserData() {
         APIHelper apiHelper = APIHelper.getInstance(getApplicationContext());
         String host = "api.linkedin.com";

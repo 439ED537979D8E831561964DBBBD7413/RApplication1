@@ -1,687 +1,687 @@
 <resources>
-	<string name="app_name">RContacts</string> 
+    <string name="app_name">RContacts</string>
 
-	<!--  facebook 
+    <!--  facebook
   -->
-	<string name="facebook_app_id">1410546345629965</string>
-	<string name="google_maps_key">AIzaSyBJSXzIhhMakvEuZ8JCLfbs5m1nKXf0zHA</string> 
+    <string name="facebook_app_id">1410546345629965</string>
+    <string name="google_maps_key">AIzaSyBJSXzIhhMakvEuZ8JCLfbs5m1nKXf0zHA</string>
 
-	<!--  Google 
-  --> 
-
-	<!-- <string name="server_client_id">842331483294-os1beu18aonoukiskj67li7l0e4orn61.apps.googleusercontent.com</string>
+    <!--  Google
   -->
-	<string name="server_client_id">842331483294-ehe2r3r6mdbn6e1g9b33ecuakb5j0n28.apps.googleusercontent.com</string> 
 
-	<!--  Common 
+    <!-- <string name="server_client_id">842331483294-os1beu18aonoukiskj67li7l0e4orn61.apps.googleusercontent.com</string>
   -->
-	<string name="msg_try_later">कुछ त्रुटि हुई! बाद में फिरसे प्रयास करें</string>
-	<string name="msg_no_internet">कृपया अपने इंटरनेट कनेक्शन की जाँच करें</string>
-	<string name="msg_unsaved_details">कुछ विवरण सहेजे नहीं गए हैं। क्या आप सुनिश्चित रूप से आगे बढ़ना चाहते हैं?</string>
-	<string name="msg_please_wait">कृपया प्रतीक्षा करें…</string>
-	<string name="msg_no_network">नेटवर्क उपलब्ध नहीं है</string>
-	<string name="action_cancel">रद्द करें</string>
-	<string name="action_call">कॉल करें</string>
-	<string name="action_delete">मिटा दे</string>
-	<string name="str_comment">टिप्पणी करें</string>
-	<string name="str_choose_from_contacts">संपर्कों में से चुनें</string>
-	<string name="str_select_social_media">सोशल मीडिया चुनें</string>
-	<string name="str_select_all">सभी का चयन करे</string>
-	<string name="str_fetching_address">पता प्राप्त हो रहा है...</string>
-	<string name="str_searching">खोज जारी है...</string>
-	<string name="error_no_placeholders">No placeholders</string>
-	<string name="str_title">शीर्षक</string>
-	<string name="str_message">संदेश</string> 
+    <string name="server_client_id">842331483294-ehe2r3r6mdbn6e1g9b33ecuakb5j0n28.apps.googleusercontent.com</string>
 
-	<!--  Other 
+    <!--  Common
   -->
-	<string name="error_facebook_login_cancelled">फेसबुक लॉग इन असफल!</string>
-	<string name="error_retrieving_details">विवरण प्राप्त करने में त्रुटि!</string>
-	<string name="description_registration_logo">पंजीकरण प्रतीक चिन्ह</string>
-	<string name="str_content_description">विवरण</string>
-	<string name="title_verify_number">अपना फोन नम्बर सत्यापित करें</string>
-	<string name="msg_enter_number">कृपया अपने देश कोड की पुष्टि करें और अपना फ़ोन नंबर दर्ज करें</string>
-	<string name="action_submit">सबमिट करें</string>
-	<string name="hint_search">खोज</string>
-	<string name="description_action_back">Description Action Back</string>
-	<string name="error_invalid_number">कृपया एक मान्य नम्बर दर्ज करें</string>
-	<string name="msg_empty_country">देश का नाम उपलब्ध नहीं है</string>
-	<string name="title_verification">सत्यापन</string> 
+    <string name="msg_try_later">कुछ त्रुटि हुई! बाद में फिरसे प्रयास करें</string>
+    <string name="msg_no_internet">कृपया अपने इंटरनेट कनेक्शन की जाँच करें</string>
+    <string name="msg_unsaved_details">कुछ विवरण सहेजे नहीं गए हैं। क्या आप सुनिश्चित रूप से आगे बढ़ना चाहते हैं?</string>
+    <string name="msg_please_wait">कृपया प्रतीक्षा करें…</string>
+    <string name="msg_no_network">नेटवर्क उपलब्ध नहीं है</string>
+    <string name="action_cancel">रद्द करें</string>
+    <string name="action_call">कॉल करें</string>
+    <string name="action_delete">मिटा दे</string>
+    <string name="str_comment">टिप्पणी करें</string>
+    <string name="str_choose_from_contacts">संपर्कों में से चुनें</string>
+    <string name="str_select_social_media">सोशल मीडिया चुनें</string>
+    <string name="str_select_all">सभी का चयन करे</string>
+    <string name="str_fetching_address">पता प्राप्त हो रहा है...</string>
+    <string name="str_searching">खोज जारी है...</string>
+    <string name="error_no_placeholders">No placeholders</string>
+    <string name="str_title">शीर्षक</string>
+    <string name="str_message">संदेश</string>
+
+    <!--  Other
+  -->
+    <string name="error_facebook_login_cancelled">फेसबुक लॉग इन असफल!</string>
+    <string name="error_retrieving_details">विवरण प्राप्त करने में त्रुटि!</string>
+    <string name="description_registration_logo">पंजीकरण प्रतीक चिन्ह</string>
+    <string name="str_content_description">विवरण</string>
+    <string name="title_verify_number">अपना फोन नम्बर सत्यापित करें</string>
+    <string name="msg_enter_number">कृपया अपने देश कोड की पुष्टि करें और अपना फ़ोन नंबर दर्ज करें</string>
+    <string name="action_submit">सबमिट करें</string>
+    <string name="hint_search">खोज</string>
+    <string name="description_action_back">Description Action Back</string>
+    <string name="error_invalid_number">कृपया एक मान्य नम्बर दर्ज करें</string>
+    <string name="msg_empty_country">देश का नाम उपलब्ध नहीं है</string>
+    <string name="title_verification">सत्यापन</string>
 
 	<string name="title_verifying_mobile_number">
 
 		<![CDATA[ Sit back & Relax! while we verify your mobile number
   ]]>
 	</string>
-	<string name="msg_enter_otp">अगर हम SMS का स्वचालित रूप से पता लगाने में असफल रहे तो कृपया 6-अंकिया OTP दर्ज करें </string>
-	<string name="action_resend">फिरसे भेजें</string>
-	<string name="msg_otp_verification_success">OTP सफलतापूर्वक सत्यापित किया गया</string>
-	<string name="error_otp_verification_fail">OTP मेल नहीं खा रहा</string>
-	<string name="msg_otp_error">कृपया एक मान्य OTP दर्ज करें</string>
-	<string name="error_otp_length_incorrect">OTP में 6 अंक शामिल होने चाहिए</string>
-	<string name="msg_success_otp_request">OTP का निवेदन सफलतापूर्वक भेजा गया!</string>
-	<string name="error_otp_expired">इस OTP की समय सिमा समाप्त हो गई है। कृपया फिरसे प्रयास करें!</string>
-	<string name="action_register">रजिस्टर</string>
-	<string name="action_continue">जारी रखे</string>
-	<string name="hint_first_name">पहला नाम</string>
-	<string name="hint_last_name">अंतिम नाम</string>
-	<string name="hint_email_id">ईमेल आईडी</string>
-	<string name="text_or">या</string>
-	<string name="text_facebook">Facebook</string>
-	<string name="text_google">Google</string>
-	<string name="text_linked_in">LinkedIn</string>
-	<string name="title_profile_registration">प्रोफाइल पंजीकरण</string>
-	<string name="title_activity_contacts_main">ContactsMainActivity</string>
-	<string name="title_my_profile">मेरी प्रोफाइल</string>
-	<string name="action_settings">सेटिंग्स</string>
-	<string name="hello_blank_fragment">Hello blank fragment</string>
-	<string name="title_all_organizations">सभी संगठन</string>
-	<string name="action_close">बंद करे</string>
-	<string name="action_ok">ठीक</string>
-	<string name="str_social_contact">सोशिअल एकाउंट्स</string>
-	<string name="str_edit_my_profile">प्रोफ़ाइल संपादित करे</string>
-	<string name="str_first">पहला</string>
-	<string name="str_last">अंतिम</string>
-	<string name="str_organization">संगठन</string>
-	<string name="str_company_name">कंपनी का नाम</string> 
+    <string name="msg_enter_otp">अगर हम SMS का स्वचालित रूप से पता लगाने में असफल रहे तो कृपया 6-अंकिया OTP दर्ज करें </string>
+    <string name="action_resend">फिरसे भेजें</string>
+    <string name="msg_otp_verification_success">OTP सफलतापूर्वक सत्यापित किया गया</string>
+    <string name="error_otp_verification_fail">OTP मेल नहीं खा रहा</string>
+    <string name="msg_otp_error">कृपया एक मान्य OTP दर्ज करें</string>
+    <string name="error_otp_length_incorrect">OTP में 6 अंक शामिल होने चाहिए</string>
+    <string name="msg_success_otp_request">OTP का निवेदन सफलतापूर्वक भेजा गया!</string>
+    <string name="error_otp_expired">इस OTP की समय सिमा समाप्त हो गई है। कृपया फिरसे प्रयास करें!</string>
+    <string name="action_register">रजिस्टर</string>
+    <string name="action_continue">जारी रखे</string>
+    <string name="hint_first_name">पहला नाम</string>
+    <string name="hint_last_name">अंतिम नाम</string>
+    <string name="hint_email_id">ईमेल आईडी</string>
+    <string name="text_or">या</string>
+    <string name="text_facebook">Facebook</string>
+    <string name="text_google">Google</string>
+    <string name="text_linked_in">LinkedIn</string>
+    <string name="title_profile_registration">प्रोफाइल पंजीकरण</string>
+    <string name="title_activity_contacts_main">ContactsMainActivity</string>
+    <string name="title_my_profile">मेरी प्रोफाइल</string>
+    <string name="action_settings">सेटिंग्स</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_all_organizations">सभी संगठन</string>
+    <string name="action_close">बंद करे</string>
+    <string name="action_ok">ठीक</string>
+    <string name="str_social_contact">सोशिअल एकाउंट्स</string>
+    <string name="str_edit_my_profile">प्रोफ़ाइल संपादित करे</string>
+    <string name="str_first">पहला</string>
+    <string name="str_last">अंतिम</string>
+    <string name="str_organization">संगठन</string>
+    <string name="str_company_name">कंपनी का नाम</string>
 
-	<!-- <string name="str_designation">Designation</string>
-  --> 
-
-	<!--  27/06/2017 Modified as Suggested by Mainank
+    <!-- <string name="str_designation">Designation</string>
   -->
-	<string name="str_tab_r_contact">RContacts</string>
-	<string name="text_tab_rcontact">RContacts</string>
-	<string name="tab_r_contact">RContacts</string>
-	<string name="str_designation">वर्तमान पदनाम</string> 
 
-	<string-array name="phonebook_contact_array_share">
-		<item>शेयर</item>
-		<item>केवल SMS माध्यम</item>
-		<item>केवल ईमेल माध्यम</item>
-	</string-array>
-
-	<string-array name="phonebook_contact_array_invite">
-		<item>आमंत्रण</item>
-		<item>केवल SMS माध्यम</item>
-		<item>केवल ईमेल माध्यम</item>
-	</string-array>
-
-	<string-array name="types_phone_number">
-		<item>मोबाइल</item>
-		<item>घर</item>
-		<item>कार्य</item>
-		<item>मुख्य</item>
-		<item>अन्य</item>
-		<item>कस्टम</item>
-	</string-array>
-
-	<string-array name="types_email_address">
-		<item>घर</item>
-		<item>कार्य</item>
-		<item>अन्य</item>
-		<item>कस्टम</item>
-	</string-array>
-
-	<string-array name="types_social_media">
-		<item>WhatsApp</item>
-		<item>Facebook</item>
-		<item>Twitter</item>
-		<item>LinkedIn</item>
-		<item>Skype</item>
-		<item>अन्य</item>
-		<item>कस्टम</item>
-	</string-array>
-
-	<string-array name="types_Event">
-		<item>जन्मदिन</item>
-		<item>सालगिरह</item>
-		<item>अन्य</item>
-		<item>कस्टम</item>
-	</string-array>
-	<string name="show_call_history">कॉल इतिहास देखें</string>
-	<string name="send_sms">SMS भेजें</string>
-	<string name="remove_from_call_log">कॉल लॉग से निकालें</string>
-	<string name="copy_phone_number">फोन नंबर कॉपी करें</string>
-	<string name="block">ब्लॉक</string>
-	<string name="unblock">अनब्लॉक</string>
-	<string name="call_reminder">कॉल रिमाइंडर</string>
-	<string name="str_hide_year">वर्ष को अनदेखा करें</string>
-	<string name="str_i_currently_work_here">वर्तमान कार्यस्थल</string>
-	<string name="nav_text_home">घर</string>
-	<string name="nav_text_account">खाता</string>
-	<string name="nav_text_timeline">टाइमलाइन</string>
-	<string name="nav_text_events">इवेंट्स</string>
-	<string name="nav_text_rating_history">रेटिंग इतिहास</string>
-	<string name="nav_text_invite_contact">अपने संपर्कों को आमंत्रित करें</string>
-	<string name="nav_text_share_rcontact">RContacts ऐप शेयर करें</string>
-	<string name="nav_text_settings">सेटिंग्स</string>
-	<string name="nav_text_block_contact">ब्लॉक किये गए सम्पर्को की सूचि</string>
-	<string name="nav_text_rate_us">हमें रेटिंग दें</string>
-	<string name="nav_text_about_help">जानकारी और सहायता</string>
-	<string name="nav_text_export_db">Export DB</string>
-	<string name="nav_text_feedback">प्रतिक्रिया</string>
-	<string name="past_5_days">पिछले 5 दिन</string>
-	<string name="recent_events">हाल के इवेंट्स</string>
-	<string name="upcoming_events">आने वाले इवेंट्स</string>
-	<string name="past_pending_requests">अपूर्ण निवेदन</string>
-	<string name="text_custom">कस्टम</string>
-	<string name="msg_please_enter_some_comment">कृपया कोई टिप्पणी दर्ज करें</string>
-	<string name="text_wishes_on_your">ने आपको \u0020 की शुभकामनाएं दी</string>
-	<string name="text_year_old">वर्षीय</string>
-	<string name="text_years_old">वर्षीय</string>
-	<string name="text_on">\u0020on\u0020</string>
-	<string name="text_you_wrote_on_timeline">आपने %1$s\ के टाइमलाइन पर लिखा</string>
-	<string name="text_reply_you_on_your">%1$s ने आपके संदेश को उत्तर दिया</string>
-	<string name="text_rate_you">ने आपको रेट किया</string>
-	<string name="text_rating_done">दी गई</string>
-	<string name="text_rating_receive">पाई गई</string>
-	<string name="text_tab_profile">प्रोफाइल</string>
-	<string name="text_tab_request">निवेदन</string>
-	<string name="text_tab_response">प्रतिक्रिया</string>
-	<string name="text_tab_comments">टिप्पणियाँ</string> 
-
-	<!-- <string name="text_tab_rcontact">RContact</string>
+    <!--  27/06/2017 Modified as Suggested by Mainank
   -->
-	<string name="text_notifications">सूचनाएं</string>
-	<string name="text_you_rated">को आपने रेट किया</string>
-	<string name="text_rated_you">ने आपको रेट किया</string>
-	<string name="footer_noti_rating_text">पिछले रेटिंग्स देखने के लिए वेबसाइट पर जाएं</string>
-	<string name="footer_noti_comments_text">पिछली टाइमलाइन टिप्पणियां देखने के लिए वेबसाइट पर जाएं</string>
-	<string name="footer_events_text">आगामी इवेंट्स देखने के लिए वेबसाइट पर जाएं</string>
-	<string name="footer_timeline_text">पिछले टाइमलाइन इवेंट्स देखने के लिए वेबसाइट पर जाएं</string>
-	<string name="footer_rating_history_text">पिछला रेटिंग इतिहास देखने के लिए वेबसाइट पर जाएं</string>
-	<string name="title_activity_call_histroy_detail">CallHistroyDetailActivity</string>
-	<string name="privacy_everyone">हर कोई</string>
-	<string name="privacy_my_contact">मेरे संपर्क</string>
-	<string name="privacy_only_me">केवल मैं</string>
-	<string name="privacy_dialog_title">गोपनीय सेटिंग</string>
-	<string name="dialer_text_add_to_contact">सम्पर्को में जोड़ दें</string>
-	<string name="permission_text">कृपया कॉल लॉग एक्सेस करने की अनुमति दें</string>
-	<string name="permission_text_sms">कृपया SMS लॉग एक्सेस करने की अनुमति दें</string>
-	<string name="no_sms_found">कोई SMS नहीं मिला</string>
-	<string name="no_logs_found">कोई कॉल नहीं मिला</string> 
+    <string name="str_tab_r_contact">RContacts</string>
+    <string name="text_tab_rcontact">RContacts</string>
+    <string name="tab_r_contact">RContacts</string>
+    <string name="str_designation">वर्तमान पदनाम</string>
 
-	<!-- Search
+    <string-array name="phonebook_contact_array_share">
+        <item>शेयर</item>
+        <item>केवल SMS माध्यम</item>
+        <item>केवल ईमेल माध्यम</item>
+    </string-array>
+
+    <string-array name="phonebook_contact_array_invite">
+        <item>आमंत्रण</item>
+        <item>केवल SMS माध्यम</item>
+        <item>केवल ईमेल माध्यम</item>
+    </string-array>
+
+    <string-array name="types_phone_number">
+        <item>मोबाइल</item>
+        <item>घर</item>
+        <item>कार्य</item>
+        <item>मुख्य</item>
+        <item>अन्य</item>
+        <item>कस्टम</item>
+    </string-array>
+
+    <string-array name="types_email_address">
+        <item>घर</item>
+        <item>कार्य</item>
+        <item>अन्य</item>
+        <item>कस्टम</item>
+    </string-array>
+
+    <string-array name="types_social_media">
+        <item>WhatsApp</item>
+        <item>Facebook</item>
+        <item>Twitter</item>
+        <item>LinkedIn</item>
+        <item>Skype</item>
+        <item>अन्य</item>
+        <item>कस्टम</item>
+    </string-array>
+
+    <string-array name="types_Event">
+        <item>जन्मदिन</item>
+        <item>सालगिरह</item>
+        <item>अन्य</item>
+        <item>कस्टम</item>
+    </string-array>
+    <string name="show_call_history">कॉल इतिहास देखें</string>
+    <string name="send_sms">SMS भेजें</string>
+    <string name="remove_from_call_log">कॉल लॉग से निकालें</string>
+    <string name="copy_phone_number">फोन नंबर कॉपी करें</string>
+    <string name="block">ब्लॉक</string>
+    <string name="unblock">अनब्लॉक</string>
+    <string name="call_reminder">कॉल रिमाइंडर</string>
+    <string name="str_hide_year">वर्ष को अनदेखा करें</string>
+    <string name="str_i_currently_work_here">वर्तमान कार्यस्थल</string>
+    <string name="nav_text_home">घर</string>
+    <string name="nav_text_account">खाता</string>
+    <string name="nav_text_timeline">टाइमलाइन</string>
+    <string name="nav_text_events">इवेंट्स</string>
+    <string name="nav_text_rating_history">रेटिंग इतिहास</string>
+    <string name="nav_text_invite_contact">अपने संपर्कों को आमंत्रित करें</string>
+    <string name="nav_text_share_rcontact">RContacts ऐप शेयर करें</string>
+    <string name="nav_text_settings">सेटिंग्स</string>
+    <string name="nav_text_block_contact">ब्लॉक किये गए सम्पर्को की सूचि</string>
+    <string name="nav_text_rate_us">हमें रेटिंग दें</string>
+    <string name="nav_text_about_help">जानकारी और सहायता</string>
+    <string name="nav_text_export_db">Export DB</string>
+    <string name="nav_text_feedback">प्रतिक्रिया</string>
+    <string name="past_5_days">पिछले 5 दिन</string>
+    <string name="recent_events">हाल के इवेंट्स</string>
+    <string name="upcoming_events">आने वाले इवेंट्स</string>
+    <string name="past_pending_requests">अपूर्ण निवेदन</string>
+    <string name="text_custom">कस्टम</string>
+    <string name="msg_please_enter_some_comment">कृपया कोई टिप्पणी दर्ज करें</string>
+    <string name="text_wishes_on_your">ने आपको \u0020 की शुभकामनाएं दी</string>
+    <string name="text_year_old">वर्षीय</string>
+    <string name="text_years_old">वर्षीय</string>
+    <string name="text_on">\u0020on\u0020</string>
+    <string name="text_you_wrote_on_timeline">आपने %1$s\ के टाइमलाइन पर लिखा</string>
+    <string name="text_reply_you_on_your">%1$s ने आपके संदेश को उत्तर दिया</string>
+    <string name="text_rate_you">ने आपको रेट किया</string>
+    <string name="text_rating_done">दी गई</string>
+    <string name="text_rating_receive">पाई गई</string>
+    <string name="text_tab_profile">प्रोफाइल</string>
+    <string name="text_tab_request">निवेदन</string>
+    <string name="text_tab_response">प्रतिक्रिया</string>
+    <string name="text_tab_comments">टिप्पणियाँ</string>
+
+    <!-- <string name="text_tab_rcontact">RContact</string>
   -->
-	<string name="title_phonebook">फोन बुक</string>
-	<string name="search_hint">नाम या नंबर से खोजें</string>
-	<string name="title_global_directory">ग्लोबल डायरेक्टरी</string>
-	<string name="view_more_results">अधिक परिणामों को देखें</string>
-	<string name="search_on_global">ग्लोबल सर्च</string>
-	<string name="search_global_text">RContacts की ग्लोबल डायरेक्टरी में खोजें</string>
-	<string name="no_records_found">कोई संपर्क नहीं मिला</string>
-	<string name="public_profile_toolbar_title">सार्वजानिक प्रोफ़ाइल</string>
-	<string name="feedback_title">प्रतिक्रिया</string>
-	<string name="search_query_validation">खोज करने के लिए टेक्स्ट दर्ज करें</string>
-	<string name="no_records_found_local">कोई रिकॉर्ड नहीं मिला</string> 
+    <string name="text_notifications">सूचनाएं</string>
+    <string name="text_you_rated">को आपने रेट किया</string>
+    <string name="text_rated_you">ने आपको रेट किया</string>
+    <string name="footer_noti_rating_text">पिछले रेटिंग्स देखने के लिए वेबसाइट पर जाएं</string>
+    <string name="footer_noti_comments_text">पिछली टाइमलाइन टिप्पणियां देखने के लिए वेबसाइट पर जाएं</string>
+    <string name="footer_events_text">आगामी इवेंट्स देखने के लिए वेबसाइट पर जाएं</string>
+    <string name="footer_timeline_text">पिछले टाइमलाइन इवेंट्स देखने के लिए वेबसाइट पर जाएं</string>
+    <string name="footer_rating_history_text">पिछला रेटिंग इतिहास देखने के लिए वेबसाइट पर जाएं</string>
+    <string name="title_activity_call_histroy_detail">CallHistroyDetailActivity</string>
+    <string name="privacy_everyone">हर कोई</string>
+    <string name="privacy_my_contact">मेरे संपर्क</string>
+    <string name="privacy_only_me">केवल मैं</string>
+    <string name="privacy_dialog_title">गोपनीय सेटिंग</string>
+    <string name="dialer_text_add_to_contact">सम्पर्को में जोड़ दें</string>
+    <string name="permission_text">कृपया कॉल लॉग एक्सेस करने की अनुमति दें</string>
+    <string name="permission_text_sms">कृपया SMS लॉग एक्सेस करने की अनुमति दें</string>
+    <string name="no_sms_found">कोई SMS नहीं मिला</string>
+    <string name="no_logs_found">कोई कॉल नहीं मिला</string>
 
-	<!-- edit-profile-text
+    <!-- Search
   -->
-	<string name="add_field">क्षेत्र जोड़ें</string>
-	<string name="update">अपडेट करें</string>
-	<string name="cancel">रद्द करें</string>
-	<string name="hint_organization_name">संस्था का नाम</string>
-	<string name="hint_organization_designation">पद</string>
-	<string name="check_text_current_organization">वर्तमान कार्यस्थल</string>
-	<string name="hint_registered_number">पंजीकृत नंबर</string>
-	<string name="hint_optional_number">वैकल्पिक नंबर</string>
-	<string name="hint_registered_email">पंजीकृत ईमेल</string>
-	<string name="hint_optional_email">वैकल्पिक ईमेल</string>
-	<string name="hint_web_address">वेब एड्रेस</string>
-	<string name="hint_country">देश</string>
-	<string name="hint_city">शहर</string>
-	<string name="hint_capital">राज्य</string>
-	<string name="hint_street">गली</string>
-	<string name="hint_landmark">सीमा चिन्ह</string>
-	<string name="hint_pincode">पिन कोड</string>
-	<string name="hint_google_code">Google कोड</string>
-	<string name="hint_facebook_username">Facebook यूज़रनेम</string>
-	<string name="hint_skypee_username">Skype यूज़रनेम</string>
-	<string name="hint_twitter_username">Twitter यूज़रनेम</string>
-	<string name="hint_select_born_date">अपनी जन्म तिथि चुनें</string>
-	<string name="hint_select_anniversary">अपनी सालगिरह की तिथि चुनें</string>
-	<string name="check_text_donot_show_year">वर्ष अनदेखा करें</string>
-	<string name="myprofile_toolbar_title">प्रोफ़ाइल संपादित करे</string>
-	<string name="set_password">पासवर्ड सेट करें</string>
-	<string name="password_verification">पासवर्ड सत्यापन</string>
-	<string name="title_confirm_password">पासवर्ड कन्फर्म करें</string>
-	<string name="msg_enter_password">कृपया अनधिकृत पहुंच को रोकने के लिए पासवर्ड सेट करें</string>
-	<string name="str_password">पासवर्ड</string>
-	<string name="str_confirm_password">पासवर्ड कन्फर्म करें</string>
-	<string name="msg_tip_password">युक्ति: पासवर्ड न्यूनतम 8 अक्षर लंबा जिसमे कम से कम 1 ऊपरी और 1 लोअर केस लेटर, 1 नंबर और 1 स्पेशल कैरेक्टर होना चाहिए</string>
-	<string name="title_password_protected">पासवर्ड से सुरक्षित</string>
-	<string name="msg_enter_password_tips">कृपया अपना खाता एक्सेस करने के लिए पासवर्ड दर्ज करें</string>
-	<string name="str_enter_password">पासवर्ड दर्ज करें</string>
-	<string name="action_login">लॉग इन</string>
-	<string name="action_forget_password">पासवर्ड भूल गए</string>
-	<string name="err_msg_please_enter_password">पासवर्ड खाली नहीं हो सकता</string>
-	<string name="err_msg_please_confirm_password">कन्फर्म पासवर्ड खाली नहीं हो सकता</string>
-	<string name="err_msg_password_not_match">पासवर्ड मेल नहीं खा रहे</string> 
+    <string name="title_phonebook">फोन बुक</string>
+    <string name="search_hint">नाम या नंबर से खोजें</string>
+    <string name="title_global_directory">ग्लोबल डायरेक्टरी</string>
+    <string name="view_more_results">अधिक परिणामों को देखें</string>
+    <string name="search_on_global">ग्लोबल सर्च</string>
+    <string name="search_global_text">RContacts की ग्लोबल डायरेक्टरी में खोजें</string>
+    <string name="no_records_found">कोई संपर्क नहीं मिला</string>
+    <string name="public_profile_toolbar_title">सार्वजानिक प्रोफ़ाइल</string>
+    <string name="feedback_title">प्रतिक्रिया</string>
+    <string name="search_query_validation">खोज करने के लिए टेक्स्ट दर्ज करें</string>
+    <string name="no_records_found_local">कोई रिकॉर्ड नहीं मिला</string>
 
-	<!--  BLock List Contact 
+    <!-- edit-profile-text
   -->
-	<string name="add_contacts_to_block_list">सम्पर्को को ब्लॉक करें</string>
-	<string name="unblock_All">सभी संपर्क अनब्लॉक करें</string>
-	<string name="block_action_title">ब्लॉक किये गए सम्पर्को की सूचि</string>
-	<string name="contacts">संपर्क</string> 
+    <string name="add_field">क्षेत्र जोड़ें</string>
+    <string name="update">अपडेट करें</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="hint_organization_name">संस्था का नाम</string>
+    <string name="hint_organization_designation">पद</string>
+    <string name="check_text_current_organization">वर्तमान कार्यस्थल</string>
+    <string name="hint_registered_number">पंजीकृत नंबर</string>
+    <string name="hint_optional_number">वैकल्पिक नंबर</string>
+    <string name="hint_registered_email">पंजीकृत ईमेल</string>
+    <string name="hint_optional_email">वैकल्पिक ईमेल</string>
+    <string name="hint_web_address">वेब एड्रेस</string>
+    <string name="hint_country">देश</string>
+    <string name="hint_city">शहर</string>
+    <string name="hint_capital">राज्य</string>
+    <string name="hint_street">गली</string>
+    <string name="hint_landmark">सीमा चिन्ह</string>
+    <string name="hint_pincode">पिन कोड</string>
+    <string name="hint_google_code">Google कोड</string>
+    <string name="hint_facebook_username">Facebook यूज़रनेम</string>
+    <string name="hint_skypee_username">Skype यूज़रनेम</string>
+    <string name="hint_twitter_username">Twitter यूज़रनेम</string>
+    <string name="hint_select_born_date">अपनी जन्म तिथि चुनें</string>
+    <string name="hint_select_anniversary">अपनी सालगिरह की तिथि चुनें</string>
+    <string name="check_text_donot_show_year">वर्ष अनदेखा करें</string>
+    <string name="myprofile_toolbar_title">प्रोफ़ाइल संपादित करे</string>
+    <string name="set_password">पासवर्ड सेट करें</string>
+    <string name="password_verification">पासवर्ड सत्यापन</string>
+    <string name="title_confirm_password">पासवर्ड कन्फर्म करें</string>
+    <string name="msg_enter_password">कृपया अनधिकृत पहुंच को रोकने के लिए पासवर्ड सेट करें</string>
+    <string name="str_password">पासवर्ड</string>
+    <string name="str_confirm_password">पासवर्ड कन्फर्म करें</string>
+    <string name="msg_tip_password">युक्ति: पासवर्ड न्यूनतम 8 अक्षर लंबा जिसमे कम से कम 1 ऊपरी और 1 लोअर केस लेटर, 1 नंबर और 1 स्पेशल कैरेक्टर होना चाहिए</string>
+    <string name="title_password_protected">पासवर्ड से सुरक्षित</string>
+    <string name="msg_enter_password_tips">कृपया अपना खाता एक्सेस करने के लिए पासवर्ड दर्ज करें</string>
+    <string name="str_enter_password">पासवर्ड दर्ज करें</string>
+    <string name="action_login">लॉग इन</string>
+    <string name="action_forget_password">पासवर्ड भूल गए</string>
+    <string name="err_msg_please_enter_password">पासवर्ड खाली नहीं हो सकता</string>
+    <string name="err_msg_please_confirm_password">कन्फर्म पासवर्ड खाली नहीं हो सकता</string>
+    <string name="err_msg_password_not_match">पासवर्ड मेल नहीं खा रहे</string>
 
-	<!--  Call History Details 
+    <!--  BLock List Contact
   -->
-	<string name="sms">SMS</string>
-	<string name="call_history">कॉल इतिहास</string>
-	<string name="text_no_history">दिखाने के लिए कोई इतिहास नहीं है</string>
-	<string name="view_old_records">पुराने रिकॉर्ड देखें</string>
-	<string name="rating_submit">रेटिंग सबमिट की गई</string>
-	<string name="please_select_number_view_sms_log">SMS लॉग देखने के लिए कृपया एक नंबर का चयन करें</string>
-	<string name="please_select_number_call">कॉल करने के लिए कृपया एक नंबर का चयन करें</string>
-	<string name="error_update_favorite_status">Error while updating favourite status!</string>
-	<string name="add_to_contact">सम्पर्को में जोड़े</string>
-	<string name="add_to_existing_contact">मौजूदा संपर्क में जोड़िये</string>
-	<string name="copy_to_clipboard">क्लिपबोर्ड पर कॉपी करें</string>
-	<string name="view_profile">प्रोफाइल देखिये</string>
-	<string name="view_reply">उत्तर देखें</string>
-	<string name="text_reply_you">आपको जवाब दिया</string>
-	<string name="edit">एडिट</string>
-	<string name="delete">मिटा दें</string>
-	<string name="clear_call_log">कॉल लॉग मिटा दें</string>
-	<string name="view_in_ac">AC में देखें</string>
-	<string name="view_in_rc">RC में देखें</string>
-	<string name="text_rate">रेट करें</string>
-	<string name="characters_left">अक्षर बाकी</string>
-	<string name="text_character">अक्षर</string>
-	<string name="please_fill_stars">रेट करने के लिए सितारों का चयन करें!</string>
-	<string name="call_history_toolbar_title">कॉल इतिहास</string> 
+    <string name="add_contacts_to_block_list">सम्पर्को को ब्लॉक करें</string>
+    <string name="unblock_All">सभी संपर्क अनब्लॉक करें</string>
+    <string name="block_action_title">ब्लॉक किये गए सम्पर्को की सूचि</string>
+    <string name="contacts">संपर्क</string>
 
-	<!--  Phone Number Type 
+    <!--  Call History Details
   -->
-	<string name="type_home">घर</string>
-	<string name="type_mobile">मोबाइल</string>
-	<string name="type_work">कार्य</string>
-	<string name="type_fax_work">फैक्स कार्य</string>
-	<string name="type_fax_home">फैक्स घर</string>
-	<string name="type_pager">पेजर</string>
-	<string name="type_other">अन्य</string>
-	<string name="type_other_caps">अन्य</string>
-	<string name="type_callback">वापस कॉल करें</string>
-	<string name="type_car">कार</string>
-	<string name="type_company_main">मुख्य कंपनी</string>
-	<string name="type_isdn">ISDN</string>
-	<string name="type_main">मुख्य</string>
-	<string name="type_other_fax">अन्य फैक्स</string>
-	<string name="type_radio">रेडियो</string>
-	<string name="type_telex">टेलेक्स</string>
-	<string name="type_tty_tdd">Tty Tdd</string>
-	<string name="type_work_mobile">कार्य मोबाइल</string>
-	<string name="type_work_pager">कार्य पेजर</string>
-	<string name="type_assistant">सहायक</string>
-	<string name="type_mms">MMS</string> 
+    <string name="sms">SMS</string>
+    <string name="call_history">कॉल इतिहास</string>
+    <string name="text_no_history">दिखाने के लिए कोई इतिहास नहीं है</string>
+    <string name="view_old_records">पुराने रिकॉर्ड देखें</string>
+    <string name="rating_submit">रेटिंग सबमिट की गई</string>
+    <string name="please_select_number_view_sms_log">SMS लॉग देखने के लिए कृपया एक नंबर का चयन करें</string>
+    <string name="please_select_number_call">कॉल करने के लिए कृपया एक नंबर का चयन करें</string>
+    <string name="error_update_favorite_status">Error while updating favourite status!</string>
+    <string name="add_to_contact">सम्पर्को में जोड़े</string>
+    <string name="add_to_existing_contact">मौजूदा संपर्क में जोड़िये</string>
+    <string name="copy_to_clipboard">क्लिपबोर्ड पर कॉपी करें</string>
+    <string name="view_profile">प्रोफाइल देखिये</string>
+    <string name="view_reply">उत्तर देखें</string>
+    <string name="text_reply_you">आपको जवाब दिया</string>
+    <string name="edit">एडिट</string>
+    <string name="delete">मिटा दें</string>
+    <string name="clear_call_log">कॉल लॉग मिटा दें</string>
+    <string name="view_in_ac">AC में देखें</string>
+    <string name="view_in_rc">RC में देखें</string>
+    <string name="text_rate">रेट करें</string>
+    <string name="characters_left">अक्षर बाकी</string>
+    <string name="text_character">अक्षर</string>
+    <string name="please_fill_stars">रेट करने के लिए सितारों का चयन करें!</string>
+    <string name="call_history_toolbar_title">कॉल इतिहास</string>
 
-	<!--  Call Log 
+    <!--  Phone Number Type
   -->
-	<string name="no_history_delete">मिटने के लिए कोई इतिहास नहीं</string>
-	<string name="call_logs_deleted">कॉल लॉग मिटाए गए</string>
-	<string name="please_select_history_to_delete">कृपया मिटाने के लिए कॉल्स का चयन करें</string>
-	<string name="str_view_previous_logs">पिछला लॉग देखें</string>
-	<string name="str_loading">लोड हो रहा है...</string>
-	<string name="str_no_call_logs">प्रदर्शित करने के लिए कोई लॉग नहीं है</string> 
+    <string name="type_home">घर</string>
+    <string name="type_mobile">मोबाइल</string>
+    <string name="type_work">कार्य</string>
+    <string name="type_fax_work">फैक्स कार्य</string>
+    <string name="type_fax_home">फैक्स घर</string>
+    <string name="type_pager">पेजर</string>
+    <string name="type_other">अन्य</string>
+    <string name="type_other_caps">अन्य</string>
+    <string name="type_callback">वापस कॉल करें</string>
+    <string name="type_car">कार</string>
+    <string name="type_company_main">मुख्य कंपनी</string>
+    <string name="type_isdn">ISDN</string>
+    <string name="type_main">मुख्य</string>
+    <string name="type_other_fax">अन्य फैक्स</string>
+    <string name="type_radio">रेडियो</string>
+    <string name="type_telex">टेलेक्स</string>
+    <string name="type_tty_tdd">Tty Tdd</string>
+    <string name="type_work_mobile">कार्य मोबाइल</string>
+    <string name="type_work_pager">कार्य पेजर</string>
+    <string name="type_assistant">सहायक</string>
+    <string name="type_mms">MMS</string>
 
-	<!--  Contact Listing 
+    <!--  Call Log
   -->
-	<string name="please_select_one_contact">कृपया कम से कम एक संपर्क का चयन करें</string>
-	<string name="please_select_one">कृपया कम से कम एक को चुनें</string>
-	<string name="invitation_shared">आमंत्रण शेयर किया गया</string>
-	<string name="invitation_sent">आमंत्रण सफलतापूर्वक भेजा गया!</string>
-	<string name="invitation_sending">आमंत्रण भेजा जा रहा है...</string>
-	<string name="share_via">ऐप शेयर करने का माध्यम</string>
-	<string name="db_dump_failed">DB dump असफल रहा</string>
-	<string name="navigation_drawer_open">नेविगेशन ड्रॉवर खोलें</string>
-	<string name="navigation_drawer_close">नेविगेशन ड्रॉवर बंद करें</string>
-	<string name="tab_contact">संपर्क</string>
-	<string name="tab_call">कॉल लॉग</string>
-	<string name="tab_sms">SMS</string>
-	<string name="tab_all_contact">मेरे संपर्क</string> 
+    <string name="no_history_delete">मिटने के लिए कोई इतिहास नहीं</string>
+    <string name="call_logs_deleted">कॉल लॉग मिटाए गए</string>
+    <string name="please_select_history_to_delete">कृपया मिटाने के लिए कॉल्स का चयन करें</string>
+    <string name="str_view_previous_logs">पिछला लॉग देखें</string>
+    <string name="str_loading">लोड हो रहा है...</string>
+    <string name="str_no_call_logs">प्रदर्शित करने के लिए कोई लॉग नहीं है</string>
 
-	<!-- <string name="tab_r_contact">R Contacts</string>
+    <!--  Contact Listing
   -->
-	<string name="tab_favorites">पसंदीदा</string>
-	<string name="data_lost_hint_1">यदि आप स्विच करते हैं, तो आपका वर्तमान डेटा खो जाएगा।</string>
-	<string name="data_lost_hint_2">आप जारी रखना चाहेंगे?</string>
-	<string name="call_log_permission">कॉल लोग सिंक करने की अनुमति आवश्यक है। क्या आप फिरसे कोशिश करना चाहेंगे?</string>
-	<string name="call_log_incoming">इनकमिंग</string>
-	<string name="call_log_outgoing">आउटगोइंग</string>
-	<string name="call_log_missed">मिस्ड</string>
-	<string name="call_log_rejected">रिजेक्टेड</string>
-	<string name="call_log_blocked">ब्लॉक्ड</string>
-	<string name="call_log_voice_mail">वॉयसमेल</string>
-	<string name="msg_draft">ड्राफ्ट</string>
-	<string name="msg_failed">असफल</string>
-	<string name="msg_received">प्राप्त</string>
-	<string name="msg_outbox">आउटबॉक्स</string>
-	<string name="msg_queued">कतार में</string>
-	<string name="msg_sent">भेजे गए</string>
-	<string name="protocol_aim">AIM</string>
-	<string name="protocol_msn">MSN</string>
-	<string name="protocol_yahoo">Yahoo</string>
-	<string name="protocol_skype">Skype</string>
-	<string name="protocol_qq">QQ</string>
-	<string name="protocol_google_talk">Google Talk</string>
-	<string name="protocol_icq">ICQ</string>
-	<string name="protocol_jabber">Jabber</string>
-	<string name="protocol_netmeeting">NetMeeting</string>
-	<string name="protocol_whatsapp">WhatsApp</string>
-	<string name="protocol_facebook">Facebook</string>
-	<string name="event_anniversary">सालगिरह</string>
-	<string name="event_birthday">जन्मदिन</string>
-	<string name="web_homepage">होमपेज</string>
-	<string name="web_blog">ब्लॉग</string>
-	<string name="web_ftp">FTP</string>
-	<string name="unknown">[अनजान]</string>
-	<string name="str_all">सभी</string>
-	<string name="str_invite">आमंत्रण</string>
-	<string name="str_today">आज</string>
-	<string name="str_yesterday">बिता कल</string>
-	<string name="str_unsaved">अरक्षित</string>
-	<string name="str_selected">चुने हुए</string>
-	<string name="str_delete_click">Delete clicked</string>
-	<string name="str_select_all_click">Select All clicked</string>
-	<string name="str_all_contact_sync">Your Contacts Are Synced</string>
-	<string name="contact_read_permission">Contact read permission is required of this app. Do you want to try again?</string>
-	<string name="calling_permission">Contact read permission is required of this app. Do you want to try again?</string> 
+    <string name="please_select_one_contact">कृपया कम से कम एक संपर्क का चयन करें</string>
+    <string name="please_select_one">कृपया कम से कम एक को चुनें</string>
+    <string name="invitation_shared">आमंत्रण शेयर किया गया</string>
+    <string name="invitation_sent">आमंत्रण सफलतापूर्वक भेजा गया!</string>
+    <string name="invitation_sending">आमंत्रण भेजा जा रहा है...</string>
+    <string name="share_via">ऐप शेयर करने का माध्यम</string>
+    <string name="db_dump_failed">DB dump असफल रहा</string>
+    <string name="navigation_drawer_open">नेविगेशन ड्रॉवर खोलें</string>
+    <string name="navigation_drawer_close">नेविगेशन ड्रॉवर बंद करें</string>
+    <string name="tab_contact">संपर्क</string>
+    <string name="tab_call">कॉल लॉग</string>
+    <string name="tab_sms">SMS</string>
+    <string name="tab_all_contact">मेरे संपर्क</string>
 
-	<!--  Social Media 
+    <!-- <string name="tab_r_contact">R Contacts</string>
+      -->
+    <string name="tab_favorites">पसंदीदा</string>
+    <string name="data_lost_hint_1">यदि आप स्विच करते हैं, तो आपका वर्तमान डेटा खो जाएगा।</string>
+    <string name="data_lost_hint_2">आप जारी रखना चाहेंगे?</string>
+    <string name="call_log_permission">कॉल लोग सिंक करने की अनुमति आवश्यक है। क्या आप फिरसे कोशिश करना चाहेंगे?</string>
+    <string name="call_log_incoming">इनकमिंग</string>
+    <string name="call_log_outgoing">आउटगोइंग</string>
+    <string name="call_log_missed">मिस्ड</string>
+    <string name="call_log_rejected">रिजेक्टेड</string>
+    <string name="call_log_blocked">ब्लॉक्ड</string>
+    <string name="call_log_voice_mail">वॉयसमेल</string>
+    <string name="msg_draft">ड्राफ्ट</string>
+    <string name="msg_failed">असफल</string>
+    <string name="msg_received">प्राप्त</string>
+    <string name="msg_outbox">आउटबॉक्स</string>
+    <string name="msg_queued">कतार में</string>
+    <string name="msg_sent">भेजे गए</string>
+    <string name="protocol_aim">AIM</string>
+    <string name="protocol_msn">MSN</string>
+    <string name="protocol_yahoo">Yahoo</string>
+    <string name="protocol_skype">Skype</string>
+    <string name="protocol_qq">QQ</string>
+    <string name="protocol_google_talk">Google Talk</string>
+    <string name="protocol_icq">ICQ</string>
+    <string name="protocol_jabber">Jabber</string>
+    <string name="protocol_netmeeting">NetMeeting</string>
+    <string name="protocol_whatsapp">WhatsApp</string>
+    <string name="protocol_facebook">Facebook</string>
+    <string name="event_anniversary">सालगिरह</string>
+    <string name="event_birthday">जन्मदिन</string>
+    <string name="web_homepage">होमपेज</string>
+    <string name="web_blog">ब्लॉग</string>
+    <string name="web_ftp">FTP</string>
+    <string name="unknown">[अनजान]</string>
+    <string name="str_all">सभी</string>
+    <string name="str_invite">आमंत्रण</string>
+    <string name="str_today">आज</string>
+    <string name="str_yesterday">बिता कल</string>
+    <string name="str_unsaved">अरक्षित</string>
+    <string name="str_selected">चुने हुए</string>
+    <string name="str_delete_click">Delete clicked</string>
+    <string name="str_select_all_click">Select All clicked</string>
+    <string name="str_all_contact_sync">संपर्कों को सफलतापूर्वक सिंक किया गया</string>
+    <string name="contact_read_permission">संपर्कों को पढ़ने की अनुमति आवश्यक है। क्या आप फिर से कोशिश करना चाहेंगे?</string>
+    <string name="calling_permission">कॉल करने के लिए अनुमति आवश्यक है। क्या आप फिर से कोशिश करना चाहेंगे?</string>
+
+    <!--  Social Media
   -->
-	<string name="social_media">Social Media</string>
-	<string name="str_whats_app">Whatsapp</string>
-	<string name="str_facebook">Facebook</string>
-	<string name="str_messenger">Messenger</string>
-	<string name="str_twitter">Twitter</string>
-	<string name="str_linked_in">Linkedin</string>
-	<string name="str_skype">Skype</string> 
-
-	<!--  Comment & Notification
+    <string name="social_media">सोशिअल मीडिया</string>
+    <string name="str_whats_app">Whatsapp</string>
+    <string name="str_facebook">Facebook</string>
+    <string name="str_messenger">Messenger</string>
+    <string name="str_twitter">Twitter</string>
+    <string name="str_linked_in">Linkedin</string>
+    <string name="str_skype">Skype</string>
+    -
+    <!--  Comment & Notification
   -->
-	<string name="str_view_reply">VIEW REPLY</string>
-	<string name="str_reply_you">Reply You</string>
-	<string name="str_unread_notification_hint_1">You have</string>
-	<string name="str_unread_notification_hint_2">unread notification</string>
-	<string name="str_unread_notification_hint_3">You have no unread notification</string>
-	<string name="str_rating_comment_hint_1">reply you on your rating and comment.</string>
-	<string name="str_rating_comment_hint_2">You wrote comment and give rating to</string>
-	<string name="str_rating_comment_hint_3">You receive comment rating from</string>
-	<string name="str_view_more">View More</string>
-	<string name="str_view_less">View Less</string>
-	<string name="str_confirm">CONFIRM</string>
-	<string name="str_reject">REJECT</string>
-	<string name="str_tab_profile">Profile</string>
-	<string name="str_tab_rating">Rating</string>
-	<string name="str_tab_comment">Comment</string> 
-
-	<!-- <string name="str_tab_r_contact">RContact</string>
+    <string name="str_view_reply">उत्तर देखें</string>
+    <string name="str_reply_you">आपको जवाब दिया</string>
+    <string name="str_unread_notification_hint_1">आपके पास</string>
+    <string name="str_unread_notification_hint_2">अपठित सूचना(एं)</string>
+    <string name="str_unread_notification_hint_3">आपके पास कोई अपठित सूचना(एं) नहीं है</string>
+    <string name="str_rating_comment_hint_1">आपकी रेटिंग और टिप्पणी पर आपको उत्तर दिया</string>
+    <string name="str_rating_comment_hint_2">को आपने रेटिंग दी और उनके लिए टिपण्णी लिखी</string>
+    <string name="str_rating_comment_hint_3">से आपको रेटिंग प्राप्त हुई</string>
+    <string name="str_view_more">अधिक देखें</string>
+    <string name="str_view_less">कम देखें</string>
+    <string name="str_confirm">कन्फर्म</string>
+    <string name="str_reject">रिजेक्ट</string>
+    <string name="str_tab_profile">प्रोफ़ाइल</string>
+    <string name="str_tab_rating">रेटिंग</string>
+    <string name="str_tab_comment">टिपण्णी</string>
+    -
+    <!-- <string name="str_tab_r_contact">RContact</string>
   -->
-	<string name="str_requested_for_your">Requested for your</string>
-	<string name="str_confirmed_your_request_for">confirmed your request for</string> 
-
-	<!--  Profile 
+    <string name="str_requested_for_your">ने आपका देखने के लिए अनुमति मांगी है।</string>
+    <string name="str_confirmed_your_request_for">ने आपका निवेदन के लिए स्वीकार कर लिया</string>
+    -
+    <!--  Profile
   -->
-	<string name="str_copy_number">Copied Number</string>
-	<string name="str_copy_email">Copied Email</string>
-	<string name="str_copy_website">Copied Website</string>
-	<string name="str_copy_address">Copied Address</string>
-	<string name="str_copy_number_clip_board">Number copied to Clipboard</string>
-	<string name="str_copy_email_clip_board">Email copied to Clipboard</string>
-	<string name="str_copy_website_clip_board">Website copied to Clipboard</string>
-	<string name="str_copy_address_clip_board">Address copied to Clipboard</string>
-	<string name="str_invalid_email">Invalid EmailId!</string>
-	<string name="str_account_required">Account is required</string>
-	<string name="str_web_required">Web address is required</string>
-	<string name="str_org_designation_required">Organization designation is required</string>
-	<string name="str_org_name_required">Organization name is required</string>
-	<string name="str_email_required">Email is required</string>
-	<string name="str_event_required">Event date is required!</string>
-	<string name="str_street_required">Street is required!</string>
-	<string name="str_city_required">City is required!</string>
-	<string name="str_state_required">State is required!</string>
-	<string name="str_country_required">Country name is required!</string>
-	<string name="str_add_birthday_anniversary_error">You can add Birthday and Anniversary only once!</string>
-	<string name="str_address_map_error">Address mapping on Map is required!</string>
-	<string name="str_select_org">Select current Organization!</string>
-	<string name="str_birthday">birthday</string>
-	<string name="str_anniversary">anniversary</string>
-	<string name="str_send_email">Send Email via:</string>
-	<string name="str_female">Female</string>
-	<string name="str_male">Male</string>
-	<string name="str_event">Event</string>
-	<string name="str_gender">Gender</string>
-	<string name="str_number">Number</string>
-	<string name="str_name">Name</string>
-	<string name="str_phone">Phone</string>
-	<string name="str_email">Email</string>
-	<string name="str_small_cap_email">email</string>
-	<string name="str_website">Website</string>
-	<string name="str_address">Address</string>
-	<string name="str_link">Link</string>
-	<string name="str_account_name">Account Name</string>
-	<string name="str_choose_date">Choose date</string>
-	<string name="str_public_profile">public_profile</string>
-	<string name="str_social_connect">Social Connect</string>
-	<string name="str_view_all_organizations">View All Organizations</string>
-	<string name="str_search_location">Search Location...</string>
-	<string name="str_sync_with_google_map">Sync with Google Map</string>
-	<string name="str_country_hint">Country (Required)</string>
-	<string name="str_state_hint">State (Required)</string>
-	<string name="str_city_hint">City (Required)</string>
-	<string name="str_street_hint">Street (Required)</string>
-	<string name="str_address_line1_hint">Address Line1 (Required)</string>
-	<string name="str_address_line2_hint">Address Line2 (Optional)</string>
-	<string name="str_neighborhood_hint">Neighbourhood</string>
-	<string name="str_pin_code_hint">Pincode (Required)</string>
-	<string name="str_po_box_number_hint">Po. Box No.</string>
-	<string name="str_image_upload_dialog_title">Upload Via</string>
-	<string name="str_image_upload_dialog_camera_title">Take Photo</string>
-	<string name="str_image_upload_dialog_gallery_title">Choose Photo</string>
-	<string name="str_image_upload_dialog_remove_title">Choose Photo</string>
-	<string name="str_custom_label">Custom Label Name</string>
-	<string name="str_profile_hint_1">Profile Updated Successfully!</string>
-	<string name="str_valid_both_name">Please enter First Name and Last Name!</string>
-	<string name="str_valid_email">Please enter valid email!</string>
-	<string name="str_valid_first_name">Please add First name!</string>
-	<string name="str_valid_last_name">Please add Last name!</string>
-	<string name="str_valid_gender">Select any gender!</string>
-	<string name="str_valid_number">Number is required!</string>
-	<string name="str_valid_name">Please add valid name!</string>
-	<string name="str_valid_address">Please add address!</string>
-	<string name="str_valid_designation">Designation in organization is required!</string>
-	<string name="str_valid_company_name">Company name in organization is required!</string>
-	<string name="str_valid_street">Street in address is required!</string>
-	<string name="str_valid_city">City in address is required!</string>
-	<string name="str_valid_state">State in address is required!</string>
-	<string name="str_valid_country">Country in address is required!</string>
-	<string name="storage_permission">Storage permission is required for uploading profile image. Do you want to try again?</string>
-	<string name="camera_permission">Camera permission is required for taking photo. Do you want to try again?</string>
-	<string name="str_view_in_phone_book">View in Phonebook</string>
-	<string name="str_rate_profile">Rate Profile</string>
-	<string name="str_error_retrieving_contact_raw_id">Error while retrieving contact raw id</string>
-	<string name="str_profile_deails">Profile Details</string>
-	<string name="str_share">Share</string>
-	<string name="str_s_profile">\'s Profile</string>
-	<string name="str_share_contact_via">Share Contact Via</string>
-	<string name="str_change_profile_picture">Change Profile Picture</string> 
-
-	<!--  SMS 
+    <string name="str_copy_number">नम्बर कॉपी किया गया</string>
+    <string name="str_copy_email">ईमेल कॉपी किया गया</string>
+    <string name="str_copy_website">वेबसाइट कॉपी की गई</string>
+    <string name="str_copy_address">पता कॉपी किया गया</string>
+    <string name="str_copy_number_clip_board">नंबर क्लिपबोर्ड पर कॉपी किया गया</string>
+    <string name="str_copy_email_clip_board"> ईमेल क्लिपबोर्ड पर कॉपी किया गया</string>
+    <string name="str_copy_website_clip_board">वेबसाइट क्लिपबोर्ड पर कॉपी किया गया</string>
+    <string name="str_copy_address_clip_board">पता क्लिपबोर्ड पर कॉपी किया गया</string>
+    <string name="str_invalid_email">अमान्य ईमेल आईडी</string>
+    <string name="str_account_required">खाता आवश्यक है</string>
+    <string name="str_web_required">वेब एड्रेस आवश्यक है</string>
+    <string name="str_org_designation_required">पदनाम आवश्यक है</string>
+    <string name="str_org_name_required">संगठन का नाम आवश्यक है</string>
+    <string name="str_email_required">ईमेल आईडी आवश्यक है</string>
+    <string name="str_event_required">ईवेंट की तिथि आवश्यक है</string>
+    <string name="str_street_required">गली का विस्तार आवश्यक है</string>
+    <string name="str_city_required">शहर का नाम आवश्यक है</string>
+    <string name="str_state_required">राज्य का नाम आवश्यक है</string>
+    <string name="str_country_required">देश का नाम आवश्यक है</string>
+    <string name="str_add_birthday_anniversary_error">जन्मदिन और सालगिरह केवल एक बार जोड़ा जा सकता है!</string>
+    <string name="str_address_map_error">पते का मैप पर सिंक होना आवश्यक है</string>
+    <string name="str_select_org">कृपया वर्तमान संगठन का चयन करें</string>
+    <string name="str_birthday">जन्मदिन</string>
+    <string name="str_anniversary">सालगिरह</string>
+    <string name="str_send_email">के माध्यम से ईमेल भेजें</string>
+    <string name="str_female">स्त्री</string>
+    <string name="str_male">पुस्र्ष</string>
+    <string name="str_event">इवेंट</string>
+    <string name="str_gender">लिंग</string>
+    <string name="str_number">नंबर</string>
+    <string name="str_name">नाम</string>
+    <string name="str_phone">फ़ोन</string>
+    <string name="str_email">ईमेल</string>
+    <string name="str_small_cap_email">ईमेल</string>
+    <string name="str_website">वेबसाइट</string>
+    <string name="str_address">पता</string>
+    <string name="str_link">लिंक</string>
+    <string name="str_account_name">खाते का नाम</string>
+    <string name="str_choose_date">दिनांक चुनें</string>
+    <string name="str_public_profile">public_profile</string>
+    <string name="str_social_connect">सोशिअल खाते</string>
+    <string name="str_view_all_organizations">सभी संगठन देखें</string>
+    <string name="str_search_location">स्थान खोजें...</string>
+    <string name="str_sync_with_google_map">Google Maps के साथ सिंक करें</string>
+    <string name="str_country_hint">देश (आवश्यक)</string>
+    <string name="str_state_hint">राज्य (आवश्यक)</string>
+    <string name="str_city_hint">शहर (आवश्यक)</string>
+    <string name="str_street_hint">गली (आवश्यक)</string>
+    <string name="str_address_line1_hint">एड्रेस लाइन 1 (आवश्यक)</string>
+    <string name="str_address_line2_hint">एड्रेस लाइन 2 (वैकल्पिक)</string>
+    <string name="str_neighborhood_hint">अड़ोस-पड़ोस</string>
+    <string name="str_pin_code_hint">पिनकोड (आवश्यक)</string>
+    <string name="str_po_box_number_hint">P.O. बॉक्स नम्बर</string>
+    <string name="str_image_upload_dialog_title">अपलोड करें</string>
+    <string name="str_image_upload_dialog_camera_title">फोटो खींचें</string>
+    <string name="str_image_upload_dialog_gallery_title">फोटो चुनें</string>
+    <string name="str_image_upload_dialog_remove_title">फोटो हटा दें</string>
+    <string name="str_custom_label">Custom Label Name</string>
+    <string name="str_profile_hint_1">प्रोफाइल को सफलतापूर्वक अपडेट किया गया!</string>
+    <string name="str_valid_both_name">कृपया प्रथम नाम और अंतिम नाम दर्ज करें</string>
+    <string name="str_valid_email">कृपया मान्य ईमेल दर्ज करें</string>
+    <string name="str_valid_first_name">कृपया मान्य प्रथम नाम जोड़ें</string>
+    <string name="str_valid_last_name">कृपया मान्य अंतिम नाम जोड़ें</string>
+    <string name="str_valid_gender">अपना लिंग चुनें</string>
+    <string name="str_valid_number">कृपया एक मान्य नंबर जोड़ें</string>
+    <string name="str_valid_name">कृपया एक मान्य नाम जोड़ें</string>
+    <string name="str_valid_address">कृपया एक मान्य पता जोड़ें</string>
+    <string name="str_valid_designation">पदनाम आवश्यक</string>
+    <string name="str_valid_company_name">कंपनी का नाम आवश्यक है</string>
+    <string name="str_valid_street">गली का विस्तार आवश्यक है</string>
+    <string name="str_valid_city">शहर का नाम आवश्यक है</string>
+    <string name="str_valid_state">राज्य का नाम आवश्यक है</string>
+    <string name="str_valid_country">देश का नाम आवश्यक है</string>
+    <string name="storage_permission">प्रोफ़ाइल फोटो अपलोड करने के लिए स्टोरेज का उपयोग करने की अनुमति आवश्यक है। क्या आप फिर से कोशिश करना चाहेंगे?</string>
+    <string name="camera_permission">फोटो लेने के लिए कैमरा के उपयोग की अनुमति आवश्यक है। क्या आप फिर से कोशिश करना चाहेंगे?</string>
+    <string name="str_view_in_phone_book">फोनबुक में देखें</string>
+    <string name="str_rate_profile">प्रोफाइल को रेट करें</string>
+    <string name="str_error_retrieving_contact_raw_id">Error while retrieving contact raw id</string>
+    <string name="str_profile_deails">प्रोफ़ाइल के विवरण</string>
+    <string name="str_share">शेयर</string>
+    <string name="str_s_profile">की प्रोफ़ाइल</string>
+    <string name="str_share_contact_via">शेयर करने का माध्यम</string>
+    <string name="str_change_profile_picture">प्रोफ़ाइल फोटो बदलें</string>
+    -
+    <!--  SMS
   -->
-	<string name="str_message_deleted">message deleted.</string> 
-
-	<!--  Dialer 
+    <string name="str_message_deleted">सन्देश मिटा दिया</string>
+    -
+    <!--  Dialer
   -->
-	<string name="str_no_sim">No sim detected</string> 
-
-	<!--  Favorite 
+    <string name="str_no_sim">कोई सिम नहीं मिला</string>
+    -
+    <!--  Favorite
   -->
-	<string name="str_no_favorite">No favorites contacts</string> 
-
-	<!--  Maps 
+    <string name="str_no_favorite">कोई पसंदीदा संपर्क नहीं मिला</string>
+    -
+    <!--  Maps
   -->
-	<string name="str_no_location_found">No Location Found</string>
-	<string name="str_unable_location_found">Unable to find Location!</string>
-	<string name="str_daily_limit_warning">You have exceeded your daily request quota for this API.</string>
-	<string name="str_hint_search_location">Please search any location!</string>
-	<string name="str_hint_search_address">Please add Address to search</string>
-	<string name="str_postal_address">Postal Address</string>
-	<string name="str_google_address">Google Address</string>
-	<string name="str_use_postal_address">Use Postal Address</string>
-	<string name="str_use_google_address">Use Google Address</string> 
-
-	<!--  Privacy
+    <string name="str_no_location_found">स्थान नहीं मिला</string>
+    <string name="str_unable_location_found">स्थान ढूंढने में असमर्थ</string>
+    <string name="str_daily_limit_warning">You have exceeded your daily request quota for this API.</string>
+    <string name="str_hint_search_location">किसी स्थान की खोज करें</string>
+    <string name="str_hint_search_address">खोज करने के लिए पता दर्ज करें!</string>
+    <string name="str_postal_address">डाक पता</string>
+    <string name="str_google_address">Google Maps पर सिंक किया हुआ पता</string>
+    <string name="str_use_postal_address">डाक पता का उपयोग करें</string>
+    <string name="str_use_google_address">Google Maps पर सिंक किए हुए पते का उपयोग करें</string>
+    -
+    <!--  Privacy
   -->
-	<string name="str_privacy_setting_update">Privacy Setting Updated Successfully</string>
-	<string name="str_request_sending_fail">Request sending failed!</string> 
-
-	<!--  GPS 
+    <string name="str_privacy_setting_update">गोपनीयता सेटिंग सफलतापूर्वक अपडेट की गई</string>
+    <string name="str_request_sending_fail">निवेदन भेजने में असफल</string>
+    -
+    <!--  GPS
   -->
-	<string name="str_gps_disable">GPS is disabled!</string>
-	<string name="str_gps_not_enable">GPS is not enabled. Do you want to go to settings menu?</string>
-	<string name="str_cancel">CANCEL</string>
-	<string name="str_settings">SETTINGS</string> 
-
-	<!--  Country 
+    <string name="str_gps_disable">GPS सक्षम करें</string>
+    <string name="str_gps_not_enable">GPS अक्षम है। कृपया इसे सेटिंग मेनू से सक्षम करें।</string>
+    <string name="str_cancel">रद्द करें</string>
+    <string name="str_settings">सेटिंग्स</string>
+    -
+    <!--  Country
   -->
-	<string name="str_no_country_found">No Country Found</string> 
-
-	<!--  OTP 
+    <string name="str_no_country_found">देश का नाम नहीं मिला</string>
+    -
+    <!--  OTP
   -->
-	<string name="str_rawal_otp">rawal_otp</string> 
-
-	<!--  Registration 
+    <string name="str_rawal_otp">rawal_otp</string>
+    -
+    <!--  Registration
   -->
-	<string name="str_mobile_number">Mobile Number</string>
-	<string name="error_custom_type">Please add valid custom type</string>
-	<string name="tutorial_header_1">Contacts Redefined</string>
-	<string name="tutorial_header_2">Smarter Management</string>
-	<string name="tutorial_header_3">Global Search</string>
-	<string name="tutorial_header_4">Spammers Banned</string>
-	<string name="tutorial_header_5">Get Rated</string> 
+    <string name="str_mobile_number">मोबाइल नंबर</string>
+    <string name="error_custom_type">कृपया एक मान्य कस्टम प्रकार जोड़ें</string>
+    <string name="tutorial_header_1">संपर्क फिर से परिभाषित</string>
+    <string name="tutorial_header_2">स्मार्ट प्रबंधन</string>
+    <string name="tutorial_header_3">वैश्विक पहुँच</string>
+    <string name="tutorial_header_4">स्पैमर प्रतिबंधित</string>
+    <string name="tutorial_header_5">रेटिंग प्राप्त करें</string>
 
-	<string name="tutorial_content_1">
-
-		<![CDATA[ A Contact is not just a number but a profile consisting of Auto-Synced data & Social Info!
-  ]]>
+    - 	<string name="tutorial_content_1">
+	<![CDATA[एक संपर्क सिर्फ एक नंबर नहीं है, बल्कि ऑटो-सिंक डेटा और सोशिअल जानकारी से भरा एक प्रोफाइल है! ]]>
 	</string>
-	<string name="tutorial_content_2">Manage SMS and Call Logs from a single icon! RContacts serves you with both in one platter.</string>
-	<string name="tutorial_content_3">Just place this EARTH on your homescreen and search for any number that belongs to it.</string>
-	<string name="tutorial_content_4">RContacts like a Special Agent will alert and rescue you of the numbers marked as Spam</string>
-	<string name="tutorial_content_5">Earn reputation stars and get yourself authenticated in the world of Contacts</string>
-	<string name="tutorial_and">And?</string>
-	<string name="tutorial_lets_go">Let\'s Go!</string>
-	<string name="get_started">Get Started</string>
-	<string name="str_welcome">WELCOME</string>
-	<string name="terms_conditions_content">Get all your Contacts, SMS and Call at one Place</string>
-	<string name="str_terms_conditions">By continuing you accept terms and conditions</string>
-	<string name="accept_terms_conditions">Accept terms and conditions before proceeding!</string> 
-
-	<!--  English Only 
+    <string name="tutorial_content_2">RContacts द्वारा संपर्क और कॉल लॉग सिर्फ एक आइकॉन से प्रबंधित करें!</string>
+    <string name="tutorial_content_3">बस अपने होमस्क्रीन पर इस धरती को जगह दें और उसके अंतर्गत शामिल किसी भी नंबर के विवरण खोजें</string>
+    <string name="tutorial_content_4">एक विशेष एजेंट की तरह RContacts स्पैम के रूप में चिह्नित नंबरों से आपका बचाव करेगा</string>
+    <string name="tutorial_content_5">प्रतिष्ठा सितारों को कमाएँ और संपर्कों की दुनिया में अपने आप को प्रमाणित करें</string>
+    <string name="tutorial_and">और?</string>
+    <string name="tutorial_lets_go">चलते हैं!</string>
+    <string name="get_started">शुरू करें</string>
+    <string name="str_welcome">स्वागत है</string>
+    <string name="terms_conditions_content">Get all your Contacts, SMS and Call at one Place</string>
+    <string name="str_terms_conditions">By continuing you accept terms and conditions</string>
+    <string name="accept_terms_conditions">Accept terms and conditions before proceeding!</string>
+    -
+    <!--  English Only
   -->
-	<string name="error_required_account">Account is required!</string>
-	<string name="error_once_birthday_anniversary">You can add Birthday and Anniversary only once!</string>
-	<string name="error_no_update">Nothing to Update</string>
-	<string name="error_required_address_mapping">Address mapping on Map is required!</string>
-	<string name="hint_account_name">Account Name</string>
-	<string name="hint_country_required">Country (Required)</string>
-	<string name="hint_state_required">State (Required)</string>
-	<string name="hint_city_town_required">City / Town (Required)</string>
-	<string name="hint_address_line_1_required">Address Line 1 (Required)</string>
-	<string name="hint_address_line_2_optional">Address Line 2 (Optional)</string>
-	<string name="hint_pincode_required">Pincode (Required)</string>
-	<string name="error_current_organization">Select current Organization!</string>
-	<string name="error_required_city">City is required!</string>
-	<string name="error_required_street">Street is required!</string>
-	<string name="error_required_state">State is required!</string>
-	<string name="error_required_country">Country is required!</string>
-	<string name="hint_choose_date">Choose date</string>
-	<string name="str_upload_via">Upload Via</string>
-	<string name="str_take_photo">Take Photo</string>
-	<string name="str_choose_photo">Choose Photo</string>
-	<string name="str_remove_photo">Remove Photo</string>
-	<string name="confirmation_unsaved_back">Some details are left unsaved. Are you sure you want to proceed?</string>
-	<string name="str_call">Call</string>
-	<string name="error_required_email">Email is required!</string>
-	<string name="error_invalid_email">Invalid EmailId!</string>
-	<string name="error_required_event_date">Event date is required!</string>
-	<string name="hint_email">Email</string>
-	<string name="error_requird_first_name">Please add First name!</string>
-	<string name="error_requird_last_name">Please add Last name!</string>
-	<string name="error_required_number">Number is required!</string>
-	<string name="hint_number">Number</string>
-	<string name="error_required_org_designation">Organization designation is required!</string>
-	<string name="error_required_org_name">Organization name is required!</string>
-	<string name="success_profile_update">Profile Updated Successfully!</string>
-	<string name="error_select_gender">Select any gender!</string>
-	<string name="error_required_web_address">Web address is required!</string>
-	<string name="str_call_log">Call Log</string>
-	<string name="str_duration">Duration :</string>
-	<string name="str_request">Request</string>
+    <string name="error_required_account">खाता आवश्यक है</string>
+    <string name="error_once_birthday_anniversary">जन्मदिन और सालगिरह केवल एक बार जोड़ा जा सकता है!</string>
+    <string name="error_no_update">अपडेट करने के लिए कुछ नहीं है</string>
+    <string name="error_required_address_mapping">पते का मैप पर सिंक होना आवश्यक है</string>
+    <string name="hint_account_name">खाते का नाम</string>
+    <string name="hint_country_required">देश (आवश्यक)</string>
+    <string name="hint_state_required">राज्य (आवश्यक)</string>
+    <string name="hint_city_town_required">शहर/नगर (आवश्यक)</string>
+    <string name="hint_address_line_1_required">पता पंक्ति 1 (आवश्यक)</string>
+    <string name="hint_address_line_2_optional">पता पंक्ति 2 (वैकल्पिक)</string>
+    <string name="hint_pincode_required">पिनकोड (आवश्यक)</string>
+    <string name="error_current_organization">कृपया वर्तमान संगठन का चयन करें</string>
+    <string name="error_required_city">शहर/नगर का नाम आवश्यक है</string>
+    <string name="error_required_street">गली का विस्तार आवश्यक है</string>
+    <string name="error_required_state">राज्य का नाम आवश्यक है</string>
+    <string name="error_required_country">देश का नाम आवश्यक है</string>
+    <string name="hint_choose_date">दिनांक चुनें</string>
+    <string name="str_upload_via">अपलोड का माध्यम</string>
+    <string name="str_take_photo">फोटो खींचें</string>
+    <string name="str_choose_photo">फोटो चुनें</string>
+    <string name="str_remove_photo">फोटो हटा दें</string>
+    <string name="confirmation_unsaved_back">कुछ विवरण सहेजे नहीं गए हैं, क्या आप सुनिश्चित रूप से आगे बढ़ना चाहते हैं?</string>
+    <string name="str_call">कॉल करें</string>
+    <string name="error_required_email">ईमेल आईडी आवश्यक है</string>
+    <string name="error_invalid_email">अमान्य ईमेल आईडी</string>
+    <string name="error_required_event_date">ईवेंट की तिथि आवश्यक है</string>
+    <string name="hint_email">ईमेल</string>
+    <string name="error_requird_first_name">कृपया प्रथम नाम जोड़ें</string>
+    <string name="error_requird_last_name">कृपया अंतिम नाम जोड़ें</string>
+    <string name="error_required_number">नंबर आवश्यक है</string>
+    <string name="hint_number">नंबर</string>
+    <string name="error_required_org_designation">पदनाम आवश्यक है</string>
+    <string name="error_required_org_name">संगठन का नाम आवश्यक है</string>
+    <string name="success_profile_update">प्रोफाइल को सफलतापूर्वक अपडेट किया गया!</string>
+    <string name="error_select_gender">अपना लिंग चुनें</string>
+    <string name="error_required_web_address">वेब एड्रेस आवश्यक है</string>
+    <string name="str_call_log">कॉल लॉग</string>
+    <string name="str_duration">अवधि:</string>
+    <string name="str_request">निवेदन</string>
 
-	<!--Account-->
-	<string name="action_bar_title">खाता</string>
-	<string name="view_account">अपना खाता देखें</string>
-	<string name="security">सुरक्षा</string>
+    <!--Account-->
+    <string name="action_bar_title">खाता</string>
+    <string name="view_account">अपना खाता देखें</string>
+    <string name="security">सुरक्षा</string>
 
-	<!--View Account-->
-	<string name="lbl_first_name">प्रथम नाम</string>
-	<string name="lbl_last_name">अंतिम नाम</string>
-	<string name="lbl_phone">फ़ोन</string>
-	<string name="lbl_email">ईमेल</string>
-	<string name="lbl_joining_date">कार्यग्रहण तारीख</string>
+    <!--View Account-->
+    <string name="lbl_first_name">प्रथम नाम</string>
+    <string name="lbl_last_name">अंतिम नाम</string>
+    <string name="lbl_phone">फ़ोन</string>
+    <string name="lbl_email">ईमेल</string>
+    <string name="lbl_joining_date">कार्यग्रहण तारीख</string>
 
-	<!--Security-->
-	<string name="security_info">जब संभव हो, आपके और आपके संपर्कों के बीच हुए संदेशों को एंड-टू-एंड एन्क्रिप्शन के साथ सुरक्षित किया जाता है, जिससे RContacts ऐप या कोई भी तीसरे पक्ष की पार्टी उन्हें पढ़ नहीं सकती। </string>
+    <!--Security-->
+    <string name="security_info">जब संभव हो, आपके और आपके संपर्कों के बीच हुए संदेशों को एंड-टू-एंड एन्क्रिप्शन के साथ सुरक्षित किया जाता है, जिससे RContacts ऐप या कोई भी तीसरे पक्ष की पार्टी उन्हें पढ़ नहीं सकती। </string>
 
-	<string name="security_link_text">RContacts की सुरक्षा के बारे में अधिक जानें</string>
+    <string name="security_link_text">RContacts की सुरक्षा के बारे में अधिक जानें</string>
 
-	<!-- Settings -->
-	<string name="app_language">भाषा</string>
-	<string name="short_by">संपर्कों को सॉर्ट करें</string>
-	<string name="export_format">संपर्क एक्सपोर्ट करें</string>
-	<string name="abc_by_first_name">ABC द्वारा प्रथम नाम</string>
-	<string name="phone_storage">फोन स्टोरेज</string>
-	<string name="sd_card">SD कार्ड</string>
-	<string name="google_drive">Google Drive</string>
-	<string name="abc_by_last_name">ABC द्वारा अंतिम नाम</string>
-	<string name="str_export">एक्सपोर्ट</string>
-	<string name="str_short">सॉर्ट</string>
-	<string name="str_push_notification">पुश नोटीफिकेशन</string>
-	<string name="str_event_notification">इवेंट नोटीफिकेशन</string>
-	<string name="str_validation_short_type">सॉर्ट प्रकार चुनें</string>
-	<string name="str_validation_export_type">एक्सपोर्ट प्रकार चुनें</string>
-	<string name="str_validation_push_notification">यदि आप पुश नोटिफिकेशन प्राप्त नहीं करना चाहते हैं तो इसे अक्षम करें</string>
-	<string name="str_validation_event_notification">सभी ईवेंट सूचनाओं को प्रबंधित करने के लिए चालू/बंद (on/off) करें</string>
-	<string name="title_activity_maps">मैप</string>
+    <!-- Settings -->
+    <string name="app_language">भाषा</string>
+    <string name="short_by">संपर्कों को सॉर्ट करें</string>
+    <string name="export_format">संपर्क एक्सपोर्ट करें</string>
+    <string name="abc_by_first_name">ABC द्वारा प्रथम नाम</string>
+    <string name="phone_storage">फोन स्टोरेज</string>
+    <string name="sd_card">SD कार्ड</string>
+    <string name="google_drive">Google Drive</string>
+    <string name="abc_by_last_name">ABC द्वारा अंतिम नाम</string>
+    <string name="str_export">एक्सपोर्ट</string>
+    <string name="str_short">सॉर्ट</string>
+    <string name="str_push_notification">पुश नोटीफिकेशन</string>
+    <string name="str_event_notification">इवेंट नोटीफिकेशन</string>
+    <string name="str_validation_short_type">सॉर्ट प्रकार चुनें</string>
+    <string name="str_validation_export_type">एक्सपोर्ट प्रकार चुनें</string>
+    <string name="str_validation_push_notification">यदि आप पुश नोटिफिकेशन प्राप्त नहीं करना चाहते हैं तो इसे अक्षम करें</string>
+    <string name="str_validation_event_notification">सभी ईवेंट सूचनाओं को प्रबंधित करने के लिए चालू/बंद (on/off) करें</string>
+    <string name="str_validation_popup_notification">Disable it if you do not want call popup</string>
+    <string name="title_activity_maps">मैप</string>
 
-	<string name="str_about">जानकारी</string>
-	<string name="str_faq">FAQs</string>
-	<string name="str_terms">Terms and Conditions</string>
-	<string name="str_contact_us">हमसे संपर्क करें</string>
-	<string name="str_join_us">सोशल मीडिया पर हमसे जुड़ें</string>
-	<string name="str_describe_problem">कृपया हमें अपनी समस्या बताएं </string>
-	<string name="str_read_faq">क्या आपने अभी तक हमारे सामान्य प्रश्नों (FAQs) को पढ़ा है?</string>
-	<string name="str_add_screen_shot">स्क्रीनशॉट जोड़ें (वैकल्पिक):</string>
-	<string name="str_msg_problem">आपकी समस्या सफलतापूर्वक भेज दी गई है।</string>
+    <string name="str_about">जानकारी</string>
+    <string name="str_faq">FAQs</string>
+    <string name="str_terms">Terms and Conditions</string>
+    <string name="str_contact_us">हमसे संपर्क करें</string>
+    <string name="str_join_us">सोशल मीडिया पर हमसे जुड़ें</string>
+    <string name="str_describe_problem">कृपया हमें अपनी समस्या बताएं </string>
+    <string name="str_read_faq">क्या आपने अभी तक हमारे सामान्य प्रश्नों (FAQs) को पढ़ा है?</string>
+    <string name="str_add_screen_shot">स्क्रीनशॉट जोड़ें (वैकल्पिक):</string>
+    <string name="str_msg_problem">आपकी समस्या सफलतापूर्वक भेज दी गई है।</string>
 
-	<!-- Web View -->
-	<string name="refresh">रिफ्रेश </string>
-	<string name="find">खोजे</string>
-	<string name="copy_link">लिंक कॉपी करें</string>
-	<string name="open_with">खोलने का माध्यम</string>
-	<string name="copied_to_clipboard">क्लिपबोर्ड पर कॉपी कर दिया गया</string>
+    <!-- Web View -->
+    <string name="refresh">रिफ्रेश </string>
+    <string name="find">खोजे</string>
+    <string name="copy_link">लिंक कॉपी करें</string>
+    <string name="open_with">खोलने का माध्यम</string>
+    <string name="copied_to_clipboard">क्लिपबोर्ड पर कॉपी कर दिया गया</string>
 
-	<!--Call-popup-->
-	<string name="network_warning_msg">कॉलर आईडी सक्षम करने के लिए आपको 3G/4G वाईफ़ाई कनेक्शन की आवश्यकता है। कृपया आपका कनेक्शन जांचें और फिर से प्रयास करें।</string>
-	<string name="call_received_from">से कॉल प्राप्त</string>
-	<string name="btn_view_profile">प्रोफाइल देखिये</string>
-	<string name="btn_view_call_history">कॉल इतिहास देखें</string>
-	<string name="txt_call">कॉल करें</string>
-	<string name="txt_message">संदेश</string>
-	<string name="txt_save">संगृहीत करें</string>
-	<string name="report_spam">स्पैम के रूप में रिपोर्ट करें</string>
+    <!--Call-popup-->
+    <string name="str_pop_up">Call Pop-Up</string>
+    <string name="network_warning_msg">कॉलर आईडी सक्षम करने के लिए आपको 3G/4G वाईफ़ाई कनेक्शन की आवश्यकता है। कृपया आपका कनेक्शन जांचें और फिर से प्रयास करें।</string>
+    <string name="call_received_from">से कॉल प्राप्त</string>
+    <string name="btn_view_profile">प्रोफाइल देखिये</string>
+    <string name="btn_view_call_history">कॉल इतिहास देखें</string>
+    <string name="txt_call">कॉल करें</string>
+    <string name="txt_message">संदेश</string>
+    <string name="txt_save">संगृहीत करें</string>
+    <string name="report_spam">स्पैम के रूप में रिपोर्ट करें</string>
 
 </resources>

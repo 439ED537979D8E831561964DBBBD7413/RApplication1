@@ -21,6 +21,7 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.LinearLayoutManager;
@@ -668,7 +669,7 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         textNoRecords.setVisibility(View.GONE);
                         rippleViewSearchOnGlobal.setVisibility(View.VISIBLE);
                         textGlobalText.setVisibility(View.VISIBLE);
-                    }else{
+                    } else {
                         globalSearchTypeArrayListMain = new ArrayList<GlobalSearchType>();
                         globalSearchAdapter = null;
                         recycleViewGlobalContact.setVisibility(View.GONE);
@@ -1176,7 +1177,8 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                     startActivity(smsIntent);
 
                 } else {
-                    showCallConfirmationDialog(numberToSend);
+                    dialCall(numberToSend);
+//                    showCallConfirmationDialog(numberToSend);
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -1356,12 +1358,15 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
                         if (allContactAdapter.getSearchCount() == 0) {
                             if (simpleCallLogListAdapter != null && simpleCallLogListAdapter
                                     .getSearchCount() == 0) {
-                                showCallConfirmationDialog(numberToSend, actionNumber);
+                                dialCall(numberToSend);
+//                                showCallConfirmationDialog(numberToSend, actionNumber);
                             } else {
-                                showCallConfirmationDialog(numberToSend);
+                                dialCall(numberToSend);
+//                                showCallConfirmationDialog(numberToSend);
                             }
                         } else {
-                            showCallConfirmationDialog(numberToSend);
+                            dialCall(numberToSend);
+//                            showCallConfirmationDialog(numberToSend);
                         }
                     }
                 }
@@ -1467,43 +1472,60 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         itemTouchHelper.attachToRecyclerView(recycleViewPbContact);
     }
 
-    private void showCallConfirmationDialog(final String number, String name) {
-//        final String formattedNumber = Utils.getFormattedNumber(getActivity(), number);
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
+    private void dialCall(String numberToSend) {
 
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                number));
-                        startActivity(intent);
-                        break;
-                }
-            }
-        };
-
-
-        Pattern numberPat = Pattern.compile("\\d+");
-        Matcher matcher1 = numberPat.matcher(name);
-        if (matcher1.find()) {
-            name = number;
-        } else {
+        final String formattedNumber = Utils.getFormattedNumber(SearchActivity.this, numberToSend);
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + formattedNumber));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
         }
-
-        callConfirmationDialog = new MaterialDialog(SearchActivity.this, cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + name + "?");
-        callConfirmationDialog.showDialog();
+        startActivity(intent);
     }
+
+//    private void showCallConfirmationDialog(final String number, String name) {
+////        final String formattedNumber = Utils.getFormattedNumber(getActivity(), number);
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+//                                number));
+//                        startActivity(intent);
+//                        break;
+//                }
+//            }
+//        };
+//
+//
+//        Pattern numberPat = Pattern.compile("\\d+");
+//        Matcher matcher1 = numberPat.matcher(name);
+//        if (matcher1.find()) {
+//            name = number;
+//        } else {
+//        }
+//
+//        callConfirmationDialog = new MaterialDialog(SearchActivity.this, cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + name + "?");
+//        callConfirmationDialog.showDialog();
+//    }
 
     private String getNumberFromName(String name) {
         String number = "";
@@ -1535,52 +1557,52 @@ public class SearchActivity extends BaseActivity implements WsResponseListener, 
         return number;
     }
 
-    private void showCallConfirmationDialog(final String number) {
-
-        final String finalNumber;
-
-        if (!number.startsWith("+91")) {
-            finalNumber = "+91" + number;
-        } else {
-            finalNumber = number;
-        }
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                finalNumber));
-                        startActivity(intent);
-                        break;
-                }
-            }
-        };
-
-
-        /*Pattern numberPat = Pattern.compile("\\d+");
-        Matcher matcher1 = numberPat.matcher(name);
-        if (matcher1.find()) {
-            name = number;
-        } else {
-        }*/
-
-        callConfirmationDialog = new MaterialDialog(this, cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber
-                + "?");
-        callConfirmationDialog.showDialog();
-    }
+//    private void showCallConfirmationDialog(final String number) {
+//
+//        final String finalNumber;
+//
+//        if (!number.startsWith("+91")) {
+//            finalNumber = "+91" + number;
+//        } else {
+//            finalNumber = number;
+//        }
+//
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+//                                finalNumber));
+//                        startActivity(intent);
+//                        break;
+//                }
+//            }
+//        };
+//
+//
+//        /*Pattern numberPat = Pattern.compile("\\d+");
+//        Matcher matcher1 = numberPat.matcher(name);
+//        if (matcher1.find()) {
+//            name = number;
+//        } else {
+//        }*/
+//
+//        callConfirmationDialog = new MaterialDialog(this, cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber
+//                + "?");
+//        callConfirmationDialog.showDialog();
+//    }
 
     private void getSMSData() {
         getSMSLogIdById();

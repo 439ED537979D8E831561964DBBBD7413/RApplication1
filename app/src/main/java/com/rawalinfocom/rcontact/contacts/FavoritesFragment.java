@@ -458,8 +458,8 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
                 } else {
 
                     callNumber = Utils.getFormattedNumber(getActivity(), actionNumber);
-
-                    showCallConfirmationDialog();
+                    Utils.callIntent(getActivity(), callNumber);
+//                    showCallConfirmationDialog();
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -669,45 +669,45 @@ public class FavoritesFragment extends BaseFragment implements LoaderManager
         getRcpDetail();
     }
 
-    private void showCallConfirmationDialog() {
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
-                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                            requestPermissions(new String[]{Manifest.permission
-                                    .CALL_PHONE}, AppConstants
-                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                        } else {
-                           /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                    callNumber));
-                            startActivity(intent);*/
-                            Utils.callIntent(getActivity(), callNumber);
-                        }
-                        break;
-                }
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
-                + callNumber + "?");
-
-        callConfirmationDialog.showDialog();
-    }
+//    private void showCallConfirmationDialog() {
+//
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//                        if (ContextCompat.checkSelfPermission(getActivity(), Manifest
+//                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//                            requestPermissions(new String[]{Manifest.permission
+//                                    .CALL_PHONE}, AppConstants
+//                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+//                        } else {
+//                           /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+//                                    callNumber));
+//                            startActivity(intent);*/
+//                            Utils.callIntent(getActivity(), callNumber);
+//                        }
+//                        break;
+//                }
+//            }
+//        };
+//
+//        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
+//                + callNumber + "?");
+//
+//        callConfirmationDialog.showDialog();
+//    }
 
     /*public AllContactListAdapter getAllContactListAdapter() {
         return allContactListAdapter;

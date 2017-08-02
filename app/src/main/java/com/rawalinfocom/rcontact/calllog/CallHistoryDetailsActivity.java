@@ -621,7 +621,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                     callConfirmationListDialog.showDialog();
 
                                 } else {
-                                    showCallConfirmationDialog(profileContactNumber);
+                                    profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
+                                    Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
+//                                    showCallConfirmationDialog(profileContactNumber);
                                 }
                             }
                         } else {
@@ -665,7 +667,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 callConfirmationListDialog.showDialog();
 
                             } else {
-                                showCallConfirmationDialog(profileContactNumber);
+                                profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
+                                Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
+//                                showCallConfirmationDialog(profileContactNumber);
                             }
                         }
                     } else {
@@ -695,8 +699,11 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                 if (StringUtils.equals(imageRightCenter.getTag().toString(), TAG_IMAGE_CALL)) {
                     if (tempPhoneNumber == null) {
                         if (!StringUtils.isEmpty(historyNumber)) {
-                            if (historyNumber.matches("[+][0-9]+") || historyNumber.matches("[0-9]+"))
-                                showCallConfirmationDialog(historyNumber);
+                            if (historyNumber.matches("[+][0-9]+") || historyNumber.matches("[0-9]+")) {
+                                profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
+                                Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
+//                                showCallConfirmationDialog(historyNumber);
+                            }
                         }
                     } else {
                         if (tempPhoneNumber != null && tempPhoneNumber.size() > 0) {
@@ -717,7 +724,9 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
                                 callConfirmationListDialog.showDialog();
 
                             } else {
-                                showCallConfirmationDialog(profileContactNumber);
+                                profileContactNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, profileContactNumber);
+                                Utils.callIntent(CallHistoryDetailsActivity.this, profileContactNumber);
+//                                showCallConfirmationDialog(profileContactNumber);
                             }
                         }
                     }
@@ -1917,45 +1926,45 @@ public class CallHistoryDetailsActivity extends BaseActivity implements RippleVi
     }
 
 
-    private void showCallConfirmationDialog(final String number) {
-
-        final String finalNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, number);
-
-       /* if (!number.startsWith("+91")) {
-            finalNumber = "+91" + number;
-        } else {
-            finalNumber = number;
-        }*/
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                       /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                formattedNumber));
-                        startActivity(intent);*/
-                        Utils.callIntent(CallHistoryDetailsActivity.this, finalNumber);
-                        break;
-                }
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(this, cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber
-                + "?");
-        callConfirmationDialog.showDialog();
-    }
+//    private void showCallConfirmationDialog(final String number) {
+//
+//        final String finalNumber = Utils.getFormattedNumber(CallHistoryDetailsActivity.this, number);
+//
+//       /* if (!number.startsWith("+91")) {
+//            finalNumber = "+91" + number;
+//        } else {
+//            finalNumber = number;
+//        }*/
+//
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//                       /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+//                                formattedNumber));
+//                        startActivity(intent);*/
+//                        Utils.callIntent(CallHistoryDetailsActivity.this, finalNumber);
+//                        break;
+//                }
+//            }
+//        };
+//
+//        callConfirmationDialog = new MaterialDialog(this, cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber
+//                + "?");
+//        callConfirmationDialog.showDialog();
+//    }
 
     private void submitRating(String ratingStar, String comment) {
 

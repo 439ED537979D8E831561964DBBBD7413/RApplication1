@@ -63,7 +63,6 @@ public class WsResponseObject {
     private ArrayList<CallLogType> arrayListCallLogHistory;
     private ArrayList<GlobalSearchType> globalSearchTypeArrayList;
     private ArrayList<SpamDataType> spamDataTypeArrayList;
-    private String spamCount;
 
     private String profileSharingData;
 

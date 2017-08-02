@@ -203,6 +203,7 @@ public class AppConstants {
     public static String PREF_EXPORT_CONTACT = "pref_export_contact";
 
     public static String PREF_DISABLE_PUSH = "pref_disable_push";
+    public static String PREF_DISABLE_POPUP = "pref_disable_popup";
     public static String PREF_DISABLE_EVENT_PUSH = "pref_disable_event_push";
 
     public static String PREF_LOGIN_TYPE = "pref_login_type";

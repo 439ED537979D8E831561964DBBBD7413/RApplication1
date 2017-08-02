@@ -50,6 +50,7 @@ import android.widget.TextView;
 
 import com.google.common.base.MoreObjects;
 import com.rawalinfocom.rcontact.BaseFragment;
+import com.rawalinfocom.rcontact.MainActivity;
 import com.rawalinfocom.rcontact.R;
 import com.rawalinfocom.rcontact.RContactApplication;
 import com.rawalinfocom.rcontact.adapters.SimpleCallLogListAdapter;
@@ -76,11 +77,13 @@ import com.rawalinfocom.rcontact.model.WsResponseObject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -513,10 +516,10 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
                 }
 
-                if (simpleCallLogListAdapter != null)
+                if (simpleCallLogListAdapter != null) {
                     simpleCallLogListAdapter.notifyItemInserted(0);
-//                    simpleCallLogListAdapter.notifyItemChanged(0);
-                simpleCallLogListAdapter.notifyDataSetChanged();
+                    simpleCallLogListAdapter.notifyDataSetChanged();
+                }
             }
 
             recyclerCallLogs.smoothScrollToPosition(0);
@@ -568,13 +571,12 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
 
                             if (AppConstants.isFirstTime()) {
                                 AppConstants.setIsFirstTime(false);
-//                                new GetCallLogs().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                                 fetchCallLogs();
                             } else {
                                 if (callLogTypeArrayList.size() > 0) {
+//                                getLatestData();
                                     makeSimpleData();
                                 } else {
-//                                    new GetCallLogs().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                                     fetchCallLogs();
                                 }
                             }
@@ -619,9 +621,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             if (cursor != null) {
                 while (cursor.moveToNext()) {
 
-//                    String number = Utils.getFormattedNumber(getActivity(),
-//                            cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER)));
-
                     String number = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
 
                     CallLogType callLogType = new CallLogType(getActivity());
@@ -639,10 +638,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     callLogType.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION)));
                     callLogType.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
                     callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
-//                    String uniquePhoneBookId = getStarredStatusFromNumber(number);
-//                    if (!TextUtils.isEmpty(uniquePhoneBookId)) {
-//                        callLogType.setLocalPbRowId(uniquePhoneBookId);
-//                    } else
                     callLogType.setLocalPbRowId(" ");
                     callLogType.setProfileImage("");
 
@@ -655,15 +650,6 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
             e.printStackTrace();
         }
 
-//        getActivity().runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                makeSimpleData();
-//                nameAndProfileImage = new GetRCPNameAndProfileImage();
-//                nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//            }
-//        });
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -672,6 +658,83 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                 nameAndProfileImage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }, 150);
+    }
+
+    private void getLatestData() {
+
+        try {
+            String order = CallLog.Calls.DATE + " ASC";
+            String prefDate = Utils.getStringPreference(getActivity(), AppConstants
+                    .PREF_CALL_LOG_SYNC_TIME, "");
+            String prefRowId = Utils.getStringPreference(getActivity(), AppConstants
+                    .PREF_CALL_LOG_ROW_ID, "");
+            String dateToCompare = "", tempDate = "";
+            String currentDate = "";
+            long dateToConvert = 0;
+            if (!StringUtils.isEmpty(prefDate)) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale
+                        .getDefault());
+                dateToConvert = sdf.parse(prefDate).getTime();
+                dateToCompare = String.valueOf(dateToConvert);
+//                System.out.println("RContact last Call-log date : " + dateToCompare);
+                currentDate = String.valueOf(System.currentTimeMillis());
+            }
+
+            Cursor cursor = getActivity().getContentResolver().query(CallLog.Calls.CONTENT_URI, null,
+                    CallLog.Calls.DATE + " BETWEEN ? AND ?"
+                    , new String[]{dateToCompare, currentDate}, order);
+
+            if (cursor != null) {
+
+                while (cursor.moveToNext()) {
+
+                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale
+                            .getDefault());
+
+                    Date cursorDate = new Date(cursor.getLong(cursor.getColumnIndex(CallLog.Calls
+                            .DATE)));
+                    String cursorDateToCompare = sdf.format(cursorDate);
+
+                    Date compareDate = new Date(dateToConvert);
+                    String prefDateToCompare = sdf.format(compareDate);
+
+                    Date curDate = sdf.parse(cursorDateToCompare);
+                    Date preferenceDate = sdf.parse(prefDateToCompare);
+
+                    if (curDate.getTime() > preferenceDate.getTime() && (Integer.parseInt(cursor
+                            .getString(cursor.getColumnIndex(CallLog.Calls._ID)))
+                            > Integer.parseInt(prefRowId))) {
+                        String number = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
+
+                        CallLogType callLogType = new CallLogType(getActivity());
+
+                        callLogType.setNumber(number);
+
+                        String userName = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
+
+                        if (!TextUtils.isEmpty(userName))
+                            callLogType.setName(userName);
+                        else
+                            callLogType.setName("");
+
+                        callLogType.setType(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE)));
+                        callLogType.setDuration(cursor.getInt(cursor.getColumnIndex(CallLog.Calls.DURATION)));
+                        callLogType.setDate(cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE)));
+                        callLogType.setUniqueContactId(cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID)));
+                        callLogType.setLocalPbRowId(" ");
+                        callLogType.setProfileImage("");
+
+                        callLogTypeArrayList.add(0, callLogType);
+                    }
+                }
+                cursor.close();
+            }
+
+            rContactApplication.setArrayListCallLogType(callLogTypeArrayList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void makeSimpleData() {
@@ -760,7 +823,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     String profileRating = spamDataType.getProfileRating();
                     String totalProfileRateUser = spamDataType.getTotalProfileRateUser();
                     String spamCount = spamDataType.getSpamCount();
-                    String photoUrl =  spamDataType.getSpamPhotoUrl();
+                    String photoUrl = spamDataType.getSpamPhotoUrl();
 
                     if (MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
                         callLogType.setRcpFirstName(callLogType.getRcpFirstName());
@@ -788,7 +851,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             callLogType.setCallLogTotalProfileRateUser(totalProfileRateUser);
                         if (!StringUtils.isEmpty(spamCount))
                             callLogType.setSpamCount(spamCount);
-                        if(!StringUtils.isEmpty(photoUrl))
+                        if (!StringUtils.isEmpty(photoUrl))
                             callLogType.setProfileImage(photoUrl);
                     }
                 }
@@ -827,8 +890,8 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                             String profileRating = spamDataType.getProfileRating();
                             String totalProfileRateUser = spamDataType.getTotalProfileRateUser();
                             String spamCount = spamDataType.getSpamCount();
-                            String publicUrl =  spamDataType.getSpamPublicUrl();
-                            String photoUrl =  spamDataType.getSpamPhotoUrl();
+                            String publicUrl = spamDataType.getSpamPublicUrl();
+                            String photoUrl = spamDataType.getSpamPhotoUrl();
 
                             if (MoreObjects.firstNonNull(callLogType.isRcpUser(), false)) {
                                 callLogType.setRcpFirstName(callLogType.getRcpFirstName());
@@ -856,7 +919,7 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                                     callLogType.setCallLogTotalProfileRateUser(totalProfileRateUser);
                                 if (!StringUtils.isEmpty(spamCount))
                                     callLogType.setSpamCount(spamCount);
-                                if(!StringUtils.isEmpty(photoUrl))
+                                if (!StringUtils.isEmpty(photoUrl))
                                     callLogType.setProfileImage(photoUrl);
                             }
 
@@ -1212,7 +1275,9 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
                     startActivity(smsIntent);
 
                 } else {
-                    showCallConfirmationDialog(actionNumber);
+                    actionNumber = Utils.getFormattedNumber(getActivity(), actionNumber);
+                    Utils.callIntent(getActivity(), actionNumber);
+//                    showCallConfirmationDialog(actionNumber);
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -1275,36 +1340,35 @@ public class CallLogFragment extends BaseFragment implements WsResponseListener,
         itemTouchHelper.attachToRecyclerView(recyclerCallLogs);
     }
 
-
-    private void showCallConfirmationDialog(String number) {
-        final String formattedNumber = Utils.getFormattedNumber(getActivity(), number);
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                        Utils.callIntent(getActivity(), formattedNumber);
-                        break;
-                }
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
-                + formattedNumber + "?");
-        callConfirmationDialog.showDialog();
-
-    }
+//    private void showCallConfirmationDialog(String number) {
+//        final String formattedNumber = Utils.getFormattedNumber(getActivity(), number);
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//                        Utils.callIntent(getActivity(), formattedNumber);
+//                        break;
+//                }
+//            }
+//        };
+//
+//        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
+//                + formattedNumber + "?");
+//        callConfirmationDialog.showDialog();
+//
+//    }
 
     boolean isDualSIM;
 

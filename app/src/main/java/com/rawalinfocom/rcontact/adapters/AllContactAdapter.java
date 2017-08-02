@@ -527,9 +527,6 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
                     smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
                     smsIntent.setType("vnd.android-dir/mms-sms");
-                  /*  smsIntent.setData(Uri.parse("sms:" + ((ProfileData)
-                            arrayListPhoneBookContacts.get(position)).getOperation().get(0)
-                            .getPbPhoneNumber().get(0).getPhoneNumber()));*/
                     smsIntent.setData(Uri.parse("sms:" + actionNumber));
                     activity.startActivity(smsIntent);
 
@@ -541,7 +538,24 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     } else if (fragment instanceof FavoritesFragment) {
                         ((FavoritesFragment) fragment).callNumber = actionNumber;
                     }
-                    showCallConfirmationDialog();
+
+                    if (ContextCompat.checkSelfPermission(activity, android.Manifest
+                            .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        fragment.requestPermissions(new String[]{Manifest.permission
+                                .CALL_PHONE}, AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL);
+                    } else {
+                        if (fragment instanceof AllContactsListFragment) {
+                            Utils.callIntent(activity, ((AllContactsListFragment) fragment)
+                                    .callNumber);
+                        } else if (activity instanceof SearchActivity) {
+                            Utils.callIntent(activity, ((SearchActivity) activity)
+                                    .numberToSend);
+                        } else if (fragment instanceof FavoritesFragment) {
+                            Utils.callIntent(activity, ((FavoritesFragment) fragment)
+                                    .callNumber);
+                        }
+                    }
+
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -615,59 +629,59 @@ public class AllContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
-    private void showCallConfirmationDialog() {
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                        if (ContextCompat.checkSelfPermission(activity, android.Manifest
-                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                            fragment.requestPermissions(new String[]{Manifest.permission
-                                    .CALL_PHONE}, AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                        } else {
-                            if (fragment instanceof AllContactsListFragment) {
-                                Utils.callIntent(activity, ((AllContactsListFragment) fragment)
-                                        .callNumber);
-                            } else if (activity instanceof SearchActivity) {
-                                Utils.callIntent(activity, ((SearchActivity) activity)
-                                        .numberToSend);
-                            } else if (fragment instanceof FavoritesFragment) {
-                                Utils.callIntent(activity, ((FavoritesFragment) fragment)
-                                        .callNumber);
-                            }
-                        }
-                        break;
-                }
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(activity, cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(activity.getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(activity.getString(R.string.action_call));
-        if (fragment instanceof AllContactsListFragment) {
-            callConfirmationDialog.setDialogBody(activity.getString(R.string.action_call)
-                    + " " + ((AllContactsListFragment) fragment).callNumber + "?");
-        } else if (fragment instanceof FavoritesFragment) {
-            callConfirmationDialog.setDialogBody(activity.getString(R.string.action_call)
-                    + " " + ((FavoritesFragment) fragment).callNumber + "?");
-        } else if (activity instanceof SearchActivity) {
-            callConfirmationDialog.setDialogBody(activity.getString(R.string.action_call)
-                    + " " + ((SearchActivity) activity).numberToSend + "?");
-        }
-
-        callConfirmationDialog.showDialog();
-
-    }
+//    private void showCallConfirmationDialog() {
+//
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//                        if (ContextCompat.checkSelfPermission(activity, android.Manifest
+//                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//                            fragment.requestPermissions(new String[]{Manifest.permission
+//                                    .CALL_PHONE}, AppConstants.MY_PERMISSIONS_REQUEST_PHONE_CALL);
+//                        } else {
+//                            if (fragment instanceof AllContactsListFragment) {
+//                                Utils.callIntent(activity, ((AllContactsListFragment) fragment)
+//                                        .callNumber);
+//                            } else if (activity instanceof SearchActivity) {
+//                                Utils.callIntent(activity, ((SearchActivity) activity)
+//                                        .numberToSend);
+//                            } else if (fragment instanceof FavoritesFragment) {
+//                                Utils.callIntent(activity, ((FavoritesFragment) fragment)
+//                                        .callNumber);
+//                            }
+//                        }
+//                        break;
+//                }
+//            }
+//        };
+//
+//        callConfirmationDialog = new MaterialDialog(activity, cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(activity.getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(activity.getString(R.string.action_call));
+//        if (fragment instanceof AllContactsListFragment) {
+//            callConfirmationDialog.setDialogBody(activity.getString(R.string.action_call)
+//                    + " " + ((AllContactsListFragment) fragment).callNumber + "?");
+//        } else if (fragment instanceof FavoritesFragment) {
+//            callConfirmationDialog.setDialogBody(activity.getString(R.string.action_call)
+//                    + " " + ((FavoritesFragment) fragment).callNumber + "?");
+//        } else if (activity instanceof SearchActivity) {
+//            callConfirmationDialog.setDialogBody(activity.getString(R.string.action_call)
+//                    + " " + ((SearchActivity) activity).numberToSend + "?");
+//        }
+//
+//        callConfirmationDialog.showDialog();
+//
+//    }
 
     //</editor-fold>
 
