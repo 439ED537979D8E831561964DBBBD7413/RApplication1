@@ -20,7 +20,6 @@ public class WsResponseObject {
 
     @JsonProperty("contact_request")
     private PrivacyRequestDataItem contactRequestData;
-    private String spamCount;
 
     public PrivacyRequestDataItem getContactRequestData() {
         return contactRequestData;

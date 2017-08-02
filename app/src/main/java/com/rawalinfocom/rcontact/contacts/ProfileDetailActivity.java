@@ -645,7 +645,7 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 (databaseHandler);
                         UserProfile userProfile = tableProfileMaster.getProfileFromCloudPmId(Integer
                                 .parseInt(pmId));
-                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
+//                        if (!StringUtils.equalsAnyIgnoreCase(pmId, "-1")) {
                             // RCP profile or Own Profile
                             Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                             sharingIntent.setType("text/plain");
@@ -656,11 +656,11 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                             sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                             startActivity(Intent.createChooser(sharingIntent, getString(R.string
                                     .str_share_contact_via)));
-                        } else {
-                            // Non-Rcp profile
-                            shareContact();
-
-                        }
+//                        } else {
+//                            // Non-Rcp profile
+//                            shareContact();
+//
+//                        }
                     } else {
                         shareContact();
                     }

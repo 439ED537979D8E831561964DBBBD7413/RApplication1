@@ -147,7 +147,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         }
         switch (state) {
             case TelephonyManager.CALL_STATE_RINGING:
-                Toast.makeText(context, "Incoming - call", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "Incoming - call", Toast.LENGTH_SHORT).show();
                 isIncoming = true;
                 callStartTime = new Date();
                 savedNumber = number;
@@ -171,7 +171,7 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             case TelephonyManager.CALL_STATE_IDLE:
 
                 //Went to idle-  this is the end of a call.  What type depends on previous state(s)
-                Toast.makeText(context, "Call - ended", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "Call - ended", Toast.LENGTH_SHORT).show();
                 AppConstants.isFromReceiver = true;
                 if (lastState == TelephonyManager.CALL_STATE_RINGING) {
                     //Ring but no pickup-  a miss
@@ -429,7 +429,11 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         incomingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         incomingDialog.setContentView(R.layout.dialog_incoming_call);
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        incomingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            incomingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
+        }else{
+            incomingDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        }
         incomingDialog.setCancelable(false);
         incomingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         layoutParams.copyFrom(incomingDialog.getWindow().getAttributes());
@@ -649,7 +653,11 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         endCallDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         endCallDialog.setContentView(R.layout.dialog_layout_end_call);
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        endCallDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            endCallDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
+        }else{
+            endCallDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        }
         endCallDialog.setCancelable(false);
         endCallDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         layoutParams.copyFrom(endCallDialog.getWindow().getAttributes());
