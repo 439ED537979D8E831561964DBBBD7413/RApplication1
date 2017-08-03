@@ -1769,7 +1769,6 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
                     if(!StringUtils.isEmpty(callLogCloudName)){
                         textName.setTextColor(ContextCompat.getColor(this, R.color.colorBlack));
-//                        textName.setText(callLogCloudName);
                     }
                 }
             }
