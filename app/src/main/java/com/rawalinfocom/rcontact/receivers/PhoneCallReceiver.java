@@ -147,7 +147,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
         }
         switch (state) {
             case TelephonyManager.CALL_STATE_RINGING:
-//                Toast.makeText(context, "Incoming - call", Toast.LENGTH_SHORT).show();
                 isIncoming = true;
                 callStartTime = new Date();
                 savedNumber = number;
@@ -171,8 +170,6 @@ public class PhoneCallReceiver extends BroadcastReceiver {
             case TelephonyManager.CALL_STATE_IDLE:
 
                 //Went to idle-  this is the end of a call.  What type depends on previous state(s)
-//                Toast.makeText(context, "Call - ended", Toast.LENGTH_SHORT).show();
-                AppConstants.isFromReceiver = true;
                 if (lastState == TelephonyManager.CALL_STATE_RINGING) {
                     //Ring but no pickup-  a miss
                     onMissedCall(context, savedNumber, callStartTime);
