@@ -653,6 +653,7 @@
     <string name="str_validation_export_type">એક્સપોર્ટ પ્રકાર પસંદ કરો</string>
     <string name="str_validation_push_notification">જો તમે પુશ નોટિફિકેશન પ્રાપ્ત કરવા ન માંગતા હો તો એને અક્ષમ કરો</string>
     <string name="str_validation_event_notification">બધી ઇવેન્ટ સૂચનાઓને પ્રબંધિત કરવા માટે ચાલુ/બંધ (on/off) કરો</string>
+    <string name="str_validation_popup_notification">Disable it if you do not want call popup</string>
     <string name="title_activity_maps">મેપ </string>
 
     <string name="str_about">જાણકારી</string>
@@ -673,6 +674,7 @@
     <string name="copied_to_clipboard">ક્લિપબોર્ડ પર કૉપિ કર્યો</string>
 
     <!--Call-popup-->
+    <string name="str_pop_up">Call Pop-Up</string>
     <string name="network_warning_msg">કૉલર આઈડી ને સક્ષમ કરવા માટે 3G/4G અથવા WiFi કનેક્શનની જરૂર છે. મહેરબાની કરીને તમારા કનેક્શન ની તપાસ કરો અને ફરીથી પ્રયાસ કરો.</string>
     <string name="call_received_from">પાસે થી કૉલ પ્રાપ્ત</string>
     <string name="btn_view_profile">પ્રોફાઇલ જુઓ</string>

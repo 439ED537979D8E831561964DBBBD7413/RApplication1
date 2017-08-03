@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.util.Util;
 import com.rawalinfocom.rcontact.BaseActivity;
 import com.rawalinfocom.rcontact.BaseFragment;
 import com.rawalinfocom.rcontact.R;
@@ -137,7 +138,7 @@ public class RContactsFragment extends BaseFragment {
         // rating update broadcast receiver register
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver
                 (localBroadcastReceiverRatingUpdate,
-                new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_RATING_UPDATE));
+                        new IntentFilter(AppConstants.ACTION_LOCAL_BROADCAST_RATING_UPDATE));
     }
 
     private void unregisterLocalBroadCast() {
@@ -251,7 +252,10 @@ public class RContactsFragment extends BaseFragment {
                     startActivity(smsIntent);
 
                 } else {
-                    showCallConfirmationDialog(actionNumber);
+
+                    actionNumber = Utils.getFormattedNumber(getActivity(), actionNumber);
+                    Utils.callIntent(getActivity(), actionNumber);
+//                    showCallConfirmationDialog(actionNumber);
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -340,45 +344,45 @@ public class RContactsFragment extends BaseFragment {
         recyclerView.scrollToPosition(scrollPosition);
     }
 
-    private void showCallConfirmationDialog(final String number) {
-
-        final String finalNumber;
-
-        if (!number.startsWith("+91")) {
-            finalNumber = "+91" + number;
-        } else {
-            finalNumber = number;
-        }
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                       /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                number));
-                        startActivity(intent);*/
-                        Utils.callIntent(getActivity(), finalNumber);
-                        break;
-                }
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
-                + finalNumber + "?");
-
-        callConfirmationDialog.showDialog();
-    }
+//    private void showCallConfirmationDialog(final String number) {
+//
+//        final String finalNumber;
+//
+//        if (!number.startsWith("+91")) {
+//            finalNumber = "+91" + number;
+//        } else {
+//            finalNumber = number;
+//        }
+//
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//                       /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+//                                number));
+//                        startActivity(intent);*/
+//                        Utils.callIntent(getActivity(), finalNumber);
+//                        break;
+//                }
+//            }
+//        };
+//
+//        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
+//                + finalNumber + "?");
+//
+//        callConfirmationDialog.showDialog();
+//    }
     //</editor-fold>
 }

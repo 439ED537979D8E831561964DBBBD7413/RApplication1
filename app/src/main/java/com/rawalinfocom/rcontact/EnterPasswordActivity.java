@@ -199,6 +199,7 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
 
                     Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants.PREF_DISABLE_PUSH, false);
                     Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants.PREF_DISABLE_EVENT_PUSH, false);
+                    Utils.setBooleanPreference(EnterPasswordActivity.this, AppConstants.PREF_DISABLE_POPUP, false);
 
                     storeProfileDataToDb(profileDetail);
 
@@ -235,6 +236,8 @@ public class EnterPasswordActivity extends BaseActivity implements RippleView
                 if (enterPassWordResponse != null && StringUtils.equalsIgnoreCase
                         (enterPassWordResponse
                                 .getStatus(), WsConstants.RESPONSE_STATUS_TRUE)) {
+
+                    Utils.setStringPreference(this, AppConstants.KEY_API_CALL_TIME, String.valueOf(System.currentTimeMillis()));
 
                     // Redirect to MainActivity
                     Intent intent = new Intent(this, MainActivity.class);

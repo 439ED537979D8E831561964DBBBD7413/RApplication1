@@ -2,12 +2,9 @@ package com.rawalinfocom.rcontact;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -21,18 +18,13 @@ import android.widget.TextView;
 
 import com.rawalinfocom.rcontact.adapters.AppLanguageListAdapter;
 import com.rawalinfocom.rcontact.constants.AppConstants;
-import com.rawalinfocom.rcontact.contacts.ProfileDetailActivity;
 import com.rawalinfocom.rcontact.helper.RippleView;
 import com.rawalinfocom.rcontact.helper.Utils;
 import com.rawalinfocom.rcontact.interfaces.WsResponseListener;
 import com.rawalinfocom.rcontact.model.AppLanguage;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +32,14 @@ import butterknife.ButterKnife;
 public class SettingsActivity extends BaseActivity implements RippleView
         .OnRippleCompleteListener, WsResponseListener {
 
+    @BindView(R.id.image_right)
+    ImageView imageRight;
+    @BindView(R.id.ripple_action_right)
+    RippleView rippleActionRight;
+    @BindView(R.id.text_pop_up)
+    TextView textPopUp;
+    @BindView(R.id.ll_pop_up)
+    LinearLayout llPopUp;
     private Activity activity;
 
     @BindView(R.id.image_action_back)
@@ -105,6 +105,7 @@ public class SettingsActivity extends BaseActivity implements RippleView
         textAppLanguage.setTypeface(Utils.typefaceRegular(this));
         textContacts.setTypeface(Utils.typefaceRegular(this));
         textNotification.setTypeface(Utils.typefaceRegular(this));
+        textPopUp.setTypeface(Utils.typefaceRegular(this));
 
         llAppLanguage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +124,18 @@ public class SettingsActivity extends BaseActivity implements RippleView
         llNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityIntent(activity, NotificationSettingsActivity.class, null);
+                Intent intent = new Intent(activity, NotificationSettingsActivity.class);
+                intent.putExtra("from", "notification");
+                startActivity(intent);
+            }
+        });
+
+        llPopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, NotificationSettingsActivity.class);
+                intent.putExtra("from", "popup");
+                startActivity(intent);
             }
         });
     }

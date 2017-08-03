@@ -1032,7 +1032,9 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
                         callNumber = actionNumber;
                     }*/
                     callNumber = Utils.getFormattedNumber(getActivity(), actionNumber);
-                    showCallConfirmationDialog();
+                    swipeToCall();
+                    // showCallConfirmationDialog();
+
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -1113,47 +1115,59 @@ public class AllContactsListFragment extends BaseFragment implements LoaderManag
         itemTouchHelper.attachToRecyclerView(recyclerViewContactList);
     }
 
-
-    private void showCallConfirmationDialog() {
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest
-                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                            requestPermissions(new String[]{Manifest.permission
-                                    .CALL_PHONE}, AppConstants
-                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                        } else {
-                            AppConstants.setIsFirstTime(false);
-                            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity
-                                    (), callNumber));
-                        }
-                        break;
-                }
-
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
-                + callNumber + "?");
-
-        callConfirmationDialog.showDialog();
-
+    private void swipeToCall() {
+        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest
+                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission
+                    .CALL_PHONE}, AppConstants
+                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+        } else {
+            AppConstants.setIsFirstTime(false);
+            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity
+                    (), callNumber));
+        }
     }
+
+//    private void showCallConfirmationDialog() {
+//
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//                        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest
+//                                .permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//                            requestPermissions(new String[]{Manifest.permission
+//                                    .CALL_PHONE}, AppConstants
+//                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+//                        } else {
+//                            AppConstants.setIsFirstTime(false);
+//                            Utils.callIntent(getActivity(), Utils.getFormattedNumber(getActivity
+//                                    (), callNumber));
+//                        }
+//                        break;
+//                }
+//
+//            }
+//        };
+//
+//        callConfirmationDialog = new MaterialDialog(getActivity(), cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(getActivity().getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(getActivity().getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(getActivity().getString(R.string.action_call) + " "
+//                + callNumber + "?");
+//
+//        callConfirmationDialog.showDialog();
+//
+//    }
 
     private void showPermissionConfirmationDialog(final int permissionType) {
 

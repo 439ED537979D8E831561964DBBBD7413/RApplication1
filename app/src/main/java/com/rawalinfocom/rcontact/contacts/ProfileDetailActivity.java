@@ -533,7 +533,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                     callConfirmationListDialog.showDialog();
 
                                 } else {
-                                    showCallConfirmationDialog(profileContactNumber);
+                                    dialCall(profileContactNumber);
+//                                    showCallConfirmationDialog(profileContactNumber);
                                 }
                             }
                         } else {
@@ -583,7 +584,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                                 callConfirmationListDialog.showDialog();
 
                             } else {
-                                showCallConfirmationDialog(profileContactNumber);
+                                dialCall(profileContactNumber);
+//                                showCallConfirmationDialog(profileContactNumber);
                             }
                         }
                     } else {
@@ -621,7 +623,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
             case R.id.ripple_action_right_center:
 
                 if (StringUtils.equals(imageRightCenter.getTag().toString(), TAG_IMAGE_CALL)) {
-                    showCallConfirmationDialog(historyNumber);
+                    dialCall(historyNumber);
+//                    showCallConfirmationDialog(historyNumber);
                     isFromReceiver = true;
 
                 } else if (StringUtils.equals(imageRightCenter.getTag().toString(),
@@ -2576,14 +2579,8 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
                     startActivity(smsIntent);
 
                 } else {
-
-                    if (!actionNumber.startsWith("+91")) {
-                        callNumber = "+91" + actionNumber;
-                    } else {
-                        callNumber = actionNumber;
-                    }
-
-                    showCallConfirmationDialog(actionNumber);
+                    dialCall(actionNumber);
+//                    showCallConfirmationDialog(actionNumber);
                 }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -2654,56 +2651,72 @@ public class ProfileDetailActivity extends BaseActivity implements RippleView
         itemTouchHelper.attachToRecyclerView(recyclerViewContactNumber);
     }
 
-    private void showCallConfirmationDialog(final String number) {
+    private void dialCall(String number) {
 
-        final String finalNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, number);
+        String finalNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, number);
 
-        /*if (!number.startsWith("+91")) {
-            finalNumber = "+91" + number;
-        } else {
-            finalNumber = number;
-        }*/
-
-        RippleView.OnRippleCompleteListener cancelListener = new RippleView
-                .OnRippleCompleteListener() {
-
-            @Override
-            public void onComplete(RippleView rippleView) {
-                switch (rippleView.getId()) {
-                    case R.id.rippleLeft:
-                        callConfirmationDialog.dismissDialog();
-                        break;
-
-                    case R.id.rippleRight:
-                        callConfirmationDialog.dismissDialog();
-                       /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
-                                number));
-                        startActivity(intent);*/
-                        if (ContextCompat.checkSelfPermission(ProfileDetailActivity.this, android
-                                .Manifest.permission.CALL_PHONE) != PackageManager
-                                .PERMISSION_GRANTED)
-                            requestPermissions(new String[]{Manifest.permission
-                                    .CALL_PHONE}, AppConstants
-                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
-                        else {
-                            Utils.callIntent(ProfileDetailActivity.this, finalNumber);
-                        }
-
-                        break;
-                }
-            }
-        };
-
-        callConfirmationDialog = new MaterialDialog(this, cancelListener);
-        callConfirmationDialog.setTitleVisibility(View.GONE);
-        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
-        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
-        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber
-                + "?");
-
-        callConfirmationDialog.showDialog();
+        if (ContextCompat.checkSelfPermission(ProfileDetailActivity.this, android
+                .Manifest.permission.CALL_PHONE) != PackageManager
+                .PERMISSION_GRANTED)
+            requestPermissions(new String[]{Manifest.permission
+                    .CALL_PHONE}, AppConstants
+                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+        else {
+            Utils.callIntent(ProfileDetailActivity.this, finalNumber);
+        }
 
     }
+
+//    private void showCallConfirmationDialog(final String number) {
+//
+//        final String finalNumber = Utils.getFormattedNumber(ProfileDetailActivity.this, number);
+//
+//        /*if (!number.startsWith("+91")) {
+//            finalNumber = "+91" + number;
+//        } else {
+//            finalNumber = number;
+//        }*/
+//
+//        RippleView.OnRippleCompleteListener cancelListener = new RippleView
+//                .OnRippleCompleteListener() {
+//
+//            @Override
+//            public void onComplete(RippleView rippleView) {
+//                switch (rippleView.getId()) {
+//                    case R.id.rippleLeft:
+//                        callConfirmationDialog.dismissDialog();
+//                        break;
+//
+//                    case R.id.rippleRight:
+//                        callConfirmationDialog.dismissDialog();
+//                       /* Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" +
+//                                number));
+//                        startActivity(intent);*/
+//                        if (ContextCompat.checkSelfPermission(ProfileDetailActivity.this, android
+//                                .Manifest.permission.CALL_PHONE) != PackageManager
+//                                .PERMISSION_GRANTED)
+//                            requestPermissions(new String[]{Manifest.permission
+//                                    .CALL_PHONE}, AppConstants
+//                                    .MY_PERMISSIONS_REQUEST_PHONE_CALL);
+//                        else {
+//                            Utils.callIntent(ProfileDetailActivity.this, finalNumber);
+//                        }
+//
+//                        break;
+//                }
+//            }
+//        };
+//
+//        callConfirmationDialog = new MaterialDialog(this, cancelListener);
+//        callConfirmationDialog.setTitleVisibility(View.GONE);
+//        callConfirmationDialog.setLeftButtonText(getString(R.string.action_cancel));
+//        callConfirmationDialog.setRightButtonText(getString(R.string.action_call));
+//        callConfirmationDialog.setDialogBody(getString(R.string.action_call) + " " + finalNumber
+//                + "?");
+//
+//        callConfirmationDialog.showDialog();
+//
+//    }
 
     public RelativeLayout getRelativeRootProfileDetail() {
         return relativeRootProfileDetail;

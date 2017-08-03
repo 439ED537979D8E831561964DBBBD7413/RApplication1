@@ -573,7 +573,7 @@
     <string name="tutorial_header_4">Spammers Banned</string>
     <string name="tutorial_header_5">Get Rated</string>
     <string name="tutorial_content_1"><![CDATA[A Contact is not just a number but a profile consisting of Auto-Synced data & Social Info!]]></string>
-    <string name="tutorial_content_2">Manage SMS and Call Logs from a single icon! RContacts serves you with both in one platter.</string>
+    <string name="tutorial_content_2">Manage Call Logs from a single icon! RContacts serves you with both in one platter.</string>
     <string name="tutorial_content_3">Just place this EARTH on your homescreen and search for any number that belongs to it.</string>
     <string name="tutorial_content_4">RContacts like a Special Agent will alert and rescue you of the numbers marked as Spam</string>
     <string name="tutorial_content_5">Earn reputation stars and get yourself authenticated in the world of Contacts</string>
@@ -660,6 +660,7 @@
     <string name="str_validation_export_type">Please select any export type</string>
     <string name="str_validation_push_notification">Disable it if you do not want receive Notifications</string>
     <string name="str_validation_event_notification">Turn On/Off to manage All Event Notifications</string>
+    <string name="str_validation_popup_notification">Disable it if you do not want call popup</string>
     <string name="title_activity_maps">Map</string>
 
     <string name="str_about">About</string>
@@ -680,6 +681,7 @@
     <string name="copied_to_clipboard">Copied to clipboard</string>
 
     <!--Call-popup-->
+    <string name="str_pop_up">Call Pop-Up</string>
     <string name="network_warning_msg">You need a 3G/4G or wifi connection for Caller ID to function. Please check
     your connection and try again.</string>
     <string name="call_received_from">Call received from</string>
